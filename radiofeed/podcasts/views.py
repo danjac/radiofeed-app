@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
@@ -140,22 +140,6 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def latest_episode(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
-    """Redirects to the latest episode for a given podcast."""
-    if (
-        episode := Episode.objects.filter(podcast=podcast_id)
-        .order_by("-pub_date")
-        .first()
-    ) is None:
-        raise Http404
-
-    return redirect(episode)
-
-
-@require_safe
-@login_required
 def podcast_detail(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> HttpResponse:
@@ -165,12 +149,17 @@ def podcast_detail(
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
+    latest_episode = (
+        Episode.objects.filter(podcast=podcast_id).order_by("-pub_date").first()
+    )
+
     return render(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,
+            "latest_episode": latest_episode,
         },
     )
 

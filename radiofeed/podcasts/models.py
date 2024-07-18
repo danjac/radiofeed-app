@@ -248,16 +248,6 @@ class Podcast(models.Model):
             },
         )
 
-    def get_latest_episode_url(self) -> str:
-        """Absolute URL to latest episode redirect."""
-        return reverse(
-            "podcasts:latest_episode",
-            kwargs={
-                "podcast_id": self.pk,
-                "slug": self.slug,
-            },
-        )
-
     @cached_property
     def cleaned_title(self) -> str:
         """Strips HTML from title field."""

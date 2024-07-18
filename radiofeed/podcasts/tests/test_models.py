@@ -1,5 +1,4 @@
 import pytest
-from django.urls import reverse
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
@@ -132,17 +131,6 @@ class TestPodcastModel:
     def test_cleaned_description(self):
         podcast = Podcast(description="<b>Test &amp; Code")
         assert podcast.cleaned_description == "Test & Code"
-
-    @pytest.mark.django_db()
-    def test_get_latest_episode_url(self, podcast):
-        url = podcast.get_latest_episode_url()
-        assert url == reverse(
-            "podcasts:latest_episode",
-            kwargs={
-                "podcast_id": podcast.pk,
-                "slug": podcast.slug,
-            },
-        )
 
     @pytest.mark.django_db()
     def test_has_similar_none(self, podcast):

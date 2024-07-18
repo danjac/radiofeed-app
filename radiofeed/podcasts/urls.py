@@ -16,11 +16,6 @@ urlpatterns = [
         name="podcast_detail",
     ),
     path(
-        "podcasts/<slug:slug>-<int:podcast_id>/latest/",
-        views.latest_episode,
-        name="latest_episode",
-    ),
-    path(
         "podcasts/<slug:slug>-<int:podcast_id>/episodes/",
         views.episodes,
         name="podcast_episodes",

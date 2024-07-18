@@ -118,20 +118,6 @@ class TestSearchPodcasts:
         assert len(response.context["page_obj"].object_list) == 0
 
 
-class TestLatestEpisode:
-    @pytest.mark.django_db()
-    def test_no_episode(self, client, auth_user, podcast):
-        response = client.get(podcast.get_latest_episode_url())
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
-
-    @pytest.mark.django_db()
-    def test_ok(self, client, auth_user, episode):
-        assert (
-            client.get(episode.podcast.get_latest_episode_url()).url
-            == episode.get_absolute_url()
-        )
-
-
 class TestSearchItunes:
     url = reverse_lazy("podcasts:search_itunes")
 

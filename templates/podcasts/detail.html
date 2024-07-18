@@ -56,11 +56,11 @@
                         </div>
                     {% endif %}
                 </nav>
-                {% if podcast.pub_date %}
-                    <a href="{{ podcast.get_latest_episode_url }}"
+                {% if latest_episode %}
+                    <a href="{{ latest_episode.get_absolute_url }}"
                        class="flex flex-wrap space-x-1 link">
                         <span>Last update</span>
-                        {% include "_date.html" with value=podcast.pub_date title="Released" %}
+                        {% include "_date.html" with value=latest_episode.pub_date title="Released" %}
                     </a>
                 {% endif %}
             </div>
