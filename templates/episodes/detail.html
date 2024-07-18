@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache heroicons partials %}
+{% load cache heroicons %}
 {% block title %}
     {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
@@ -62,72 +62,43 @@
             {% cover_image episode.get_cover_url "detail" podcast.cleaned_title css_class="h-36 w-36 lg:h-40 lg:w-40" %}
             <div class="flex flex-col place-content-between h-32">
                 {% include "episodes/_audio_player_button.html" %}
-                {% partialdef bookmark_button inline=True %}
-                <div id="bookmark-button"
-                     hx-push-url="false"
-                     hx-target="this"
-                     hx-swap="outerHTML"
-                     hx-indicator="this"
-                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    {% if is_bookmarked %}
-                        <button aria-label="Remove Episode from your Bookmarks"
-                                title="Remove Episode from your Bookmarks"
-                                class="inline-flex items-center btn btn-default btn-outline"
-                                hx-disabled-elt="this"
-                                hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
-                                hx-trigger="click once">
-                            {% heroicon_mini "bookmark-slash" class="mr-2" %}
-                            Bookmark
-                        </button>
-                    {% else %}
-                        <button aria-label="Add Episode to your Bookmarks"
-                                title="Add Episode to your Bookmarks"
-                                class="inline-flex items-center btn btn-default"
-                                hx-disabled-elt="this"
-                                hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
-                                hx-trigger="click once">
-                            {% heroicon_mini "bookmark" class="mr-2" %}
-                            Bookmark
-                        </button>
-                    {% endif %}
+                {% include "episodes/_bookmark_button.html" %}
+                <div class="flex flex-wrap items-center space-x-2 font-semibold text-gray-800 sm:space-x-3 dark:text-gray-300">
+                    <a download
+                       aria-label="Download audio file to your device"
+                       title="Download audio file to your device"
+                       href="{{ episode.media_url }}"
+                       target="_blank"
+                       class="link">Download</a>
+                    {% with website=episode.website|default:podcast.website %}
+                        {% if website %}
+                            <a href="{{ website }}"
+                               target="_blank"
+                               rel="noopener"
+                               class="link"
+                               title="Link to Website">Website</a>
+                        {% endif %}
+                    {% endwith %}
                 </div>
-            {% endpartialdef bookmark_button %}
-            <div class="flex flex-wrap items-center space-x-2 font-semibold text-gray-800 sm:space-x-3 dark:text-gray-300">
-                <a download
-                   aria-label="Download audio file to your device"
-                   title="Download audio file to your device"
-                   href="{{ episode.media_url }}"
-                   target="_blank"
-                   class="link">Download</a>
-                {% with website=episode.website|default:podcast.website %}
-                    {% if website %}
-                        <a href="{{ website }}"
-                           target="_blank"
-                           rel="noopener"
-                           class="link"
-                           title="Link to Website">Website</a>
-                    {% endif %}
-                {% endwith %}
             </div>
         </div>
-    </div>
-    {% if episode.is_explicit %}
-        <div title="May contain adult themes and language. Listener discretion advised."
-             class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
-            {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+        {% if episode.is_explicit %}
+            <div title="May contain adult themes and language. Listener discretion advised."
+                 class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
+                {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+            </div>
+        {% endif %}
+        <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
+            <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
+            {% with duration=episode.duration_in_seconds %}
+                {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
+            {% endwith %}
+            {% with file_size=episode.get_file_size %}
+                {% if file_size %}<div title="File Size">{{ file_size }}</div>{% endif %}
+            {% endwith %}
         </div>
-    {% endif %}
-    <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
-        <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
-        {% with duration=episode.duration_in_seconds %}
-            {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
-        {% endwith %}
-        {% with file_size=episode.get_file_size %}
-            {% if file_size %}<div title="File Size">{{ file_size }}</div>{% endif %}
-        {% endwith %}
-    </div>
-    {% include "episodes/_audio_log.html" %}
-    {% markdown episode.description %}
-</article>
+        {% include "episodes/_audio_log.html" %}
+        {% markdown episode.description %}
+    </article>
 {% endwith %}
 {% endblock content %}

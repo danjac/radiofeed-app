@@ -284,7 +284,7 @@ def _render_bookmark_action(
 ) -> HttpResponse:
     return render(
         request,
-        "episodes/detail.html#bookmark_button",
+        "episodes/_bookmark_button.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,

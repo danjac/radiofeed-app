@@ -415,7 +415,7 @@ def _render_subscribe_action(
 ) -> HttpResponse:
     return render(
         request,
-        "podcasts/detail.html#subscribe_button",
+        "podcasts/_subscribe_button.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,

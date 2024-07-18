@@ -70,7 +70,7 @@ def import_podcast_feeds(
 
     return render(
         request,
-        "account/podcast_feeds.html#import_feeds_form",
+        "account/podcast_feeds.html",
         {
             "upload_form": form,
         },

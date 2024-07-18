@@ -44,7 +44,6 @@ django==5.0.7
     #   django-model-utils
     #   django-permissions-policy
     #   django-redis
-    #   django-template-partials
     #   heroicons
 django-allauth==0.63.6
     # via radiofeed (pyproject.toml)
@@ -67,8 +66,6 @@ django-model-utils==4.5.1
 django-permissions-policy==4.20.0
     # via radiofeed (pyproject.toml)
 django-redis==5.4.0
-    # via radiofeed (pyproject.toml)
-django-template-partials==24.2
     # via radiofeed (pyproject.toml)
 gunicorn==22.0.0
     # via radiofeed (pyproject.toml)
