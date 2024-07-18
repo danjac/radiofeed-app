@@ -39,9 +39,6 @@ class ActiveLink(TypedDict):
     active: bool
 
 
-get_cover_image_attrs = register.simple_tag(cover_image.get_cover_image_attrs)
-
-
 @register.simple_tag(takes_context=True)
 def active_link(
     context: RequestContext,
@@ -112,11 +109,7 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-@register.inclusion_tag("_cookie_notice.html", takes_context=True)
-def cookie_notice(context: RequestContext) -> dict:
-    """Renders GDPR cookie notice. Notice should be hidden once user has clicked
-    "Accept Cookies" button."""
-    return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
+get_cover_image_attrs = register.simple_tag(cover_image.get_cover_image_attrs)
 
 
 @register.inclusion_tag("_cover_image.html", name="cover_image")
@@ -136,6 +129,13 @@ def cover_image_(
         "title": title,
         "url": url,
     }
+
+
+@register.inclusion_tag("_cookie_notice.html", takes_context=True)
+def cookie_notice(context: RequestContext) -> dict:
+    """Renders GDPR cookie notice. Notice should be hidden once user has clicked
+    "Accept Cookies" button."""
+    return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
 
 
 @register.filter(name="markdown")
