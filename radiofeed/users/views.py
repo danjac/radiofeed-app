@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_safe
 
 from radiofeed.decorators import require_form_methods
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
@@ -37,36 +37,26 @@ def user_preferences(
     )
 
 
-@require_safe
-@login_required
-def manage_podcast_feeds(request: HttpRequest) -> HttpResponse:
-    """Renders import/export page."""
-    return render(
-        request,
-        "account/podcast_feeds.html",
-        {
-            "upload_form": OpmlUploadForm(),
-        },
-    )
-
-
-@require_POST
+@require_form_methods
 @login_required
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form = OpmlUploadForm(request.POST, request.FILES)
-    if form.is_valid():
-        if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
-            messages.success(
-                request,
-                f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
-            )
-        else:
-            messages.info(request, "No new podcasts found in uploaded file")
+    if request.method == "POST":
+        form = OpmlUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
+                messages.success(
+                    request,
+                    f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
+                )
+            else:
+                messages.info(request, "No new podcasts found in uploaded file")
 
-        return redirect("users:manage_podcast_feeds")
+            return redirect(request.path)
+    else:
+        form = OpmlUploadForm()
 
     return render(
         request,
