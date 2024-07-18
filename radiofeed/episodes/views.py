@@ -65,24 +65,24 @@ def search_episodes(request: HttpRequest) -> HttpResponse:
 
     index_url = reverse("episodes:index")
 
-    if not request.search:
-        return HttpResponseRedirect(index_url)
+    if request.search:
+        episodes = (
+            Episode.objects.search(request.search.value)
+            .filter(podcast__private=False)
+            .select_related("podcast")
+            .order_by("-rank", "-pub_date")
+        )
 
-    episodes = (
-        Episode.objects.search(request.search.value)
-        .filter(podcast__private=False)
-        .select_related("podcast")
-        .order_by("-rank", "-pub_date")
-    )
+        return TemplateResponse(
+            request,
+            "episodes/search.html",
+            {
+                "episodes": episodes,
+                "clear_search_url": index_url,
+            },
+        )
 
-    return TemplateResponse(
-        request,
-        "episodes/search.html",
-        {
-            "episodes": episodes,
-            "clear_search_url": index_url,
-        },
-    )
+    return HttpResponseRedirect(index_url)
 
 
 @require_safe

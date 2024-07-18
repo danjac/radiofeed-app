@@ -100,28 +100,28 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
     discover_url = reverse("podcasts:discover")
 
-    if not request.search:
-        return HttpResponseRedirect(discover_url)
-
-    podcasts = (
-        _get_podcasts()
-        .filter(private=False)
-        .search(request.search.value)
-        .order_by(
-            "-exact_match",
-            "-rank",
-            "-pub_date",
+    if request.search:
+        podcasts = (
+            _get_podcasts()
+            .filter(private=False)
+            .search(request.search.value)
+            .order_by(
+                "-exact_match",
+                "-rank",
+                "-pub_date",
+            )
         )
-    )
 
-    return TemplateResponse(
-        request,
-        "podcasts/search.html",
-        {
-            "podcasts": podcasts,
-            "clear_search_url": discover_url,
-        },
-    )
+        return TemplateResponse(
+            request,
+            "podcasts/search.html",
+            {
+                "podcasts": podcasts,
+                "clear_search_url": discover_url,
+            },
+        )
+
+    return HttpResponseRedirect(discover_url)
 
 
 @require_safe
@@ -130,19 +130,19 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
     discover_url = reverse("podcasts:discover")
 
-    if not request.search:
-        return HttpResponseRedirect(discover_url)
+    if request.search:
+        feeds = itunes.search(get_client(), request.search.value)
 
-    feeds = itunes.search(get_client(), request.search.value)
+        return TemplateResponse(
+            request,
+            "podcasts/search_itunes.html",
+            {
+                "feeds": feeds,
+                "clear_search_url": reverse("podcasts:discover"),
+            },
+        )
 
-    return TemplateResponse(
-        request,
-        "podcasts/search_itunes.html",
-        {
-            "feeds": feeds,
-            "clear_search_url": reverse("podcasts:discover"),
-        },
-    )
+    return HttpResponseRedirect(discover_url)
 
 
 @require_safe
