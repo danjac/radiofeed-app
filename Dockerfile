@@ -1,14 +1,12 @@
 # Production Dockerfile for application
 
-FROM node:22-bookworm-slim AS frontend
+FROM node:20-bookworm-slim AS frontend
 
 WORKDIR /app
 
 # Asset requirements
 
-COPY ./package.json /app/package.json
-
-COPY ./package-lock.json /app/package-lock.json
+COPY package*.json ./
 
 RUN npm install
 
