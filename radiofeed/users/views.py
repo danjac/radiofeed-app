@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -16,7 +16,7 @@ from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 @login_required
 def user_preferences(
     request: HttpRequest,
-) -> HttpResponse:
+) -> HttpResponseRedirect | TemplateResponse:
     """Allow user to edit their preferences."""
 
     if request.method == "POST":
@@ -40,7 +40,7 @@ def user_preferences(
 @login_required
 def import_podcast_feeds(
     request: HttpRequest,
-) -> HttpResponse:
+) -> HttpResponseRedirect | TemplateResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
@@ -128,7 +128,7 @@ def user_stats(request: HttpRequest) -> TemplateResponse:
 
 @require_form_methods
 @login_required
-def delete_account(request: HttpRequest) -> HttpResponse:
+def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Delete account on confirmation."""
     if request.method == "POST" and "confirm-delete" in request.POST:
         request.user.delete()

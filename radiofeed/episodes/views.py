@@ -7,7 +7,6 @@ from django.db.models import Exists, OuterRef
 from django.http import (
     Http404,
     HttpRequest,
-    HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
 )
@@ -60,7 +59,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def search_episodes(request: HttpRequest) -> HttpResponse:
+def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
 
     index_url = reverse("episodes:index")
@@ -141,7 +140,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 @require_POST
 @htmx_login_required
-def close_player(request: HttpRequest) -> HttpResponse:
+def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateResponse:
     """Closes audio player."""
     if episode_id := request.audio_player.pop():
         audio_log = get_object_or_404(
@@ -162,7 +161,9 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @ajax_login_required
-def player_time_update(request: HttpRequest) -> HttpResponse:
+def player_time_update(
+    request: HttpRequest,
+) -> HttpResponseBadRequest | HttpResponseNoContent:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
@@ -260,7 +261,9 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
 @require_POST
 @htmx_login_required
-def add_bookmark(request: HttpRequest, episode_id: int) -> HttpResponse:
+def add_bookmark(
+    request: HttpRequest, episode_id: int
+) -> HttpResponseConflict | TemplateResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
 

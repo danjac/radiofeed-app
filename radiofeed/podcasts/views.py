@@ -95,7 +95,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def search_podcasts(request: HttpRequest) -> HttpResponse:
+def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search all public podcasts in database."""
 
     discover_url = reverse("podcasts:discover")
@@ -126,7 +126,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def search_itunes(request: HttpRequest) -> HttpResponse:
+def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
     discover_url = reverse("podcasts:discover")
 
@@ -291,7 +291,9 @@ def category_detail(
 
 @require_POST
 @htmx_login_required
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def subscribe(
+    request: HttpRequest, podcast_id: int
+) -> HttpResponseConflict | TemplateResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
     try:
@@ -353,22 +355,23 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 @login_required
 def add_private_feed(
     request: HttpRequest,
-) -> HttpResponse:
+) -> HttpResponseRedirect | TemplateResponse:
     """Add new private feed to collection."""
     if request.method == "POST":
         form = PrivateFeedForm(request.user, request.POST)
         if form.is_valid():
-            podcast, is_new = form.save()
+            match form.save():
+                case [_, True]:
+                    success_message = (
+                        "Podcast added to your Private Feeds and will appear here soon"
+                    )
+                    redirect_url = reverse("podcasts:private_feeds")
+                case [podcast, False]:
+                    success_message = "Podcast added to your Private Feeds"
+                    redirect_url = podcast.get_absolute_url()
 
-            if is_new:
-                messages.success(
-                    request,
-                    "Podcast added to your Private Feeds and will appear here soon",
-                )
-                return HttpResponseRedirect(reverse("podcasts:private_feeds"))
-
-            messages.success(request, "Podcast added to your Private Feeds")
-            return HttpResponseRedirect(podcast.get_absolute_url())
+            messages.success(success_message)
+            return HttpResponseRedirect(redirect_url)
     else:
         form = PrivateFeedForm(request.user)
 
