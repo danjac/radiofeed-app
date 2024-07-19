@@ -17,7 +17,7 @@ npmupdate:
 	npm run check-updates && npm install npm-update-all
 
 precommitinstall:
-	pre-commit install
+	pre-commit install && pre-commit install --hook-type commit-msg
 
 precommitupdate:
 	pre-commit autoupdate
