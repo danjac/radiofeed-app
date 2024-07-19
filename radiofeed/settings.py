@@ -35,6 +35,7 @@ INSTALLED_APPS: list[str] = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "csp",
     "django_extensions",
     "django_htmx",
     "health_check",
@@ -67,6 +68,7 @@ MIDDLEWARE: list[str] = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "csp.middleware.CSPMiddleware",
     "radiofeed.middleware.HtmxRestoreMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
@@ -367,6 +369,28 @@ HEALTH_CHECK = {
     "DISK_USAGE_MAX": 90,  # percent
     "MEMORY_MIN": 100,  # in MB
 }
+
+# Content-Security-Policy
+# https://django-csp.readthedocs.io/en/3.8/configuration.html
+
+SELF = "'self'"
+UNSAFE_EVAL = "'unsafe-eval'"
+UNSAFE_INLINE = "'unsafe-inline'"
+
+CSP_DEFAULT_SRC = [SELF]
+
+CSP_SCRIPT_SRC = [
+    SELF,
+    "*.account.google.com",
+    "*.googleapis.com",
+    UNSAFE_EVAL,
+    UNSAFE_INLINE,
+]
+
+CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
+
+# Allow all audio files
+CSP_MEDIA_SRC = ["*"]
 
 
 # PWA configuration
