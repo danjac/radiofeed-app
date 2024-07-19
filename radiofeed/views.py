@@ -22,7 +22,6 @@ from radiofeed.http_client import get_client
 from radiofeed.templatetags import ACCEPT_COOKIES_NAME
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 350
-_THEME_COLOR: Final = "#26323C"
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
 _cache_page = cache_page(_CACHE_TIMEOUT)
@@ -81,16 +80,18 @@ def service_worker(request: HttpRequest) -> TemplateResponse:
 @_cache_page
 def assetlinks(request: HttpRequest) -> JsonResponse:
     """PWA assetlinks"""
+
+    package_name = settings.PWA_CONFIG["assetlinks"]["package_name"]
+    fingerprints = settings.PWA_CONFIG["assetlinks"]["sha256_fingerprints"]
+
     return JsonResponse(
         [
             {
                 "relation": ["delegate_permission/common.handle_all_urls"],
                 "target": {
                     "namespace": "android_app",
-                    "package_name": settings.ASSETLINKS["package_name"],
-                    "sha256_cert_fingerprints": settings.ASSETLINKS[
-                        "sha256_cert_fingerprints"
-                    ],
+                    "package_name": package_name,
+                    "sha256_cert_fingerprints": fingerprints,
                 },
             }
         ],
@@ -111,11 +112,15 @@ def manifest(request: HttpRequest) -> JsonResponse:
         "sizes": "512x512",
     }
 
+    categories = settings.PWA_CONFIG["manifest"]["categories"]
+    description = settings.PWA_CONFIG["manifest"]["description"]
+    theme_color = settings.PWA_CONFIG["manifest"]["theme_color"]
+
     return JsonResponse(
         {
-            "background_color": _THEME_COLOR,
-            "theme_color": _THEME_COLOR,
-            "description": "Podcast aggregator site",
+            "background_color": theme_color,
+            "theme_color": theme_color,
+            "description": description,
             "dir": "ltr",
             "display": "standalone",
             "name": request.site.name,
@@ -135,14 +140,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
                     "auto",
                 ]
             },
-            "categories": [
-                "books",
-                "education",
-                "entertainment",
-                "news",
-                "politics",
-                "sport",
-            ],
+            "categories": categories,
             "screenshots": [
                 static("img/desktop.png"),
                 static("img/mobile.png"),

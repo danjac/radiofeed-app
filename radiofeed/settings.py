@@ -368,15 +368,31 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 100,  # in MB
 }
 
-# Digital Assetlinks
+
+# PWA configuration
+# https://docs.pwabuilder.com/#/builder/manifest
 # https://developer.chrome.com/docs/android/trusted-web-activity/android-for-web-devs#digital-asset-links
 
-ASSETLINKS = {
-    "namespace": env("ASSETLINKS_NAMESPACE", default="android_app"),
-    "package_name": env("ASSETLINKS_PACKAGE_NAME", default="app.radiofeed.twa"),
-    "sha256_cert_fingerprints": env.list(
-        "ASSETLINKS_SHA256_CERT_FINGERPRINTS", default=[]
-    ),
+PWA_CONFIG = {
+    "assetlinks": {
+        "package_name": env("PWA_PACKAGE_NAME", default="app.radiofeed.twa"),
+        "sha256_fingerprints": env.list("PWA_SHA256_FINGERPRINTS", default=[]),
+    },
+    "manifest": {
+        "categories": env.list(
+            "PWA_CATEGORIES",
+            default=[
+                "books",
+                "education",
+                "entertainment",
+                "news",
+                "politics",
+                "sport",
+            ],
+        ),
+        "description": env("PWA_DESCRIPTION", default="Podcast aggregator site"),
+        "theme_color": env("PWA_THEME_COLOR", default="#26323C"),
+    },
 }
 
 # Sentry
