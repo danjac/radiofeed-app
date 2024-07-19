@@ -23,6 +23,7 @@ LICENSE
 Makefile
 Procfile
 README.md
+commitlint.config.js
 conftest.py
 docker-compose.yml
 eslint.config.js
