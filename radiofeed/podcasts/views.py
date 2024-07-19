@@ -360,17 +360,18 @@ def add_private_feed(
     if request.method == "POST":
         form = PrivateFeedForm(request.user, request.POST)
         if form.is_valid():
-            match form.save():
-                case [_, True]:
+            podcast, is_new = form.save()
+            match is_new:
+                case True:
                     success_message = (
                         "Podcast added to your Private Feeds and will appear here soon"
                     )
                     redirect_url = reverse("podcasts:private_feeds")
-                case [podcast, False]:
+                case False:
                     success_message = "Podcast added to your Private Feeds"
                     redirect_url = podcast.get_absolute_url()
 
-            messages.success(success_message)
+            messages.success(request, success_message)
             return HttpResponseRedirect(redirect_url)
     else:
         form = PrivateFeedForm(request.user)
