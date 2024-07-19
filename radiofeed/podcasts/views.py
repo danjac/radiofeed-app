@@ -148,7 +148,7 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
 @require_safe
 @login_required
 def podcast_detail(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
+    request: HttpRequest, podcast_id: int, slug: str
 ) -> TemplateResponse:
     """Details for a single podcast."""
 
