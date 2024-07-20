@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q, QuerySet
+from django.db.models import Exists, OuterRef, QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -81,20 +81,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
 
-    podcasts = (
-        Podcast.objects.annotate(
-            is_recommended=Exists(
-                request.user.recommended_podcasts.filter(pk=OuterRef("pk"))
-            )
-            & ~Exists(
-                request.user.subscriptions.filter(
-                    podcast=OuterRef("pk"),
-                )
-            ),
-        )
-        .filter(Q(promoted=True) | Q(is_recommended=True))
-        .order_by("-pub_date")
-    )
+    podcasts = _get_promoted_podcasts().order_by("-pub_date")
 
     return TemplateResponse(
         request,
