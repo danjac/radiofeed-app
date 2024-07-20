@@ -1,20 +1,28 @@
 {# vim: set filetype=htmldjango #}
 {% load heroicons %}
 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
-    {% if audio_log %}
+    {% if audio_log and not is_playing %}
         <div class="flex-wrap items-center space-y-3 font-semibold text-gray-600 sm:flex sm:space-y-0 sm:space-x-3 dark:text-gray-300">
             <div class="flex flex-wrap items-center space-x-3">
-                <div class="flex items-center">
-                    Listened
-                    {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
-                </div>
                 {% with percent_complete=audio_log.current_time|percentage:episode.duration_in_seconds %}
-                    {% if percent_complete and percent_complete < 100 %}
-                        <div>{{ percent_complete }}% Complete</div>
+                    <div class="flex items-center">
+                        {% if audio_log.current_time == 0 or percent_complete >= 100 %}
+                            Completed
+                        {% else %}
+                            Listened
+                        {% endif %}
+                        {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
+                    </div>
+                    {% if percent_complete < 100 %}
+                        <div class="flex items-center">
+                            {% if percent_complete > 0 %}
+                                {{ percent_complete }}% Complete
+                            {% elif audio_log.current_time %}
+                                {{ audio_log.current_time|format_duration }}
+                            {% endif %}
+                        </div>
                     {% endif %}
                 {% endwith %}
-            </div>
-            {% if not is_playing %}
                 <button class="inline-flex items-center btn btn-danger"
                         title="Remove episode from your History"
                         hx-disabled-elt="this"
@@ -28,7 +36,7 @@
                     {% heroicon_mini "trash" class="mr-2" %}
                     Remove
                 </button>
-            {% endif %}
+            </div>
         </div>
     {% endif %}
 </div>
