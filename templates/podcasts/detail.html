@@ -90,6 +90,6 @@
             {% endif %}
         {% endwith %}
     {% endcache %}
-    {% include "_markdown.html" with content=podcast.description %}
+    {% markdown podcast.description %}
 </article>
 {% endblock podcast_content %}

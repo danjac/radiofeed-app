@@ -138,10 +138,10 @@ def cookie_notice(context: RequestContext) -> dict:
     return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
 
 
-@register.filter(name="markdown")
-def markdown_(content: str | None) -> str:
+@register.inclusion_tag("_markdown.html", name="markdown")
+def markdown_(content: str | None) -> dict:
     """Render content as Markdown."""
-    return markdown.render(content or "")
+    return {"content": markdown.render(content or "")}
 
 
 @register.filter
