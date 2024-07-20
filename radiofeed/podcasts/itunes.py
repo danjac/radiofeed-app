@@ -41,13 +41,12 @@ FeedIterator: TypeAlias = Iterator[Feed]
 class FeedResultSet:
     """Pagination-friendly way to handle iterator."""
 
-    def __init__(self, feeds: FeedIterator, length: int) -> None:
+    def __init__(self, feeds: FeedIterator) -> None:
         self._feeds = feeds
-        self._length = length
 
     def __len__(self) -> int:
         """Returns number of feeds."""
-        return self._length
+        return len(self._result_cache)
 
     def __getitem__(self, index: int) -> Feed:
         """Return item by index"""
@@ -62,14 +61,8 @@ def search(client: httpx.Client, search_term: str) -> FeedResultSet:
     """Runs cached search for podcasts on iTunes API."""
     response = _get_response(client, search_term)
 
-    try:
-        length = int(response["resultCount"])
-    except (KeyError, ValueError):
-        length = 0
-
     return FeedResultSet(
         _insert_podcasts(_parse_feeds_from_json(response)),
-        length=length,
     )
 
 

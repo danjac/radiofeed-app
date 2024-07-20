@@ -23,8 +23,6 @@
             </ul>
         </nav>
     </header>
-    {% cache 300 search-itunes request.get_full_path %}
     {% paginate feeds as page_obj %}
     {% include "podcasts/_itunes_feeds.html" %}
-{% endcache %}
 {% endblock content %}
