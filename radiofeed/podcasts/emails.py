@@ -1,6 +1,5 @@
 from django.db.models import Case, Value, When
 
-from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.mail import send_templated_mail
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
 from radiofeed.users.models import User
@@ -11,35 +10,20 @@ def send_recommendations_email(
 ) -> None:
     """Sends email to user with a list of recommended podcasts.
 
-    Recommendations based on their subscriptions, bookmarks and listening history, or latest promoted podcasts.
+    Recommendations based on their subscriptions or latest promoted podcasts.
 
     Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
 
     If no matching podcasts are found, no email is sent.
     """
 
-    # listened, bookmarked, subscribed
-
-    podcast_ids = (
-        set(
-            Bookmark.objects.filter(user=user)
-            .select_related("episode__podcast")
-            .values_list("episode__podcast", flat=True)
-        )
-        | set(
-            AudioLog.objects.filter(user=user)
-            .select_related("episode__podcast")
-            .values_list("episode__podcast", flat=True)
-        )
-        | set(
-            Subscription.objects.filter(subscriber=user).values_list(
-                "podcast", flat=True
-            )
-        )
+    subscribed_podcast_ids = set(
+        Subscription.objects.filter(subscriber=user).values_list("podcast", flat=True)
     )
-    # exclude any podcasts already recommended/subscribed/listened etc
 
-    exclude_podcast_ids = podcast_ids | set(
+    # exclude any podcasts already recommended or subscribed
+
+    exclude_podcast_ids = subscribed_podcast_ids | set(
         user.recommended_podcasts.values_list("pk", flat=True)
     )
 
@@ -47,7 +31,7 @@ def send_recommendations_email(
 
     recommended_ids = set(
         Recommendation.objects.with_relevance()
-        .filter(podcast__pk__in=podcast_ids)
+        .filter(podcast__pk__in=subscribed_podcast_ids)
         .exclude(recommended__pk__in=exclude_podcast_ids)
         .order_by("-relevance")
         .values_list("recommended", flat=True)[:num_podcasts]

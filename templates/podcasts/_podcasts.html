@@ -1,4 +1,8 @@
 {% extends "_pagination.html" %}
 {% block pagination_item %}
-    {% include "podcasts/_podcast.html" with podcast=item %}
+    {% if is_fk %}
+        {% include "podcasts/_podcast.html" with podcast=item.podcast %}
+    {% else %}
+        {% include "podcasts/_podcast.html" with podcast=item %}
+    {% endif %}
 {% endblock pagination_item %}
