@@ -1,6 +1,5 @@
 {# vim: set filetype=htmldjango #}
 {# djlint:off #}
-{% spaceless %}
     <img class="object-cover border bg-transparent bg-gray-100 dark:bg-gray-900 text-transparent {{ css_class }}"
         aria-hidden="true"
         loading="lazy"
@@ -9,5 +8,4 @@
         alt="{{ title }}"
         {% get_cover_image_attrs cover_url variant as attrs %}
         {% for name, value in attrs.items %}{{ name }}="{{ value|stringformat:"s" }}"{% endfor %}>
-    {% endspaceless %}
 {# djlint:on #}
