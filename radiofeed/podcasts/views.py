@@ -93,7 +93,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
             ),
         )
         .filter(Q(promoted=True) | Q(is_recommended=True))
-        .order_by("-is_recommended", "-pub_date")
+        .order_by("-pub_date")
     )
 
     return TemplateResponse(
