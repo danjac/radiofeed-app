@@ -8,9 +8,9 @@
         <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl sm:text-start">
             {{ podcast.cleaned_title }}
         </h1>
-        {% cache 300 podcast-detail-nav request.get_full_path %}
+        {% cache 300 podcast-detail-navbar request.get_full_path %}
         <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
-            {% block podcast_nav %}
+            {% block podcast_navbar %}
                 <nav class="flex justify-center items-center sm:justify-start">
                     <ul class="flex items-center space-x-6">
                         {% active_link podcast.get_detail_url as link %}
@@ -45,7 +45,7 @@
                         {% endif %}
                     </ul>
                 </nav>
-            {% endblock podcast_nav %}
+            {% endblock podcast_navbar %}
         </div>
     {% endcache %}
 </header>

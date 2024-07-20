@@ -3,9 +3,15 @@
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
-{% block podcast_nav %}
+{% block content %}
+    {% cache 300 podcast-episodes request.get_full_path %}
+    {% paginate episodes as page_obj %}
     {{ block.super }}
-    {% if podcast.num_episodes > page_size %}
+{% endcache %}
+{% endblock content %}
+{% block podcast_navbar %}
+    {{ block.super }}
+    {% if page_obj.has_other_pages %}
         <nav class="flex justify-center items-center sm:justify-start">
             <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
                 {% if request.search %}
@@ -33,10 +39,7 @@
             </ul>
         </nav>
     {% endif %}
-{% endblock podcast_nav %}
+{% endblock podcast_navbar %}
 {% block podcast_content %}
-    {% cache 300 podcast-episodes request.get_full_path %}
-    {% paginate episodes as page_obj %}
     {% include "episodes/_episodes.html" with is_podcast_detail=True %}
-{% endcache %}
 {% endblock podcast_content %}

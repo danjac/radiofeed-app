@@ -195,7 +195,6 @@ def episodes(
             "podcast": podcast,
             "episodes": episodes,
             "ordering_asc": ordering_asc,
-            "page_size": PAGE_SIZE,
         },
     )
 
