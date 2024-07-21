@@ -35,6 +35,7 @@ class TestPercentage:
             pytest.param(50, 0, 0, id="total zero"),
             pytest.param(0, 50, 0, id="value zero"),
             pytest.param(50, 100, 50, id="50%"),
+            pytest.param(150, 100, 100, id="150%"),
             pytest.param(100, 100, 100, id="100%"),
         ],
     )

@@ -170,4 +170,4 @@ def percentage(value: float, total: float) -> int:
     """
     if 0 in (value, total):
         return 0
-    return math.ceil((value / total) * 100)
+    return min(math.ceil((value / total) * 100), 100)

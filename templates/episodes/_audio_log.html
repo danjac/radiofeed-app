@@ -6,22 +6,18 @@
             <div class="flex flex-wrap items-center space-x-2">
                 {% with percent_complete=audio_log.current_time|percentage:episode.duration_in_seconds %}
                     <span>
-                        {% if audio_log.current_time == 0 or percent_complete >= 100 %}
+                        {% if audio_log.current_time == 0 or percent_complete == 100 %}
                             Completed
                         {% else %}
                             Listened
                         {% endif %}
                     </span>
                     {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
-                    <span>
-                        {% if percent_complete < 100 %}
-                            {% if percent_complete > 0 %}
-                                {{ percent_complete }}% Complete
-                            {% elif audio_log.current_time %}
-                                {{ audio_log.current_time|format_duration }}
-                            {% endif %}
-                        {% endif %}
-                    </span>
+                    {% if percent_complete > 0 and percent_complete < 100 %}
+                        <span>{{ percent_complete }}% Complete</span>
+                    {% elif percent_complete == 0 and audio_log.current_time %}
+                        <span>{{ audio_log.current_time|format_duration }}</span>
+                    {% endif %}
                 {% endwith %}
             </div>
             <button class="inline-flex items-center text-sm btn btn-danger"
