@@ -1,4 +1,5 @@
-from django.db.models import Case, Value, When
+from django.db.models import DecimalField, OuterRef, Q, Subquery
+from django.db.models.functions import Coalesce
 
 from radiofeed.mail import send_templated_mail
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
@@ -29,31 +30,31 @@ def send_recommendations_email(
 
     # pick highest matches
 
-    recommended_ids = set(
+    recommendations = (
         Recommendation.objects.with_relevance()
-        .filter(podcast__pk__in=subscribed_podcast_ids)
+        .filter(podcast__pk__in=subscribed_podcast_ids, recommended=OuterRef("pk"))
         .exclude(recommended__pk__in=exclude_podcast_ids)
-        .order_by("-relevance")
-        .values_list("recommended", flat=True)[:num_podcasts]
-    )
+    ).order_by("-relevance")
 
     # include recommended + promoted
 
     podcasts = (
         Podcast.objects.annotate(
-            priority=Case(
-                When(pk__in=recommended_ids, then=Value(2)),
-                When(promoted=True, then=Value(1)),
-                default=Value(0),
+            relevance=Coalesce(
+                Subquery(
+                    recommendations.values("relevance")[:1],
+                ),
+                0,
+                output_field=DecimalField(),
             )
         )
         .filter(
-            priority__gt=0,
+            Q(relevance__gt=0) | Q(promoted=True),
             private=False,
             pub_date__isnull=False,
         )
         .exclude(pk__in=exclude_podcast_ids)
-        .order_by("-priority", "-pub_date")
+        .order_by("-relevance", "-pub_date")
     )[:num_podcasts]
 
     if podcasts:
