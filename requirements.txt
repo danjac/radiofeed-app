@@ -27,7 +27,7 @@ click==8.1.7
     # via
     #   django-click
     #   nltk
-cryptography==42.0.8
+cryptography==43.0.0
     # via pyjwt
 dj-database-url==2.2.0
     # via radiofeed (pyproject.toml)

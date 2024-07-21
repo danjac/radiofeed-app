@@ -38,7 +38,7 @@ coverage==7.6.0
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
-cryptography==42.0.8
+cryptography==43.0.0
     # via pyjwt
 decorator==5.1.1
     # via ipython
@@ -201,7 +201,7 @@ pygments==2.18.0
     #   rich
 pyjwt==2.8.0
     # via django-allauth
-pytest==8.2.2
+pytest==8.3.1
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
