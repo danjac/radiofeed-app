@@ -306,7 +306,7 @@ if env.bool("USE_HSTS", default=False):
     )
     SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=True)
     SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=15768001)
-#
+
 # Permissions Policy
 # https://pypi.org/project/django-permissions-policy/
 
@@ -322,7 +322,30 @@ PERMISSIONS_POLICY: dict[str, list] = {
     "payment": [],
 }
 
+# Content-Security-Policy
+# https://django-csp.readthedocs.io/en/3.8/configuration.html
+
+SELF = "'self'"
+UNSAFE_EVAL = "'unsafe-eval'"
+UNSAFE_INLINE = "'unsafe-inline'"
+
+CSP_DEFAULT_SRC = [SELF]
+
+CSP_SCRIPT_SRC = [
+    SELF,
+    "*.account.google.com",
+    "*.googleapis.com",
+    UNSAFE_EVAL,
+    UNSAFE_INLINE,
+]
+
+CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
+
+# Allow all audio files
+CSP_MEDIA_SRC = ["*"]
+
 # Logging
+# https://docs.djangoproject.com/en/5.0/howto/logging/
 
 LOGGING = {
     "version": 1,
@@ -369,28 +392,6 @@ HEALTH_CHECK = {
     "DISK_USAGE_MAX": 90,  # percent
     "MEMORY_MIN": 100,  # in MB
 }
-
-# Content-Security-Policy
-# https://django-csp.readthedocs.io/en/3.8/configuration.html
-
-SELF = "'self'"
-UNSAFE_EVAL = "'unsafe-eval'"
-UNSAFE_INLINE = "'unsafe-inline'"
-
-CSP_DEFAULT_SRC = [SELF]
-
-CSP_SCRIPT_SRC = [
-    SELF,
-    "*.account.google.com",
-    "*.googleapis.com",
-    UNSAFE_EVAL,
-    UNSAFE_INLINE,
-]
-
-CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
-
-# Allow all audio files
-CSP_MEDIA_SRC = ["*"]
 
 
 # PWA configuration
