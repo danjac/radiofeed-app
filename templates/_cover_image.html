@@ -7,5 +7,5 @@
         title="{{ title }}"
         alt="{{ title }}"
         {% get_cover_image_attrs cover_url variant as attrs %}
-        {% for name, value in attrs.items %}{{ name }}="{{ value|stringformat:"s" }}"{% endfor %}>
+        {% include "django/forms/attrs.html" %}
 {# djlint:on #}
