@@ -80,4 +80,16 @@ def render(value: str) -> str:
 
 @functools.cache
 def _markdown():
-    return MarkdownIt("commonmark", {"linkify": True}).enable("linkify")
+    return MarkdownIt(
+        "commonmark",
+        {
+            "linkify": True,
+            "typographer": True,
+        },
+    ).enable(
+        [
+            "linkify",
+            "replacements",
+            "smartquotes",
+        ]
+    )
