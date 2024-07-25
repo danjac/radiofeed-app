@@ -201,7 +201,7 @@ pygments==2.18.0
     #   rich
 pyjwt==2.8.0
     # via django-allauth
-pytest==8.3.1
+pytest==8.3.2
     # via
     #   radiofeed (pyproject.toml)
     #   pytest-cov
