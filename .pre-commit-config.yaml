@@ -77,7 +77,7 @@ repos:
       hooks:
           - id: validate-pyproject
     - repo: https://github.com/astral-sh/uv-pre-commit
-      rev: 0.2.27
+      rev: 0.2.29
       hooks:
         - id: pip-compile
           name: pip-compile

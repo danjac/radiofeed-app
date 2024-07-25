@@ -241,7 +241,7 @@ redis==5.0.7
     # via
     #   radiofeed (pyproject.toml)
     #   django-redis
-regex==2024.5.15
+regex==2024.7.24
     # via nltk
 requests==2.32.3
     # via
@@ -258,7 +258,7 @@ scipy==1.14.0
     # via
     #   radiofeed (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.10.0
+sentry-sdk==2.11.0
     # via radiofeed (pyproject.toml)
 setuptools==71.1.0
     # via radiofeed (pyproject.toml)
