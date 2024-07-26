@@ -21,6 +21,7 @@ document.addEventListener("alpine:init", () => {
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
+                preview: "00:00:00",
             },
             init() {
                 if (metadataTag && "mediaSession" in navigator) {
@@ -162,6 +163,14 @@ document.addEventListener("alpine:init", () => {
                     });
                 }
             },
+            setPreviewCounter(position) {
+                if (this.isPlaying) {
+                    const { clientWidth } = this.$refs.range;
+                    const percent = position / clientWidth;
+                    const value = Math.floor(percent * this.duration);
+                    this.counters.preview = this.formatCounter(value);
+                }
+            },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) {
                     return "00:00:00";
@@ -189,6 +198,16 @@ document.addEventListener("alpine:init", () => {
             },
             handleError(error) {
                 console.error(error);
+            },
+            // properties
+            get title() {
+                if (!this.isLoaded) {
+                    return "Loading";
+                }
+                if (!this.isPlaying) {
+                    return "Paused";
+                }
+                return this.counters.preview;
             },
         }),
     );

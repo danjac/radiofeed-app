@@ -96,12 +96,13 @@
                         <div class="w-full h-4">
                             <input type="range"
                                    aria-label="Progress"
-                                   title="Progress"
                                    class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
                                    min="0"
                                    x-ref="range"
                                    x-model="runtime"
                                    @change="skip"
+                                   @mouseover="setPreviewCounter($event.offsetX)"
+                                   :title="title"
                                    :max="duration"
                                    :disabled="!isPlaying"
                                    :class="{'cursor-pointer': isPlaying, 'cursor-not-allowed': !isPlaying}">
