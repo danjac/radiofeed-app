@@ -107,7 +107,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
     start_url = reverse("podcasts:index")
 
     icon = {
-        "src": static("img/wave-white-512.png"),
+        "src": static("img/wave-512.png"),
         "type": "image/png",
         "sizes": "512x512",
     }

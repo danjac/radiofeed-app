@@ -416,7 +416,7 @@ PWA_CONFIG = {
             ],
         ),
         "description": env("PWA_DESCRIPTION", default="Podcast aggregator site"),
-        "theme_color": env("PWA_THEME_COLOR", default="#3C009A"),
+        "theme_color": env("PWA_THEME_COLOR", default="#ffffff"),
     },
 }
 
