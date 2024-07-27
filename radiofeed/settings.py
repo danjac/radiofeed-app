@@ -261,7 +261,7 @@ USE_TZ = True
 # Static files
 
 STATIC_URL = env("STATIC_URL", default="/static/")
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "assets"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Whitenoise
@@ -416,7 +416,7 @@ PWA_CONFIG = {
             ],
         ),
         "description": env("PWA_DESCRIPTION", default="Podcast aggregator site"),
-        "theme_color": env("PWA_THEME_COLOR", default="#26323C"),
+        "theme_color": env("PWA_THEME_COLOR", default="#3C009A"),
     },
 }
 

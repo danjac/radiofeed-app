@@ -2,10 +2,10 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build-css": "tailwindcss -i ./static/css/app.css -o ./static/dist/app.css --minify --verbose",
-        "build-js": "esbuild --bundle ./static/js/app.js --minify --sourcemap --outfile=./static/dist/app.js",
-        "watch-css": "tailwindcss -i ./static/css/app.css -o ./static/dist/app.css --verbose --watch",
-        "watch-js": "esbuild --bundle ./static/js/app.js --outfile=./static/dist/app.js --watch",
+        "build-css": "tailwindcss -i ./assets/css/app.css -o ./assets/dist/app.css --minify --verbose",
+        "build-js": "esbuild --bundle ./assets/js/app.js --minify --sourcemap --outfile=./assets/dist/app.js",
+        "watch-css": "tailwindcss -i ./assets/css/app.css -o ./assets/dist/app.css --verbose --watch",
+        "watch-js": "esbuild --bundle ./assets/js/app.js --outfile=./assets/dist/app.js --watch",
         "build": "concurrently \"npm:build-js\" \"npm:build-css\"",
         "watch": "concurrently \"npm:watch-js\" \"npm:watch-css\"",
         "check-updates": "ncu -u"

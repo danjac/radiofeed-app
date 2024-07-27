@@ -3,9 +3,9 @@ repos:
       rev: v4.6.0
       hooks:
           - id: trailing-whitespace
-            exclude: ^static/dist
+            exclude: ^assets/dist
           - id: end-of-file-fixer
-            exclude: ^static/dist
+            exclude: ^assets/dist
           - id: check-builtin-literals
           - id: check-json
           - id: check-merge-conflict
@@ -50,14 +50,14 @@ repos:
       rev: v9.7.0
       hooks:
           - id: eslint
-            files: ^static
-            exclude: ^static/dist
+            files: ^assets
+            exclude: ^assets/dist
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.34.1
       hooks:
           - id: djlint-django
             args: ["--lint", "--reformat"]
-            exclude: ^static
+            exclude: ^assets
     - repo: https://github.com/hadolint/hadolint
       rev: v2.13.0-beta
       hooks:
