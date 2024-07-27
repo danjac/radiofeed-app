@@ -51,7 +51,7 @@ COPY . /app
 
 # Build and copy over assets
 
-COPY --from=frontend /app/static /app/static
+COPY --from=frontend /app/assets /app/assets
 
 # Collect static files for Whitenoise
 
