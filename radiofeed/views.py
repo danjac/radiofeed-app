@@ -122,7 +122,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
             "theme_color": theme_color,
             "description": description,
             "dir": "ltr",
-            "display": "standalone",
+            "display": "minimal-ui",
             "name": request.site.name,
             "short_name": truncatechars(request.site.name, 12),
             "prefer_related_applications": False,
@@ -131,7 +131,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
             "start_url": start_url,
             "id": "?homescreen=1",
             "display_override": [
-                "standalone",
+                "minimal-ui",
                 "window-controls-overlay",
             ],
             "launch_handler": {
