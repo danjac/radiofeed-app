@@ -131,7 +131,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
             "start_url": start_url,
             "id": "?homescreen=1",
             "display_override": [
-                "fullscreen",
+                "standalone",
                 "window-controls-overlay",
             ],
             "launch_handler": {
