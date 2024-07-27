@@ -1,7 +1,5 @@
 import datetime
-import functools
 import io
-import pathlib
 from typing import Final
 
 import httpx
@@ -60,7 +58,9 @@ def accept_cookies(_) -> HttpResponse:
 @_cache_page
 def favicon(_) -> FileResponse:
     """Generates favicon file."""
-    return FileResponse(_favicon_path().open("rb"))
+    return FileResponse(
+        (settings.BASE_DIR / "assets" / "img" / "wave-ico.png").open("rb")
+    )
 
 
 @require_safe
@@ -241,8 +241,3 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
-
-
-@functools.cache
-def _favicon_path() -> pathlib.Path:
-    return settings.BASE_DIR / "static" / "img" / "wave-ico.png"

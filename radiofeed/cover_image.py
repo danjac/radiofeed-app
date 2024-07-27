@@ -97,7 +97,7 @@ def get_placeholder_url(size: int) -> str:
 @functools.cache
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
-    return settings.BASE_DIR / "static" / "img" / get_placeholder(size)
+    return settings.BASE_DIR / "assets" / "img" / get_placeholder(size)
 
 
 def is_cover_image_size(size: int) -> bool:
