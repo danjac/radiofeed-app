@@ -57,6 +57,12 @@ def active_link(
     )
 
 
+@register.simple_tag
+def theme_color() -> dict:
+    """Returns the PWA configuration theme color."""
+    return settings.PWA_CONFIG["manifest"]["theme_color"]
+
+
 @register.simple_tag(takes_context=True)
 def paginate(
     context: RequestContext,
