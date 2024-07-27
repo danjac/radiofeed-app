@@ -115,7 +115,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
 
     return JsonResponse(
         {
-            "background_color": "#ffffff",
+            "background_color": "#fff",
             "theme_color": theme_color,
             "description": description,
             "dir": "ltr",
