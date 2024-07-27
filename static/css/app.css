@@ -65,7 +65,7 @@
         --thumbSize: theme("spacing.4");
         --trackSize: theme("spacing.1");
         --thumbBg: theme("colors.blue.600");
-        --trackBg: theme("colors.white");
+        --trackBg: theme("colors.blue.300");
         --progressBg: theme("colors.blue.900");
 
         /* webkit progress workaround */

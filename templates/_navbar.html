@@ -1,5 +1,5 @@
 {% load static heroicons %}
-<header class="sticky top-0 z-10 w-full text-white bg-black"
+<header class="sticky top-0 z-10 w-full bg-gray-100 dark:bg-gray-800"
     :class="scrolling ? 'drop-shadow-xl': ''"
     x-data="{showMenu: false, showDropdown: false, scrolling: false}"
     {# djlint: off #}
@@ -15,7 +15,7 @@
                 <a class="inline-flex items-center text-xl font-bold lg:text-2xl"
                    href="{% url 'podcasts:index' %}"
                    title="{{ site_name }}">
-                    <img src="{% static 'img/wave-white.webp' %}"
+                    <img src="{% static 'img/navbar-icon.webp' %}"
                          height="32"
                          width="32"
                          alt="{{ site_name }}"
@@ -38,7 +38,7 @@
                                 @click="showDropdown = !showDropdown"
                                 @click.outside="showDropdown=false"
                                 @keyup.escape.window="showDropdown=false"
-                                class="flex items-center text-white rounded-lg sm:justify-end hover:text-gray-300 md:hover:bg-transparent">
+                                class="flex items-center rounded-lg sm:justify-end hover:text-gray-600 md:hover:bg-transparent dark:hover-text-gray-300">
                             {% heroicon_outline "user-circle" size=30 x_show="!showDropdown" %}
                             {% heroicon_solid "user-circle" size=30 x_show="showDropdown" %}
                         </button>

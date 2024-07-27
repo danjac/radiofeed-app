@@ -25,7 +25,7 @@
                    @error.prevent="error">
                 <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
             </audio>
-            <div class="fixed bottom-0 p-2 w-full font-semibold text-white bg-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+            <div class="fixed bottom-0 p-2 w-full font-semibold text-black bg-gray-100 shadow-inner opacity-100 duration-1000 ease-in-out transform translate-y-0 dark:text-white dark:bg-gray-800 htmx-added:opacity-0 htmx-added:translate-y-24">
                 <div class="items-center space-y-2 w-full divide-y divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x">
                     <div class="sm:w-1/2">
                         <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
@@ -35,11 +35,11 @@
                              hx-push-url="true">
                             {% cover_image episode.get_cover_url "card" episode.cleaned_title css_class="w-16 h-16 group-hover:opacity-75" %}
                             <div class="flex flex-col place-content-between h-16">
-                                <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2"
+                                <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300"
                                     aria-label="{{ episode.cleaned_title }}"
                                     title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</h2>
                                 {% with podcast=episode.podcast %}
-                                    <h3 class="text-sm font-semibold leading-tight text-gray-300 group-hover:text-blue-300 line-clamp-1"
+                                    <h3 class="text-sm font-semibold leading-tight text-gray-600 dark:text-gray-300 group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300"
                                         aria-label="{{ podcast.cleaned_title }}"
                                         title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h3>
                                 {% endwith %}
@@ -53,8 +53,8 @@
                                  aria-label="Current Time"
                                  title="Current Time"
                                  class="flex justify-start items-center font-mono text-sm"
-                                 :class="{'text-gray-300': !isPlaying}"></div>
-                            {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                 :class="{'text-gray-600 dark:text-gray-300': !isPlaying}"></div>
+                            {% with BUTTON_CSS="focus:outline-none hover:text-blue-600 dark:hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                 <div class="flex justify-center items-center space-x-6">
                                     <button aria-label="Skip Back 10 Seconds"
                                             title="Skip Back 10 Seconds"
@@ -91,7 +91,7 @@
                                  aria-label="Time Remaining"
                                  title="Time Remaining"
                                  class="flex justify-end items-center font-mono text-sm"
-                                 :class="isPlaying ? '' : 'text-gray-300'"></div>
+                                 :class="{'text-gray-600 dark:text-gray-300': !isPlaying}"></div>
                         </div>
                         <div class="w-full h-4">
                             <input type="range"
