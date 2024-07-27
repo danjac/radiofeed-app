@@ -1,5 +1,4 @@
 import datetime
-import functools
 import io
 from collections.abc import Iterator
 from typing import Final
@@ -237,19 +236,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
 
 def _app_icons() -> Iterator[dict]:
-    for icon in _icons():
-        app_icon = icon | {
-            "src": static(f"img/icons/{icon['src']}"),
-            "type": "image/png",
-        }
-        yield app_icon
-        yield app_icon | {"purpose": "maskable"}
-        yield app_icon | {"purpose": "any"}
-
-
-@functools.cache
-def _icons() -> list[dict]:
-    return [
+    icons = [
         {"src": "android/android-launchericon-512-512.png", "sizes": "512x512"},
         {"src": "android/android-launchericon-192-192.png", "sizes": "192x192"},
         {"src": "android/android-launchericon-144-144.png", "sizes": "144x144"},
@@ -283,3 +270,11 @@ def _icons() -> list[dict]:
         {"src": "ios/512.png", "sizes": "512x512"},
         {"src": "ios/1024.png", "sizes": "1024x1024"},
     ]
+    for icon in icons:
+        app_icon = icon | {
+            "src": static(f"img/icons/{icon['src']}"),
+            "type": "image/png",
+        }
+        yield app_icon
+        yield app_icon | {"purpose": "maskable"}
+        yield app_icon | {"purpose": "any"}
