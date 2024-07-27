@@ -114,7 +114,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 py-6 px-3 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
+        <nav class="absolute left-0 p-3 w-full shadow-xl xl:hidden bg-inherit"
              x-cloak
              x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
              x-show.transition="showMenu"
