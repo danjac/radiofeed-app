@@ -38,10 +38,6 @@
                                    aria-label="{{ podcast.cleaned_title }} | Similar"
                                    title="{{ podcast.cleaned_title }} | Similar">Similar</a>
                             </li>
-                        {% elif podcast.private %}
-                            <li>
-                                <a class="link" href="{% url "podcasts:private_feeds" %}">Private Feeds</a>
-                            </li>
                         {% endif %}
                     </ul>
                 </nav>
