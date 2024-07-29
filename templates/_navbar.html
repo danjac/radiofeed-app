@@ -1,14 +1,14 @@
 {% load static heroicons %}
 <header class="sticky top-0 z-10 w-full text-white bg-violet-900"
     :class="scrolling ? 'drop-shadow-xl': ''"
-    x-data="{showMenu: false, showDropdown: false, scrolling: false}"
+    x-data="{showSidebar: false, showUserDropdown: false, scrolling: false}"
     {# djlint: off #}
     x-init="
-        $watch('showMenu', value => { if (value) showDropdown = false; });
-        $watch('showDropdown', value => { if (value) showMenu = false; });"
+        $watch('showSidebar', value => { if (value) showUserDropdown = false; });
+        $watch('showUserDropdown', value => { if (value) showSidebar = false; });"
     {# djlint: on #}
     @scroll.window="scrolling = window.pageYOffset > 0"
-    @htmx:before-request.window="showMenu=false; showDropdown=false">
+    @htmx:before-request.window="showSidebar=false; showUserDropdown=false">
     <nav class="flex justify-between items-center p-2">
         {% with site_name=request.site.name %}
             <div class="flex flex-shrink-0 items-center">
@@ -35,16 +35,16 @@
                                 accesskey="u"
                                 title="You are logged in as {{ user.username }}"
                                 x-cloak
-                                @click="showDropdown = !showDropdown"
-                                @click.outside="showDropdown=false"
-                                @keyup.escape.window="showDropdown=false"
+                                @click="showUserDropdown = !showUserDropdown"
+                                @click.outside="showUserDropdown=false"
+                                @keyup.escape.window="showUserDropdown=false"
                                 class="flex items-center rounded-lg sm:justify-end hover:text-gray-300 md:hover:bg-transparent">
-                            {% heroicon_outline "user-circle" size=30 x_show="!showDropdown" %}
-                            {% heroicon_solid "user-circle" size=30 x_show="showDropdown" %}
+                            {% heroicon_outline "user-circle" size=30 x_show="!showUserDropdown" %}
+                            {% heroicon_solid "user-circle" size=30 x_show="showUserDropdown" %}
                         </button>
                         <div class="absolute right-1 z-20 w-64 bg-white rounded-lg border shadow-lg dark:bg-gray-800 dark:border"
                              x-cloak
-                             x-show="showDropdown"
+                             x-show="showUserDropdown"
                              x-transition.scape.origin.top>
                             <ul class="py-3 list-none" aria-labelledby="user-dropdown-btn">
                                 <li class="flex flex-wrap items-center py-2 px-4 pb-3 mb-3 text-gray-700 break-words border-b dark:text-gray-100">
@@ -77,26 +77,28 @@
                 </li>
                 <li class="flex items-center xl:hidden">
                     <button class="transition transform focus:outline-none"
-                            aria-label="Show Menu"
-                            title="Show Menu"
+                            aria-label="Show Site Navigation"
+                            title="Show Site Navigation"
                             accesskey="m"
                             tabindex="0"
                             x-cloak
-                            x-show.transition="!showMenu"
+                            x-show.transition="!showSidebar"
                             x-transition:enter-start="rotate-45"
                             x-transition:enter-end="rotate-0"
-                            @click="showMenu=true">{% heroicon_outline "bars-3" size=30 title="Toggle Menu" %}</button>
+                            @click="showSidebar=true">
+                        {% heroicon_outline "bars-3" size=30 title="Toggle Menu" %}
+                    </button>
                     <button class="transition transform focus:outline-none"
-                            aria-label="Hide Menu"
-                            title="Hide Menu"
+                            aria-label="Hide Site Navigation"
+                            title="Hide Site Navigation"
                             accesskey="m"
                             tabindex="0"
                             x-cloak
-                            x-show.transition="showMenu"
+                            x-show.transition="showSidebar"
                             x-transition:enter-start="-rotate-45"
                             x-transition:enter-end="rotate-0"
-                            @click="showMenu=false"
-                            @keyup.escape.window="showMenu=false">
+                            @click="showSidebar=false"
+                            @keyup.escape.window="showSidebar=false">
                         {% heroicon_outline "x-mark" size=30 title="Toggle Menu" %}
                     </button>
                 </li>
@@ -117,14 +119,14 @@
         <nav class="absolute left-0 py-6 px-2 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
              x-cloak
              x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
-             x-show.transition="showMenu"
+             x-show.transition="showSidebar"
              x-transition:enter-start="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
              x-transition:enter="transition ease-out duration-100"
              x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
              x-transition:leave="transition ease-in duration-100"
              x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
-             @click.outside="showMenu=false">
+             @click.outside="showSidebar=false">
         </nav>
     {% endif %}
     {% include "_signup_cta.html" %}
