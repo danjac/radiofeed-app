@@ -150,7 +150,7 @@ scipy==1.14.0
     #   scikit-learn
 sentry-sdk==2.11.0
     # via radiofeed (pyproject.toml)
-setuptools==71.1.0
+setuptools==72.0.0
     # via radiofeed (pyproject.toml)
 six==1.16.0
     # via python-dateutil
