@@ -58,8 +58,10 @@
                         </main>
                     </div>
                 </div>
-                {% audio_player %}
-                {% cookie_notice %}
+                {% block page_footer %}
+                    {% audio_player %}
+                    {% cookie_notice %}
+                {% endblock page_footer %}
             </div>
             {% django_htmx_script %}
             <script defer src="{{ static_js }}{% if debug %}?{{ timestamp }}{% endif %}"></script>
