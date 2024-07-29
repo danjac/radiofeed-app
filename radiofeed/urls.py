@@ -25,6 +25,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
+
 if "django_browser_reload" in settings.INSTALLED_APPS:  # pragma: no cover
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
