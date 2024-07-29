@@ -1,7 +1,10 @@
 {% extends "error_base.html" %}
-{% block content %}
-    <h1 class="mb-6 text-lg font-bold lg:text-xl">405: Method Not Allowed</h1>
-    <p>
-        Sorry, you cannot perform this action. You may have disabled JavaScript on your browser or are using an older browser that does not support this action.
-    </p>
-{% endblock content %}
+{% block title %}
+    {{ block.super }} | 405: Method Not Allowed
+{% endblock title %}
+{% block error_header %}
+    404: Method Not Allowed
+{% endblock error_header %}
+{% block error_description %}
+    <p>Sorry, you cannot perform this action.</p>
+{% endblock error_description %}
