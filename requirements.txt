@@ -46,7 +46,7 @@ django==5.0.7
     #   django-permissions-policy
     #   django-redis
     #   heroicons
-django-allauth==0.63.6
+django-allauth==64.0.0
     # via radiofeed (pyproject.toml)
 django-anymail==11.0.1
     # via radiofeed (pyproject.toml)
@@ -129,7 +129,7 @@ pyjwt==2.8.0
     # via django-allauth
 python-dateutil==2.9.0.post0
     # via radiofeed (pyproject.toml)
-redis==5.0.7
+redis==5.0.8
     # via
     #   radiofeed (pyproject.toml)
     #   django-redis
@@ -148,9 +148,9 @@ scipy==1.14.0
     # via
     #   radiofeed (pyproject.toml)
     #   scikit-learn
-sentry-sdk==2.11.0
+sentry-sdk==2.12.0
     # via radiofeed (pyproject.toml)
-setuptools==72.0.0
+setuptools==72.1.0
     # via radiofeed (pyproject.toml)
 six==1.16.0
     # via python-dateutil

@@ -1,11 +1,13 @@
-name: radiofeed_default
-on: [pull_request, push]
-run-name: ${{ github.actor }} is running checks
+name: radiofeed_deploy_docker
+run-name: ${{ github.actor }} is building and pushing new Docker image
+on:
+    workflow_dispatch:
+        branches:
+            - main
 jobs:
     run_checks:
         uses: ./.github/workflows/checks.yml
     build_docker:
         needs: run_checks
-        if: github.ref == 'refs/heads/main'
         uses: ./.github/workflows/docker.yml
         secrets: inherit

@@ -1,0 +1,12 @@
+name: radiofeed_default
+on:
+    push:
+        branches:
+            - '!main'
+    pull_request:
+        branches:
+            - main
+run-name: ${{ github.actor }} is running checks
+jobs:
+    run_checks:
+        uses: ./.github/workflows/checks.yml
