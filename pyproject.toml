@@ -38,6 +38,7 @@ dependencies =[
     "pillow",
     "psutil",
     "psycopg[binary]",
+    "psycopg-pool",
     "pydantic",
     "python-dateutil",
     "redis",
@@ -93,6 +94,7 @@ env = [
     "COVERAGE_CORE=sysmon",
     "TEMPLATE_DEBUG=true",
     "USE_COLLECTSTATIC=false",
+    "USE_CONNECTION_POOL=false",
     "USE_HTTPS=false",
 ]
 

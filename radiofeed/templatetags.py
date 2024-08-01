@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import math
-from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -73,28 +72,6 @@ def paginate(
     return Paginator(object_list, page_size).get_page(
         context.request.GET.get(param, ""), **pagination_kwargs
     )
-
-
-@register.simple_tag(takes_context=True)
-def query_string(context: RequestContext, **kwargs) -> str:
-    """Replace values with query string values.
-
-    If value is None, then removes that param.
-
-    This can be replaced with Django 5.1 upgrade, which has a more complete implementation.
-    """
-    dct = context.request.GET.copy()
-    for param, value in kwargs.items():
-        if value is None:
-            if param in dct:
-                del dct[param]
-        elif isinstance(value, Iterable) and not isinstance(value, str):
-            dct.setlist(param, value)
-        else:
-            dct[param] = value
-    if dct:
-        return f"?{dct.urlencode()}"
-    return ""
 
 
 @register.simple_tag

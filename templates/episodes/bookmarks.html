@@ -23,10 +23,10 @@
                     {% else %}
                         <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
                             {% if ordering_asc %}
-                                <a href="{{ request.path }}{% query_string order="desc" page=None %}"
+                                <a href="{{ request.path }}{% querystring order="desc" page=None %}"
                                    class="link">Newest First</a>
                             {% else %}
-                                <a href="{{ request.path }}{% query_string order="asc" page=None %}"
+                                <a href="{{ request.path }}{% querystring order="asc" page=None %}"
                                    class="link">Oldest First</a>
                             {% endif %}
                         </li>

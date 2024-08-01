@@ -8,7 +8,6 @@ from radiofeed.templatetags import (
     active_link,
     format_duration,
     percentage,
-    query_string,
 )
 
 
@@ -41,40 +40,6 @@ class TestPercentage:
     )
     def test_percentage(self, value, total, expected):
         assert percentage(value, total) == expected
-
-
-class TestQueryString:
-    @pytest.mark.parametrize(
-        (
-            "qs",
-            "param",
-            "value",
-            "expected",
-        ),
-        [
-            pytest.param({}, "page", 1, "?page=1", id="new value"),
-            pytest.param({}, "page", None, "", id="value is None"),
-            pytest.param(
-                {"search": "test"},
-                "page",
-                1,
-                "?search=test&page=1",
-                id="add value",
-            ),
-            pytest.param({"page": 1}, "page", 2, "?page=2", id="replace value"),
-            pytest.param({"page": 1}, "page", None, "", id="drop value"),
-            pytest.param(
-                {},
-                "page",
-                (1, 2, 3),
-                "?page=1&page=2&page=3",
-                id="iterable",
-            ),
-        ],
-    )
-    def test_query_string(self, rf, qs, param, value, expected):
-        context = RequestContext(rf.get("/", dict(qs)))
-        assert query_string(context, **{param: value}) == expected
 
 
 class TestFormatDuration:
