@@ -288,7 +288,6 @@
 
     .form-control a,
     .link {
-        color: theme("colors.gray.800");
         font-weight: theme("fontWeight.semibold");
     }
     .form-control a:active,
@@ -301,11 +300,6 @@
     @media (prefers-color-scheme: dark) {
         :root {
             color-scheme: dark;
-        }
-
-        .form-control a,
-        .link {
-            color: theme("colors.gray.100");
         }
 
         .form-control a:active,
