@@ -31,7 +31,7 @@ cryptography==43.0.0
     # via pyjwt
 dj-database-url==2.2.0
     # via radiofeed (pyproject.toml)
-django==5.0.8
+django==5.1rc1
     # via
     #   radiofeed (pyproject.toml)
     #   dj-database-url
@@ -119,6 +119,8 @@ psycopg==3.2.1
     # via radiofeed (pyproject.toml)
 psycopg-binary==3.2.1
     # via psycopg
+psycopg-pool==3.2.2
+    # via radiofeed (pyproject.toml)
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
@@ -168,6 +170,7 @@ typing-extensions==4.12.2
     # via
     #   dj-database-url
     #   psycopg
+    #   psycopg-pool
     #   pydantic
     #   pydantic-core
 uc-micro-py==1.0.3

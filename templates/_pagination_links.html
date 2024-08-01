@@ -4,7 +4,7 @@
         <li>
             {% if page_obj.has_previous %}
                 <a class="link"
-                   href="{{ request.path }}{% query_string page=page_obj.previous_page_number %}"
+                   href="{{ request.path }}{% querystring page=page_obj.previous_page_number %}"
                    aria-label="Previous Page"
                    title="Previous Page">Previous</a>
             {% else %}
@@ -17,7 +17,7 @@
             {% if page_obj.has_next %}
                 <a class="link"
                    aria-label="Next Page"
-                   href="{{ request.path }}{% query_string page=page_obj.next_page_number %}"
+                   href="{{ request.path }}{% querystring page=page_obj.next_page_number %}"
                    title="Next Page">Next</a>
             {% else %}
                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"

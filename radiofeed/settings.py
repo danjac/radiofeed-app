@@ -91,6 +91,7 @@ DATABASES = {
         "CONN_HEALTH_CHECKS": CONN_MAX_AGE > 0,
         "OPTIONS": {
             "options": f"-c statement_timeout={STATEMENT_TIMEOUT}s",
+            "pool": env.bool("USE_CONNECTION_POOL", default=False),
         },
     }
 }

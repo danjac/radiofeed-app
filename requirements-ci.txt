@@ -44,7 +44,7 @@ decorator==5.1.1
     # via ipython
 dj-database-url==2.2.0
     # via radiofeed (pyproject.toml)
-django==5.0.8
+django==5.1rc1
     # via
     #   radiofeed (pyproject.toml)
     #   dj-database-url
@@ -185,6 +185,8 @@ psycopg==3.2.1
     # via radiofeed (pyproject.toml)
 psycopg-binary==3.2.1
     # via psycopg
+psycopg-pool==3.2.2
+    # via radiofeed (pyproject.toml)
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
@@ -297,6 +299,7 @@ typing-extensions==4.12.2
     #   dj-database-url
     #   mypy
     #   psycopg
+    #   psycopg-pool
     #   pydantic
     #   pydantic-core
 uc-micro-py==1.0.3
