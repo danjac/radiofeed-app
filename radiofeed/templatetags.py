@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.paginator import Page
+from django.core.paginator import Page, Paginator
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 
-from radiofeed import cover_image, markdown, pagination
+from radiofeed import cover_image, markdown
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.core.paginator import Page
@@ -22,6 +22,8 @@ if TYPE_CHECKING:  # pragma: nocover
     from radiofeed.cover_image import CoverImageVariant
 
 ACCEPT_COOKIES_NAME: Final = "accept-cookies"
+
+PAGE_SIZE: Final = 30
 
 
 _SECONDS_IN_MINUTE: Final = 60
@@ -67,11 +69,14 @@ def theme_color() -> dict:
 def paginate(
     context: RequestContext,
     object_list: QuerySet,
-    **kwargs,
+    page_size: int = PAGE_SIZE,
+    param: str = "page",
+    **pagination_kwargs,
 ) -> Page:
     """Returns paginated object list."""
-
-    return pagination.paginate(context.request, object_list, **kwargs)
+    return Paginator(object_list, page_size).get_page(
+        context.request.GET.get(param, ""), **pagination_kwargs
+    )
 
 
 @register.simple_tag(takes_context=True)

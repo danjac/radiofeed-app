@@ -16,10 +16,10 @@ from radiofeed.decorators import (
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict
 from radiofeed.http_client import get_client
-from radiofeed.pagination import PAGE_SIZE
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.templatetags import PAGE_SIZE
 
 
 @require_safe
