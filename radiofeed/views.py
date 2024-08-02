@@ -138,8 +138,18 @@ def manifest(request: HttpRequest) -> JsonResponse:
             },
             "categories": categories,
             "screenshots": [
-                static("img/desktop.png"),
-                static("img/mobile.png"),
+                {
+                    "src": static("img/desktop.png"),
+                    "label": "Desktop homescreen",
+                    "form_factor": "wide",
+                    "type": "image/png",
+                },
+                {
+                    "src": static("img/mobile.png"),
+                    "label": "Mobile homescreen",
+                    "form_factor": "narrow",
+                    "type": "image/png",
+                },
             ],
             "icons": list(_app_icons()),
             "shortcuts": [],
