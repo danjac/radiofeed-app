@@ -21,7 +21,6 @@
 .vscode
 LICENSE
 Makefile
-Procfile
 README.md
 commitlint.config.js
 conftest.py
@@ -32,4 +31,4 @@ npm-debug.log
 pyproject.toml
 requirements-ci.txt
 screenshots
-static/dist
+assets/dist
