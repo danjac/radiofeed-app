@@ -39,7 +39,7 @@ def about_page(request: HttpRequest) -> TemplateResponse:
 
 
 @require_POST
-def accept_cookies(_) -> HttpResponse:
+def accept_gdpr_cookies(_) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
     response.set_cookie(

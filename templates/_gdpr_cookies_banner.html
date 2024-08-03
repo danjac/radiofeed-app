@@ -1,7 +1,7 @@
 {# vim: set filetype=htmldjango #}
 {% if not accept_cookies %}
     <div class="flex fixed bottom-0 z-50 justify-center py-3 w-full text-white bg-black opacity-90"
-         id="accept-cookies">
+         id="accept-gdpr-cookies">
         <div class="px-2">
             <div class="items-center md:flex">
                 <p class="mb-3 font-bold text-center md:mr-4 md:mb-0 md:text-start">
@@ -12,8 +12,8 @@
                             aria-label="OK, I accept cookies"
                             title="OK, I accept cookies"
                             hx-disabled-elt="this"
-                            hx-post="{% url 'accept_cookies' %}"
-                            hx-target="#accept-cookies"
+                            hx-post="{% url 'accept_gdpr_cookies' %}"
+                            hx-target="#accept-gdpr-cookies"
                             hx-push-url="false"
                             hx-swap="delete"
                             hx-indicator="this"

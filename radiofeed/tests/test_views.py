@@ -58,10 +58,10 @@ class TestAbout:
         assert response.status_code == http.HTTPStatus.OK
 
 
-class TestAcceptCookies:
+class TestAcceptGdprCookies:
     @pytest.mark.django_db()
     def test_post(self, client):
-        response = client.post(reverse("accept_cookies"))
+        response = client.post(reverse("accept_gdpr_cookies"))
         assert response.status_code == http.HTTPStatus.OK
         assert "accept-cookies" in response.cookies
 

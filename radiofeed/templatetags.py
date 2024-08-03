@@ -138,8 +138,8 @@ def cover_image_(
     }
 
 
-@register.inclusion_tag("_cookie_notice.html", takes_context=True)
-def cookie_notice(context: RequestContext) -> dict:
+@register.inclusion_tag("_gdpr_cookies_banner.html", takes_context=True)
+def gdpr_cookies_banner(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
     return {"accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES}
