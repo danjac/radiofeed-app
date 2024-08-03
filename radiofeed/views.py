@@ -110,11 +110,12 @@ def manifest(request: HttpRequest) -> JsonResponse:
 
     categories = settings.PWA_CONFIG["manifest"]["categories"]
     description = settings.PWA_CONFIG["manifest"]["description"]
+    background_color = settings.PWA_CONFIG["manifest"]["background_color"]
     theme_color = settings.PWA_CONFIG["manifest"]["theme_color"]
 
     return JsonResponse(
         {
-            "background_color": "#fff",
+            "background_color": background_color,
             "theme_color": theme_color,
             "description": description,
             "dir": "ltr",
