@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -19,7 +20,6 @@ from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.templatetags import PAGE_SIZE
 
 
 @require_safe
@@ -213,7 +213,7 @@ def similar(
     recommendations = (
         podcast.recommendations.with_relevance()
         .select_related("recommended")
-        .order_by("-relevance")[:PAGE_SIZE]
+        .order_by("-relevance")[: settings.PAGE_SIZE]
     )
 
     return TemplateResponse(

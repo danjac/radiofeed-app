@@ -18,7 +18,6 @@ from PIL import Image
 
 from radiofeed.cover_image import get_placeholder_path, is_cover_image_size
 from radiofeed.http_client import get_client
-from radiofeed.templatetags import ACCEPT_COOKIES_NAME
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 350
 
@@ -44,7 +43,7 @@ def accept_cookies(_) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
     response.set_cookie(
-        ACCEPT_COOKIES_NAME,
+        settings.GDPR_COOKIE_NAME,
         value="true",
         expires=timezone.now() + datetime.timedelta(days=365),
         secure=True,

@@ -21,10 +21,6 @@ if TYPE_CHECKING:  # pragma: nocover
 
     from radiofeed.cover_image import CoverImageVariant
 
-ACCEPT_COOKIES_NAME: Final = "accept-cookies"
-
-PAGE_SIZE: Final = 30
-
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
@@ -69,7 +65,7 @@ def theme_color() -> dict:
 def paginate(
     context: RequestContext,
     object_list: QuerySet,
-    page_size: int = PAGE_SIZE,
+    page_size: int = settings.PAGE_SIZE,
     param: str = "page",
     **pagination_kwargs,
 ) -> Page:
@@ -146,7 +142,7 @@ def cover_image_(
 def cookie_notice(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
-    return {"accept_cookies": ACCEPT_COOKIES_NAME in context.request.COOKIES}
+    return {"accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES}
 
 
 @register.inclusion_tag("_markdown.html", name="markdown")

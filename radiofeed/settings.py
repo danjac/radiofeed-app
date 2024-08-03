@@ -160,6 +160,8 @@ CSRF_USE_SESSIONS = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 
+GDPR_COOKIE_NAME = "accept-cookies"
+
 # Email configuration
 
 # Mailgun
@@ -393,6 +395,9 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 100,  # in MB
 }
 
+# Pagination
+
+PAGE_SIZE = 30
 
 # PWA configuration
 # https://docs.pwabuilder.com/#/builder/manifest
