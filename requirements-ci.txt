@@ -12,7 +12,7 @@ asgiref==3.8.1
     #   django-permissions-policy
 asttokens==2.4.1
     # via stack-data
-attrs==23.2.0
+attrs==24.1.0
     # via pytest-mypy
 bandit==1.7.9
     # via radiofeed (pyproject.toml)
