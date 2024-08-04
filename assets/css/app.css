@@ -287,11 +287,15 @@
     /* LINKS */
 
     .form-control a,
+    .markdown a,
     .link {
         font-weight: theme("fontWeight.semibold");
+        color: theme("colors.black");
     }
     .form-control a:active,
     .form-control a:hover,
+    .markdown a:active,
+    .markdown a:hover,
     .link.active,
     .link:hover {
         color: theme("colors.blue.600");
@@ -302,8 +306,16 @@
             color-scheme: dark;
         }
 
+        .form-control a,
+        .markdown a,
+        .link {
+            color: theme("colors.white");
+        }
+
         .form-control a:active,
         .form-control a:hover,
+        .markdown a:active,
+        .markdown a:hover,
         .link.active,
         .link:hover {
             color: theme("colors.blue.300");
@@ -326,7 +338,6 @@
     .message-warning {
         background-color: theme("colors.yellow.600");
     }
-
 }
 
 @layer utilities {
