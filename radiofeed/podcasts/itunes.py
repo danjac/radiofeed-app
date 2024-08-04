@@ -46,14 +46,14 @@ class FeedResultSet:
 
     def __len__(self) -> int:
         """Returns number of feeds."""
-        return len(self._result_cache)
+        return len(self._feed_cache)
 
     def __getitem__(self, index: int) -> Feed:
         """Return item by index"""
-        return self._result_cache[index]
+        return self._feed_cache[index]
 
     @cached_property
-    def _result_cache(self) -> list[Feed]:
+    def _feed_cache(self) -> list[Feed]:
         return list(self._feeds)
 
 
