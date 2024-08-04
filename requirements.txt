@@ -162,7 +162,7 @@ sqlparse==0.5.1
     # via django
 threadpoolctl==3.5.0
     # via scikit-learn
-tqdm==4.66.4
+tqdm==4.66.5
     # via nltk
 typing-extensions==4.12.2
     # via
