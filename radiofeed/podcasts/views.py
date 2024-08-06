@@ -9,13 +9,8 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import (
-    htmx_login_required,
-    require_DELETE,
-    require_form_methods,
-)
 from radiofeed.episodes.models import Episode
-from radiofeed.http import HttpResponseConflict
+from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -289,7 +284,7 @@ def category_detail(
 
 
 @require_POST
-@htmx_login_required
+@login_required
 def subscribe(
     request: HttpRequest, podcast_id: int
 ) -> HttpResponseConflict | TemplateResponse:
@@ -306,7 +301,7 @@ def subscribe(
 
 
 @require_DELETE
-@htmx_login_required
+@login_required
 def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -384,7 +379,7 @@ def add_private_feed(
 
 
 @require_DELETE
-@htmx_login_required
+@login_required
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
     """Removes subscription to private feed."""
     podcast = _get_podcast_or_404(podcast_id, private=True)

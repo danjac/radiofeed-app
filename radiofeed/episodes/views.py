@@ -16,15 +16,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import (
-    ajax_login_required,
-    htmx_login_required,
-    require_DELETE,
-)
 from radiofeed.episodes.models import Episode
 from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,
+    HttpResponseUnauthorized,
+    require_DELETE,
 )
 
 
@@ -108,7 +105,7 @@ def episode_detail(
 
 
 @require_POST
-@htmx_login_required
+@login_required
 def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
@@ -139,7 +136,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 
 @require_POST
-@htmx_login_required
+@login_required
 def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateResponse:
     """Closes audio player."""
     if episode_id := request.audio_player.pop():
@@ -160,10 +157,9 @@ def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateRespon
 
 
 @require_POST
-@ajax_login_required
 def player_time_update(
     request: HttpRequest,
-) -> HttpResponseBadRequest | HttpResponseNoContent:
+) -> HttpResponseBadRequest | HttpResponseNoContent | HttpResponseUnauthorized:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
@@ -171,19 +167,21 @@ def player_time_update(
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
-    if episode_id := request.audio_player.get():
-        try:
-            request.user.audio_logs.update_or_create(
-                episode=get_object_or_404(Episode, pk=episode_id),
-                defaults={
-                    "current_time": int(request.POST["current_time"]),
-                    "listened": timezone.now(),
-                },
-            )
-        except (KeyError, ValueError):
-            return HttpResponseBadRequest()
+    if request.user.is_authenticated:
+        if episode_id := request.audio_player.get():
+            try:
+                request.user.audio_logs.update_or_create(
+                    episode=get_object_or_404(Episode, pk=episode_id),
+                    defaults={
+                        "current_time": int(request.POST["current_time"]),
+                        "listened": timezone.now(),
+                    },
+                )
+            except (KeyError, ValueError):
+                return HttpResponseBadRequest()
 
-    return HttpResponseNoContent()
+        return HttpResponseNoContent()
+    return HttpResponseUnauthorized()
 
 
 @require_safe
@@ -210,7 +208,7 @@ def history(request: HttpRequest) -> TemplateResponse:
 
 
 @require_DELETE
-@htmx_login_required
+@login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
@@ -260,7 +258,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
 
 @require_POST
-@htmx_login_required
+@login_required
 def add_bookmark(
     request: HttpRequest, episode_id: int
 ) -> HttpResponseConflict | TemplateResponse:
@@ -278,7 +276,7 @@ def add_bookmark(
 
 
 @require_DELETE
-@htmx_login_required
+@login_required
 def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
