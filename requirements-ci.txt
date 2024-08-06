@@ -81,7 +81,7 @@ django-fast-update==0.2.3
     # via radiofeed (pyproject.toml)
 django-health-check==3.18.3
     # via radiofeed (pyproject.toml)
-django-htmx==1.18.0
+django-htmx==1.19.0
     # via radiofeed (pyproject.toml)
 django-model-utils==4.5.1
     # via radiofeed (pyproject.toml)
