@@ -49,7 +49,7 @@
                title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</a>
         </h2>
         {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
-            <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-800 dark:text-gray-300">
+            <div class="flex flex-wrap items-center space-x-3 font-semibold">
                 {% if episode_type %}<span>{{ episode_type|capfirst }}</span>{% endif %}
                 {% if episode_num %}<span>Episode {{ episode_num }}</span>{% endif %}
                 {% if season %}<span>Season {{ season }}</span>{% endif %}
@@ -63,7 +63,7 @@
             <div class="flex flex-col place-content-between h-32">
                 {% include "episodes/_audio_player_button.html" %}
                 {% include "episodes/_bookmark_button.html" %}
-                <div class="flex flex-wrap items-center space-x-2 font-semibold text-gray-800 sm:space-x-3 dark:text-gray-300">
+                <div class="flex flex-wrap items-center space-x-2 font-semibold sm:space-x-3">
                     <a download
                        aria-label="Download audio file to your device"
                        title="Download audio file to your device"
@@ -88,7 +88,7 @@
                 {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
             </div>
         {% endif %}
-        <div class="flex flex-wrap items-center space-x-3 font-semibold text-gray-600 dark:text-gray-300">
+        <div class="flex flex-wrap items-center space-x-3 font-semibold">
             <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
             {% with duration=episode.duration_in_seconds %}
                 {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
