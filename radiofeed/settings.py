@@ -79,6 +79,7 @@ MIDDLEWARE: list[str] = [
 # Databases
 
 CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=360)
+STATEMENT_TIMEOUT = env.int("STATEMENT_TIMEOUT", default=30)
 
 DATABASES = {
     "default": env.db(
@@ -89,7 +90,7 @@ DATABASES = {
         "CONN_MAX_AGE": CONN_MAX_AGE,
         "CONN_HEALTH_CHECKS": CONN_MAX_AGE > 0,
         "OPTIONS": {
-            "options": "-c statement_timeout=30s",
+            "options": f"-c statement_timeout={STATEMENT_TIMEOUT}s",
         },
     }
 }
