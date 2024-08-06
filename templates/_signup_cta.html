@@ -2,7 +2,7 @@
 {% if user.is_anonymous %}
     <div id="signup-cta"
          class="p-3 font-bold text-center text-white bg-blue-600">
-        {% with css_class="link underline" %}
+        {% with css_class="underline text-white hover:opacity-75" %}
             <a class="{{ css_class }}" href="{% url 'account_signup' %}">Sign up</a>
             or
             <a class="{{ css_class }}" href="{% url 'account_login' %}">log in</a>
