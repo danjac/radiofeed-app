@@ -125,7 +125,6 @@ def cover_image_(
     variant: CoverImageVariant,
     title: str,
     *,
-    url: str = "",
     css_class: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
@@ -134,7 +133,6 @@ def cover_image_(
         "css_class": css_class,
         "variant": variant,
         "title": title,
-        "url": url,
     }
 
 
