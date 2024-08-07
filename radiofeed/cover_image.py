@@ -100,6 +100,7 @@ def get_placeholder_path(size: int) -> pathlib.Path:
     return settings.BASE_DIR / "assets" / "img" / get_placeholder(size)
 
 
+@functools.cache
 def is_cover_image_size(size: int) -> bool:
     """Check image has correct size."""
     return size in COVER_IMAGE_SIZES
