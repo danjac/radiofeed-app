@@ -2,7 +2,7 @@
 {% load heroicons %}
 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
     {% if audio_log and not is_playing %}
-        <div class="flex-wrap items-center space-y-3 font-semibold text-gray-600 sm:flex sm:space-y-0 sm:space-x-3 dark:text-gray-300">
+        <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
             <div class="flex flex-wrap items-center space-x-2">
                 {% with percent_complete=audio_log.current_time|percentage:episode.duration_in_seconds %}
                     <span>
