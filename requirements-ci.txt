@@ -15,8 +15,11 @@ asttokens==2.4.1
 attrs==24.2.0
     # via pytest-mypy
 bandit==1.7.9
+    # via radiofeed (pyproject.toml)
 brotli==1.1.0
-    # via whitenoise
+    # via
+    #   radiofeed (pyproject.toml)
+    #   whitenoise
 certifi==2024.7.4
     # via
     #   httpcore
@@ -32,14 +35,18 @@ click==8.1.7
     #   django-click
     #   nltk
 coverage==7.6.1
-    # via pytest-cov
+    # via
+    #   radiofeed (pyproject.toml)
+    #   pytest-cov
 cryptography==43.0.0
     # via pyjwt
 decorator==5.1.1
     # via ipython
 dj-database-url==2.2.0
+    # via radiofeed (pyproject.toml)
 django==5.1
     # via
+    #   radiofeed (pyproject.toml)
     #   dj-database-url
     #   django-allauth
     #   django-anymail
@@ -55,36 +62,55 @@ django==5.1
     #   django-redis
     #   heroicons
 django-allauth==64.0.0
+    # via radiofeed (pyproject.toml)
 django-anymail==11.1
+    # via radiofeed (pyproject.toml)
 django-browser-reload==1.13.0
+    # via radiofeed (pyproject.toml)
 django-click==2.4.0
+    # via radiofeed (pyproject.toml)
 django-csp==3.8
+    # via radiofeed (pyproject.toml)
 django-debug-toolbar==4.4.6
+    # via radiofeed (pyproject.toml)
 django-environ==0.11.2
+    # via radiofeed (pyproject.toml)
 django-extensions==3.2.3
+    # via radiofeed (pyproject.toml)
 django-fast-update==0.2.3
+    # via radiofeed (pyproject.toml)
 django-health-check==3.18.3
+    # via radiofeed (pyproject.toml)
 django-htmx==1.19.0
+    # via radiofeed (pyproject.toml)
 django-model-utils==4.5.1
+    # via radiofeed (pyproject.toml)
 django-permissions-policy==4.21.0
+    # via radiofeed (pyproject.toml)
 django-redis==5.4.0
+    # via radiofeed (pyproject.toml)
 execnet==2.1.1
     # via pytest-xdist
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
+    # via radiofeed (pyproject.toml)
 faker==26.2.0
     # via factory-boy
 filelock==3.15.4
     # via pytest-mypy
 gunicorn==22.0.0
+    # via radiofeed (pyproject.toml)
 h11==0.14.0
     # via httpcore
 heroicons==2.7.0
+    # via radiofeed (pyproject.toml)
 hiredis==3.0.0
+    # via radiofeed (pyproject.toml)
 httpcore==1.0.5
     # via httpx
 httpx==0.27.0
+    # via radiofeed (pyproject.toml)
 icdiff==2.0.7
     # via pytest-icdiff
 idna==3.7
@@ -95,6 +121,7 @@ idna==3.7
 iniconfig==2.0.0
     # via pytest
 ipython==8.26.0
+    # via radiofeed (pyproject.toml)
 jedi==0.19.1
     # via ipython
 joblib==1.4.2
@@ -104,8 +131,11 @@ joblib==1.4.2
 linkify-it-py==2.0.3
     # via markdown-it-py
 lxml==5.2.2
+    # via radiofeed (pyproject.toml)
 markdown-it-py==3.0.0
-    # via rich
+    # via
+    #   radiofeed (pyproject.toml)
+    #   rich
 markupsafe==2.1.5
     # via werkzeug
 matplotlib-inline==0.1.7
@@ -113,11 +143,17 @@ matplotlib-inline==0.1.7
 mdurl==0.1.2
     # via markdown-it-py
 mypy==1.11.1
-    # via pytest-mypy
+    # via
+    #   radiofeed (pyproject.toml)
+    #   pytest-mypy
 mypy-extensions==1.0.0
-    # via mypy
+    # via
+    #   radiofeed (pyproject.toml)
+    #   mypy
 nh3==0.2.18
+    # via radiofeed (pyproject.toml)
 nltk==3.8.1
+    # via radiofeed (pyproject.toml)
 numpy==2.0.1
     # via
     #   scikit-learn
@@ -136,6 +172,7 @@ pbr==6.0.0
 pexpect==4.9.0
     # via ipython
 pillow==10.4.0
+    # via radiofeed (pyproject.toml)
 pluggy==1.5.0
     # via pytest
 pprintpp==0.4.0
@@ -143,10 +180,13 @@ pprintpp==0.4.0
 prompt-toolkit==3.0.47
     # via ipython
 psutil==6.0.0
+    # via radiofeed (pyproject.toml)
 psycopg==3.2.1
+    # via radiofeed (pyproject.toml)
 psycopg-binary==3.2.1
     # via psycopg
 psycopg-pool==3.2.2
+    # via radiofeed (pyproject.toml)
 ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
@@ -154,6 +194,7 @@ pure-eval==0.2.3
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
+    # via radiofeed (pyproject.toml)
 pydantic-core==2.20.1
     # via pydantic
 pygments==2.18.0
@@ -164,6 +205,7 @@ pyjwt==2.9.0
     # via django-allauth
 pytest==8.3.2
     # via
+    #   radiofeed (pyproject.toml)
     #   pytest-cov
     #   pytest-django
     #   pytest-env
@@ -174,20 +216,33 @@ pytest==8.3.2
     #   pytest-sugar
     #   pytest-xdist
 pytest-cov==5.0.0
+    # via radiofeed (pyproject.toml)
 pytest-django==4.8.0
+    # via radiofeed (pyproject.toml)
 pytest-env==1.1.3
+    # via radiofeed (pyproject.toml)
 pytest-icdiff==0.9
+    # via radiofeed (pyproject.toml)
 pytest-mock==3.14.0
+    # via radiofeed (pyproject.toml)
 pytest-mypy==0.10.3
+    # via radiofeed (pyproject.toml)
 pytest-randomly==3.15.0
+    # via radiofeed (pyproject.toml)
 pytest-sugar==1.0.0
+    # via radiofeed (pyproject.toml)
 pytest-xdist==3.6.1
+    # via radiofeed (pyproject.toml)
 python-dateutil==2.9.0.post0
-    # via faker
+    # via
+    #   radiofeed (pyproject.toml)
+    #   faker
 pyyaml==6.0.2
     # via bandit
 redis==5.0.8
-    # via django-redis
+    # via
+    #   radiofeed (pyproject.toml)
+    #   django-redis
 regex==2024.7.24
     # via nltk
 requests==2.32.3
@@ -200,10 +255,15 @@ requests-oauthlib==2.0.0
 rich==13.7.1
     # via bandit
 scikit-learn==1.5.1
+    # via radiofeed (pyproject.toml)
 scipy==1.14.0
-    # via scikit-learn
+    # via
+    #   radiofeed (pyproject.toml)
+    #   scikit-learn
 sentry-sdk==2.12.0
+    # via radiofeed (pyproject.toml)
 setuptools==72.1.0
+    # via radiofeed (pyproject.toml)
 six==1.16.0
     # via
     #   asttokens
@@ -231,7 +291,9 @@ traitlets==5.14.3
     #   ipython
     #   matplotlib-inline
 types-python-dateutil==2.9.0.20240316
+    # via radiofeed (pyproject.toml)
 types-urllib3==1.26.25.14
+    # via radiofeed (pyproject.toml)
 typing-extensions==4.12.2
     # via
     #   dj-database-url
@@ -250,4 +312,6 @@ urllib3==2.2.2
 wcwidth==0.2.13
     # via prompt-toolkit
 werkzeug==3.0.3
+    # via radiofeed (pyproject.toml)
 whitenoise==6.7.0
+    # via radiofeed (pyproject.toml)
