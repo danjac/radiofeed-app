@@ -31,7 +31,7 @@ cryptography==43.0.0
     # via pyjwt
 dj-database-url==2.2.0
     # via radiofeed (pyproject.toml)
-django==5.0.8
+django==5.1
     # via
     #   radiofeed (pyproject.toml)
     #   dj-database-url
@@ -48,7 +48,7 @@ django==5.0.8
     #   heroicons
 django-allauth==64.0.0
     # via radiofeed (pyproject.toml)
-django-anymail==11.0.1
+django-anymail==11.1
     # via radiofeed (pyproject.toml)
 django-click==2.4.0
     # via radiofeed (pyproject.toml)
@@ -66,7 +66,7 @@ django-htmx==1.19.0
     # via radiofeed (pyproject.toml)
 django-model-utils==4.5.1
     # via radiofeed (pyproject.toml)
-django-permissions-policy==4.20.0
+django-permissions-policy==4.21.0
     # via radiofeed (pyproject.toml)
 django-redis==5.4.0
     # via radiofeed (pyproject.toml)
