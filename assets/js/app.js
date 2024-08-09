@@ -16,9 +16,3 @@ window.htmx.config.useTemplateFragments = true;
 
 window.Alpine = Alpine;
 window.Alpine.start();
-
-// HTMX: handle errors
-// call a page redirect
-document.body.addEventListener("htmx:responseError", () => {
-    window.location.reload();
-});
