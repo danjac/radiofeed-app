@@ -95,7 +95,7 @@ executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
     # via radiofeed (pyproject.toml)
-faker==26.2.0
+faker==26.3.0
     # via factory-boy
 filelock==3.15.4
     # via pytest-mypy

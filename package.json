@@ -23,8 +23,8 @@
         "esbuild": "^0.23.0",
         "eslint": "^9.8.0",
         "globals": "^15.9.0",
-        "npm-check-updates": "^17.0.5",
+        "npm-check-updates": "^17.0.6",
         "npm-update-all": "^1.0.1",
-        "tailwindcss": "^3.4.8"
+        "tailwindcss": "^3.4.9"
     }
 }
