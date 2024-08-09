@@ -11,7 +11,7 @@ version = "0.0.0"
 license = {file = "LICENSE"}
 authors = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
 maintainers = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
-dependencies =[
+dependencies = [
     "brotli",
     "dj-database-url",
     "django",
@@ -50,7 +50,7 @@ dependencies =[
 ]
 
 [project.optional-dependencies]
-dev =[
+dev = [
     "bandit[toml]",
     "coverage[toml]",
     "django-browser-reload",
