@@ -109,7 +109,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
 
         return TemplateResponse(
             request,
-            "podcasts/search.html",
+            "podcasts/search_podcasts.html",
             {
                 "podcasts": podcasts,
                 "clear_search_url": discover_url,
