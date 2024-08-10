@@ -47,6 +47,7 @@ sentry-sdk = "^2.12.0"
 setuptools = "^72.1.0"
 whitenoise = {version = "^6.7.0", extras = ["brotli"]}
 scikit-learn = "^1.5.1"
+django-version-checks = "^1.12.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"

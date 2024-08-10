@@ -825,6 +825,21 @@ redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
 hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
+name = "django-version-checks"
+version = "1.12.0"
+description = "System checks for your project's environment."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django_version_checks-1.12.0-py3-none-any.whl", hash = "sha256:7988587b2cdf6c2e489a0997cd96ce66f1015846feba2838c7fd76893bcefd94"},
+    {file = "django_version_checks-1.12.0.tar.gz", hash = "sha256:29fb03837c4dbc4e649c29b37570a3cc7af7019406cfccb560524a3f651be7df"},
+]
+
+[package.dependencies]
+django = ">=3.2"
+packaging = ">=20.8"
+
+[[package]]
 name = "execnet"
 version = "2.1.1"
 description = "execnet: rapid multi-Python deployment"
@@ -2999,4 +3014,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "10215dcc8cb412fe99dcdd99b787c452bd3feb9214d0684dd21d2e2073541a13"
+content-hash = "586b9b220e49ab87143c8399571638c2c962aeb72cfc325065bfd77fd15b1010"

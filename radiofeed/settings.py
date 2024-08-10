@@ -38,6 +38,7 @@ INSTALLED_APPS: list[str] = [
     "csp",
     "django_extensions",
     "django_htmx",
+    "django_version_checks",
     "health_check",
     "health_check.db",
     "health_check.cache",
@@ -443,6 +444,13 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
         send_default_pii=True,
     )
 
+# Django version checks
+# https://pypi.org/project/django-version-checks/
+
+VERSION_CHECKS = {
+    "postgresql": "~=16.2",
+    "python": "==3.12.*",
+}
 
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
