@@ -27,10 +27,12 @@ django-htmx = "^1.19.0"
 django-model-utils = "^4.5.1"
 django-permissions-policy = "^4.21.0"
 django-redis = "^5.4.0"
+django-version-checks = "^1.12.0"
 gunicorn = "^22.0.0"
 heroicons = {version = "^2.7.0", extras = ["django"]}
 hiredis = "^3.0.0"
 httpx = "^0.27.0"
+loguru = "^0.7.2"
 lxml = "^5.2.2"
 markdown-it-py = {version = "^3.0.0", extras = ["linkify"]}
 nh3 = "^0.2.18"
@@ -42,16 +44,13 @@ psycopg-pool = "^3.2.2"
 pydantic = "^2.8.2"
 python-dateutil = "^2.9.0.post0"
 redis = "^5.0.8"
+scikit-learn = "^1.5.1"
 scipy = "^1.14.0"
 sentry-sdk = "^2.12.0"
 setuptools = "^72.1.0"
 whitenoise = {version = "^6.7.0", extras = ["brotli"]}
-scikit-learn = "^1.5.1"
-django-version-checks = "^1.12.0"
-loguru = "^0.7.2"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.2"
 bandit = {version = "^1.7.9", extras = ["toml"]}
 coverage = {version = "^7.6.1", extras = ["toml"]}
 django-browser-reload = "^1.13.0"
@@ -60,6 +59,7 @@ factory-boy = "^3.3.0"
 ipython = "^8.26.0"
 mypy = "^1.11.1"
 mypy-extensions = "^1.0.0"
+pytest = "^8.3.2"
 pytest-cov = "^5.0.0"
 pytest-django = "^4.8.0"
 pytest-env = "^1.1.3"
