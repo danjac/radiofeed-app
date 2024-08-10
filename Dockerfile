@@ -45,7 +45,7 @@ COPY ./pyproject.toml /app/pyproject.toml
 
 COPY ./poetry.lock /app/poetry.lock
 
-RUN poetry install --without=dev && rm -rf $POETRY_CACHE_DIR
+RUN poetry install --without=dev --no-root && rm -rf $POETRY_CACHE_DIR
 
 # Download NLTK files
 

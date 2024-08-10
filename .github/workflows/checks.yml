@@ -37,10 +37,10 @@ jobs:
             - run: |
                   poetry config virtualenvs.create false
                   poetry config virtualenvs.in-project false
-                  poetry config cache-dir /tmp/poetry_cache
+                  poetry config cache-dir ./poetry_cache
             - uses: actions/cache@v3
               with:
-                 path: /tmp/poetry_cache
+                 path: ./poetry_cache
                  key: poetry-${{ hashFiles('poetry.lock') }}
             - run: poetry install --no-interaction
             - run: xargs python -m nltk.downloader < nltk.txt
