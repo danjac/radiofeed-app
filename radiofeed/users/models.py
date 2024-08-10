@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
-class UserManager(BaseUserManager):
+class UserManager(BaseUserManager["User"]):
     """Custom Manager for User model."""
 
     def create_user(
