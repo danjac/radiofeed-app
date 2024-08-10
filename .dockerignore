@@ -28,7 +28,5 @@ docker-compose.yml
 eslint.config.js
 node_modules
 npm-debug.log
-pyproject.toml
-requirements-ci.txt
 screenshots
 assets/dist
