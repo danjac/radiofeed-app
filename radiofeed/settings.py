@@ -383,6 +383,11 @@ LOGGING = {
             "level": "CRITICAL",
             "propagate": False,
         },
+        "environ": {
+            "handlers": ["console"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
         "httpx": {
             "handlers": ["console"],
             "level": "CRITICAL",
