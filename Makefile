@@ -20,7 +20,7 @@ precommitupdate:
 	pre-commit autoupdate
 
 nltkdownload:
-	xargs -I{} .venv/bin/python -c "import nltk; nltk.download('{}')" < nltk.txt
+	xargs -I{} poetry run python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 clean:
 	git clean -Xdf
