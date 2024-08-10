@@ -1,7 +1,6 @@
 import dataclasses
 import functools
 import itertools
-import logging
 from collections.abc import Iterator
 from typing import Final, TypeAlias
 
@@ -10,6 +9,7 @@ from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.functional import cached_property
 from django.utils.http import urlsafe_base64_encode
+from loguru import logger
 
 from radiofeed.podcasts.models import Podcast
 
@@ -62,7 +62,9 @@ def search(client: httpx.Client, search_term: str) -> FeedResultSet:
     response = _get_response(client, search_term)
 
     return FeedResultSet(
-        _insert_podcasts(_parse_feeds_from_json(response)),
+        _insert_podcasts(
+            _parse_feeds_from_json(response),
+        ),
     )
 
 
@@ -95,7 +97,7 @@ def _get_response(client: httpx.Client, search_term: str) -> dict:
         data = response.json()
 
     except httpx.HTTPError as e:
-        logging.error(e)
+        logger.error(e)
         return {}
 
     cache.set(cache_key, data, _CACHE_TIMEOUT)
