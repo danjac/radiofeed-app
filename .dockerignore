@@ -21,7 +21,6 @@
 .vscode
 LICENSE
 Makefile
-README.md
 commitlint.config.js
 conftest.py
 docker-compose.yml
