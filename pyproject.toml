@@ -1,78 +1,84 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
-name = "radiofeed"
-description = "Podcast aggregator app"
-requires-python = ">=3.12"
+[tool.poetry]
+name = "radiofeed-app"
+version = "0.1.0"
+description = "Podcast aggregator"
+authors = ["Dan Jacob <danjac2018@gmail.com>"]
+license = "MIT"
 readme = "README.md"
-version = "0.0.0"
-license = {file = "LICENSE"}
-authors = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
-maintainers = [{name="Dan Jacob", email="danjac2018@gmail.com"}]
-dependencies = [
-    "brotli",
-    "dj-database-url",
-    "django",
-    "django-allauth[socialaccount]",
-    "django-anymail",
-    "django-click",
-    "django-csp",
-    "django-environ",
-    "django-extensions",
-    "django-fast-update",
-    "django-health-check",
-    "django-htmx",
-    "django-model-utils",
-    "django-permissions-policy",
-    "django-redis",
-    "gunicorn",
-    "heroicons[django]",
-    "hiredis",
-    "httpx",
-    "lxml",
-    "markdown-it-py[linkify]",
-    "nh3",
-    "nltk",
-    "pillow",
-    "psutil",
-    "psycopg[binary]",
-    "psycopg-pool",
-    "pydantic",
-    "python-dateutil",
-    "redis",
-    "scikit-learn",
-    "scipy",
-    "sentry-sdk",
-    "setuptools",
-    "whitenoise[brotli]",
-]
 
-[project.optional-dependencies]
-dev = [
-    "bandit[toml]",
-    "coverage[toml]",
-    "django-browser-reload",
-    "django-debug-toolbar",
-    "factory_boy",
-    "ipython",
-    "mypy",
-    "mypy_extensions",
-    "pytest",
-    "pytest-cov",
-    "pytest-django",
-    "pytest-env",
-    "pytest-icdiff",
-    "pytest-mock",
-    "pytest-mypy",
-    "pytest-randomly",
-    "pytest-sugar",
-    "pytest-xdist",
-    "types-python-dateutil",
-    "types-urllib3",
-    "werkzeug",
-]
+[tool.poetry.dependencies]
+python = "^3.12"
+Django = "^5.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+# dependencies = [
+#     "brotli",
+#     "dj-database-url",
+#     "django",
+#     "django-allauth[socialaccount]",
+#     "django-anymail",
+#     "django-click",
+#     "django-csp",
+#     "django-environ",
+#     "django-extensions",
+#     "django-fast-update",
+#     "django-health-check",
+#     "django-htmx",
+#     "django-model-utils",
+#     "django-permissions-policy",
+#     "django-redis",
+#     "gunicorn",
+#     "heroicons[django]",
+#     "hiredis",
+#     "httpx",
+#     "lxml",
+#     "markdown-it-py[linkify]",
+#     "nh3",
+#     "nltk",
+#     "pillow",
+#     "psutil",
+#     "psycopg[binary]",
+#     "psycopg-pool",
+#     "pydantic",
+#     "python-dateutil",
+#     "redis",
+#     "scikit-learn",
+#     "scipy",
+#     "sentry-sdk",
+#     "setuptools",
+#     "whitenoise[brotli]",
+# ]
+
+# [project.optional-dependencies]
+# dev = [
+#     "bandit[toml]",
+#     "coverage[toml]",
+#     "django-browser-reload",
+#     "django-debug-toolbar",
+#     "factory_boy",
+#     "ipython",
+#     "mypy",
+#     "mypy_extensions",
+#     "pytest",
+#     "pytest-cov",
+#     "pytest-django",
+#     "pytest-env",
+#     "pytest-icdiff",
+#     "pytest-mock",
+#     "pytest-mypy",
+#     "pytest-randomly",
+#     "pytest-sugar",
+#     "pytest-xdist",
+#     "types-python-dateutil",
+#     "types-urllib3",
+#     "werkzeug",
+# ]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
