@@ -3,19 +3,19 @@ from django.http import HttpRequest, HttpResponse
 from radiofeed.middleware import BaseMiddleware
 
 
-class AudioPlayerMiddleware(BaseMiddleware):
-    """Adds `AudioPlayerDetail` instance to request as `request.audio_player`."""
+class PlayerMiddleware(BaseMiddleware):
+    """Adds `PlayerDetail` instance to request as `request.player`."""
 
     def handle_request(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.audio_player = AudioPlayerDetails(request)
+        request.player = PlayerDetails(request)
         return self.get_response(request)
 
 
-class AudioPlayerDetails:
+class PlayerDetails:
     """Tracks current player episode in session."""
 
-    session_key: str = "audio_player"
+    session_key: str = "player"
 
     def __init__(self, request: HttpRequest) -> None:
         self.request = request

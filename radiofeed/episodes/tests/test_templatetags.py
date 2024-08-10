@@ -1,7 +1,7 @@
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.middleware import AudioPlayerDetails
+from radiofeed.episodes.middleware import PlayerDetails
 from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
@@ -66,7 +66,7 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = anonymous_user
         req.session = {}
-        req.audio_player = AudioPlayerDetails(req)
+        req.player = PlayerDetails(req)
         assert audio_player(RequestContext(req)) == {
             **defaults,
             "request": req,
@@ -77,7 +77,7 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = user
         req.session = {}
-        req.audio_player = AudioPlayerDetails(req)
+        req.player = PlayerDetails(req)
         assert audio_player(RequestContext(req)) == defaults | {"request": req}
 
     @pytest.mark.django_db()
@@ -86,8 +86,8 @@ class TestAudioPlayer:
         req.user = user
         req.session = {}
 
-        req.audio_player = AudioPlayerDetails(req)
-        req.audio_player.set(audio_log.episode.pk)
+        req.player = PlayerDetails(req)
+        req.player.set(audio_log.episode.pk)
 
         assert audio_player(RequestContext(req)) == {
             **defaults,
@@ -103,7 +103,7 @@ class TestAudioPlayer:
         req.user = anonymous_user
         req.session = {}
 
-        req.audio_player = AudioPlayerDetails(req)
-        req.audio_player.set(episode.pk)
+        req.player = PlayerDetails(req)
+        req.player.set(episode.pk)
 
         assert audio_player(RequestContext(req)) == defaults | {"request": req}

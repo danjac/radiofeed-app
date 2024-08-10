@@ -40,7 +40,7 @@ def audio_player(context: RequestContext) -> dict:
     }
     if (
         context.request.user.is_authenticated
-        and (episode_id := context.request.audio_player.get())
+        and (episode_id := context.request.player.get())
         and (
             audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
             .select_related("episode", "episode__podcast")
