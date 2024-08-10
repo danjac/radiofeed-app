@@ -390,6 +390,13 @@ LOGGING = {
     },
 }
 
+# Django version checks
+# https://pypi.org/project/django-version-checks/
+
+VERSION_CHECKS = {
+    "postgresql": "~=16.2",
+    "python": "==3.12.*",
+}
 # Health checks
 # https://pypi.org/project/django-health-check/
 
@@ -443,14 +450,6 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
-
-# Django version checks
-# https://pypi.org/project/django-version-checks/
-
-VERSION_CHECKS = {
-    "postgresql": "~=16.2",
-    "python": "==3.12.*",
-}
 
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
