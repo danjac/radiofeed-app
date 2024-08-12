@@ -7,6 +7,7 @@ name = "radiofeed"
 version = "0.1.0"
 description = "Podcast aggregator"
 authors = ["Dan Jacob <danjac2018@gmail.com>"]
+maintainers = ["Dan Jacob <danjac2018@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
