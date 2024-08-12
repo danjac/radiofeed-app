@@ -32,6 +32,7 @@ gunicorn = "^22.0.0"
 heroicons = {version = "^2.7.0", extras = ["django"]}
 hiredis = "^3.0.0"
 httpx = "^0.27.0"
+ipython = "^8.26.0"
 loguru = "^0.7.2"
 lxml = "^5.2.2"
 markdown-it-py = {version = "^3.0.0", extras = ["linkify"]}
@@ -49,6 +50,7 @@ scipy = "^1.14.0"
 sentry-sdk = "^2.12.0"
 setuptools = "^72.1.0"
 whitenoise = {version = "^6.7.0", extras = ["brotli"]}
+django-read-only = "^1.16.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {version = "^1.7.9", extras = ["toml"]}
@@ -56,7 +58,6 @@ coverage = {version = "^7.6.1", extras = ["toml"]}
 django-browser-reload = "^1.13.0"
 django-debug-toolbar = "^4.4.6"
 factory-boy = "^3.3.0"
-ipython = "^8.26.0"
 mypy = "^1.11.1"
 mypy-extensions = "^1.0.0"
 pytest = "^8.3.2"
