@@ -38,7 +38,6 @@ INSTALLED_APPS: list[str] = [
     "csp",
     "django_extensions",
     "django_htmx",
-    "django_read_only",
     "django_version_checks",
     "health_check",
     "health_check.db",
