@@ -190,9 +190,10 @@ lint.ignore = [
     "Q000",
     "S101",
 ]
+
 [tool.ruff.lint.per-file-ignores]
-"**/conftest.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 "**/apps.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
+"**/conftest.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 "**/migrations/**.py" = ["D101", "D102", "D103", "D105", "E501", "N", "PL", "RUF"]
 "**/tests/**.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 
