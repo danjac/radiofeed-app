@@ -34,7 +34,7 @@ jobs:
         needs: deploy_cron_scheduler
         strategy:
             matrix:
-                server_ip: ${{ fromJson(env.APP_SERVER_IP_REFS) }}
+                server_ip: ${{ fromJson(vars.APP_SERVER_IP_REFS) }}
         steps:
             - name: Cloning repo
               uses: actions/checkout@v4
