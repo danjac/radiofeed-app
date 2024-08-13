@@ -12,6 +12,8 @@ from django.urls import reverse
 
 COVER_IMAGE_SIZES: Final = (96, 112, 144, 160, 224)
 
+_MIN_FULL_SIZE_WIDTH: Final = 1024
+
 
 class CoverImageVariant(StrEnum):
     """Possible size variations."""
@@ -21,7 +23,7 @@ class CoverImageVariant(StrEnum):
     TILE = "tile"
 
 
-COVER_IMAGE_VARIANTS: Final = {
+_COVER_IMAGE_VARIANTS: Final = {
     CoverImageVariant.CARD: (96, 96),
     CoverImageVariant.DETAIL: (144, 160),
     CoverImageVariant.TILE: (112, 224),
@@ -31,7 +33,7 @@ COVER_IMAGE_VARIANTS: Final = {
 @functools.cache
 def get_cover_image_attrs(cover_url: str, variant: CoverImageVariant) -> dict:
     """Returns the HTML attributes for an image."""
-    min_size, full_size = COVER_IMAGE_VARIANTS[variant]
+    min_size, full_size = _COVER_IMAGE_VARIANTS[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
@@ -55,8 +57,8 @@ def get_cover_image_attrs(cover_url: str, variant: CoverImageVariant) -> dict:
 
     sizes = ", ".join(
         [
-            f"(max-width: 1023.99px) {min_size}px",
-            f"(min-width: 1024px) {full_size}px",
+            f"(max-width: {_MIN_FULL_SIZE_WIDTH-0.01}px) {min_size}px",
+            f"(min-width: {_MIN_FULL_SIZE_WIDTH}px) {full_size}px",
         ]
     )
 
