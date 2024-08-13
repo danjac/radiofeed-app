@@ -34,6 +34,8 @@ jobs:
         needs: deploy_cron_scheduler
         strategy:
             matrix:
+                # list of references in JSON array e.g. ["APP_SERVER_1", "APP_SERVER_2"]
+                # each reference should be value in secrets e.g. APP_SERVER_1=169.0.0.1
                 server_ip: ${{ fromJson(vars.APP_SERVER_IP_REFS) }}
         steps:
             - name: Cloning repo
