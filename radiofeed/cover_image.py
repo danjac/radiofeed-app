@@ -29,6 +29,18 @@ _COVER_IMAGE_VARIANTS: Final = {
     CoverImageVariant.TILE: (112, 224),
 }
 
+_COVER_IMAGE_CLASSES: Final = {
+    CoverImageVariant.CARD: "size-16",
+    CoverImageVariant.DETAIL: "size-36 lg:size-40",
+    CoverImageVariant.TILE: "size-28 lg:size-56",
+}
+
+
+@functools.cache
+def get_cover_image_class(variant: CoverImageVariant) -> str:
+    """Returns default CSS class for the cover image."""
+    return _COVER_IMAGE_CLASSES[variant]
+
 
 @functools.cache
 def get_cover_image_attrs(cover_url: str, variant: CoverImageVariant) -> dict:

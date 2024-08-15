@@ -6,6 +6,7 @@ from django.urls import reverse, reverse_lazy
 from radiofeed.templatetags import (
     absolute_uri,
     active_link,
+    cover_image_,
     format_duration,
     percentage,
 )
@@ -24,6 +25,19 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
+
+
+class TestCoverImage:
+    def test_cover_image(self):
+        context = cover_image_(
+            "https://www.example.com/test.jpg",
+            "detail",
+            "test image",
+            css_class="hover:grayscale",
+        )
+        assert context["css_class"] == "hover:grayscale size-28 lg:size:36"
+        assert context["attrs"]["alt"] == "test image"
+        assert context["attrs"]["title"] == "test image"
 
 
 class TestPercentage:

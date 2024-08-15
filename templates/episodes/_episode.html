@@ -5,7 +5,7 @@
          tabindex="0"
          hx-get="{{ episode.get_absolute_url }}"
          hx-push-url="true">
-        {% with variant="card" css_class="w-16 h-16 group-hover:opacity-75" %}
+        {% with variant="card" css_class="group-hover:opacity-75" %}
             {% if is_podcast_detail %}
                 {% cover_image episode.get_cover_url variant episode.cleaned_title css_class=css_class %}
             {% else %}
