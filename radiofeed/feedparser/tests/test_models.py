@@ -65,7 +65,7 @@ class TestItem:
 
 
 class TestFeed:
-    @pytest.fixture()
+    @pytest.fixture
     def item(self):
         return Item(**ItemFactory())
 

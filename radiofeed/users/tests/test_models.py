@@ -11,7 +11,7 @@ def _make_random_password():
 class TestUserManager:
     email = "tester@gmail.com"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_create_user(self):
         password = _make_random_password()
 
@@ -20,7 +20,7 @@ class TestUserManager:
         )
         assert user.check_password(password)
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_create_superuser(self):
         password = _make_random_password()
 

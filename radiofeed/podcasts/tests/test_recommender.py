@@ -8,14 +8,14 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _clear_categories_cache():
     get_categories.cache_clear()
     return
 
 
 class TestRecommender:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     @pytest.mark.usefixtures("_clear_categories_cache")
     def test_no_suitable_matches_for_podcasts(self):
         PodcastFactory(
@@ -29,7 +29,7 @@ class TestRecommender:
 
 
 class TestRecommend:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     @pytest.mark.usefixtures("_clear_categories_cache")
     def test_handle_empty_data_frame(self):
         PodcastFactory(
@@ -40,7 +40,7 @@ class TestRecommend:
         recommend("en")
         assert Recommendation.objects.count() == 0
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     @pytest.mark.usefixtures("_clear_categories_cache")
     def test_no_categories(self):
         podcast_1 = PodcastFactory(
@@ -60,7 +60,7 @@ class TestRecommend:
         )
         assert recommendations.count() == 0
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     @pytest.mark.usefixtures("_clear_categories_cache")
     def test_create_recommendations(self):
         Category.objects.bulk_create(

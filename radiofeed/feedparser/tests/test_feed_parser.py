@@ -62,7 +62,7 @@ class TestFeedParser:
     redirect_rss = "https://example.com/test.xml"
     updated = "Wed, 01 Jul 2020 15:25:26 +0000"
 
-    @pytest.fixture()
+    @pytest.fixture
     def categories(self):
         get_categories.cache_clear()
         Category.objects.bulk_create(
@@ -93,7 +93,7 @@ class TestFeedParser:
         headers = _FeedParser(podcast)._get_headers()
         assert headers["If-Modified-Since"]
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_unhandled_exception(self, podcast, mocker):
         def _handle(request):
             raise ValueError("oops")
@@ -107,7 +107,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
         assert podcast.active
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_ok(self, categories):
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
@@ -187,7 +187,7 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_links_as_ids(self, categories):
         podcast = PodcastFactory(
             rss="https://feeds.feedburner.com/VarsoviaVentoPodkasto"
@@ -216,7 +216,7 @@ class TestFeedParser:
         assert podcast.title == "Varsovia Vento Podkasto"
         assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_high_num_episodes(self, categories):
         podcast = PodcastFactory()
         client = _mock_client(
@@ -241,7 +241,7 @@ class TestFeedParser:
         assert podcast.content_hash
         assert podcast.title == "Armstrong & Getty On Demand"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_ok_no_pub_date(self, categories):
         podcast = PodcastFactory(pub_date=None)
 
@@ -304,7 +304,7 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_same_content(self, mocker, categories):
         content = self.get_rss_content()
         podcast = PodcastFactory(content_hash=make_content_hash(content))
@@ -333,7 +333,7 @@ class TestFeedParser:
 
         mock_parse_rss.assert_not_called()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_podcast_another_feed_same_content(self, mocker, podcast, categories):
         content = self.get_rss_content()
 
@@ -363,7 +363,7 @@ class TestFeedParser:
 
         mock_parse_rss.assert_not_called()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_complete(self, podcast, categories):
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -420,7 +420,7 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_permanent_redirect(self, podcast, categories):
         client = _mock_client(
             url=self.redirect_rss,
@@ -445,7 +445,7 @@ class TestFeedParser:
         assert podcast.modified
         assert podcast.parsed
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_permanent_redirect_url_taken(self, podcast, categories):
         other = PodcastFactory(rss=self.redirect_rss)
         current_rss = podcast.rss
@@ -469,7 +469,7 @@ class TestFeedParser:
         assert not podcast.active
         assert podcast.parsed
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_invalid_data(self, podcast, categories):
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -487,7 +487,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 1
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_no_podcasts(self, podcast, categories):
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -505,7 +505,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 1
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_no_podcasts_max_retries(self, podcast, categories):
         podcast.num_retries = 3
 
@@ -525,7 +525,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 4
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_empty_feed(self, podcast, categories):
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -543,7 +543,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 1
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_not_modified(self, podcast, categories):
         client = _mock_client(
             status_code=http.HTTPStatus.NOT_MODIFIED,
@@ -563,7 +563,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 0
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_http_gone(self, podcast, categories):
         client = _mock_client(
             status_code=http.HTTPStatus.GONE,
@@ -579,7 +579,7 @@ class TestFeedParser:
         assert podcast.num_retries == 1
         assert podcast.parsed
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_http_server_error(self, podcast, categories):
         client = _mock_client(
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
@@ -595,7 +595,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 1
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_connect_error(self, podcast, categories):
         client = _mock_error_client(httpx.HTTPError("fail"))
 
@@ -610,7 +610,7 @@ class TestFeedParser:
         assert podcast.parsed
         assert podcast.num_retries == 1
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_parse_connect_max_retries(self, podcast, categories):
         podcast.num_retries = 3
 

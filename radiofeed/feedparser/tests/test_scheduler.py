@@ -148,7 +148,7 @@ class TestGetScheduledForUpdate:
             ),
         ],
     )
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_scheduled_podcasts(self, kwargs, exists):
         now = timezone.now()
 

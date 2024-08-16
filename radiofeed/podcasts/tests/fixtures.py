@@ -9,16 +9,16 @@ from radiofeed.podcasts.tests.factories import (
 from radiofeed.users.models import User
 
 
-@pytest.fixture()
+@pytest.fixture
 def podcast() -> Podcast:
     return PodcastFactory()
 
 
-@pytest.fixture()
+@pytest.fixture
 def category() -> Category:
     return CategoryFactory()
 
 
-@pytest.fixture()
+@pytest.fixture
 def subscription(auth_user: User, podcast: Podcast) -> Subscription:
     return SubscriptionFactory(podcast=podcast, subscriber=auth_user)

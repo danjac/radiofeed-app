@@ -9,7 +9,7 @@ from radiofeed.podcasts.tests.factories import (
 
 
 class TestRecommendations:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_send_if_no_recommendations(self, user, mailoutbox):
         """If no recommendations, don't send."""
         PodcastFactory.create_batch(3)
@@ -17,7 +17,7 @@ class TestRecommendations:
         assert not emails.send_recommendations_email(user)
         assert len(mailoutbox) == 0
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_send_promoted(self, user, mailoutbox):
         PodcastFactory.create_batch(3, promoted=True)
         emails.send_recommendations_email(user)
@@ -26,7 +26,7 @@ class TestRecommendations:
         assert mailoutbox[0].to == [user.email]
         assert user.recommended_podcasts.count() == 3
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_has_recommendations(self, user, mailoutbox):
         first = SubscriptionFactory(subscriber=user).podcast
         second = SubscriptionFactory(subscriber=user).podcast
@@ -45,7 +45,7 @@ class TestRecommendations:
         assert mailoutbox[0].to == [user.email]
         assert user.recommended_podcasts.count() == 4
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_already_recommended(self, user, mailoutbox):
         subscribed = SubscriptionFactory(subscriber=user).podcast
         recommended = RecommendationFactory(podcast=subscribed).recommended

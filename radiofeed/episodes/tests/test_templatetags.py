@@ -11,7 +11,7 @@ from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestMediaMetadata:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_media_metadata(self, rf):
         episode = EpisodeFactory(
             podcast=PodcastFactory(cover_url="https://mysite.com/test.jpg")
@@ -29,7 +29,7 @@ class TestMediaMetadata:
         assert data["artwork"][0]["sizes"] == "96x96"
         assert data["artwork"][0]["type"] == "image/webp"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_media_metadata_no_cover_url(self, rf):
         episode = EpisodeFactory(podcast=PodcastFactory(cover_url=None))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
@@ -48,7 +48,7 @@ class TestMediaMetadata:
 
 
 class TestAudioPlayer:
-    @pytest.fixture()
+    @pytest.fixture
     def defaults(self):
         return {
             "is_playing": False,
@@ -57,11 +57,11 @@ class TestAudioPlayer:
             "episode": None,
         }
 
-    @pytest.fixture()
+    @pytest.fixture
     def audio_log(self, user, episode):
         return AudioLogFactory(episode=episode, user=user)
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_is_anonymous(self, rf, anonymous_user, defaults):
         req = rf.get("/")
         req.user = anonymous_user
@@ -72,7 +72,7 @@ class TestAudioPlayer:
             "request": req,
         }
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_is_empty(self, rf, user, defaults):
         req = rf.get("/")
         req.user = user
@@ -80,7 +80,7 @@ class TestAudioPlayer:
         req.player = PlayerDetails(req)
         assert audio_player(RequestContext(req)) == defaults | {"request": req}
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_is_playing(self, rf, user, audio_log, defaults):
         req = rf.get("/")
         req.user = user
@@ -97,7 +97,7 @@ class TestAudioPlayer:
             "current_time": 1000,
         }
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_is_anonymous_is_playing(self, rf, anonymous_user, episode, defaults):
         req = rf.get("/")
         req.user = anonymous_user

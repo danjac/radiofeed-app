@@ -5,7 +5,7 @@ from radiofeed.podcasts.tests.factories import RecommendationFactory
 
 
 class TestCreateRecommendations:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_create_recommendations(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",

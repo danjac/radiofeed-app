@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
 
 
-@pytest.fixture()
+@pytest.fixture
 def site():
     return Site.objects.get_current()
 
@@ -23,7 +23,7 @@ def _settings_overrides(settings: Settings) -> None:
     settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _locmem_cache(settings: Settings) -> Generator:
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}

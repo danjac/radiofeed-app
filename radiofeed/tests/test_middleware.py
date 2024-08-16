@@ -13,23 +13,23 @@ from radiofeed.middleware import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def htmx_mw(get_response):
     return HtmxMiddleware(get_response)
 
 
-@pytest.fixture()
+@pytest.fixture
 def req(rf):
     return rf.get("/")
 
 
-@pytest.fixture()
+@pytest.fixture
 def htmx_req(rf):
     return rf.get("/", HTTP_HX_REQUEST="true")
 
 
 class TestHtmxRedirectMiddleware:
-    @pytest.fixture()
+    @pytest.fixture
     def get_redirect_response(self):
         def _get_response(req):
             resp = HttpResponse()
@@ -53,7 +53,7 @@ class TestHtmxRedirectMiddleware:
 
 
 class TestHtmxRestoreMiddleware:
-    @pytest.fixture()
+    @pytest.fixture
     def cache_mw(self, get_response):
         return HtmxRestoreMiddleware(get_response)
 
@@ -85,11 +85,11 @@ class TestHtmxRestoreMiddleware:
 
 
 class TestHtmxMessagesMiddleware:
-    @pytest.fixture()
+    @pytest.fixture
     def mw(self, get_response):
         return HtmxMessagesMiddleware(get_response)
 
-    @pytest.fixture()
+    @pytest.fixture
     def messages(self):
         return [
             {"message": "OK", "tags": "success"},
@@ -123,7 +123,7 @@ class TestHtmxMessagesMiddleware:
 
 
 class TestSearchMiddleware:
-    @pytest.fixture()
+    @pytest.fixture
     def mw(self, get_response):
         return SearchMiddleware(get_response)
 

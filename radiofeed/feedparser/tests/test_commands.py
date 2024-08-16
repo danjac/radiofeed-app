@@ -11,11 +11,11 @@ from radiofeed.podcasts.tests.factories import PodcastFactory
 class TestParseOpml:
     patched = "radiofeed.feedparser.management.commands.parse_opml.parse_opml"
 
-    @pytest.fixture()
+    @pytest.fixture
     def filename(self):
         return pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_command(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
         call_command("parse_opml", filename)
@@ -23,7 +23,7 @@ class TestParseOpml:
         assert not Podcast.objects.first().promoted
         patched.assert_called()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_promote(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
         call_command("parse_opml", filename, promote=True)
@@ -31,7 +31,7 @@ class TestParseOpml:
         assert Podcast.objects.first().promoted
         patched.assert_called()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_empty(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter([]))
         call_command("parse_opml", filename)
@@ -40,23 +40,23 @@ class TestParseOpml:
 
 
 class TestExportFeeds:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_ok(self, podcast):
         call_command("export_opml", "-")
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_promoted(self, podcast):
         call_command("export_opml", "-", promoted=True)
 
 
 class TestParseFeeds:
-    @pytest.fixture()
+    @pytest.fixture
     def mock_parse_ok(self, mocker):
         return mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_parse_fail(self, mocker):
         return mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",

@@ -13,12 +13,12 @@ from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestEpisodeManager:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_search(self):
         EpisodeFactory(title="testing")
         assert Episode.objects.search("testing").count() == 1
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_search_empty(self):
         EpisodeFactory(title="testing")
         assert Episode.objects.search("").count() == 0
@@ -27,15 +27,15 @@ class TestEpisodeManager:
 class TestEpisodeModel:
     link = "https://example.com"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_next_episode_if_none(self, episode):
         assert episode.get_next_episode() is None
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_previous_episode_if_none(self, episode):
         assert episode.get_previous_episode() is None
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_next_episode_not_same_podcast(self, episode):
         EpisodeFactory(
             pub_date=episode.pub_date + datetime.timedelta(days=2),
@@ -43,7 +43,7 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() is None
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_previous_episode_not_same_podcast(self, episode):
         EpisodeFactory(
             pub_date=episode.pub_date - datetime.timedelta(days=2),
@@ -51,7 +51,7 @@ class TestEpisodeModel:
 
         assert episode.get_previous_episode() is None
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_next_episode(self, episode):
         next_episode = EpisodeFactory(
             podcast=episode.podcast,
@@ -60,7 +60,7 @@ class TestEpisodeModel:
 
         assert episode.get_next_episode() == next_episode
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_previous_episode(self, episode):
         previous_episode = EpisodeFactory(
             podcast=episode.podcast,
@@ -139,18 +139,18 @@ class TestEpisodeModel:
     def test_get_file_size_if_none(self):
         assert Episode(length=None).get_file_size() is None
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_cover_url_if_episode_cover(self, podcast):
         episode = EpisodeFactory(
             podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
         )
         assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_cover_url_if_podcast_cover(self, episode):
         assert episode.get_cover_url() == "https://example.com/cover.jpg"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_get_cover_url_if_none(self):
         episode = EpisodeFactory(podcast=PodcastFactory(cover_url=None))
         assert episode.get_cover_url() is None
@@ -169,7 +169,7 @@ class TestEpisodeModel:
 
 
 class TestBookmarkManager:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_search(self):
         episode = EpisodeFactory(title="testing")
         BookmarkFactory(episode=episode)
@@ -177,7 +177,7 @@ class TestBookmarkManager:
 
 
 class TestAudioLogManager:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_search(self):
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)

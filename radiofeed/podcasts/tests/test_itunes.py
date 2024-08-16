@@ -28,7 +28,7 @@ def _mock_page(mock_file):
 
 
 class TestSearch:
-    @pytest.fixture()
+    @pytest.fixture
     def good_client(self):
         return httpx.Client(
             transport=httpx.MockTransport(
@@ -40,7 +40,7 @@ class TestSearch:
             timeout=DEFAULT_TIMEOUT,
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def invalid_client(self):
         return httpx.Client(
             transport=httpx.MockTransport(
@@ -59,7 +59,7 @@ class TestSearch:
             timeout=DEFAULT_TIMEOUT,
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def bad_client(self):
         def _handle(request):
             raise httpx.HTTPError("fail")
@@ -68,25 +68,25 @@ class TestSearch:
             transport=httpx.MockTransport(_handle), timeout=DEFAULT_TIMEOUT
         )
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_ok(self, good_client):
         feeds = itunes.search(good_client, "test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_not_ok(self, bad_client):
         feeds = itunes.search(bad_client, "test")
         assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_bad_data(self, invalid_client):
         feeds = itunes.search(invalid_client, "test")
         assert len(feeds) == 0
         assert list(feeds) == []
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     @pytest.mark.usefixtures("_locmem_cache")
     def test_is_not_cached(self, good_client):
         feeds = itunes.search(good_client, "test")
@@ -96,7 +96,7 @@ class TestSearch:
 
         assert cache.get(itunes.search_cache_key("test")) == MOCK_RESULT
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     @pytest.mark.usefixtures("_locmem_cache")
     def test_is_cached(self, good_client):
         cache.set(itunes.search_cache_key("test"), MOCK_RESULT)
@@ -106,7 +106,7 @@ class TestSearch:
         assert len(feeds) == 1
         assert not Podcast.objects.filter(rss=feeds[0].url).exists()
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_podcast_exists(self, good_client):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
 

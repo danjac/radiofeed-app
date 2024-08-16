@@ -12,7 +12,7 @@ from radiofeed.templatetags import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def req(rf, anonymous_user):
     req = rf.get("/")
     req.user = anonymous_user
@@ -21,7 +21,7 @@ def req(rf, anonymous_user):
     return req
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_req(req, user):
     req.user = user
     return req
@@ -97,16 +97,16 @@ class TestActiveLink:
 
 
 class TestAbsoluteUri:
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_plain_url(self):
         assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_https(self, settings):
         settings.SECURE_SSL_REDIRECT = True
         assert absolute_uri("/podcasts/") == "https://example.com/podcasts/"
 
-    @pytest.mark.django_db()
+    @pytest.mark.django_db
     def test_object(self, podcast):
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
