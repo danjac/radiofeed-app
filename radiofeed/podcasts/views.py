@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -18,7 +18,7 @@ from radiofeed.podcasts.models import Category, Podcast
 
 
 @require_safe
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Returns landing page."""
     if request.user.is_anonymous:
         podcasts = _get_promoted_podcasts().order_by("-pub_date")
