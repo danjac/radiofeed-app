@@ -96,8 +96,8 @@ def _get_response(client: httpx.Client, search_term: str) -> dict:
         response.raise_for_status()
         data = response.json()
 
-    except httpx.HTTPError as e:
-        logger.error(e)
+    except httpx.HTTPError as exc:
+        logger.exception(exc)
         return {}
 
     cache.set(cache_key, data, _CACHE_TIMEOUT)
