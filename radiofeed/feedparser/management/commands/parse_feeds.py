@@ -1,3 +1,4 @@
+import contextlib
 from concurrent.futures import wait
 
 import djclick as click
@@ -41,20 +42,5 @@ def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
 
 
 def _parse_feed(podcast: Podcast, client: httpx.Client) -> None:
-    try:
+    with contextlib.suppress(FeedParserError):
         feed_parser.parse_feed(podcast, client)
-        click.echo(
-            click.style(
-                f"{podcast}: OK",
-                bold=True,
-                fg="green",
-            )
-        )
-    except FeedParserError as exc:
-        click.echo(
-            click.style(
-                f"{podcast}: {exc.parser_error.label}",  # type: ignore[union-attr]
-                bold=True,
-                fg="red",
-            )
-        )

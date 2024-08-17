@@ -10,6 +10,7 @@ from django.db.models.functions import Lower
 from django.db.utils import DataError
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
+from loguru import logger
 
 from radiofeed import tokenizer
 from radiofeed.episodes.models import Episode
@@ -74,6 +75,7 @@ class _FeedParser:
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
+        logger.debug("Parsing {}...", self._podcast)
         try:
             response = self._get_response(client)
             content_hash = self._make_content_hash(response)
@@ -83,7 +85,9 @@ class _FeedParser:
                 content_hash=content_hash,
                 feed=rss_parser.parse_rss(response.content),
             )
+            logger.success("{}: OK", self._podcast)
         except FeedParserError as exc:
+            logger.error("{}: {}", self._podcast, exc.parser_error.label)
             self._handle_error(exc)
 
     def _make_content_hash(self, response: httpx.Response) -> str:
