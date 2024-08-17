@@ -87,7 +87,7 @@ class _FeedParser:
             )
             logger.success("{}: OK", self._podcast)
         except FeedParserError as exc:
-            logger.error("{}: {}", self._podcast, exc.parser_error.label)
+            logger.error("{}: {}", self._podcast, exc.parser_error.label)  # type: ignore[union-attr]
             self._handle_error(exc)
 
     def _make_content_hash(self, response: httpx.Response) -> str:
