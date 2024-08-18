@@ -382,7 +382,7 @@ LOGGING = {
             "propagate": False,
         },
         "django.request": {
-            "handlers": ["null"],
+            "handlers": ["console"],
             "propagate": False,
         },
         "environ": {
@@ -407,7 +407,7 @@ logger.remove(0)
 
 logger.add(
     sys.stderr,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> | <green>{extra}</green>",
+    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> | <green>{extra}</green>",
     colorize=True,
     backtrace=False,
     diagnose=False,

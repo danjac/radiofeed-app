@@ -1,17 +1,20 @@
 import argparse
 import contextlib
 from concurrent.futures import wait
+from typing import Final
 
-import httpx
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F, QuerySet
 from loguru import logger
 
 from radiofeed.feedparser import feed_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.http_client import get_client
+from radiofeed.http_client import Client, get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
+
+_VERBOSITY_NORMAL: Final = 1
+_VERBOSITY_VERBOSE: Final = 2
 
 
 class Command(BaseCommand):
@@ -32,10 +35,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Implementation of handle."""
         limit: int = options["limit"]
-        verbosity: int | None = options["verbosity"]
+        verbosity: int = options["verbosity"]
 
-        if verbosity and verbosity > 1:
+        if verbosity > _VERBOSITY_NORMAL:
             logger.enable("radiofeed.feedparser.feed_parser")
+        if verbosity > _VERBOSITY_VERBOSE:
+            logger.enable("radiofeed.http_client")
 
         client = get_client()
 
@@ -59,6 +64,6 @@ class Command(BaseCommand):
             )[:limit]
         )
 
-    def _parse_feed(self, podcast: Podcast, client: httpx.Client) -> None:
+    def _parse_feed(self, podcast: Podcast, client: Client) -> None:
         with contextlib.suppress(FeedParserError):
             feed_parser.parse_feed(podcast, client)

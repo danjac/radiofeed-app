@@ -26,6 +26,7 @@ from radiofeed.feedparser.exceptions import (
     UnavailableError,
 )
 from radiofeed.feedparser.models import Feed, Item
+from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 
 logger.disable(__name__)
@@ -45,7 +46,7 @@ def make_content_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def parse_feed(podcast: Podcast, client: httpx.Client) -> None:
+def parse_feed(podcast: Podcast, client: Client) -> None:
     """Updates a Podcast instance with its RSS or Atom feed source."""
     _FeedParser(podcast).parse(client)
 
@@ -69,7 +70,7 @@ class _FeedParser:
         self._podcast = podcast
         self._logger = logger.bind(podcast=str(self._podcast))
 
-    def parse(self, client: httpx.Client) -> None:
+    def parse(self, client: Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
 
         Podcast details are updated and episodes created, updated or deleted
@@ -89,7 +90,6 @@ class _FeedParser:
             )
             self._logger.success("Parsed OK")
         except FeedParserError as exc:
-            self._logger.error("Parser error: {error}", error=exc.parser_error.label)  # type: ignore[union-attr]
             self._handle_error(exc)
 
     def _make_content_hash(self, response: httpx.Response) -> str:
@@ -146,19 +146,16 @@ class _FeedParser:
         except DataError as exc:
             raise InvalidDataError from exc
 
-    def _get_response(self, client: httpx.Client) -> httpx.Response:
+    def _get_response(self, client: Client) -> httpx.Response:
         try:
-            response = client.get(self._podcast.rss, headers=self._get_headers())
             try:
-                response.raise_for_status()
+                return client.get(self._podcast.rss, headers=self._get_headers())
             except httpx.HTTPStatusError as exc:
                 if exc.response.is_redirect:
                     raise NotModifiedError from exc
                 if exc.response.is_client_error:
                     raise InaccessibleError from exc
                 raise
-
-            return response
         except httpx.HTTPError as exc:
             raise UnavailableError from exc
 
@@ -171,6 +168,7 @@ class _FeedParser:
         return headers
 
     def _handle_error(self, exc: FeedParserError) -> None:
+        self._logger.error("Parser error: {error}", error=exc.parser_error.label)  # type: ignore[union-attr]
         num_retries: int = self._podcast.num_retries
         active: bool = True
 

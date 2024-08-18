@@ -225,7 +225,6 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     try:
         response = get_client().get(cover_url)
-        response.raise_for_status()
 
         image = Image.open(io.BytesIO(response.content)).resize(
             (size, size),

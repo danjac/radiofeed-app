@@ -9,8 +9,8 @@ from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.functional import cached_property
 from django.utils.http import urlsafe_base64_encode
-from loguru import logger
 
+from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24
@@ -57,7 +57,7 @@ class FeedResultSet:
         return list(self._feeds)
 
 
-def search(client: httpx.Client, search_term: str) -> FeedResultSet:
+def search(client: Client, search_term: str) -> FeedResultSet:
     """Runs cached search for podcasts on iTunes API."""
     response = _get_response(client, search_term)
 
@@ -76,7 +76,7 @@ def search_cache_key(search_term: str) -> str:
     )
 
 
-def _get_response(client: httpx.Client, search_term: str) -> dict:
+def _get_response(client: Client, search_term: str) -> dict:
     cache_key = search_cache_key(search_term)
 
     if cached := cache.get(cache_key):
@@ -93,11 +93,9 @@ def _get_response(client: httpx.Client, search_term: str) -> dict:
                 "Accept": "application/json",
             },
         )
-        response.raise_for_status()
         data = response.json()
 
-    except httpx.HTTPError as exc:
-        logger.exception(exc)
+    except httpx.HTTPError:
         return {}
 
     cache.set(cache_key, data, _CACHE_TIMEOUT)

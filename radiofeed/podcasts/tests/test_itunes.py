@@ -5,7 +5,7 @@ import httpx
 import pytest
 from django.core.cache import cache
 
-from radiofeed.http_client import DEFAULT_TIMEOUT
+from radiofeed.http_client import Client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
@@ -30,19 +30,18 @@ def _mock_page(mock_file):
 class TestSearch:
     @pytest.fixture
     def good_client(self):
-        return httpx.Client(
+        return Client(
             transport=httpx.MockTransport(
                 lambda request: httpx.Response(
                     http.HTTPStatus.OK,
                     json=MOCK_RESULT,
                 )
             ),
-            timeout=DEFAULT_TIMEOUT,
         )
 
     @pytest.fixture
     def invalid_client(self):
-        return httpx.Client(
+        return Client(
             transport=httpx.MockTransport(
                 lambda request: httpx.Response(
                     http.HTTPStatus.OK,
@@ -56,7 +55,6 @@ class TestSearch:
                     },
                 )
             ),
-            timeout=DEFAULT_TIMEOUT,
         )
 
     @pytest.fixture
@@ -64,9 +62,7 @@ class TestSearch:
         def _handle(request):
             raise httpx.HTTPError("fail")
 
-        return httpx.Client(
-            transport=httpx.MockTransport(_handle), timeout=DEFAULT_TIMEOUT
-        )
+        return Client(transport=httpx.MockTransport(_handle))
 
     @pytest.mark.django_db
     def test_ok(self, good_client):
