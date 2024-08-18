@@ -29,8 +29,6 @@ from radiofeed.feedparser.models import Feed, Item
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 
-logger.disable(__name__)
-
 
 @functools.cache
 def get_categories() -> dict[str, Category]:

@@ -15,8 +15,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 from radiofeed import tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
-logger.disable(__name__)
-
 
 def recommend(language: str) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by

@@ -4,8 +4,6 @@ import functools
 import httpx
 from loguru import logger
 
-logger.disable(__name__)
-
 
 @dataclasses.dataclass
 class Client:

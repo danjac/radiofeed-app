@@ -403,6 +403,11 @@ LOGGING = {
     },
 }
 
+# Loguru
+# https://loguru.readthedocs.io/en/stable
+
+LOGURU_LEVEL = env("LOGURU_LEVEL", default="CRITICAL")
+
 logger.remove(0)
 
 logger.add(
@@ -411,7 +416,7 @@ logger.add(
     colorize=True,
     backtrace=False,
     diagnose=False,
-    level="DEBUG",
+    level=LOGURU_LEVEL,
 )
 
 # Django version checks

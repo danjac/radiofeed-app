@@ -70,18 +70,6 @@ class TestParseFeeds:
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db()(transaction=True)
-    def test_verbose(self, mock_parse_ok):
-        PodcastFactory(pub_date=None)
-        call_command("parse_feeds", verbosity=2)
-        mock_parse_ok.assert_called()
-
-    @pytest.mark.django_db()(transaction=True)
-    def test_very_verbose(self, mock_parse_ok):
-        PodcastFactory(pub_date=None)
-        call_command("parse_feeds", verbosity=3)
-        mock_parse_ok.assert_called()
-
-    @pytest.mark.django_db()(transaction=True)
     def test_not_scheduled(self, mock_parse_ok):
         PodcastFactory(active=False)
         call_command("parse_feeds")
