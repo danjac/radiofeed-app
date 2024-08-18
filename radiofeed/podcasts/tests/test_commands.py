@@ -16,6 +16,17 @@ class TestCreateRecommendations:
         call_command("create_recommendations")
         patched.assert_called()
 
+    @pytest.mark.django_db
+    def test_verbose(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.recommender.recommend",
+            return_value=[
+                ("en", RecommendationFactory.create_batch(3)),
+            ],
+        )
+        call_command("create_recommendations", verbosity=2)
+        patched.assert_called()
+
 
 class TestSendRecommendationsEmails:
     @pytest.mark.django_db()(transaction=True)

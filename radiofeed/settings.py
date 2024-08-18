@@ -1,9 +1,11 @@
 import pathlib
+import sys
 from email.utils import getaddresses
 
 import environ
 import sentry_sdk
 from django.urls import reverse_lazy
+from loguru import logger
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
@@ -380,7 +382,7 @@ LOGGING = {
             "propagate": False,
         },
         "django.request": {
-            "level": "CRITICAL",
+            "handlers": ["null"],
             "propagate": False,
         },
         "environ": {
@@ -400,6 +402,17 @@ LOGGING = {
         },
     },
 }
+
+logger.remove(0)
+
+logger.add(
+    sys.stderr,
+    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> | <green>{extra}</green>",
+    colorize=True,
+    backtrace=False,
+    diagnose=False,
+    level="DEBUG",
+)
 
 # Django version checks
 # https://pypi.org/project/django-version-checks/

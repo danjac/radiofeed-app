@@ -1,39 +1,52 @@
-import djclick as click
+import argparse
+import sys
+from typing import IO
+
 from django.contrib.sites.models import Site
+from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
 
 from radiofeed.podcasts.models import Podcast
 
 
-@click.command(help="Generate OPML document from all public feeds")
-@click.argument("output", type=click.File("w"))
-@click.option(
-    "--promoted/--no-promoted",
-    default=False,
-    help="Export only promoted podcasts",
-)
-def command(output: click.File, *, promoted: bool) -> None:
-    """Implementation of command."""
-    podcasts = Podcast.objects.filter(
-        private=False,
-        pub_date__isnull=False,
-    ).order_by("title")
+class Command(BaseCommand):
+    """BaseCommand subclass"""
 
-    if promoted:
-        podcasts = podcasts.filter(promoted=True)
-    output.write(
-        render_to_string(
-            "feedparser/podcasts.opml",
-            {
-                "podcasts": podcasts,
-                "site": Site.objects.get_current(),
-            },
+    help = "Generate OPML document from all public feeds"
+
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
+        """Add command-line arguments"""
+        parser.add_argument(
+            "file",
+            type=argparse.FileType("w"),
+            default=sys.stdout,
         )
-    )
-    click.echo(
-        click.style(
-            f"{podcasts.count()} podcasts exported",
-            bold=True,
-            fg="green",
+        parser.add_argument(
+            "--promoted",
+            action="store_true",
+            default=False,
+            help="Export only promoted podcasts",
         )
-    )
+
+    def handle(self, **options) -> None:
+        """Implementation of command."""
+        writer: IO = options["file"]
+        promoted: bool = options["promoted"]
+
+        podcasts = Podcast.objects.filter(
+            private=False,
+            pub_date__isnull=False,
+        ).order_by("title")
+
+        if promoted:
+            podcasts = podcasts.filter(promoted=True)
+
+        writer.write(
+            render_to_string(
+                "feedparser/podcasts.opml",
+                {
+                    "podcasts": podcasts,
+                    "site": Site.objects.get_current(),
+                },
+            )
+        )

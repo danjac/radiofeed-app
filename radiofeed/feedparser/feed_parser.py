@@ -28,6 +28,8 @@ from radiofeed.feedparser.exceptions import (
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
 
+logger.disable(__name__)
+
 
 @functools.cache
 def get_categories() -> dict[str, Category]:
@@ -65,6 +67,7 @@ class _FeedParser:
 
     def __init__(self, podcast: Podcast) -> None:
         self._podcast = podcast
+        self._logger = logger.bind(podcast=str(self._podcast))
 
     def parse(self, client: httpx.Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
@@ -75,7 +78,6 @@ class _FeedParser:
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
-        logger.debug("Parsing {}...", self._podcast)
         try:
             response = self._get_response(client)
             content_hash = self._make_content_hash(response)
@@ -85,9 +87,9 @@ class _FeedParser:
                 content_hash=content_hash,
                 feed=rss_parser.parse_rss(response.content),
             )
-            logger.success("{}: OK", self._podcast)
+            self._logger.success("Parsed OK")
         except FeedParserError as exc:
-            logger.error("{}: {}", self._podcast, exc.parser_error.label)  # type: ignore[union-attr]
+            self._logger.error("Parser error: {error}", error=exc.parser_error.label)  # type: ignore[union-attr]
             self._handle_error(exc)
 
     def _make_content_hash(self, response: httpx.Response) -> str:

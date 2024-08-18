@@ -651,24 +651,6 @@ asgiref = ">=3.6"
 django = ">=3.2"
 
 [[package]]
-name = "django-click"
-version = "2.4.0"
-description = "Build Django management commands using the click CLI package."
-optional = false
-python-versions = "*"
-files = [
-    {file = "django_click-2.4.0-py2.py3-none-any.whl", hash = "sha256:3c64a31cf25e54d3fccaea3af8d46d0b63511da2722e5888612aeee4d81e46d4"},
-    {file = "django_click-2.4.0.tar.gz", hash = "sha256:ef935b611040d123b60e88eb2952c4838b4538b14d248114128fcccb4418685d"},
-]
-
-[package.dependencies]
-click = ">=7.1"
-
-[package.extras]
-folders-vx-6s8qx4z51pv2snps55k6zv100000gq-t-build-via-sdist-9fqb03nr-django-click-2-4-0-requirements-dev = ["Fabric", "Sphinx", "check-manifest", "flake8", "livereload", "mccabe", "pep8", "pep8-naming", "pyflakes", "sphinx-autobuild", "sphinx-rtd-theme", "wheel"]
-folders-vx-6s8qx4z51pv2snps55k6zv100000gq-t-build-via-sdist-9fqb03nr-django-click-2-4-0-requirements-test = ["coverage (<5)", "pytest", "pytest-cov", "pytest-django", "pytest-flake8"]
-
-[[package]]
 name = "django-csp"
 version = "3.8"
 description = "Django Content Security Policy support."
@@ -3043,4 +3025,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "a5e8e5a3f6f17d32da0fd1a6c778d3e8dd4e10d3f324277324958d331c80ff70"
+content-hash = "aeb99cfd8f9989744dceb26856e51913b1f9a5da139a041e68321f965daa119c"

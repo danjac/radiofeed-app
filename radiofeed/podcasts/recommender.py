@@ -15,6 +15,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from radiofeed import tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
+logger.disable(__name__)
+
 
 def recommend(language: str) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by
@@ -42,11 +44,13 @@ class _Recommender:
             stop_words=list(tokenizer.get_stopwords(self._language))
         )
 
+        self._logger = logger.bind(language=self._language)
+
     def recommend(self) -> None:
         """Creates recommendation instances."""
 
         # Delete existing recommendations first
-        logger.debug("Deleting current recommendations ({})", self._language)
+        self._logger.debug("Deleting current recommendations")
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in itertools.batched(self._build_matches_dict().items(), 1000):
@@ -70,8 +74,8 @@ class _Recommender:
         matches = collections.defaultdict(list)
 
         for category in get_categories():
-            logger.debug(
-                "Recommendations for category {} ({})", category, self._language
+            self._logger.debug(
+                "Recommendations for category {category}", category=category.name
             )
             for batch in itertools.batched(
                 self._get_podcasts(category)

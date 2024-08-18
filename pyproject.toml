@@ -18,7 +18,6 @@ brotli = "^1.1.0"
 dj-database-url = "^2.2.0"
 django-allauth = {version = "^64.0.0", extras = ["socialaccount"]}
 django-anymail = "^11.1"
-django-click = "^2.4.0"
 django-csp = "^3.8"
 django-environ = "^0.11.2"
 django-extensions = "^3.2.3"
