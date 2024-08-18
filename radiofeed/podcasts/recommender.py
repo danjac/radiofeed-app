@@ -72,9 +72,7 @@ class _Recommender:
         matches = collections.defaultdict(list)
 
         for category in get_categories():
-            self._logger.debug(
-                "Recommendations for category {category}", category=category.name
-            )
+            self._logger.debug("Recommendations for category", category=category.name)
             for batch in itertools.batched(
                 self._get_podcasts(category)
                 .values_list("id", "extracted_text")

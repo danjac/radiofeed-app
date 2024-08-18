@@ -412,7 +412,15 @@ logger.remove(0)
 
 logger.add(
     sys.stderr,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> | <green>{extra}</green>",
+    format=" | ".join(
+        [
+            "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>",
+            "<level>{level}</level>",
+            "<cyan>{name}:{function}:{line}</cyan>",
+            "<green>{message}</green>",
+            "<green>{extra}</green>",
+        ]
+    ),
     colorize=True,
     backtrace=False,
     diagnose=False,

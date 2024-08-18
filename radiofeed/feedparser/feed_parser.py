@@ -166,7 +166,7 @@ class _FeedParser:
         return headers
 
     def _handle_error(self, exc: FeedParserError) -> None:
-        self._logger.error("Parser error: {error}", error=exc.parser_error.label)  # type: ignore[union-attr]
+        self._logger.error("Parser error", error=exc.parser_error.label)  # type: ignore[union-attr]
         num_retries: int = self._podcast.num_retries
         active: bool = True
 
