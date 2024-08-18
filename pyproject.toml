@@ -38,7 +38,7 @@ loguru = "^0.7.2"
 lxml = "^5.2.2"
 markdown-it-py = {version = "^3.0.0", extras = ["linkify"]}
 nh3 = "^0.2.18"
-nltk = "^3.9"
+nltk = "3.9b1"
 pillow = "^10.4.0"
 psutil = "^6.0.0"
 psycopg = {version = "^3.2.1", extras = ["binary"]}
