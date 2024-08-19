@@ -66,7 +66,14 @@ class _FeedParser:
 
     def __init__(self, podcast: Podcast) -> None:
         self._podcast = podcast
-        self._logger = logger.bind(podcast=str(self._podcast))
+
+        self._logger = logger.bind(
+            podcast={
+                "title": self._podcast.title,
+                "rss": self._podcast.rss,
+                "id": self._podcast.pk,
+            }
+        )
 
     def parse(self, client: Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.

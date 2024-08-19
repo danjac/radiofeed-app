@@ -414,7 +414,7 @@ logger.add(
     sys.stderr,
     format=" | ".join(
         [
-            "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>",
+            "<green>{time:YYYY-MM-DD HH:mm:ss}</green>",
             "<level>{level}</level>",
             "<cyan>{name}:{function}:{line}</cyan>",
             "<green>{message}</green>",
