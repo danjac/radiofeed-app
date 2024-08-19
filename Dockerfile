@@ -29,23 +29,15 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    POETRY_NO_INTERACTION=true \
-    POETRY_VIRTUALENVS_IN_PROJECT=false \
-    POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+    PIP_ROOT_USER_ACTION=ignore
 
 WORKDIR /app
 
 # Python requirements
 
-RUN pip install poetry==1.8.3
+COPY ./requirements.txt /app/requirements.txt
 
-COPY ./pyproject.toml /app/pyproject.toml
-
-COPY ./poetry.lock /app/poetry.lock
-
-RUN poetry install --without=dev --no-root && rm -rf $POETRY_CACHE_DIR
+RUN pip install -r /app/requirements.txt
 
 # Download NLTK files
 

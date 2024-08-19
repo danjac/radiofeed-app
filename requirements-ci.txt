@@ -31,9 +31,7 @@ cffi==1.17.0
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via
-    #   django-click
-    #   nltk
+    # via nltk
 coverage==7.6.1
     # via
     #   radiofeed (pyproject.toml)
@@ -66,8 +64,6 @@ django-allauth==64.1.0
 django-anymail==11.1
     # via radiofeed (pyproject.toml)
 django-browser-reload==1.15.0
-    # via radiofeed (pyproject.toml)
-django-click==2.4.0
     # via radiofeed (pyproject.toml)
 django-csp==3.8
     # via radiofeed (pyproject.toml)

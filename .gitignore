@@ -40,4 +40,5 @@ node_modules/
 npm-debug.log*
 staticfiles
 venv
+requirements-ci.txt
 assets/dist/
