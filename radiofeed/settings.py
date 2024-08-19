@@ -408,26 +408,27 @@ LOGGING = {
 
 LOGURU_LEVEL = env("LOGURU_LEVEL", default="CRITICAL")
 
-logger.remove(0)
-
-logger.add(
-    sys.stderr,
-    format=" | ".join(
-        [
-            "<green>{time:YYYY-MM-DD HH:mm:ss}</green>",
-            "<level>{level}</level>",
-            "<cyan>{name}:{function}:{line}</cyan>",
-            "<green>{message}</green>",
-            "<green>{extra}</green>",
-        ]
-    ),
-    colorize=True,
-    backtrace=False,
-    diagnose=False,
-    level=LOGURU_LEVEL,
+logger.configure(
+    handlers=[
+        {
+            "sink": sys.stderr,
+            "level": LOGURU_LEVEL,
+            "format": " | ".join(
+                [
+                    "<green>{time:YYYY-MM-DD HH:mm:ss}</green>",
+                    "<level>{level}</level>",
+                    "<cyan>{name}:{function}:{line}</cyan>",
+                    "<green>{message}</green>",
+                    "<green>{extra}</green>",
+                ]
+            ),
+            "colorize": True,
+            "backtrace": False,
+            "diagnose": False,
+        },
+    ],
 )
 
-# Django version checks
 # https://pypi.org/project/django-version-checks/
 
 VERSION_CHECKS = {
