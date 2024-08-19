@@ -43,6 +43,7 @@ django==5.1
     #   django-model-utils
     #   django-permissions-policy
     #   django-redis
+    #   django-version-checks
     #   heroicons
 django-allauth==64.1.0
     # via radiofeed (pyproject.toml)
@@ -65,6 +66,8 @@ django-model-utils==4.5.1
 django-permissions-policy==4.21.0
     # via radiofeed (pyproject.toml)
 django-redis==5.4.0
+    # via radiofeed (pyproject.toml)
+django-version-checks==1.12.0
     # via radiofeed (pyproject.toml)
 gunicorn==23.0.0
     # via radiofeed (pyproject.toml)
@@ -108,7 +111,9 @@ numpy==2.1.0
 oauthlib==3.2.2
     # via requests-oauthlib
 packaging==24.1
-    # via gunicorn
+    # via
+    #   django-version-checks
+    #   gunicorn
 pillow==10.4.0
     # via radiofeed (pyproject.toml)
 psutil==6.0.0

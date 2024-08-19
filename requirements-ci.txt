@@ -58,6 +58,7 @@ django==5.1
     #   django-model-utils
     #   django-permissions-policy
     #   django-redis
+    #   django-version-checks
     #   heroicons
 django-allauth==64.1.0
     # via radiofeed (pyproject.toml)
@@ -84,6 +85,8 @@ django-model-utils==4.5.1
 django-permissions-policy==4.21.0
     # via radiofeed (pyproject.toml)
 django-redis==5.4.0
+    # via radiofeed (pyproject.toml)
+django-version-checks==1.12.0
     # via radiofeed (pyproject.toml)
 execnet==2.1.1
     # via pytest-xdist
@@ -160,6 +163,7 @@ oauthlib==3.2.2
     # via requests-oauthlib
 packaging==24.1
     # via
+    #   django-version-checks
     #   gunicorn
     #   pytest
     #   pytest-sugar

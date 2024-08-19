@@ -26,6 +26,7 @@ dependencies = [
     "django-model-utils",
     "django-permissions-policy",
     "django-redis",
+    "django-version-checks",
     "gunicorn",
     "heroicons[django]",
     "hiredis",
