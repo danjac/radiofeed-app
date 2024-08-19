@@ -80,3 +80,4 @@ repos:
       rev: 1.8.0
       hooks:
           - id: poetry-check
+          - id: poetry-lock
