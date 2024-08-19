@@ -429,6 +429,23 @@ logger.configure(
     ],
 )
 
+# Sentry
+# https://docs.sentry.io/platforms/python/guides/django/
+
+if SENTRY_URL := env("SENTRY_URL", default=None):
+    ignore_logger("django.security.DisallowedHost")
+
+    sentry_sdk.init(
+        dsn=SENTRY_URL,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=0.5,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
+
+# Health checks
+
 # https://pypi.org/project/django-version-checks/
 
 VERSION_CHECKS = {
@@ -474,20 +491,7 @@ PWA_CONFIG = {
     },
 }
 
-# Sentry
-# https://docs.sentry.io/platforms/python/guides/django/
-
-if SENTRY_URL := env("SENTRY_URL", default=None):
-    ignore_logger("django.security.DisallowedHost")
-
-    sentry_sdk.init(
-        dsn=SENTRY_URL,
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=0.5,
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
-        send_default_pii=True,
-    )
+# Dev tools
 
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
