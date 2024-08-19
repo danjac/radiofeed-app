@@ -452,7 +452,7 @@ VERSION_CHECKS = {
     "postgresql": "~=16.2",
     "python": "==3.12.*",
 }
-# Health checks
+
 # https://pypi.org/project/django-health-check/
 
 HEALTH_CHECK = {
