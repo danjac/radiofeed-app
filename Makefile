@@ -2,10 +2,13 @@ install: pyinstall npminstall precommitinstall nltkdownload
 update: pyupdate npmupdate precommitupdate
 
 pyinstall:
-	poetry install
+	uv venv && source .venv/bin/activate
+	uv pip install -r requirements-ci.txt
 
 pyupdate:
-	poetry update
+	uv pip compile pyproject.toml --upgrade -o requirements.txt
+	uv pip compile pyproject.toml --upgrade --extra dev -o requirements-ci.txt
+	uv pip sync requirements-ci.txt
 
 npminstall:
 	npm ci

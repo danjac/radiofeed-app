@@ -76,8 +76,14 @@ repos:
       rev: v0.19
       hooks:
           - id: validate-pyproject
-    - repo: https://github.com/python-poetry/poetry
-      rev: 1.8.0
+    - repo: https://github.com/astral-sh/uv-pre-commit
+      rev: 0.2.34
       hooks:
-          - id: poetry-check
-          - id: poetry-lock
+        - id: pip-compile
+          name: pip-compile
+          args: [pyproject.toml, -o, requirements.txt]
+          files: pyproject.toml|requirements.txt
+        - id: pip-compile
+          name: pip-compile ci
+          args: [pyproject.toml, --extra, dev, -o, requirements-ci.txt]
+          files: pyproject.toml|requirements-ci.txt
