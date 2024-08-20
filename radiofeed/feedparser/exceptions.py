@@ -1,3 +1,5 @@
+import httpx
+
 from radiofeed.podcasts.models import Podcast
 
 
@@ -5,6 +7,10 @@ class FeedParserError(ValueError):
     """Base feed parser exception."""
 
     parser_error: tuple[str, str] | None = None
+
+    def __init__(self, *args, response: httpx.Response | None = None, **kwargs):
+        self.response = response
+        super().__init__(*args, **kwargs)
 
 
 class DuplicateError(FeedParserError):

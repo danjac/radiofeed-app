@@ -2,6 +2,7 @@ import functools
 import hashlib
 import itertools
 from collections.abc import Iterator
+from datetime import datetime
 
 import httpx
 from django.db import transaction
@@ -84,6 +85,7 @@ class _FeedParser:
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
+        response: httpx.Response | None = None
         try:
             response = self._get_response(client)
             content_hash = self._make_content_hash(response)
@@ -95,7 +97,7 @@ class _FeedParser:
             )
             self._logger.success("Parsed OK")
         except FeedParserError as exc:
-            self._handle_error(exc)
+            self._handle_error(exc, response or exc.response)
 
     def _make_content_hash(self, response: httpx.Response) -> str:
         content_hash = make_content_hash(response.content)
@@ -133,8 +135,8 @@ class _FeedParser:
                     keywords=keywords,
                     rss=response.url,
                     active=not (feed.complete),
-                    etag=response.headers.get("ETag", ""),
-                    modified=parse_date(response.headers.get("Last-Modified")),
+                    etag=self._parse_etag(response),
+                    modified=self._parse_modified(response),
                     extracted_text=self._extract_text(feed),
                     frequency=scheduler.schedule(feed),
                     **feed.model_dump(
@@ -157,12 +159,18 @@ class _FeedParser:
                 return client.get(self._podcast.rss, headers=self._get_headers())
             except httpx.HTTPStatusError as exc:
                 if exc.response.is_redirect:
-                    raise NotModifiedError from exc
+                    raise NotModifiedError(response=exc.response) from exc
                 if exc.response.is_client_error:
-                    raise InaccessibleError from exc
+                    raise InaccessibleError(response=exc.response) from exc
                 raise
         except httpx.HTTPError as exc:
             raise UnavailableError from exc
+
+    def _parse_etag(self, response: httpx.Response) -> str:
+        return response.headers.get("ETag", "")
+
+    def _parse_modified(self, response: httpx.Response) -> datetime | None:
+        return parse_date(response.headers.get("Last-Modified"))
 
     def _get_headers(self) -> dict[str, str]:
         headers = {"Accept": self._accept_header}
@@ -172,10 +180,20 @@ class _FeedParser:
             headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
         return headers
 
-    def _handle_error(self, exc: FeedParserError) -> None:
+    def _handle_error(
+        self, exc: FeedParserError, response: httpx.Response | None = None
+    ) -> None:
         self._logger.error("Parser error", error=exc.parser_error.label)  # type: ignore[union-attr]
         num_retries: int = self._podcast.num_retries
+
         active: bool = True
+
+        if response:
+            etag = self._parse_etag(response)
+            modified = self._parse_modified(response)
+        else:
+            etag = self._podcast.etag
+            modified = self._podcast.modified
 
         match exc:
             case DuplicateError():
@@ -212,6 +230,8 @@ class _FeedParser:
             active=active,
             num_retries=num_retries,
             frequency=frequency,
+            etag=etag,
+            modified=modified,
             parser_error=exc.parser_error,
         )
 

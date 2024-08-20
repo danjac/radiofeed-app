@@ -326,7 +326,8 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.NOT_MODIFIED
 
         assert podcast.active
-        assert podcast.modified is None
+        assert podcast.etag
+        assert podcast.modified
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()
@@ -356,7 +357,7 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.DUPLICATE
 
         assert podcast.active is False
-        assert podcast.modified is None
+        assert podcast.modified
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()
@@ -490,6 +491,10 @@ class TestFeedParser:
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
             content=self.get_rss_content("rss_no_podcasts_mock.xml"),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
         )
 
         with pytest.raises(InvalidRSSError):
@@ -501,6 +506,8 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
+        assert podcast.etag
+        assert podcast.modified
         assert podcast.num_retries == 1
 
     @pytest.mark.django_db
