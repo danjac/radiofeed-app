@@ -409,7 +409,7 @@ LOGGING = {
 # Loguru
 # https://loguru.readthedocs.io/en/stable
 
-LOGURU_LEVEL = env("LOGURU_LEVEL", default="CRITICAL")
+LOGURU_LEVEL = env("LOGURU_LEVEL", default="DEBUG")
 
 logger.configure(
     handlers=[
