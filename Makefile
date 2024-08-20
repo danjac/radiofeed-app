@@ -6,8 +6,8 @@ pyinstall:
 	uv pip install -r requirements-ci.txt
 
 pyupdate:
-	uv pip compile pyproject.toml --upgrade -o requirements.txt
-	uv pip compile pyproject.toml --upgrade --extra dev -o requirements-ci.txt
+	uv pip compile pyproject.toml --no-annotate --no-header --upgrade -o requirements.txt
+	uv pip compile pyproject.toml --no-annotate --no-header --upgrade --extra dev -o requirements-ci.txt
 	uv pip sync requirements-ci.txt
 
 npminstall:

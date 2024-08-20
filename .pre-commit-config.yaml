@@ -81,9 +81,9 @@ repos:
       hooks:
         - id: pip-compile
           name: pip-compile
-          args: [pyproject.toml, -o, requirements.txt]
+          args: [pyproject.toml, --no-annotate, --no-header, -o, requirements.txt]
           files: pyproject.toml|requirements.txt
         - id: pip-compile
           name: pip-compile ci
-          args: [pyproject.toml, --extra, dev, -o, requirements-ci.txt]
+          args: [pyproject.toml, --no-annotate, --no-header, --extra, dev, -o, requirements-ci.txt]
           files: pyproject.toml|requirements-ci.txt
