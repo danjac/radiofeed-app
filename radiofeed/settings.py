@@ -11,6 +11,9 @@ from sentry_sdk.integrations.logging import ignore_logger
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
+# by default, environ logs all the variables, which we don't want
+logger.disable("environ.environ")
+
 env = environ.Env()
 
 environ.Env.read_env(BASE_DIR / ".env")
