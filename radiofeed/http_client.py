@@ -42,14 +42,14 @@ class Client:
             http_logger.error(
                 "Status Error",
                 status=exc.response.status_code,
-                response_headers=exc.response.headers,
+                response_headers=dict(exc.response.headers),
             )
             raise
 
         http_logger.success(
             "Response OK",
             status=response.status_code,
-            response_headers=response.headers,
+            response_headers=dict(response.headers),
         )
         return response
 
