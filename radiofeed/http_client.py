@@ -23,11 +23,11 @@ class Client:
             timeout=timeout,
             **kwargs,
         )
-        self._logger = logger.bind(headers=headers)
+        self._logger = logger.bind(request_headers=headers)
 
     def get(self, url: str, headers: dict | None = None, **kwargs) -> httpx.Response:
         """Does an HTTP GET request."""
-        http_logger = self._logger.bind(url=url, headers=headers)
+        http_logger = self._logger.bind(url=url, request_headers=headers)
         http_logger.debug("Request")
 
         try:
@@ -39,10 +39,18 @@ class Client:
         try:
             response.raise_for_status()
         except httpx.HTTPStatusError as exc:
-            http_logger.error("Status Error", status=exc.response.status_code)
+            http_logger.error(
+                "Status Error",
+                status=exc.response.status_code,
+                response_headers=exc.response.headers,
+            )
             raise
 
-        http_logger.success("Response OK", status=response.status_code)
+        http_logger.success(
+            "Response OK",
+            status=response.status_code,
+            response_headers=response.headers,
+        )
         return response
 
 
