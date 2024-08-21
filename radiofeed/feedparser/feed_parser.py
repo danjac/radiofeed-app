@@ -329,7 +329,7 @@ class _FeedParser:
     ) -> Iterator[Episode]:
         episode_ids = set()
 
-        for item in (item for item in feed.items if item.guid in guids):
+        for item in [item for item in feed.items if item.guid in guids]:
             if (episode_id := guids[item.guid]) not in episode_ids:
                 yield self._make_episode(item, episode_id)
                 episode_ids.add(episode_id)
