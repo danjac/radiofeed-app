@@ -2,6 +2,7 @@ import dataclasses
 import functools
 
 import httpx
+from django.conf import settings
 from loguru import logger
 
 
@@ -17,21 +18,29 @@ class Client:
         timeout: int = 5,
         **kwargs,
     ) -> None:
+        self._headers = {
+            "User-Agent": settings.USER_AGENT,
+        } | (headers or {})
+
         self._client = httpx.Client(
-            headers=headers,
+            headers=self._headers,
             follow_redirects=follow_redirects,
             timeout=timeout,
             **kwargs,
         )
+
         self._logger = logger.bind(request_headers=headers)
 
     def get(self, url: str, headers: dict | None = None, **kwargs) -> httpx.Response:
         """Does an HTTP GET request."""
-        http_logger = self._logger.bind(url=url, request_headers=headers)
+        http_logger = self._logger.bind(
+            url=url,
+            request_headers=self._headers | (headers or {}),
+        )
         http_logger.debug("HTTP Request")
 
         try:
-            response = self._client.get(url, **kwargs)
+            response = self._client.get(url, headers=headers, **kwargs)
         except httpx.HTTPError as exc:
             http_logger.error("HTTP Error", exception=exc)
             raise
