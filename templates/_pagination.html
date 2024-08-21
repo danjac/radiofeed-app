@@ -17,11 +17,17 @@
         </ul>
     {% endwith %}
 {% else %}
-    <p class="text-center sm:text-start">
+    <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
         {% if request.search %}
-            No results for &quot;<strong>{{ request.search.value }}</strong>&quot;
+            {% block search_pagination_empty %}
+                <p>
+                    No results for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                </p>
+            {% endblock search_pagination_empty %}
         {% else %}
-            Nothing to see here.
+            {% block pagination_empty %}
+                <p>Nothing to see here.</p>
+            {% endblock pagination_empty %}
         {% endif %}
-    </p>
+    </div>
 {% endif %}
