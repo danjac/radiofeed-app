@@ -33,7 +33,7 @@ class Client:
         try:
             response = self._client.get(url, **kwargs)
         except httpx.HTTPError as exc:
-            http_logger.exception(exc)
+            http_logger.error("HTTP Error", exception=exc)
             raise
 
         try:
