@@ -1,4 +1,3 @@
-import dataclasses
 import functools
 
 import httpx
@@ -6,7 +5,6 @@ from django.conf import settings
 from loguru import logger
 
 
-@dataclasses.dataclass
 class Client:
     """Handles HTTP GET requests."""
 
