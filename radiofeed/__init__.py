@@ -6,9 +6,11 @@ from loguru import logger
 
 from radiofeed.checks import check_secure_admin_url
 
-# add custom checks
+# register custom Django system checks
 
 register(check_secure_admin_url, Tags.security, deploy=True)
+
+# intercept logging with loguru handler
 
 
 class InterceptHandler(logging.Handler):
