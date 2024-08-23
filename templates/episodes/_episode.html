@@ -1,10 +1,9 @@
 {# vim: set filetype=htmldjango #}
 {% with podcast=episode.podcast %}
-    <div class="flex items-center space-x-3 cursor-pointer group"
-         role="link"
-         tabindex="0"
-         hx-get="{{ episode.get_absolute_url }}"
-         hx-push-url="true">
+    <a class="flex items-center space-x-3 cursor-pointer group"
+       role="link"
+       tabindex="0"
+       href="{{ episode.get_absolute_url }}">
         {% with variant="card" css_class="group-hover:opacity-75" %}
             {% if is_podcast_detail %}
                 {% cover_image episode.get_cover_url variant episode.cleaned_title css_class=css_class %}
@@ -26,5 +25,5 @@
                 {% endif %}
             </h3>
         </div>
-    </div>
+    </a>
 {% endwith %}
