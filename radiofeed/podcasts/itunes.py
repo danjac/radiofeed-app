@@ -125,17 +125,17 @@ def _insert_podcasts(feeds: FeedIterator) -> FeedIterator:
     # insert podcasts to feeds where we have a match
 
     feeds_for_insert, feeds = itertools.tee(
-        (dataclasses.replace(feed, podcast=podcasts.get(feed.rss)) for feed in feeds),
+        [dataclasses.replace(feed, podcast=podcasts.get(feed.rss)) for feed in feeds],
     )
 
     # create new podcasts for feeds without a match
 
     Podcast.objects.bulk_create(
-        (
+        [
             Podcast(title=feed.title, rss=feed.rss)
             for feed in set(feeds_for_insert)
             if feed.podcast is None
-        ),
+        ],
         ignore_conflicts=True,
     )
 
