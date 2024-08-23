@@ -95,7 +95,7 @@ class _FeedParser:
                 content_hash=content_hash,
                 feed=rss_parser.parse_rss(response.content),
             )
-            self._logger.success("Parsed OK")
+            self._logger.success("Parser completed with update")
         except FeedParserError as exc:
             self._handle_error(exc, response or exc.response)
 
@@ -183,7 +183,7 @@ class _FeedParser:
     def _handle_error(
         self, exc: FeedParserError, response: httpx.Response | None = None
     ) -> None:
-        self._logger.error("Parser error", error=exc.parser_error.label)  # type: ignore[union-attr]
+        self._logger.info("Parser completed", error=exc.parser_error.label)  # type: ignore[union-attr]
         num_retries: int = self._podcast.num_retries
 
         active: bool = True
