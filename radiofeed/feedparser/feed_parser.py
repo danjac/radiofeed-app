@@ -183,16 +183,8 @@ class _FeedParser:
     def _handle_error(
         self, exc: FeedParserError, response: httpx.Response | None = None
     ) -> None:
-        num_retries: int = self._podcast.num_retries
-
         active: bool = True
-
-        if response:
-            etag = self._parse_etag(response)
-            modified = self._parse_modified(response)
-        else:
-            etag = self._podcast.etag
-            modified = self._podcast.modified
+        num_retries: int = 0
 
         match exc:
             case DuplicateError():
@@ -201,9 +193,7 @@ class _FeedParser:
                 self._logger.error("Duplicate feed")
 
             case NotModifiedError():
-                # any other result: reset num_retries
                 num_retries = 0
-
                 self._logger.info("Feed not modified")
 
             case (
@@ -213,12 +203,19 @@ class _FeedParser:
                 | UnavailableError()
             ):
                 # increment num_retries in case a temporary error
-                num_retries += 1
+                num_retries = self._podcast.num_retries + 1
 
                 self._logger.error("Feed error", error=exc.parser_error.label)  # type: ignore[attr-defined]
 
         # if number of errors exceeds threshold then deactivate the podcast
         active = active and num_retries < self._max_retries
+
+        if response:
+            etag = self._parse_etag(response)
+            modified = self._parse_modified(response)
+        else:
+            etag = self._podcast.etag
+            modified = self._podcast.modified
 
         # if podcast is still active, reschedule next update check
         frequency = (
