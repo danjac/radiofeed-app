@@ -95,7 +95,6 @@ class _FeedParser:
                 content_hash=content_hash,
                 feed=rss_parser.parse_rss(response.content),
             )
-            self._logger.success("Parser completed with update")
         except FeedParserError as exc:
             self._handle_error(exc, response or exc.response)
 
@@ -150,6 +149,7 @@ class _FeedParser:
 
                 self._podcast.categories.set(categories)
                 self._episode_updates(feed)
+                self._logger.success("Feed updated")
         except DataError as exc:
             raise InvalidDataError from exc
 
@@ -183,7 +183,6 @@ class _FeedParser:
     def _handle_error(
         self, exc: FeedParserError, response: httpx.Response | None = None
     ) -> None:
-        self._logger.info("Parser completed", error=exc.parser_error.label)  # type: ignore[union-attr]
         num_retries: int = self._podcast.num_retries
 
         active: bool = True
@@ -199,6 +198,13 @@ class _FeedParser:
             case DuplicateError():
                 # podcast should be discontinued and no longer updated
                 active = False
+                self._logger.error("Duplicate feed")
+
+            case NotModifiedError():
+                # any other result: reset num_retries
+                num_retries = 0
+
+                self._logger.info("Feed not modified")
 
             case (
                 InvalidDataError()
@@ -209,9 +215,7 @@ class _FeedParser:
                 # increment num_retries in case a temporary error
                 num_retries += 1
 
-            case _:
-                # any other result: reset num_retries
-                num_retries = 0
+                self._logger.error("Feed error", error=exc.parser_error.label)  # type: ignore[attr-defined]
 
         # if number of errors exceeds threshold then deactivate the podcast
         active = active and num_retries < self._max_retries
