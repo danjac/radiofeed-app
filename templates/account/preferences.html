@@ -7,7 +7,10 @@
     <form method="post"
           action="{{ request.path }}"
           class="space-y-3"
-          id="preferences-form">
+          id="preferences-form"
+          hx-select="#preferences-form"
+          hx-target="this"
+          hx-swap="outerHTML">
         {% csrf_token %}
         {{ form }}
         <div>
