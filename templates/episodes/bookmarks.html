@@ -38,7 +38,7 @@
             </nav>
         {% endif %}
     </header>
-    {% if page_obj.paginator.count %}
+    {% if request.search or page_obj.paginator.count %}
         {% include "episodes/_episodes.html" with is_fk=True %}
     {% else %}
         <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">

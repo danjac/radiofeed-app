@@ -37,7 +37,7 @@
             </ul>
         </nav>
     </header>
-    {% if page_obj.paginator.count %}
+    {% if request.search or page_obj.paginator.count %}
         {% include "podcasts/_podcasts.html" %}
     {% else %}
         <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
