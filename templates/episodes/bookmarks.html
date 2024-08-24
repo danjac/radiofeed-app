@@ -38,5 +38,15 @@
             </nav>
         {% endif %}
     </header>
-    {% include "episodes/_bookmarks.html" with is_fk=True %}
+    {% if page_obj.paginator.count %}
+        {% include "episodes/_episodes.html" with is_fk=True %}
+    {% else %}
+        <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
+            <p>You don't have any Bookmarks yet.</p>
+            <p>This is where you can save all your favorites or any episodes you want to listen to later.</p>
+            <p>
+                To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
+            </p>
+        </div>
+    {% endif %}
 {% endblock content %}

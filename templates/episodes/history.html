@@ -38,5 +38,14 @@
             </nav>
         {% endif %}
     </header>
-    {% include "episodes/_history.html" with is_fk=True %}
+    {% if page_obj.paginator.count %}
+        {% include "episodes/_episodes.html" with is_fk=True %}
+    {% else %}
+        <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
+            <p>Your listening history is empty right now.</p>
+            <p>
+                To start enjoying some podcasts, just click the <strong>Play</strong> button on any episode page. Once you begin listening, episodes will show up here.
+            </p>
+        </div>
+    {% endif %}
 {% endblock content %}
