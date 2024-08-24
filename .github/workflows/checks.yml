@@ -34,4 +34,5 @@ jobs:
                   cache: "pip"
             - run: pip install -r ./requirements-ci.txt
             - run: xargs python -m nltk.downloader < nltk.txt
+            - run: python ./manage.py validate_templates
             - run: python -m pytest

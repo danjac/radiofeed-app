@@ -37,5 +37,14 @@
             </ul>
         </nav>
     </header>
-    {% include "podcasts/_private_feeds.html" %}
+    {% if page_obj.paginator.count %}
+        {% include "podcasts/_podcasts.html" %}
+    {% else %}
+        <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
+            <p>You are not subscribed to any Private Feeds.</p>
+            <p>
+                To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
+            </p>
+        </div>
+    {% endif %}
 {% endblock content %}
