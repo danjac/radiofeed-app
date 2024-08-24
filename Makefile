@@ -45,4 +45,3 @@ nltkdownload:
 .PHONY: clean
 clean:
 	git clean -Xdf
-	poetry env remove --all
