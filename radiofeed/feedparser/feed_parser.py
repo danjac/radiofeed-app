@@ -22,7 +22,6 @@ from radiofeed.feedparser.exceptions import (
     FeedParserError,
     InaccessibleError,
     InvalidDataError,
-    InvalidRSSError,
     NotModifiedError,
     UnavailableError,
 )
@@ -184,7 +183,9 @@ class _FeedParser:
         self, exc: FeedParserError, response: httpx.Response | None = None
     ) -> None:
         active: bool = True
-        num_retries: int = 0
+        etag: str = self._podcast.etag
+        modified: datetime | None = self._podcast.modified
+        num_retries: int = self._podcast.num_retries
 
         match exc:
             case DuplicateError():
@@ -193,29 +194,21 @@ class _FeedParser:
                 self._logger.error("Duplicate feed")
 
             case NotModifiedError():
+                # can reset num retries, feed is ok
                 num_retries = 0
+                # ensure we update Etag and Last-Modified
+                if response:
+                    etag = self._parse_etag(response)
+                    modified = self._parse_modified(response)
                 self._logger.info("Feed not modified")
 
-            case (
-                InvalidDataError()
-                | InaccessibleError()
-                | InvalidRSSError()
-                | UnavailableError()
-            ):
+            case _:
                 # increment num_retries in case a temporary error
-                num_retries = self._podcast.num_retries + 1
+                num_retries += 1
+                # if number of errors exceeds threshold then deactivate the podcast
+                active = self._max_retries > num_retries
 
-                self._logger.error("Feed error", error=exc.parser_error.label)  # type: ignore[attr-defined]
-
-        # if number of errors exceeds threshold then deactivate the podcast
-        active = active and num_retries < self._max_retries
-
-        if response:
-            etag = self._parse_etag(response)
-            modified = self._parse_modified(response)
-        else:
-            etag = self._podcast.etag
-            modified = self._podcast.modified
+                self._logger.error("Feed error", error=exc.parser_error.label)  # type: ignore[union-attr]
 
         # if podcast is still active, reschedule next update check
         frequency = (
