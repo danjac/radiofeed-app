@@ -72,7 +72,6 @@ dev = [
     "pytest-xdist",
     "types-python-dateutil",
     "types-urllib3",
-    "werkzeug",
 ]
 
 [tool.pytest.ini_options]
