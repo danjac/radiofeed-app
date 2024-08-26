@@ -1,19 +1,11 @@
 import dataclasses
-import functools
 import itertools
 from collections.abc import Iterator
-from typing import Final, TypeAlias
 
 import httpx
-from django.core.cache import cache
-from django.utils.encoding import force_bytes
-from django.utils.functional import cached_property
-from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
-
-_CACHE_TIMEOUT: Final = 60 * 60 * 24
 
 
 @dataclasses.dataclass(frozen=True)
@@ -35,53 +27,12 @@ class Feed:
     podcast: Podcast | None = None
 
 
-FeedIterator: TypeAlias = Iterator[Feed]
-
-
-class FeedResultSet:
-    """Pagination-friendly way to handle iterator."""
-
-    def __init__(self, feeds: FeedIterator) -> None:
-        self._feeds = feeds
-
-    def __len__(self) -> int:
-        """Returns number of feeds."""
-        return len(self._feed_cache)
-
-    def __getitem__(self, index: int) -> Feed:
-        """Return item by index"""
-        return self._feed_cache[index]
-
-    @cached_property
-    def _feed_cache(self) -> list[Feed]:
-        return list(self._feeds)
-
-
-def search(client: Client, search_term: str) -> FeedResultSet:
+def search(client: Client, search_term: str) -> Iterator[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    response = _get_response(client, search_term)
-
-    return FeedResultSet(
-        _insert_podcasts(
-            _parse_feeds_from_json(response),
-        ),
-    )
-
-
-@functools.cache
-def search_cache_key(search_term: str) -> str:
-    """Return cache key"""
-    return "itunes:" + urlsafe_base64_encode(
-        force_bytes(search_term.casefold(), "utf-8")
-    )
+    return _insert_podcasts(_parse_feeds_from_json(client, search_term))
 
 
 def _get_response(client: Client, search_term: str) -> dict:
-    cache_key = search_cache_key(search_term)
-
-    if cached := cache.get(cache_key):
-        return cached
-
     try:
         response = client.get(
             "https://itunes.apple.com/search",
@@ -93,17 +44,14 @@ def _get_response(client: Client, search_term: str) -> dict:
                 "Accept": "application/json",
             },
         )
-        data = response.json()
+        return response.json()
 
     except httpx.HTTPError:
         return {}
 
-    cache.set(cache_key, data, _CACHE_TIMEOUT)
-    return data
 
-
-def _parse_feeds_from_json(data: dict) -> FeedIterator:
-    for result in data.get("results", []):
+def _parse_feeds_from_json(client, search_term) -> Iterator[Feed]:
+    for result in _get_response(client, search_term).get("results", []):
         try:
             yield Feed(
                 rss=result["feedUrl"],
@@ -115,7 +63,7 @@ def _parse_feeds_from_json(data: dict) -> FeedIterator:
             continue
 
 
-def _insert_podcasts(feeds: FeedIterator) -> FeedIterator:
+def _insert_podcasts(feeds: Iterator[Feed]) -> Iterator[Feed]:
     feeds_for_podcasts, feeds = itertools.tee(feeds)
 
     podcasts = Podcast.objects.filter(
