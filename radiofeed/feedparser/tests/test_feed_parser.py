@@ -357,7 +357,8 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.DUPLICATE
 
         assert podcast.active is False
-        assert podcast.modified is None
+        assert podcast.etag
+        assert podcast.modified
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()
@@ -506,9 +507,9 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
-        assert podcast.etag == ""
         assert podcast.num_retries == 1
-        assert podcast.modified is None
+        assert podcast.etag
+        assert podcast.modified
 
     @pytest.mark.django_db
     def test_parse_no_podcasts_max_retries(self, podcast, categories):
