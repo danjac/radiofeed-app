@@ -1,29 +1,18 @@
 {# vim: set filetype=htmldjango #}
-{% with podcast=episode.podcast %}
-    <a class="flex items-center space-x-3 cursor-pointer group"
-       role="link"
-       tabindex="0"
-       href="{{ episode.get_absolute_url }}">
-        {% with variant="card" css_class="group-hover:opacity-75" %}
-            {% if is_podcast_detail %}
-                {% cover_image episode.get_cover_url variant episode.cleaned_title css_class=css_class %}
-            {% else %}
-                {% cover_image podcast.cover_url variant podcast.cleaned_title css_class=css_class %}
-            {% endif %}
-        {% endwith %}
-        <div class="flex flex-col place-content-between h-16 leading-tight">
-            <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300"
-                aria-label="{{ episode.cleaned_title }}"
-                title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</h2>
-            <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300"
-                aria-label="{{ podcast.cleaned_title }}"
-                title="{{ podcast.cleaned_title }}">
-                {% if is_podcast_detail %}
-                    {% include "_date.html" with value=episode.pub_date title="Release Date" %}
-                {% else %}
-                    {{ podcast.cleaned_title }}
-                {% endif %}
-            </h3>
-        </div>
-    </a>
-{% endwith %}
+{% extends "_card.html" %}
+{% block card %}
+    {% with url=episode.get_absolute_url title=episode.cleaned_title %}
+        {% if is_podcast_detail %}
+            {% with cover_url=episode.get_cover_url %}{{ block.super }}{% endwith %}
+        {% else %}
+            {% with cover_url=episode.podcast.cover_url %}{{ block.super }}{% endwith %}
+        {% endif %}
+    {% endwith %}
+{% endblock card %}
+{% block extra_info %}
+    {% if is_podcast_detail %}
+        {% include "_date.html" with value=episode.pub_date title="Release Date" %}
+    {% else %}
+        {{ episode.podcast.cleaned_title }}
+    {% endif %}
+{% endblock extra_info %}

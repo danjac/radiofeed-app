@@ -1,15 +1,10 @@
 {# vim: set filetype=htmldjango #}
-<a class="flex items-center space-x-3 cursor-pointer group"
-   role="link"
-   tabindex="0"
-   href="{{ podcast.get_absolute_url }}">
-    {% cover_image podcast.cover_url "card" podcast.cleaned_title css_class="group-hover:opacity-75" %}
-    <div class="flex flex-col place-content-between h-16 leading-tight">
-        <h2 class="font-bold break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300"
-            aria-label="{{ podcast.cleaned_title }}"
-            title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h2>
-        <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
-            {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
-        </h3>
-    </div>
-</a>
+{% extends "_card.html" %}
+{% block card %}
+    {% with url=podcast.get_absolute_url title=podcast.cleaned_title cover_url=podcast.cover_url %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock card %}
+{% block extra_info %}
+    {% include "_date.html" with value=podcast.pub_date title="Latest Episode" %}
+{% endblock extra_info %}
