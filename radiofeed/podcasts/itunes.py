@@ -27,12 +27,12 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(client: Client, search_term: str) -> Iterator[Feed]:
+def search(client: Client, search_term: str, limit: int = 30) -> Iterator[Feed]:
     """Runs cached search for podcasts on iTunes API."""
-    return _insert_podcasts(_parse_feeds_from_json(client, search_term))
+    return _insert_podcasts(_parse_feeds_from_json(client, search_term, limit))
 
 
-def _get_response(client: Client, search_term: str) -> dict:
+def _get_response(client: Client, search_term: str, limit: int) -> dict:
     try:
         response = client.get(
             "https://itunes.apple.com/search",
@@ -50,8 +50,10 @@ def _get_response(client: Client, search_term: str) -> dict:
         return {}
 
 
-def _parse_feeds_from_json(client, search_term) -> Iterator[Feed]:
-    for result in _get_response(client, search_term).get("results", []):
+def _parse_feeds_from_json(
+    client: Client, search_term: str, limit: int
+) -> Iterator[Feed]:
+    for result in _get_response(client, search_term, limit).get("results", []):
         try:
             yield Feed(
                 rss=result["feedUrl"],
