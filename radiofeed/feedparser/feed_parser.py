@@ -313,9 +313,9 @@ class _FeedParser:
     def _episodes_for_insert(
         self, feed: Feed, guids: dict[str, int]
     ) -> Iterator[Episode]:
-        return (
-            self._make_episode(item) for item in feed.items if item.guid not in guids
-        )
+        for item in feed.items:
+            if item.guid not in guids:
+                yield self._make_episode(item)
 
     def _episodes_for_update(
         self, feed: Feed, guids: dict[str, int]
