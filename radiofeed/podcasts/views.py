@@ -9,6 +9,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.decorators import use_template_partial
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
@@ -285,6 +286,7 @@ def category_detail(
 
 @require_POST
 @login_required
+@use_template_partial(partial="subscribe_button", target="subscribe-button")
 def subscribe(
     request: HttpRequest, podcast_id: int
 ) -> HttpResponseConflict | TemplateResponse:
@@ -302,6 +304,7 @@ def subscribe(
 
 @require_DELETE
 @login_required
+@use_template_partial(partial="subscribe_button", target="subscribe-button")
 def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -347,10 +350,12 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_form_methods
 @login_required
+@use_template_partial(partial="form", target="private-feed-form")
 def add_private_feed(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Add new private feed to collection."""
+
     if request.method == "POST":
         form = PrivateFeedForm(request.user, request.POST)
         if form.is_valid():
@@ -400,14 +405,26 @@ def _get_promoted_podcasts() -> QuerySet[Podcast]:
     return _get_podcasts().filter(promoted=True)
 
 
-def _render_subscribe_action(
-    request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
+def _render_podcast_detail(
+    request: HttpRequest, podcast: Podcast, extra_context: dict | None = None
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "podcasts/_subscribe_button.html",
+        "podcasts/detail.html",
         {
             "podcast": podcast,
+        }
+        | (extra_context or {}),
+    )
+
+
+def _render_subscribe_action(
+    request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
+) -> TemplateResponse:
+    return _render_podcast_detail(
+        request,
+        podcast,
+        {
             "is_subscribed": is_subscribed,
         },
     )
