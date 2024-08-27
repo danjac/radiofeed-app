@@ -2,8 +2,10 @@ import json
 
 import pytest
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
+from radiofeed.htmx.decorators import use_template_partial
 from radiofeed.htmx.middleware import (
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
@@ -24,6 +26,32 @@ def req(rf):
 @pytest.fixture
 def htmx_req(rf):
     return rf.get("/", HTTP_HX_REQUEST="true")
+
+
+class TestUseTemplatePartial:
+    @pytest.fixture
+    def view(self, request):
+        @use_template_partial(partial="form", target="my-form")
+        def _view(request):
+            return TemplateResponse(request, "index.html")
+
+        return _view
+
+    def test_not_htmx(self, req, view):
+        req.htmx = HtmxDetails(req)
+        response = view(req)
+        assert response.template_name == "index.html"
+
+    def test_htmx_no_target_match(self, htmx_req, view):
+        htmx_req.htmx = HtmxDetails(htmx_req)
+        response = view(htmx_req)
+        assert response.template_name == "index.html"
+
+    def test_htmx_target_match(self, rf, view):
+        req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="my-form")
+        req.htmx = HtmxDetails(req)
+        response = view(req)
+        assert response.template_name == "index.html#form"
 
 
 class TestHtmxRedirectMiddleware:
