@@ -92,7 +92,7 @@ redis==5.0.8
 regex==2024.7.24
 requests==2.32.3
 requests-oauthlib==2.0.0
-rich==13.7.1
+rich==13.8.0
 scikit-learn==1.5.1
 scipy==1.14.1
 sentry-sdk==2.13.0
