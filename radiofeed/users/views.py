@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Exists, OuterRef
 from django.http import HttpRequest, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
@@ -8,12 +9,15 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
+from radiofeed.decorators import use_template_partial
 from radiofeed.http import require_form_methods
+from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
 @require_form_methods
 @login_required
+@use_template_partial(partial="form", target="preferences-form")
 def user_preferences(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
@@ -38,6 +42,10 @@ def user_preferences(
 
 @require_form_methods
 @login_required
+@use_template_partial(
+    partial="import_feeds_form",
+    target="import-feeds-form",
+)
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
@@ -71,20 +79,28 @@ def import_podcast_feeds(
 def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
-    subscriptions = (
-        request.user.subscriptions.filter(
-            podcast__private=False,
-            podcast__pub_date__isnull=False,
+    podcasts = (
+        Podcast.objects.annotate(
+            is_subscribed=Exists(
+                request.user.subscriptions.filter(
+                    podcast=OuterRef("pk"),
+                )
+            )
         )
-        .select_related("podcast")
-        .order_by("podcast__title")
+        .filter(
+            is_subscribed=True,
+            private=False,
+            pub_date__isnull=False,
+        )
+        .order_by("title")
     )
 
     return TemplateResponse(
         request,
-        "account/podcasts.opml",
+        "feedparser/podcasts.opml",
         {
-            "subscriptions": subscriptions,
+            "site": request.site,
+            "podcasts": podcasts,
         },
         content_type="text/x-opml",
         headers={

@@ -1,9 +1,10 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons %}
+{% load heroicons partials %}
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
 {% block settings_content %}
+    {% partialdef form inline=True %}
     <form method="post"
           action="{{ request.path }}"
           class="space-y-3"
@@ -20,4 +21,5 @@
             </button>
         </div>
     </form>
+{% endpartialdef form %}
 {% endblock settings_content %}
