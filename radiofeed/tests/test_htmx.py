@@ -1,3 +1,4 @@
+import http
 import json
 
 import pytest
@@ -52,6 +53,15 @@ class TestUseTemplatePartial:
         req.htmx = HtmxDetails(req)
         response = view(req)
         assert response.template_name == "index.html#form"
+
+    def test_not_template_response(self, rf):
+        def _view(request):
+            return HttpResponse("ok")
+
+        req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="my-form")
+        req.htmx = HtmxDetails(req)
+        response = _view(req)
+        assert response.status_code == http.HTTPStatus.OK
 
 
 class TestHtmxRedirectMiddleware:
