@@ -77,9 +77,9 @@ MIDDLEWARE: list[str] = [
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "csp.middleware.CSPMiddleware",
-    "radiofeed.middleware.HtmxRestoreMiddleware",
-    "radiofeed.middleware.HtmxMessagesMiddleware",
-    "radiofeed.middleware.HtmxRedirectMiddleware",
+    "radiofeed.htmx.middleware.HtmxRestoreMiddleware",
+    "radiofeed.htmx.middleware.HtmxMessagesMiddleware",
+    "radiofeed.htmx.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.SearchMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
 ]

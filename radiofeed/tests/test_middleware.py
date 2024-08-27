@@ -4,10 +4,12 @@ import pytest
 from django.http import HttpResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
-from radiofeed.middleware import (
+from radiofeed.htmx.middleware import (
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
     HtmxRestoreMiddleware,
+)
+from radiofeed.middleware import (
     SearchDetails,
     SearchMiddleware,
 )

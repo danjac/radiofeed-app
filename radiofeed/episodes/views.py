@@ -16,8 +16,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.decorators import use_template_partial
 from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.htmx.decorators import use_template_partial
 from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,

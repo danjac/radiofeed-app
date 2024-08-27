@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
-from radiofeed.decorators import use_template_partial
+from radiofeed.htmx.decorators import use_template_partial
 from radiofeed.http import require_form_methods
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
