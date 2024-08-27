@@ -27,7 +27,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
     }
 
 
-@register.inclusion_tag("episodes/detail.html#audio_player", takes_context=True)
+@register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
 
