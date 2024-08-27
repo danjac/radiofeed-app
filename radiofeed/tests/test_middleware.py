@@ -1,16 +1,15 @@
-import http
 import json
 
 import pytest
 from django.http import HttpResponse
-from django.template.response import TemplateResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
-from radiofeed.htmx.decorators import use_template_partial
-from radiofeed.htmx.middleware import (
+from radiofeed.middleware import (
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
     HtmxRestoreMiddleware,
+    SearchDetails,
+    SearchMiddleware,
 )
 
 
@@ -29,39 +28,37 @@ def htmx_req(rf):
     return rf.get("/", HTTP_HX_REQUEST="true")
 
 
-class TestUseTemplatePartial:
+class TestSearchMiddleware:
     @pytest.fixture
-    def view(self, request):
-        @use_template_partial(partial="form", target="my-form")
-        def _view(request):
-            return TemplateResponse(request, "index.html")
+    def mw(self, get_response):
+        return SearchMiddleware(get_response)
 
-        return _view
+    def test_search(self, rf, mw):
+        req = rf.get("/", {"search": "testing"})
+        mw(req)
+        assert req.search
+        assert str(req.search) == "testing"
 
-    def test_not_htmx(self, req, view):
-        req.htmx = HtmxDetails(req)
-        response = view(req)
-        assert response.template_name == "index.html"
+    def test_no_search(self, req, mw):
+        mw(req)
+        assert not req.search
+        assert not str(req.search)
 
-    def test_htmx_no_target_match(self, htmx_req, view):
-        htmx_req.htmx = HtmxDetails(htmx_req)
-        response = view(htmx_req)
-        assert response.template_name == "index.html"
 
-    def test_htmx_target_match(self, rf, view):
-        req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="my-form")
-        req.htmx = HtmxDetails(req)
-        response = view(req)
-        assert response.template_name == "index.html#form"
+class TestSearchDetails:
+    def test_search(self, rf):
+        req = rf.get("/", {"search": "testing"})
+        search = SearchDetails(req)
+        assert search
+        assert str(search) == "testing"
+        assert search.qs == "?search=testing"
 
-    def test_not_template_response(self, rf):
-        def _view(request):
-            return HttpResponse("ok")
-
-        req = rf.get("/", HTTP_HX_REQUEST="true", HTTP_HX_TARGET="my-form")
-        req.htmx = HtmxDetails(req)
-        response = _view(req)
-        assert response.status_code == http.HTTPStatus.OK
+    def test_no_search(self, rf):
+        req = rf.get("/")
+        search = SearchDetails(req)
+        assert not search
+        assert not str(search)
+        assert search.qs == ""
 
 
 class TestHtmxRedirectMiddleware:
