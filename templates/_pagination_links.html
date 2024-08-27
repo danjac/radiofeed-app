@@ -2,7 +2,7 @@
 <nav role="navigation"
      aria-label="Pagination"
      hx-target="#pagination"
-     hx-select="#pagination">
+     hx-swap="outerHTML show:window:top">
     <ul class="flex justify-between items-center">
         <li>
             {% if page_obj.has_previous %}

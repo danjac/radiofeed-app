@@ -13,6 +13,7 @@ from radiofeed.decorators import use_template_partial
 from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
+from radiofeed.pagination import paginate
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -37,6 +38,7 @@ def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page.
     If user does not have any subscribed podcasts, redirects to Discover page.
@@ -67,13 +69,14 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         request,
         "podcasts/subscriptions.html",
         {
-            "podcasts": podcasts,
+            "page_obj": paginate(request, podcasts),
         },
     )
 
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
 
@@ -83,7 +86,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
         request,
         "podcasts/discover.html",
         {
-            "podcasts": podcasts,
+            "page_obj": paginate(request, podcasts),
             "search_url": reverse("podcasts:search_podcasts"),
         },
     )
@@ -91,6 +94,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search all public podcasts in database."""
 
@@ -112,7 +116,7 @@ def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             request,
             "podcasts/search_podcasts.html",
             {
-                "podcasts": podcasts,
+                "page_obj": paginate(request, podcasts),
                 "clear_search_url": discover_url,
             },
         )
@@ -169,6 +173,7 @@ def podcast_detail(
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -189,7 +194,7 @@ def episodes(
         "podcasts/episodes.html",
         {
             "podcast": podcast,
-            "episodes": episodes,
+            "page_obj": paginate(request, episodes),
             "ordering_asc": ordering_asc,
         },
     )
@@ -254,6 +259,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -279,7 +285,7 @@ def category_detail(
         "podcasts/category_detail.html",
         {
             "category": category,
-            "podcasts": podcasts,
+            "page_obj": paginate(request, podcasts),
         },
     )
 
@@ -315,6 +321,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = (
@@ -343,7 +350,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
         request,
         "podcasts/private_feeds.html",
         {
-            "podcasts": podcasts,
+            "page_obj": paginate(request, podcasts),
         },
     )
 

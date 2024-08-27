@@ -24,10 +24,12 @@ from radiofeed.http import (
     HttpResponseUnauthorized,
     require_DELETE,
 )
+from radiofeed.pagination import paginate
 
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
@@ -49,7 +51,7 @@ def index(request: HttpRequest) -> TemplateResponse:
         request,
         "episodes/index.html",
         {
-            "episodes": episodes,
+            "page_obj": paginate(request, episodes),
             "search_url": reverse("episodes:search_episodes"),
         },
     )
@@ -57,6 +59,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
 
@@ -74,7 +77,7 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             request,
             "episodes/search.html",
             {
-                "episodes": episodes,
+                "page_obj": paginate(request, episodes),
                 "clear_search_url": index_url,
             },
         )
@@ -179,6 +182,7 @@ def player_time_update(
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
@@ -194,7 +198,7 @@ def history(request: HttpRequest) -> TemplateResponse:
         request,
         "episodes/history.html",
         {
-            "audio_logs": audio_logs,
+            "page_obj": paginate(request, audio_logs),
             "ordering_asc": ordering_asc,
         },
     )
@@ -223,6 +227,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_template_partial(partial="pagination", target="pagination")
 def bookmarks(request: HttpRequest) -> TemplateResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
@@ -239,7 +244,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
         request,
         "episodes/bookmarks.html",
         {
-            "bookmarks": bookmarks,
+            "page_obj": paginate(request, bookmarks),
             "ordering_asc": ordering_asc,
         },
     )

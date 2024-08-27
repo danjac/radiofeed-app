@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache heroicons %}
+{% load cache heroicons partials %}
 {% block title %}
     {{ block.super }} | Search Podcasts
 {% endblock title %}
@@ -26,7 +26,8 @@
         </nav>
     </header>
     {% cache 300 search-podcasts request.get_full_path %}
-    {% paginate podcasts as page_obj %}
+    {% partialdef pagination inline=True %}
     {% include "podcasts/_podcasts.html" %}
+{% endpartialdef pagination %}
 {% endcache %}
 {% endblock content %}
