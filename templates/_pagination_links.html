@@ -1,7 +1,8 @@
 {# vim: set filetype=htmldjango #}
 <nav role="navigation"
      aria-label="Pagination"
-     hx-target="#pagination"
+     hx-target="#{{ pagination_id }}"
+     hx-select="#{{ pagination_id }}"
      hx-swap="outerHTML show:window:top">
     <ul class="flex justify-between items-center">
         <li>

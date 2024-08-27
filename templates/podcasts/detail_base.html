@@ -27,9 +27,7 @@
                                href="{{ link.url }}"
                                {% if link.active %}aria-current="page"{% endif %}
                                aria-label="{{ podcast.cleaned_title }} | Episodes"
-                               title="{{ podcast.cleaned_title }} | Episodes">
-                                Episodes ({{ page_obj.paginator.count|default:podcast.num_episodes }})
-                            </a>
+                               title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
                         </li>
                         {% if podcast.has_similar %}
                             {% active_link podcast.get_similar_url as link %}

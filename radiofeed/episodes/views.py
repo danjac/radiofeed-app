@@ -17,19 +17,16 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.htmx.decorators import use_template_partial
 from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,
     HttpResponseUnauthorized,
     require_DELETE,
 )
-from radiofeed.pagination import paginate
 
 
 @require_safe
 @login_required
-@use_template_partial(partial="pagination", target="pagination")
 def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
@@ -51,7 +48,7 @@ def index(request: HttpRequest) -> TemplateResponse:
         request,
         "episodes/index.html",
         {
-            "page_obj": paginate(request, episodes),
+            "episodes": episodes,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
@@ -59,7 +56,6 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-@use_template_partial(partial="pagination", target="pagination")
 def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
 
@@ -77,7 +73,7 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             request,
             "episodes/search.html",
             {
-                "page_obj": paginate(request, episodes),
+                "episodes": episodes,
                 "clear_search_url": index_url,
             },
         )
@@ -110,7 +106,6 @@ def episode_detail(
 
 @require_POST
 @login_required
-@use_template_partial(partial="audio_player_button", target="audio-player-button")
 def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
@@ -136,7 +131,6 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 @require_POST
 @login_required
-@use_template_partial(partial="audio_player_button", target="audio-player-button")
 def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
@@ -182,7 +176,6 @@ def player_time_update(
 
 @require_safe
 @login_required
-@use_template_partial(partial="pagination", target="pagination")
 def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
@@ -198,7 +191,7 @@ def history(request: HttpRequest) -> TemplateResponse:
         request,
         "episodes/history.html",
         {
-            "page_obj": paginate(request, audio_logs),
+            "audio_logs": audio_logs,
             "ordering_asc": ordering_asc,
         },
     )
@@ -206,7 +199,6 @@ def history(request: HttpRequest) -> TemplateResponse:
 
 @require_DELETE
 @login_required
-@use_template_partial(partial="audio_log", target="audio-log")
 def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
@@ -222,12 +214,17 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     messages.info(request, "Removed from History")
 
-    return _render_episode_detail(request, audio_log.episode)
+    return TemplateResponse(
+        request,
+        "episodes/_audio_log.html",
+        {
+            "episode": audio_log.episode,
+        },
+    )
 
 
 @require_safe
 @login_required
-@use_template_partial(partial="pagination", target="pagination")
 def bookmarks(request: HttpRequest) -> TemplateResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
@@ -244,7 +241,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
         request,
         "episodes/bookmarks.html",
         {
-            "page_obj": paginate(request, bookmarks),
+            "bookmarks": bookmarks,
             "ordering_asc": ordering_asc,
         },
     )
@@ -252,7 +249,6 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
 @require_POST
 @login_required
-@use_template_partial(partial="bookmark_button", target="bookmark-button")
 def add_bookmark(
     request: HttpRequest, episode_id: int
 ) -> HttpResponseConflict | TemplateResponse:
@@ -271,7 +267,6 @@ def add_bookmark(
 
 @require_DELETE
 @login_required
-@use_template_partial(partial="bookmark_button", target="bookmark-button")
 def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
@@ -282,32 +277,15 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     return _render_bookmark_action(request, episode, is_bookmarked=False)
 
 
-def _render_episode_detail(
-    request: HttpRequest,
-    episode: Episode,
-    extra_context: dict | None = None,
-    *,
-    partial: str = "",
-    target: str = "",
-) -> TemplateResponse:
-    return TemplateResponse(
-        request,
-        "episodes/detail.html",
-        {
-            "episode": episode,
-        }
-        | (extra_context or {}),
-    )
-
-
 def _render_audio_player_action(
     request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
 ) -> TemplateResponse:
-    return _render_episode_detail(
+    return TemplateResponse(
         request,
-        audio_log.episode,
+        "episodes/_audio_player_button.html",
         {
             "audio_log": audio_log,
+            "episode": audio_log.episode,
             "current_time": audio_log.current_time,
             "is_playing": is_playing,
             "start_player": is_playing,
@@ -318,10 +296,11 @@ def _render_audio_player_action(
 def _render_bookmark_action(
     request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> TemplateResponse:
-    return _render_episode_detail(
+    return TemplateResponse(
         request,
-        episode,
+        "episodes/_bookmark_button.html",
         {
+            "episode": episode,
             "is_bookmarked": is_bookmarked,
         },
     )

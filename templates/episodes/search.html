@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache partials %}
+{% load cache %}
 {% block title %}
     {{ block.super }} | Search Episodes
 {% endblock title %}
@@ -16,9 +16,8 @@
             </ul>
         </nav>
     </header>
-    {% partialdef pagination inline=True %}
     {% cache 300 search-episodes request.get_full_path %}
+    {% paginate episodes as page_obj %}
     {% include "episodes/_episodes.html" %}
 {% endcache %}
-{% endpartialdef pagination %}
 {% endblock content %}
