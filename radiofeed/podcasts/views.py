@@ -9,7 +9,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.episodes.models import Episode
 from radiofeed.htmx.decorators import use_template_partial
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
@@ -156,17 +155,12 @@ def podcast_detail(
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
-    latest_episode = (
-        Episode.objects.filter(podcast=podcast_id).order_by("-pub_date").first()
-    )
-
     return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,
-            "latest_episode": latest_episode,
         },
     )
 

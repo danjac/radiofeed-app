@@ -8,9 +8,9 @@
         <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
             {{ podcast.cleaned_title }}
         </h1>
-        {% cache 300 podcast-detail-navbar podcast.pk %}
         <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
             {% block podcast_navbar %}
+                {% cache 300 podcast-detail-links request.get_full_path %}
                 <nav class="flex justify-center items-center sm:justify-start">
                     <ul class="flex items-center space-x-6">
                         {% active_link podcast.get_detail_url as link %}
@@ -27,7 +27,9 @@
                                href="{{ link.url }}"
                                {% if link.active %}aria-current="page"{% endif %}
                                aria-label="{{ podcast.cleaned_title }} | Episodes"
-                               title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
+                               title="{{ podcast.cleaned_title }} | Episodes">
+                                Episodes ({{ page_obj.paginator.count|default:podcast.num_episodes }})
+                            </a>
                         </li>
                         {% if podcast.has_similar %}
                             {% active_link podcast.get_similar_url as link %}
@@ -41,9 +43,9 @@
                         {% endif %}
                     </ul>
                 </nav>
-            {% endblock podcast_navbar %}
-        </div>
-    {% endcache %}
+            {% endcache %}
+        {% endblock podcast_navbar %}
+    </div>
 </header>
 {% block podcast_content %}
 {% endblock podcast_content %}
