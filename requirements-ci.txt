@@ -27,7 +27,6 @@ django-htmx==1.19.0
 django-model-utils==4.5.1
 django-permissions-policy==4.21.0
 django-redis==5.4.0
-django-template-partials==24.4
 django-version-checks==1.12.0
 execnet==2.1.1
 executing==2.0.1
@@ -39,7 +38,7 @@ h11==0.14.0
 heroicons==2.8.0
 hiredis==3.0.0
 httpcore==1.0.5
-httpx==0.27.0
+httpx==0.27.2
 icdiff==2.0.7
 idna==3.8
 iniconfig==2.0.0
@@ -60,7 +59,7 @@ numpy==2.1.0
 oauthlib==3.2.2
 packaging==24.1
 parso==0.8.4
-pbr==6.0.0
+pbr==6.1.0
 pexpect==4.9.0
 pillow==10.4.0
 pluggy==1.5.0

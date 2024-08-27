@@ -20,14 +20,13 @@ django-htmx==1.19.0
 django-model-utils==4.5.1
 django-permissions-policy==4.21.0
 django-redis==5.4.0
-django-template-partials==24.4
 django-version-checks==1.12.0
 gunicorn==23.0.0
 h11==0.14.0
 heroicons==2.8.0
 hiredis==3.0.0
 httpcore==1.0.5
-httpx==0.27.0
+httpx==0.27.2
 idna==3.8
 joblib==1.4.2
 linkify-it-py==2.0.3

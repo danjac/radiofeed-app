@@ -18,7 +18,6 @@ dependencies = [
     "django-allauth[socialaccount]",
     "django-anymail",
     "django-csp",
-    "django-template-partials",
     "django-environ",
     "django-extensions",
     "django-fast-update",
