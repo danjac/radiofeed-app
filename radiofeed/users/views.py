@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
+from radiofeed.htmx import render_template_partial
 from radiofeed.http import require_form_methods
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
@@ -31,10 +32,14 @@ def user_preferences(
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return TemplateResponse(
+    return render_template_partial(
         request,
         "account/preferences.html",
-        {"form": form},
+        {
+            "form": form,
+        },
+        partial="form",
+        target="preferences-form",
     )
 
 
@@ -59,12 +64,14 @@ def import_podcast_feeds(
     else:
         form = OpmlUploadForm()
 
-    return TemplateResponse(
+    return render_template_partial(
         request,
         "account/podcast_feeds.html",
         {
             "upload_form": form,
         },
+        partial="form",
+        target="import-feeds-form",
     )
 
 

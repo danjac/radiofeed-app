@@ -1,5 +1,5 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons %}
+{% load heroicons partials %}
 {% block title %}
     {{ block.super }} | Import/Export Feeds
 {% endblock title %}
@@ -24,6 +24,7 @@
         {% endif %}
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
+            {% partialdef form inline=True %}
             <form class="space-y-3"
                   id="import-feeds-form"
                   hx-encoding="multipart/form-data"
@@ -40,6 +41,7 @@
                     </button>
                 </div>
             </form>
-        </div>
+        {% endpartialdef %}
     </div>
+</div>
 {% endblock settings_content %}
