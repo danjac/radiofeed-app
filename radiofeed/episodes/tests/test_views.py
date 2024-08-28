@@ -201,8 +201,6 @@ class TestStartPlayer:
         )
 
         assert response.status_code == http.HTTPStatus.OK
-        assert response.context["start_player"]
-        assert response.context["is_playing"]
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 

@@ -7,14 +7,12 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.paginator import Page, Paginator
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 
 from radiofeed import cover_image, markdown
 
 if TYPE_CHECKING:  # pragma: nocover
-    from django.db.models import QuerySet
     from django.template.context import RequestContext
 
     from radiofeed.cover_image import CoverImageVariant
@@ -65,20 +63,6 @@ def get_site() -> Site:
     """Returns the current Site instance. Use when `request.site` is unavailable, e.g. in emails run from cronjobs."""
 
     return Site.objects.get_current()
-
-
-@register.simple_tag(takes_context=True)
-def paginate(
-    context: RequestContext,
-    object_list: QuerySet,
-    page_size: int = settings.PAGE_SIZE,
-    param: str = "page",
-    **pagination_kwargs,
-) -> Page:
-    """Returns paginated object list."""
-    return Paginator(object_list, page_size).get_page(
-        context.request.GET.get(param, ""), **pagination_kwargs
-    )
 
 
 @register.simple_tag
