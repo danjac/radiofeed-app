@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache heroicons %}
+{% load cache heroicons partials audio_player %}
 {% block title %}
     {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
@@ -61,44 +61,263 @@
         <div class="flex items-center space-x-3 sm:space-x-6">
             {% cover_image episode.get_cover_url "detail" podcast.cleaned_title %}
             <div class="flex flex-col place-content-between h-32">
-                {% include "episodes/_audio_player_button.html" %}
-                {% include "episodes/_bookmark_button.html" %}
-                <div class="flex flex-wrap items-center space-x-2 font-semibold sm:space-x-3">
-                    <a download
-                       aria-label="Download audio file to your device"
-                       title="Download audio file to your device"
-                       href="{{ episode.media_url }}"
-                       target="_blank"
-                       class="link">Download</a>
-                    {% with website=episode.website|default:podcast.website %}
-                        {% if website %}
-                            <a href="{{ website }}"
-                               target="_blank"
-                               rel="noopener"
-                               class="link"
-                               title="Link to Website">Website</a>
+                {% partialdef audio_player_button inline=True %}
+                {% with target="audio-player-button" %}
+                    <div id="{{ target }}"
+                         hx-push-url="false"
+                         hx-target="this"
+                         hx-indicator="this"
+                         hx-swap="outerHTML"
+                         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                        {% if is_playing %}
+                            <button aria-label="Close Player"
+                                    title="Close Player"
+                                    class="inline-flex items-center btn btn-primary btn-outline btn-lg"
+                                    hx-disabled-elt="this"
+                                    hx-post="{% url 'episodes:close_player' %}"
+                                    hx-trigger="click once">
+                                {% heroicon_mini "stop-circle" class="mr-2" %}
+                                Close
+                            </button>
+                        {% else %}
+                            <button aria-label="Open Episode in Player"
+                                    title="Open Episode in Player"
+                                    class="inline-flex items-center btn btn-primary btn-lg"
+                                    hx-disabled-elt="this"
+                                    hx-post="{% url 'episodes:start_player' episode.pk %}"
+                                    hx-trigger="click once">
+                                {% heroicon_mini "play-circle" class="mr-2" %}
+                                Play
+                            </button>
                         {% endif %}
-                    {% endwith %}
+                        {% if request.htmx.target == target %}
+                            {% with hx_oob=True %}
+                                {% partial audio_log %}
+                                {% partial audio_player %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                {% endwith %}
+            {% endpartialdef audio_player_button %}
+            {% partialdef bookmark_button inline=True %}
+            <div id="bookmark-button"
+                 hx-push-url="false"
+                 hx-target="this"
+                 hx-swap="outerHTML"
+                 hx-indicator="this"
+                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                {% if is_bookmarked %}
+                    <button aria-label="Remove Episode from your Bookmarks"
+                            title="Remove Episode from your Bookmarks"
+                            class="inline-flex items-center btn btn-default btn-outline"
+                            hx-disabled-elt="this"
+                            hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
+                            hx-trigger="click once">
+                        {% heroicon_mini "bookmark-slash" class="mr-2" %}
+                        Bookmark
+                    </button>
+                {% else %}
+                    <button aria-label="Add Episode to your Bookmarks"
+                            title="Add Episode to your Bookmarks"
+                            class="inline-flex items-center btn btn-default"
+                            hx-disabled-elt="this"
+                            hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
+                            hx-trigger="click once">
+                        {% heroicon_mini "bookmark" class="mr-2" %}
+                        Bookmark
+                    </button>
+                {% endif %}
+            </div>
+        {% endpartialdef bookmark_button %}
+        <div class="flex flex-wrap items-center space-x-2 font-semibold sm:space-x-3">
+            <a download
+               aria-label="Download audio file to your device"
+               title="Download audio file to your device"
+               href="{{ episode.media_url }}"
+               target="_blank"
+               class="link">Download</a>
+            {% with website=episode.website|default:podcast.website %}
+                {% if website %}
+                    <a href="{{ website }}"
+                       target="_blank"
+                       rel="noopener"
+                       class="link"
+                       title="Link to Website">Website</a>
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+{% if episode.is_explicit %}
+    <div title="May contain adult themes and language. Listener discretion advised."
+         class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
+        {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+    </div>
+{% endif %}
+<div class="flex flex-wrap items-center space-x-3 font-semibold">
+    <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
+    {% with duration=episode.duration_in_seconds %}
+        {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
+    {% endwith %}
+    {% with file_size=episode.get_file_size %}
+        {% if file_size %}<div title="File Size">{{ file_size }}</div>{% endif %}
+    {% endwith %}
+</div>
+{% partialdef audio_log inline=True %}
+<div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
+    {% if audio_log and not is_playing %}
+        <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
+            <div class="flex flex-wrap items-center space-x-2">
+                {% with percent_complete=audio_log.current_time|percentage:episode.duration_in_seconds %}
+                    <span>
+                        {% if audio_log.current_time == 0 or percent_complete == 100 %}
+                            Completed
+                        {% else %}
+                            Listened
+                        {% endif %}
+                    </span>
+                    {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
+                    {% if percent_complete > 0 and percent_complete < 100 %}
+                        <span>{{ percent_complete }}% Complete</span>
+                    {% elif percent_complete == 0 and audio_log.current_time %}
+                        <span>{{ audio_log.current_time|format_duration }}</span>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <button class="inline-flex items-center text-sm btn btn-danger"
+                    title="Remove episode from your History"
+                    hx-disabled-elt="this"
+                    hx-target="#audio-log"
+                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                    hx-indicator="this"
+                    hx-push-url="false"
+                    hx-swap="outerHTML"
+                    hx-confirm="Are you sure you want to remove this episode from your History?"
+                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                {% heroicon_mini "trash" class="mr-2" %}
+                Remove
+            </button>
+        </div>
+    {% endif %}
+</div>
+{% endpartialdef audio_log %}
+{% markdown episode.description %}
+</article>
+{% endwith %}
+{% endblock content %}
+{% partialdef audio_player %}
+<div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+    {% if episode and is_playing %}
+        {% get_media_metadata episode as metadata %}
+        {% if metadata %}{{ metadata|json_script:'audioplayer-metadata' }}{% endif %}
+        <div class="h-40 sm:h-28"
+            {# djlint:off #}
+                x-data="
+                audioPlayer(
+                    csrfToken='{{ csrf_token }}',
+                    currentTime={{ current_time|default:0 }},
+                    metadataTag='audioplayer-metadata',
+                    startPlayer={{ start_player|yesno:'true,false' }},
+                    timeUpdateUrl='{% url 'episodes:player_time_update' %}',
+                )"
+            {# djlint:on #}
+            @keydown.window="shortcuts">
+            <audio x-ref="audio"
+                   preload="auto"
+                   @loadedmetadata="loaded"
+                   @ended="ended"
+                   @timeupdate="timeUpdate"
+                   @play="play"
+                   @pause="pause"
+                   @error.prevent="error">
+                <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
+            </audio>
+            <div class="fixed bottom-0 p-2 w-full font-semibold text-white bg-gradient-to-b from-violet-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                <div class="items-center space-y-2 w-full divide-y divide-gray-300 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x dark:divide-gray-600">
+                    <div class="sm:w-1/2">
+                        <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
+                             role="link"
+                             tabindex="0"
+                             hx-get="{{ episode.get_absolute_url }}"
+                             hx-push-url="true">
+                            {% cover_image episode.get_cover_url "card" episode.cleaned_title css_class="group-hover:opacity-75" %}
+                            <div class="flex flex-col place-content-between h-16">
+                                <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2"
+                                    aria-label="{{ episode.cleaned_title }}"
+                                    title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</h2>
+                                {% with podcast=episode.podcast %}
+                                    <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-300 line-clamp-1"
+                                        aria-label="{{ podcast.cleaned_title }}"
+                                        title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h3>
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-2 sm:w-1/2">
+                        <div class="grid grid-cols-3 place-content-between h-12"
+                             :class="!isLoaded ? 'animate-pulse': ''">
+                            <div x-text="counters.current"
+                                 aria-label="Current Time"
+                                 title="Current Time"
+                                 class="flex justify-start items-center font-mono text-sm"
+                                 :class="{'text-gray-300': !isPlaying}"></div>
+                            {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                <div class="flex justify-center items-center space-x-6">
+                                    <button aria-label="Skip Back 10 Seconds"
+                                            title="Skip Back 10 Seconds"
+                                            class="{{ BUTTON_CSS }}"
+                                            x-cloak
+                                            @click="skipBack"
+                                            :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                        {% heroicon_outline "backward" size=30 %}
+                                    </button>
+                                    <button aria-label="Play"
+                                            :title="isLoaded ? 'Play' : 'Loading...'"
+                                            class="{{ BUTTON_CSS }}"
+                                            x-cloak
+                                            :class="isLoaded || '{{ INACTIVE_CSS }}'"
+                                            @click="togglePlayPause"
+                                            x-show="!isPlaying">{% heroicon_outline "play-circle" size=36 %}</button>
+                                    <button aria-label="Pause"
+                                            title="Pause"
+                                            class="{{ BUTTON_CSS }}"
+                                            x-cloak
+                                            @click="togglePlayPause"
+                                            x-show="isPlaying">{% heroicon_outline "pause-circle" size=36 %}</button>
+                                    <button aria-label="Skip Forward 10 Seconds"
+                                            title="Skip Forward 10 Seconds"
+                                            class="{{ BUTTON_CSS }}"
+                                            x-cloak
+                                            @click="skipForward"
+                                            :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                        {% heroicon_outline "forward" size=30 %}
+                                    </button>
+                                </div>
+                            {% endwith %}
+                            <div x-text="counters.remaining"
+                                 aria-label="Time Remaining"
+                                 title="Time Remaining"
+                                 class="flex justify-end items-center font-mono text-sm"
+                                 :class="{'text-gray-300': !isPlaying}"></div>
+                        </div>
+                        <div class="w-full h-4">
+                            <input type="range"
+                                   aria-label="Progress"
+                                   class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
+                                   min="0"
+                                   x-ref="range"
+                                   x-model="runtime"
+                                   @change="skip"
+                                   @mouseover="setPreviewCounter($event.offsetX)"
+                                   :title="title"
+                                   :max="duration"
+                                   :disabled="!isPlaying"
+                                   :class="{'cursor-pointer': isPlaying, 'cursor-not-allowed': !isPlaying}">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        {% if episode.is_explicit %}
-            <div title="May contain adult themes and language. Listener discretion advised."
-                 class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
-                {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
-            </div>
-        {% endif %}
-        <div class="flex flex-wrap items-center space-x-3 font-semibold">
-            <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
-            {% with duration=episode.duration_in_seconds %}
-                {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
-            {% endwith %}
-            {% with file_size=episode.get_file_size %}
-                {% if file_size %}<div title="File Size">{{ file_size }}</div>{% endif %}
-            {% endwith %}
-        </div>
-        {% include "episodes/_audio_log.html" %}
-        {% markdown episode.description %}
-    </article>
-{% endwith %}
-{% endblock content %}
+    {% endif %}
+</div>
+{% endpartialdef audio_player %}

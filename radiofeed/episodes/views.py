@@ -217,7 +217,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     return TemplateResponse(
         request,
-        "episodes/_audio_log.html",
+        "episodes/detail.html#audio_log",
         {
             "episode": audio_log.episode,
         },
@@ -279,11 +279,14 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 
 def _render_audio_player_action(
-    request: HttpRequest, audio_log: AudioLog, *, is_playing: bool
+    request: HttpRequest,
+    audio_log: AudioLog,
+    *,
+    is_playing: bool,
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "episodes/_audio_player_button.html",
+        "episodes/detail.html#audio_player_button",
         {
             "audio_log": audio_log,
             "episode": audio_log.episode,
@@ -299,7 +302,7 @@ def _render_bookmark_action(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "episodes/_bookmark_button.html",
+        "episodes/detail.html#bookmark_button",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,
