@@ -25,9 +25,9 @@
             </ul>
         </nav>
     </header>
-    {% cache 300 search-podcasts request.get_full_path %}
     {% partialdef pagination inline=True %}
+    {% cache 300 search-podcasts request.get_full_path %}
     {% include "podcasts/_podcasts.html" %}
-{% endpartialdef pagination %}
 {% endcache %}
+{% endpartialdef pagination %}
 {% endblock content %}
