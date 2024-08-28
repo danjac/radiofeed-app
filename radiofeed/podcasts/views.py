@@ -9,10 +9,9 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.htmx import render_template_partial
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
-from radiofeed.pagination import paginate
+from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -63,14 +62,10 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_template_partial(
+    return render_pagination_response(
         request,
+        podcasts,
         "podcasts/subscriptions.html",
-        {
-            "page_obj": paginate(request, podcasts),
-        },
-        partial="pagination",
-        target="pagination",
     )
 
 
@@ -79,17 +74,13 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
 
-    podcasts = _get_promoted_podcasts().order_by("-pub_date")
-
-    return render_template_partial(
+    return render_pagination_response(
         request,
+        _get_promoted_podcasts().order_by("-pub_date"),
         "podcasts/discover.html",
         {
-            "page_obj": paginate(request, podcasts),
             "search_url": reverse("podcasts:search_podcasts"),
         },
-        partial="pagination",
-        target="pagination",
     )
 
 
@@ -112,11 +103,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             )
         )
 
-        return TemplateResponse(
+        return render_pagination_response(
             request,
+            podcasts,
             "podcasts/search_podcasts.html",
             {
-                "podcasts": podcasts,
                 "clear_search_url": discover_url,
             },
         )
