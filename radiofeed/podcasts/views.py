@@ -9,6 +9,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.htmx import render_template_partial
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.pagination import render_pagination_response
@@ -174,12 +175,12 @@ def episodes(
         else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
     )
 
-    return TemplateResponse(
+    return render_pagination_response(
         request,
+        episodes,
         "podcasts/episodes.html",
         {
             "podcast": podcast,
-            "episodes": episodes,
             "ordering_asc": ordering_asc,
         },
     )
@@ -264,12 +265,12 @@ def category_detail(
         else podcasts.order_by("-pub_date")
     )
 
-    return TemplateResponse(
+    return render_pagination_response(
         request,
+        podcasts,
         "podcasts/category_detail.html",
         {
             "category": category,
-            "podcasts": podcasts,
         },
     )
 
@@ -327,13 +328,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return TemplateResponse(
-        request,
-        "podcasts/private_feeds.html",
-        {
-            "podcasts": podcasts,
-        },
-    )
+    return render_pagination_response(request, podcasts, "podcasts/private_feeds.html")
 
 
 @require_form_methods
@@ -361,12 +356,14 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return TemplateResponse(
+    return render_template_partial(
         request,
         "podcasts/private_feed_form.html",
         {
             "form": form,
         },
+        partial="form",
+        target="private-feed-form",
     )
 
 

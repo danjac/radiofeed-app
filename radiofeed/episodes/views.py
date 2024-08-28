@@ -23,6 +23,7 @@ from radiofeed.http import (
     HttpResponseUnauthorized,
     require_DELETE,
 )
+from radiofeed.pagination import render_pagination_response
 
 
 @require_safe
@@ -44,11 +45,11 @@ def index(request: HttpRequest) -> TemplateResponse:
         .order_by("-pub_date", "-id")
     )
 
-    return TemplateResponse(
+    return render_pagination_response(
         request,
+        episodes,
         "episodes/index.html",
         {
-            "episodes": episodes,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
@@ -69,11 +70,11 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             .order_by("-rank", "-pub_date")
         )
 
-        return TemplateResponse(
+        return render_pagination_response(
             request,
+            episodes,
             "episodes/search.html",
             {
-                "episodes": episodes,
                 "clear_search_url": index_url,
             },
         )
@@ -187,11 +188,11 @@ def history(request: HttpRequest) -> TemplateResponse:
         else audio_logs.order_by("listened" if ordering_asc else "-listened")
     )
 
-    return TemplateResponse(
+    return render_pagination_response(
         request,
+        audio_logs,
         "episodes/history.html",
         {
-            "audio_logs": audio_logs,
             "ordering_asc": ordering_asc,
         },
     )
@@ -237,11 +238,11 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
         else bookmarks.order_by("created" if ordering_asc else "-created")
     )
 
-    return TemplateResponse(
+    return render_pagination_response(
         request,
+        bookmarks,
         "episodes/bookmarks.html",
         {
-            "bookmarks": bookmarks,
             "ordering_asc": ordering_asc,
         },
     )
