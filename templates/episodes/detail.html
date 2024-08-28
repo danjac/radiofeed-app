@@ -209,7 +209,7 @@
 <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
     {% if episode and is_playing %}
         {% get_media_metadata episode as metadata %}
-        {% if metadata %}{{ metadata|json_script:'audioplayer-metadata' }}{% endif %}
+        {{ metadata|json_script:"audioplayer-metadata" }}
         <div class="h-40 sm:h-28"
             {# djlint:off #}
                 x-data="
@@ -217,8 +217,8 @@
                     csrfToken='{{ csrf_token }}',
                     currentTime={{ current_time|default:0 }},
                     metadataTag='audioplayer-metadata',
-                    startPlayer={{ start_player|yesno:'true,false' }},
-                    timeUpdateUrl='{% url 'episodes:player_time_update' %}',
+                    startPlayer={{ start_player|yesno:"true,false" }},
+                    timeUpdateUrl='{% url "episodes:player_time_update" %}',
                 )"
             {# djlint:on #}
             @keydown.window="shortcuts">
