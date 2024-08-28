@@ -27,6 +27,7 @@ django-htmx==1.19.0
 django-model-utils==4.5.1
 django-permissions-policy==4.21.0
 django-redis==5.4.0
+django-template-partials==24.4
 django-version-checks==1.12.0
 execnet==2.1.1
 executing==2.0.1

@@ -9,8 +9,10 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.htmx import render_template_partial
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
+from radiofeed.pagination import paginate
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -61,12 +63,14 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return TemplateResponse(
+    return render_template_partial(
         request,
         "podcasts/subscriptions.html",
         {
-            "podcasts": podcasts,
+            "page_obj": paginate(request, podcasts),
         },
+        partial="pagination",
+        target="pagination",
     )
 
 
@@ -77,13 +81,15 @@ def discover(request: HttpRequest) -> TemplateResponse:
 
     podcasts = _get_promoted_podcasts().order_by("-pub_date")
 
-    return TemplateResponse(
+    return render_template_partial(
         request,
         "podcasts/discover.html",
         {
-            "podcasts": podcasts,
+            "page_obj": paginate(request, podcasts),
             "search_url": reverse("podcasts:search_podcasts"),
         },
+        partial="pagination",
+        target="pagination",
     )
 
 
@@ -400,7 +406,7 @@ def _render_subscribe_action(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "podcasts/_subscribe_button.html",
+        "podcasts/detail.html#subscribe_button",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,
