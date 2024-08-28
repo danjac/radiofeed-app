@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 def render_template_partial(
     request: HttpRequest,
     template_name: str,
-    context: dict,
+    context: dict | None = None,
     *,
     partial: str,
     target: str,
