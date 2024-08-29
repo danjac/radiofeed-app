@@ -38,7 +38,7 @@ def search(client: Client, search_term: str, limit: int) -> Iterator[Feed]:
 
 def _fetch_itunes_results(
     client: Client, search_term: str, limit: int
-) -> list[dict[str, str]]:
+) -> Iterator[dict[str, str]]:
     try:
         response = client.get(
             "https://itunes.apple.com/search",
@@ -51,13 +51,13 @@ def _fetch_itunes_results(
                 "Accept": "application/json",
             },
         )
-        return response.json()["results"]
+        yield from response.json().get("results", [])
 
     except httpx.HTTPError:
-        return []
+        return
 
 
-def _parse_feeds_from_json(results: list[dict[str, str]]) -> Iterator[Feed]:
+def _parse_feeds_from_json(results: Iterator[dict[str, str]]) -> Iterator[Feed]:
     for result in results:
         try:
             yield Feed(
