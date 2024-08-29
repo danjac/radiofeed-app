@@ -33,32 +33,37 @@ def search(
     search_term: str,
     limit: int = settings.PAGE_SIZE,
 ) -> Iterator[Feed]:
-    """Runs cached search for podcasts on iTunes API."""
-    return _insert_podcasts(_parse_feeds_from_json(client, search_term, limit))
+    """Search iTunes podcast API."""
+    return _insert_podcasts(
+        _parse_feeds_from_json(
+            _fetch_itunes_results(client, search_term, limit),
+        )
+    )
 
 
-def _get_response(client: Client, search_term: str, limit: int) -> dict:
+def _fetch_itunes_results(
+    client: Client, search_term: str, limit: int
+) -> list[dict[str, str]]:
     try:
         response = client.get(
             "https://itunes.apple.com/search",
             params={
                 "term": search_term,
                 "media": "podcast",
+                "limit": limit,
             },
             headers={
                 "Accept": "application/json",
             },
         )
-        return response.json()
+        return response.json()["results"]
 
     except httpx.HTTPError:
-        return {}
+        return []
 
 
-def _parse_feeds_from_json(
-    client: Client, search_term: str, limit: int
-) -> Iterator[Feed]:
-    for result in _get_response(client, search_term, limit).get("results", []):
+def _parse_feeds_from_json(results: list[dict[str, str]]) -> Iterator[Feed]:
+    for result in results:
         try:
             yield Feed(
                 rss=result["feedUrl"],
