@@ -21,7 +21,6 @@ if TYPE_CHECKING:  # pragma: no cover
     import decimal
     from datetime import datetime, timedelta
 
-    from radiofeed.episodes.models import Episode
     from radiofeed.users.models import User
 
 
@@ -273,11 +272,6 @@ class Podcast(models.Model):
     def has_similar(self) -> bool:
         """Returns true if any recommendations."""
         return False if self.private else self.recommendations.exists()
-
-    @cached_property
-    def latest_episode(self) -> Episode | None:
-        """Returns latest episode, if any."""
-        return self.episodes.order_by("-pub_date").first()
 
 
 class Subscription(TimeStampedModel):
