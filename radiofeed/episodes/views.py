@@ -22,7 +22,6 @@ from radiofeed.http import (
     HttpResponseUnauthorized,
     require_DELETE,
 )
-from radiofeed.pagination import render_pagination_response
 
 
 @require_safe
@@ -39,11 +38,11 @@ def index(request: HttpRequest) -> TemplateResponse:
         .order_by("-pub_date", "-id")
     )
 
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        episodes,
         "episodes/index.html",
         {
+            "episodes": episodes,
             "search_url": reverse("episodes:search_episodes"),
         },
     )
@@ -64,11 +63,11 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             .order_by("-rank", "-pub_date")
         )
 
-        return render_pagination_response(
+        return TemplateResponse(
             request,
-            episodes,
             "episodes/search.html",
             {
+                "episodes": episodes,
                 "clear_search_url": index_url,
             },
         )
@@ -182,11 +181,11 @@ def history(request: HttpRequest) -> TemplateResponse:
         else audio_logs.order_by("listened" if ordering_asc else "-listened")
     )
 
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        audio_logs,
         "episodes/history.html",
         {
+            "audio_logs": audio_logs,
             "ordering_asc": ordering_asc,
         },
     )
@@ -211,7 +210,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     return TemplateResponse(
         request,
-        "episodes/detail.html#audio_log",
+        "episodes/_audio_log.html",
         {
             "episode": audio_log.episode,
         },
@@ -232,11 +231,11 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
         else bookmarks.order_by("created" if ordering_asc else "-created")
     )
 
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        bookmarks,
         "episodes/bookmarks.html",
         {
+            "bookmarks": bookmarks,
             "ordering_asc": ordering_asc,
         },
     )
@@ -280,7 +279,7 @@ def _render_audio_player_action(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "episodes/detail.html#audio_player_button",
+        "episodes/_audio_player_button.html",
         {
             "audio_log": audio_log,
             "episode": audio_log.episode,
@@ -296,7 +295,7 @@ def _render_bookmark_action(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "episodes/detail.html#bookmark_button",
+        "episodes/_bookmark_button.html",
         {
             "episode": episode,
             "is_bookmarked": is_bookmarked,

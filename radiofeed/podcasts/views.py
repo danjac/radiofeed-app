@@ -11,11 +11,9 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
-from radiofeed.pagination import render_pagination_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.template import render_template_partial
 
 
 @require_safe
@@ -40,6 +38,7 @@ def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
 def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""
     podcasts = _get_podcasts().subscribed(request.user)
+
     podcasts = (
         podcasts.search(request.search.value).order_by(
             "-exact_match",
@@ -50,10 +49,12 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        podcasts,
         "podcasts/subscriptions.html",
+        {
+            "podcasts": podcasts,
+        },
     )
 
 
@@ -61,12 +62,11 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 @login_required
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
-
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        _get_promoted_podcasts().order_by("-pub_date"),
         "podcasts/discover.html",
         {
+            "podcasts": _get_promoted_podcasts().order_by("-pub_date"),
             "search_url": reverse("podcasts:search_podcasts"),
         },
     )
@@ -91,11 +91,11 @@ def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             )
         )
 
-        return render_pagination_response(
+        return TemplateResponse(
             request,
-            podcasts,
             "podcasts/search_podcasts.html",
             {
+                "podcasts": podcasts,
                 "clear_search_url": discover_url,
             },
         )
@@ -166,12 +166,12 @@ def episodes(
         else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
     )
 
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        episodes,
         "podcasts/episodes.html",
         {
             "podcast": podcast,
+            "episodes": episodes,
             "ordering_asc": ordering_asc,
         },
     )
@@ -256,12 +256,12 @@ def category_detail(
         else podcasts.order_by("-pub_date")
     )
 
-    return render_pagination_response(
+    return TemplateResponse(
         request,
-        podcasts,
         "podcasts/category_detail.html",
         {
             "category": category,
+            "podcasts": podcasts,
         },
     )
 
@@ -308,8 +308,13 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
         if request.search
         else podcasts.order_by("-pub_date")
     )
-
-    return render_pagination_response(request, podcasts, "podcasts/private_feeds.html")
+    return TemplateResponse(
+        request,
+        "podcasts/private_feeds.html",
+        {
+            "podcasts": podcasts,
+        },
+    )
 
 
 @require_form_methods
@@ -337,14 +342,12 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return render_template_partial(
+    return TemplateResponse(
         request,
         "podcasts/private_feed_form.html",
         {
             "form": form,
         },
-        partial="form",
-        target="private-feed-form",
     )
 
 
@@ -375,7 +378,7 @@ def _render_subscribe_action(
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
-        "podcasts/detail.html#subscribe_button",
+        "podcasts/_subscribe_button.html",
         {
             "podcast": podcast,
             "is_subscribed": is_subscribed,

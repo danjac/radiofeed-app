@@ -1,15 +1,15 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons partials %}
+{% load heroicons %}
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
 {% block settings_content %}
-    {% partialdef form inline=True %}
     <form method="post"
           action="{{ request.path }}"
           class="space-y-3"
           id="preferences-form"
           hx-target="this"
+          hx-select="#preferences-form"
           hx-swap="outerHTML">
         {% csrf_token %}
         {{ form }}
@@ -20,5 +20,4 @@
             </button>
         </div>
     </form>
-{% endpartialdef form %}
 {% endblock settings_content %}
