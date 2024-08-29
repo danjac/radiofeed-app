@@ -20,7 +20,7 @@ from radiofeed.template import render_template_partial
 
 @require_safe
 def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
-    """Returns landing page."""
+    """Returns landing page. If user is logged in, redirects to the subscriptions page instead."""
     if request.user.is_anonymous:
         podcasts = _get_promoted_podcasts().order_by("-pub_date")
 
