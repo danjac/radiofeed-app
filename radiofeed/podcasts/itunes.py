@@ -3,7 +3,6 @@ import itertools
 from collections.abc import Iterator
 
 import httpx
-from django.conf import settings
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
@@ -28,11 +27,7 @@ class Feed:
     podcast: Podcast | None = None
 
 
-def search(
-    client: Client,
-    search_term: str,
-    limit: int = settings.PAGE_SIZE,
-) -> Iterator[Feed]:
+def search(client: Client, search_term: str, limit: int) -> Iterator[Feed]:
     """Search iTunes podcast API."""
     return _insert_podcasts(
         _parse_feeds_from_json(

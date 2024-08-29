@@ -121,7 +121,11 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
     discover_url = reverse("podcasts:discover")
 
     if request.search:
-        feeds = itunes.search(get_client(), request.search.value)
+        feeds = itunes.search(
+            get_client(),
+            request.search.value,
+            settings.PAGE_SIZE,
+        )
 
         return TemplateResponse(
             request,
