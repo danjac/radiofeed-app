@@ -124,7 +124,7 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
         feeds = itunes.search(
             get_client(),
             request.search.value,
-            settings.PAGE_SIZE,
+            limit=settings.PAGE_SIZE,
         )
 
         return TemplateResponse(
