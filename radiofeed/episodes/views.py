@@ -32,7 +32,7 @@ def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
     episodes = (
-        Episode.objects.annotate(
+        Episode.objects.alias(
             is_subscribed=Exists(
                 request.user.subscriptions.filter(podcast=OuterRef("podcast"))
             )

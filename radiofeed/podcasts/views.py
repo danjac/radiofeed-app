@@ -41,7 +41,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""
     podcasts = (
         _get_podcasts()
-        .annotate(
+        .alias(
             is_subscribed=Exists(
                 request.user.subscriptions.filter(
                     podcast=OuterRef("pk"),
@@ -219,7 +219,7 @@ def similar(
 def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
-        Category.objects.annotate(
+        Category.objects.alias(
             has_podcasts=Exists(
                 Podcast.objects.filter(
                     categories=OuterRef("pk"),
@@ -309,7 +309,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = (
         _get_podcasts()
-        .annotate(
+        .alias(
             is_subscribed=Exists(
                 request.user.subscriptions.filter(
                     podcast=OuterRef("pk"),
