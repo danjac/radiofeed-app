@@ -49,8 +49,8 @@ def _fetch_itunes_results(
             "https://itunes.apple.com/search",
             params={
                 "term": search_term,
-                "media": "podcast",
                 "limit": limit,
+                "media": "podcast",
             },
             headers={
                 "Accept": "application/json",
