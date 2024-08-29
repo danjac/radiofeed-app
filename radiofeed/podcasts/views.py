@@ -50,7 +50,6 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         )
         .filter(is_subscribed=True)
     )
-
     podcasts = (
         podcasts.search(request.search.value).order_by(
             "-exact_match",
