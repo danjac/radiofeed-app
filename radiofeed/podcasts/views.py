@@ -39,17 +39,7 @@ def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
 @login_required
 def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""
-    podcasts = (
-        _get_podcasts()
-        .alias(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(
-                    podcast=OuterRef("pk"),
-                )
-            )
-        )
-        .filter(is_subscribed=True)
-    )
+    podcasts = _get_podcasts().subscribed(request.user)
     podcasts = (
         podcasts.search(request.search.value).order_by(
             "-exact_match",
@@ -307,17 +297,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 @login_required
 def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
-    podcasts = (
-        _get_podcasts()
-        .alias(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(
-                    podcast=OuterRef("pk"),
-                )
-            )
-        )
-        .filter(private=True, is_subscribed=True)
-    )
+    podcasts = _get_podcasts().subscribed(request.user).filter(private=True)
 
     podcasts = (
         podcasts.search(request.search.value).order_by(

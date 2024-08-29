@@ -27,6 +27,16 @@ if TYPE_CHECKING:  # pragma: no cover
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
+    def subscribed(self, user: User) -> models.QuerySet[Podcast]:
+        """Returns episodes belonging to episodes subscribed by user."""
+        return self.alias(
+            is_subscribed=models.Exists(
+                user.subscriptions.filter(
+                    podcast=models.OuterRef("podcast"),
+                )
+            )
+        ).filter(is_subscribed=True)
+
 
 class Episode(models.Model):
     """Individual podcast episode."""

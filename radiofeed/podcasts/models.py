@@ -103,6 +103,16 @@ class PodcastQuerySet(
             )
         return qs.annotate(exact_match=models.Value(0))
 
+    def subscribed(self, user: User) -> models.QuerySet[Podcast]:
+        """Returns podcasts subscribed by user."""
+        return self.alias(
+            is_subscribed=models.Exists(
+                user.subscriptions.filter(
+                    podcast=models.OuterRef("pk"),
+                )
+            )
+        ).filter(is_subscribed=True)
+
 
 class Podcast(models.Model):
     """Podcast channel or feed."""

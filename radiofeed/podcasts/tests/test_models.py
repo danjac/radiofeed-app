@@ -6,6 +6,7 @@ from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
+    SubscriptionFactory,
 )
 
 
@@ -108,6 +109,15 @@ class TestPodcastManager:
 
         assert second.title == "the testing"
         assert second.exact_match == 0
+
+    @pytest.mark.django_db
+    def test_subscribed_true(self, user):
+        SubscriptionFactory(subscriber=user)
+        assert Podcast.objects.subscribed(user).exists() is True
+
+    @pytest.mark.django_db
+    def test_subscribed_false(self, user, podcast):
+        assert Podcast.objects.subscribed(user).exists() is False
 
 
 class TestPodcastModel:

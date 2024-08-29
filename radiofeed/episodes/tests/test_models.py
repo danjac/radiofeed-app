@@ -9,7 +9,7 @@ from radiofeed.episodes.tests.factories import (
     EpisodeFactory,
 )
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.tests.factories import PodcastFactory
+from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 
 
 class TestEpisodeManager:
@@ -22,6 +22,15 @@ class TestEpisodeManager:
     def test_search_empty(self):
         EpisodeFactory(title="testing")
         assert Episode.objects.search("").count() == 0
+
+    @pytest.mark.django_db
+    def test_subscribed_true(self, user, episode):
+        SubscriptionFactory(subscriber=user, podcast=episode.podcast)
+        assert Episode.objects.subscribed(user).exists() is True
+
+    @pytest.mark.django_db
+    def test_subscribed_false(self, user, episode):
+        assert Episode.objects.subscribed(user).exists() is False
 
 
 class TestEpisodeModel:

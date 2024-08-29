@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef
 from django.http import (
     Http404,
     HttpRequest,
@@ -32,13 +31,8 @@ def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
     episodes = (
-        Episode.objects.alias(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(podcast=OuterRef("podcast"))
-            )
-        )
+        Episode.objects.subscribed(request.user)
         .filter(
-            is_subscribed=True,
             pub_date__gt=timezone.now() - timedelta(days=14),
         )
         .select_related("podcast")
