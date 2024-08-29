@@ -38,9 +38,7 @@ def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
 @require_safe
 @login_required
 def subscriptions(request: HttpRequest) -> TemplateResponse:
-    """Render podcast index page.
-    If user does not have any subscribed podcasts, redirects to Discover page.
-    """
+    """Render podcast index page."""
     podcasts = (
         _get_podcasts()
         .annotate(
