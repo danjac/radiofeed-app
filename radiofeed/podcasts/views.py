@@ -12,10 +12,10 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.pagination import render_pagination_response
-from radiofeed.partials import render_template_partial
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.template import render_template_partial
 
 
 @require_safe

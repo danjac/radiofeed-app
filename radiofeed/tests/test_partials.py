@@ -1,7 +1,7 @@
 import pytest
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.partials import render_template_partial
+from radiofeed.template import render_template_partial
 
 
 class TestRenderTemplatePartial:
