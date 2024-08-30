@@ -239,9 +239,9 @@ class Podcast(models.Model):
         )
 
     def get_episodes_url(self) -> str:
-        """Absolute URL of podcast episode list page."""
+        """URL of podcast episode list page."""
         return reverse(
-            "podcasts:podcast_episodes",
+            "podcasts:episodes",
             kwargs={
                 "podcast_id": self.pk,
                 "slug": self.slug,
@@ -249,12 +249,21 @@ class Podcast(models.Model):
         )
 
     def get_similar_url(self) -> str:
-        """Absolute URL of podcast similar recommendations page."""
+        """URL of podcast similar recommendations page."""
         return reverse(
-            "podcasts:podcast_similar",
+            "podcasts:similar",
             kwargs={
                 "podcast_id": self.pk,
                 "slug": self.slug,
+            },
+        )
+
+    def get_latest_episode_url(self) -> str:
+        """URL of latest episode."""
+        return reverse(
+            "podcasts:latest_episode",
+            kwargs={
+                "podcast_id": self.pk,
             },
         )
 

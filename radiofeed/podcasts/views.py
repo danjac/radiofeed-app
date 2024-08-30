@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -147,6 +147,16 @@ def podcast_detail(
             "is_subscribed": is_subscribed,
         },
     )
+
+
+@require_safe
+@login_required
+def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
+    """Redirects to latest episode."""
+    podcast = _get_podcast_or_404(podcast_id)
+    if episode := podcast.episodes.order_by("-pub_date").first():
+        return HttpResponseRedirect(episode.get_absolute_url())
+    raise Http404
 
 
 @require_safe

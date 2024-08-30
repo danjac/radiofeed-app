@@ -18,12 +18,17 @@ urlpatterns = [
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/episodes/",
         views.episodes,
-        name="podcast_episodes",
+        name="episodes",
     ),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/similar/",
         views.similar,
-        name="podcast_similar",
+        name="similar",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/latest-episode/",
+        views.latest_episode,
+        name="latest_episode",
     ),
     path(
         "subscribe/<int:podcast_id>/",

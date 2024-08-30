@@ -56,42 +56,38 @@
                         </div>
                     {% endif %}
                 </nav>
-                {% cache 300 latest-podcast-episode podcast.pk %}
-                {% if podcast.latest_episode %}
-                    <a href="{{ podcast.latest_episode.get_absolute_url }}"
-                       class="flex flex-wrap space-x-1 link">
-                        <span>Last update</span>
-                        {% include "_date.html" with value=podcast.latest_episode.pub_date title="Last update" %}
-                    </a>
-                {% endif %}
-            {% endcache %}
+                <a href="{{ podcast.get_latest_episode_url }}"
+                   class="flex flex-wrap space-x-1 link">
+                    <span>Last update</span>
+                    {% include "_date.html" with value=podcast.pub_date title="Last update" %}
+                </a>
+            </div>
         </div>
-    </div>
-    {% if podcast.funding_url %}
-        <div class="flex-wrap font-semibold">
-            <a href="{{ podcast.funding_url }}"
-               class="link"
-               rel="noopener nofollow"
-               target="_blank">{{ podcast.funding_text|default:'Support this podcast' }}</a>
-        </div>
-    {% endif %}
-    {% cache 300 podcast-categories podcast.pk %}
-    {% with categories=podcast.categories.all %}
-        {% if categories %}
-            <div class="flex flex-wrap items-center space-x-2 max-w-prose leading-loose sm:space-x-3">
-                {% for category in categories %}
-                    <a class="inline-flex items-center link"
-                       aria-label="{{ category.name }} Podcasts"
-                       title="{{ category.name }} Podcasts"
-                       href="{{ category.get_absolute_url }}">
-                        {% heroicon_mini "tag" class="mr-2" %}
-                        {{ category.name }}
-                    </a>
-                {% endfor %}
+        {% if podcast.funding_url %}
+            <div class="flex-wrap font-semibold">
+                <a href="{{ podcast.funding_url }}"
+                   class="link"
+                   rel="noopener nofollow"
+                   target="_blank">{{ podcast.funding_text|default:'Support this podcast' }}</a>
             </div>
         {% endif %}
-    {% endwith %}
-{% endcache %}
-{% markdown podcast.description %}
+        {% cache 300 podcast-categories podcast.pk %}
+        {% with categories=podcast.categories.all %}
+            {% if categories %}
+                <div class="flex flex-wrap items-center space-x-2 max-w-prose leading-loose sm:space-x-3">
+                    {% for category in categories %}
+                        <a class="inline-flex items-center link"
+                           aria-label="{{ category.name }} Podcasts"
+                           title="{{ category.name }} Podcasts"
+                           href="{{ category.get_absolute_url }}">
+                            {% heroicon_mini "tag" class="mr-2" %}
+                            {{ category.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endcache %}
+    {% markdown podcast.description %}
 </article>
 {% endblock podcast_content %}

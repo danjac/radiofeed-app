@@ -226,10 +226,19 @@ class TestPodcastDetail:
         assertContains(response, "Admin")
 
 
-class TestPodcastEpisodes:
-    def url(self, podcast):
-        return podcast.get_episodes_url()
+class TestLatestEpisode:
+    @pytest.mark.django_db
+    def test_ok(self, client, auth_user, episode):
+        response = client.get(episode.podcast.get_latest_episode_url())
+        assert response.url == episode.get_absolute_url()
 
+    @pytest.mark.django_db
+    def test_no_episodes(self, client, auth_user, podcast):
+        response = client.get(podcast.get_latest_episode_url())
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
+
+
+class TestPodcastEpisodes:
     @pytest.mark.django_db
     def test_get_episodes(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
@@ -269,6 +278,9 @@ class TestPodcastEpisodes:
         )
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page_obj"].object_list) == 1
+
+    def url(self, podcast):
+        return podcast.get_episodes_url()
 
 
 class TestCategoryList:
