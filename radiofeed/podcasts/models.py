@@ -89,19 +89,19 @@ class PodcastQuerySet(
 
         qs = super().search(search_term)
 
-        if exact_matches := set(
+        exact_matches_qs = (
             self.alias(title_lower=models.functions.Lower("title"))
             .filter(title_lower=force_str(search_term).casefold())
             .values_list("pk", flat=True)
-        ):
-            qs = qs | self.filter(pk__in=exact_matches)
-            return qs.annotate(
-                exact_match=models.Case(
-                    models.When(pk__in=exact_matches, then=models.Value(1)),
-                    default=models.Value(0),
-                )
+        )
+        qs = qs | self.filter(pk__in=exact_matches_qs)
+
+        return qs.annotate(
+            exact_match=models.Case(
+                models.When(pk__in=exact_matches_qs, then=models.Value(1)),
+                default=models.Value(0),
             )
-        return qs.annotate(exact_match=models.Value(0))
+        )
 
     def subscribed(self, user: User) -> models.QuerySet[Podcast]:
         """Returns podcasts subscribed by user."""
