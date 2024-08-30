@@ -357,8 +357,8 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.DUPLICATE
 
         assert podcast.active is False
-        assert podcast.etag
-        assert podcast.modified
+        assert not podcast.etag
+        assert podcast.modified is None
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()
