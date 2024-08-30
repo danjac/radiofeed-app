@@ -2,7 +2,7 @@ import functools
 import hashlib
 import itertools
 from collections.abc import Iterator
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import httpx
 from django.db import transaction
@@ -185,6 +185,11 @@ class _FeedParser:
         active: bool = True
         num_retries: int = self._podcast.num_retries
 
+        frequency: timedelta = self._podcast.frequency
+
+        etag: str = self._podcast.etag
+        modified: datetime | None = self._podcast.modified
+
         match exc:
             case DuplicateError():
                 active = False
@@ -198,26 +203,19 @@ class _FeedParser:
                 num_retries += 1
                 self._logger.error("Feed error", error=exc.parser_error.label)  # type: ignore[union-attr]
 
-        # ensure we update Etag and Last-Modified each time
-        if response:
-            etag = self._parse_etag(response)
-            modified = self._parse_modified(response)
-        else:
-            etag = self._podcast.etag
-            modified = self._podcast.modified
-
         # if number of errors exceeds threshold then deactivate the podcast
         active = active and self._max_retries > num_retries
 
-        # if podcast is still active, reschedule next update check
-        frequency = (
-            scheduler.reschedule(
-                self._podcast.pub_date,
-                self._podcast.frequency,
+        if active:
+            # if still active, reschedule podcast and set etag and modified headers for next time
+
+            frequency = scheduler.reschedule(
+                self._podcast.pub_date, self._podcast.frequency
             )
-            if active
-            else self._podcast.frequency
-        )
+
+            if response:
+                etag = self._parse_etag(response)
+                modified = self._parse_modified(response)
 
         self._podcast_update(
             active=active,
