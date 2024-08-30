@@ -2,14 +2,14 @@ annotated-types==0.7.0
 anyio==4.4.0
 asgiref==3.8.1
 brotli==1.1.0
-certifi==2024.7.4
+certifi==2024.8.30
 cffi==1.17.0
 charset-normalizer==3.3.2
 click==8.1.7
 cryptography==43.0.0
 dj-database-url==2.2.0
 django==5.1
-django-allauth==64.1.0
+django-allauth==64.2.0
 django-anymail==11.1
 django-csp==3.8
 django-environ==0.11.2

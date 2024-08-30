@@ -5,7 +5,7 @@ asttokens==2.4.1
 attrs==24.2.0
 bandit==1.7.9
 brotli==1.1.0
-certifi==2024.7.4
+certifi==2024.8.30
 cffi==1.17.0
 charset-normalizer==3.3.2
 click==8.1.7
@@ -14,7 +14,7 @@ cryptography==43.0.0
 decorator==5.1.1
 dj-database-url==2.2.0
 django==5.1
-django-allauth==64.1.0
+django-allauth==64.2.0
 django-anymail==11.1
 django-browser-reload==1.15.0
 django-csp==3.8
@@ -42,7 +42,7 @@ httpx==0.27.2
 icdiff==2.0.7
 idna==3.8
 iniconfig==2.0.0
-ipython==8.26.0
+ipython==8.27.0
 jedi==0.19.1
 joblib==1.4.2
 linkify-it-py==2.0.3
