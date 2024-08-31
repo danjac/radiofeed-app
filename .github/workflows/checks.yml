@@ -28,20 +28,13 @@ jobs:
                 options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: "3.12.1"
-            - uses: abatilo/actions-poetry@v2
-              with:
-                  poetry-version: "1.8.3"
-            - name: Set up local env
-              run: |
-                poetry config virtualenvs.create true --local
-                poetry config virtualenvs.in-project true --local
             - uses: actions/cache@v3
               with:
                 path: ./.venv
-                key: venv-${{ hashFiles('poetry.lock') }}
-            - run: poetry install
-            - run: poetry run xargs python -m nltk.downloader < nltk.txt
-            - run: poetry run python -m pytest
+                key: venv-${{ hashFiles('pdm.lock') }}
+            - uses: pdm-project/setup-pdm@v3
+              with:
+                  python-version: "3.12.1"
+            - run: pdm install
+            - run: pdm run xargs python -m nltk.downloader < nltk.txt
+            - run: pdm run python -m pytest
