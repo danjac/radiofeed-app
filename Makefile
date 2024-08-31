@@ -18,11 +18,11 @@ copyenv:
 
 .PHONY: pyinstall
 pyinstall:
-	poetry install
+	pdm install
 
 .PHONY: pyupdate
 pyupdate:
-	poetry update
+	pdm update
 
 .PHONY: npminstall
 npminstall:
@@ -42,9 +42,8 @@ precommitupdate:
 
 .PHONY: nltkdownload
 nltkdownload:
-	poetry run xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
+	pdm run xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 .PHONY: clean
 clean:
 	git clean -Xdf
-	rm -rf `poetry env info -p`
