@@ -76,8 +76,3 @@ repos:
       rev: v0.19
       hooks:
           - id: validate-pyproject
-    - repo: https://github.com/python-poetry/poetry
-      rev: "1.8.0"
-      hooks:
-        - id: poetry-check
-        - id: poetry-lock
