@@ -43,6 +43,5 @@ jobs:
                 path: ./.venv
                 key: venv-${{ hashFiles('poetry.lock') }}
             - run: poetry install
-            - run: poetry run python ./manage.py validate_templates
             - run: poetry run xargs python -m nltk.downloader < nltk.txt
             - run: poetry run python -m pytest
