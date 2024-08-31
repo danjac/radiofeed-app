@@ -28,12 +28,9 @@ jobs:
                 options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/cache@v3
-              with:
-                path: ./.venv
-                key: venv-${{ hashFiles('pdm.lock') }}
             - uses: pdm-project/setup-pdm@v3
               with:
+                  cache: true
                   python-version: "3.12.1"
             - run: pdm install
             - run: pdm run xargs python -m nltk.downloader < nltk.txt

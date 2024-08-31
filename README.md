@@ -9,9 +9,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 * Python 3.12
 * Node 16+
-* [Poetry](https://github.com/python-poetry/poetry)
-
-If your system uses an older version of Python and/or Node, consider using [pyenv](https://github.com/pyenv/pyenv) and [nvm](https://github.com/nvm-sh/nvm).
+* [PDM](https://pdm-project.org/)
 
 For ease of local development a `docker-compose.yml` file is provided which includes Docker images:
 
