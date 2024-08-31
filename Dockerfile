@@ -1,6 +1,8 @@
+ARG PYTHON_BASE=3.12.4-bookworm
+
 # Production Dockerfile for application
 
-FROM node:22-bookworm-slim AS frontend
+FROM node:22-bookworm-slim AS frontend-deps
 
 WORKDIR /app
 
@@ -20,7 +22,7 @@ RUN npm run build && rm -rf node_modules
 
 # Python
 
-FROM python:3.12.4-bookworm AS backend
+FROM python:$PYTHON_BASE AS backend-deps
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
@@ -43,20 +45,26 @@ COPY ./pdm.lock /app/pdm.lock
 
 RUN pdm install --check --prod --no-editable --no-self --fail-fast
 
+FROM python:$PYTHON_BASE
+
+WORKDIR /app
+
+COPY . /app
+
+COPY --from=backend-deps /app/.venv/ /app/.venv
+
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Download NLTK files
 
 COPY ./nltk.txt /app/nltk.txt
 
-RUN pdm run xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
-
-# Copy over files
-
-COPY . /app
+RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 # Build and copy over assets
 
-COPY --from=frontend /app/assets /app/assets
+COPY --from=frontend-deps /app/assets /app/assets
 
 # Collect static files for Whitenoise
 
-RUN pdm run python manage.py collectstatic --no-input --traceback
+RUN python manage.py collectstatic --no-input --traceback
