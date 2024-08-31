@@ -18,7 +18,7 @@ copyenv:
 
 .PHONY: pyinstall
 pyinstall:
-	pdm install
+	pdm install --no-self
 
 .PHONY: pyupdate
 pyupdate:

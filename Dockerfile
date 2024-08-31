@@ -29,29 +29,25 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=0 \
-    POETRY_VIRTUALENVS_CREATE=0 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+    PIP_ROOT_USER_ACTION=ignore
 
 WORKDIR /app
 
 # Python requirements
 
-RUN pip install poetry==1.8.3
+RUN pip install pdm==2.18.1
 
 COPY ./pyproject.toml /app/pyproject.toml
 
-COPY ./poetry.lock /app/poetry.lock
+COPY ./pdm.lock /app/pdm.lock
 
-RUN poetry install --without dev && pip uninstall --yes poetry
+RUN pdm install --check --prod --no-editable --no-self --fail-fast
 
 # Download NLTK files
 
 COPY ./nltk.txt /app/nltk.txt
 
-RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
+RUN pdm run xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 # Copy over files
 
@@ -63,4 +59,4 @@ COPY --from=frontend /app/assets /app/assets
 
 # Collect static files for Whitenoise
 
-RUN python manage.py collectstatic --no-input --traceback
+RUN pdm run python manage.py collectstatic --no-input --traceback
