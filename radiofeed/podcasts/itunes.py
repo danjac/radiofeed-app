@@ -31,7 +31,11 @@ def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Fee
     """Search iTunes podcast API."""
     return _insert_podcasts(
         _parse_feeds_from_json(
-            _fetch_itunes_results(client, search_term, limit),
+            _fetch_itunes_results(
+                client,
+                search_term,
+                limit,
+            ),
         )
     )
 
