@@ -9,7 +9,7 @@
 *.swp
 *log
 .disk_cache
-.pdm-python/
+.pdm-python
 .python-version
 .ruff_cache
 .coverage
