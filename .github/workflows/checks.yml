@@ -31,7 +31,7 @@ jobs:
             - uses: pdm-project/setup-pdm@v3
               with:
                   cache: true
-                  python-version: "3.12.1"
+                  python-version: "3.12.4"
             - run: pdm install
             - run: pdm run xargs python -m nltk.downloader < nltk.txt
             - run: pdm run python -m pytest
