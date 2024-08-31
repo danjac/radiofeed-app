@@ -17,6 +17,7 @@
 .pytest_cache
 .python-version
 .ruff_cache
+.venv
 .vim
 .vscode
 LICENSE
