@@ -13,14 +13,11 @@ update:
 
 .PHONY: pyinstall
 pyinstall:
-	uv venv && source .venv/bin/activate
-	uv pip install -r requirements-ci.txt
+	poetry install
 
 .PHONY: pyupdate
 pyupdate:
-	uv pip compile pyproject.toml --no-annotate --no-header --upgrade -o requirements.txt
-	uv pip compile pyproject.toml --no-annotate --no-header --upgrade --extra dev -o requirements-ci.txt
-	uv pip sync requirements-ci.txt
+	poetry update
 
 .PHONY: npminstall
 npminstall:
@@ -40,8 +37,9 @@ precommitupdate:
 
 .PHONY: nltkdownload
 nltkdownload:
-	xargs -I{} .venv/bin/python -c "import nltk; nltk.download('{}')" < nltk.txt
+	poetry run xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
 
 .PHONY: clean
 clean:
 	git clean -Xdf
+	rm -rf `poetry env info -p`
