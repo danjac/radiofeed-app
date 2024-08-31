@@ -1,7 +1,7 @@
 [project]
 name = "radiofeed-app"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "Podcast aggregator app"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"},
 ]
