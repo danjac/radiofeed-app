@@ -5,7 +5,9 @@ description = "Default template for PDM package"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "django>=5.1",
+]
 requires-python = "==3.12.*"
 readme = "README.md"
 license = {text = "MIT"}
