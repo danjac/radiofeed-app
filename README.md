@@ -23,16 +23,7 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Current tested versions are PostgreSQL 16 and Redis 7.
 
-To get started, first copy `.env.example` to `.env`. The default settings should work with the forementioned Docker services, otherwise modify as needed, in particular `DATABASE_URL` and `REDIS_URL`.
-
-You should run your development environment inside a virtualenv:
-
-```bash
-uv venv
-uv pip install -r requirements-ci.txt
-```
-
-Alternatively you can just run `make install` (see below) which will install your Python and other dependencies.
+You should run your development environment inside a virtualenv. Alternatively you can just run `make install` (see below) which will install your Python and other dependencies.
 
 The `Makefile` has some convenient shortcuts for local development, including:
 

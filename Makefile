@@ -1,5 +1,6 @@
 .PHONY: install
 install:
+	@$(MAKE) copyenv
 	@$(MAKE) pyinstall
 	@$(MAKE) npminstall
 	@$(MAKE) precommitinstall
@@ -10,6 +11,10 @@ update:
 	@$(MAKE) pyupdate
 	@$(MAKE) npmupdate
 	@$(MAKE) precommitupdate
+
+.PHONY: copyenv
+copyenv:
+	cp -R -u -p .env.example .env
 
 .PHONY: pyinstall
 pyinstall:
