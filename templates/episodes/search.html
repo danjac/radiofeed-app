@@ -18,9 +18,7 @@
     </header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-episodes request.get_full_path %}
-            {% pagination page_obj %}
-                {% include "episodes/_episode.html" with episode=item %}
-            {% endpagination %}
+            {% include "episodes/_episodes.html" %}
         {% endcache %}
     {% endpartialdef %}
 {% endblock content %}

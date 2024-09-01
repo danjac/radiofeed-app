@@ -27,9 +27,7 @@
     </header>
     {% partialdef pagination inline=True %}
         {% cache 300 promoted-podcasts request.get_full_path %}
-            {% pagination page_obj %}
-                {% include "podcasts/_podcast.html" with podcast=item %}
-            {% endpagination %}
+            {% include "podcasts/_podcasts.html" %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

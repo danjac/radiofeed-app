@@ -39,9 +39,7 @@
 {% block podcast_content %}
     {% partialdef pagination inline=True %}
         {% cache 300 podcast-episodes request.get_full_path %}
-            {% pagination page_obj %}
-                {% include "podcasts/_episode.html" with episode=item %}
-            {% endpagination %}
+            {% include "podcasts/_episodes.html" %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock podcast_content %}

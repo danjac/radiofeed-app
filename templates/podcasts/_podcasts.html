@@ -1,3 +1,4 @@
-{% pagination page_obj %}
+{% extends "_pagination.html" %}
+{% block item %}
     {% include "podcasts/_podcast.html" with podcast=item %}
-{% endpagination %}
+{% endblock item %}

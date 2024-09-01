@@ -1,10 +1,8 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.template import RequestContext, Template, TemplateSyntaxError
+from django.template import RequestContext
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.pagination import paginate
-from radiofeed.podcasts.tests.factories import PodcastFactory
 from radiofeed.templatetags import (
     absolute_uri,
     active_link,
@@ -113,91 +111,3 @@ class TestAbsoluteUri:
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
         )
-
-
-class TestPagination:
-    @pytest.mark.django_db
-    def test_missing_arg(self, rf):
-        template = """
-        {% pagination %}
-        {% include "podcasts/_podcast.html" with podcast=item %}
-        {% endpagination %}
-        """
-
-        request = rf.get("/")
-        podcasts = PodcastFactory.create_batch(6)
-        page_obj = paginate(request, podcasts)
-
-        with pytest.raises(TemplateSyntaxError):
-            Template(template).render(
-                RequestContext(
-                    request,
-                    {"page_obj": page_obj},
-                )
-            )
-
-    @pytest.mark.django_db
-    def test_single_page(self, rf):
-        template = """
-        {% pagination page_obj %}
-        {% include "podcasts/_podcast.html" with podcast=item %}
-        {% endpagination %}
-        """
-
-        request = rf.get("/")
-        podcasts = PodcastFactory.create_batch(6)
-        page_obj = paginate(request, podcasts)
-
-        rendered = Template(template).render(
-            RequestContext(
-                request,
-                {"page_obj": page_obj},
-            )
-        )
-
-        assert "?page=1" not in rendered
-        assert "?page=2" not in rendered
-
-    @pytest.mark.django_db
-    def test_first_page(self, rf):
-        template = """
-        {% pagination page_obj %}
-        {% include "podcasts/_podcast.html" with podcast=item %}
-        {% endpagination %}
-        """
-
-        request = rf.get("/")
-        podcasts = PodcastFactory.create_batch(33)
-        page_obj = paginate(request, podcasts)
-
-        rendered = Template(template).render(
-            RequestContext(
-                request,
-                {"page_obj": page_obj},
-            )
-        )
-
-        assert "?page=1" not in rendered
-        assert "?page=2" in rendered
-
-    @pytest.mark.django_db
-    def test_next_page(self, rf):
-        template = """
-        {% pagination page_obj %}
-        {% include "podcasts/_podcast.html" with podcast=item %}
-        {% endpagination %}
-        """
-
-        request = rf.get("/", {"page": 2})
-        podcasts = PodcastFactory.create_batch(33)
-        page_obj = paginate(request, podcasts)
-
-        rendered = Template(template).render(
-            RequestContext(
-                request,
-                {"page_obj": page_obj},
-            )
-        )
-
-        assert "?page=1" in rendered
-        assert "?page=2" not in rendered

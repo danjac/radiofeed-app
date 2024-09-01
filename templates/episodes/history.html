@@ -39,9 +39,7 @@
     </header>
     {% if request.search or page_obj.paginator.count %}
         {% partialdef pagination inline=True %}
-            {% pagination page_obj %}
-                {% include "episodes/_episode.html" with episode=item.episode %}
-            {% endpagination %}
+            {% include "episodes/_episodes.html" with is_fk=True %}
         {% endpartialdef pagination %}
     {% else %}
         <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
