@@ -165,9 +165,11 @@ def pagination(parser: Parser, token: Token) -> PaginationNode:
     nodelist = parser.parse(("endpagination",))
     parser.delete_first_token()
     try:
-        page_obj = token.contents.split()[1]
-    except IndexError as exc:
-        raise template.TemplateSyntaxError("page_obj required") from exc
+        (page_obj,) = token.contents.split()[1:]
+    except ValueError as exc:
+        raise template.TemplateSyntaxError(
+            "page_obj argument required for pagination tag"
+        ) from exc
 
     return PaginationNode(page_obj, nodelist)
 
