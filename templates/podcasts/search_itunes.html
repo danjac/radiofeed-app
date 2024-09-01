@@ -24,22 +24,22 @@
         </nav>
     </header>
     {% cache 300 search-itunes request.get_full_path %}
-    <ul class="divide-y divide-solid">
-        {% for feed in feeds %}
-            <li class="py-3 first:pt-0 last:pb-0">
-                {% if feed.podcast.pub_date %}
-                    {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
-                {% else %}
-                    {% include "podcasts/_itunes_feed.html" %}
-                {% endif %}
-            </li>
-        {% empty %}
-            <li>
-                <div class="text-center sm:text-start">
-                    No results for &quot;<strong>{{ request.search.value }}</strong>&quot;
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
-{% endcache %}
+        <ul class="divide-y divide-solid">
+            {% for feed in feeds %}
+                <li class="py-3 first:pt-0 last:pb-0">
+                    {% if feed.podcast.pub_date %}
+                        {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
+                    {% else %}
+                        {% include "podcasts/_itunes_feed.html" %}
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>
+                    <div class="text-center sm:text-start">
+                        No results for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endcache %}
 {% endblock content %}

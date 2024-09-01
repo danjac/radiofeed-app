@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-{% load heroicons %}
+{% load heroicons partials %}
 {% block title %}
     {{ block.super }} | Private Feeds
 {% endblock title %}
 {% block content %}
-    {% paginate podcasts as page_obj %}
     <header class="pb-3   mb-3 border-b space-y-3 {% if not page_obj.has_other_pages %}sm:space-y-0 sm:flex items-center justify-between{% endif %}">
         <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
             Private Feeds
@@ -38,7 +37,9 @@
         </nav>
     </header>
     {% if request.search or page_obj.paginator.count %}
-        {% include "podcasts/_podcasts.html" %}
+        {% partialdef pagination inline=True %}
+            {% include "podcasts/_podcasts.html" %}
+        {% endpartialdef pagination %}
     {% else %}
         <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
             <p>You are not subscribed to any Private Feeds.</p>

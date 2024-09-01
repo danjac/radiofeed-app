@@ -52,6 +52,20 @@ class TestSubscriptions:
         assert response.context["page_obj"].object_list[0] == sub.podcast
 
     @pytest.mark.django_db
+    def test_htmx_request(self, client, auth_user):
+        PodcastFactory.create_batch(3, promoted=True)
+        sub = SubscriptionFactory(subscriber=auth_user)
+        response = client.get(
+            _subscriptions_url,
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="pagination",
+        )
+
+        assert response.status_code == http.HTTPStatus.OK
+        assert len(response.context["page_obj"].object_list) == 1
+        assert response.context["page_obj"].object_list[0] == sub.podcast
+
+    @pytest.mark.django_db
     def test_user_is_subscribed_search(self, client, auth_user):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
 
@@ -374,7 +388,11 @@ class TestSubscribe:
     def test_subscribe_private(self, client, auth_user):
         podcast = PodcastFactory(private=True)
 
-        response = client.post(self.url(podcast), HTTP_HX_REQUEST="true")
+        response = client.post(
+            self.url(podcast),
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="subscribe-button",
+        )
 
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
@@ -393,6 +411,7 @@ class TestSubscribe:
         response = client.post(
             self.url(podcast),
             HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="subscribe-button",
         )
         assert response.status_code == http.HTTPStatus.CONFLICT
         assert Subscription.objects.filter(
@@ -410,6 +429,7 @@ class TestUnsubscribe:
         response = client.delete(
             self.url(podcast),
             HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="subscribe-button",
         )
         assert response.status_code == http.HTTPStatus.OK
         assert not Subscription.objects.filter(
@@ -422,7 +442,11 @@ class TestUnsubscribe:
             subscriber=auth_user, podcast=PodcastFactory(private=True)
         ).podcast
 
-        response = client.delete(self.url(podcast), HTTP_HX_REQUEST="true")
+        response = client.delete(
+            self.url(podcast),
+            HTTP_HX_REQUEST="true",
+            HTTP_HX_TARGET="subscribe-button",
+        )
         assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         assert Subscription.objects.filter(

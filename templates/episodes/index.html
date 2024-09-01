@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load partials %}
 {% block title %}
     {{ block.super }} | New Releases
 {% endblock title %}
@@ -15,9 +16,10 @@
             </ul>
         </nav>
     </header>
-    {% paginate episodes as page_obj %}
     {% if page_obj.paginator.count %}
-        {% include "episodes/_episodes.html" %}
+        {% partialdef pagination inline=True %}
+            {% include "episodes/_episodes.html" %}
+        {% endpartialdef pagination %}
     {% else %}
         <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">
             <p>You're not following any podcasts yet.</p>

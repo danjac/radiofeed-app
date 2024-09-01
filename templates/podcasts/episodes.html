@@ -1,45 +1,45 @@
 {% extends "podcasts/detail_base.html" %}
-{% load cache heroicons %}
+{% load cache heroicons partials %}
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
-{% block content %}
-    {% cache 300 podcast-episodes request.get_full_path %}
-    {% paginate episodes as page_obj %}
-    {{ block.super }}
-{% endcache %}
-{% endblock content %}
 {% block podcast_navbar %}
     {{ block.super }}
-    {% if page_obj.has_other_pages or request.search %}
-        <nav class="flex justify-center items-center sm:justify-start">
-            <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
-                {% if request.search %}
+    {% cache 300 podcast-episodes-header request.search.value %}
+        {% if page_obj.has_other_pages or request.search %}
+            <nav class="flex justify-center items-center sm:justify-start">
+                <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
+                    {% if request.search %}
+                        <li class="flex justify-center items-center sm:justify-end">
+                            <a class="inline-flex items-center btn btn-default"
+                               href="{% url "episodes:search_episodes" %}{{ request.search.qs }}">
+                                {% heroicon_mini "magnifying-glass" class="mr-2" %}
+                                Search All Episodes
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
+                            {% if ordering_asc %}
+                                <a href="{{ request.path }}{% querystring order="desc" page=None %}"
+                                   class="link">Newest First</a>
+                            {% else %}
+                                <a href="{{ request.path }}{% querystring order="asc" page=None %}"
+                                   class="link">Oldest First</a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
                     <li class="flex justify-center items-center sm:justify-end">
-                        <a class="inline-flex items-center btn btn-default"
-                           href="{% url "episodes:search_episodes" %}{{ request.search.qs }}">
-                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                            Search All Episodes
-                        </a>
+                        {% include "_search_form.html" with placeholder="Search: Episodes" %}
                     </li>
-                {% else %}
-                    <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-                        {% if ordering_asc %}
-                            <a href="{{ request.path }}{% querystring order="desc" page=None %}"
-                               class="link">Newest First</a>
-                        {% else %}
-                            <a href="{{ request.path }}{% querystring order="asc" page=None %}"
-                               class="link">Oldest First</a>
-                        {% endif %}
-                    </li>
-                {% endif %}
-                <li class="flex justify-center items-center sm:justify-end">
-                    {% include "_search_form.html" with placeholder="Search: Episodes" %}
-                </li>
-            </ul>
-        </nav>
-    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% endcache %}
 {% endblock podcast_navbar %}
 {% block podcast_content %}
-    {% include "podcasts/_episodes.html" %}
+    {% partialdef pagination inline=True %}
+        {% cache 300 podcast-episodes request.get_full_path %}
+            {% include "podcasts/_episodes.html" %}
+        {% endcache %}
+    {% endpartialdef pagination %}
 {% endblock podcast_content %}

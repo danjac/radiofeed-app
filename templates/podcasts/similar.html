@@ -5,12 +5,12 @@
 {% endblock title %}
 {% block podcast_content %}
     {% cache 300 similar-podcasts request.get_full_path %}
-    <ul class="divide-y divide-solid">
-        {% for recommendation in recommendations %}
-            <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
-                {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
-            </li>
-        {% endfor %}
-    </ul>
-{% endcache %}
+        <ul class="divide-y divide-solid">
+            {% for recommendation in recommendations %}
+                <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
+                    {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endcache %}
 {% endblock podcast_content %}
