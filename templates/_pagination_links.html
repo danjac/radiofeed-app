@@ -5,9 +5,9 @@
      hx-swap="outerHTML show:window:top">
     <ul class="flex justify-between items-center">
         <li>
-            {% if page_obj.has_previous %}
+            {% if previous_page %}
                 <a class="link"
-                   href="{{ request.path }}{% querystring page=page_obj.previous_page_number %}"
+                   href="{{ request.path }}{% querystring page=previous_page %}"
                    aria-label="Previous Page"
                    title="Previous Page">Previous</a>
             {% else %}
@@ -17,10 +17,10 @@
             {% endif %}
         </li>
         <li>
-            {% if page_obj.has_next %}
+            {% if next_page %}
                 <a class="link"
                    aria-label="Next Page"
-                   href="{{ request.path }}{% querystring page=page_obj.next_page_number %}"
+                   href="{{ request.path }}{% querystring page=next_page %}"
                    title="Next Page">Next</a>
             {% else %}
                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"

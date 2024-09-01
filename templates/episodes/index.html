@@ -18,7 +18,9 @@
     </header>
     {% if page_obj.paginator.count %}
         {% partialdef pagination inline=True %}
-            {% include "episodes/_episodes.html" %}
+            {% pagination page_obj %}
+                {% include "episodes/_episode.html" with episode=item %}
+            {% endpagination %}
         {% endpartialdef pagination %}
     {% else %}
         <div class="text-center prose prose-zinc sm:text-start dark:prose-invert">

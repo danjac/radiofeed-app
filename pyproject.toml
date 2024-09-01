@@ -127,7 +127,7 @@ ignore_errors = true
 [tool.djlint]
 profile = "django"
 ignore = "H030,H031,H017,H021"
-custom_blocks="cache,partialdef"
+custom_blocks="cache,partialdef,pagination"
 
 [tool.ruff]
 target-version = "py312"

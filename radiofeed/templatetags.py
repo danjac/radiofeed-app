@@ -9,11 +9,16 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
+from django.template.loader import get_template
 
 from radiofeed import cover_image, markdown
 
 if TYPE_CHECKING:  # pragma: nocover
-    from django.template.context import RequestContext
+    from collections.abc import Iterator
+
+    from django.core.pagination import Page
+    from django.template.base import NodeList, Parser, Token
+    from django.template.context import Context, RequestContext
 
     from radiofeed.cover_image import CoverImageVariant
 
@@ -146,3 +151,67 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
+
+
+@register.tag
+def pagination(parser: Parser, token: Token) -> PaginationNode:
+    """Renders paginated list."""
+    nodelist = parser.parse(("endpagination",))
+    parser.delete_first_token()
+    try:
+        page_obj = token.contents.split()[1]
+    except IndexError as exc:
+        raise template.TemplateSyntaxError("page_obj required") from exc
+
+    return PaginationNode(page_obj, nodelist)
+
+
+class PaginationNode(template.Node):
+    """Implementation of pagination tag."""
+
+    def __init__(
+        self,
+        page_obj: str,
+        nodelist: NodeList,
+        request: str = "request",
+        template_name: str = "_pagination.html",
+    ) -> None:
+        self.nodelist = nodelist
+        self.template = get_template(template_name)
+
+        self.page_obj = template.Variable(page_obj)
+        self.request = template.Variable(request)
+
+    def render(self, context: Context) -> str:
+        """Render pagination."""
+
+        page_obj = self.page_obj.resolve(context)
+        request = self.request.resolve(context)
+
+        previous_page, next_page = None, None
+
+        if page_obj.has_previous():
+            previous_page = page_obj.previous_page_number()
+
+        if page_obj.has_next():
+            next_page = page_obj.next_page_number()
+
+        has_other_pages = next_page or previous_page
+
+        with context.push():
+            context.update(
+                {
+                    "previous_page": previous_page,
+                    "next_page": next_page,
+                    "has_other_pages": has_other_pages,
+                    "paginated_items": self._paginated_items(page_obj, context),
+                }
+            )
+
+            return self.template.render(context.flatten(), request)
+
+    def _paginated_items(self, page_obj: Page, context: Context) -> Iterator[str]:
+        for item in page_obj:
+            with context.push():
+                context.update({"item": item})
+                yield self.nodelist.render(context)
