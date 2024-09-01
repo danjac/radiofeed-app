@@ -16,7 +16,7 @@ from radiofeed import cover_image, markdown
 if TYPE_CHECKING:  # pragma: nocover
     from collections.abc import Iterator
 
-    from django.core.pagination import Page
+    from django.core.paginator import Page
     from django.template.base import NodeList, Parser, Token
     from django.template.context import Context, RequestContext
 
