@@ -6,8 +6,8 @@
         {% endif %}
         {% for item in page_obj %}
             <li class="py-3 first:pt-0 last:pb-0">
-                {% block item %}
-                {% endblock item %}
+                {% block pagination_item %}
+                {% endblock pagination_item %}
             </li>
         {% empty %}
             <li>
