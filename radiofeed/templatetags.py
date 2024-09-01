@@ -155,7 +155,13 @@ def percentage(value: float, total: float) -> int:
 
 @register.tag
 def pagination(parser: Parser, token: Token) -> PaginationNode:
-    """Renders paginated list."""
+    """Renders paginated list.
+
+    Usage:
+        {% pagination page_obj %}
+            {% include "podcasts/_podcast.html" with podcast=item %}
+        {% endpagination %}
+    """
     nodelist = parser.parse(("endpagination",))
     parser.delete_first_token()
     try:
