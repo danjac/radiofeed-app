@@ -78,14 +78,30 @@ def paginate_lazy(*args, **kwargs) -> SimpleLazyObject:
     return SimpleLazyObject(lambda: paginate(*args, **kwargs))
 
 
-def render_paginated_response(
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class PaginationTemplatePartial:
+    """Encapsulates partial arguments."""
+
+    partial: str
+    target: str
+
+
+def render_paginated_response(  # noqa: PLR0913
     request: HttpRequest,
     template_name: str,
     object_list: QuerySet,
     extra_context: dict | None = None,
+    partial: str = "pagination",
+    target: str = "pagination",
     **pagination_kwargs,
 ) -> TemplateResponse:
-    """Shortcut for rendering a pagination template.
+    """Shortcut for rendering a pagination template, conditionally rendering to a partial.
+
+    The rendered pagination should be wrapped in `partialdef` tag e.g:
+
+        {% partialdef pagination inline=True %}
+        ...pagination markup
+        {% endpartialdef %}
 
     This adds a `page_obj` to the template, which is a lazily-evaluated `Page` instance,
     i.e. database queries are not evaluated until page_obj is referenced in the template.
@@ -94,9 +110,14 @@ def render_paginated_response(
         request,
         template_name,
         context={
-            "page_obj": paginate_lazy(request, object_list, **pagination_kwargs),
+            "page_obj": paginate_lazy(
+                request,
+                object_list,
+                **pagination_kwargs,
+            ),
+            "pagination_id": target,
         }
         | (extra_context or {}),
-        partial="pagination",
-        target="pagination",
+        partial=partial,
+        target=target,
     )

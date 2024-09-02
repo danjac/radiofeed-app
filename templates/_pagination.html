@@ -1,27 +1,25 @@
 {# vim: set filetype=htmldjango #}
-{% with pagination_id=pagination_id|default:"pagination" %}
-    <ul class="divide-y divide-solid" id="{{ pagination_id }}">
-        {% if page_obj.has_other_pages %}
-            <li class="pb-3">{% include "_pagination_links.html" %}</li>
-        {% endif %}
-        {% for item in page_obj %}
-            <li class="py-3 first:pt-0 last:pb-0">
-                {% block pagination_item %}
-                {% endblock pagination_item %}
-            </li>
-        {% empty %}
-            <li>
-                <div class="text-center sm:text-start">
-                    {% if request.search %}
-                        No results for &quot;<strong>{{ request.search.value }}</strong>&quot;
-                    {% else %}
-                        Nothing to see here.
-                    {% endif %}
-                </div>
-            </li>
-        {% endfor %}
-        {% if page_obj.has_other_pages %}
-            <li class="pt-3">{% include "_pagination_links.html" %}</li>
-        {% endif %}
-    </ul>
-{% endwith %}
+<ul class="divide-y divide-solid" id="{{ pagination_id }}">
+    {% if page_obj.has_other_pages %}
+        <li class="pb-3">{% include "_pagination_links.html" %}</li>
+    {% endif %}
+    {% for item in page_obj %}
+        <li class="py-3 first:pt-0 last:pb-0">
+            {% block pagination_item %}
+            {% endblock pagination_item %}
+        </li>
+    {% empty %}
+        <li>
+            <div class="text-center sm:text-start">
+                {% if request.search %}
+                    No results for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                {% else %}
+                    Nothing to see here.
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+    {% if page_obj.has_other_pages %}
+        <li class="pt-3">{% include "_pagination_links.html" %}</li>
+    {% endif %}
+</ul>
