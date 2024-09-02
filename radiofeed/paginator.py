@@ -8,7 +8,7 @@ from django.http import HttpRequest
 from django.template.response import TemplateResponse
 from django.utils.functional import SimpleLazyObject, cached_property
 
-from radiofeed.template import render_template_partial
+from radiofeed.partials import render_template_partial
 
 
 @dataclasses.dataclass(frozen=True)
