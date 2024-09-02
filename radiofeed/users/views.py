@@ -92,7 +92,8 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
         },
         content_type="text/x-opml",
         headers={
-            "Content-Disposition": f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+            "Content-Disposition": "attachment;"
+            f"filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
         },
     )
 
