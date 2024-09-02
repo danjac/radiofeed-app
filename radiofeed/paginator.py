@@ -78,14 +78,6 @@ def paginate_lazy(*args, **kwargs) -> SimpleLazyObject:
     return SimpleLazyObject(lambda: paginate(*args, **kwargs))
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class PaginationTemplatePartial:
-    """Encapsulates partial arguments."""
-
-    partial: str
-    target: str
-
-
 def render_paginated_response(  # noqa: PLR0913
     request: HttpRequest,
     template_name: str,
