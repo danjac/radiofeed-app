@@ -1,6 +1,6 @@
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.partials import render_template_partial
+from radiofeed.template_partials import render_template_partial
 
 
 def add_htmx_details(req):
