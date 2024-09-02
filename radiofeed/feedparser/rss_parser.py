@@ -1,3 +1,4 @@
+import contextlib
 import functools
 from collections.abc import Iterator
 from typing import Final
@@ -96,10 +97,8 @@ class _RSSParser:
 
     def _parse_items(self, channel: OptionalXmlElement) -> Iterator[Item]:
         for item in self._parser.iterfind(channel, "item"):
-            try:
+            with contextlib.suppress(ValidationError):
                 yield self._parse_item(item)
-            except ValidationError:
-                continue
 
     def _parse_item(self, item: OptionalXmlElement) -> Item:
         return Item.model_validate(
