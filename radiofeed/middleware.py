@@ -1,3 +1,5 @@
+from typing import Final
+
 from django.contrib.messages import get_messages
 from django.http import HttpRequest, HttpResponse, QueryDict
 from django.template.loader import render_to_string
@@ -16,7 +18,7 @@ class TemplatePartialMiddleware:
     Response must be a `TemplateResponse` class or similar.
     """
 
-    _header = "X-TemplatePartial"
+    _template_partial_header: Final = "X-TemplatePartial"
 
     def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
@@ -30,7 +32,7 @@ class TemplatePartialMiddleware:
     ) -> TemplateResponse:
         """Implement middleware hook."""
 
-        if partial := request.headers.get(self._header):
+        if partial := request.headers.get(self._template_partial_header):
             response.template_name += f"#{partial}"
 
         return response
@@ -59,7 +61,7 @@ class HtmxRestoreMiddleware:
 class HtmxMessagesMiddleware:
     """Adds messages to HTMX response"""
 
-    _hx_redirect_headers = frozenset(
+    _hx_redirect_headers: Final = frozenset(
         {
             "HX-Location",
             "HX-Redirect",

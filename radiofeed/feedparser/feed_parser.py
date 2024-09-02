@@ -3,6 +3,7 @@ import hashlib
 import itertools
 from collections.abc import Iterator
 from datetime import datetime, timedelta
+from typing import Final
 
 import httpx
 from django.db import transaction
@@ -52,9 +53,9 @@ def parse_feed(podcast: Podcast, client: Client) -> None:
 class _FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
-    _max_retries: int = 3
+    _max_retries: Final = 3
 
-    _accept_header: str = (
+    _accept_header: Final = (
         "application/atom+xml,"
         "application/rdf+xml,"
         "application/rss+xml,"
