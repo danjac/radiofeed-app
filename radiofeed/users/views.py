@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Exists, OuterRef
 from django.http import HttpRequest, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
@@ -76,15 +75,8 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
-        Podcast.objects.annotate(
-            is_subscribed=Exists(
-                request.user.subscriptions.filter(
-                    podcast=OuterRef("pk"),
-                )
-            )
-        )
+        Podcast.objects.subscribed(request.user)
         .filter(
-            is_subscribed=True,
             private=False,
             pub_date__isnull=False,
         )
