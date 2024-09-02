@@ -24,7 +24,7 @@ class CachedPage:
 
     @cached_property
     def object_list(self) -> Paginator:
-        """Returns Paginator instance."""
+        """Returns object list."""
         return self.page.object_list
 
     @cached_property
