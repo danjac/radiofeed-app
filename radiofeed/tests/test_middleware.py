@@ -173,7 +173,7 @@ class TestTemplatePartialMiddleware:
         req = rf.get(
             "/",
             headers={
-                "X-Template-Partial": "pagination",
+                "X-TemplatePartial": "pagination",
             },
         )
         response = mw.process_template_response(

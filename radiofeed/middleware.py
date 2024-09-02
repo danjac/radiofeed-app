@@ -11,10 +11,12 @@ from radiofeed.types import HttpRequestResponse
 
 
 class TemplatePartialMiddleware:
-    """If request header X-Template-Partial is present, return the specified template partial.
+    """If request header X-TemplatePartial is present, return the specified template partial.
 
     Response must be a `TemplateResponse` class or similar.
     """
+
+    _header = "X-TemplatePartial"
 
     def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
@@ -28,7 +30,7 @@ class TemplatePartialMiddleware:
     ) -> TemplateResponse:
         """Implement middleware hook."""
 
-        if partial := request.headers.get("X-Template-Partial"):
+        if partial := request.headers.get(self._header):
             response.template_name += f"#{partial}"
 
         return response
