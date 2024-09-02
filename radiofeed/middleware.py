@@ -11,9 +11,9 @@ from radiofeed.types import HttpRequestResponse
 
 
 class TemplatePartialMiddleware:
-    """If request header X-Template-Partial is present, return that partial name.
+    """If request header X-Template-Partial is present, return the specified template partial.
 
-    Response must be a `SimpleTemplateResponse` subclass.
+    Response must be a `TemplateResponse` class or similar.
     """
 
     def __init__(self, get_response: HttpRequestResponse) -> None:

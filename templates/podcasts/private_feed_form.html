@@ -15,7 +15,8 @@
               class="space-y-3"
               id="private-feed-form"
               hx-swap="outerHTML"
-              hx-target="this">
+              hx-target="this"
+              hx-headers='{"X-Template-Partial": "form"}'>
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center space-x-3">

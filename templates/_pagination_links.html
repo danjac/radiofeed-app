@@ -1,12 +1,12 @@
 {# vim: set filetype=htmldjango #}
 <nav role="navigation"
      aria-label="Pagination"
-     hx-target="#pagination"
+     hx-target="#{{ target }}"
      hx-swap="outerHTML show:window:top"
-     hx-headers='{"X-Template-Partial": "pagination"}'>
+     hx-headers='{"X-Template-Partial": "{{ partial }}"}'>
     <ul class="flex justify-between items-center">
         <li>
-            {% if page_obj.has_previous %}
+            {% if has_previous %}
                 <a class="link"
                    href="{{ request.path }}{% querystring page=page_obj.previous_page_number %}"
                    aria-label="Previous Page"
@@ -18,7 +18,7 @@
             {% endif %}
         </li>
         <li>
-            {% if page_obj.has_next %}
+            {% if has_next %}
                 <a class="link"
                    aria-label="Next Page"
                    href="{{ request.path }}{% querystring page=page_obj.next_page_number %}"

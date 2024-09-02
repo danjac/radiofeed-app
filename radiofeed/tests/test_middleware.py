@@ -2,6 +2,7 @@ import json
 
 import pytest
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
 from radiofeed.middleware import (
@@ -10,6 +11,7 @@ from radiofeed.middleware import (
     HtmxRestoreMiddleware,
     SearchDetails,
     SearchMiddleware,
+    TemplatePartialMiddleware,
 )
 
 
@@ -25,7 +27,7 @@ def req(rf):
 
 @pytest.fixture
 def htmx_req(rf):
-    return rf.get("/", HTTP_HX_REQUEST="true")
+    return rf.get("/", headers={"Hx-Request": "true"})
 
 
 class TestSearchMiddleware:
@@ -135,7 +137,7 @@ class TestHtmxMessagesMiddleware:
         assert b"OK" not in resp.content
 
     def test_htmx(self, rf, mw, messages):
-        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req = rf.get("/", headers={"Hx-Request": "true"})
         req.htmx = HtmxDetails(req)
         req._messages = messages
         resp = mw(req)
@@ -148,8 +150,33 @@ class TestHtmxMessagesMiddleware:
             return resp
 
         mw = HtmxMessagesMiddleware(_get_response)
-        req = rf.get("/", HTTP_HX_REQUEST="true")
+        req = rf.get("/", headers={"Hx-Request": "true"})
         req.htmx = HtmxDetails(req)
         req._messages = messages
         resp = mw(req)
         assert b"OK" not in resp.content
+
+
+class TestTemplatePartialMiddleware:
+    def test_full_template(self, rf, get_response):
+        req = rf.get("/")
+        response = TemplatePartialMiddleware(get_response).process_template_response(
+            req, TemplateResponse(rf.get("/"), "index.html")
+        )
+        assert response.template_name == "index.html"
+
+    def test_partial_template(self, rf, get_response):
+        req = rf.get(
+            "/",
+            headers={
+                "X-Template-Partial": "pagination",
+            },
+        )
+        response = TemplatePartialMiddleware(get_response).process_template_response(
+            req,
+            TemplateResponse(
+                req,
+                "index.html",
+            ),
+        )
+        assert response.template_name == "index.html#pagination"

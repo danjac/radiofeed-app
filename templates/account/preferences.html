@@ -11,7 +11,8 @@
               id="preferences-form"
               hx-target="this"
               hx-select="#preferences-form"
-              hx-swap="outerHTML">
+              hx-swap="outerHTML"
+              hx-headers='{"X-Template-Partial": "form"}'>
             {% csrf_token %}
             {{ form }}
             <div>
