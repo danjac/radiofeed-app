@@ -3,7 +3,7 @@
      aria-label="Pagination"
      hx-target="#{{ target }}"
      hx-swap="outerHTML show:window:top"
-     hx-headers='{"X-TemplatePartial": "{{ partial }}"}'>
+     {% hx_headers x_templatepartial=partial %}>
     <ul class="flex justify-between items-center">
         <li>
             {% if page_obj.has_previous %}

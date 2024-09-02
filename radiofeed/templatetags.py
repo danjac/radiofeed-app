@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import json
 import math
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
@@ -9,6 +10,8 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
+from django.utils.encoding import force_str
+from django.utils.html import format_html
 
 from radiofeed import cover_image, markdown
 
@@ -48,6 +51,17 @@ def active_link(
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
+    )
+
+
+@register.simple_tag
+def hx_headers(**headers: str) -> str:
+    """Renders hx-headers attribute."""
+    return format_html(
+        "hx-headers='{}'",
+        json.dumps(
+            {k.replace("_", "-"): force_str(v) for k, v in headers.items()},
+        ),
     )
 
 
