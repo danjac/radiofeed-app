@@ -18,7 +18,7 @@ class TemplatePartialMiddleware:
     Response must be a `TemplateResponse` class or similar.
     """
 
-    _template_partial_header: Final = "X-TemplatePartial"
+    _header_name: Final = "X-TemplatePartial"
 
     def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
@@ -32,7 +32,7 @@ class TemplatePartialMiddleware:
     ) -> TemplateResponse:
         """Implement middleware hook."""
 
-        if partial := request.headers.get(self._template_partial_header):
+        if partial := request.headers.get(self._header_name):
             response.template_name += f"#{partial}"
 
         return response
