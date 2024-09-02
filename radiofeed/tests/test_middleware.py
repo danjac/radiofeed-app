@@ -158,21 +158,25 @@ class TestHtmxMessagesMiddleware:
 
 
 class TestTemplatePartialMiddleware:
-    def test_full_template(self, rf, get_response):
+    @pytest.fixture
+    def mw(self, get_response):
+        return TemplatePartialMiddleware(get_response)
+
+    def test_full_template(self, rf, mw):
         req = rf.get("/")
-        response = TemplatePartialMiddleware(get_response).process_template_response(
+        response = mw.process_template_response(
             req, TemplateResponse(rf.get("/"), "index.html")
         )
         assert response.template_name == "index.html"
 
-    def test_partial_template(self, rf, get_response):
+    def test_partial_template(self, rf, mw):
         req = rf.get(
             "/",
             headers={
                 "X-Template-Partial": "pagination",
             },
         )
-        response = TemplatePartialMiddleware(get_response).process_template_response(
+        response = mw.process_template_response(
             req,
             TemplateResponse(
                 req,
