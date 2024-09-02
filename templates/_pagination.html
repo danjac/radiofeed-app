@@ -1,7 +1,7 @@
 {# vim: set filetype=htmldjango #}
-{% with pagination_id="pagination" has_other_pages=page_obj.has_other_pages %}
+{% with pagination_id=pagination_id|default:"pagination" %}
     <ul class="divide-y divide-solid" id="{{ pagination_id }}">
-        {% if has_other_pages %}
+        {% if page_obj.has_other_pages %}
             <li class="pb-3">{% include "_pagination_links.html" %}</li>
         {% endif %}
         {% for item in page_obj %}
@@ -20,7 +20,7 @@
                 </div>
             </li>
         {% endfor %}
-        {% if has_other_pages %}
+        {% if page_obj.has_other_pages %}
             <li class="pt-3">{% include "_pagination_links.html" %}</li>
         {% endif %}
     </ul>
