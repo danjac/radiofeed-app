@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block podcast_navbar %}
     {{ block.super }}
-    {% cache 300 podcast-episodes-header request.path request.search.value %}
+    {% cache 300 podcast-episodes-header podcast.pk request.search.value %}
         {% if page_obj.has_other_pages or request.search %}
             <nav class="flex justify-center items-center sm:justify-start">
                 <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
