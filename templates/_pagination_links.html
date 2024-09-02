@@ -6,7 +6,7 @@
      hx-headers='{"X-TemplatePartial": "{{ partial }}"}'>
     <ul class="flex justify-between items-center">
         <li>
-            {% if has_previous %}
+            {% if page_obj.has_previous %}
                 <a class="link"
                    href="{{ request.path }}{% querystring page=page_obj.previous_page_number %}"
                    aria-label="Previous Page"
@@ -18,7 +18,7 @@
             {% endif %}
         </li>
         <li>
-            {% if has_next %}
+            {% if page_obj.has_next %}
                 <a class="link"
                    aria-label="Next Page"
                    href="{{ request.path }}{% querystring page=page_obj.next_page_number %}"

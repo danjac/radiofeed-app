@@ -1,5 +1,5 @@
 {# vim: set filetype=htmldjango #}
-{% with target="pagination" partial="pagination" has_next=page_obj.has_next has_previous=page_obj.has_previous has_other_pages=page_obj.has_other_pages %}
+{% with target="pagination" partial="pagination" has_other_pages=page_obj.has_other_pages %}
     <ul class="divide-y divide-solid" id="{{ target }}">
         {% if has_other_pages %}
             <li class="pb-3">{% include "_pagination_links.html" %}</li>
