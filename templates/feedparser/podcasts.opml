@@ -1,3 +1,4 @@
+{% spaceless %}
 <?xml version="1.0" encoding="UTF-8"?>
 
 <opml version="1.0">
@@ -8,10 +9,12 @@
         <outline text="Podcasts" title="Podcasts">
         {% for podcast in podcasts %}
         <outline type="rss"
-                title="{{ podcast.title }}"
-                text="{{ podcast.cleaned_description|truncatewords:60 }}"
-                xmlUrl="{{ podcast.rss }}"
-            {% if podcast.website %}htmlUrl="{{ podcast.website }}" {% endif %} />
-        {% endfor %} </outline>
+                 title="{{ podcast.title }}"
+                 text="{{ podcast.cleaned_description|truncatewords:60 }}"
+                 xmlUrl="{{ podcast.rss }}"
+            {% if podcast.website %}htmlUrl="{{ podcast.website }}"{% endif %} />
+        {% endfor %}
+        </outline>
     </body>
 </opml>
+{% endspaceless %}
