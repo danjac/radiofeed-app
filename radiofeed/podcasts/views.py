@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
-from radiofeed.paginator import render_paginated_response
+from radiofeed.paginator import paginate, render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -51,7 +51,11 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_paginated_response(request, "podcasts/subscriptions.html", podcasts)
+    return TemplateResponse(
+        request,
+        "podcasts/subscriptions.html",
+        {"page_obj": paginate(request, podcasts)},
+    )
 
 
 @require_safe

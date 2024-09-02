@@ -1,12 +1,37 @@
 from django.contrib.messages import get_messages
 from django.http import HttpRequest, HttpResponse, QueryDict
 from django.template.loader import render_to_string
+from django.template.response import TemplateResponse
 from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
 from radiofeed.types import HttpRequestResponse
+
+
+class TemplatePartialMiddleware:
+    """If request header X-Template-Partial is present, return that partial name.
+
+    Response must be a `SimpleTemplateResponse` subclass.
+    """
+
+    def __init__(self, get_response: HttpRequestResponse) -> None:
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest) -> HttpResponse:
+        """Implement middleware."""
+        return self.get_response(request)
+
+    def process_template_response(
+        self, request: HttpRequest, response: TemplateResponse
+    ) -> TemplateResponse:
+        """Implement middleware hook."""
+
+        if partial := request.headers.get("X-Template-Partial"):
+            response.template_name += f"#{partial}"
+
+        return response
 
 
 class HtmxRestoreMiddleware:

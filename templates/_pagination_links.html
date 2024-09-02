@@ -2,7 +2,8 @@
 <nav role="navigation"
      aria-label="Pagination"
      hx-target="#pagination"
-     hx-swap="outerHTML show:window:top">
+     hx-swap="outerHTML show:window:top"
+     hx-headers='{"X-Template-Partial": "pagination"}'>
     <ul class="flex justify-between items-center">
         <li>
             {% if page_obj.has_previous %}
