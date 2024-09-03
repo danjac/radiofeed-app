@@ -70,9 +70,14 @@ def json_attr(name: str, *pairs: str) -> str:
 
 
 hx_headers = register.simple_tag(
-    functools.partial(json_attr, "hx-headers"), name="hx_headers"
+    functools.partial(json_attr, "hx-headers"),
+    name="hx_headers",
 )
-hx_vals = register.simple_tag(functools.partial(json_attr, "hx-vals"), name="hx_vals")
+
+hx_vals = register.simple_tag(
+    functools.partial(json_attr, "hx-vals"),
+    name="hx_vals",
+)
 
 
 @register.simple_tag
