@@ -11,7 +11,7 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
@@ -23,6 +23,9 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
+
+_index_url: str = reverse_lazy("episodes:index")
+_search_episodes_url: str = reverse_lazy("episodes:search_episodes")
 
 
 @require_safe
@@ -44,7 +47,7 @@ def index(request: HttpRequest) -> TemplateResponse:
         "episodes/index.html",
         episodes,
         {
-            "search_url": reverse("episodes:search_episodes"),
+            "search_url": _search_episodes_url,
         },
     )
 
@@ -53,8 +56,6 @@ def index(request: HttpRequest) -> TemplateResponse:
 @login_required
 def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
-
-    index_url = reverse("episodes:index")
 
     if request.search:
         episodes = (
@@ -69,11 +70,11 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             "episodes/search.html",
             episodes,
             {
-                "clear_search_url": index_url,
+                "clear_search_url": _index_url,
             },
         )
 
-    return HttpResponseRedirect(index_url)
+    return HttpResponseRedirect(_index_url)
 
 
 @require_safe
