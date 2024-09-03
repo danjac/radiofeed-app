@@ -10,8 +10,7 @@
               class="space-y-3"
               id="preferences-form"
               hx-target="this"
-              hx-swap="outerHTML"
-              {% hx_headers "X-TemplatePartial" "form" %}>
+              hx-swap="outerHTML">
             {% csrf_token %}
             {{ form }}
             <div>

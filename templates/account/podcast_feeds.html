@@ -30,8 +30,7 @@
                       hx-encoding="multipart/form-data"
                       hx-target="this"
                       hx-swap="outerHTML"
-                      hx-post="{% url 'users:import_podcast_feeds' %}"
-                      {% hx_headers "X-TemplatePartial" "upload_form" %}>
+                      hx-post="{% url 'users:import_podcast_feeds' %}">
                     {% csrf_token %}
                     {{ upload_form }}
                     <div>
