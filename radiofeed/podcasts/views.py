@@ -17,7 +17,6 @@ from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 
 _discover_url: str = reverse_lazy("podcasts:discover")
-_search_podcasts_url: str = reverse_lazy("podcasts:search_podcasts")
 _private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
 
 
@@ -66,7 +65,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
         "podcasts/discover.html",
         _get_promoted_podcasts().order_by("-pub_date"),
         {
-            "search_url": _search_podcasts_url,
+            "search_url": reverse("podcasts:search_podcasts"),
         },
     )
 
