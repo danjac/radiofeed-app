@@ -11,7 +11,7 @@
               id="preferences-form"
               hx-target="this"
               hx-swap="outerHTML"
-              {% hx_headers x_templatepartial="form" %}>
+              {% hx_headers "X-TemplatePartial" "form" %}>
             {% csrf_token %}
             {{ form }}
             <div>

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import itertools
 import json
 import math
 from typing import TYPE_CHECKING, Any, Final, TypedDict
@@ -55,14 +56,17 @@ def active_link(
 
 
 @register.simple_tag
-def hx_headers(**headers: str) -> str:
-    """Renders hx-headers attribute."""
-    return format_html(
-        "hx-headers='{}'",
-        json.dumps(
-            {k.replace("_", "-"): force_str(v) for k, v in headers.items()},
-        ),
-    )
+def hx_headers(*pairs) -> str:
+    """Renders hx-headers attribute.
+
+    Takes pairs of headers and values e.g.:
+        {% hx_headers "X-CSRFToken" csrf_token "myHeader": "form" %}
+
+    This will generate:
+        hx-headers='{"X-CSRF-Token": "...", "myHeader": "form"}'
+    """
+    headers = {k: force_str(v) for k, v in itertools.batched(pairs, 2)}
+    return format_html("hx-headers='{}'", json.dumps(headers))
 
 
 @register.simple_tag

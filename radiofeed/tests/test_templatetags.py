@@ -8,6 +8,7 @@ from radiofeed.templatetags import (
     active_link,
     cover_image_,
     format_duration,
+    hx_headers,
     percentage,
 )
 
@@ -94,6 +95,14 @@ class TestActiveLink:
             "css": "link active",
             "active": True,
         }
+
+
+class TestHxHeaders:
+    def test_headers(self):
+        assert (
+            hx_headers("X-CSRFToken", "abc123", "myHeader", "def456")
+            == "hx-headers='{&quot;X-CSRFToken&quot;: &quot;abc123&quot;, &quot;myHeader&quot;: &quot;def456&quot;}'"
+        )
 
 
 class TestAbsoluteUri:

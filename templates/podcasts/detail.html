@@ -16,7 +16,7 @@
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
                                     hx-delete="{% url 'podcasts:remove_private_feed' podcast.pk %}"
-                                    {% hx_headers x_csrftoken=csrf_token %}>
+                                    {% hx_headers "X-CSRFToken" csrf_token %}>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>
@@ -37,7 +37,7 @@
                              hx-push-url="false"
                              hx-indicator="this"
                              hx-swap="outerHTML"
-                             {% hx_headers x_csrftoken=csrf_token %}>
+                             {% hx_headers "X-CSRFToken" csrf_token %}>
                             {% if is_subscribed %}
                                 <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                         aria-label="Unsubscribe from this Podcast"
