@@ -9,6 +9,8 @@ from radiofeed.templatetags import (
     cover_image_,
     format_duration,
     hx_headers,
+    hx_vals,
+    json_attr,
     percentage,
 )
 
@@ -97,11 +99,34 @@ class TestActiveLink:
         }
 
 
-class TestHxHeaders:
+class TestJsonAttr:
     def test_headers(self):
         assert (
-            hx_headers("X-CSRFToken", "abc123", "myHeader", "def456")
+            json_attr(
+                "hx-headers",
+                "X-CSRFToken",
+                "abc123",
+                "myHeader",
+                "def456",
+            )
             == "hx-headers='{&quot;X-CSRFToken&quot;: &quot;abc123&quot;, &quot;myHeader&quot;: &quot;def456&quot;}'"
+        )
+
+    def test_hx_headers(self):
+        assert (
+            hx_headers(
+                "X-CSRFToken",
+                "abc123",
+                "myHeader",
+                "def456",
+            )
+            == "hx-headers='{&quot;X-CSRFToken&quot;: &quot;abc123&quot;, &quot;myHeader&quot;: &quot;def456&quot;}'"
+        )
+
+    def test_hx_vals(self):
+        assert (
+            hx_vals("action", "cancel")
+            == "hx-vals='{&quot;action&quot;: &quot;cancel&quot;}'"
         )
 
 
