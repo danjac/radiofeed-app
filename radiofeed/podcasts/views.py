@@ -15,6 +15,7 @@ from radiofeed.paginator import render_paginated_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.template_partials import use_partial_for_target
 
 _discover_url: str = reverse_lazy("podcasts:discover")
 _private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
@@ -39,6 +40,7 @@ def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""
     podcasts = _get_podcasts().subscribed(request.user)
@@ -58,6 +60,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     return render_paginated_response(
@@ -72,6 +75,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search all public podcasts in database."""
 
@@ -156,6 +160,7 @@ def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponseRedirec
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -241,6 +246,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def category_detail(
     request: HttpRequest, category_id: int, slug: str | None = None
 ) -> TemplateResponse:
@@ -268,6 +274,8 @@ def category_detail(
         {
             "category": category,
         },
+        target="pagination",
+        partial="pagination",
     )
 
 
@@ -300,6 +308,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = _get_podcasts().subscribed(request.user).filter(private=True)
@@ -313,11 +322,13 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
         if request.search
         else podcasts.order_by("-pub_date")
     )
+
     return render_paginated_response(request, "podcasts/private_feeds.html", podcasts)
 
 
 @require_form_methods
 @login_required
+@use_partial_for_target(target="private-feed-form", partial="form")
 def add_private_feed(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
@@ -345,7 +356,13 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return TemplateResponse(request, "podcasts/private_feed_form.html", {"form": form})
+    return TemplateResponse(
+        request,
+        "podcasts/private_feed_form.html",
+        {
+            "form": form,
+        },
+    )
 
 
 @require_DELETE
