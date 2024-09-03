@@ -16,9 +16,12 @@ class TemplatePartialMiddleware:
     """If request header X-TemplatePartial is present, return the specified template partial.
 
     Response must be a `TemplateResponse` class or similar.
+
+    If value of partial is literal `none` then no partial is returned. This is useful in situations where you need to override this header.
     """
 
     _header_name: Final = "X-TemplatePartial"
+    _ignore_value: Final = "none"
 
     def __init__(self, get_response: HttpRequestResponse) -> None:
         self.get_response = get_response
@@ -32,7 +35,9 @@ class TemplatePartialMiddleware:
     ) -> TemplateResponse:
         """Implement middleware hook."""
 
-        if partial := request.headers.get(self._header_name):
+        if (
+            partial := request.headers.get(self._header_name)
+        ) and partial != self._ignore_value:
             response.template_name += f"#{partial}"
 
         return response

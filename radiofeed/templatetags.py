@@ -56,17 +56,23 @@ def active_link(
 
 
 @register.simple_tag
-def hx_headers(*pairs) -> str:
-    """Renders hx-headers attribute.
+def json_attr(name: str, *pairs: str) -> str:
+    """Renders attribute containing JSON.
 
-    Takes pairs of headers and values e.g.:
-        {% hx_headers "X-CSRFToken" csrf_token "myHeader": "form" %}
+    Takes multiple pairs of headers and values e.g.:
+        {% json_attr "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
 
     This will generate:
         hx-headers='{"X-CSRF-Token": "...", "myHeader": "form"}'
     """
     headers = {k: force_str(v) for k, v in itertools.batched(pairs, 2)}
-    return format_html("hx-headers='{}'", json.dumps(headers))
+    return format_html("{}='{}'", name, json.dumps(headers))
+
+
+hx_headers = register.simple_tag(
+    functools.partial(json_attr, "hx-headers"), name="hx_headers"
+)
+hx_vals = register.simple_tag(functools.partial(json_attr, "hx-vals"), name="hx_vals")
 
 
 @register.simple_tag

@@ -16,6 +16,7 @@
               id="private-feed-form"
               hx-swap="outerHTML"
               hx-target="this"
+              {% hx_vals "action" "add" %}
               {% hx_headers "X-TemplatePartial" "form" %}>
             {% csrf_token %}
             {{ form }}
@@ -24,11 +25,13 @@
                     {% heroicon_mini "plus" class="mr-2" %}
                     Add Feed
                 </button>
-                <a class="inline-flex items-center btn btn-default"
-                   href="{% url "podcasts:private_feeds" %}">
+                <button class="inline-flex items-center btn btn-default"
+                        type="button"
+                        hx-post="{{ request.path }}"
+                        {% hx_vals "action" "cancel" %}>
                     {% heroicon_mini "arrow-uturn-left" class="mr-2" %}
                     Cancel
-                </a>
+                </button>
             </div>
         </form>
     {% endpartialdef form %}

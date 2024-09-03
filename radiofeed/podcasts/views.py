@@ -324,7 +324,11 @@ def add_private_feed(
     """Add new private feed to collection."""
 
     if request.method == "POST":
+        if request.POST.get("action") == "cancel":
+            return HttpResponseRedirect(reverse("podcasts:private_feeds"))
+
         form = PrivateFeedForm(request.user, request.POST)
+
         if form.is_valid():
             podcast, is_new = form.save()
             if is_new:
@@ -341,13 +345,7 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return TemplateResponse(
-        request,
-        "podcasts/private_feed_form.html",
-        {
-            "form": form,
-        },
-    )
+    return TemplateResponse(request, "podcasts/private_feed_form.html", {"form": form})
 
 
 @require_DELETE

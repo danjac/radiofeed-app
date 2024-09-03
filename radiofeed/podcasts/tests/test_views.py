@@ -6,7 +6,7 @@ from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -523,14 +523,23 @@ class TestRemovePrivateFeed:
 class TestAddPrivateFeed:
     url = reverse_lazy("podcasts:add_private_feed")
 
+    @pytest.fixture
+    def rss(self, faker):
+        return faker.url()
+
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         response = client.get(self.url)
         assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db
-    def test_post_not_existing(self, client, faker, auth_user):
-        rss = faker.url()
+    def test_cancel(self, client, auth_user, rss):
+        response = client.post(self.url, {"rss": rss, "action": "cancel"})
+        assert response.url == reverse("podcasts:private_feeds")
+        assert not Podcast.objects.exists()
+
+    @pytest.mark.django_db
+    def test_post_not_existing(self, client, auth_user, rss):
         response = client.post(self.url, {"rss": rss})
         assert response.url == reverse("podcasts:private_feeds")
 
@@ -541,7 +550,7 @@ class TestAddPrivateFeed:
         assert podcast.private
 
     @pytest.mark.django_db
-    def test_existing_private(self, client, faker, auth_user):
+    def test_existing_private(self, client, auth_user):
         podcast = PodcastFactory(private=True)
 
         response = client.post(self.url, {"rss": podcast.rss})
@@ -552,7 +561,7 @@ class TestAddPrivateFeed:
         ).exists()
 
     @pytest.mark.django_db
-    def test_existing_public(self, client, faker, auth_user):
+    def test_existing_public(self, client, auth_user):
         podcast = PodcastFactory(private=False)
 
         response = client.post(self.url, {"rss": podcast.rss})
