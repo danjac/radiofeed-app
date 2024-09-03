@@ -274,8 +274,6 @@ def category_detail(
         {
             "category": category,
         },
-        target="pagination",
-        partial="pagination",
     )
 
 

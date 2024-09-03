@@ -1,17 +1,18 @@
 import functools
+from collections.abc import Callable
 
 from django.http import HttpRequest, HttpResponse
 from django.template.response import TemplateResponse
 
-from radiofeed.typing import HttpRequestResponse
+from radiofeed.types import HttpRequestResponse
 
 
-def use_partial_for_target(*, target: str, partial: str) -> HttpRequestResponse:
+def use_partial_for_target(*, target: str, partial: str) -> Callable:
     """Conditionally renders template partial if `target` matches HX-Target."""
 
     def _decorator(fn: HttpRequestResponse) -> HttpRequestResponse:
         @functools.wraps(fn)
-        def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        def _view(request: HttpRequest, *args, **kwargs) -> HttpResponse:
             response = fn(request, *args, **kwargs)
             if hasattr(response, "render"):
                 return render_partial_for_target(
@@ -22,7 +23,7 @@ def use_partial_for_target(*, target: str, partial: str) -> HttpRequestResponse:
                 )
             return response
 
-        return _wrapper
+        return _view
 
     return _decorator
 
@@ -36,6 +37,6 @@ def render_partial_for_target(
 ) -> TemplateResponse:
     """Conditionally renders template partial if `target` matches HX-Target."""
 
-    if request.htmx.target == target:
+    if request.htmx.target == target and not response.is_rendered:
         response.template_name += f"#{partial}"
     return response

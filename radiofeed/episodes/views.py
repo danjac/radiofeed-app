@@ -23,6 +23,7 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
+from radiofeed.template_partials import use_partial_for_target
 
 _index_url: str = reverse_lazy("episodes:index")
 _search_episodes_url: str = reverse_lazy("episodes:search_episodes")
@@ -30,6 +31,7 @@ _search_episodes_url: str = reverse_lazy("episodes:search_episodes")
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
@@ -54,6 +56,7 @@ def index(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
 
@@ -172,6 +175,7 @@ def player_time_update(
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
@@ -221,6 +225,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 @require_safe
 @login_required
+@use_partial_for_target(target="pagination", partial="pagination")
 def bookmarks(request: HttpRequest) -> TemplateResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
