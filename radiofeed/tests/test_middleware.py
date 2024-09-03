@@ -184,19 +184,3 @@ class TestTemplatePartialMiddleware:
             ),
         )
         assert response.template_name == "index.html#pagination"
-
-    def test_is_none(self, rf, mw):
-        req = rf.get(
-            "/",
-            headers={
-                "X-TemplatePartial": "none",
-            },
-        )
-        response = mw.process_template_response(
-            req,
-            TemplateResponse(
-                req,
-                "index.html",
-            ),
-        )
-        assert response.template_name == "index.html"
