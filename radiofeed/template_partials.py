@@ -37,6 +37,6 @@ def render_partial_for_target(
 ) -> TemplateResponse:
     """Conditionally renders template partial if `target` matches HX-Target."""
 
-    if request.htmx.target == target and not response.is_rendered:
+    if request.htmx.target == target:
         response.template_name += f"#{partial}"
     return response
