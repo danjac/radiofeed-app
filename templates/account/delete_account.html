@@ -4,9 +4,10 @@
     {{ block.super }} | Delete Account
 {% endblock title %}
 {% block settings_content %}
-    <div class="space-y-3 w-full">
-        <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
-        <div>
+    {% if user.is_authenticated %}
+        <div class="space-y-3">
+            <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
+            <p>This will delete ALL your data including your subscriptions, bookmarks and listening history.</p>
             <form method="post"
                   hx-disable="true"
                   action="{% url 'users:delete_account' %}"
@@ -22,5 +23,21 @@
                 </div>
             </form>
         </div>
-    </div>
+    {% else %}
+        <h1 class="flex flex-wrap justify-center pb-3 mb-6 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
+            Delete Account
+        </h1>
+        <div class="space-y-3">
+            <p>
+                You must be logged in to delete your data. All user data, including subscriptions, bookmarks and listening history, will be irrevocably deleted.
+            </p>
+            <p>
+                More details on our data policy can be found <a class="link" href="{% url "privacy" %}">here</a>.
+            </p>
+            <p>
+                <a class="link"
+                   href="{% url "account_login" %}{% querystring next=request.path|urlencode %}">Please log in to delete your account.</a>
+            </p>
+        </div>
+    {% endif %}
 {% endblock settings_content %}

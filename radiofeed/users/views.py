@@ -132,10 +132,13 @@ def user_stats(request: HttpRequest) -> TemplateResponse:
 
 
 @require_form_methods
-@login_required
 def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Delete account on confirmation."""
-    if request.method == "POST" and "confirm-delete" in request.POST:
+    if (
+        request.user.is_authenticated
+        and request.method == "POST"
+        and "confirm-delete" in request.POST
+    ):
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")

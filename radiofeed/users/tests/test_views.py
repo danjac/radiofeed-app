@@ -172,6 +172,16 @@ class TestDeleteAccount:
     url = reverse_lazy("users:delete_account")
 
     @pytest.mark.django_db
+    def test_get_not_logged_in(self, client):
+        response = client.get(self.url)
+        assert response.status_code == http.HTTPStatus.OK
+
+    @pytest.mark.django_db
+    def test_post_not_logged_in(self, client):
+        response = client.post(self.url, {"confirm-delete": True})
+        assert response.status_code == http.HTTPStatus.OK
+
+    @pytest.mark.django_db
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
         response = client.get(self.url)
