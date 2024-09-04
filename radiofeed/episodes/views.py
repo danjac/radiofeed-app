@@ -22,7 +22,7 @@ from radiofeed.http import (
     HttpResponseUnauthorized,
     require_DELETE,
 )
-from radiofeed.paginator import paginate_lazy
+from radiofeed.paginator import paginate, paginate_lazy
 from radiofeed.template import render_partial_for_target
 
 _index_url: str = reverse_lazy("episodes:index")
@@ -49,7 +49,7 @@ def index(request: HttpRequest) -> TemplateResponse:
             request,
             "episodes/index.html",
             {
-                "page_obj": paginate_lazy(request, episodes),
+                "page_obj": paginate(request, episodes),
                 "search_url": _search_episodes_url,
             },
         ),
@@ -200,7 +200,7 @@ def history(request: HttpRequest) -> TemplateResponse:
             request,
             "episodes/history.html",
             {
-                "page_obj": paginate_lazy(request, audio_logs),
+                "page_obj": paginate(request, audio_logs),
                 "ordering_asc": ordering_asc,
             },
         ),
@@ -255,7 +255,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
             request,
             "episodes/bookmarks.html",
             {
-                "page_obj": paginate_lazy(request, bookmarks),
+                "page_obj": paginate(request, bookmarks),
                 "ordering_asc": ordering_asc,
             },
         ),
