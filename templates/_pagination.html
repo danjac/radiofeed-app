@@ -1,6 +1,7 @@
 {# vim: set filetype=htmldjango #}
-{% with target="pagination" partial="pagination" has_other_pages=page_obj.has_other_pages %}
-    <ul class="divide-y divide-solid" id="{{ target }}">
+{% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
+    {% hx_headers "X-TemplatePartial" "pagination" as pagination_hx_headers %}
+    <ul class="divide-y divide-solid" id="{{ pagination_target }}">
         {% if has_other_pages %}
             <li class="pb-3">{% include "_pagination_links.html" %}</li>
         {% endif %}

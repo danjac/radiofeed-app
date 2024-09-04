@@ -1,8 +1,5 @@
 {# vim: set filetype=htmldjango #}
-<nav role="navigation"
-     aria-label="Pagination"
-     hx-target="#{{ target }}"
-     hx-swap="outerHTML show:window:top">
+<nav role="navigation" aria-label="Pagination" hx-swap="outerHTML show:window:top" hx-target="#{{ pagination_target }}" {{ pagination_hx_headers }}>
     <ul class="flex justify-between items-center">
         <li>
             {% if page_obj.has_previous %}

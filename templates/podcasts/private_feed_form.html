@@ -16,11 +16,14 @@
               id="private-feed-form"
               hx-swap="outerHTML"
               hx-target="this"
+              {% hx_headers "X-TemplatePartial" "form" %}
               {% hx_vals "action" "add" %}>
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center space-x-3">
-                <button class="inline-flex items-center btn btn-primary">
+                <button class="inline-flex items-center btn btn-primary"
+                        name="action"
+                        value="add">
                     {% heroicon_mini "plus" class="mr-2" %}
                     Add Feed
                 </button>
