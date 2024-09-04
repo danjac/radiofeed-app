@@ -9,8 +9,8 @@ from django.utils import timezone
 from django.views.decorators.http import require_safe
 
 from radiofeed.http import require_form_methods
+from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
-from radiofeed.template import render_partial_for_target
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 

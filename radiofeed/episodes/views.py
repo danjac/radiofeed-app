@@ -23,7 +23,7 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import paginate, paginate_lazy
-from radiofeed.template import render_partial_for_target
+from radiofeed.partials import render_partial_for_target
 
 _index_url: str = reverse_lazy("episodes:index")
 _search_episodes_url: str = reverse_lazy("episodes:search_episodes")

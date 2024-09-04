@@ -1,7 +1,7 @@
 from django.template.response import TemplateResponse
 from django_htmx.middleware import HtmxDetails
 
-from radiofeed.template import render_partial_for_target
+from radiofeed.partials import render_partial_for_target
 
 
 class TestRenderPartialForTarget:

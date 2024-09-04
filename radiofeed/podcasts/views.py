@@ -12,10 +12,10 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.paginator import paginate, paginate_lazy
+from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.template import render_partial_for_target
 
 _discover_url: str = reverse_lazy("podcasts:discover")
 _private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
