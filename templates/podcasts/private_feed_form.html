@@ -16,7 +16,6 @@
               id="private-feed-form"
               hx-swap="outerHTML"
               hx-target="this"
-              {% hx_headers "X-TemplatePartial" "form" %}
               {% hx_vals "action" "add" %}>
             {% csrf_token %}
             {{ form }}

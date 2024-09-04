@@ -81,7 +81,6 @@ MIDDLEWARE: list[str] = [
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.SearchMiddleware",
-    "radiofeed.middleware.TemplatePartialMiddleware",
     "radiofeed.episodes.middleware.PlayerMiddleware",
 ]
 

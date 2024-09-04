@@ -2,7 +2,6 @@ import json
 
 import pytest
 from django.http import HttpResponse
-from django.template.response import TemplateResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
 from radiofeed.middleware import (
@@ -11,7 +10,6 @@ from radiofeed.middleware import (
     HtmxRestoreMiddleware,
     SearchDetails,
     SearchMiddleware,
-    TemplatePartialMiddleware,
 )
 
 
@@ -155,32 +153,3 @@ class TestHtmxMessagesMiddleware:
         req._messages = messages
         resp = mw(req)
         assert b"OK" not in resp.content
-
-
-class TestTemplatePartialMiddleware:
-    @pytest.fixture
-    def mw(self, get_response):
-        return TemplatePartialMiddleware(get_response)
-
-    def test_full_template(self, rf, mw):
-        req = rf.get("/")
-        response = mw.process_template_response(
-            req, TemplateResponse(rf.get("/"), "index.html")
-        )
-        assert response.template_name == "index.html"
-
-    def test_partial_template(self, rf, mw):
-        req = rf.get(
-            "/",
-            headers={
-                "X-TemplatePartial": "pagination",
-            },
-        )
-        response = mw.process_template_response(
-            req,
-            TemplateResponse(
-                req,
-                "index.html",
-            ),
-        )
-        assert response.template_name == "index.html#pagination"
