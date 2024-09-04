@@ -10,6 +10,7 @@ from django.views.decorators.http import require_safe
 
 from radiofeed.http import require_form_methods
 from radiofeed.podcasts.models import Podcast
+from radiofeed.template import render_partial_for_target
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -30,12 +31,17 @@ def user_preferences(
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return TemplateResponse(
+    return render_partial_for_target(
         request,
-        "account/preferences.html",
-        {
-            "form": form,
-        },
+        TemplateResponse(
+            request,
+            "account/preferences.html",
+            {
+                "form": form,
+            },
+        ),
+        target="preferences-form",
+        partial="form",
     )
 
 
@@ -60,12 +66,17 @@ def import_podcast_feeds(
     else:
         form = OpmlUploadForm()
 
-    return TemplateResponse(
+    return render_partial_for_target(
         request,
-        "account/podcast_feeds.html",
-        {
-            "upload_form": form,
-        },
+        TemplateResponse(
+            request,
+            "account/podcast_feeds.html",
+            {
+                "upload_form": form,
+            },
+            target="import-feeds-form",
+            partial="form",
+        ),
     )
 
 

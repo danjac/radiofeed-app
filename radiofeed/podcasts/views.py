@@ -11,10 +11,11 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
-from radiofeed.paginator import render_paginated_response
+from radiofeed.paginator import paginate_lazy
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.template import render_partial_for_target
 
 _discover_url: str = reverse_lazy("podcasts:discover")
 _private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
@@ -53,20 +54,39 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_paginated_response(request, "podcasts/subscriptions.html", podcasts)
+    return render_partial_for_target(
+        request,
+        TemplateResponse(
+            request,
+            "podcasts/subscriptions.html",
+            {
+                "page_obj": paginate_lazy(request, podcasts),
+            },
+        ),
+        target="pagination",
+        partial="pagination",
+    )
 
 
 @require_safe
 @login_required
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
-    return render_paginated_response(
+    return render_partial_for_target(
         request,
-        "podcasts/discover.html",
-        _get_promoted_podcasts().order_by("-pub_date"),
-        {
-            "search_url": reverse("podcasts:search_podcasts"),
-        },
+        TemplateResponse(
+            request,
+            "podcasts/discover.html",
+            {
+                "page_obj": paginate_lazy(
+                    request,
+                    _get_promoted_podcasts().order_by("-pub_date"),
+                ),
+                "search_url": reverse("podcasts:search_podcasts"),
+            },
+        ),
+        target="pagination",
+        partial="pagination",
     )
 
 
@@ -87,13 +107,18 @@ def search_podcasts(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             )
         )
 
-        return render_paginated_response(
+        return render_partial_for_target(
             request,
-            "podcasts/search_podcasts.html",
-            podcasts,
-            {
-                "clear_search_url": _discover_url,
-            },
+            TemplateResponse(
+                request,
+                "podcasts/search_podcasts.html",
+                {
+                    "page_obj": paginate_lazy(request, podcasts),
+                    "clear_search_url": _discover_url,
+                },
+            ),
+            target="pagination",
+            partial="pagination",
         )
 
     return HttpResponseRedirect(_discover_url)
@@ -171,14 +196,19 @@ def episodes(
         else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
     )
 
-    return render_paginated_response(
+    return render_partial_for_target(
         request,
-        "podcasts/episodes.html",
-        episodes,
-        {
-            "podcast": podcast,
-            "ordering_asc": ordering_asc,
-        },
+        TemplateResponse(
+            request,
+            "podcasts/episodes.html",
+            {
+                "podcast": podcast,
+                "page_obj": paginate_lazy(request, episodes),
+                "ordering_asc": ordering_asc,
+            },
+        ),
+        target="pagination",
+        partial="pagination",
     )
 
 
@@ -261,13 +291,18 @@ def category_detail(
         else podcasts.order_by("-pub_date")
     )
 
-    return render_paginated_response(
+    return render_partial_for_target(
         request,
-        "podcasts/category_detail.html",
-        podcasts,
-        {
-            "category": category,
-        },
+        TemplateResponse(
+            request,
+            "podcasts/category_detail.html",
+            {
+                "category": category,
+                "page_obj": paginate_lazy(request, podcasts),
+            },
+        ),
+        target="pagination",
+        partial="pagination",
     )
 
 
@@ -314,7 +349,18 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_paginated_response(request, "podcasts/private_feeds.html", podcasts)
+    return render_partial_for_target(
+        request,
+        TemplateResponse(
+            request,
+            "podcasts/private_feeds.html",
+            {
+                "page_obj": paginate_lazy(request, podcasts),
+            },
+        ),
+        target="pagination",
+        partial="pagination",
+    )
 
 
 @require_form_methods
@@ -346,12 +392,17 @@ def add_private_feed(
     else:
         form = PrivateFeedForm(request.user)
 
-    return TemplateResponse(
+    return render_partial_for_target(
         request,
-        "podcasts/private_feed_form.html",
-        {
-            "form": form,
-        },
+        TemplateResponse(
+            request,
+            "podcasts/private_feed_form.html",
+            {
+                "form": form,
+            },
+        ),
+        target="private-feed-form",
+        partial="form",
     )
 
 

@@ -23,6 +23,7 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
+from radiofeed.template import render_partial_for_target
 
 _index_url: str = reverse_lazy("episodes:index")
 _search_episodes_url: str = reverse_lazy("episodes:search_episodes")
@@ -42,13 +43,18 @@ def index(request: HttpRequest) -> TemplateResponse:
         .order_by("-pub_date", "-id")
     )
 
-    return render_paginated_response(
+    return render_partial_for_target(
         request,
-        "episodes/index.html",
-        episodes,
-        {
-            "search_url": _search_episodes_url,
-        },
+        render_paginated_response(
+            request,
+            "episodes/index.html",
+            episodes,
+            {
+                "search_url": _search_episodes_url,
+            },
+        ),
+        target="pagination",
+        partial="pagination",
     )
 
 
@@ -65,13 +71,18 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
             .order_by("-rank", "-pub_date")
         )
 
-        return render_paginated_response(
+        return render_partial_for_target(
             request,
-            "episodes/search.html",
-            episodes,
-            {
-                "clear_search_url": _index_url,
-            },
+            render_paginated_response(
+                request,
+                "episodes/search.html",
+                episodes,
+                {
+                    "clear_search_url": _index_url,
+                },
+            ),
+            target="pagination",
+            partial="pagination",
         )
 
     return HttpResponseRedirect(_index_url)
@@ -183,13 +194,18 @@ def history(request: HttpRequest) -> TemplateResponse:
         else audio_logs.order_by("listened" if ordering_asc else "-listened")
     )
 
-    return render_paginated_response(
+    return render_partial_for_target(
         request,
-        "episodes/history.html",
-        audio_logs,
-        {
-            "ordering_asc": ordering_asc,
-        },
+        render_paginated_response(
+            request,
+            "episodes/history.html",
+            audio_logs,
+            {
+                "ordering_asc": ordering_asc,
+            },
+        ),
+        target="pagination",
+        partial="pagination",
     )
 
 
@@ -233,13 +249,18 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
         else bookmarks.order_by("created" if ordering_asc else "-created")
     )
 
-    return render_paginated_response(
+    return render_partial_for_target(
         request,
-        "episodes/bookmarks.html",
-        bookmarks,
-        {
-            "ordering_asc": ordering_asc,
-        },
+        render_paginated_response(
+            request,
+            "episodes/bookmarks.html",
+            bookmarks,
+            {
+                "ordering_asc": ordering_asc,
+            },
+        ),
+        target="pagination",
+        partial="pagination",
     )
 
 
