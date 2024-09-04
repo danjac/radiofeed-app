@@ -74,9 +74,9 @@ def import_podcast_feeds(
             {
                 "upload_form": form,
             },
-            target="import-feeds-form",
-            partial="form",
         ),
+        target="import-feeds-form",
+        partial="form",
     )
 
 

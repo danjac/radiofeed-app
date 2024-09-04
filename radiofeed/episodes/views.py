@@ -22,7 +22,7 @@ from radiofeed.http import (
     HttpResponseUnauthorized,
     require_DELETE,
 )
-from radiofeed.paginator import render_paginated_response
+from radiofeed.paginator import paginate_lazy
 from radiofeed.template import render_partial_for_target
 
 _index_url: str = reverse_lazy("episodes:index")
@@ -45,11 +45,11 @@ def index(request: HttpRequest) -> TemplateResponse:
 
     return render_partial_for_target(
         request,
-        render_paginated_response(
+        TemplateResponse(
             request,
             "episodes/index.html",
-            episodes,
             {
+                "page_obj": paginate_lazy(request, episodes),
                 "search_url": _search_episodes_url,
             },
         ),
@@ -73,11 +73,11 @@ def search_episodes(request: HttpRequest) -> HttpResponseRedirect | TemplateResp
 
         return render_partial_for_target(
             request,
-            render_paginated_response(
+            TemplateResponse(
                 request,
                 "episodes/search.html",
-                episodes,
                 {
+                    "page_obj": paginate_lazy(request, episodes),
                     "clear_search_url": _index_url,
                 },
             ),
@@ -196,11 +196,11 @@ def history(request: HttpRequest) -> TemplateResponse:
 
     return render_partial_for_target(
         request,
-        render_paginated_response(
+        TemplateResponse(
             request,
             "episodes/history.html",
-            audio_logs,
             {
+                "page_obj": paginate_lazy(request, audio_logs),
                 "ordering_asc": ordering_asc,
             },
         ),
@@ -251,11 +251,11 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
     return render_partial_for_target(
         request,
-        render_paginated_response(
+        TemplateResponse(
             request,
             "episodes/bookmarks.html",
-            bookmarks,
             {
+                "page_obj": paginate_lazy(request, bookmarks),
                 "ordering_asc": ordering_asc,
             },
         ),
