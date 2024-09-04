@@ -58,6 +58,13 @@ class TestAbout:
         assert response.status_code == http.HTTPStatus.OK
 
 
+class TestPrivacy:
+    @pytest.mark.django_db
+    def test_get(self, client):
+        response = client.get(reverse("privacy"))
+        assert response.status_code == http.HTTPStatus.OK
+
+
 class TestAcceptGdprCookies:
     @pytest.mark.django_db
     def test_post(self, client):

@@ -27,8 +27,8 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def about_page(request: HttpRequest) -> TemplateResponse:
-    """Renders about page."""
+def about(request: HttpRequest) -> TemplateResponse:
+    """Renders About page."""
     return TemplateResponse(
         request,
         "about.html",
@@ -36,6 +36,12 @@ def about_page(request: HttpRequest) -> TemplateResponse:
             "contact_email": settings.CONTACT_EMAIL,
         },
     )
+
+
+@require_safe
+def privacy(request: HttpRequest) -> TemplateResponse:
+    """Renders Privacy page."""
+    return TemplateResponse(request, "privacy.html")
 
 
 @require_POST
