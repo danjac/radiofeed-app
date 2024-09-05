@@ -23,7 +23,7 @@ class CoverImageVariant(StrEnum):
     TILE = "tile"
 
 
-_COVER_IMAGE_VARIANTS: Final = {
+_COVER_IMAGE_SIZES: Final = {
     CoverImageVariant.CARD: (96, 96),
     CoverImageVariant.DETAIL: (144, 160),
     CoverImageVariant.TILE: (112, 224),
@@ -45,7 +45,7 @@ def get_cover_image_class(variant: CoverImageVariant) -> str:
 @functools.cache
 def get_cover_image_attrs(cover_url: str, variant: CoverImageVariant) -> dict:
     """Returns the HTML attributes for an image."""
-    min_size, full_size = _COVER_IMAGE_VARIANTS[variant]
+    min_size, full_size = _COVER_IMAGE_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {

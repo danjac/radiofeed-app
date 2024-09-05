@@ -6,7 +6,7 @@ from django.urls import reverse, reverse_lazy
 from radiofeed.templatetags import (
     absolute_uri,
     active_link,
-    cover_image_,
+    cover_image,
     format_duration,
     hx_headers,
     hx_vals,
@@ -32,7 +32,7 @@ def auth_req(req, user):
 
 class TestCoverImage:
     def test_cover_image(self):
-        context = cover_image_(
+        context = cover_image(
             "https://www.example.com/test.jpg",
             "detail",
             "test image",

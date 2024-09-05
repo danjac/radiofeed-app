@@ -14,12 +14,12 @@ from django.template.defaultfilters import pluralize
 from django.utils.encoding import force_str
 from django.utils.html import format_html
 
-from radiofeed import cover_image, html
+from radiofeed import cover_images, html
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.template.context import RequestContext
 
-    from radiofeed.cover_image import CoverImageVariant
+    from radiofeed.cover_images import CoverImageVariant
 
 
 _SECONDS_IN_MINUTE: Final = 60
@@ -101,11 +101,11 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-get_cover_image_attrs = register.simple_tag(cover_image.get_cover_image_attrs)
+get_cover_image_attrs = register.simple_tag(cover_images.get_cover_image_attrs)
 
 
-@register.inclusion_tag("_cover_image.html", name="cover_image")
-def cover_image_(
+@register.inclusion_tag("_cover_image.html")
+def cover_image(
     cover_url: str | None,
     variant: CoverImageVariant,
     title: str,
@@ -116,11 +116,11 @@ def cover_image_(
     attrs = {
         "alt": title,
         "title": title,
-    } | cover_image.get_cover_image_attrs(cover_url, variant)
+    } | cover_images.get_cover_image_attrs(cover_url, variant)
     css_class = " ".join(
         [
             css_class,
-            cover_image.get_cover_image_class(variant),
+            cover_images.get_cover_image_class(variant),
         ]
     ).strip()
     return {
