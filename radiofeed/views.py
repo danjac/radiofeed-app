@@ -19,7 +19,7 @@ from PIL import Image
 from radiofeed.cover_images import get_placeholder_path, is_cover_image_size
 from radiofeed.http_client import get_client
 
-_CACHE_TIMEOUT: Final = 60 * 60 * 24 * 350
+_CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
