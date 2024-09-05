@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpRequest
+from django.http import HttpHeaders, HttpRequest
 
 
 def cache_timeout(request: HttpRequest) -> dict:
@@ -11,6 +11,4 @@ def cache_timeout(request: HttpRequest) -> dict:
 def csrf_header(request: HttpRequest) -> dict:
     """Returns the CSRF header, based on CSRF_HEADER_NAME setting."""
 
-    header = settings.CSRF_HEADER_NAME.removeprefix("HTTP_").replace("_", "-")
-
-    return {"CSRF_HEADER": header}
+    return {"CSRF_HEADER": HttpHeaders.parse_header_name(settings.CSRF_HEADER_NAME)}
