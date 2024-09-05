@@ -38,7 +38,7 @@ class TestCoverImage:
             "test image",
             css_class="hover:grayscale",
         )
-        assert context["css_class"] == "hover:grayscale size-36 lg:size-40"
+        assert context["css_class"] == "size-36 lg:size-40 hover:grayscale"
         assert context["attrs"]["alt"] == "test image"
         assert context["attrs"]["title"] == "test image"
 

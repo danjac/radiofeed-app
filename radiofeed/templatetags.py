@@ -113,16 +113,14 @@ def cover_image(
     css_class: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
+
     attrs = {
         "alt": title,
         "title": title,
     } | cover_images.get_cover_image_attrs(cover_url, variant)
-    css_class = " ".join(
-        [
-            css_class,
-            cover_images.get_cover_image_class(variant),
-        ]
-    ).strip()
+
+    css_class = cover_images.get_cover_image_class(variant, css_class)
+
     return {
         "attrs": attrs,
         "cover_url": cover_url,

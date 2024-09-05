@@ -37,9 +37,15 @@ _COVER_IMAGE_CLASSES: Final = {
 
 
 @functools.cache
-def get_cover_image_class(variant: CoverImageVariant) -> str:
+def get_cover_image_class(variant: CoverImageVariant, *classes) -> str:
     """Returns default CSS class for the cover image."""
-    return _COVER_IMAGE_CLASSES[variant]
+    return " ".join(
+        [
+            css_class.strip()
+            for css_class in [_COVER_IMAGE_CLASSES[variant], *classes]
+            if css_class
+        ]
+    ).strip()
 
 
 @functools.cache
