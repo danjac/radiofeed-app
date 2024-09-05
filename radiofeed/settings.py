@@ -107,10 +107,12 @@ DATABASES = {
 # Caches
 
 
+CACHE_TIMEOUT = 300
+
 CACHES = {
     "default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")
     | {
-        "TIMEOUT": 300,
+        "TIMEOUT": CACHE_TIMEOUT,
         "OPTIONS": {
             "PARSER_CLASS": "redis.connection._HiredisParser",
         },
@@ -142,6 +144,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "radiofeed.context_processors.csrf_header",
+                "radiofeed.context_processors.cache_timeout",
             ],
         },
     }

@@ -26,7 +26,7 @@
         </nav>
     </header>
     {% partialdef pagination inline=True %}
-        {% cache 300 promoted-podcasts request.get_full_path %}
+        {% cache CACHE_TIMEOUT promoted-podcasts request.get_full_path %}
             {% include "podcasts/_podcasts.html" %}
         {% endcache %}
     {% endpartialdef pagination %}

@@ -67,10 +67,12 @@ class TestAudioPlayer:
         req.user = anonymous_user
         req.session = {}
         req.player = PlayerDetails(req)
-        assert audio_player(RequestContext(req)) == {
-            **defaults,
-            "request": req,
-        }
+
+        context = audio_player(RequestContext(req))
+
+        assert context["is_playing"] is False
+        assert context["current_time"] is None
+        assert context["episode"] is None
 
     @pytest.mark.django_db
     def test_is_empty(self, rf, user, defaults):
@@ -78,7 +80,11 @@ class TestAudioPlayer:
         req.user = user
         req.session = {}
         req.player = PlayerDetails(req)
-        assert audio_player(RequestContext(req)) == defaults | {"request": req}
+        context = audio_player(RequestContext(req))
+
+        assert context["is_playing"] is False
+        assert context["current_time"] is None
+        assert context["episode"] is None
 
     @pytest.mark.django_db
     def test_is_playing(self, rf, user, audio_log, defaults):
@@ -89,13 +95,11 @@ class TestAudioPlayer:
         req.player = PlayerDetails(req)
         req.player.set(audio_log.episode.pk)
 
-        assert audio_player(RequestContext(req)) == {
-            **defaults,
-            "request": req,
-            "episode": audio_log.episode,
-            "is_playing": True,
-            "current_time": 1000,
-        }
+        context = audio_player(RequestContext(req))
+
+        assert context["is_playing"] is True
+        assert context["current_time"] == 1000
+        assert context["episode"] == audio_log.episode
 
     @pytest.mark.django_db
     def test_is_anonymous_is_playing(self, rf, anonymous_user, episode, defaults):
@@ -106,4 +110,8 @@ class TestAudioPlayer:
         req.player = PlayerDetails(req)
         req.player.set(episode.pk)
 
-        assert audio_player(RequestContext(req)) == defaults | {"request": req}
+        context = audio_player(RequestContext(req))
+
+        assert context["is_playing"] is False
+        assert context["current_time"] is None
+        assert context["episode"] is None

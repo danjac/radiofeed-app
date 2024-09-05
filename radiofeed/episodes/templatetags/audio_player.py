@@ -31,26 +31,29 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
 
-    defaults = {
+    context_data = context.flatten() | {
         "current_time": None,
         "episode": None,
         "is_playing": False,
         "start_player": False,
-        "request": context.request,
     }
+
     if (
         context.request.user.is_authenticated
         and (episode_id := context.request.player.get())
         and (
             audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
-            .select_related("episode", "episode__podcast")
+            .select_related(
+                "episode",
+                "episode__podcast",
+            )
             .first()
         )
     ):
-        return defaults | {
+        return context_data | {
             "episode": audio_log.episode,
             "current_time": audio_log.current_time,
             "is_playing": True,
         }
 
-    return defaults
+    return context_data

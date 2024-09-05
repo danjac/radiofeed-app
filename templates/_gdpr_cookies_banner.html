@@ -17,7 +17,7 @@
                             hx-push-url="false"
                             hx-swap="delete"
                             hx-indicator="this"
-                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>OK</button>
+                            {% hx_headers CSRF_HEADER csrf_token %}>OK</button>
                 </div>
             </div>
         </div>
