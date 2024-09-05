@@ -122,11 +122,11 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 @functools.cache
 def is_cover_size(size: int) -> bool:
     """Check image has correct size."""
-    return size in get_allowed_sizes()
+    return size in get_allowed_cover_sizes()
 
 
 @functools.cache
-def get_allowed_sizes() -> set[int]:
+def get_allowed_cover_sizes() -> set[int]:
     """Returns set of allowed sizes."""
     return set(itertools.chain.from_iterable(_COVER_SIZES.values()))
 
@@ -139,5 +139,5 @@ def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]
             "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
-        for size in get_allowed_sizes()
+        for size in get_allowed_cover_sizes()
     ]

@@ -8,7 +8,7 @@ class TestGetPlaceholderUrl:
         ("size", "expected"),
         [
             pytest.param(size, f"/static/img/placeholder-{size}.webp", id=f"{size}px")
-            for size in covers.get_allowed_sizes()
+            for size in covers.get_allowed_cover_sizes()
         ],
     )
     def test_check_paths(self, size, expected):
