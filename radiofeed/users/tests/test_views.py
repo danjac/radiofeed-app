@@ -1,4 +1,3 @@
-import http
 import pathlib
 
 import pytest
@@ -9,6 +8,7 @@ from pytest_django.asserts import assertRedirects
 from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.tests.asserts import assert_200
 from radiofeed.users.models import User
 
 
@@ -17,8 +17,7 @@ class TestUserPreferences:
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        response = client.get(self.url, HTTP_HX_REQUEST="true")
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(self.url, HTTP_HX_REQUEST="true"))
 
     @pytest.mark.django_db
     def test_post(self, client, auth_user):
@@ -58,16 +57,14 @@ class TestUserStats:
         AudioLogFactory(user=auth_user)
         BookmarkFactory(user=auth_user)
 
-        response = client.get(reverse("users:stats"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(reverse("users:stats")))
 
     @pytest.mark.django_db
     def test_stats_plural(self, client, auth_user):
         AudioLogFactory.create_batch(3, user=auth_user)
         BookmarkFactory.create_batch(3, user=auth_user)
         SubscriptionFactory.create_batch(3, subscriber=auth_user)
-        response = client.get(reverse("users:stats"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(reverse("users:stats")))
 
 
 class TestImportPodcastFeeds:
@@ -84,8 +81,7 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(self.url))
 
     @pytest.mark.django_db
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
@@ -104,26 +100,27 @@ class TestImportPodcastFeeds:
 
     @pytest.mark.django_db
     def test_post_invalid_form(self, client, auth_user):
-        response = client.post(
-            self.url,
-            data={"opml": "test.xml"},
-            HTTP_HX_TARGET="import-feeds-form",
-            HTTP_HX_REQUEST="true",
+        assert_200(
+            client.post(
+                self.url,
+                data={"opml": "test.xml"},
+                HTTP_HX_TARGET="import-feeds-form",
+                HTTP_HX_REQUEST="true",
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.OK
 
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
     @pytest.mark.django_db
     def test_post_podcast_not_in_db(self, client, auth_user, upload_file):
-        response = client.post(
-            self.url,
-            data={"opml": upload_file},
-            HTTP_HX_TARGET="import-feeds-form",
-            HTTP_HX_REQUEST="true",
+        assert_200(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="import-feeds-form",
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert response.status_code == http.HTTPStatus.OK
 
         assert Subscription.objects.filter(subscriber=auth_user).count() == 0
 
@@ -136,26 +133,27 @@ class TestImportPodcastFeeds:
             subscriber=auth_user,
         )
 
-        response = client.post(
-            self.url,
-            data={"opml": upload_file},
-            HTTP_HX_TARGET="opml-import-form",
-            HTTP_HX_REQUEST="true",
+        assert_200(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_REQUEST="true",
+            )
         )
-        assert response.status_code == http.HTTPStatus.OK
 
         assert Subscription.objects.filter(subscriber=auth_user).exists()
 
     @pytest.mark.django_db
     def test_post_is_empty(self, client, auth_user, upload_file):
-        response = client.post(
-            self.url,
-            data={"opml": upload_file},
-            HTTP_HX_TARGET="opml-import-form",
-            HTTP_HX_REQUEST="true",
+        assert_200(
+            client.post(
+                self.url,
+                data={"opml": upload_file},
+                HTTP_HX_TARGET="opml-import-form",
+                HTTP_HX_REQUEST="true",
+            )
         )
-
-        assert response.status_code == http.HTTPStatus.OK
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
 
@@ -173,25 +171,21 @@ class TestDeleteAccount:
 
     @pytest.mark.django_db
     def test_get_not_logged_in(self, client):
-        response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(self.url))
 
     @pytest.mark.django_db
     def test_post_not_logged_in(self, client):
-        response = client.post(self.url, {"confirm-delete": True})
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.post(self.url, {"confirm-delete": True}))
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
-        response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(self.url))
         assert User.objects.exists()
 
     @pytest.mark.django_db
     def test_post_unconfirmed(self, client, auth_user):
-        response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert_200(client.get(self.url))
         assert User.objects.exists()
 
     @pytest.mark.django_db
