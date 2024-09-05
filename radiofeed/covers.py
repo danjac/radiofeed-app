@@ -51,7 +51,7 @@ def get_cover_class(variant: CoverVariant, *classes) -> str:
 def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_SIZES[variant]
-    full_src = get_cover_image_url(cover_url, full_size)
+    full_src = get_cover_url(cover_url, full_size)
 
     attrs = {
         "height": full_size,
@@ -63,7 +63,7 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
     if min_size == full_size:
         return attrs
 
-    min_src = get_cover_image_url(cover_url, min_size)
+    min_src = get_cover_url(cover_url, min_size)
 
     srcset = ", ".join(
         [
@@ -83,7 +83,7 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
 
 
 @functools.cache
-def get_cover_image_url(cover_url: str | None, size: int) -> str:
+def get_cover_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
         (
@@ -135,7 +135,7 @@ def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]
     """Returns media artwork details."""
     return [
         {
-            "src": request.build_absolute_uri(get_cover_image_url(cover_url, size)),
+            "src": request.build_absolute_uri(get_cover_url(cover_url, size)),
             "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
