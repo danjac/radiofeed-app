@@ -14,7 +14,7 @@ from django.template.defaultfilters import pluralize
 from django.utils.encoding import force_str
 from django.utils.html import format_html
 
-from radiofeed import cover_image, markdown
+from radiofeed import cover_image, html
 
 if TYPE_CHECKING:  # pragma: nocover
     from django.template.context import RequestContext
@@ -140,10 +140,10 @@ def gdpr_cookies_banner(context: RequestContext) -> dict:
     } | context.flatten()
 
 
-@register.inclusion_tag("_markdown.html", name="markdown")
-def markdown_(content: str | None) -> dict:
+@register.inclusion_tag("_markdown.html")
+def markdown(content: str | None) -> dict:
     """Render content as Markdown."""
-    return {"content": markdown.render(content or "")}
+    return {"content": html.markdown(content or "")}
 
 
 @register.filter
