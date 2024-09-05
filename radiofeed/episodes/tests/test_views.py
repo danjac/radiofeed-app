@@ -204,8 +204,10 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(episode),
-                HTTP_HX_REQUEST="true",
-                HTTP_HX_TARGET="audio-player-button",
+                {
+                    "HX-Request": "true",
+                    "HX-Target": "audio-player-button",
+                },
             )
         )
 
@@ -220,7 +222,9 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(episode),
-                HTTP_HX_REQUEST="true",
+                {
+                    "HX-Request": "true",
+                },
             )
         )
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
@@ -232,7 +236,9 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(episode),
-                HTTP_HX_REQUEST="true",
+                {
+                    "HX-Request": "true",
+                },
             )
         )
 
@@ -245,7 +251,9 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(player_episode),
-                HTTP_HX_REQUEST="true",
+                {
+                    "HX-Request": "true",
+                },
             )
         )
 
@@ -257,7 +265,14 @@ class TestClosePlayer:
 
     @pytest.mark.django_db
     def test_player_empty(self, client, auth_user, episode):
-        assert_204(client.post(self.url, HTTP_HX_REQUEST="true"))
+        assert_204(
+            client.post(
+                self.url,
+                {
+                    "HX-Request": "true",
+                },
+            )
+        )
 
     @pytest.mark.django_db
     def test_close(
@@ -267,11 +282,14 @@ class TestClosePlayer:
     ):
         response = client.post(
             self.url,
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TARGET="audio-player-button",
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-player-button",
+            },
         )
 
         assert_200(response)
+
         assert not response.context["is_playing"]
 
         assert player_episode.pk not in client.session
@@ -383,7 +401,7 @@ class TestAddBookmark:
 
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
-        response = client.post(self.url(episode), HTTP_HX_REQUEST="true")
+        response = client.post(self.url(episode), headers={"HX-Request": "true"})
 
         assert_200(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -392,7 +410,7 @@ class TestAddBookmark:
     def test_already_bookmarked(self, client, auth_user, episode):
         BookmarkFactory(episode=episode, user=auth_user)
 
-        response = client.post(self.url(episode), HTTP_HX_REQUEST="true")
+        response = client.post(self.url(episode), headers={"HX-Request": "true"})
 
         assert_409(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -408,7 +426,7 @@ class TestRemoveBookmark:
         assert_200(
             client.delete(
                 self.url(episode),
-                HTTP_HX_REQUEST="true",
+                headers={"HX-Request": "true"},
             )
         )
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -456,9 +474,6 @@ class TestHistory:
 
 
 class TestRemoveAudioLog:
-    def url(self, episode):
-        return reverse("episodes:remove_audio_log", args=[episode.pk])
-
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
         AudioLogFactory(user=auth_user, episode=episode)
@@ -467,8 +482,10 @@ class TestRemoveAudioLog:
         assert_200(
             client.delete(
                 self.url(episode),
-                HTTP_HX_TARGET="audio-log",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "audio-log",
+                },
             )
         )
 
@@ -482,8 +499,10 @@ class TestRemoveAudioLog:
         assert_404(
             client.delete(
                 self.url(player_episode),
-                HTTP_HX_TARGET="audio-log",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "audio-log",
+                },
             )
         )
         assert AudioLog.objects.filter(user=auth_user, episode=player_episode).exists()
@@ -495,10 +514,15 @@ class TestRemoveAudioLog:
         assert_200(
             client.delete(
                 self.url(log.episode),
-                HTTP_HX_TARGET="audio-log",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "audio-log",
+                },
             )
         )
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
+
+    def url(self, episode):
+        return reverse("episodes:remove_audio_log", args=[episode.pk])

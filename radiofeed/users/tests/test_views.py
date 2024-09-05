@@ -17,7 +17,7 @@ class TestUserPreferences:
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        assert_200(client.get(self.url, HTTP_HX_REQUEST="true"))
+        assert_200(client.get(self.url, headers={"HX-Request": "true"}))
 
     @pytest.mark.django_db
     def test_post(self, client, auth_user):
@@ -104,8 +104,10 @@ class TestImportPodcastFeeds:
             client.post(
                 self.url,
                 data={"opml": "test.xml"},
-                HTTP_HX_TARGET="import-feeds-form",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "import-feeds-form",
+                },
             )
         )
 
@@ -117,8 +119,10 @@ class TestImportPodcastFeeds:
             client.post(
                 self.url,
                 data={"opml": upload_file},
-                HTTP_HX_TARGET="import-feeds-form",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "import-feeds-form",
+                },
             )
         )
 
@@ -137,8 +141,10 @@ class TestImportPodcastFeeds:
             client.post(
                 self.url,
                 data={"opml": upload_file},
-                HTTP_HX_TARGET="opml-import-form",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "import-feeds-form",
+                },
             )
         )
 
@@ -150,8 +156,10 @@ class TestImportPodcastFeeds:
             client.post(
                 self.url,
                 data={"opml": upload_file},
-                HTTP_HX_TARGET="opml-import-form",
-                HTTP_HX_REQUEST="true",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "import-feeds-form",
+                },
             )
         )
         assert not Subscription.objects.filter(subscriber=auth_user).exists()

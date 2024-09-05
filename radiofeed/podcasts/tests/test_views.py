@@ -55,8 +55,10 @@ class TestSubscriptions:
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(
             _subscriptions_url,
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TARGET="pagination",
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "pagination",
+            },
         )
 
         assert_200(response)
@@ -394,7 +396,12 @@ class TestSubscribe:
 
     @pytest.mark.django_db
     def test_subscribe(self, client, podcast, auth_user):
-        response = client.post(self.url(podcast), HTTP_HX_REQUEST="true")
+        response = client.post(
+            self.url(podcast),
+            headers={
+                "HX-Request": "true",
+            },
+        )
 
         assert_200(response)
 
@@ -408,8 +415,10 @@ class TestSubscribe:
 
         response = client.post(
             self.url(podcast),
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TARGET="subscribe-button",
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "subscribe-button",
+            },
         )
 
         assert_404(response)
@@ -429,8 +438,10 @@ class TestSubscribe:
         assert_409(
             client.post(
                 self.url(podcast),
-                HTTP_HX_REQUEST="true",
-                HTTP_HX_TARGET="subscribe-button",
+                headers={
+                    "HX-Request": "true",
+                    "HX-Target": "subscribe-button",
+                },
             )
         )
 
@@ -448,8 +459,10 @@ class TestUnsubscribe:
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.delete(
             self.url(podcast),
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TARGET="subscribe-button",
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "subscribe-button",
+            },
         )
 
         assert_200(response)
@@ -466,8 +479,10 @@ class TestUnsubscribe:
 
         response = client.delete(
             self.url(podcast),
-            HTTP_HX_REQUEST="true",
-            HTTP_HX_TARGET="subscribe-button",
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "subscribe-button",
+            },
         )
 
         assert_404(response)
