@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed import cover_images
+from radiofeed import covers
 
 
 class TestGetPlaceholderUrl:
@@ -8,19 +8,19 @@ class TestGetPlaceholderUrl:
         ("size", "expected"),
         [
             pytest.param(size, f"/static/img/placeholder-{size}.webp", id=f"{size}px")
-            for size in cover_images.COVER_IMAGE_SIZES
+            for size in covers.get_allowed_sizes()
         ],
     )
     def test_check_paths(self, size, expected):
-        assert cover_images.get_placeholder_path(size).exists()
+        assert covers.get_placeholder_path(size).exists()
 
 
-class TestGetCoverImageAttrs:
+class TestGetCoverAttrs:
     @pytest.mark.parametrize(
         ("variant", "expected"),
         [
             pytest.param(
-                cover_images.CoverImageVariant.CARD,
+                covers.CoverVariant.CARD,
                 {
                     "height": 96,
                     "width": 96,
@@ -29,7 +29,7 @@ class TestGetCoverImageAttrs:
                 id="card",
             ),
             pytest.param(
-                cover_images.CoverImageVariant.DETAIL,
+                covers.CoverVariant.DETAIL,
                 {
                     "height": 160,
                     "width": 160,
@@ -39,7 +39,7 @@ class TestGetCoverImageAttrs:
                 id="detail",
             ),
             pytest.param(
-                cover_images.CoverImageVariant.TILE,
+                covers.CoverVariant.TILE,
                 {
                     "height": 224,
                     "width": 224,
@@ -50,8 +50,8 @@ class TestGetCoverImageAttrs:
             ),
         ],
     )
-    def test_get_cover_image_attrs(self, variant, expected):
-        attrs = cover_images.get_cover_image_attrs("test.jpg", variant)
+    def test_get_cover_attrs(self, variant, expected):
+        attrs = covers.get_cover_attrs("test.jpg", variant)
         assert attrs["height"] == expected["height"]
         assert attrs["width"] == expected["width"]
         assert attrs["src"].startswith(expected["src"])

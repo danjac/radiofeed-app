@@ -16,7 +16,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
-from radiofeed.cover_images import get_placeholder_path, is_cover_image_size
+from radiofeed.covers import get_placeholder_path, is_cover_size
 from radiofeed.http_client import get_client
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
@@ -218,7 +218,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     URL should be signed, so we can verify the request comes from this site.
     """
     # only specific image sizes permitted
-    if not is_cover_image_size(size):
+    if not is_cover_size(size):
         raise Http404
 
     # check cover url is legit

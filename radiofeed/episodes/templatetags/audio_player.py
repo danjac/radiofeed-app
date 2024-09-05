@@ -1,7 +1,7 @@
 from django import template
 from django.template.context import RequestContext
 
-from radiofeed.cover_images import get_metadata_info
+from radiofeed.covers import get_metadata_info
 from radiofeed.episodes.models import Episode
 
 register = template.Library()

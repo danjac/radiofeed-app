@@ -1,4 +1,5 @@
 import functools
+import itertools
 import pathlib
 import urllib.parse
 from enum import StrEnum
@@ -10,12 +11,8 @@ from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 
-COVER_IMAGE_SIZES: Final = (96, 112, 144, 160, 224)
 
-_MIN_FULL_SIZE_WIDTH: Final = 1024
-
-
-class CoverImageVariant(StrEnum):
+class CoverVariant(StrEnum):
     """Possible size variations."""
 
     CARD = "card"
@@ -23,35 +20,37 @@ class CoverImageVariant(StrEnum):
     TILE = "tile"
 
 
-_COVER_IMAGE_SIZES: Final = {
-    CoverImageVariant.CARD: (96, 96),
-    CoverImageVariant.DETAIL: (144, 160),
-    CoverImageVariant.TILE: (112, 224),
+_COVER_SIZES: Final = {
+    CoverVariant.CARD: (96, 96),
+    CoverVariant.DETAIL: (144, 160),
+    CoverVariant.TILE: (112, 224),
 }
 
-_COVER_IMAGE_CLASSES: Final = {
-    CoverImageVariant.CARD: "size-16",
-    CoverImageVariant.DETAIL: "size-36 lg:size-40",
-    CoverImageVariant.TILE: "size-28 lg:size-56",
+_COVER_CLASSES: Final = {
+    CoverVariant.CARD: "size-16",
+    CoverVariant.DETAIL: "size-36 lg:size-40",
+    CoverVariant.TILE: "size-28 lg:size-56",
 }
+
+_MIN_FULL_SIZE_WIDTH: Final = 1024
 
 
 @functools.cache
-def get_cover_image_class(variant: CoverImageVariant, *classes) -> str:
+def get_cover_class(variant: CoverVariant, *classes) -> str:
     """Returns default CSS class for the cover image."""
     return " ".join(
         [
             css_class.strip()
-            for css_class in [_COVER_IMAGE_CLASSES[variant], *classes]
+            for css_class in [_COVER_CLASSES[variant], *classes]
             if css_class
         ]
     ).strip()
 
 
 @functools.cache
-def get_cover_image_attrs(cover_url: str, variant: CoverImageVariant) -> dict:
+def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
     """Returns the HTML attributes for an image."""
-    min_size, full_size = _COVER_IMAGE_SIZES[variant]
+    min_size, full_size = _COVER_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
@@ -121,9 +120,15 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 
 
 @functools.cache
-def is_cover_image_size(size: int) -> bool:
+def is_cover_size(size: int) -> bool:
     """Check image has correct size."""
-    return size in COVER_IMAGE_SIZES
+    return size in get_allowed_sizes()
+
+
+@functools.cache
+def get_allowed_sizes() -> set[int]:
+    """Returns set of allowed sizes."""
+    return set(itertools.chain.from_iterable(_COVER_SIZES.values()))
 
 
 def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]:
@@ -134,5 +139,5 @@ def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]
             "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
-        for size in COVER_IMAGE_SIZES
+        for size in get_allowed_sizes()
     ]
