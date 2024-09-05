@@ -30,7 +30,7 @@ npminstall:
 
 .PHONY: npmupdate
 npmupdate:
-	npm run check-updates && npm install npm-update-all
+	npm update
 
 .PHONY: precommitinstall
 precommitinstall:
