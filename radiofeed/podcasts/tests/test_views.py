@@ -484,11 +484,16 @@ class TestPrivateFeeds:
     def test_ok(self, client, auth_user):
         for podcast in PodcastFactory.create_batch(33, private=True):
             SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        assert_200(client.get(self.url))
+        response = client.get(self.url)
+        assert_200(response)
+        assert response.context["page_obj"].paginator.count == 33
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
-        assert_200(client.get(self.url))
+        PodcastFactory(private=True)
+        response = client.get(self.url)
+        assert_200(response)
+        assert response.context["page_obj"].paginator.count == 0
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, faker):
