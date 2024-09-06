@@ -5,7 +5,7 @@ from django.http import HttpHeaders, HttpRequest
 def cache_timeout(request: HttpRequest) -> dict:
     """Returns the DEFAULT_CACHE_TIMEOUT setting."""
 
-    return {"CACHE_TIMEOUT": settings.CACHE_TIMEOUT}
+    return {"CACHE_TIMEOUT": settings.DEFAULT_CACHE_TIMEOUT}
 
 
 def csrf_header(request: HttpRequest) -> dict:

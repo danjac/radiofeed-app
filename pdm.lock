@@ -329,7 +329,7 @@ files = [
 
 [[package]]
 name = "django-allauth"
-version = "64.2.0"
+version = "64.2.1"
 requires_python = ">=3.8"
 summary = "Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication."
 groups = ["default"]
@@ -337,24 +337,24 @@ dependencies = [
     "Django>=4.2",
 ]
 files = [
-    {file = "django_allauth-64.2.0.tar.gz", hash = "sha256:71b404b3a7631502005e549800411e77939754e6864f2d24c17741a42e8e50e5"},
+    {file = "django_allauth-64.2.1.tar.gz", hash = "sha256:54bf0af8dc5c334254dd56f9069447c19b9b623110a095b2a0dcb82a414e1055"},
 ]
 
 [[package]]
 name = "django-allauth"
-version = "64.2.0"
+version = "64.2.1"
 extras = ["socialaccount"]
 requires_python = ">=3.8"
 summary = "Integrated set of Django applications addressing authentication, registration, account management as well as 3rd party (social) account authentication."
 groups = ["default"]
 dependencies = [
-    "django-allauth==64.2.0",
+    "django-allauth==64.2.1",
     "pyjwt[crypto]>=1.7",
     "requests-oauthlib>=0.3.0",
     "requests>=2.0.0",
 ]
 files = [
-    {file = "django_allauth-64.2.0.tar.gz", hash = "sha256:71b404b3a7631502005e549800411e77939754e6864f2d24c17741a42e8e50e5"},
+    {file = "django_allauth-64.2.1.tar.gz", hash = "sha256:54bf0af8dc5c334254dd56f9069447c19b9b623110a095b2a0dcb82a414e1055"},
 ]
 
 [[package]]
@@ -1248,24 +1248,25 @@ files = [
 
 [[package]]
 name = "pydantic"
-version = "2.8.2"
+version = "2.9.0"
 requires_python = ">=3.8"
 summary = "Data validation using Python type hints"
 groups = ["default"]
 dependencies = [
     "annotated-types>=0.4.0",
-    "pydantic-core==2.20.1",
+    "pydantic-core==2.23.2",
     "typing-extensions>=4.12.2; python_version >= \"3.13\"",
     "typing-extensions>=4.6.1; python_version < \"3.13\"",
+    "tzdata; python_version >= \"3.9\"",
 ]
 files = [
-    {file = "pydantic-2.8.2-py3-none-any.whl", hash = "sha256:73ee9fddd406dc318b885c7a2eab8a6472b68b8fb5ba8150949fc3db939f23c8"},
-    {file = "pydantic-2.8.2.tar.gz", hash = "sha256:6f62c13d067b0755ad1c21a34bdd06c0c12625a22b0fc09c6b149816604f7c2a"},
+    {file = "pydantic-2.9.0-py3-none-any.whl", hash = "sha256:f66a7073abd93214a20c5f7b32d56843137a7a2e70d02111f3be287035c45370"},
+    {file = "pydantic-2.9.0.tar.gz", hash = "sha256:c7a8a9fdf7d100afa49647eae340e2d23efa382466a8d177efcd1381e9be5598"},
 ]
 
 [[package]]
 name = "pydantic-core"
-version = "2.20.1"
+version = "2.23.2"
 requires_python = ">=3.8"
 summary = "Core functionality for Pydantic validation and serialization"
 groups = ["default"]
@@ -1273,19 +1274,19 @@ dependencies = [
     "typing-extensions!=4.7.0,>=4.6.0",
 ]
 files = [
-    {file = "pydantic_core-2.20.1-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:595ba5be69b35777474fa07f80fc260ea71255656191adb22a8c53aba4479231"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a4f55095ad087474999ee28d3398bae183a66be4823f753cd7d67dd0153427c9"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f9aa05d09ecf4c75157197f27cdc9cfaeb7c5f15021c6373932bf3e124af029f"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e97fdf088d4b31ff4ba35db26d9cc472ac7ef4a2ff2badeabf8d727b3377fc52"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:bc633a9fe1eb87e250b5c57d389cf28998e4292336926b0b6cdaee353f89a237"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:d573faf8eb7e6b1cbbcb4f5b247c60ca8be39fe2c674495df0eb4318303137fe"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:26dc97754b57d2fd00ac2b24dfa341abffc380b823211994c4efac7f13b9e90e"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:33499e85e739a4b60c9dac710c20a08dc73cb3240c9a0e22325e671b27b70d24"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:bebb4d6715c814597f85297c332297c6ce81e29436125ca59d1159b07f423eb1"},
-    {file = "pydantic_core-2.20.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:516d9227919612425c8ef1c9b869bbbee249bc91912c8aaffb66116c0b447ebd"},
-    {file = "pydantic_core-2.20.1-cp312-none-win32.whl", hash = "sha256:469f29f9093c9d834432034d33f5fe45699e664f12a13bf38c04967ce233d688"},
-    {file = "pydantic_core-2.20.1-cp312-none-win_amd64.whl", hash = "sha256:035ede2e16da7281041f0e626459bcae33ed998cca6a0a007a5ebb73414ac72d"},
-    {file = "pydantic_core-2.20.1.tar.gz", hash = "sha256:26ca695eeee5f9f1aeeb211ffc12f10bcb6f71e2989988fda61dabd65db878d4"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-macosx_10_12_x86_64.whl", hash = "sha256:4c83c64d05ffbbe12d4e8498ab72bdb05bcc1026340a4a597dc647a13c1605ec"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:6294907eaaccf71c076abdd1c7954e272efa39bb043161b4b8aa1cd76a16ce43"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4a801c5e1e13272e0909c520708122496647d1279d252c9e6e07dac216accc41"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:cc0c316fba3ce72ac3ab7902a888b9dc4979162d320823679da270c2d9ad0cad"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:6b06c5d4e8701ac2ba99a2ef835e4e1b187d41095a9c619c5b185c9068ed2a49"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:82764c0bd697159fe9947ad59b6db6d7329e88505c8f98990eb07e84cc0a5d81"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2b1a195efd347ede8bcf723e932300292eb13a9d2a3c1f84eb8f37cbbc905b7f"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:b7efb12e5071ad8d5b547487bdad489fbd4a5a35a0fc36a1941517a6ad7f23e0"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:5dd0ec5f514ed40e49bf961d49cf1bc2c72e9b50f29a163b2cc9030c6742aa73"},
+    {file = "pydantic_core-2.23.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:820f6ee5c06bc868335e3b6e42d7ef41f50dfb3ea32fbd523ab679d10d8741c0"},
+    {file = "pydantic_core-2.23.2-cp312-none-win32.whl", hash = "sha256:3713dc093d5048bfaedbba7a8dbc53e74c44a140d45ede020dc347dda18daf3f"},
+    {file = "pydantic_core-2.23.2-cp312-none-win_amd64.whl", hash = "sha256:e1895e949f8849bc2757c0dbac28422a04be031204df46a56ab34bcf98507342"},
+    {file = "pydantic_core-2.23.2.tar.gz", hash = "sha256:95d6bf449a1ac81de562d65d180af5d8c19672793c81877a2eda8fde5d08f2fd"},
 ]
 
 [[package]]
@@ -1775,13 +1776,13 @@ files = [
 
 [[package]]
 name = "types-python-dateutil"
-version = "2.9.0.20240821"
+version = "2.9.0.20240906"
 requires_python = ">=3.8"
 summary = "Typing stubs for python-dateutil"
 groups = ["dev"]
 files = [
-    {file = "types-python-dateutil-2.9.0.20240821.tar.gz", hash = "sha256:9649d1dcb6fef1046fb18bebe9ea2aa0028b160918518c34589a46045f6ebd98"},
-    {file = "types_python_dateutil-2.9.0.20240821-py3-none-any.whl", hash = "sha256:f5889fcb4e63ed4aaa379b44f93c32593d50b9a94c9a60a0c854d8cc3511cd57"},
+    {file = "types-python-dateutil-2.9.0.20240906.tar.gz", hash = "sha256:9706c3b68284c25adffc47319ecc7947e5bb86b3773f843c73906fd598bc176e"},
+    {file = "types_python_dateutil-2.9.0.20240906-py3-none-any.whl", hash = "sha256:27c8cc2d058ccb14946eebcaaa503088f4f6dbc4fb6093d3d456a49aef2753f6"},
 ]
 
 [[package]]
@@ -1811,7 +1812,7 @@ version = "2024.1"
 requires_python = ">=2"
 summary = "Provider of IANA time zone data"
 groups = ["default", "dev"]
-marker = "sys_platform == \"win32\""
+marker = "sys_platform == \"win32\" or python_version >= \"3.9\""
 files = [
     {file = "tzdata-2024.1-py2.py3-none-any.whl", hash = "sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252"},
     {file = "tzdata-2024.1.tar.gz", hash = "sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd"},
