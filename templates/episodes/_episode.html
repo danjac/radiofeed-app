@@ -1,7 +1,6 @@
 {# vim: set filetype=htmldjango #}
 {% with podcast=episode.podcast %}
     <a class="flex items-center space-x-3 cursor-pointer group"
-       role="link"
        tabindex="0"
        href="{{ episode.get_absolute_url }}"
        aria-label="{{ episode.cleaned_title }}"
