@@ -14,7 +14,7 @@ from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 @click.command()
 @click.option("--limit", type=int, default=360, help="Number of feeds to process")
 def command(limit: int) -> None:
-    "Parses RSS feeds of all scheduled podcasts."
+    "Parses RSS feeds of all scheduled podcasts"
 
     client = get_client()
 
