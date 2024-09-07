@@ -1,22 +1,7 @@
-import logging
 import math
 import multiprocessing
 
 import psutil
-from loguru import logger
-
-
-class PropagateHandler(logging.Handler):
-    """Propagate logs to Gunicorn."""
-
-    def emit(self, record: logging.LogRecord) -> None:
-        """Handle logging event."""
-        logging.getLogger("gunicorn.error").handle(record)
-
-
-logger.remove()
-logger.add(PropagateHandler(), format="{message}")
-logger.warning("Logging with Gunicorn")
 
 # https://docs.gunicorn.org/en/stable/configure.html#configuration-file
 
