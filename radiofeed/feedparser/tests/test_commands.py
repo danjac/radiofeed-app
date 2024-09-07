@@ -18,7 +18,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_command(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("parse_opml", filename)
+        call_command("feedparser parse_opml", filename)
         assert Podcast.objects.count() == 1
         assert not Podcast.objects.first().promoted
         patched.assert_called()
@@ -26,7 +26,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_promote(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("parse_opml", filename, promote=True)
+        call_command("feedparser parse_opml", filename, promote=True)
         assert Podcast.objects.count() == 1
         assert Podcast.objects.first().promoted
         patched.assert_called()
@@ -34,7 +34,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_empty(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter([]))
-        call_command("parse_opml", filename)
+        call_command("feedparser parse_opml", filename)
         assert Podcast.objects.count() == 0
         patched.assert_called()
 
@@ -42,11 +42,11 @@ class TestParseOpml:
 class TestExportFeeds:
     @pytest.mark.django_db
     def test_ok(self, podcast):
-        call_command("export_opml", "-")
+        call_command("feedparser export_opml", "-")
 
     @pytest.mark.django_db
     def test_promoted(self, podcast):
-        call_command("export_opml", "-", promoted=True)
+        call_command("feedparser", "-", name="export_opml", promoted=True)
 
 
 class TestParseFeeds:
@@ -66,17 +66,17 @@ class TestParseFeeds:
     @pytest.mark.django_db()(transaction=True)
     def test_ok(self, mock_parse_ok):
         PodcastFactory(pub_date=None)
-        call_command("parse_feeds")
+        call_command("feedparser parse_feeds")
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_not_scheduled(self, mock_parse_ok):
         PodcastFactory(active=False)
-        call_command("parse_feeds")
+        call_command("feedparser parse_feeds")
         mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_feed_parser_error(self, mock_parse_fail):
         PodcastFactory(pub_date=None)
-        call_command("parse_feeds")
+        call_command("feedparser parse_feeds")
         mock_parse_fail.assert_called()
