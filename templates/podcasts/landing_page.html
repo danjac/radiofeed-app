@@ -9,7 +9,7 @@
             We curate a selection of the best podcasts across a range of topics, so there's something for everyone!
         </h2>
     </header>
-    <div class="flex flex-wrap gap-1 justify-center" hx-disable="true">
+    <div class="flex flex-wrap gap-1 justify-center">
         {% cache CACHE_TIMEOUT podcasts-landing-page %}
             {% for podcast in podcasts|slice:30 %}
                 {% with css_class="hover:opacity-75" %}

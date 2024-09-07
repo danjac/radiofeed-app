@@ -9,7 +9,6 @@
             <p>You can sign in to your account using any of the following third party accounts:</p>
             <form method="post"
                   class="space-y-3"
-                  hx-disable="true"
                   action="{% url 'socialaccount_connections' %}">
                 {% csrf_token %}
                 {% for base_account in form.accounts %}

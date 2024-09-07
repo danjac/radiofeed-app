@@ -9,7 +9,6 @@
             {% if num_addresses %}
                 <p>The following e-mail addresses are associated with your account:</p>
                 <form class="space-y-3"
-                      hx-disable="true"
                       method="post"
                       id="email-addresses"
                       action="{% url 'account_email' %}">
@@ -63,10 +62,7 @@
         {% if can_add_email %}
             <hr />
             <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
-            <form method="post"
-                  action="{{ request.path }}"
-                  class="space-y-3"
-                  hx-disable="true">
+            <form method="post" action="{{ request.path }}" class="space-y-3">
                 {% csrf_token %}
                 {{ form }}
                 <div class="flex items-center">
