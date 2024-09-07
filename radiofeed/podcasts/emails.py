@@ -1,5 +1,6 @@
 from django.db.models import DecimalField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
+from loguru import logger
 
 from radiofeed.mail import send_templated_mail
 from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
@@ -58,6 +59,12 @@ def send_recommendations_email(
     )[:num_podcasts]
 
     if podcasts:
+        logger.debug(
+            "Sending recommendations email",
+            email=user.email,
+            num_podcasts=len(podcasts),
+        )
+
         user.recommended_podcasts.add(*podcasts)
 
         send_templated_mail(
