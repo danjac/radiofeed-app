@@ -1,0 +1,21 @@
+{# vim: set filetype=htmldjango #}
+{% block card %}
+    <a class="flex items-center space-x-3 cursor-pointer group"
+       tabindex="0"
+       href="{{ url }}"
+       aria-label="{{ title }}"
+       title="{{ title }} {% block extra_attrs %}{% endblock extra_attrs %}">
+        {% cover_art cover_url "card" title=title css_class="group-hover:opacity-75" %}
+        <div class="flex flex-col place-content-between h-16 leading-tight">
+            <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
+                {% block header %}
+                    {{ title }}
+                {% endblock header %}
+            </h2>
+            <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
+                {% block footer %}
+                {% endblock footer %}
+            </h3>
+        </div>
+    </a>
+{% endblock card %}

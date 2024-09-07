@@ -1,8 +1,10 @@
 {% extends "_pagination.html" %}
 {% block pagination_item %}
-    {% if is_fk %}
-        {% include "episodes/_episode.html" with episode=item.episode %}
-    {% else %}
-        {% include "episodes/_episode.html" with episode=item %}
-    {% endif %}
+    {% with template=is_podcast_detail|yesno:"podcasts/_episode.html,episodes/_episode.html" %}
+        {% if is_fk %}
+            {% include template with episode=item.episode %}
+        {% else %}
+            {% include template with episode=item %}
+        {% endif %}
+    {% endwith %}
 {% endblock pagination_item %}
