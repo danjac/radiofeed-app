@@ -1,52 +1,33 @@
-import argparse
-import sys
-from typing import IO
-
+import djclick as click
 from django.contrib.sites.models import Site
-from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
 
 from radiofeed.podcasts.models import Podcast
 
 
-class Command(BaseCommand):
-    """BaseCommand subclass"""
+@click.command()
+@click.argument("file", type=click.File("w"))
+@click.option(
+    "--promoted/--not-promoted",
+    default=False,
+    help="Export only promoted podcasts",
+)
+def command(file, *, promoted: bool):
+    "Generate OPML document from all public feeds"
+    podcasts = Podcast.objects.filter(
+        private=False,
+        pub_date__isnull=False,
+    ).order_by("title")
 
-    help = "Generate OPML document from all public feeds"
+    if promoted:
+        podcasts = podcasts.filter(promoted=True)
 
-    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
-        """Add command-line arguments"""
-        parser.add_argument(
-            "file",
-            type=argparse.FileType("w"),
-            default=sys.stdout,
+    file.write(
+        render_to_string(
+            "feedparser/podcasts.opml",
+            {
+                "podcasts": podcasts,
+                "site": Site.objects.get_current(),
+            },
         )
-        parser.add_argument(
-            "--promoted",
-            action="store_true",
-            default=False,
-            help="Export only promoted podcasts",
-        )
-
-    def handle(self, **options) -> None:
-        """Implementation of command."""
-        writer: IO = options["file"]
-        promoted: bool = options["promoted"]
-
-        podcasts = Podcast.objects.filter(
-            private=False,
-            pub_date__isnull=False,
-        ).order_by("title")
-
-        if promoted:
-            podcasts = podcasts.filter(promoted=True)
-
-        writer.write(
-            render_to_string(
-                "feedparser/podcasts.opml",
-                {
-                    "podcasts": podcasts,
-                    "site": Site.objects.get_current(),
-                },
-            )
-        )
+    )
