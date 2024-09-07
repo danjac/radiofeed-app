@@ -1,6 +1,6 @@
 {% extends "_pagination.html" %}
 {% block pagination_item %}
-    {% with template=is_podcast_detail|yesno:"podcasts/_episode.html,episodes/_episode.html" %}
+    {% with template=template|default:"episodes/_episode.html" %}
         {% if is_fk %}
             {% include template with episode=item.episode %}
         {% else %}
