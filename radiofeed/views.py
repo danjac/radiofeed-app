@@ -1,4 +1,5 @@
 import datetime
+import functools
 import io
 from collections.abc import Iterator
 from typing import Final
@@ -157,7 +158,7 @@ def manifest(request: HttpRequest) -> JsonResponse:
                     "type": "image/png",
                 },
             ],
-            "icons": list(_app_icons()),
+            "icons": _app_icons_list(),
             "shortcuts": [],
             "lang": "en",
         }
@@ -248,6 +249,11 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
+
+
+@functools.cache
+def _app_icons_list() -> list[dict]:
+    return list(_app_icons())
 
 
 def _app_icons() -> Iterator[dict]:
