@@ -15,7 +15,7 @@ from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 @click.group(invoke_without_command=True)
 def cli():
-    """Group command."""
+    """Feedparser commands."""
 
 
 @cli.command(name="parse_feeds")
