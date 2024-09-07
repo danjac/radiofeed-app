@@ -6,20 +6,19 @@ from django.contrib.sites.models import Site
 from django.db.models import Count, F, QuerySet
 from django.template.loader import render_to_string
 
-from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser import feed_parser, opml_parser, scheduler
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.http_client import Client, get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 
 @click.group(invoke_without_command=True)
-def main():
-    """Main command."""
+def cli():
+    """Group command."""
 
 
-@main.command(name="parse_feeds")
+@cli.command(name="parse_feeds")
 @click.option("--limit", type=int, default=360, help="Number of feeds to process")
 def parse_feeds(limit: int) -> None:
     "Parses RSS feeds of all scheduled podcasts"
@@ -35,10 +34,10 @@ def parse_feeds(limit: int) -> None:
         )
 
 
-@main.command(name="parse_ompl")
+@cli.command(name="parse_opml")
 @click.argument("file", type=click.File("rb"))
 @click.option("--promote/--no-promote", default=False, help="Promote imported podcasts")
-def parse_ompl(file: click.File, *, promote: bool) -> None:
+def parse_opml(file: click.File, *, promote: bool) -> None:
     """Create new podcast feeds from OPML document"""
 
     podcasts = Podcast.objects.bulk_create(
@@ -47,7 +46,7 @@ def parse_ompl(file: click.File, *, promote: bool) -> None:
                 rss=rss,
                 promoted=promote,
             )
-            for rss in parse_opml(file.read())
+            for rss in opml_parser.parse_opml(file.read())
         ],
         ignore_conflicts=True,
     )
@@ -58,7 +57,7 @@ def parse_ompl(file: click.File, *, promote: bool) -> None:
         click.echo(click.style("No podcasts found", fg="red"))
 
 
-@main.command(name="export_opml")
+@cli.command(name="export_opml")
 @click.argument("file", type=click.File("w"))
 @click.option(
     "--promoted/--not-promoted",

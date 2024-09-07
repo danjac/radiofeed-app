@@ -1,52 +1,60 @@
 import pathlib
 
 import pytest
-from django.core.management import call_command
 
 from radiofeed.feedparser.exceptions import DuplicateError
+from radiofeed.feedparser.management.commands.feedparser import cli
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestParseOpml:
-    patched = "radiofeed.feedparser.management.commands.parse_opml.parse_opml"
+    patched = "radiofeed.feedparser.opml_parser.parse_opml"
 
     @pytest.fixture
     def filename(self):
         return pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
 
     @pytest.mark.django_db
-    def test_command(self, mocker, filename):
+    def test_command(self, mocker, cli_runner, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("feedparser parse_opml", filename)
+        with cli_runner.isolated_filesystem():
+            result = cli_runner.invoke(cli, ["parse_opml", "--", filename])
+            assert result.exit_code == 0
         assert Podcast.objects.count() == 1
         assert not Podcast.objects.first().promoted
         patched.assert_called()
 
     @pytest.mark.django_db
-    def test_promote(self, mocker, filename):
+    def test_promote(self, mocker, cli_runner, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("feedparser parse_opml", filename, promote=True)
+        with cli_runner.isolated_filesystem():
+            result = cli_runner.invoke(cli, ["parse_opml", "--promote", "--", filename])
+            assert result.exit_code == 0
         assert Podcast.objects.count() == 1
         assert Podcast.objects.first().promoted
         patched.assert_called()
 
     @pytest.mark.django_db
-    def test_empty(self, mocker, filename):
+    def test_empty(self, mocker, cli_runner, filename):
         patched = mocker.patch(self.patched, return_value=iter([]))
-        call_command("feedparser parse_opml", filename)
+        with cli_runner.isolated_filesystem():
+            result = cli_runner.invoke(cli, ["parse_opml", "--", filename])
+            assert result.exit_code == 0
         assert Podcast.objects.count() == 0
         patched.assert_called()
 
 
 class TestExportFeeds:
     @pytest.mark.django_db
-    def test_ok(self, podcast):
-        call_command("feedparser export_opml", "-")
+    def test_ok(self, cli_runner, podcast):
+        with cli_runner.isolated_filesystem():
+            cli_runner.invoke(cli, ["export_opml", "-"])
 
     @pytest.mark.django_db
-    def test_promoted(self, podcast):
-        call_command("feedparser", "-", name="export_opml", promoted=True)
+    def test_promoted(self, cli_runner, podcast):
+        with cli_runner.isolated_filesystem():
+            cli_runner.invoke(cli, ["export_opml", "-", "--promoted"])
 
 
 class TestParseFeeds:
@@ -64,19 +72,22 @@ class TestParseFeeds:
         )
 
     @pytest.mark.django_db()(transaction=True)
-    def test_ok(self, mock_parse_ok):
+    def test_ok(self, cli_runner, mock_parse_ok):
         PodcastFactory(pub_date=None)
-        call_command("feedparser parse_feeds")
+        result = cli_runner.invoke(cli, "parse_feeds")
+        assert result.exit_code == 0
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db()(transaction=True)
-    def test_not_scheduled(self, mock_parse_ok):
+    def test_not_scheduled(self, cli_runner, mock_parse_ok):
         PodcastFactory(active=False)
-        call_command("feedparser parse_feeds")
+        result = cli_runner.invoke(cli, "parse_feeds")
+        assert result.exit_code == 0
         mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
-    def test_feed_parser_error(self, mock_parse_fail):
+    def test_feed_parser_error(self, cli_runner, mock_parse_fail):
         PodcastFactory(pub_date=None)
-        call_command("feedparser parse_feeds")
+        result = cli_runner.invoke(cli, "parse_feeds")
+        assert result.exit_code == 0
         mock_parse_fail.assert_called()
