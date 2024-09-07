@@ -7,12 +7,12 @@ from radiofeed.users.models import User
 
 
 @click.group(invoke_without_command=True)
-def cli():
-    """Podcasts commands."""
+def recommendations():
+    """Recommendations commands."""
 
 
-@cli.command(name="create_recommendations")
-def create_recommendations() -> None:
+@recommendations.command(name="create")
+def create() -> None:
     "Create podcast recommendations."
     with DatabaseSafeThreadPoolExecutor() as executor:
         executor.db_safe_map(
@@ -21,8 +21,8 @@ def create_recommendations() -> None:
         )
 
 
-@cli.command(name="send_recommendations_emails")
-def send_recommendations_emails() -> None:
+@recommendations.command(name="send_emails")
+def send_emails() -> None:
     """Send recommendations emails to subscribers."""
 
     with DatabaseSafeThreadPoolExecutor() as executor:

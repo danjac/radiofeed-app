@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.podcasts.management.commands.podcasts import cli
+from radiofeed.podcasts.management.commands.recommendations import recommendations
 from radiofeed.podcasts.tests.factories import RecommendationFactory
 
 
@@ -13,7 +13,7 @@ class TestCreateRecommendations:
                 ("en", RecommendationFactory.create_batch(3)),
             ],
         )
-        result = cli_runner.invoke(cli, ["create_recommendations"])
+        result = cli_runner.invoke(recommendations, ["create"])
         assert result.exit_code == 0
         patched.assert_called()
 
@@ -26,7 +26,7 @@ class TestCreateRecommendations:
             ],
         )
 
-        result = cli_runner.invoke(cli, ["create_recommendations"])
+        result = cli_runner.invoke(recommendations, ["create"])
         assert result.exit_code == 0
         patched.assert_called()
 
@@ -35,6 +35,6 @@ class TestSendRecommendationsEmails:
     @pytest.mark.django_db()(transaction=True)
     def test_send_emails(self, mocker, cli_runner, user):
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
-        result = cli_runner.invoke(cli, ["send_recommendations_emails"])
+        result = cli_runner.invoke(recommendations, ["send_emails"])
         assert result.exit_code == 0
         patched.assert_called()

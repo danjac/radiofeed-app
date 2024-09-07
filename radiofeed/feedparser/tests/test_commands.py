@@ -3,7 +3,8 @@ import pathlib
 import pytest
 
 from radiofeed.feedparser.exceptions import DuplicateError
-from radiofeed.feedparser.management.commands.feedparser import cli
+from radiofeed.feedparser.management.commands.opml import opml
+from radiofeed.feedparser.management.commands.parse_feeds import parse_feeds
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
@@ -19,7 +20,7 @@ class TestParseOpml:
     def test_command(self, mocker, cli_runner, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
         with cli_runner.isolated_filesystem():
-            result = cli_runner.invoke(cli, ["parse_opml", "--", filename])
+            result = cli_runner.invoke(opml, ["parse", "--", filename])
             assert result.exit_code == 0
         assert Podcast.objects.count() == 1
         assert not Podcast.objects.first().promoted
@@ -29,7 +30,7 @@ class TestParseOpml:
     def test_promote(self, mocker, cli_runner, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
         with cli_runner.isolated_filesystem():
-            result = cli_runner.invoke(cli, ["parse_opml", "--promote", "--", filename])
+            result = cli_runner.invoke(opml, ["parse", "--promote", "--", filename])
             assert result.exit_code == 0
         assert Podcast.objects.count() == 1
         assert Podcast.objects.first().promoted
@@ -39,22 +40,22 @@ class TestParseOpml:
     def test_empty(self, mocker, cli_runner, filename):
         patched = mocker.patch(self.patched, return_value=iter([]))
         with cli_runner.isolated_filesystem():
-            result = cli_runner.invoke(cli, ["parse_opml", "--", filename])
+            result = cli_runner.invoke(opml, ["parse", "--", filename])
             assert result.exit_code == 0
         assert Podcast.objects.count() == 0
         patched.assert_called()
 
 
-class TestExportFeeds:
+class TestExportOpml:
     @pytest.mark.django_db
     def test_ok(self, cli_runner, podcast):
         with cli_runner.isolated_filesystem():
-            cli_runner.invoke(cli, ["export_opml", "-"])
+            cli_runner.invoke(opml, ["export", "-"])
 
     @pytest.mark.django_db
     def test_promoted(self, cli_runner, podcast):
         with cli_runner.isolated_filesystem():
-            cli_runner.invoke(cli, ["export_opml", "-", "--promoted"])
+            cli_runner.invoke(opml, ["export", "-", "--promoted"])
 
 
 class TestParseFeeds:
@@ -74,20 +75,20 @@ class TestParseFeeds:
     @pytest.mark.django_db()(transaction=True)
     def test_ok(self, cli_runner, mock_parse_ok):
         PodcastFactory(pub_date=None)
-        result = cli_runner.invoke(cli, "parse_feeds")
+        result = cli_runner.invoke(parse_feeds)
         assert result.exit_code == 0
         mock_parse_ok.assert_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_not_scheduled(self, cli_runner, mock_parse_ok):
         PodcastFactory(active=False)
-        result = cli_runner.invoke(cli, "parse_feeds")
+        result = cli_runner.invoke(parse_feeds)
         assert result.exit_code == 0
         mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_feed_parser_error(self, cli_runner, mock_parse_fail):
         PodcastFactory(pub_date=None)
-        result = cli_runner.invoke(cli, "parse_feeds")
+        result = cli_runner.invoke(parse_feeds)
         assert result.exit_code == 0
         mock_parse_fail.assert_called()
