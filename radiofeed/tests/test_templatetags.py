@@ -1,7 +1,6 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.core.paginator import Paginator
-from django.template import RequestContext, Template, TemplateSyntaxError
+from django.template import RequestContext
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.templatetags import (
@@ -146,27 +145,3 @@ class TestAbsoluteUri:
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
         )
-
-
-class TestPagination:
-    def test_render_tag(self, rf):
-        template = Template(
-            """{% pagination page_obj %}
-            <span>{{ item }}</span>
-        {% endpagination %}"""
-        )
-        items = "test string" * 20
-        page_obj = Paginator(items, 12).get_page(1)
-
-        context = RequestContext(rf.get("/"), {"page_obj": page_obj})
-        rendered = template.render(context)
-
-        assert "?page=2" in rendered
-
-    def test_missing_args(self):
-        with pytest.raises(TemplateSyntaxError):
-            Template(
-                """{% pagination %}
-                <span>{{ item }}</span>
-            {% endpagination %}"""
-            )

@@ -10,7 +10,6 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.shortcuts import resolve_url
-from django.template import loader
 from django.template.defaultfilters import pluralize
 from django.utils.encoding import force_str
 from django.utils.html import format_html
@@ -18,11 +17,7 @@ from django.utils.html import format_html
 from radiofeed import covers, html
 
 if TYPE_CHECKING:  # pragma: nocover
-    from collections.abc import Iterator
-
-    from django.core.paginator import Page
-    from django.template.base import NodeList, Parser, Token
-    from django.template.context import Context, RequestContext
+    from django.template.context import RequestContext
 
     from radiofeed.covers import CoverVariant
 
@@ -180,45 +175,3 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
-
-
-@register.tag
-def pagination(parser: Parser, token: Token) -> PaginationNode:
-    """Render pagination template."""
-    _, *bits = token.split_contents()
-
-    try:
-        page_obj = bits[0]
-    except IndexError as exc:
-        raise template.TemplateSyntaxError("pagination tag requires page_obj") from exc
-
-    nodelist = parser.parse(parse_until=["endpagination"])
-    parser.delete_first_token()
-
-    return PaginationNode(page_obj, nodelist)
-
-
-class PaginationNode(template.Node):
-    """Renders pagination node."""
-
-    pagination_template = "_pagination.html"
-
-    def __init__(self, page_obj: str, nodelist: NodeList) -> None:
-        self.page_obj = template.Variable(page_obj)
-        self.nodelist = nodelist
-
-    def render(self, context: Context) -> str:
-        """Renders tag."""
-
-        template = loader.get_template(self.pagination_template)
-
-        with context.push():
-            page_obj = self.page_obj.resolve(context)
-            context["pagination_items"] = self._render_items(page_obj, context)
-            return template.render(context.flatten(), request=context["request"])
-
-    def _render_items(self, page_obj: Page, context: Context) -> Iterator[str]:
-        for item in page_obj:
-            with context.push():
-                context["item"] = item
-                yield self.nodelist.render(context)
