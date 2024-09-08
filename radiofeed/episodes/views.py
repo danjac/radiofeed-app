@@ -129,11 +129,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     request.player.set(episode.pk)
 
-    return _render_audio_player_action(
-        request,
-        audio_log,
-        is_playing=True,
-    )
+    return _render_audio_player_action(request, audio_log, is_playing=True)
 
 
 @require_POST
@@ -145,11 +141,7 @@ def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateRespon
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_audio_player_action(
-            request,
-            audio_log,
-            is_playing=False,
-        )
+        return _render_audio_player_action(request, audio_log, is_playing=False)
     return HttpResponseNoContent()
 
 
@@ -306,9 +298,7 @@ def _render_audio_player_action(
         {
             "audio_log": audio_log,
             "episode": audio_log.episode,
-            "current_time": audio_log.current_time,
             "is_playing": is_playing,
-            "start_player": is_playing,
         },
     )
 

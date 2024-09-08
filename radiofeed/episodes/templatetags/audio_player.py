@@ -1,10 +1,27 @@
+import dataclasses
+
 from django import template
 from django.template.context import RequestContext
 
 from radiofeed.covers import get_metadata_info
-from radiofeed.episodes.models import Episode
+from radiofeed.episodes.models import AudioLog, Episode
 
 register = template.Library()
+
+
+@dataclasses.dataclass
+class PlayerInfo:
+    """Audio player context data."""
+
+    current_time: int | None = None
+    episode: Episode | None = None
+    is_playing: bool = False
+    start_player: bool = False
+    hx_oob: bool = False
+
+    def as_context(self, context: RequestContext) -> dict:
+        """Merges info to context."""
+        return context.flatten() | dataclasses.asdict(self)
 
 
 @register.simple_tag(takes_context=True)
@@ -27,16 +44,28 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
     }
 
 
+@register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
+def start_audio_player(context: RequestContext, audio_log: AudioLog) -> dict:
+    """Renders audio player action to start player."""
+    return PlayerInfo(
+        current_time=audio_log.current_time,
+        episode=audio_log.episode,
+        is_playing=True,
+        start_player=True,
+        hx_oob=True,
+    ).as_context(context)
+
+
+@register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
+def close_audio_player(context: RequestContext) -> dict:
+    """Renders audio player action to close player."""
+    return PlayerInfo(hx_oob=True).as_context(context)
+
+
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
-
-    context_data = context.flatten() | {
-        "current_time": None,
-        "episode": None,
-        "is_playing": False,
-        "start_player": False,
-    }
+    info = PlayerInfo()
 
     if (
         context.request.user.is_authenticated
@@ -50,10 +79,11 @@ def audio_player(context: RequestContext) -> dict:
             .first()
         )
     ):
-        return context_data | {
-            "episode": audio_log.episode,
-            "current_time": audio_log.current_time,
-            "is_playing": True,
-        }
+        info = dataclasses.replace(
+            info,
+            episode=audio_log.episode,
+            current_time=audio_log.current_time,
+            is_playing=True,
+        )
 
-    return context_data
+    return info.as_context(context)

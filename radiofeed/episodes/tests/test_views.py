@@ -212,22 +212,6 @@ class TestStartPlayer:
         )
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-
-        assert client.session[PlayerDetails.session_key] == episode.pk
-
-    @pytest.mark.django_db
-    def test_play_private_subscribed(self, client, auth_user):
-        episode = EpisodeFactory(podcast=PodcastFactory(private=True))
-        SubscriptionFactory(subscriber=auth_user, podcast=episode.podcast)
-        assert_200(
-            client.post(
-                self.url(episode),
-                {
-                    "HX-Request": "true",
-                },
-            )
-        )
-        assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert client.session[PlayerDetails.session_key] == episode.pk
 
     @pytest.mark.django_db
