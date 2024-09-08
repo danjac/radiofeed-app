@@ -55,7 +55,7 @@ RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 COPY . /app
 
-COPY --from=tailwind /app/assets/dist /app/assets/
+COPY --from=tailwind /app/assets /app/assets
 
 # Collect static files for Whitenoise
 
