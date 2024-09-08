@@ -204,7 +204,7 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(episode),
-                {
+                headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
                 },
@@ -220,8 +220,9 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(episode),
-                {
+                headers={
                     "HX-Request": "true",
+                    "HX-Target": "audio-player-button",
                 },
             )
         )
@@ -235,8 +236,9 @@ class TestStartPlayer:
         assert_200(
             client.post(
                 self.url(player_episode),
-                {
+                headers={
                     "HX-Request": "true",
+                    "HX-Target": "audio-player-button",
                 },
             )
         )
@@ -252,8 +254,9 @@ class TestClosePlayer:
         assert_204(
             client.post(
                 self.url,
-                {
+                headers={
                     "HX-Request": "true",
+                    "HX-Target": "audio-player-button",
                 },
             )
         )
