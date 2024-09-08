@@ -13,7 +13,7 @@ update:
 	@$(MAKE) precommitupdate
 
 .PHONY: envfile
-copyenv:
+envfile:
 	cp -R -u -p .env.example .env
 
 .PHONY: pyinstall
