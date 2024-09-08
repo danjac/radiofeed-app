@@ -4,6 +4,7 @@ import functools
 import itertools
 import json
 import math
+import time
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -12,6 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
+from django.templatetags.static import static
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
 from django.utils.html import format_html
@@ -101,6 +103,18 @@ def htmx_config() -> str:
 def theme_color() -> dict:
     """Returns the PWA configuration theme color."""
     return settings.PWA_CONFIG["manifest"]["theme_color"]
+
+
+@register.simple_tag
+def debug_static(url: str) -> str:
+    """Works like {% static %} but appends a browser cache-busting param to URL in DEBUG mode.
+    Otherwise just returns the plain static URL.
+
+    This is useful in development with non-vendor assets you want to see refreshed on each browser reload,
+    but has no effect in production.
+    """
+    static_url = static(url)
+    return f"{static_url}?v={int(time.time())}" if settings.DEBUG else static_url
 
 
 @register.simple_tag

@@ -11,7 +11,7 @@
             <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
             <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
             {% compress css %}
-                <link rel="stylesheet" href="{% static "app.dist.css" %}">
+                <link rel="stylesheet" href="{% debug_static "app.dist.css" %}">
             {% endcompress %}
             <link rel="manifest" href="{% url "manifest" %}">
             <link rel="canonical" href="{{ request.build_absolute_uri }}">
@@ -21,7 +21,7 @@
                   content="width=device-width, initial-scale=1, viewport-fit=no">
             <meta name="mobile-wep-app-capable" content="yes">
             <meta name="apple-mobile-wep-app-capable" content="yes">
-            <meta name="copyright" content="Dan Jacob {% now " Y" %}">
+            <meta name="copyright" content="Dan Jacob {% now "Y" %}">
             <meta name="cache-control" content="no-cache">
             <meta name="robots" content="index,follow">
             <meta name="description" content="Podcast aggregator site">

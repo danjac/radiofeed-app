@@ -2794,6 +2794,11 @@ input[type="range"]::-ms-fill-lower {
     font-size: 1.875rem;
     line-height: 2.25rem;
   }
+
+  .xl\:text-6xl {
+    font-size: 3.75rem;
+    line-height: 1;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
