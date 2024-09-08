@@ -17,7 +17,7 @@ class _OpmlParser:
         self._parser = XPathParser()
 
     def parse(self, content: bytes) -> Iterator[str]:
-        """Parse OPML content."""
+        """Parse OPML content, returning RSS or Atom URLs."""
         yield from self._parser.itervalues(
             self._parser.find(content, "opml", "body"),
             ".//outline/@xmlUrl",
