@@ -1,4 +1,4 @@
-{% load heroicons partials audio_player %}
+{% load static heroicons partials audio_player %}
 {% if user.is_authenticated %}
     {% partialdef player inline=True %}
         <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
@@ -120,5 +120,5 @@
             {% endif %}
         </div>
     {% endpartialdef player %}
-    <script src="{% "audio-player.js" %}"></script>
+    <script src="{% static "audio-player.js" %}{% if debug %}?{% now "U" %}{% endif %}"></script>
 {% endif %}
