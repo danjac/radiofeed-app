@@ -29,9 +29,10 @@ COPY ./nltk.txt /app/nltk.txt
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
-# Compress assets and collect for Whitenoise
-
 COPY . /app
 
-RUN python manage.py compress && \
-    python manage.py collectstatic --no-input --traceback
+# Collect static files, compress blocks, and re-collect for Whitenoise
+
+RUN python manage.py collectstatic --no-input && \
+    python manage.py compress --force && \
+    python manage.py collectstatic --no-input
