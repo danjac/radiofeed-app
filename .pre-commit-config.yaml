@@ -40,6 +40,12 @@ repos:
       rev: v0.3.1
       hooks:
           - id: absolufy-imports
+    - repo: https://github.com/pre-commit/mirrors-eslint
+      rev: v9.10.0
+      hooks:
+          - id: eslint
+            files: ^assets
+            exclude: ^assets/vendor
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.35.2
       hooks:
