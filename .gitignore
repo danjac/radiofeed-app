@@ -27,6 +27,7 @@
 '
 :
 :w
+assets/app.dist.css
 codealike.json
 __pycache__
 celerybeat-schedule

@@ -21,13 +21,12 @@
 .venv
 .vim
 .vscode
+assets/app.dist.css
 LICENSE
 Makefile
 README.md
 conftest.py
 docker-compose.yml
 node_modules
-package.json
-package-lock.json
 npm-debug.log
 screenshots
