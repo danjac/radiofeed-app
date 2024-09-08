@@ -24,7 +24,7 @@
 LICENSE
 Makefile
 README.md
-assets/dist
+assets/app.min.css
 conftest.py
 docker-compose.yml
 node_modules

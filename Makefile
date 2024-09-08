@@ -34,7 +34,7 @@ npmupdate:
 
 .PHONY: tailwind
 tailwind:
-	npx tailwindcss -i ./assets/app.css -o ./assets/dist/app.css --verbose --watch
+	npx tailwindcss -i ./assets/app.css -o ./assets/app.min.css --verbose --watch
 
 .PHONY: precommitinstall
 precommitinstall:

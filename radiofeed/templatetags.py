@@ -12,6 +12,7 @@ from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
 from django.utils.html import format_html
@@ -55,6 +56,14 @@ def active_link(
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
     )
+
+
+@register.simple_tag
+def cache_buster() -> str:
+    """
+    If DEBUG, returns cache bust ?v= tag, otherwise empty string.
+    """
+    return f"?v={timezone.now().strftime("%f")}" if settings.DEBUG else ""
 
 
 @register.simple_tag

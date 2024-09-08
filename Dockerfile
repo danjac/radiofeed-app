@@ -17,7 +17,7 @@ ENV NODE_ENV=production
 
 RUN npx tailwindcss \
     -i ./assets/app.css \
-    -o ./assets/dist/app.css --minify && \
+    -o ./assets/app.min.css --minify && \
     rm -rf node_modules
 
 # Install Python dependencies
@@ -55,7 +55,7 @@ RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 COPY . /app
 
-COPY --from=tailwind /app/assets /app/assets
+COPY --from=tailwind /app/assets/app.min.css /app/assets/
 
 # Collect static files for Whitenoise
 

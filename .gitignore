@@ -42,4 +42,4 @@ npm-debug.log*
 staticfiles
 venv
 requirements-ci.txt
-assets/dist/
+assets/app.min.css
