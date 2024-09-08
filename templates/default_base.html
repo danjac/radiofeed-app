@@ -10,7 +10,8 @@
             </title>
             <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
             <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
-            <link rel="stylesheet" href="{% static "app.min.css" %}{% cache_buster %}">
+            <link rel="stylesheet"
+                  href="{% static "app.min.css" %}{% bust_static_cache %}">
             <link rel="manifest" href="{% url "manifest" %}">
             <link rel="canonical" href="{{ request.build_absolute_uri }}">
             <meta charset="UTF-8" />

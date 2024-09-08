@@ -4,6 +4,7 @@ import functools
 import itertools
 import json
 import math
+import time
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -12,7 +13,6 @@ from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
-from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
 from django.utils.html import format_html
@@ -59,11 +59,11 @@ def active_link(
 
 
 @register.simple_tag
-def cache_buster() -> str:
+def bust_static_cache() -> str:
+    """Returns cache-busting query parameter in debug mode.
+    Use with any non-vendor static URLs.
     """
-    If DEBUG, returns cache bust ?v= tag, otherwise empty string.
-    """
-    return f"?v={timezone.now().strftime("%f")}" if settings.DEBUG else ""
+    return f"?v={int(time.time())}" if settings.DEBUG else ""
 
 
 @register.simple_tag

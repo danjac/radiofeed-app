@@ -120,5 +120,5 @@
             {% endif %}
         </div>
     {% endpartialdef player %}
-    <script src="{% static "audio-player.js" %}{% cache_buster %}"></script>
+    <script src="{% static "audio-player.js" %}{% bust_static_cache %}"></script>
 {% endif %}
