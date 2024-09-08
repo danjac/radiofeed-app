@@ -1,7 +1,5 @@
-import Alpine from "alpinejs";
-
 document.addEventListener("alpine:init", () => {
-    Alpine.data(
+    window.Alpine.data(
         "audioPlayer",
         (
             csrfHeader = null,

@@ -1,116 +1,339 @@
-{% load heroicons audio_player %}
-<div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
-    {% if episode and is_playing %}
-        {% get_media_metadata episode as metadata %}
-        {{ metadata|json_script:"audioplayer-metadata" }}
-        <div class="h-40 sm:h-28"
-            {# djlint:off #}
-            x-data="
-            audioPlayer(
-                csrfHeader='{{ CSRF_HEADER }}',
-                csrfToken='{{ csrf_token }}',
-                currentTime={{ current_time|default:0 }},
-                metadataTag='audioplayer-metadata',
-                startPlayer={{ start_player|yesno:" true,false" }},
-                timeUpdateUrl='{% url "episodes:player_time_update" %}',
-            )"
-            {# djlint:on #}
-            @keydown.window="shortcuts">
-            <audio x-ref="audio"
-                   preload="auto"
-                   @loadedmetadata="loaded"
-                   @ended="ended"
-                   @timeupdate="timeUpdate"
-                   @play="play"
-                   @pause="pause"
-                   @error.prevent="error">
-                <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
-            </audio>
-            <div class="fixed bottom-0 p-2 w-full font-semibold text-white bg-gradient-to-b from-violet-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
-                <div class="items-center space-y-2 w-full divide-y divide-gray-300 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x dark:divide-gray-600">
-                    <div class="sm:w-1/2">
-                        <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
-                             role="link"
-                             tabindex="0"
-                             hx-get="{{ episode.get_absolute_url }}"
-                             hx-push-url="true">
-                            {% cover_art episode.get_cover_url "card" episode.cleaned_title css_class="group-hover:opacity-75" %}
-                            <div class="flex flex-col place-content-between h-16">
-                                <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2"
-                                    aria-label="{{ episode.cleaned_title }}"
-                                    title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</h2>
-                                {% with podcast=episode.podcast %}
-                                    <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-300 line-clamp-1"
-                                        aria-label="{{ podcast.cleaned_title }}"
-                                        title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h3>
-                                {% endwith %}
+{% load heroicons partials audio_player %}
+{% if user.is_authenticated %}
+    {% partialdef player inline=True %}
+        <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
+            {% if episode and is_playing %}
+                {% get_media_metadata episode as metadata %}
+                {{ metadata|json_script:"audioplayer-metadata" }}
+                <div class="h-40 sm:h-28"
+                    {# djlint:off #}
+                    x-data="
+                    audioPlayer(
+                        csrfHeader='{{ CSRF_HEADER }}',
+                        csrfToken='{{ csrf_token }}',
+                        currentTime={{ current_time|default:0 }},
+                        metadataTag='audioplayer-metadata',
+                        startPlayer={{ start_player|yesno:" true,false" }},
+                        timeUpdateUrl='{% url "episodes:player_time_update" %}',
+                    )"{# djlint:on #}
+                    @keydown.window="shortcuts">
+                    <audio x-ref="audio"
+                           preload="auto"
+                           @loadedmetadata="loaded"
+                           @ended="ended"
+                           @timeupdate="timeUpdate"
+                           @play="play"
+                           @pause="pause"
+                           @error.prevent="error">
+                        <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
+                    </audio>
+                    <div class="fixed bottom-0 p-2 w-full font-semibold text-white bg-gradient-to-b from-violet-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                        <div class="items-center space-y-2 w-full divide-y divide-gray-300 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x dark:divide-gray-600">
+                            <div class="sm:w-1/2">
+                                <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
+                                     role="link"
+                                     tabindex="0"
+                                     hx-get="{{ episode.get_absolute_url }}"
+                                     hx-push-url="true">
+                                    {% cover_art episode.get_cover_url "card" episode.cleaned_title css_class="group-hover:opacity-75" %}
+                                    <div class="flex flex-col place-content-between h-16">
+                                        <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2"
+                                            aria-label="{{ episode.cleaned_title }}"
+                                            title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</h2>
+                                        {% with podcast=episode.podcast %}
+                                            <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-300 line-clamp-1"
+                                                aria-label="{{ podcast.cleaned_title }}"
+                                                title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h3>
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-2 sm:w-1/2">
+                                <div class="grid grid-cols-3 place-content-between h-12"
+                                     :class="!isLoaded ? 'animate-pulse': ''">
+                                    <div x-text="counters.current"
+                                         aria-label="Current Time"
+                                         title="Current Time"
+                                         class="flex justify-start items-center font-mono text-sm"
+                                         :class="{'text-gray-300': !isPlaying}"></div>
+                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                        <div class="flex justify-center items-center space-x-6">
+                                            <button aria-label="Skip Back 10 Seconds"
+                                                    title="Skip Back 10 Seconds"
+                                                    class="{{ BUTTON_CSS }}"
+                                                    x-cloak
+                                                    @click="skipBack"
+                                                    :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                                {% heroicon_outline "backward" size=30 %}
+                                            </button>
+                                            <button aria-label="Play"
+                                                    :title="isLoaded ? 'Play' : 'Loading...'"
+                                                    class="{{ BUTTON_CSS }}"
+                                                    x-cloak
+                                                    :class="isLoaded || '{{ INACTIVE_CSS }}'"
+                                                    @click="togglePlayPause"
+                                                    x-show="!isPlaying">
+                                                {% heroicon_outline "play-circle" size=36 %}
+                                            </button>
+                                            <button aria-label="Pause"
+                                                    title="Pause"
+                                                    class="{{ BUTTON_CSS }}"
+                                                    x-cloak
+                                                    @click="togglePlayPause"
+                                                    x-show="isPlaying">
+                                                {% heroicon_outline "pause-circle" size=36 %}
+                                            </button>
+                                            <button aria-label="Skip Forward 10 Seconds"
+                                                    title="Skip Forward 10 Seconds"
+                                                    class="{{ BUTTON_CSS }}"
+                                                    x-cloak
+                                                    @click="skipForward"
+                                                    :class="isPlaying || '{{ INACTIVE_CSS }}'">
+                                                {% heroicon_outline "forward" size=30 %}
+                                            </button>
+                                        </div>
+                                    {% endwith %}
+                                    <div x-text="counters.remaining"
+                                         aria-label="Time Remaining"
+                                         title="Time Remaining"
+                                         class="flex justify-end items-center font-mono text-sm"
+                                         :class="{'text-gray-300': !isPlaying}"></div>
+                                </div>
+                                <div class="w-full h-4">
+                                    <input type="range"
+                                           aria-label="Progress"
+                                           class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
+                                           min="0"
+                                           x-ref="range"
+                                           x-model="runtime"
+                                           @change="skip"
+                                           @mouseover="setPreviewCounter($event.offsetX)"
+                                           :title="title"
+                                           :max="duration"
+                                           :disabled="!isPlaying"
+                                           :class="{'cursor-pointer': isPlaying, 'cursor-not-allowed': !isPlaying}">
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-2 sm:w-1/2">
-                        <div class="grid grid-cols-3 place-content-between h-12"
-                             :class="!isLoaded ? 'animate-pulse': ''">
-                            <div x-text="counters.current"
-                                 aria-label="Current Time"
-                                 title="Current Time"
-                                 class="flex justify-start items-center font-mono text-sm"
-                                 :class="{'text-gray-300': !isPlaying}"></div>
-                            {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                <div class="flex justify-center items-center space-x-6">
-                                    <button aria-label="Skip Back 10 Seconds"
-                                            title="Skip Back 10 Seconds"
-                                            class="{{ BUTTON_CSS }}"
-                                            x-cloak
-                                            @click="skipBack"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                        {% heroicon_outline "backward" size=30 %}
-                                    </button>
-                                    <button aria-label="Play"
-                                            :title="isLoaded ? 'Play' : 'Loading...'"
-                                            class="{{ BUTTON_CSS }}"
-                                            x-cloak
-                                            :class="isLoaded || '{{ INACTIVE_CSS }}'"
-                                            @click="togglePlayPause"
-                                            x-show="!isPlaying">{% heroicon_outline "play-circle" size=36 %}</button>
-                                    <button aria-label="Pause"
-                                            title="Pause"
-                                            class="{{ BUTTON_CSS }}"
-                                            x-cloak
-                                            @click="togglePlayPause"
-                                            x-show="isPlaying">{% heroicon_outline "pause-circle" size=36 %}</button>
-                                    <button aria-label="Skip Forward 10 Seconds"
-                                            title="Skip Forward 10 Seconds"
-                                            class="{{ BUTTON_CSS }}"
-                                            x-cloak
-                                            @click="skipForward"
-                                            :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                        {% heroicon_outline "forward" size=30 %}
-                                    </button>
-                                </div>
-                            {% endwith %}
-                            <div x-text="counters.remaining"
-                                 aria-label="Time Remaining"
-                                 title="Time Remaining"
-                                 class="flex justify-end items-center font-mono text-sm"
-                                 :class="{'text-gray-300': !isPlaying}"></div>
-                        </div>
-                        <div class="w-full h-4">
-                            <input type="range"
-                                   aria-label="Progress"
-                                   class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
-                                   min="0"
-                                   x-ref="range"
-                                   x-model="runtime"
-                                   @change="skip"
-                                   @mouseover="setPreviewCounter($event.offsetX)"
-                                   :title="title"
-                                   :max="duration"
-                                   :disabled="!isPlaying"
-                                   :class="{'cursor-pointer': isPlaying, 'cursor-not-allowed': !isPlaying}">
-                        </div>
-                    </div>
                 </div>
-            </div>
+            {% endif %}
         </div>
-    {% endif %}
-</div>
+    {% endpartialdef player %}
+    <script>
+document.addEventListener("alpine:init", () => {
+    window.Alpine.data(
+        "audioPlayer",
+        (
+            csrfHeader = null,
+            csrfToken = null,
+            currentTime = 0,
+            metadataTag = null,
+            startPlayer = false,
+            timeUpdateUrl = null,
+        ) => ({
+            csrfHeader,
+            csrfToken,
+            currentTime,
+            timeUpdateUrl,
+            duration: 0,
+            isLoaded: false,
+            isPlaying: false,
+            runtime: 0,
+            timer: null,
+            counters: {
+                current: "00:00:00",
+                remaining: "00:00:00",
+                preview: "00:00:00",
+            },
+            init() {
+                if (metadataTag && "mediaSession" in navigator) {
+                    navigator.mediaSession.metadata =
+                        this.getMediaMetadata(metadataTag);
+                }
+
+                this.$watch("runtime", value => {
+                    const percent =
+                        value && this.duration
+                            ? (value / this.duration) * 100
+                            : 0;
+                    this.$refs.range.style.setProperty(
+                        "--webkitProgressPercent",
+                        `${percent}%`,
+                    );
+                    this.counters.current = this.formatCounter(value);
+                    this.counters.remaining = this.formatCounter(
+                        this.duration - value,
+                    );
+                });
+
+                this.$watch("duration", value => {
+                    this.counters.remaining = this.formatCounter(value);
+                });
+
+                this.$refs.audio.load();
+            },
+            destroy() {
+                this.clearTimer();
+            },
+            loaded(event) {
+                if (this.isLoaded) {
+                    return;
+                }
+
+                this.duration = event.target.duration || 0;
+
+                event.target.currentTime = currentTime;
+                this.runtime = Math.floor(event.target.currentTime);
+
+                if (startPlayer) {
+                    event.target.play().catch(this.handleError.bind(this));
+                }
+
+                this.isLoaded = true;
+            },
+            timeUpdate(event) {
+                this.runtime = Math.floor(event.target.currentTime);
+            },
+            ended() {
+                this.pause();
+                this.runtime = 0;
+                this.sendTimeUpdate();
+            },
+            play() {
+                this.isPlaying = true;
+                this.startTimer();
+            },
+            pause() {
+                this.isPlaying = false;
+                this.clearTimer();
+            },
+            error(event) {
+                this.handleError(event.target.error);
+            },
+            togglePlayPause() {
+                if (this.isPlaying) {
+                    this.$refs.audio.pause();
+                } else {
+                    this.$refs.audio.play();
+                }
+            },
+            skip() {
+                if (this.isPlaying) {
+                    this.$refs.audio.currentTime = this.runtime;
+                }
+            },
+            skipTo(seconds) {
+                if (this.isPlaying) {
+                    this.$refs.audio.currentTime += seconds;
+                }
+            },
+            skipBack() {
+                this.skipTo(-10);
+            },
+            skipForward() {
+                this.skipTo(10);
+            },
+            shortcuts(event) {
+                if (
+                    event.ctrlKey ||
+                    event.altKey ||
+                    event.target.tagName.match(/INPUT|TEXTAREA/)
+                ) {
+                    return;
+                }
+
+                const handleEvent = fn => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    fn.bind(this)();
+                };
+
+                switch (event.code) {
+                    case "Space":
+                        return handleEvent(this.togglePlayPause);
+                    case "ArrowRight":
+                        return handleEvent(this.skipForward);
+                    case "ArrowLeft":
+                        return handleEvent(this.skipBack);
+                }
+            },
+            startTimer() {
+                if (!this.timer) {
+                    this.timer = setInterval(() => {
+                        if (this.isPlaying) {
+                            this.sendTimeUpdate();
+                        }
+                    }, 5000);
+                }
+            },
+            clearTimer() {
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+            },
+            sendTimeUpdate() {
+                if (timeUpdateUrl) {
+                    fetch(this.timeUpdateUrl, {
+                        method: "POST",
+                        headers: {
+                            [this.csrfHeader]: this.csrfToken,
+                        },
+                        body: new URLSearchParams({
+                            current_time: this.runtime,
+                        }),
+                    });
+                }
+            },
+            setPreviewCounter(position) {
+                if (this.isPlaying) {
+                    const { clientWidth } = this.$refs.range;
+                    const percent = position / clientWidth;
+                    const value = Math.floor(percent * this.duration);
+                    this.counters.preview = this.formatCounter(value);
+                }
+            },
+            formatCounter(value) {
+                if (isNaN(value) || value < 0) {
+                    return "00:00:00";
+                }
+
+                const duration = Math.floor(value);
+                return [
+                    Math.floor(duration / 3600),
+                    Math.floor((duration % 3600) / 60),
+                    Math.floor(duration % 60),
+                ]
+                    .map(t => t.toString().padStart(2, "0"))
+                    .join(":");
+            },
+            getMediaMetadata(tagName) {
+                const dataTag = document.getElementById(tagName);
+                const metadata = dataTag
+                    ? JSON.parse(dataTag.textContent || "{}")
+                    : {};
+
+                if (metadata && Object.keys(metadata).length > 0) {
+                    return new MediaMetadata(metadata);
+                }
+                return null;
+            },
+            handleError(error) {
+                console.error(error);
+            },
+            // properties
+            get title() {
+                if (!this.isLoaded) {
+                    return "Loading";
+                }
+                if (!this.isPlaying) {
+                    return "Paused";
+                }
+                return this.counters.preview;
+            },
+        }),
+    );
+});
+    </script>
+{% endif %}

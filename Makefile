@@ -32,6 +32,10 @@ npminstall:
 npmupdate:
 	npm update
 
+.PHONY: tailwind
+tailwind:
+	npx tailwindcss -i ./assets/app.css -o ./assets/dist/app.css --verbose --watch
+
 .PHONY: precommitinstall
 precommitinstall:
 	pre-commit install && pre-commit install --hook-type commit-msg

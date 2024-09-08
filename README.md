@@ -29,6 +29,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 * `make install`: download and install front and backend Javascript and Python dependencies
 * `make update`: update all front and backend dependencies to latest available versions
+* `make tailwind`: runs Tailwind preprocessor on-the-fly
 
 To run unit tests, just run `pytest`.
 

@@ -474,6 +474,17 @@ HEALTH_CHECK = {
 
 PAGE_SIZE = 30
 
+# HTMX configuration
+# https://htmx.org/docs/#config
+
+HTMX_CONFIG = {
+    "historyCacheSize": 0,
+    "refreshOnHistoryMiss": False,
+    "scrollBehavior": "instant",
+    "scrollIntoViewOnBoost": False,
+    "useTemplateFragments": True,
+}
+
 # PWA configuration
 # https://docs.pwabuilder.com/#/builder/manifest
 # https://developer.chrome.com/docs/android/trusted-web-activity/android-for-web-devs#digital-asset-links

@@ -9,12 +9,6 @@ jobs:
               with:
                   python-version: "3.12.1"
                   cache: "pip"
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-                  cache: "npm"
-            # install eslint dependencies etc first
-            - run: npm install
             - uses: pre-commit/action@v3.0.1
     unittests:
         needs: precommit

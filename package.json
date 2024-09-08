@@ -1,29 +1,7 @@
 {
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build-css": "tailwindcss -i ./assets/css/app.css -o ./assets/dist/app.css --minify --verbose",
-        "build-js": "esbuild --bundle ./assets/js/app.js --minify --sourcemap --outfile=./assets/dist/app.js",
-        "watch-css": "tailwindcss -i ./assets/css/app.css -o ./assets/dist/app.css --verbose --watch",
-        "watch-js": "esbuild --bundle ./assets/js/app.js --outfile=./assets/dist/app.js --watch",
-        "build": "concurrently \"npm:build-js\" \"npm:build-css\"",
-        "watch": "concurrently \"npm:watch-js\" \"npm:watch-css\"",
-        "check-updates": "ncu -u"
-    },
-    "dependencies": {
-        "alpinejs": "^3.14.1",
-        "htmx.org": "^2.0.1"
-    },
     "devDependencies": {
-        "@commitlint/config-conventional": "^19.4.1",
-        "@eslint/js": "^9.9.1",
-        "@tailwindcss/forms": "^0.5.8",
+        "@tailwindcss/forms": "^0.5.9",
         "@tailwindcss/typography": "^0.5.15",
-        "concurrently": "^8.2.2",
-        "esbuild": "^0.23.1",
-        "eslint": "^9.9.1",
-        "globals": "^15.9.0",
-        "npm-update-all": "^1.0.1",
         "tailwindcss": "^3.4.10"
     }
 }

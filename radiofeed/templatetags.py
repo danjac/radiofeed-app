@@ -9,9 +9,11 @@ from typing import TYPE_CHECKING, Any, Final, TypedDict
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
 from django.utils.encoding import force_str
+from django.utils.functional import LazyObject
 from django.utils.html import format_html
 
 from radiofeed import covers, html
@@ -64,9 +66,18 @@ def json_attr(name: str, *pairs: str) -> str:
 
     This will generate:
         hx-headers='{"X-CSRF-Token": "...", "myHeader": "form"}'
+
+    Note: LazyObjects will be resolved to strings. Should be ok for the simple case e.g
+    csrf_token but more complex cases should require evaluation of the lazy value first.
     """
-    headers = {k: force_str(v) for k, v in itertools.batched(pairs, 2)}
-    return format_html("{}='{}'", name, json.dumps(headers))
+    value = json.dumps(
+        {
+            k: force_str(v) if isinstance(v, LazyObject) else v
+            for k, v in itertools.batched(pairs, 2)
+        },
+        cls=DjangoJSONEncoder,
+    )
+    return format_html("{}='{}'", name, value)
 
 
 hx_headers = register.simple_tag(
@@ -78,6 +89,12 @@ hx_vals = register.simple_tag(
     functools.partial(json_attr, "hx-vals"),
     name="hx_vals",
 )
+
+
+@register.simple_tag
+def htmx_config() -> str:
+    """Returns HTMX config."""
+    return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
 
 
 @register.simple_tag

@@ -93,7 +93,7 @@
                                 {% if request.htmx.target == target %}
                                     {% with hx_oob=True %}
                                         {% partial audio_log %}
-                                        {% include "episodes/_audio_player.html" %}
+                                        {% include "episodes/_audio_player.html#player" %}
                                     {% endwith %}
                                 {% endif %}
                             </div>

@@ -25,10 +25,8 @@ LICENSE
 Makefile
 README.md
 assets/dist
-commitlint.config.js
 conftest.py
 docker-compose.yml
-eslint.config.js
 node_modules
 npm-debug.log
 screenshots
