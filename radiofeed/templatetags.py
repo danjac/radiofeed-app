@@ -79,6 +79,7 @@ def json_attr(name: str, *pairs: str) -> str:
     )
     return format_html("{}='{}'", name, value)
 
+
 hx_headers = register.simple_tag(
     functools.partial(json_attr, "hx-headers"),
     name="hx_headers",
