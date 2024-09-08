@@ -40,7 +40,7 @@
                         {% empty %}
                             <li class="text-center prose sm:text-start dark:prose-invert">
                                 {% if request.search %}
-                                    No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                                    No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                                 {% else %}
                                     Category {{ category.name }} does not have any podcasts.
                                 {% endif %}

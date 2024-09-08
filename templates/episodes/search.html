@@ -27,7 +27,7 @@
                         <li class="py-3 first:pt-0 last:pb-0">{% include "episodes/_episode.html" %}</li>
                     {% empty %}
                         <li class="text-center prose sm:text-start dark:prose-invert">
-                            No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                            No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         </li>
                     {% endfor %}
                     {% if has_other_pages %}
