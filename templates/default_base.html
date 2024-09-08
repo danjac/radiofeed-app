@@ -10,7 +10,7 @@
             </title>
             <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
             <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
-            {% compress css %}
+            {% compress css file app %}
                 <link rel="stylesheet" href="{% debug_static "app.dist.css" %}">
             {% endcompress %}
             <link rel="manifest" href="{% url "manifest" %}">
@@ -28,7 +28,7 @@
             <meta name="keywords" content="podcasts, rss, feeds">
             <meta name="theme-color" content="{% theme_color %}">
             <meta name="htmx-config" content='{% htmx_config %}'>
-            {% compress js %}
+            {% compress js file vendor %}
                 <script defer src="{% static "vendor/alpine-3.14.1.min.js" %}"></script>
                 <script defer src="{% static "vendor/htmx-2.0.2.min.js" %}"></script>
             {% endcompress %}

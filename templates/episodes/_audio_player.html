@@ -120,7 +120,7 @@
             {% endif %}
         </div>
     {% endpartialdef player %}
-    {% compress js %}
+    {% compress js file audio-player %}
         <script src="{% debug_static "audio-player.js" %}"></script>
     {% endcompress %}
 {% endif %}
