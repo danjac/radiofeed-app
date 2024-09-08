@@ -4,7 +4,6 @@ import functools
 import itertools
 import json
 import math
-import time
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -56,14 +55,6 @@ def active_link(
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
     )
-
-
-@register.simple_tag
-def bust_static_cache() -> str:
-    """Returns cache-busting query parameter in debug mode.
-    Use with any non-vendor static URLs.
-    """
-    return f"?v={int(time.time())}" if settings.DEBUG else ""
 
 
 @register.simple_tag
