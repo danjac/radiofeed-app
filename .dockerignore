@@ -24,9 +24,10 @@
 LICENSE
 Makefile
 README.md
-assets/app.min.css
 conftest.py
 docker-compose.yml
 node_modules
+package.json
+package-lock.json
 npm-debug.log
 screenshots

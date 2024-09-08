@@ -1,25 +1,3 @@
-# Production Dockerfile for application
-FROM node:22-bookworm-slim AS tailwind
-
-WORKDIR /app
-
-# Asset requirements
-
-COPY package*.json ./
-
-RUN npm install
-
-# Build CSS
-
-COPY . /app
-
-ENV NODE_ENV=production
-
-RUN npx tailwindcss \
-    -i ./assets/app.css \
-    -o ./assets/app.min.css --minify && \
-    rm -rf node_modules
-
 # Install Python dependencies
 
 FROM python:3.12.4-bookworm AS django
@@ -51,12 +29,9 @@ COPY ./nltk.txt /app/nltk.txt
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
-# Build and copy over assets
+# Compress assets and collect for Whitenoise
 
 COPY . /app
 
-COPY --from=tailwind /app/assets/app.min.css /app/assets/
-
-# Collect static files for Whitenoise
-
-RUN python manage.py collectstatic --no-input --traceback
+RUN python manage.py compress && \
+    python manage.py collectstatic --no-input --traceback
