@@ -24,7 +24,7 @@ def handle_form(
     """Handles common form boilerplate. Processes form on HTTP POST and returns result of validation."""
 
     if request.method == "POST":
-        form = form_class(request.POST, request.FILES, **form_kwargs)
+        form = form_class(data=request.POST, files=request.FILES, **form_kwargs)
         return FormResult(form=form, processed=True, success=form.is_valid())
 
     return FormResult(form=form_class(**form_kwargs))
