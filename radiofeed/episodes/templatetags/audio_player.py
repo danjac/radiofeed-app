@@ -19,7 +19,7 @@ class PlayerInfo:
     start_player: bool = False
     hx_oob: bool = False
 
-    def as_context(self, context: RequestContext) -> dict:
+    def merge_context(self, context: RequestContext) -> dict:
         """Merges info to context."""
         return context.flatten() | dataclasses.asdict(self)
 
@@ -42,24 +42,6 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
             episode.get_cover_url(),
         ),
     }
-
-
-@register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
-def start_audio_player(context: RequestContext, audio_log: AudioLog) -> dict:
-    """Renders audio player action to start player."""
-    return PlayerInfo(
-        current_time=audio_log.current_time,
-        episode=audio_log.episode,
-        is_playing=True,
-        start_player=True,
-        hx_oob=True,
-    ).as_context(context)
-
-
-@register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
-def close_audio_player(context: RequestContext) -> dict:
-    """Renders audio player action to close player."""
-    return PlayerInfo(hx_oob=True).as_context(context)
 
 
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
@@ -86,4 +68,21 @@ def audio_player(context: RequestContext) -> dict:
             is_playing=True,
         )
 
-    return info.as_context(context)
+    return info.merge_context(context)
+
+
+@register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
+def update_audio_player(
+    context: RequestContext,
+    audio_log: AudioLog,
+    *,
+    start_player: bool,
+) -> dict:
+    """Renders audio player update to open or close the player."""
+    return PlayerInfo(
+        current_time=audio_log.current_time,
+        episode=audio_log.episode,
+        start_player=start_player,
+        is_playing=start_player,
+        hx_oob=True,
+    ).merge_context(context)

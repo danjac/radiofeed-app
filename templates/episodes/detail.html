@@ -91,14 +91,10 @@
                                     </button>
                                 {% endif %}
                                 {% if request.htmx.target == target %}
+                                    {% update_audio_player audio_log start_player=is_playing %}
                                     {% with hx_oob=True %}
                                         {% partial audio_log %}
                                     {% endwith %}
-                                    {% if is_playing %}
-                                        {% start_audio_player audio_log %}
-                                    {% else %}
-                                        {% close_audio_player %}
-                                    {% endif %}
                                 {% endif %}
                             </div>
                         {% endwith %}
