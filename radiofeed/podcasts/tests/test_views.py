@@ -575,6 +575,13 @@ class TestAddPrivateFeed:
         assert_200(client.get(self.url))
 
     @pytest.mark.django_db
+    def test_post_cancel(self, client, auth_user, rss):
+        response = client.post(self.url, {"rss": rss, "action": "cancel"})
+
+        assert response.url == reverse("podcasts:private_feeds")
+        assert Subscription.objects.exists() is False
+
+    @pytest.mark.django_db
     def test_post_not_existing(self, client, auth_user, rss):
         response = client.post(self.url, {"rss": rss})
         assert response.url == reverse("podcasts:private_feeds")

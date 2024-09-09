@@ -80,10 +80,6 @@ class TestImportPodcastFeeds:
         )
 
     @pytest.mark.django_db
-    def test_get(self, client, auth_user):
-        assert_200(client.get(self.url))
-
-    @pytest.mark.django_db
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
         podcast = PodcastFactory(
             rss="https://feeds.99percentinvisible.org/99percentinvisible"

@@ -6,9 +6,8 @@ from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_safe
+from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.forms import handle_form
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
@@ -21,11 +20,15 @@ def user_preferences(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Allow user to edit their preferences."""
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
 
-    if result := handle_form(request, UserPreferencesForm, instance=request.user):
-        result.form.save()
-        messages.success(request, "Your preferences have been saved")
-        return HttpResponseRedirect(request.path)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your preferences have been saved")
+            return HttpResponseRedirect(request.path)
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
     return render_partial_for_target(
         request,
@@ -33,7 +36,7 @@ def user_preferences(
             request,
             "account/preferences.html",
             {
-                "form": result.form,
+                "form": form,
             },
         ),
         target="preferences-form",
@@ -41,14 +44,15 @@ def user_preferences(
     )
 
 
-@require_form_methods
+@require_POST
 @login_required
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    if result := handle_form(request, OpmlUploadForm):
-        if num_new_feeds := len(result.form.subscribe_to_feeds(request.user)):
+    form = OpmlUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+        if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
             messages.success(
                 request,
                 f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
@@ -64,7 +68,7 @@ def import_podcast_feeds(
             request,
             "account/podcast_feeds.html",
             {
-                "upload_form": result.form,
+                "upload_form": form,
             },
         ),
         target="import-feeds-form",
