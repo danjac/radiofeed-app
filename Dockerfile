@@ -9,7 +9,7 @@ COPY package*.json /app/
 
 RUN npm install
 
-# Build assets
+# Build Tailwind CSS
 
 COPY . /app
 
@@ -52,7 +52,7 @@ COPY . /app
 
 # Compile Tailwind CSS
 
-COPY --from=tailwind /app/assets/app.css /app/assets/
+COPY --from=tailwind /app/static/app.css /app/static/
 
 # Collect static files, compress blocks, and re-collect for Whitenoise
 

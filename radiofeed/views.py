@@ -66,9 +66,7 @@ def accept_gdpr_cookies(_) -> HttpResponse:
 @_cache_page
 def favicon(_) -> FileResponse:
     """Generates favicon file."""
-    return FileResponse(
-        (settings.BASE_DIR / "assets" / "img" / "wave-ico.png").open("rb")
-    )
+    return FileResponse((settings.STATIC_SRC / "img" / "wave-ico.png").open("rb"))
 
 
 @require_safe

@@ -2,8 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "tailwind:build": "tailwindcss -i ./assets/tailwind.css -o ./assets/app.css --verbose",
-        "tailwind:watch": "tailwindcss -i ./assets/tailwind.css -o ./assets/app.css --verbose --watch"
+        "tailwind:build": "tailwindcss -i ./static/tailwind.css -o ./static/app.css --verbose",
+        "tailwind:watch": "tailwindcss -i ./static/tailwind.css -o ./static/app.css --verbose --watch"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.9",

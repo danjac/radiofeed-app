@@ -278,8 +278,9 @@ USE_TZ = True
 # Static files
 
 STATIC_URL = env("STATIC_URL", default="/static/")
-STATICFILES_DIRS = [BASE_DIR / "assets"]
+STATIC_SRC = BASE_DIR / "static"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [STATIC_SRC]
 
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
