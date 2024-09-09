@@ -15,15 +15,15 @@ if TYPE_CHECKING:  # pragma: no cover
     from radiofeed.episodes.models import AudioLog, Episode
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True, kw_only=True)
 class PlayerInfo:
     """Audio player context data."""
 
     current_time: int | None = None
     episode: Episode | None = None
+    hx_oob: bool = False
     is_playing: bool = False
     start_player: bool = False
-    hx_oob: bool = False
 
     def update(self, **fields) -> PlayerInfo:
         """Update instance."""
