@@ -1,12 +1,18 @@
+from __future__ import annotations
+
 import dataclasses
+from typing import TYPE_CHECKING
 
 from django import template
-from django.template.context import RequestContext
 
 from radiofeed.covers import get_metadata_info
-from radiofeed.episodes.models import AudioLog, Episode
 
 register = template.Library()
+
+if TYPE_CHECKING:  # pragma: no check
+    from django.template.context import RequestContext
+
+    from radiofeed.episodes.models import AudioLog, Episode
 
 
 @dataclasses.dataclass
@@ -18,6 +24,10 @@ class PlayerInfo:
     is_playing: bool = False
     start_player: bool = False
     hx_oob: bool = False
+
+    def update(self, **fields) -> PlayerInfo:
+        """Update instance."""
+        return dataclasses.replace(self, **fields)
 
     def merge_context(self, context: RequestContext) -> dict:
         """Merges info to context."""
@@ -61,8 +71,7 @@ def audio_player(context: RequestContext) -> dict:
             .first()
         )
     ):
-        info = dataclasses.replace(
-            info,
+        info = info.update(
             episode=audio_log.episode,
             current_time=audio_log.current_time,
             is_playing=True,
@@ -74,15 +83,17 @@ def audio_player(context: RequestContext) -> dict:
 @register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
 def update_audio_player(
     context: RequestContext,
-    audio_log: AudioLog,
+    audio_log: AudioLog | None = None,
     *,
     start_player: bool,
 ) -> dict:
     """Renders audio player update to open or close the player."""
-    return PlayerInfo(
-        current_time=audio_log.current_time,
-        episode=audio_log.episode,
-        start_player=start_player,
-        is_playing=start_player,
-        hx_oob=True,
-    ).merge_context(context)
+    info = PlayerInfo(hx_oob=True)
+    if audio_log and start_player:
+        info = info.update(
+            current_time=audio_log.current_time,
+            episode=audio_log.episode,
+            start_player=True,
+            is_playing=True,
+        )
+    return info.merge_context(context)
