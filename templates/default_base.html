@@ -11,7 +11,7 @@
             <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
             <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
             {% compress css file app %}
-                <link rel="stylesheet" href="{% debug_static "app.dist.css" %}">
+                <link rel="stylesheet" href="{% debug_static "app.css" %}">
             {% endcompress %}
             <link rel="manifest" href="{% url "manifest" %}">
             <link rel="canonical" href="{{ request.build_absolute_uri }}">

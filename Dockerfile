@@ -5,13 +5,17 @@ WORKDIR /app
 
 # Asset requirements
 
-COPY package*.json ./
+COPY package*.json /app/
 
 RUN npm install
 
 # Build assets
 
-COPY . /app
+COPY tailwind.config.js /app/
+
+COPY assets/tailwind.css /app/assets/
+
+COPY templates/ /app/
 
 ENV NODE_ENV=production
 
@@ -52,7 +56,7 @@ COPY . /app
 
 # Compile Tailwind CSS
 
-COPY --from=tailwind /app/assets/app.dist.css /app/assets/
+COPY --from=tailwind /app/assets/app.css /app/assets/
 
 # Collect static files, compress blocks, and re-collect for Whitenoise
 

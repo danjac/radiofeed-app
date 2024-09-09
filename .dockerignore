@@ -21,7 +21,7 @@
 .venv
 .vim
 .vscode
-assets/app.dist.css
+assets/app.css
 LICENSE
 Makefile
 README.md
