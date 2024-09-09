@@ -9,7 +9,7 @@ from radiofeed.covers import get_metadata_info
 
 register = template.Library()
 
-if TYPE_CHECKING:  # pragma: no check
+if TYPE_CHECKING:  # pragma: no cover
     from django.template.context import RequestContext
 
     from radiofeed.episodes.models import AudioLog, Episode
@@ -29,9 +29,9 @@ class PlayerInfo:
         """Update instance."""
         return dataclasses.replace(self, **fields)
 
-    def merge_context(self, context: RequestContext) -> dict:
-        """Merges info to context."""
-        return context.flatten() | dataclasses.asdict(self)
+    def as_dict(self) -> dict:
+        """Returns fields as dict."""
+        return dataclasses.asdict(self)
 
 
 @register.simple_tag(takes_context=True)
@@ -77,7 +77,7 @@ def audio_player(context: RequestContext) -> dict:
             is_playing=True,
         )
 
-    return info.merge_context(context)
+    return context.flatten() | info.as_dict()
 
 
 @register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
@@ -96,4 +96,4 @@ def update_audio_player(
             start_player=True,
             is_playing=True,
         )
-    return info.merge_context(context)
+    return context.flatten() | info.as_dict()
