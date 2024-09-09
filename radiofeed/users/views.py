@@ -6,7 +6,7 @@ from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_safe
 
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
@@ -44,23 +44,26 @@ def user_preferences(
     )
 
 
-@require_POST
+@require_form_methods
 @login_required
 def import_podcast_feeds(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    form = OpmlUploadForm(request.POST, request.FILES)
-    if form.is_valid():
-        if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
-            messages.success(
-                request,
-                f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
-            )
-        else:
-            messages.info(request, "No new podcasts found in uploaded file")
+    if request.method == "POST":
+        form = OpmlUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
+                messages.success(
+                    request,
+                    f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
+                )
+            else:
+                messages.info(request, "No new podcasts found in uploaded file")
 
-        return HttpResponseRedirect(request.path)
+            return HttpResponseRedirect(request.path)
+    else:
+        form = OpmlUploadForm()
 
     return render_partial_for_target(
         request,
