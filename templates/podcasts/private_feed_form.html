@@ -23,14 +23,13 @@
                     {% heroicon_mini "plus" class="mr-2" %}
                     Add Feed
                 </button>
-                <button class="inline-flex items-center btn btn-default"
-                        type="button"
-                        hx-get="{% url "podcasts:private_feeds" %}"
-                        hx-swap="innerHTML show:window:top"
-                        hx-target="#content">
+                <a class="inline-flex items-center btn btn-default"
+                   href="{% url "podcasts:private_feeds" %}"
+                   hx-swap="innerHTML show:window:top"
+                   hx-target="#content">
                     {% heroicon_mini "arrow-uturn-left" class="mr-2" %}
                     Cancel
-                </button>
+                </a>
             </div>
         </form>
     {% endpartialdef form %}
