@@ -13,7 +13,7 @@ class PrivateFeedForm(forms.Form):
         help_text="RSS feed for podcast",
     )
 
-    def __init__(self, user: User, *args, **kwargs) -> None:
+    def __init__(self, *args, user: User, **kwargs) -> None:
         self.user = user
         super().__init__(*args, **kwargs)
 

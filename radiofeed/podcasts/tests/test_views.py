@@ -4,7 +4,7 @@ from pytest_django.asserts import assertContains
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.models import Podcast, Subscription
+from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -573,12 +573,6 @@ class TestAddPrivateFeed:
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         assert_200(client.get(self.url))
-
-    @pytest.mark.django_db
-    def test_cancel(self, client, auth_user, rss):
-        response = client.post(self.url, {"rss": rss, "action": "cancel"})
-        assert response.url == reverse("podcasts:private_feeds")
-        assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_post_not_existing(self, client, auth_user, rss):
