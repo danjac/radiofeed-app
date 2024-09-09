@@ -11,11 +11,7 @@ RUN npm install
 
 # Build assets
 
-COPY tailwind.config.js /app/
-
-COPY assets/tailwind.css /app/assets/
-
-COPY templates/ /app/
+COPY . /app
 
 ENV NODE_ENV=production
 
