@@ -9,6 +9,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.form_handler import handle_form
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.paginator import paginate, paginate_lazy
@@ -369,27 +370,23 @@ def add_private_feed(
     request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Add new private feed to collection."""
-    if request.method == "POST":
-        if request.POST.get("action") == "cancel":
-            return HttpResponseRedirect(_private_feeds_url)
 
-        form = PrivateFeedForm(request.POST, user=request.user)
+    if request.POST.get("action") == "cancel":
+        return HttpResponseRedirect(_private_feeds_url)
 
-        if form.is_valid():
-            podcast, is_new = form.save()
-            if is_new:
-                success_message = (
-                    "Podcast added to your Private Feeds and will appear here soon"
-                )
-                redirect_url = _private_feeds_url
-            else:
-                success_message = "Podcast added to your Private Feeds"
-                redirect_url = podcast.get_absolute_url()
+    if result := handle_form(request, PrivateFeedForm, user=request.user):
+        podcast, is_new = result.form.save()
+        if is_new:
+            success_message = (
+                "Podcast added to your Private Feeds and will appear here soon"
+            )
+            redirect_url = _private_feeds_url
+        else:
+            success_message = "Podcast added to your Private Feeds"
+            redirect_url = podcast.get_absolute_url()
 
-            messages.success(request, success_message)
-            return HttpResponseRedirect(redirect_url)
-    else:
-        form = PrivateFeedForm(user=request.user)
+        messages.success(request, success_message)
+        return HttpResponseRedirect(redirect_url)
 
     return render_partial_for_target(
         request,
@@ -397,7 +394,7 @@ def add_private_feed(
             request,
             "podcasts/private_feed_form.html",
             {
-                "form": form,
+                "form": result.form,
             },
         ),
         target="private-feed-form",
