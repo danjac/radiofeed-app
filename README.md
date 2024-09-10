@@ -32,12 +32,11 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 To run unit tests, just run `pytest`.
 
-## Tailwind
+The development environment uses [Honcho](https://github.com/nickstenning/honcho) which is bundled with this project along with a Procfile. If you run `honcho start` in a terminal window, this will run:
 
-Radiofeed uses [Tailwind](https://tailwindcss.com) to build CSS for the application:
-
-* `npm run tailwind:watch`: compiles CSS on the fly, watching for changes in assets and templates
-* `npm run tailwind:build`: builds target CSS file for production
+* The Django development server
+* [Esbuild](https://esbuild.github.io) for bundling JS files
+* [Tailwind](https://tailwindcss.com) for compiling CSS classes
 
 ## Deployment
 
