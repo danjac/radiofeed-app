@@ -41,7 +41,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "compressor",
     "csp",
     "django_extensions",
     "django_htmx",
@@ -281,24 +280,6 @@ STATIC_URL = env("STATIC_URL", default="/static/")
 STATIC_SRC = BASE_DIR / "static"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [STATIC_SRC]
-
-# https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",  # Django-Compressor
-]
-
-# Django-compressor
-# https://django-compressor.readthedocs.io/en/latest/quickstart.html
-
-COMPRESS_STORAGE = "compressor.storage.GzipCompressorFileStorage"
-
-COMPRESS_ENABLED = env.bool("COMPRESS_ENABLED", default=True)
-
-# Whitenoise compatibility
-# https://whitenoise.readthedocs.io/en/stable/django.html
-COMPRESS_OFFLINE = env.bool("COMPRESS_OFFLINE", default=True)
 
 # Whitenoise
 # https://whitenoise.readthedocs.io/en/latest/django.html

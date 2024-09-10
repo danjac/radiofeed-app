@@ -2,12 +2,15 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "tailwind:build": "tailwindcss -i ./static/tailwind.css -o ./static/app.css --verbose",
-        "tailwind:watch": "tailwindcss -i ./static/tailwind.css -o ./static/app.css --verbose --watch"
+        "tailwind:build": "tailwindcss -i ./static/src/app.css -o ./static/dist/app.css --verbose --minify",
+        "tailwind:watch": "tailwindcss -i ./static/src/app.css -o ./static/dist/app.css --verbose --watch",
+        "esbuild:build": "esbuild ./static/src/**/*.js --bundle --minify --outdir=./static/dist",
+        "esbuild:watch": "esbuild ./static/src/**/*.js --bundle --watch --outdir=./static/dist"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.9",
         "@tailwindcss/typography": "^0.5.15",
+        "esbuild": "^0.23.1",
         "tailwindcss": "^3.4.10"
     }
 }

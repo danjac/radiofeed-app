@@ -21,7 +21,7 @@
 .venv
 .vim
 .vscode
-static/app.css
+static/dist
 LICENSE
 Makefile
 README.md
