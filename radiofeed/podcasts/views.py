@@ -372,7 +372,9 @@ def add_private_feed(
     if request.method == "POST":
         if request.POST.get("action") == "cancel":
             return HttpResponseRedirect(_private_feeds_url)
+
         form = PrivateFeedForm(request.POST, user=request.user)
+
         if form.is_valid():
             podcast, is_new = form.save()
             if is_new:
@@ -387,7 +389,7 @@ def add_private_feed(
             messages.success(request, success_message)
             return HttpResponseRedirect(redirect_url)
     else:
-        form = PrivateFeedForm()
+        form = PrivateFeedForm(user=request.user)
 
     return render_partial_for_target(
         request,

@@ -1,16 +1,10 @@
 from collections.abc import Callable, Generator
 
 import pytest
-from click.testing import CliRunner
 from django.conf import Settings
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
-
-
-@pytest.fixture
-def cli_runner():
-    return CliRunner()
 
 
 @pytest.fixture

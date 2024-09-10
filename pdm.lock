@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:f7ac5f9d8ebfcc8bb98acddf596b639149375b6ce181fa8612711e1924964196"
+content_hash = "sha256:f1ad995c0895d6263b6daf43faba96905efc02a1cb8c80306f9722b0786a6118"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -386,19 +386,6 @@ dependencies = [
 files = [
     {file = "django_browser_reload-1.15.0-py3-none-any.whl", hash = "sha256:55b72335568b988e3a2beddb1703db6951516355925d3fc9c587f0bbd9e8efaa"},
     {file = "django_browser_reload-1.15.0.tar.gz", hash = "sha256:ed094386c587a95ff4f34a0d302ecd58f15e919784c4c76a97f7cb977446104c"},
-]
-
-[[package]]
-name = "django-click"
-version = "2.4.0"
-summary = "Build Django management commands using the click CLI package."
-groups = ["default"]
-dependencies = [
-    "click>=7.1",
-]
-files = [
-    {file = "django_click-2.4.0-py2.py3-none-any.whl", hash = "sha256:3c64a31cf25e54d3fccaea3af8d46d0b63511da2722e5888612aeee4d81e46d4"},
-    {file = "django_click-2.4.0.tar.gz", hash = "sha256:ef935b611040d123b60e88eb2952c4838b4538b14d248114128fcccb4418685d"},
 ]
 
 [[package]]

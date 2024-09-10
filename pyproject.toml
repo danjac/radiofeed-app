@@ -40,8 +40,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "whitenoise[brotli]>=6.7.0",
     "django-template-partials>=24.4",
-    "django-click>=2.4.0",
-    "click>=8.1.7",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
