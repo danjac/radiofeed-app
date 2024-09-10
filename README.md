@@ -32,7 +32,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 To run unit tests, just run `pytest`.
 
-The development environment uses [Honcho](https://github.com/nickstenning/honcho) which is bundled with this project along with a Procfile. If you run `honcho start` in a terminal window, this will run:
+The development environment uses [Honcho](https://github.com/nickstenning/honcho) which is bundled with this project along with a Procfile. If you type `honcho start` in a terminal window, this will run:
 
 * The Django development server
 * [Esbuild](https://esbuild.github.io) for bundling JS files
