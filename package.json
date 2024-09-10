@@ -2,10 +2,10 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "tailwind:build": "tailwindcss -i ./static/src/app.css -o ./static/dist/app.css --verbose --minify",
-        "tailwind:watch": "tailwindcss -i ./static/src/app.css -o ./static/dist/app.css --verbose --watch",
         "esbuild:build": "esbuild ./static/src/**/*.js --bundle --minify --outdir=./static/dist",
-        "esbuild:watch": "esbuild ./static/src/**/*.js --bundle --watch --outdir=./static/dist"
+        "esbuild:watch": "esbuild ./static/src/**/*.js --bundle --watch --outdir=./static/dist",
+        "tailwind:build": "tailwindcss -i ./static/src/app.css -o ./static/dist/app.css --verbose --minify",
+        "tailwind:watch": "tailwindcss -i ./static/src/app.css -o ./static/dist/app.css --verbose --watch"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.9",
