@@ -1,13 +1,10 @@
 from django.http import HttpRequest, HttpResponse
 
-from radiofeed.types import HttpRequestResponse
+from radiofeed.middleware import BaseMiddleware
 
 
-class PlayerMiddleware:
+class PlayerMiddleware(BaseMiddleware):
     """Adds `PlayerDetails` instance to request as `request.player`."""
-
-    def __init__(self, get_response: HttpRequestResponse) -> None:
-        self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
