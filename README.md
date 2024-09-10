@@ -32,11 +32,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 To run unit tests, just run `pytest`.
 
-The development environment uses [Honcho](https://github.com/nickstenning/honcho) which is bundled with this project along with a Procfile. If you type `honcho start` in a terminal window, this will run:
-
-* The Django development server
-* [Esbuild](https://esbuild.github.io) for bundling JS files
-* [Tailwind](https://tailwindcss.com) for compiling CSS classes
+To handle asset compilation on the fly, run `npm run watch`. This will compile/bundle JS and CSS (Tailwind) files.
 
 ## Deployment
 

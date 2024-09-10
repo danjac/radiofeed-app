@@ -15,9 +15,7 @@ COPY . /app
 
 ENV NODE_ENV=production
 
-RUN npm run esbuild:build && \
-    npm run tailwind:build && \
-    rm -rf node_modules
+RUN npm run build && rm -rf node_modules
 
 # Install Python dependencies
 

@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:a0e48400b559b05f2fe5ac8816bb8ca4a46040a3795ca44effa140d6b8c5d202"
+content_hash = "sha256:f7ac5f9d8ebfcc8bb98acddf596b639149375b6ce181fa8612711e1924964196"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -707,19 +707,6 @@ files = [
     {file = "hiredis-3.0.0-cp312-cp312-win32.whl", hash = "sha256:120f2dda469b28d12ccff7c2230225162e174657b49cf4cd119db525414ae281"},
     {file = "hiredis-3.0.0-cp312-cp312-win_amd64.whl", hash = "sha256:e584fe5f4e6681d8762982be055f1534e0170f6308a7a90f58d737bab12ff6a8"},
     {file = "hiredis-3.0.0.tar.gz", hash = "sha256:fed8581ae26345dea1f1e0d1a96e05041a727a45e7d8d459164583e23c6ac441"},
-]
-
-[[package]]
-name = "honcho"
-version = "1.1.0"
-summary = "Honcho: a Python clone of Foreman. For managing Procfile-based applications."
-groups = ["dev"]
-dependencies = [
-    "colorama; sys_platform == \"win32\"",
-]
-files = [
-    {file = "honcho-1.1.0-py2.py3-none-any.whl", hash = "sha256:a4d6e3a88a7b51b66351ecfc6e9d79d8f4b87351db9ad7e923f5632cc498122f"},
-    {file = "honcho-1.1.0.tar.gz", hash = "sha256:c5eca0bded4bef6697a23aec0422fd4f6508ea3581979a3485fc4b89357eb2a9"},
 ]
 
 [[package]]
