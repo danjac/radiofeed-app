@@ -8,9 +8,10 @@ from radiofeed.templatetags import (
     active_link,
     cover_art,
     format_duration,
+    html_json_attr,
     hx_headers,
     hx_vals,
-    json_attr,
+    json_values,
     percentage,
 )
 
@@ -99,10 +100,23 @@ class TestActiveLink:
         }
 
 
-class TestJsonAttr:
+class TestJsonValues:
+    def test_values(self):
+        assert (
+            json_values(
+                "X-CSRFToken",
+                "abc123",
+                "myHeader",
+                "def456",
+            )
+            == '{"X-CSRFToken": "abc123", "myHeader": "def456"}'
+        )
+
+
+class TestHtmlJsonAttr:
     def test_headers(self):
         assert (
-            json_attr(
+            html_json_attr(
                 "hx-headers",
                 "X-CSRFToken",
                 "abc123",

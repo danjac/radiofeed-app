@@ -60,7 +60,26 @@ def active_link(
 
 
 @register.simple_tag
-def json_attr(name: str, *pairs: str) -> str:
+def json_values(*pairs: str) -> str:
+    """Renders attribute value containing JSON.
+
+    Takes multiple pairs of headers and values e.g.:
+        {% json_attr_value "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
+
+    This will generate:
+        '{"X-CSRF-Token": "...", "myHeader": "form"}'
+    """
+    return json.dumps(
+        {
+            k: force_str(v) if isinstance(v, LazyObject) else v
+            for k, v in itertools.batched(pairs, 2)
+        },
+        cls=DjangoJSONEncoder,
+    )
+
+
+@register.simple_tag
+def html_json_attr(name: str, *pairs: str) -> str:
     """Renders attribute containing JSON.
 
     Takes multiple pairs of headers and values e.g.:
@@ -72,24 +91,15 @@ def json_attr(name: str, *pairs: str) -> str:
     Note: LazyObjects will be resolved to strings. Should be ok for the simple case e.g
     csrf_token but more complex cases should require evaluation of the lazy value first.
     """
-    value = json.dumps(
-        {
-            k: force_str(v) if isinstance(v, LazyObject) else v
-            for k, v in itertools.batched(pairs, 2)
-        },
-        cls=DjangoJSONEncoder,
-    )
-    return format_html("{}='{}'", name, value)
+    return format_html("{}='{}'", name, json_values(*pairs))
 
 
 hx_headers = register.simple_tag(
-    functools.partial(json_attr, "hx-headers"),
-    name="hx_headers",
+    functools.partial(html_json_attr, "hx-headers"), name="hx_headers"
 )
 
 hx_vals = register.simple_tag(
-    functools.partial(json_attr, "hx-vals"),
-    name="hx_vals",
+    functools.partial(html_json_attr, "hx-vals"), name="hx_vals"
 )
 
 
