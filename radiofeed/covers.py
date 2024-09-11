@@ -32,7 +32,7 @@ _COVER_CLASSES: Final = {
     CoverVariant.TILE: "size-28 lg:size-56",
 }
 
-_MIN_FULL_SIZE_WIDTH: Final = 1024
+_MIN_DESKTOP_WIDTH: Final = 1024
 
 
 @functools.cache
@@ -74,8 +74,8 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
 
     sizes = ", ".join(
         [
-            f"(max-width: {_MIN_FULL_SIZE_WIDTH-0.01}px) {min_size}px",
-            f"(min-width: {_MIN_FULL_SIZE_WIDTH}px) {full_size}px",
+            f"(max-width: {_MIN_DESKTOP_WIDTH-0.01}px) {min_size}px",
+            f"(min-width: {_MIN_DESKTOP_WIDTH}px) {full_size}px",
         ]
     )
 
