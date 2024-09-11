@@ -81,7 +81,7 @@ def audio_player(context: RequestContext) -> dict:
 
 
 @register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
-def update_audio_player(
+def inject_audio_player(
     context: RequestContext,
     audio_log: AudioLog | None = None,
     *,
