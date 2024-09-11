@@ -19,5 +19,8 @@ def paginate(
 
 
 def paginate_lazy(*args, **kwargs) -> SimpleLazyObject:
-    """Returns lazily-evaluated pagination object"""
+    """Returns lazily-evaluated pagination object.
+    Use instead of `paginate()` in cases where the pagination is in a cached template snippet,
+    so the database queries are not evaluated until the page obj is referenced.
+    """
     return SimpleLazyObject(lambda: paginate(*args, **kwargs))
