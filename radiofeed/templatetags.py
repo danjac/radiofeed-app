@@ -64,7 +64,7 @@ def json_values(*pairs: str) -> str:
     """Renders attribute value containing JSON.
 
     Takes multiple pairs of headers and values e.g.:
-        {% json_attr_value "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
+        {% json_values "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
 
     This will generate:
         '{"X-CSRF-Token": "...", "myHeader": "form"}'
@@ -83,7 +83,7 @@ def html_json_attr(name: str, *pairs: str) -> str:
     """Renders attribute containing JSON.
 
     Takes multiple pairs of headers and values e.g.:
-        {% json_attr "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
+        {% html_json_attr "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
 
     This will generate:
         hx-headers='{"X-CSRF-Token": "...", "myHeader": "form"}'
