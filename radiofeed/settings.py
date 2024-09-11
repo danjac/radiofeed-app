@@ -25,6 +25,8 @@ SECRET_KEY = env(
     default="django-insecure-+-pzc(vc+*=sjj6gx84da3y-2y@h_&f=)@s&fvwwpz_+8(ced^",
 )
 
+SECRET_KEY_FALLBACKS = env.list("SECRET_KEY_FALLBACKS", default=[])
+
 INSTALLED_APPS: list[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
