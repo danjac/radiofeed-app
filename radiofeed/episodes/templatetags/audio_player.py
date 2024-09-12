@@ -10,6 +10,7 @@ from radiofeed.covers import get_metadata_info
 register = template.Library()
 
 if TYPE_CHECKING:  # pragma: no cover
+    from django.http import HttpRequest
     from django.template.context import RequestContext
 
     from radiofeed.episodes.models import AudioLog, Episode
@@ -59,18 +60,7 @@ def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
     info = PlayerContext()
 
-    if (
-        context.request.user.is_authenticated
-        and (episode_id := context.request.player.get())
-        and (
-            audio_log := context.request.user.audio_logs.filter(episode__pk=episode_id)
-            .select_related(
-                "episode",
-                "episode__podcast",
-            )
-            .first()
-        )
-    ):
+    if audio_log := _get_audio_log_from_player(context.request):
         info = info.update(
             episode=audio_log.episode,
             current_time=audio_log.current_time,
@@ -97,3 +87,17 @@ def inject_audio_player(
             is_playing=True,
         )
     return context.flatten() | info.as_dict()
+
+
+def _get_audio_log_from_player(request: HttpRequest) -> AudioLog | None:
+    if (episode_id := request.player.get()) and request.user.is_authenticated:
+        return (
+            request.user.audio_logs.filter(episode__pk=episode_id)
+            .select_related(
+                "episode",
+                "episode__podcast",
+            )
+            .first()
+        )
+
+    return None
