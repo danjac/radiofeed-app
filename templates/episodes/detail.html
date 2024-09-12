@@ -91,7 +91,7 @@
                                     </button>
                                 {% endif %}
                                 {% if request.htmx.target == target %}
-                                    {% replace_audio_player audio_log start_player=is_playing %}
+                                    {% update_audio_player audio_log start_player=is_playing %}
                                     {% with hx_oob=True %}
                                         {% partial audio_log %}
                                     {% endwith %}
