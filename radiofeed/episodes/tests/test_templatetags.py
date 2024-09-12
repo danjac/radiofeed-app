@@ -4,8 +4,8 @@ from django.template.context import RequestContext
 from radiofeed.episodes.middleware import PlayerDetails
 from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
+    audio_player_update,
     get_media_metadata,
-    update_audio_player,
 )
 from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
 from radiofeed.podcasts.tests.factories import PodcastFactory
@@ -48,7 +48,7 @@ class TestMediaMetadata:
         assert data["artwork"][0]["type"] == "image/webp"
 
 
-class TestUpdateAudioPlayer:
+class TestAudioPlayerUpdate:
     @pytest.fixture
     def audio_log(self, user, episode):
         return AudioLogFactory(episode=episode, user=user)
@@ -59,7 +59,7 @@ class TestUpdateAudioPlayer:
 
     @pytest.mark.django_db
     def test_start_player(self, audio_log, req_context):
-        data = update_audio_player(req_context, audio_log, start_player=True)
+        data = audio_player_update(req_context, audio_log, start_player=True)
         assert data["hx_oob"] is True
         assert data["is_playing"] is True
         assert data["start_player"] is True
@@ -68,7 +68,7 @@ class TestUpdateAudioPlayer:
 
     @pytest.mark.django_db
     def test_close_player(self, audio_log, req_context):
-        data = update_audio_player(req_context, audio_log, start_player=False)
+        data = audio_player_update(req_context, audio_log, start_player=False)
         assert data["hx_oob"] is True
         assert data["is_playing"] is False
         assert data["start_player"] is False
@@ -77,7 +77,7 @@ class TestUpdateAudioPlayer:
 
     @pytest.mark.django_db
     def test_start_player_audio_log_none(self, req_context):
-        data = update_audio_player(req_context, None, start_player=True)
+        data = audio_player_update(req_context, None, start_player=True)
         assert data["hx_oob"] is True
         assert data["is_playing"] is False
         assert data["start_player"] is False
