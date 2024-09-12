@@ -83,6 +83,7 @@ def inject_audio_player(
 ) -> dict:
     """Renders audio player update to open or close the player."""
     info = PlayerInfo(hx_oob=True)
+
     if audio_log and start_player:
         info = info.update(
             current_time=audio_log.current_time,
@@ -90,6 +91,7 @@ def inject_audio_player(
             start_player=True,
             is_playing=True,
         )
+
     return info.merge(context)
 
 
