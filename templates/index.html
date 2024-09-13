@@ -6,11 +6,13 @@
         {% cache CACHE_TIMEOUT landing-page %}
             <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
                 <div class="gap-6 py-6 px-6 sm:grid lg:grid-cols-2">
-                    <div class="justify-center pb-6 mb-6 space-y-6 border-b border-white lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0 lg:border-r">
-                        <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ request.site.name }}</h1>
-                        <h2 class="text-xl font-bold text-center lg:mb-12 lg:text-2xl">
-                            <strong>{{ request.site.name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts.
-                        </h2>
+                    <div class="justify-center pb-6 mb-6 space-y-12 border-b border-white lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0 lg:border-r">
+                        <div class="space-y-6">
+                            <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ request.site.name }}</h1>
+                            <h2 class="text-xl font-bold text-center lg:mb-12 lg:text-2xl">
+                                <strong>{{ request.site.name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts.
+                            </h2>
+                        </div>
                         <div class="space-y-3 lg:space-y-6">
                             <a href="{% url "account_signup" %}"
                                class="flex justify-center items-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-primary">{% heroicon_solid "plus" class="mr-2" %}Sign up to {{ request.site.name }}</a>
