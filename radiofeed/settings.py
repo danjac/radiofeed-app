@@ -315,6 +315,8 @@ if env.bool("USE_HTTPS", default=True):
     SECURE_PROXY_SSL_HEADER = env.tuple(
         "SECURE_PROXY_SSL_HEADER", default=("HTTP_X_FORWARDED_PROTO", "https")
     )
+else:
+    SECURE_SSL_REDIRECT = False
 
 # make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
 # otherwise leave disabled.
@@ -345,6 +347,7 @@ PERMISSIONS_POLICY: dict[str, list] = {
 # https://django-csp.readthedocs.io/en/3.8/configuration.html
 
 SELF = "'self'"
+DATA = f"data: {'https' if SECURE_SSL_REDIRECT else 'http'}:;"
 UNSAFE_EVAL = "'unsafe-eval'"
 UNSAFE_INLINE = "'unsafe-inline'"
 
@@ -359,6 +362,8 @@ CSP_SCRIPT_SRC = [
 ]
 
 CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
+
+CSP_IMG_SRC = [f" * {SELF} {DATA}"]
 
 # Allow all audio files
 CSP_MEDIA_SRC = ["*"]
