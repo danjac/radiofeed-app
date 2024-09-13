@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load heroicons %}
+{% load static heroicons %}
 {% block body %}
     <body class="mx-auto font-sans antialiased text-white bg-gradient-to-b from-violet-900 to-black container-xl scroll-smooth">
         <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
             <div class="grid-cols-2 gap-6 py-12 px-6 sm:grid">
                 <div class="justify-center pb-6 mb-6 border-b sm:pr-6 sm:pb-0 sm:mb-0 sm:border-b-0 sm:border-r">
-                    <h1 class="pb-6 mb-6 text-3xl font-extrabold text-center sm:pb-12 sm:mb-12 md:text-4xl lg:text-5xl">
+                    <h1 class="pb-6 mb-6 text-3xl font-extrabold text-center md:text-4xl lg:pb-12 lg:mb-12 lg:text-5xl">
                         Welcome to {{ request.site.name }}
                     </h1>
                     <div class="space-y-3">
@@ -23,7 +23,25 @@
                         </p>
                     </div>
                 </div>
-                <div>About section goes here</div>
+                <div>
+                    <h2 class="pb-3 mb-3 text-xl font-bold lg:pb-6 lg:mb-6 lg:text-2xl">
+                        <strong>{{ request.site.name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts.
+                    </h2>
+                    <div class="grid-cols-2 grid-flow-col-dense gap-3 pb-3 mb-3 sm:grid lg:pb-6 lg:mb-6">
+                        <div class="pb-3 mb-3 space-y-3 font-semibold sm:pb-0 sm:mb-0 lg:space-y-6">
+                            <ul class="space-y-3 text-base list-disc list-inside lg:text-lg">
+                                <li>Subscribe to your favorite podcasts</li>
+                                <li>Find exciting and interesting new content</li>
+                                <li>Receive a weekly AI-generated email with personalized recommendations</li>
+                                <li>Bookmark your favorite episodes or those you want to listen to later</li>
+                                <li>Subscribe to private feeds from Patreon and other services</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <img src="{% static "img/mobile.png" %}" alt="Mobile" class="bg-cover rounded-xl border" width="360" height="800">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
