@@ -33,17 +33,13 @@ def auth_req(req, user):
 
 
 class TestDebugStatic:
-    @pytest.fixture
-    def req_context(self, rf):
-        return RequestContext(rf.get("/"))
-
-    def test_debug(self, settings, req_context):
+    def test_debug(self, settings):
         settings.DEBUG = True
-        assert "?v=" in debug_static(req_context)
+        assert "?v=" in debug_static()
 
-    def test_production(self, settings, req_context):
+    def test_production(self, settings):
         settings.DEBUG = False
-        assert debug_static(req_context) == ""
+        assert debug_static() == ""
 
 
 class TestCoverArt:
