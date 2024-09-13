@@ -17,7 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class AudioPlayerContext:
+class AudioPlayerInfo:
     """Audio player context data."""
 
     current_time: int | None = None
@@ -26,7 +26,7 @@ class AudioPlayerContext:
     is_playing: bool = False
     start_player: bool = False
 
-    def update(self, **fields) -> AudioPlayerContext:
+    def update(self, **fields) -> AudioPlayerInfo:
         """Update instance."""
         return dataclasses.replace(self, **fields)
 
@@ -62,16 +62,16 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
-    player_context = AudioPlayerContext()
+    info = AudioPlayerInfo()
 
     if audio_log := _get_audio_log_from_player(context.request):
-        player_context = player_context.update(
+        info = info.update(
             episode=audio_log.episode,
             current_time=audio_log.current_time,
             is_playing=True,
         )
 
-    return player_context.merge_with_context(context)
+    return info.merge_with_context(context)
 
 
 @register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
@@ -82,17 +82,17 @@ def audio_player_update(
     start_player: bool,
 ) -> dict:
     """Renders audio player update to open or close the player."""
-    player_context = AudioPlayerContext(hx_oob=True)
+    info = AudioPlayerInfo(hx_oob=True)
 
     if audio_log and start_player:
-        player_context = player_context.update(
+        info = info.update(
             current_time=audio_log.current_time,
             episode=audio_log.episode,
             start_player=True,
             is_playing=True,
         )
 
-    return player_context.merge_with_context(context)
+    return info.merge_with_context(context)
 
 
 def _get_audio_log_from_player(request: HttpRequest) -> AudioLog | None:
