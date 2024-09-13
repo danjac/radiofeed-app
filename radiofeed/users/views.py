@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -12,6 +14,15 @@ from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
+
+
+class Stat(TypedDict):
+    """Line item in user stats"""
+
+    label: str
+    value: int
+    unit: str
+    url: str
 
 
 @require_form_methods
@@ -111,30 +122,30 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
-        {
-            "label": "Subscribed",
-            "value": request.user.subscriptions.count(),
-            "unit": "podcast",
-            "url": reverse("podcasts:index"),
-        },
-        {
-            "label": "Private Feeds",
-            "value": request.user.subscriptions.filter(podcast__private=True).count(),
-            "unit": "podcast",
-            "url": reverse("podcasts:private_feeds"),
-        },
-        {
-            "label": "Bookmarks",
-            "value": request.user.bookmarks.count(),
-            "unit": "episode",
-            "url": reverse("episodes:bookmarks"),
-        },
-        {
-            "label": "Listened",
-            "value": request.user.audio_logs.count(),
-            "unit": "episode",
-            "url": reverse("episodes:history"),
-        },
+        Stat(
+            label="Subscribed",
+            value=request.user.subscriptions.count(),
+            unit="podcast",
+            url=reverse("podcasts:subscriptions"),
+        ),
+        Stat(
+            label="Private Feeds",
+            value=request.user.subscriptions.filter(podcast__private=True).count(),
+            unit="podcast",
+            url=reverse("podcasts:private_feeds"),
+        ),
+        Stat(
+            label="Bookmarks",
+            value=request.user.bookmarks.count(),
+            unit="episode",
+            url=reverse("episodes:bookmarks"),
+        ),
+        Stat(
+            label="Listened",
+            value=request.user.audio_logs.count(),
+            unit="episode",
+            url=reverse("episodes:history"),
+        ),
     ]
     return TemplateResponse(request, "account/stats.html", {"stats": stats})
 
