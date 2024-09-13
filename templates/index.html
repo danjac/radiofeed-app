@@ -7,7 +7,7 @@
             <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
                 <div class="grid-cols-2 gap-6 py-12 px-6 sm:grid">
                     <div class="justify-center pb-6 mb-6 border-b border-white sm:pr-6 sm:pb-0 sm:mb-0 sm:border-b-0 sm:border-r">
-                        <h1 class="pb-6 mb-6 text-3xl font-extrabold text-center md:text-4xl lg:pb-12 lg:mb-12 lg:text-5xl">
+                        <h1 class="pb-6 mb-6 text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">
                             Welcome to {{ request.site.name }}
                         </h1>
                         <div class="space-y-3 lg:space-y-6">
@@ -20,18 +20,18 @@
                             </div>
                             <a href="{% url "account_login" %}"
                                class="flex justify-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-default btn-outline !text-white hover:!bg-inherit">Log in</a>
-                            <p class="text-center">
+                            <p class="text-lg text-center lg:text-xl">
                                 Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ request.site.name }}</a>
                             </p>
                         </div>
                     </div>
                     <div>
-                        <h2 class="pb-3 mb-3 text-xl font-bold lg:pb-6 lg:mb-6 lg:text-2xl">
+                        <h2 class="mb-6 text-xl font-bold lg:mb-12 lg:text-2xl">
                             <strong>{{ request.site.name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts.
                         </h2>
-                        <div class="grid-cols-2 grid-flow-col-dense gap-3 pb-3 mb-3 sm:grid lg:pb-6 lg:mb-6">
-                            <div class="pb-3 mb-3 space-y-3 font-semibold sm:pb-0 sm:mb-0 lg:space-y-6">
-                                <ul class="space-y-3 text-base list-disc list-inside lg:text-lg">
+                        <div class="flex flex-col space-y-3 sm:flex-row-reverse sm:pb-6 sm:mb-6 sm:space-y-0">
+                            <div class="pb-3 mb-3 space-y-3 font-semibold sm:pb-0 sm:pl-3 sm:mb-0 lg:pl-6 lg:space-y-6">
+                                <ul class="space-y-3 text-base list-none list-inside sm:list-outside lg:space-y-6 lg:text-lg">
                                     <li>Subscribe to your favorite podcasts</li>
                                     <li>Find exciting and interesting new content</li>
                                     <li>Receive a weekly AI-generated email with personalized recommendations</li>
