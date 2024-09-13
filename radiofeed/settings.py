@@ -83,7 +83,7 @@ MIDDLEWARE: list[str] = [
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.SearchMiddleware",
-    "radiofeed.episodes.middleware.PlayerMiddleware",
+    "radiofeed.episodes.middleware.AudioPlayerMiddleware",
 ]
 
 # Databases

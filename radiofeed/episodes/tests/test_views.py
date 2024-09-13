@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains
 
-from radiofeed.episodes.middleware import PlayerDetails
+from radiofeed.episodes.middleware import AudioPlayerDetails
 from radiofeed.episodes.models import AudioLog, Bookmark
 from radiofeed.episodes.tests.factories import (
     AudioLogFactory,
@@ -30,7 +30,7 @@ def player_episode(auth_user, client, episode):
     AudioLogFactory(user=auth_user, episode=episode)
 
     session = client.session
-    session[PlayerDetails.session_key] = episode.pk
+    session[AudioPlayerDetails.session_id] = episode.pk
     session.save()
 
     return episode
@@ -212,7 +212,7 @@ class TestStartPlayer:
         )
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
-        assert client.session[PlayerDetails.session_key] == episode.pk
+        assert client.session[AudioPlayerDetails.session_id] == episode.pk
 
     @pytest.mark.django_db
     def test_another_episode_in_player(self, client, auth_user, player_episode):
@@ -229,7 +229,7 @@ class TestStartPlayer:
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
-        assert client.session[PlayerDetails.session_key] == episode.pk
+        assert client.session[AudioPlayerDetails.session_id] == episode.pk
 
     @pytest.mark.django_db
     def test_resume(self, client, auth_user, player_episode):
@@ -243,7 +243,7 @@ class TestStartPlayer:
             )
         )
 
-        assert client.session[PlayerDetails.session_key] == player_episode.pk
+        assert client.session[AudioPlayerDetails.session_id] == player_episode.pk
 
 
 class TestClosePlayer:
@@ -301,7 +301,7 @@ class TestPlayerTimeUpdate:
     @pytest.mark.django_db
     def test_player_log_missing(self, client, auth_user, episode):
         session = client.session
-        session[PlayerDetails.session_key] = episode.pk
+        session[AudioPlayerDetails.session_id] = episode.pk
         session.save()
 
         assert_204(

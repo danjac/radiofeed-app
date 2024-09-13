@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Final
 
 from django.contrib.messages import get_messages
@@ -84,17 +85,16 @@ class SearchMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.search = SearchDetails(request)
+        request.search = SearchDetails(request=request)
         return self.get_response(request)
 
 
+@dataclasses.dataclass(frozen=True, kw_only=True)
 class SearchDetails:
     """Handles search parameters in request."""
 
-    param: str = "search"
-
-    def __init__(self, request: HttpRequest) -> None:
-        self.request = request
+    request: HttpRequest
+    search_parameter: str = "search"
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -107,13 +107,17 @@ class SearchDetails:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return force_str(self.request.GET.get(self.param, "")).strip()
+        return force_str(self.request.GET.get(self.search_parameter, "")).strip()
 
     @cached_property
     def qs(self) -> str:
         """Returns querystring with search."""
         return (
-            "?" + QueryDict.fromkeys([self.param], value=self.value).urlencode()
+            "?"
+            + QueryDict.fromkeys(
+                [self.search_parameter],
+                value=self.value,
+            ).urlencode()
             if self
             else ""
         )
