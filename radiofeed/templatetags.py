@@ -13,7 +13,7 @@ from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
-from django.templatetags.static import static
+from django.template.defaulttags import querystring
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
 from django.utils.html import format_html
@@ -115,16 +115,19 @@ def theme_color() -> dict:
     return settings.PWA_CONFIG["manifest"]["theme_color"]
 
 
-@register.simple_tag
-def debug_static(url: str) -> str:
-    """Works like {% static %} but appends a browser cache-busting param to URL in DEBUG mode.
+@register.simple_tag(takes_context=True)
+def debug_static(context: RequestContext, **kwargs) -> str:
+    """Appends a browser cache-busting param to URL in DEBUG mode.
     Otherwise just returns the plain static URL.
+
+    Example:
+
+        <link href="{% static 'app.css' %}{% debug_static %}">
 
     This is useful in development with non-vendor assets you want to see refreshed on each browser reload,
     but has no effect in production.
     """
-    static_url = static(url)
-    return f"{static_url}?v={int(time.time())}" if settings.DEBUG else static_url
+    return querystring(context, v=int(time.time()), **kwargs) if settings.DEBUG else ""
 
 
 @register.simple_tag

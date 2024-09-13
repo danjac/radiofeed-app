@@ -7,6 +7,7 @@ from radiofeed.templatetags import (
     absolute_uri,
     active_link,
     cover_art,
+    debug_static,
     format_duration,
     html_json_attr,
     hx_headers,
@@ -29,6 +30,20 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
+
+
+class TestDebugStatic:
+    @pytest.fixture
+    def req_context(self, rf):
+        return RequestContext(rf.get("/"))
+
+    def test_debug(self, settings, req_context):
+        settings.DEBUG = True
+        assert "?v=" in debug_static(req_context)
+
+    def test_production(self, settings, req_context):
+        settings.DEBUG = False
+        assert debug_static(req_context) == ""
 
 
 class TestCoverArt:
