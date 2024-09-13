@@ -6,7 +6,7 @@
         {% cache CACHE_TIMEOUT landing-page %}
             <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
                 <div class="grid-cols-2 gap-6 py-12 px-6 sm:grid">
-                    <div class="justify-center pb-6 mb-6 border-b sm:pr-6 sm:pb-0 sm:mb-0 sm:border-b-0 sm:border-r">
+                    <div class="justify-center pb-6 mb-6 border-b border-gray-600 sm:pr-6 sm:pb-0 sm:mb-0 sm:border-b-0 sm:border-r">
                         <h1 class="pb-6 mb-6 text-3xl font-extrabold text-center md:text-4xl lg:pb-12 lg:mb-12 lg:text-5xl">
                             Welcome to {{ request.site.name }}
                         </h1>
@@ -14,12 +14,12 @@
                             <a href="{% url "account_signup" %}"
                                class="flex justify-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-primary">Sign up to {{ request.site.name }}</a>
                             <div class="flex relative items-center py-5">
-                                <div class="flex-grow border-t"></div>
-                                <span class="flex-shrink mx-4 font-bold text-gray-600 dark:text-gray-200">OR</span>
-                                <div class="flex-grow border-t"></div>
+                                <div class="flex-grow border-t border-gray-600"></div>
+                                <span class="flex-shrink mx-4 font-bold">OR</span>
+                                <div class="flex-grow border-t border-gray-600"></div>
                             </div>
                             <a href="{% url "account_login" %}"
-                               class="flex justify-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-default btn-outline">Log in</a>
+                               class="flex justify-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-default btn-outline !text-white hover:!bg-inherit">Log in</a>
                             <p class="text-center">
                                 Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ request.site.name }}</a>
                             </p>
@@ -40,7 +40,7 @@
                                 </ul>
                             </div>
                             <div>
-                                <img src="{% static "img/mobile.png" %}" alt="Mobile" class="bg-cover rounded-xl border" width="360" height="800">
+                                <img src="{% static "img/mobile.png" %}" alt="Mobile" class="bg-cover rounded-xl border border-gray-600" width="360" height="800">
                             </div>
                         </div>
                     </div>
