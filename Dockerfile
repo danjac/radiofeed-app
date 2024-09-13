@@ -19,7 +19,7 @@ RUN npm run build && rm -rf node_modules
 
 # Install Python dependencies
 
-FROM python:3.12.4-bookworm AS django
+FROM python:3.12.6-bookworm AS django
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
