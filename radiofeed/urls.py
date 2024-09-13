@@ -8,6 +8,7 @@ admin.site.site_header = admin.site.site_title = settings.ADMIN_SITE_HEADER
 
 
 urlpatterns = [
+    path("", views.index, name="index"),
     path("", include("radiofeed.episodes.urls")),
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.users.urls")),

@@ -22,23 +22,6 @@ _private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
 
 
 @require_safe
-def index(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
-    """Returns landing page. If user is logged in, redirects to the subscriptions page instead."""
-    if request.user.is_anonymous:
-        podcasts = _get_promoted_podcasts().order_by("-pub_date")
-
-        return TemplateResponse(
-            request,
-            "podcasts/landing_page.html",
-            {
-                "podcasts": podcasts,
-            },
-        )
-
-    return HttpResponseRedirect(reverse("podcasts:subscriptions"))
-
-
-@require_safe
 @login_required
 def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""

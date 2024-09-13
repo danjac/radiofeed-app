@@ -13,7 +13,7 @@
         {% with site_name=request.site.name %}
             <div class="flex flex-shrink-0 items-center">
                 <a class="inline-flex items-center text-xl font-bold lg:text-2xl"
-                   href="{% url 'podcasts:index' %}"
+                   {% if user.is_authenticated %} href="{% url 'podcasts:subscriptions' %}" {% else %} href="{% url 'index' %}" hx-disable="true" {% endif %}
                    title="{{ site_name }}">
                     <img src="{% static 'img/wave-white-36.webp' %}"
                          height="32"

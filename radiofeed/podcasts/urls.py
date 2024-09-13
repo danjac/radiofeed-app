@@ -5,7 +5,6 @@ from radiofeed.podcasts import views
 app_name = "podcasts"
 
 urlpatterns = [
-    path("", views.index, name="index"),
     path("subscriptions/", views.subscriptions, name="subscriptions"),
     path("discover/", views.discover, name="discover"),
     path("search/", views.search_podcasts, name="search_podcasts"),

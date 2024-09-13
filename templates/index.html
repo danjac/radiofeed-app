@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load heroicons %}
+{% block body %}
+    <body class="mx-auto font-sans antialiased text-white bg-gradient-to-b from-violet-900 to-black container-xl scroll-smooth">
+        <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
+            <div class="grid-cols-2 gap-6 py-12 px-6 sm:grid">
+                <div class="justify-center pb-6 mb-6 border-b sm:pr-6 sm:pb-0 sm:mb-0 sm:border-b-0 sm:border-r">
+                    <h1 class="pb-6 mb-6 text-3xl font-extrabold text-center sm:pb-12 sm:mb-12 md:text-4xl lg:text-5xl">
+                        Welcome to {{ request.site.name }}
+                    </h1>
+                    <div class="space-y-3">
+                        <a href="{% url "account_signup" %}"
+                           class="flex justify-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-primary">Sign up to {{ request.site.name }}</a>
+                        <div class="flex relative items-center py-5">
+                            <div class="flex-grow border-t"></div>
+                            <span class="flex-shrink mx-4 font-bold text-gray-600 dark:text-gray-200">OR</span>
+                            <div class="flex-grow border-t"></div>
+                        </div>
+                        <a href="{% url "account_login" %}"
+                           class="flex justify-center py-3 w-full text-xl lg:text-3xl btn btn-lg btn-default btn-outline">Log in</a>
+                        <p class="text-center">
+                            Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ request.site.name }}</a>
+                        </p>
+                    </div>
+                </div>
+                <div>About section goes here</div>
+            </div>
+        </div>
+    </body>
+{% endblock body %}

@@ -7,7 +7,14 @@ from typing import Final
 import httpx
 from django.conf import settings
 from django.core.signing import BadSignature, Signer
-from django.http import FileResponse, Http404, HttpRequest, HttpResponse, JsonResponse
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    JsonResponse,
+)
 from django.template.defaultfilters import truncatechars
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
@@ -25,6 +32,16 @@ _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
 _cache_page = cache_page(_CACHE_TIMEOUT)
+
+
+@require_safe
+def index(request) -> TemplateResponse:
+    """Landing page of site."""
+
+    # if user logged in, redirect to their home page
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+    return TemplateResponse(request, "index.html")
 
 
 @require_safe
