@@ -17,7 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class AudioPlayerInfo:
+class AudioPlayerContext:
     """Audio player context data."""
 
     current_time: int | None = None
@@ -26,7 +26,7 @@ class AudioPlayerInfo:
     is_playing: bool = False
     start_player: bool = False
 
-    def update(self, **fields) -> AudioPlayerInfo:
+    def update(self, **fields) -> AudioPlayerContext:
         """Update instance."""
         return dataclasses.replace(self, **fields)
 
@@ -34,8 +34,8 @@ class AudioPlayerInfo:
         """Returns fields as dict."""
         return dataclasses.asdict(self)
 
-    def merge(self, context: Context) -> dict:
-        """Merges template context with info."""
+    def merge_with_context(self, context: Context) -> dict:
+        """Merges template context with instance."""
         return context.flatten() | self.as_dict()
 
 
@@ -62,16 +62,16 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
-    info = AudioPlayerInfo()
+    player_context = AudioPlayerContext()
 
     if audio_log := _get_audio_log_from_player(context.request):
-        info = info.update(
+        player_context = player_context.update(
             episode=audio_log.episode,
             current_time=audio_log.current_time,
             is_playing=True,
         )
 
-    return info.merge(context)
+    return player_context.merge_with_context(context)
 
 
 @register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
@@ -82,17 +82,17 @@ def audio_player_update(
     start_player: bool,
 ) -> dict:
     """Renders audio player update to open or close the player."""
-    info = AudioPlayerInfo(hx_oob=True)
+    player_context = AudioPlayerContext(hx_oob=True)
 
     if audio_log and start_player:
-        info = info.update(
+        player_context = player_context.update(
             current_time=audio_log.current_time,
             episode=audio_log.episode,
             start_player=True,
             is_playing=True,
         )
 
-    return info.merge(context)
+    return player_context.merge_with_context(context)
 
 
 def _get_audio_log_from_player(request: HttpRequest) -> AudioLog | None:
