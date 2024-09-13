@@ -94,7 +94,7 @@ class SearchDetails:
     """Handles search parameters in request."""
 
     request: HttpRequest
-    search_parameter: str = "search"
+    param: str = "search"
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -107,7 +107,7 @@ class SearchDetails:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return force_str(self.request.GET.get(self.search_parameter, "")).strip()
+        return force_str(self.request.GET.get(self.param, "")).strip()
 
     @cached_property
     def qs(self) -> str:
@@ -115,7 +115,7 @@ class SearchDetails:
         return (
             "?"
             + QueryDict.fromkeys(
-                [self.search_parameter],
+                [self.param],
                 value=self.value,
             ).urlencode()
             if self
