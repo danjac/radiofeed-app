@@ -17,7 +17,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class PlayerInfo:
+class AudioPlayerInfo:
     """Audio player context data."""
 
     current_time: int | None = None
@@ -26,7 +26,7 @@ class PlayerInfo:
     is_playing: bool = False
     start_player: bool = False
 
-    def update(self, **fields) -> PlayerInfo:
+    def update(self, **fields) -> AudioPlayerInfo:
         """Update instance."""
         return dataclasses.replace(self, **fields)
 
@@ -62,7 +62,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
-    info = PlayerInfo()
+    info = AudioPlayerInfo()
 
     if audio_log := _get_audio_log_from_player(context.request):
         info = info.update(
@@ -82,7 +82,7 @@ def audio_player_update(
     start_player: bool,
 ) -> dict:
     """Renders audio player update to open or close the player."""
-    info = PlayerInfo(hx_oob=True)
+    info = AudioPlayerInfo(hx_oob=True)
 
     if audio_log and start_player:
         info = info.update(
