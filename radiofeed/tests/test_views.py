@@ -3,11 +3,25 @@ import urllib.parse
 
 import httpx
 import pytest
+from django.conf import settings
 from django.core.signing import Signer
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from radiofeed.http_client import Client
 from radiofeed.tests.asserts import assert_200, assert_404
+
+
+class TestIndex:
+    url = reverse_lazy("index")
+
+    @pytest.mark.django_db
+    def test_anonymous(self, client):
+        assert_200(client.get(self.url))
+
+    @pytest.mark.django_db
+    def test_authenticated(self, client, auth_user):
+        response = client.get(self.url)
+        assert response.url == settings.LOGIN_REDIRECT_URL
 
 
 class TestManifest:

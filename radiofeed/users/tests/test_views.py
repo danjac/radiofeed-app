@@ -199,5 +199,5 @@ class TestDeleteAccount:
     @pytest.mark.django_db
     def test_post_confirmed(self, client, auth_user):
         response = client.post(self.url, {"confirm-delete": True})
-        assert response.url == reverse("podcasts:index")
+        assert response.url == reverse("index")
         assert not User.objects.exists()

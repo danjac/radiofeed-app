@@ -18,18 +18,6 @@ _subscriptions_url = reverse_lazy("podcasts:subscriptions")
 _discover_url = reverse_lazy("podcasts:discover")
 
 
-class TestIndex:
-    @pytest.mark.django_db
-    def test_anonymous(self, client):
-        PodcastFactory.create_batch(3, promoted=True)
-        assert_200(client.get(_index_url))
-
-    @pytest.mark.django_db
-    def test_authenticated(self, client, auth_user):
-        response = client.get(_index_url)
-        assert response.url == _subscriptions_url
-
-
 class TestSubscriptions:
     @pytest.mark.django_db
     def test_authenticated_no_subscriptions(self, client, auth_user):

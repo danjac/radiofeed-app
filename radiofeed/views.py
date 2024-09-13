@@ -127,7 +127,7 @@ def assetlinks(request: HttpRequest) -> JsonResponse:
 @_cache_page
 def manifest(request: HttpRequest) -> JsonResponse:
     """PWA manifest.json file."""
-    start_url = reverse("podcasts:index")
+    start_url = reverse("index")
 
     categories = settings.PWA_CONFIG["manifest"]["categories"]
     description = settings.PWA_CONFIG["manifest"]["description"]

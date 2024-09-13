@@ -161,5 +161,5 @@ def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateRespo
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return HttpResponseRedirect(reverse("podcasts:index"))
+        return HttpResponseRedirect(reverse("index"))
     return TemplateResponse(request, "account/delete_account.html")
