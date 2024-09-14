@@ -38,16 +38,6 @@ class TestGetCoverAttrs:
                 },
                 id="detail",
             ),
-            pytest.param(
-                covers.CoverVariant.TILE,
-                {
-                    "height": 224,
-                    "width": 224,
-                    "src": "/covers/224/cover.webp?url=test.jpg",
-                    "sizes": "(max-width: 1023.99px) 112px, (min-width: 1024px) 224px",
-                },
-                id="tile",
-            ),
         ],
     )
     def test_get_cover_attrs(self, variant, expected):

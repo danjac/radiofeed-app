@@ -16,10 +16,8 @@ export default {
         "message-success",
         "message-warning",
         "size-16",
-        "size-28",
         "size-36",
         "lg:size-40",
-        "lg:size-56",
     ],
     keyframes: true,
     variants: {
