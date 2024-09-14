@@ -190,7 +190,7 @@ class TestPodcastDetail:
 
     @pytest.mark.django_db
     def test_get_podcast_no_website(self, client, auth_user, faker):
-        podcast = PodcastFactory(website=None, owner=faker.name())
+        podcast = PodcastFactory(website="", owner=faker.name())
         response = client.get(podcast.get_absolute_url())
 
         assert_200(response)

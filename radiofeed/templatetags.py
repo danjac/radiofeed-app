@@ -163,7 +163,7 @@ get_cover_attrs = register.simple_tag(covers.get_cover_attrs)
 
 @register.inclusion_tag("_cover_art.html")
 def cover_art(
-    cover_url: str | None,
+    cover_url: str,
     variant: CoverVariant,
     title: str,
     *,

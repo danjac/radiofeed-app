@@ -27,6 +27,17 @@ class TestRenderPartialForTarget:
         )
         assert response.template_name == "index.html#form"
 
+    def test_htmx_target_match_is_list(self, rf):
+        req = rf.get("/", headers={"HX-Request": "true", "HX-Target": "form"})
+        req.htmx = HtmxDetails(req)
+        response = render_partial_for_target(
+            req,
+            TemplateResponse(req, ["index.html"]),
+            target="form",
+            partial="form",
+        )
+        assert response.template_name == "index.html#form"
+
     def test_htmx_target_not_match(self, rf):
         req = rf.get("/", headers={"HX-Request": "true", "HX-Target": "my-form"})
         req.htmx = HtmxDetails(req)

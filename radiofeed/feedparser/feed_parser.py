@@ -129,7 +129,7 @@ class _FeedParser:
             with transaction.atomic():
                 self._podcast_update(
                     num_retries=0,
-                    parser_error=None,
+                    parser_error="",
                     content_hash=content_hash,
                     keywords=keywords,
                     rss=response.url,

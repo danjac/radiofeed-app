@@ -161,8 +161,8 @@ class TestEpisodeModel:
 
     @pytest.mark.django_db
     def test_get_cover_url_if_none(self):
-        episode = EpisodeFactory(podcast=PodcastFactory(cover_url=None))
-        assert episode.get_cover_url() is None
+        episode = EpisodeFactory(podcast=PodcastFactory(cover_url=""))
+        assert episode.get_cover_url() == ""
 
     @pytest.mark.parametrize(
         ("episode_type", "expected"),

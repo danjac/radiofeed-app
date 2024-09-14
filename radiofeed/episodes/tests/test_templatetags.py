@@ -32,7 +32,7 @@ class TestMediaMetadata:
 
     @pytest.mark.django_db
     def test_get_media_metadata_no_cover_url(self, rf):
-        episode = EpisodeFactory(podcast=PodcastFactory(cover_url=None))
+        episode = EpisodeFactory(podcast=PodcastFactory(cover_url=""))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.title
         assert data["album"] == episode.podcast.title

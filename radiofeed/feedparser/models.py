@@ -97,7 +97,7 @@ def _default_if_none(value: Any, *, default: T) -> T:
     return default if value is None else value
 
 
-def _url(value: str | None) -> str | None:
+def _url(value: str | None) -> str:
     if value:
         if not value.startswith("http"):
             value = f"http://{value}"
@@ -105,7 +105,7 @@ def _url(value: str | None) -> str | None:
         with contextlib.suppress(ValidationError):
             _url_validator(value)
             return value
-    return None
+    return ""
 
 
 OptionalUrl = Annotated[str | None, AfterValidator(_url)]
@@ -142,8 +142,8 @@ class Item(BaseModel):
     media_url: str
     media_type: str
 
-    cover_url: OptionalUrl = None
-    website: OptionalUrl = None
+    cover_url: OptionalUrl = ""
+    website: OptionalUrl = ""
 
     explicit: Explicit = False
 
@@ -239,11 +239,11 @@ class Feed(BaseModel):
     language: str = DEFAULT_LANGUAGE
     pub_date: datetime | None = None
 
-    website: OptionalUrl = None
-    cover_url: OptionalUrl = None
+    website: OptionalUrl = ""
+    cover_url: OptionalUrl = ""
 
     funding_text: EmptyIfNone = ""
-    funding_url: OptionalUrl = None
+    funding_url: OptionalUrl = ""
 
     explicit: Explicit = False
     complete: bool = False

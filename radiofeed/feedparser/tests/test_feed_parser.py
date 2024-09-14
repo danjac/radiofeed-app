@@ -149,7 +149,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert podcast.parser_error is None
+        assert podcast.parser_error == ""
         assert podcast.active
         assert podcast.num_retries == 0
         assert podcast.content_hash
@@ -207,7 +207,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert podcast.parser_error is None
+        assert podcast.parser_error == ""
         assert podcast.active
         assert podcast.num_retries == 0
         assert podcast.content_hash
@@ -233,7 +233,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_error is None
+        assert podcast.parser_error == ""
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
@@ -272,7 +272,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_error is None
+        assert podcast.parser_error == ""
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
@@ -393,7 +393,7 @@ class TestFeedParser:
 
         assert podcast.rss
         assert podcast.active is False
-        assert podcast.parser_error is None
+        assert podcast.parser_error == ""
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -438,7 +438,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_error is None
+        assert podcast.parser_error == ""
 
         assert podcast.rss == self.redirect_rss
         assert podcast.active

@@ -11,5 +11,10 @@ def render_partial_for_target(
     """
 
     if request.htmx.target == target:
-        response.template_name += f"#{partial}"
+        template_name = (
+            response.template_name[0]
+            if isinstance(response.template_name, (list, tuple))
+            else response.template_name
+        )
+        response.template_name = f"{template_name}#{partial}"
     return response

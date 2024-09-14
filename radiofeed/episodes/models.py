@@ -121,7 +121,7 @@ class Episode(models.Model):
         except self.DoesNotExist:
             return None
 
-    def get_cover_url(self) -> str | None:
+    def get_cover_url(self) -> str:
         """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
 

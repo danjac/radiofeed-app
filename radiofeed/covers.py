@@ -83,7 +83,7 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
 
 
 @functools.cache
-def get_cover_url(cover_url: str | None, size: int) -> str:
+def get_cover_url(cover_url: str, size: int) -> str:
     """Return the cover image URL"""
     return (
         (
@@ -131,7 +131,7 @@ def get_cover_sizes() -> set[int]:
     return set(itertools.chain.from_iterable(_COVER_SIZES.values()))
 
 
-def get_metadata_info(request: HttpRequest, cover_url: str | None) -> list[dict]:
+def get_metadata_info(request: HttpRequest, cover_url: str) -> list[dict]:
     """Returns media artwork details."""
     return [
         {
