@@ -27,7 +27,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term: str) -> models.QuerySet[Category]:
+    def search(self, search_term) -> models.QuerySet[Category]:
         """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
@@ -37,7 +37,7 @@ class CategoryQuerySet(models.QuerySet):
 class Category(models.Model):
     """iTunes category."""
 
-    name: str = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True)
     parent: Category | None = models.ForeignKey(
         "self",
         null=True,
@@ -79,7 +79,7 @@ class PodcastQuerySet(
 ):
     """Custom QuerySet of Podcast model."""
 
-    def search(self, search_term: str) -> models.QuerySet[Podcast]:
+    def search(self, search_term) -> models.QuerySet[Podcast]:
         """Does standard full text search, prioritizing exact search results.
 
         Annotates `exact_match` to indicate such results.
@@ -125,71 +125,62 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         UNAVAILABLE = "unavailable", "Unavailable"
 
-    rss: str = models.URLField(unique=True, max_length=500)
+    rss = models.URLField(unique=True, max_length=500)
 
-    active: bool = models.BooleanField(
+    active = models.BooleanField(
         default=True,
         help_text="Inactive podcasts will no longer be updated from their RSS feeds.",
     )
 
-    private: bool = models.BooleanField(
+    private = models.BooleanField(
         default=False,
         help_text="Only available to subscribers",
     )
 
-    etag: str = models.TextField(blank=True)
-    title: str = models.TextField(blank=True)
+    etag = models.TextField(blank=True)
+    title = models.TextField(blank=True)
 
-    pub_date: datetime | None = models.DateTimeField(null=True, blank=True)
+    pub_date = models.DateTimeField(null=True, blank=True)
 
-    parsed: datetime | None = models.DateTimeField(null=True, blank=True)
+    parsed = models.DateTimeField(null=True, blank=True)
 
-    parser_error: str = models.CharField(
-        max_length=30,
-        choices=ParserError,
-        null=True,
-        blank=True,
-    )
+    parser_error = models.CharField(max_length=30, choices=ParserError, blank=True)
 
     frequency: timedelta = models.DurationField(null=True, blank=True)
 
-    modified: datetime | None = models.DateTimeField(
+    modified = models.DateTimeField(
         null=True,
         blank=True,
     )
 
-    content_hash: str | None = models.CharField(
-        max_length=64,
-        null=True,
-        blank=True,
-    )
+    content_hash = models.CharField(max_length=64, blank=True)
 
-    num_retries: int = models.PositiveSmallIntegerField(default=0)
+    num_retries = models.PositiveSmallIntegerField(default=0)
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url = models.URLField(max_length=2083, blank=True)
 
-    funding_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
-    funding_text: str = models.TextField(blank=True)
+    funding_url = models.URLField(max_length=2083, blank=True)
+    funding_text = models.TextField(blank=True)
 
-    language: str = models.CharField(
+    language = models.CharField(
         max_length=2,
         default="en",
         validators=[MinLengthValidator(2)],
     )
 
-    description: str = models.TextField(blank=True)
-    website: str | None = models.URLField(max_length=2083, null=True, blank=True)
-    keywords: str = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    website = models.URLField(max_length=2083, blank=True)
+    keywords = models.TextField(blank=True)
     extracted_text = models.TextField(blank=True)
-    owner: str = models.TextField(blank=True)
+    owner = models.TextField(blank=True)
 
     created: datetime = models.DateTimeField(auto_now_add=True)
     updated: datetime = models.DateTimeField(
         auto_now=True, verbose_name="Podcast Updated in Database"
     )
 
-    explicit: bool = models.BooleanField(default=False)
-    promoted: bool = models.BooleanField(default=False)
+    explicit = models.BooleanField(default=False)
+    promoted = models.BooleanField(default=False)
 
     categories: models.QuerySet[Category] = models.ManyToManyField(
         "podcasts.Category",
@@ -203,7 +194,7 @@ class Podcast(models.Model):
         related_name="recommended_podcasts",
     )
 
-    search_vector: str | None = SearchVectorField(null=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager[Podcast] = PodcastQuerySet.as_manager()
 
@@ -349,7 +340,7 @@ class Recommendation(models.Model):
         related_name="similar",
     )
 
-    frequency: int = models.PositiveIntegerField(default=0)
+    frequency = models.PositiveIntegerField(default=0)
 
     similarity: decimal.Decimal | None = models.DecimalField(
         decimal_places=10,
