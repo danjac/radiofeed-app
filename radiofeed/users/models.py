@@ -45,6 +45,6 @@ class UserManager(BaseUserManager["User"]):
 class User(AbstractUser):
     """Custom User model."""
 
-    send_email_notifications: bool = models.BooleanField(default=True)
+    send_email_notifications = models.BooleanField(default=True)
 
     objects: models.Manager[User] = UserManager()
