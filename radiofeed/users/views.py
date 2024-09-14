@@ -16,7 +16,7 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
-class Stat(TypedDict):
+class UserStat(TypedDict):
     """Line item in user stats"""
 
     label: str
@@ -122,25 +122,25 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
-        Stat(
+        UserStat(
             label="Subscribed",
             value=request.user.subscriptions.count(),
             unit="podcast",
             url=reverse("podcasts:subscriptions"),
         ),
-        Stat(
+        UserStat(
             label="Private Feeds",
             value=request.user.subscriptions.filter(podcast__private=True).count(),
             unit="podcast",
             url=reverse("podcasts:private_feeds"),
         ),
-        Stat(
+        UserStat(
             label="Bookmarks",
             value=request.user.bookmarks.count(),
             unit="episode",
             url=reverse("episodes:bookmarks"),
         ),
-        Stat(
+        UserStat(
             label="Listened",
             value=request.user.audio_logs.count(),
             unit="episode",
