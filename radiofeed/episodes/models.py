@@ -47,31 +47,31 @@ class Episode(models.Model):
         related_name="episodes",
     )
 
-    guid: str = models.TextField()
+    guid = models.TextField()
 
     pub_date: datetime = models.DateTimeField()
 
-    title: str = models.TextField(blank=True)
-    description: str = models.TextField(blank=True)
-    keywords: str = models.TextField(blank=True)
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    keywords = models.TextField(blank=True)
 
-    website: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    website = models.URLField(max_length=2083, blank=True)
 
-    episode_type: str = models.CharField(max_length=30, default="full")
-    episode: int | None = models.IntegerField(null=True, blank=True)
-    season: int | None = models.IntegerField(null=True, blank=True)
+    episode_type = models.CharField(max_length=30, default="full")
+    episode = models.IntegerField(null=True, blank=True)
+    season = models.IntegerField(null=True, blank=True)
 
-    cover_url: str | None = models.URLField(max_length=2083, null=True, blank=True)
+    cover_url = models.URLField(max_length=2083, blank=True)
 
-    media_url: str = models.URLField(max_length=2083)
-    media_type: str = models.CharField(max_length=60)
+    media_url = models.URLField(max_length=2083)
+    media_type = models.CharField(max_length=60)
 
-    length: int | None = models.BigIntegerField(null=True, blank=True)
-    duration: str = models.CharField(max_length=30, blank=True)
+    length = models.BigIntegerField(null=True, blank=True)
+    duration = models.CharField(max_length=30, blank=True)
 
-    explicit: bool = models.BooleanField(default=False)
+    explicit = models.BooleanField(default=False)
 
-    search_vector: str | None = SearchVectorField(null=True, editable=False)
+    search_vector = SearchVectorField(null=True, editable=False)
 
     objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
 
