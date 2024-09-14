@@ -2,8 +2,7 @@
 
 set -o errexit
 
-# increase statement timeout for migrations
-#
+# increase statement timeout for larger migrations
 export STATEMENT_TIMEOUT=300
 
 python ./manage.py check --deploy
