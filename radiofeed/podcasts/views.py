@@ -55,16 +55,15 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 @login_required
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
+    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
+
     return render_partial_for_target(
         request,
         TemplateResponse(
             request,
             "podcasts/discover.html",
             {
-                "page_obj": paginate_lazy(
-                    request,
-                    _get_promoted_podcasts().order_by("-pub_date"),
-                ),
+                "page_obj": paginate_lazy(request, podcasts),
                 "search_url": reverse("podcasts:search_podcasts"),
             },
         ),
@@ -398,16 +397,12 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRe
     return HttpResponseRedirect(_private_feeds_url)
 
 
-def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
-    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
-
-
 def _get_podcasts() -> QuerySet[Podcast]:
     return Podcast.objects.filter(pub_date__isnull=False)
 
 
-def _get_promoted_podcasts() -> QuerySet[Podcast]:
-    return _get_podcasts().filter(promoted=True)
+def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
+    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
 
 
 def _render_subscribe_action(
