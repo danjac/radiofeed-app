@@ -6,7 +6,7 @@ from radiofeed.podcasts.models import Podcast
 class FeedParserError(ValueError):
     """Base feed parser exception."""
 
-    parser_error: tuple[str, str] | None = None
+    parser_error: Podcast.ParserError
 
     def __init__(self, *args, response: httpx.Response | None = None, **kwargs):
         self.response = response
@@ -16,34 +16,34 @@ class FeedParserError(ValueError):
 class DuplicateError(FeedParserError):
     """Another identical podcast exists in the database."""
 
-    parser_error = Podcast.ParserError.DUPLICATE
+    parser_error = Podcast.ParserError.DUPLICATE  # type: ignore[assignment]
 
 
 class InaccessibleError(FeedParserError):
     """Content is forbidden, no longer exists or other server issue."""
 
-    parser_error = Podcast.ParserError.INACCESSIBLE
+    parser_error = Podcast.ParserError.INACCESSIBLE  # type: ignore[assignment]
 
 
 class InvalidRSSError(FeedParserError):
     """Error parsing RSS content."""
 
-    parser_error = Podcast.ParserError.INVALID_RSS
+    parser_error = Podcast.ParserError.INVALID_RSS  # type: ignore[assignment]
 
 
 class NotModifiedError(FeedParserError):
     """RSS feed has not been modified since last update."""
 
-    parser_error = Podcast.ParserError.NOT_MODIFIED
+    parser_error = Podcast.ParserError.NOT_MODIFIED  # type: ignore[assignment]
 
 
 class UnavailableError(FeedParserError):
     """Content is inaccessible due to temporary network issue, 500 error etc."""
 
-    parser_error = Podcast.ParserError.UNAVAILABLE
+    parser_error = Podcast.ParserError.UNAVAILABLE  # type: ignore[assignment]
 
 
 class InvalidDataError(FeedParserError):
     """Error caused by unvalid data e.g. bad date strings."""
 
-    parser_error = Podcast.ParserError.INVALID_DATA
+    parser_error = Podcast.ParserError.INVALID_DATA  # type: ignore[assignment]
