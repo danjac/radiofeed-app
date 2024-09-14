@@ -17,16 +17,19 @@ class CoverVariant(StrEnum):
 
     CARD = "card"
     DETAIL = "detail"
+    TILE = "tile"
 
 
 _COVER_SIZES: Final = {
     CoverVariant.CARD: (96, 96),
     CoverVariant.DETAIL: (144, 160),
+    CoverVariant.TILE: (160, 224),
 }
 
 _COVER_CLASSES: Final = {
     CoverVariant.CARD: "size-16",
     CoverVariant.DETAIL: "size-36 lg:size-40",
+    CoverVariant.TILE: "size-40 lg:size-56",
 }
 
 _MIN_DESKTOP_WIDTH: Final = 1024
