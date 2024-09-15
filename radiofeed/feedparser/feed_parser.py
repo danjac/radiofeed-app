@@ -185,8 +185,7 @@ class _FeedParser:
     ) -> None:
         active: bool = True
         num_retries: int = self._podcast.num_retries
-
-        frequency: timedelta = self._podcast.frequency
+        frequency: timedelta | None = self._podcast.frequency
 
         etag: str = self._podcast.etag
         modified: datetime | None = self._podcast.modified
