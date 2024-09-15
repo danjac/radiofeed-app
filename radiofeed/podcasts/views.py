@@ -1,3 +1,5 @@
+from typing import cast
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -16,7 +18,7 @@ from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.types import AuthenticatedHttpRequest
+from radiofeed.users.models import User
 
 _discover_url: str = reverse_lazy("podcasts:discover")
 _private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
@@ -348,15 +350,13 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_form_methods
 @login_required
-def add_private_feed(
-    request: AuthenticatedHttpRequest,
-) -> HttpResponseRedirect | TemplateResponse:
+def add_private_feed(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
     """Add new private feed to collection."""
     if request.method == "POST":
         if request.POST.get("action") == "cancel":
             return HttpResponseRedirect(_private_feeds_url)
 
-        form = PrivateFeedForm(request.POST, user=request.user)
+        form = PrivateFeedForm(request.POST, user=cast(User, request.user))
 
         if form.is_valid():
             podcast, is_new = form.save()
@@ -372,7 +372,7 @@ def add_private_feed(
             messages.success(request, success_message)
             return HttpResponseRedirect(redirect_url)
     else:
-        form = PrivateFeedForm(user=request.user)
+        form = PrivateFeedForm(user=cast(User, request.user))
 
     return render_partial_for_target(
         request,
