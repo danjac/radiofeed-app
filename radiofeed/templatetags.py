@@ -68,6 +68,9 @@ def json_values(*pairs: str) -> str:
 
     This will generate:
         '{"X-CSRF-Token": "...", "myHeader": "form"}'
+
+    Note: LazyObjects will be resolved to strings. Should be ok for the simple case e.g
+    csrf_token but more complex cases should require evaluation of the lazy value first.
     """
     return json.dumps(
         {
@@ -87,19 +90,18 @@ def html_json_attr(name: str, *pairs: str) -> str:
 
     This will generate:
         hx-headers='{"X-CSRF-Token": "...", "myHeader": "form"}'
-
-    Note: LazyObjects will be resolved to strings. Should be ok for the simple case e.g
-    csrf_token but more complex cases should require evaluation of the lazy value first.
     """
     return format_html("{}='{}'", name, json_values(*pairs))
 
 
 hx_headers = register.simple_tag(
-    functools.partial(html_json_attr, "hx-headers"), name="hx_headers"
+    functools.partial(html_json_attr, "hx-headers"),
+    name="hx_headers",
 )
 
 hx_vals = register.simple_tag(
-    functools.partial(html_json_attr, "hx-vals"), name="hx_vals"
+    functools.partial(html_json_attr, "hx-vals"),
+    name="hx_vals",
 )
 
 
