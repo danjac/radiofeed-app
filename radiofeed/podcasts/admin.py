@@ -1,18 +1,12 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
-
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
-from django.template.defaultfilters import timesince, timeuntil
+from django.http import HttpRequest
 from django.utils import timezone
+from django.utils.timesince import timesince, timeuntil
 
 from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.feedparser import scheduler
 from radiofeed.podcasts.models import Category, Podcast, Subscription
-
-if TYPE_CHECKING:  # pragma: no cover
-    from django.http import HttpRequest
 
 
 @admin.register(Category)

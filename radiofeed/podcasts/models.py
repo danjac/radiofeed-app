@@ -5,6 +5,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
@@ -78,7 +79,7 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
         qs = super().search(search_term)
 
         exact_matches_qs = (
-            self.alias(title_lower=models.functions.Lower("title"))
+            self.alias(title_lower=Lower("title"))
             .filter(title_lower=force_str(search_term).casefold())
             .values_list("pk", flat=True)
         )
@@ -196,7 +197,7 @@ class Podcast(models.Model):
             models.Index(fields=["promoted"]),
             models.Index(fields=["content_hash"]),
             models.Index(
-                models.functions.Lower("title"),
+                Lower("title"),
                 name="%(app_label)s_%(class)s_lwr_title_idx",
             ),
             GinIndex(fields=["search_vector"]),
