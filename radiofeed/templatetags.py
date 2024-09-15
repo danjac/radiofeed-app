@@ -94,15 +94,16 @@ def html_json_attr(name: str, *pairs: str) -> str:
     return format_html("{}='{}'", name, json_values(*pairs))
 
 
-hx_headers = register.simple_tag(
-    functools.partial(html_json_attr, "hx-headers"),
-    name="hx_headers",
-)
+@register.simple_tag
+def hx_headers(*pairs: str) -> str:
+    """Renders hx-headers."""
+    return html_json_attr("hx_headers", *pairs)
 
-hx_vals = register.simple_tag(
-    functools.partial(html_json_attr, "hx-vals"),
-    name="hx_vals",
-)
+
+@register.simple_tag
+def hx_vals(*pairs: str) -> str:
+    """Renders hx-vals."""
+    return html_json_attr("hx_vals", *pairs)
 
 
 @register.simple_tag

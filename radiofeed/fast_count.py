@@ -2,6 +2,7 @@ from typing import Protocol
 
 from django.core.paginator import Paginator
 from django.db import connections
+from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 
@@ -61,7 +62,7 @@ class FastCountAdminMixin(T_ModelAdmin):
 
     paginator = FastCountPaginator
 
-    def get_queryset(self, request: HttpRequest) -> FastCounter:
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
         """Monkeypatches `count()` to use fast counter."""
         qs = super().get_queryset(request)
         qs.count = qs.fast_count

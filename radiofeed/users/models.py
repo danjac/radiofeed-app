@@ -47,4 +47,4 @@ class User(AbstractUser):
 
     send_email_notifications = models.BooleanField(default=True)
 
-    objects: models.Manager[User] = UserManager()
+    objects: models.Manager = UserManager()

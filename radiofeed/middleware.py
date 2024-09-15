@@ -1,4 +1,5 @@
 import dataclasses
+from collections.abc import Callable
 from typing import Final
 
 from django.contrib.messages import get_messages
@@ -9,13 +10,11 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
-from radiofeed.types import HttpRequestResponse
-
 
 class BaseMiddleware:
     """Base middleware class."""
 
-    def __init__(self, get_response: HttpRequestResponse) -> None:
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
 
@@ -31,7 +30,7 @@ class HtmxRestoreMiddleware(BaseMiddleware):
         """Middleware implementation."""
         response = self.get_response(request)
         if request.htmx:
-            patch_vary_headers(response, ["HX-Request"])
+            patch_vary_headers(response, ("HX-Request",))
             response.setdefault("Cache-Control", "no-store, max-age=0")
         return response
 

@@ -1,8 +1,8 @@
 from django.conf import settings
-from django.core.checks import CheckMessage, Warning
+from django.core.checks import Warning
 
 
-def check_secure_admin_url(app_configs: list, **kwargs) -> list[CheckMessage]:
+def check_secure_admin_url(app_configs: list[str], **kwargs) -> list[Warning]:
     """Checks ADMIN_URL is not /admin/ in production."""
     if settings.ADMIN_URL == "admin/":
         return [
