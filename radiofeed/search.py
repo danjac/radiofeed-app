@@ -6,7 +6,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Q, QuerySet
 
 
-class SearchQuerySetMixin:
+class SearchQuerySetMixin(QuerySet):
     """Provides standard search interface for models supporting search vector
     and ranking.
 
