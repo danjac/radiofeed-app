@@ -11,7 +11,6 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from fast_update.query import FastUpdateQuerySet
-from model_utils.models import TimeStampedModel
 
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.html import strip_html
@@ -187,7 +186,7 @@ class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     ]
 
 
-class Bookmark(TimeStampedModel):
+class Bookmark(models.Model):
     """Bookmarked episodes."""
 
     user = models.ForeignKey(
@@ -202,6 +201,8 @@ class Bookmark(TimeStampedModel):
         related_name="bookmarks",
     )
 
+    created = models.DateTimeField(auto_now_add=True)
+
     objects = BookmarkQuerySet.as_manager()
 
     class Meta:
@@ -215,6 +216,10 @@ class Bookmark(TimeStampedModel):
             models.Index(fields=["-created"]),
         ]
 
+    def __str__(self) -> str:
+        """Required __str__ method"""
+        return self._meta.verbose_name
+
 
 class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for AudioLog."""
@@ -225,7 +230,7 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     ]
 
 
-class AudioLog(TimeStampedModel):
+class AudioLog(models.Model):
     """Record of user listening history."""
 
     user: User = models.ForeignKey(
@@ -239,8 +244,8 @@ class AudioLog(TimeStampedModel):
         related_name="audio_logs",
     )
 
-    listened: datetime = models.DateTimeField()
-    current_time: int = models.IntegerField(default=0)
+    listened = models.DateTimeField()
+    current_time = models.IntegerField(default=0)
 
     objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()
 
@@ -255,3 +260,7 @@ class AudioLog(TimeStampedModel):
             models.Index(fields=["-listened"]),
             models.Index(fields=["listened"]),
         ]
+
+    def __str__(self) -> str:
+        """Required __str__ method"""
+        return self._meta.verbose_name

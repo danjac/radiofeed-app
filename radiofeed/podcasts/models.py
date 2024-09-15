@@ -11,7 +11,6 @@ from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from model_utils.models import TimeStampedModel
 
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.html import strip_html
@@ -284,7 +283,7 @@ class Podcast(models.Model):
         return False if self.private else self.recommendations.exists()
 
 
-class Subscription(TimeStampedModel):
+class Subscription(models.Model):
     """Subscribed podcast belonging to a user's collection."""
 
     subscriber: User = models.ForeignKey(
@@ -299,6 +298,8 @@ class Subscription(TimeStampedModel):
         related_name="subscriptions",
     )
 
+    created = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         constraints: ClassVar[list] = [
             models.UniqueConstraint(
@@ -307,6 +308,10 @@ class Subscription(TimeStampedModel):
             )
         ]
         indexes: ClassVar[list] = [models.Index(fields=["-created"])]
+
+    def __str__(self) -> str:
+        """Required __str__ method"""
+        return self._meta.verbose_name
 
 
 class RecommendationQuerySet(models.QuerySet):

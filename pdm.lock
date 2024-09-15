@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:f1ad995c0895d6263b6daf43faba96905efc02a1cb8c80306f9722b0786a6118"
+content_hash = "sha256:78a320037e8637df59c5e8e766b5ec75591333a7152978d47fbd762ef0978f98"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -480,20 +480,6 @@ dependencies = [
 files = [
     {file = "django_htmx-1.19.0-py3-none-any.whl", hash = "sha256:875a642814e52278c1728842436beda2001847a493ab79fd82da3fb46ead140f"},
     {file = "django_htmx-1.19.0.tar.gz", hash = "sha256:e7e17304e78e07f96eca0affc3ce1806edfdf3538bb7cb1912452b101f3e627d"},
-]
-
-[[package]]
-name = "django-model-utils"
-version = "5.0.0"
-requires_python = ">=3.8"
-summary = "Django model mixins and utilities"
-groups = ["default"]
-dependencies = [
-    "Django>=3.2",
-]
-files = [
-    {file = "django_model_utils-5.0.0-py3-none-any.whl", hash = "sha256:fec78e6c323d565a221f7c4edc703f4567d7bb1caeafe1acd16a80c5ff82056b"},
-    {file = "django_model_utils-5.0.0.tar.gz", hash = "sha256:041cdd6230d2fbf6cd943e1969318bce762272077f4ecd333ab2263924b4e5eb"},
 ]
 
 [[package]]

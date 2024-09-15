@@ -1,7 +1,7 @@
 import pytest
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
+from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -163,3 +163,8 @@ class TestPodcastModel:
     def test_num_episodes(self, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         assert podcast.num_episodes == 3
+
+
+class TestSubscriptionModel:
+    def test_str(self):
+        assert str(Subscription()) == "subscription"

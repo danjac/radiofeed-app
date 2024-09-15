@@ -185,9 +185,19 @@ class TestBookmarkManager:
         assert Bookmark.objects.search("testing").count() == 1
 
 
+class TestBookmarkModel:
+    def test_str(self):
+        assert str(Bookmark()) == "bookmark"
+
+
 class TestAudioLogManager:
     @pytest.mark.django_db
     def test_search(self):
         episode = EpisodeFactory(title="testing")
         AudioLogFactory(episode=episode)
         assert AudioLog.objects.search("testing").count() == 1
+
+
+class TestAudioLogModel:
+    def test_str(self):
+        assert str(AudioLog()) == "audio log"
