@@ -97,13 +97,13 @@ def html_json_attr(name: str, *pairs: str) -> str:
 @register.simple_tag
 def hx_headers(*pairs: str) -> str:
     """Renders hx-headers."""
-    return html_json_attr("hx_headers", *pairs)
+    return html_json_attr("hx-headers", *pairs)
 
 
 @register.simple_tag
 def hx_vals(*pairs: str) -> str:
     """Renders hx-vals."""
-    return html_json_attr("hx_vals", *pairs)
+    return html_json_attr("hx-vals", *pairs)
 
 
 @register.simple_tag

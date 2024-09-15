@@ -34,7 +34,7 @@ class Category(models.Model):
     """iTunes category."""
 
     name = models.CharField(max_length=100, unique=True)
-    parent: Category | None = models.ForeignKey(
+    parent = models.ForeignKey(
         "self",
         null=True,
         blank=True,
@@ -181,13 +181,13 @@ class Podcast(models.Model):
     explicit = models.BooleanField(default=False)
     promoted = models.BooleanField(default=False)
 
-    categories: models.QuerySet[Category] = models.ManyToManyField(
+    categories = models.ManyToManyField(
         "podcasts.Category",
         blank=True,
         related_name="podcasts",
     )
 
-    recipients: models.QuerySet[User] = models.ManyToManyField(
+    recipients = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
         related_name="recommended_podcasts",
@@ -286,13 +286,13 @@ class Podcast(models.Model):
 class Subscription(models.Model):
     """Subscribed podcast belonging to a user's collection."""
 
-    subscriber: User = models.ForeignKey(
+    subscriber = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="subscriptions",
     )
 
-    podcast: Podcast = models.ForeignKey(
+    podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="subscriptions",
@@ -333,13 +333,13 @@ class RecommendationQuerySet(models.QuerySet):
 class Recommendation(models.Model):
     """Recommendation based on similarity between two podcasts."""
 
-    podcast: Podcast = models.ForeignKey(
+    podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="recommendations",
     )
 
-    recommended: Podcast = models.ForeignKey(
+    recommended = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="similar",

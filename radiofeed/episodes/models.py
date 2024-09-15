@@ -17,8 +17,6 @@ from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 
 if TYPE_CHECKING:  # pragma: no cover
-    from datetime import datetime
-
     from radiofeed.podcasts.models import Podcast
     from radiofeed.users.models import User
 
@@ -40,7 +38,7 @@ class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQue
 class Episode(models.Model):
     """Individual podcast episode."""
 
-    podcast: Podcast = models.ForeignKey(
+    podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
         related_name="episodes",
@@ -48,7 +46,7 @@ class Episode(models.Model):
 
     guid = models.TextField()
 
-    pub_date: datetime = models.DateTimeField()
+    pub_date = models.DateTimeField()
 
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
@@ -233,12 +231,12 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
 class AudioLog(models.Model):
     """Record of user listening history."""
 
-    user: User = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="audio_logs",
     )
-    episode: Episode = models.ForeignKey(
+    episode = models.ForeignKey(
         "episodes.Episode",
         on_delete=models.CASCADE,
         related_name="audio_logs",

@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, cast
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -13,8 +13,8 @@ from django.views.decorators.http import require_safe
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
-from radiofeed.types import AuthenticatedHttpRequest
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
+from radiofeed.users.models import User
 
 
 class UserStat(TypedDict):
@@ -29,7 +29,7 @@ class UserStat(TypedDict):
 @require_form_methods
 @login_required
 def user_preferences(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Allow user to edit their preferences."""
     if request.method == "POST":
@@ -58,13 +58,13 @@ def user_preferences(
 @require_form_methods
 @login_required
 def import_podcast_feeds(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            if num_new_feeds := len(form.subscribe_to_feeds(request.user)):
+            if num_new_feeds := len(form.subscribe_to_feeds(cast(User, request.user))):
                 messages.success(
                     request,
                     f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
@@ -91,7 +91,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
@@ -120,7 +120,7 @@ def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
         UserStat(
