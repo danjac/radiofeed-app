@@ -31,11 +31,11 @@ def get_scheduled_podcasts() -> QuerySet[Podcast]:
             Q(parsed__lt=now - _MAX_FREQUENCY)
             | Q(
                 pub_date__isnull=True,
-                parsed__lt=now - F("frequency"),
+                parsed__lt=now - F("frequency"),  # type: ignore[operator]
             )
             | Q(
                 pub_date__isnull=False,
-                pub_date__lt=now - F("frequency"),
+                pub_date__lt=now - F("frequency"),  # type: ignore[operator]
             ),
             parsed__lt=now - _MIN_FREQUENCY,
         )

@@ -70,7 +70,7 @@ class ParserErrorFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
-    ) -> tuple[tuple[str, str], ...]:
+    ) -> list[tuple[str, str]]:
         """Returns lookup values/labels."""
         return Podcast.ParserError.choices
 

@@ -140,7 +140,9 @@ class Podcast(models.Model):
 
     parsed = models.DateTimeField(null=True, blank=True)
 
-    parser_error = models.CharField(max_length=30, choices=ParserError, blank=True)
+    parser_error = models.CharField(
+        max_length=30, choices=ParserError.choices, blank=True
+    )
 
     frequency = models.DurationField(null=True, blank=True)
 
@@ -309,7 +311,7 @@ class Subscription(models.Model):
 
     def __str__(self) -> str:
         """Required __str__ method"""
-        return self._meta.verbose_name
+        return str(self._meta.verbose_name)
 
 
 class RecommendationQuerySet(models.QuerySet):

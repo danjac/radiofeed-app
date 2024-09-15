@@ -218,7 +218,7 @@ class Bookmark(models.Model):
 
     def __str__(self) -> str:
         """Required __str__ method"""
-        return self._meta.verbose_name
+        return str(self._meta.verbose_name)
 
 
 class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
@@ -263,4 +263,4 @@ class AudioLog(models.Model):
 
     def __str__(self) -> str:
         """Required __str__ method"""
-        return self._meta.verbose_name
+        return "audio log"

@@ -13,6 +13,7 @@ from django.views.decorators.http import require_safe
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
+from radiofeed.types import AuthenticatedHttpRequest
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 
@@ -28,7 +29,7 @@ class UserStat(TypedDict):
 @require_form_methods
 @login_required
 def user_preferences(
-    request: HttpRequest,
+    request: AuthenticatedHttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Allow user to edit their preferences."""
     if request.method == "POST":
@@ -57,7 +58,7 @@ def user_preferences(
 @require_form_methods
 @login_required
 def import_podcast_feeds(
-    request: HttpRequest,
+    request: AuthenticatedHttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
@@ -90,7 +91,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
@@ -119,7 +120,7 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def user_stats(request: HttpRequest) -> TemplateResponse:
+def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
         UserStat(
