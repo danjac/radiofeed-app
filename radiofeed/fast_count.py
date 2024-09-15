@@ -15,7 +15,7 @@ class FastCounter(Protocol):
         ...  # pragma: no cover
 
 
-class FastCountQuerySetMixin(QuerySet):
+class FastCountQuerySetMixin:
     """Provides faster alternative to COUNT for very large tables, using PostgreSQL
     retuple SELECT.
 
