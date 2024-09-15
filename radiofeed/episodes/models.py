@@ -211,7 +211,12 @@ class Bookmark(models.Model):
 
     def __str__(self) -> str:
         """Required __str__ method"""
-        return str(self._meta.verbose_name)
+        return " | ".join(
+            [
+                f"user {self.user_id}",
+                f"episode {self.episode_id}",
+            ]
+        )
 
 
 class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
@@ -256,4 +261,10 @@ class AudioLog(models.Model):
 
     def __str__(self) -> str:
         """Required __str__ method"""
-        return "audio log"
+        return " | ".join(
+            [
+                f"user {self.user_id}",
+                f"episode {self.episode_id}",
+                self.listened.isoformat(),
+            ]
+        )

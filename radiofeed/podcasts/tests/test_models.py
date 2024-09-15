@@ -26,7 +26,10 @@ class TestRecommendationManager:
 
 class TestRecommendationModel:
     def test_str(self):
-        assert str(Recommendation(id=100)) == "Recommendation #100"
+        assert (
+            str(Recommendation(podcast_id=1, recommended_id=2))
+            == "podcast 1 | recommended 2"
+        )
 
 
 class TestCategoryManager:
@@ -167,4 +170,7 @@ class TestPodcastModel:
 
 class TestSubscriptionModel:
     def test_str(self):
-        assert str(Subscription()) == "subscription"
+        assert (
+            str(Subscription(podcast_id=1, subscriber_id=2))
+            == "subscriber 2 | podcast 1"
+        )

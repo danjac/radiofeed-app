@@ -37,7 +37,7 @@ class ActiveFilter(admin.SimpleListFilter):
     parameter_name = "active"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (
@@ -63,7 +63,7 @@ class ParserErrorFilter(admin.SimpleListFilter):
     parameter_name = "parser_error"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> list[tuple[str, str]]:
         """Returns lookup values/labels."""
         return Podcast.ParserError.choices
@@ -85,7 +85,7 @@ class PubDateFilter(admin.SimpleListFilter):
     parameter_name = "pub_date"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (
@@ -113,7 +113,7 @@ class PromotedFilter(admin.SimpleListFilter):
     parameter_name = "promoted"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (("yes", "Promoted"),)
@@ -132,7 +132,7 @@ class PrivateFilter(admin.SimpleListFilter):
     parameter_name = "private"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (("yes", "Private"),)
@@ -151,7 +151,7 @@ class SubscribedFilter(admin.SimpleListFilter):
     parameter_name = "subscribed"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (("yes", "Subscribed"),)
@@ -178,7 +178,7 @@ class ScheduledFilter(admin.SimpleListFilter):
     parameter_name = "scheduled"
 
     def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin[Podcast]
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> tuple[tuple[str, str], ...]:
         """Returns lookup values/labels."""
         return (("yes", "Scheduled"),)

@@ -187,7 +187,7 @@ class TestBookmarkManager:
 
 class TestBookmarkModel:
     def test_str(self):
-        assert str(Bookmark()) == "bookmark"
+        assert str(Bookmark(episode_id=1, user_id=1)) == "user 1 | episode 1"
 
 
 class TestAudioLogManager:
@@ -200,4 +200,9 @@ class TestAudioLogManager:
 
 class TestAudioLogModel:
     def test_str(self):
-        assert str(AudioLog()) == "audio log"
+        audio_log = AudioLog(
+            episode_id=2,
+            user_id=1,
+            listened=datetime.datetime(year=2024, month=9, day=10),
+        )
+        assert str(audio_log) == "user 1 | episode 2 | 2024-09-10T00:00:00"

@@ -304,7 +304,12 @@ class Subscription(models.Model):
 
     def __str__(self) -> str:
         """Required __str__ method"""
-        return str(self._meta.verbose_name)
+        return " | ".join(
+            [
+                f"subscriber {self.subscriber_id}",
+                f"podcast {self.podcast_id}",
+            ]
+        )
 
 
 class RecommendationQuerySet(models.QuerySet):
@@ -363,5 +368,10 @@ class Recommendation(models.Model):
         ]
 
     def __str__(self) -> str:
-        """Returns ID of recommendation."""
-        return f"Recommendation #{self.pk}"
+        """Required __str__ method"""
+        return " | ".join(
+            [
+                f"podcast {self.podcast_id}",
+                f"recommended {self.recommended_id}",
+            ]
+        )
