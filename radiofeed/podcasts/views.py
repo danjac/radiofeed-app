@@ -156,7 +156,7 @@ def podcast_detail(
 
 @require_safe
 @login_required
-def latest_episode(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
+def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
     """Redirects to latest episode."""
     podcast = _get_podcast_or_404(podcast_id)
     if episode := podcast.episodes.order_by("-pub_date").first():
