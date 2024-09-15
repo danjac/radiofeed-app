@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:41d55d357efdda239c5eb0ec0eaaa54aa0311f7b2440090d539b24c5f35978b3"
+content_hash = "sha256:19b033c7abedf368973803276def5f701887ae8d06c8c1480aa0c4e4dd86e417"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -15,7 +15,7 @@ name = "annotated-types"
 version = "0.7.0"
 requires_python = ">=3.8"
 summary = "Reusable constraint types to use with typing.Annotated"
-groups = ["default", "dev"]
+groups = ["default"]
 dependencies = [
     "typing-extensions>=4.0.0; python_version < \"3.9\"",
 ]
@@ -918,17 +918,6 @@ files = [
 ]
 
 [[package]]
-name = "mypy-extensions"
-version = "1.0.0"
-requires_python = ">=3.5"
-summary = "Type system extensions for programs checked with the mypy type checker."
-groups = ["dev"]
-files = [
-    {file = "mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d"},
-    {file = "mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782"},
-]
-
-[[package]]
 name = "nh3"
 version = "0.2.18"
 summary = "Python bindings to the ammonia HTML sanitization library."
@@ -1236,7 +1225,7 @@ name = "pydantic"
 version = "2.9.1"
 requires_python = ">=3.8"
 summary = "Data validation using Python type hints"
-groups = ["default", "dev"]
+groups = ["default"]
 dependencies = [
     "annotated-types>=0.6.0",
     "pydantic-core==2.23.3",
@@ -1253,7 +1242,7 @@ name = "pydantic-core"
 version = "2.23.3"
 requires_python = ">=3.8"
 summary = "Core functionality for Pydantic validation and serialization"
-groups = ["default", "dev"]
+groups = ["default"]
 dependencies = [
     "typing-extensions!=4.7.0,>=4.6.0",
 ]
@@ -1417,22 +1406,6 @@ dependencies = [
 files = [
     {file = "pytest-mock-3.14.0.tar.gz", hash = "sha256:2719255a1efeceadbc056d6bf3df3d1c5015530fb40cf347c0f9afac88410bd0"},
     {file = "pytest_mock-3.14.0-py3-none-any.whl", hash = "sha256:0b72c38033392a5f4621342fe11e9219ac11ec9d375f8e2a0c164539e0d70f6f"},
-]
-
-[[package]]
-name = "pytest-pyright"
-version = "0.0.6"
-requires_python = ">=3.7"
-summary = "Pytest plugin for type checking code with Pyright"
-groups = ["dev"]
-dependencies = [
-    "pydantic>=1.6.0",
-    "pyright>=0.0.7",
-    "pytest>=7.0.0",
-]
-files = [
-    {file = "pytest-pyright-0.0.6.tar.gz", hash = "sha256:cc3353d62750393c1e0eb150aac662d50661bbc68c2fc47095ed3f910582d8c2"},
-    {file = "pytest_pyright-0.0.6-py3-none-any.whl", hash = "sha256:f2cefac242fde4a54437f66f05de7ffe23e87bf65751b7677e0d3c861a60a328"},
 ]
 
 [[package]]
