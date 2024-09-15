@@ -6,8 +6,6 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.functional import cached_property
 
-from radiofeed.types import T_ModelAdmin, T_QuerySet
-
 
 class FastCounter(Protocol):
     """Protocol for QuerySet subclasses or mixins implementing `fast_count()`."""
@@ -17,7 +15,7 @@ class FastCounter(Protocol):
         ...  # pragma: no cover
 
 
-class FastCountQuerySetMixin(T_QuerySet):
+class FastCountQuerySetMixin:
     """Provides faster alternative to COUNT for very large tables, using PostgreSQL
     retuple SELECT.
 
@@ -28,7 +26,7 @@ class FastCountQuerySetMixin(T_QuerySet):
 
     fast_count_row_limit: int = 1000
 
-    def fast_count(self: T_QuerySet) -> int:
+    def fast_count(self) -> int:
         """Does optimized COUNT.
 
         If query contains WHERE, DISTINCT or GROUP BY, or number of rows under
@@ -57,7 +55,7 @@ class FastCountPaginator(Paginator):
         return self.object_list.fast_count()
 
 
-class FastCountAdminMixin(T_ModelAdmin):
+class FastCountAdminMixin:
     """Implements fast count. Use with queryset implementing FastCounter."""
 
     paginator = FastCountPaginator

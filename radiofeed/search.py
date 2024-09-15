@@ -3,12 +3,10 @@ import operator
 from typing import ClassVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Q
-
-from radiofeed.types import T_QuerySet
+from django.db.models import F, Q, QuerySet
 
 
-class SearchQuerySetMixin(T_QuerySet):
+class SearchQuerySetMixin:
     """Provides standard search interface for models supporting search vector
     and ranking.
 
@@ -27,7 +25,7 @@ class SearchQuerySetMixin(T_QuerySet):
     search_rank: str = "rank"
     search_type: str = "websearch"
 
-    def search(self: T_QuerySet, search_term: str) -> T_QuerySet:
+    def search(self, search_term: str) -> QuerySet:
         """Returns result of search."""
 
         if not search_term:

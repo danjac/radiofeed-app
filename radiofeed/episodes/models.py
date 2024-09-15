@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar, Optional
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -15,16 +13,13 @@ from fast_update.query import FastUpdateQuerySet
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
-
-if TYPE_CHECKING:  # pragma: no cover
-    from radiofeed.podcasts.models import Podcast
-    from radiofeed.users.models import User
+from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
-    def subscribed(self, user: User) -> models.QuerySet[Podcast]:
+    def subscribed(self, user: User) -> models.QuerySet["Episode"]:
         """Returns episodes belonging to episodes subscribed by user."""
         return self.alias(
             is_subscribed=models.Exists(
@@ -70,7 +65,7 @@ class Episode(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager[Episode] = EpisodeQuerySet.as_manager()
+    objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
 
     class Meta:
         constraints: ClassVar[list] = [
@@ -104,14 +99,14 @@ class Episode(models.Model):
             },
         )
 
-    def get_next_episode(self) -> Episode | None:
+    def get_next_episode(self) -> Optional["Episode"]:
         """Returns the next episode in this podcast."""
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def get_previous_episode(self) -> Episode | None:
+    def get_previous_episode(self) -> Optional["Episode"]:
         """Returns the previous episode in this podcast."""
         try:
             return self.get_previous_by_pub_date(podcast=self.podcast)
@@ -245,7 +240,7 @@ class AudioLog(models.Model):
     listened = models.DateTimeField()
     current_time = models.IntegerField(default=0)
 
-    objects: models.Manager[AudioLog] = AudioLogQuerySet.as_manager()
+    objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
 
     class Meta:
         constraints: ClassVar[list] = [

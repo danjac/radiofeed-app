@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -15,15 +13,13 @@ from django.utils.text import slugify
 from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
-
-if TYPE_CHECKING:  # pragma: no cover
-    from radiofeed.users.models import User
+from radiofeed.users.models import User
 
 
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term) -> models.QuerySet[Category]:
+    def search(self, search_term) -> models.QuerySet["Category"]:
         """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
@@ -42,7 +38,7 @@ class Category(models.Model):
         related_name="children",
     )
 
-    objects: models.Manager[Category] = CategoryQuerySet.as_manager()
+    objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
 
     class Meta:
         verbose_name_plural = "categories"
@@ -68,14 +64,10 @@ class Category(models.Model):
         return slugify(self.name, allow_unicode=False)
 
 
-class PodcastQuerySet(
-    FastCountQuerySetMixin,
-    SearchQuerySetMixin,
-    models.QuerySet,
-):
+class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    def search(self, search_term) -> models.QuerySet[Podcast]:
+    def search(self, search_term) -> models.QuerySet["Podcast"]:
         """Does standard full text search, prioritizing exact search results.
 
         Annotates `exact_match` to indicate such results.
@@ -99,7 +91,7 @@ class PodcastQuerySet(
             )
         )
 
-    def subscribed(self, user: User) -> models.QuerySet[Podcast]:
+    def subscribed(self, user: User) -> models.QuerySet["Podcast"]:
         """Returns podcasts subscribed by user."""
         return self.alias(
             is_subscribed=models.Exists(
@@ -195,7 +187,7 @@ class Podcast(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager[Podcast] = PodcastQuerySet.as_manager()
+    objects: models.Manager["Podcast"] = PodcastQuerySet.as_manager()
 
     class Meta:
         indexes: ClassVar[list] = [
@@ -317,7 +309,7 @@ class Subscription(models.Model):
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
 
-    def with_relevance(self) -> models.QuerySet[Recommendation]:
+    def with_relevance(self) -> models.QuerySet["Recommendation"]:
         """Returns factor of frequency and similarity as annotated value `relevance`."""
         return self.annotate(relevance=models.F("frequency") * models.F("similarity"))
 
@@ -354,7 +346,7 @@ class Recommendation(models.Model):
         blank=True,
     )
 
-    objects: models.Manager[Recommendation] = RecommendationQuerySet.as_manager()
+    objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()
 
     class Meta:
         indexes: ClassVar[list] = [
