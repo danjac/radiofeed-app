@@ -17,9 +17,6 @@ from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 
 if TYPE_CHECKING:  # pragma: no cover
-    import decimal
-    from datetime import datetime, timedelta
-
     from radiofeed.users.models import User
 
 
@@ -145,7 +142,7 @@ class Podcast(models.Model):
 
     parser_error = models.CharField(max_length=30, choices=ParserError, blank=True)
 
-    frequency: timedelta = models.DurationField(null=True, blank=True)
+    frequency = models.DurationField(null=True, blank=True)
 
     modified = models.DateTimeField(
         null=True,
@@ -173,8 +170,9 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
-    created: datetime = models.DateTimeField(auto_now_add=True)
-    updated: datetime = models.DateTimeField(
+    created = models.DateTimeField(auto_now_add=True)
+
+    updated = models.DateTimeField(
         auto_now=True, verbose_name="Podcast Updated in Database"
     )
 
@@ -347,7 +345,7 @@ class Recommendation(models.Model):
 
     frequency = models.PositiveIntegerField(default=0)
 
-    similarity: decimal.Decimal | None = models.DecimalField(
+    similarity = models.DecimalField(
         decimal_places=10,
         max_digits=100,
         null=True,
