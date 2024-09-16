@@ -2,9 +2,9 @@ import pathlib
 import sys
 from email.utils import getaddresses
 
-import environ
 import sentry_sdk
 from django.urls import reverse_lazy
+from environs import Env
 from loguru import logger
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
@@ -14,9 +14,8 @@ BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 # by default, environ logs all the variables, which we don't want
 logger.disable("environ.environ")
 
-env = environ.Env()
-
-environ.Env.read_env(BASE_DIR / ".env")
+env = Env()
+env.read_env()
 
 DEBUG = env.bool("DEBUG", default=False)
 
@@ -92,7 +91,8 @@ CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=360)
 STATEMENT_TIMEOUT = env.int("STATEMENT_TIMEOUT", default=30)
 
 DATABASES = {
-    "default": env.db(
+    "default": env.dj_db_url(
+        "DATABASE_URL",
         default="postgresql://postgres:password@127.0.0.1:5432/postgres",
     )
     | {
@@ -112,12 +112,9 @@ DATABASES = {
 DEFAULT_CACHE_TIMEOUT = 300
 
 CACHES = {
-    "default": env.cache("REDIS_URL", default="redis://127.0.0.1:6379/0")
+    "default": env.dj_cache_url("REDIS_URL", default="redis://127.0.0.1:6379/0")
     | {
         "TIMEOUT": DEFAULT_CACHE_TIMEOUT,
-        "OPTIONS": {
-            "PARSER_CLASS": "redis.connection._HiredisParser",
-        },
     }
 }
 
@@ -189,7 +186,7 @@ if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
     # For European domains: https://api.eu.mailgun.net/v3
-    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    MAILGUN_API_URL = env.url("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
     MAILGUN_SENDER_DOMAIN = EMAIL_HOST = env("MAILGUN_SENDER_DOMAIN")
 
     ANYMAIL = {
@@ -198,7 +195,7 @@ if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
         "MAILGUN_SENDER_DOMAIN": MAILGUN_SENDER_DOMAIN,
     }
 else:
-    EMAIL_CONFIG = env.email(default="smtp://localhost:1025")
+    EMAIL_CONFIG = env.dj_email_url("EMAIL_URL", default="smtp://localhost:1025")
 
     EMAIL_HOST = EMAIL_CONFIG["EMAIL_HOST"]
 
@@ -207,9 +204,10 @@ else:
     EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
     EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=False)
 
-ADMINS = getaddresses([ADMINS]) if (ADMINS := env("ADMINS", default="")) else []
+ADMINS = getaddresses([admins]) if (admins := env("ADMINS", default="")) else []
+
 MANAGERS = (
-    getaddresses([MANAGERS]) if (MANAGERS := env("MANAGERS", default="")) else ADMINS
+    getaddresses([managers]) if (managers := env("MANAGERS", default="")) else ADMINS
 )
 
 SERVER_EMAIL = env("SERVER_EMAIL", default=f"no-reply@{EMAIL_HOST}")
@@ -449,12 +447,12 @@ logger.configure(
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
-if SENTRY_URL := env("SENTRY_URL", default=None):
+if env.bool("USE_SENTRY", default=False):
     logger.disable("sentry_sdk.integrations.logging")
     ignore_logger("django.security.DisallowedHost")
 
     sentry_sdk.init(
-        dsn=SENTRY_URL,
+        dsn=env.url("SENTRY_URL"),
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.5,
         # If you wish to associate users to errors (assuming you are using

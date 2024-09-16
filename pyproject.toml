@@ -8,7 +8,6 @@ authors = [
 dependencies = [
     "django>=5.1",
     "django-allauth[socialaccount]>=64.2.0",
-    "dj-database-url>=2.2.0",
     "django-anymail>=11.1",
     "django-csp>=3.8",
     "django-environ>=0.11.2",
@@ -20,7 +19,6 @@ dependencies = [
     "django-redis>=5.4.0",
     "django-version-checks>=1.12.0",
     "heroicons[django]>=2.8.0",
-    "hiredis>=3.0.0",
     "httpx>=0.27.2",
     "loguru>=0.7.2",
     "lxml>=5.3.0",
@@ -39,6 +37,7 @@ dependencies = [
     "gunicorn>=23.0.0",
     "whitenoise[brotli]>=6.7.0",
     "django-template-partials>=24.4",
+    "environs[django]>=11.0.0",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
