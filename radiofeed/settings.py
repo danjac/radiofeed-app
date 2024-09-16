@@ -310,8 +310,11 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 if env.bool("USE_HTTPS", default=True):
     SECURE_SSL_REDIRECT = True
 
-    SECURE_PROXY_SSL_HEADER = env.tuple(
-        "SECURE_PROXY_SSL_HEADER", default=("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_PROXY_SSL_HEADER = tuple(
+        env.list(
+            "SECURE_PROXY_SSL_HEADER",
+            default=["HTTP_X_FORWARDED_PROTO", "https"],
+        ),
     )
 else:
     SECURE_SSL_REDIRECT = False
