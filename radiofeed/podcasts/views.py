@@ -231,9 +231,8 @@ def category_list(request: HttpRequest) -> TemplateResponse:
     categories = (
         Category.objects.alias(
             has_podcasts=Exists(
-                Podcast.objects.filter(
+                _get_podcasts().filter(
                     categories=OuterRef("pk"),
-                    pub_date__isnull=False,
                     private=False,
                 )
             )
