@@ -1,11 +1,13 @@
+from collections.abc import Sequence
+
 from django.apps import AppConfig
 from django.conf import settings
-from django.core.checks import Warning
+from django.core.checks import CheckMessage, Warning
 
 
 def check_secure_admin_url(
-    app_configs: list[AppConfig] | None, **kwargs
-) -> list[Warning]:
+    app_configs: Sequence[AppConfig] | None, **kwargs
+) -> Sequence[CheckMessage]:
     """Checks ADMIN_URL is not /admin/ in production."""
     if settings.ADMIN_URL == "admin/":
         return [
