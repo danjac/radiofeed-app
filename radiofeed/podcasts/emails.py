@@ -3,7 +3,7 @@ from django.db.models.functions import Coalesce
 from loguru import logger
 
 from radiofeed.mail import send_templated_mail
-from radiofeed.podcasts.models import Podcast, Recommendation, Subscription
+from radiofeed.podcasts.models import Podcast, Recommendation
 from radiofeed.users.models import User
 
 
@@ -19,9 +19,7 @@ def send_recommendations_email(
     If no matching podcasts are found, no email is sent.
     """
 
-    subscribed_podcast_ids = set(
-        Subscription.objects.filter(subscriber=user).values_list("podcast", flat=True)
-    )
+    subscribed_podcast_ids = set(user.subscriptions.values_list("podcast", flat=True))
 
     # exclude any podcasts already recommended or subscribed
 
