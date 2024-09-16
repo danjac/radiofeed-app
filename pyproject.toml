@@ -175,7 +175,6 @@ known-first-party = ["radiofeed"]
 [tool.pyright]
 include=["radiofeed"]
 exclude=[
-  "**/settings.py",
   "**/migrations/*.py",
   "**/tests/*.py",
 ]
