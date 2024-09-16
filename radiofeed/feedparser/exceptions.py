@@ -3,7 +3,7 @@ import httpx
 from radiofeed.podcasts.models import Podcast
 
 
-class FeedParserError(ValueError):
+class FeedParserError(Exception):
     """Base feed parser exception."""
 
     parser_error: Podcast.ParserError
@@ -44,6 +44,6 @@ class UnavailableError(FeedParserError):
 
 
 class InvalidDataError(FeedParserError):
-    """Error caused by unvalid data e.g. bad date strings."""
+    """Error caused by invalid data e.g. bad date strings."""
 
     parser_error = Podcast.ParserError.INVALID_DATA
