@@ -16,34 +16,34 @@ class FeedParserError(ValueError):
 class DuplicateError(FeedParserError):
     """Another identical podcast exists in the database."""
 
-    parser_error = Podcast.ParserError.DUPLICATE  # type: ignore[assignment]
+    parser_error = Podcast.ParserError.DUPLICATE
 
 
 class InaccessibleError(FeedParserError):
     """Content is forbidden, no longer exists or other server issue."""
 
-    parser_error = Podcast.ParserError.INACCESSIBLE  # type: ignore[assignment]
+    parser_error = Podcast.ParserError.INACCESSIBLE
 
 
 class InvalidRSSError(FeedParserError):
     """Error parsing RSS content."""
 
-    parser_error = Podcast.ParserError.INVALID_RSS  # type: ignore[assignment]
+    parser_error = Podcast.ParserError.INVALID_RSS
 
 
 class NotModifiedError(FeedParserError):
     """RSS feed has not been modified since last update."""
 
-    parser_error = Podcast.ParserError.NOT_MODIFIED  # type: ignore[assignment]
+    parser_error = Podcast.ParserError.NOT_MODIFIED
 
 
 class UnavailableError(FeedParserError):
     """Content is inaccessible due to temporary network issue, 500 error etc."""
 
-    parser_error = Podcast.ParserError.UNAVAILABLE  # type: ignore[assignment]
+    parser_error = Podcast.ParserError.UNAVAILABLE
 
 
 class InvalidDataError(FeedParserError):
     """Error caused by unvalid data e.g. bad date strings."""
 
-    parser_error = Podcast.ParserError.INVALID_DATA  # type: ignore[assignment]
+    parser_error = Podcast.ParserError.INVALID_DATA
