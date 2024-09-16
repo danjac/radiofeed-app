@@ -186,7 +186,7 @@ if MAILGUN_API_KEY := env("MAILGUN_API_KEY", default=None):
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
     # For European domains: https://api.eu.mailgun.net/v3
-    MAILGUN_API_URL = env.url("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
+    MAILGUN_API_URL = env("MAILGUN_API_URL", default="https://api.mailgun.net/v3")
     MAILGUN_SENDER_DOMAIN = EMAIL_HOST = env("MAILGUN_SENDER_DOMAIN")
 
     ANYMAIL = {
@@ -447,12 +447,12 @@ logger.configure(
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
-if env.bool("USE_SENTRY", default=False):
+if SENTRY_URL := env("SENTRY_URL", default=None):
     logger.disable("sentry_sdk.integrations.logging")
     ignore_logger("django.security.DisallowedHost")
 
     sentry_sdk.init(
-        dsn=env.url("SENTRY_URL"),
+        dsn=SENTRY_URL,
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.5,
         # If you wish to associate users to errors (assuming you are using
