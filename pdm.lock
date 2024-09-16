@@ -1122,69 +1122,69 @@ files = [
 
 [[package]]
 name = "psycopg"
-version = "3.2.1"
+version = "3.2.2"
 requires_python = ">=3.8"
 summary = "PostgreSQL database adapter for Python"
 groups = ["default"]
 dependencies = [
     "backports-zoneinfo>=0.2.0; python_version < \"3.9\"",
-    "typing-extensions>=4.4",
+    "typing-extensions>=4.6; python_version < \"3.13\"",
     "tzdata; sys_platform == \"win32\"",
 ]
 files = [
-    {file = "psycopg-3.2.1-py3-none-any.whl", hash = "sha256:ece385fb413a37db332f97c49208b36cf030ff02b199d7635ed2fbd378724175"},
-    {file = "psycopg-3.2.1.tar.gz", hash = "sha256:dc8da6dc8729dacacda3cc2f17d2c9397a70a66cf0d2b69c91065d60d5f00cb7"},
+    {file = "psycopg-3.2.2-py3-none-any.whl", hash = "sha256:babf565d459d8f72fb65da5e211dd0b58a52c51e4e1fa9cadecff42d6b7619b2"},
+    {file = "psycopg-3.2.2.tar.gz", hash = "sha256:8bad2e497ce22d556dac1464738cb948f8d6bab450d965cf1d8a8effd52412e0"},
 ]
 
 [[package]]
 name = "psycopg-binary"
-version = "3.2.1"
+version = "3.2.2"
 requires_python = ">=3.8"
 summary = "PostgreSQL database adapter for Python -- C optimisation distribution"
 groups = ["default"]
 marker = "implementation_name != \"pypy\""
 files = [
-    {file = "psycopg_binary-3.2.1-cp312-cp312-macosx_12_0_x86_64.whl", hash = "sha256:7066d3dca196ed0dc6172f9777b2d62e4f138705886be656cccff2d555234d60"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:28ada5f610468c57d8a4a055a8ea915d0085a43d794266c4f3b9d02f4288f4db"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2e8213bf50af073b1aa8dc3cff123bfeedac86332a16c1b7274910bc88a847c7"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:74d623261655a169bc84a9669890975c229f2fa6e19a7f2d10a77675dcf1a707"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:42781ba94e8842ee98bca5a7d0c44cc9d067500fedca2d6a90fa3609b6d16b42"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:33e6669091d09f8ba36e10ce678a6d9916e110446236a9b92346464a3565635e"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:b09e8a576a2ac69d695032ee76f31e03b30781828b5dd6d18c6a009e5a3d1c35"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:8f28ff0cb9f1defdc4a6f8c958bf6787274247e7dfeca811f6e2f56602695fb1"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-musllinux_1_2_ppc64le.whl", hash = "sha256:4c84fcac8a3a3479ac14673095cc4e1fdba2935499f72c436785ac679bec0d1a"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:950fd666ec9e9fe6a8eeb2b5a8f17301790e518953730ad44d715b59ffdbc67f"},
-    {file = "psycopg_binary-3.2.1-cp312-cp312-win_amd64.whl", hash = "sha256:334046a937bb086c36e2c6889fe327f9f29bfc085d678f70fac0b0618949f674"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-macosx_12_0_x86_64.whl", hash = "sha256:0dd314229885a81f9497875295d8788e651b78945627540f1e78ed71595e614a"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:989acbe2f552769cdb780346cea32d86e7c117044238d5172ac10b025fe47194"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:566b1c530898590f0ac9d949cf94351c08d73c89f8800c74c0a63ffd89a383c8"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:68d03efab7e2830a0df3aa4c29a708930e3f6b9fd98774ff9c4fd1f33deafecc"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1e1f013bfb744023df23750fde51edcb606def8328473361db3c192c392c6060"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a06136aab55a2de7dd4e2555badae276846827cfb023e6ba1b22f7a7b88e3f1b"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:020c5154be144a1440cf87eae012b9004fb414ae4b9e7b1b9fb808fe39e96e83"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:ef341c556aeaa43a2729b07b04e20bfffdcf3d96c4a96e728ca94fe4ce632d8c"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-musllinux_1_2_ppc64le.whl", hash = "sha256:66de2dd7d37bf66eb234ca9d907f5cd8caca43ff8d8a50dd5c15844d1cf0390c"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:2eb6f8f410dbbb71b8c633f283b8588b63bee0a7321f00ab76e9c800c593f732"},
+    {file = "psycopg_binary-3.2.2-cp312-cp312-win_amd64.whl", hash = "sha256:b45553c6b614d02e1486585980afdfd18f0000aac668e2e87c6e32da1adb051a"},
 ]
 
 [[package]]
 name = "psycopg-pool"
-version = "3.2.2"
+version = "3.2.3"
 requires_python = ">=3.8"
 summary = "Connection Pool for Psycopg"
 groups = ["default"]
 dependencies = [
-    "typing-extensions>=4.4",
+    "typing-extensions>=4.6",
 ]
 files = [
-    {file = "psycopg_pool-3.2.2-py3-none-any.whl", hash = "sha256:273081d0fbfaced4f35e69200c89cb8fbddfe277c38cc86c235b90a2ec2c8153"},
-    {file = "psycopg_pool-3.2.2.tar.gz", hash = "sha256:9e22c370045f6d7f2666a5ad1b0caf345f9f1912195b0b25d0d3bcc4f3a7389c"},
+    {file = "psycopg_pool-3.2.3-py3-none-any.whl", hash = "sha256:53bd8e640625e01b2927b2ad96df8ed8e8f91caea4597d45e7673fc7bbb85eb1"},
+    {file = "psycopg_pool-3.2.3.tar.gz", hash = "sha256:bb942f123bef4b7fbe4d55421bd3fb01829903c95c0f33fd42b7e94e5ac9b52a"},
 ]
 
 [[package]]
 name = "psycopg"
-version = "3.2.1"
+version = "3.2.2"
 extras = ["binary"]
 requires_python = ">=3.8"
 summary = "PostgreSQL database adapter for Python"
 groups = ["default"]
 dependencies = [
-    "psycopg-binary==3.2.1; implementation_name != \"pypy\"",
-    "psycopg==3.2.1",
+    "psycopg-binary==3.2.2; implementation_name != \"pypy\"",
+    "psycopg==3.2.2",
 ]
 files = [
-    {file = "psycopg-3.2.1-py3-none-any.whl", hash = "sha256:ece385fb413a37db332f97c49208b36cf030ff02b199d7635ed2fbd378724175"},
-    {file = "psycopg-3.2.1.tar.gz", hash = "sha256:dc8da6dc8729dacacda3cc2f17d2c9397a70a66cf0d2b69c91065d60d5f00cb7"},
+    {file = "psycopg-3.2.2-py3-none-any.whl", hash = "sha256:babf565d459d8f72fb65da5e211dd0b58a52c51e4e1fa9cadecff42d6b7619b2"},
+    {file = "psycopg-3.2.2.tar.gz", hash = "sha256:8bad2e497ce22d556dac1464738cb948f8d6bab450d965cf1d8a8effd52412e0"},
 ]
 
 [[package]]
@@ -1634,13 +1634,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "74.1.2"
+version = "75.0.0"
 requires_python = ">=3.8"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
 groups = ["dev"]
 files = [
-    {file = "setuptools-74.1.2-py3-none-any.whl", hash = "sha256:5f4c08aa4d3ebcb57a50c33b1b07e94315d7fc7230f7115e47fc99776c8ce308"},
-    {file = "setuptools-74.1.2.tar.gz", hash = "sha256:95b40ed940a1c67eb70fc099094bd6e99c6ee7c23aa2306f4d2697ba7916f9c6"},
+    {file = "setuptools-75.0.0-py3-none-any.whl", hash = "sha256:791ae94f04f78c880b5e614e560dd32d4b4af5d151bd9e7483e3377846caf90a"},
+    {file = "setuptools-75.0.0.tar.gz", hash = "sha256:25af69c809d9334cd8e653d385277abeb5a102dca255954005a7092d282575ea"},
 ]
 
 [[package]]
