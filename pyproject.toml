@@ -85,7 +85,6 @@ addopts = [
 testpaths = "radiofeed"
 env = [
     "COVERAGE_CORE=sysmon",
-    "COMPRESS_ENABLED=false",
     "USE_COLLECTSTATIC=false",
     "USE_CONNECTION_POOL=false",
     "USE_HTTPS=false",
@@ -106,7 +105,7 @@ omit=[
 [tool.djlint]
 profile = "django"
 ignore = "H030,H031,H017,H021"
-custom_blocks="cache,compress,partialdef"
+custom_blocks="cache,partialdef"
 
 [tool.ruff]
 target-version = "py312"
