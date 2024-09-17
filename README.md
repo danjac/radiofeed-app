@@ -32,7 +32,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 To run unit tests, just run `pytest`.
 
-To handle asset compilation on the fly, run `npm run watch`. This will compile/bundle JS and CSS (Tailwind) files.
+To handle Tailwind CSS compilation on the fly, run `./manage.py tailwind runserver`.
 
 ## Deployment
 
