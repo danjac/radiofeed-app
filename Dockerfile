@@ -34,7 +34,7 @@ WORKDIR /app
 
 # Python requirements
 
-RUN pip install pdm==2.18.1
+RUN pip install pdm==2.18.2
 
 COPY ./pyproject.toml ./pdm.lock /app/
 
