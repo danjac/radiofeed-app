@@ -6,17 +6,17 @@ from radiofeed.http import HttpRequest
 from radiofeed.middleware import BaseMiddleware
 
 
-class AudioPlayerMiddleware(BaseMiddleware):
+class PlayerMiddleware(BaseMiddleware):
     """Adds `PlayerDetails` instance to request as `request.player`."""
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.player = AudioPlayerDetails(request=request)
+        request.player = PlayerDetails(request=request)
         return self.get_response(request)
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
-class AudioPlayerDetails:
+class PlayerDetails:
     """Tracks current player episode in session."""
 
     request: HttpRequest

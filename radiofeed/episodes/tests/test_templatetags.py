@@ -1,7 +1,7 @@
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.middleware import AudioPlayerDetails
+from radiofeed.episodes.middleware import PlayerDetails
 from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
     audio_player_update,
@@ -104,7 +104,7 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = anonymous_user
         req.session = {}
-        req.player = AudioPlayerDetails(request=req)
+        req.player = PlayerDetails(request=req)
 
         context = audio_player(RequestContext(req))
 
@@ -117,7 +117,7 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = user
         req.session = {}
-        req.player = AudioPlayerDetails(request=req)
+        req.player = PlayerDetails(request=req)
         context = audio_player(RequestContext(req))
 
         assert context["is_playing"] is False
@@ -130,7 +130,7 @@ class TestAudioPlayer:
         req.user = user
         req.session = {}
 
-        req.player = AudioPlayerDetails(request=req)
+        req.player = PlayerDetails(request=req)
         req.player.set(audio_log.episode.pk)
 
         context = audio_player(RequestContext(req))
@@ -145,7 +145,7 @@ class TestAudioPlayer:
         req.user = anonymous_user
         req.session = {}
 
-        req.player = AudioPlayerDetails(request=req)
+        req.player = PlayerDetails(request=req)
         req.player.set(episode.pk)
 
         context = audio_player(RequestContext(req))

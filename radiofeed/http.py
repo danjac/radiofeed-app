@@ -12,7 +12,7 @@ require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 if TYPE_CHECKING:  # pragma: no cover
     from django_htmx.middleware import HtmxDetails
 
-    from radiofeed.episodes.middleware import AudioPlayerDetails
+    from radiofeed.episodes.middleware import PlayerDetails
     from radiofeed.middleware import SearchDetails
     from radiofeed.users.models import User
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:  # pragma: no cover
         """HttpRequest annotated with middleware-provided properties."""
 
         htmx: HtmxDetails
-        player: AudioPlayerDetails
+        player: PlayerDetails
         search: SearchDetails
 
     class UserRequest(HttpRequest):
