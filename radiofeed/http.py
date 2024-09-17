@@ -1,11 +1,35 @@
 import http
+from typing import TYPE_CHECKING
 
+from django.http import HttpRequest as DjangoHttpRequest
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 
 require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
+
+if TYPE_CHECKING:  # pragma: no cover
+    from django_htmx.middleware import HtmxDetails
+
+    from radiofeed.episodes.middleware import AudioPlayerDetails
+    from radiofeed.middleware import SearchDetails
+    from radiofeed.users.models import User
+
+    class HttpRequest(DjangoHttpRequest):
+        """HttpRequest annotated with middleware-provided properties."""
+
+        htmx: HtmxDetails
+        player: AudioPlayerDetails
+        search: SearchDetails
+
+    class UserRequest(HttpRequest):
+        """Ensures always using logged-in user."""
+
+        user: User
+
+else:
+    UserRequest = HttpRequest = DjangoHttpRequest
 
 
 class HttpResponseNoContent(HttpResponse):
