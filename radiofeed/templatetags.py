@@ -4,8 +4,6 @@ import functools
 import itertools
 import json
 import math
-import time
-import urllib.parse
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -116,30 +114,6 @@ def htmx_config() -> str:
 def theme_color() -> dict:
     """Returns the PWA configuration theme color."""
     return settings.PWA_CONFIG["manifest"]["theme_color"]
-
-
-@register.simple_tag
-def debug_static() -> str:
-    """Appends a browser cache-busting param to URL in DEBUG mode.
-    Otherwise just returns the plain static URL.
-
-    Example:
-
-        <link href="{% static 'app.css' %}{% debug_static %}">
-
-    This is useful in development with non-vendor assets you want to see refreshed on each browser reload,
-    but has no effect in production.
-    """
-    return (
-        "?"
-        + urllib.parse.urlencode(
-            {
-                "v": int(time.time()),
-            }
-        )
-        if settings.DEBUG
-        else ""
-    )
 
 
 @register.simple_tag

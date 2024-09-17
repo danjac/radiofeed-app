@@ -3,11 +3,11 @@ from django.contrib.sites.models import Site
 from django.template import RequestContext
 from django.urls import reverse, reverse_lazy
 
+from radiofeed.covers import CoverVariant
 from radiofeed.templatetags import (
     absolute_uri,
     active_link,
     cover_art,
-    debug_static,
     format_duration,
     html_json_attr,
     hx_headers,
@@ -32,21 +32,11 @@ def auth_req(req, user):
     return req
 
 
-class TestDebugStatic:
-    def test_debug(self, settings):
-        settings.DEBUG = True
-        assert "?v=" in debug_static()
-
-    def test_production(self, settings):
-        settings.DEBUG = False
-        assert debug_static() == ""
-
-
 class TestCoverArt:
     def test_cover_art(self):
         context = cover_art(
             "https://www.example.com/test.jpg",
-            "detail",
+            CoverVariant.DETAIL,
             "test image",
             css_class="hover:grayscale",
         )
