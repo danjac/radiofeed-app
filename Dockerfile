@@ -29,8 +29,6 @@ COPY ./nltk.txt /app/nltk.txt
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
-# Download Tailwind CLI
-
 COPY . /app
 
 # Compile and collect static files
