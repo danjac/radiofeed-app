@@ -33,9 +33,7 @@ RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 COPY . /app
 
-# Compile, compress and collect static files
+# Compile and collect static files
 
 RUN python manage.py tailwind build && \
-    python manage.py collectstatic --no-input && \
-    python manage.py compress && \
     python manage.py collectstatic --no-input

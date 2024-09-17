@@ -39,7 +39,6 @@ dependencies = [
     "django-template-partials>=24.4",
     "environs[django]>=11.0.0",
     "django-tailwind-cli>=2.16.0",
-    "django-compressor>=4.5.1",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
