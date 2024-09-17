@@ -2,14 +2,12 @@
 install:
 	@$(MAKE) envfile
 	@$(MAKE) pyinstall
-	@$(MAKE) npminstall
 	@$(MAKE) precommitinstall
 	@$(MAKE) nltkdownload
 
 .PHONY: update
 update:
 	@$(MAKE) pyupdate
-	@$(MAKE) npmupdate
 	@$(MAKE) precommitupdate
 
 .PHONY: envfile
@@ -23,14 +21,6 @@ pyinstall:
 .PHONY: pyupdate
 pyupdate:
 	pdm update
-
-.PHONY: npminstall
-npminstall:
-	npm ci
-
-.PHONY: npmupdate
-npmupdate:
-	npm update
 
 .PHONY: precommitinstall
 precommitinstall:
