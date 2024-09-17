@@ -42,9 +42,11 @@ INSTALLED_APPS: list[str] = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "compressor",
     "csp",
     "django_extensions",
     "django_htmx",
+    "django_tailwind_cli",
     "django_version_checks",
     "health_check",
     "health_check.db",
@@ -280,6 +282,24 @@ STATIC_URL = env("STATIC_URL", default="/static/")
 STATIC_SRC = BASE_DIR / "static"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [STATIC_SRC]
+
+STATICFILES_FINDERS = (
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+)
+
+# Django-compressor
+# https://django-compressor.readthedocs.io/en/stable/settings.html
+
+COMPRESS_STORAGE = "compressor.storage.BrotliCompressorFileStorage"
+COMPRESS_OFFLINE = True
+
+# Tailwind CLI
+# https://django-tailwind-cli.andrich.me/settings/#settings
+
+TAILWIND_CLI_SRC_CSS = STATIC_SRC / "css" / "app.css"
+TAILWIND_CLI_CONFIG_FILE = BASE_DIR / "tailwind.config.js"
 
 # Whitenoise
 # https://whitenoise.readthedocs.io/en/latest/django.html

@@ -40,6 +40,6 @@ media/
 node_modules/
 npm-debug.log*
 requirements-ci.txt
-static/dist
+static/css/tailwind.css
 staticfiles
 venv

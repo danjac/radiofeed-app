@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:2bf7651d32d891324c6dd251f719167e2e9f4ad64365926401522f9d0b5eb1e5"
+content_hash = "sha256:f35da2d38a6b0239256389893e05ff3573dc1778ca32ec4f5bca7c9ede09900d"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -370,6 +370,20 @@ files = [
 ]
 
 [[package]]
+name = "django-appconf"
+version = "1.0.6"
+requires_python = ">=3.7"
+summary = "A helper class for handling configuration defaults of packaged apps gracefully."
+groups = ["default"]
+dependencies = [
+    "django",
+]
+files = [
+    {file = "django-appconf-1.0.6.tar.gz", hash = "sha256:cfe87ea827c4ee04b9a70fab90b86d704cb02f2981f89da8423cb0fabf88efbf"},
+    {file = "django_appconf-1.0.6-py3-none-any.whl", hash = "sha256:c3ae442fba1ff7ec830412c5184b17169a7a1e71cf0864a4c3f93cf4c98a1993"},
+]
+
+[[package]]
 name = "django-browser-reload"
 version = "1.15.0"
 requires_python = ">=3.8"
@@ -392,6 +406,23 @@ groups = ["default"]
 files = [
     {file = "django-cache-url-3.4.5.tar.gz", hash = "sha256:eb9fb194717524348c95cad9905b70b647452741c1d9e481fac6d2125f0ad917"},
     {file = "django_cache_url-3.4.5-py2.py3-none-any.whl", hash = "sha256:5f350759978483ab85dc0e3e17b3d53eed3394a28148f6bf0f53d11d0feb5b3c"},
+]
+
+[[package]]
+name = "django-compressor"
+version = "4.5.1"
+requires_python = ">=3.8"
+summary = "('Compresses linked and inline JavaScript or CSS into single cached files.',)"
+groups = ["default"]
+dependencies = [
+    "Django>=4.2",
+    "django-appconf>=1.0.3",
+    "rcssmin==1.1.2",
+    "rjsmin==1.2.2",
+]
+files = [
+    {file = "django_compressor-4.5.1-py2.py3-none-any.whl", hash = "sha256:87741edee4e7f24f3e0b8072d94a990cfb010cb2ca7cc443944da8e193cdea65"},
+    {file = "django_compressor-4.5.1.tar.gz", hash = "sha256:c1d8a48a2ee4d8b7f23c411eb9c97e2d88db18a18ba1c9e8178d5f5b8366a822"},
 ]
 
 [[package]]
@@ -553,6 +584,22 @@ files = [
 ]
 
 [[package]]
+name = "django-tailwind-cli"
+version = "2.16.0"
+requires_python = ">=3.9"
+summary = "Django and Tailwind integration based on the prebuilt Tailwind CSS CLI."
+groups = ["default"]
+dependencies = [
+    "certifi<2025.0.0,>=2023.7.22",
+    "django-typer>=2.1.2",
+    "django>=4.2",
+]
+files = [
+    {file = "django_tailwind_cli-2.16.0-py3-none-any.whl", hash = "sha256:30eb796aea5a4e029779e4be41e635c9542065787c74c1e2e6248eae0390a9d6"},
+    {file = "django_tailwind_cli-2.16.0.tar.gz", hash = "sha256:e47c1eaba142b0411b75e9bdcc3ac2cbf26c85cdf3c683596d4d779986f3d00d"},
+]
+
+[[package]]
 name = "django-template-partials"
 version = "24.4"
 summary = "django-template-partials"
@@ -563,6 +610,24 @@ dependencies = [
 files = [
     {file = "django_template_partials-24.4-py2.py3-none-any.whl", hash = "sha256:ee59d3839385d7f648907c3fa8d5923fcd66cd8090f141fe2a1c338b917984e2"},
     {file = "django_template_partials-24.4.tar.gz", hash = "sha256:25b67301470fc274ecc419e5e5fd4686a5020b1c038fd241a70eb087809034b6"},
+]
+
+[[package]]
+name = "django-typer"
+version = "2.2.2"
+requires_python = "<4.0,>=3.8"
+summary = "Use Typer to define the CLI for your Django management commands."
+groups = ["default"]
+dependencies = [
+    "Django<6.0,>=3.2",
+    "click<9.0.0,>=8.1.0",
+    "shellingham>=1.5.4",
+    "typer-slim<0.13.0,>=0.12.5",
+    "typing-extensions>=3.7.4.3; python_version < \"3.10\"",
+]
+files = [
+    {file = "django_typer-2.2.2-py3-none-any.whl", hash = "sha256:ad88bd590834402dd5b464e860960f75be7ab83b885bdc41f202b731e16b6dc3"},
+    {file = "django_typer-2.2.2.tar.gz", hash = "sha256:c63f294a3bed1156bdd0a8487f4a1aee6247fb9f11d9ba8de8ce25eff5ce80bc"},
 ]
 
 [[package]]
@@ -1540,6 +1605,21 @@ files = [
 ]
 
 [[package]]
+name = "rcssmin"
+version = "1.1.2"
+summary = "CSS Minifier"
+groups = ["default"]
+files = [
+    {file = "rcssmin-1.1.2-cp312-cp312-manylinux1_i686.whl", hash = "sha256:e58a54e63f79c996284240ec2dfb2992e8b90ad8941b1c70997e256b65940de7"},
+    {file = "rcssmin-1.1.2-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:657324bfb76fa9e97badabe26af97a1622446f33c9073dd0510c7c7e8c7b96da"},
+    {file = "rcssmin-1.1.2-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:fdffd58868a752cac0400249ce21bddf55e00d3206f8885d4a3aca1dab487070"},
+    {file = "rcssmin-1.1.2-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:82aad2c3526055956fba537ab067ad937b3f57a1bd13c89bf691fced9c24c89d"},
+    {file = "rcssmin-1.1.2-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:3a860a1f4304e9813900f70fe6b1d429aff73a6fa30ef07f345f68d0a4e33abc"},
+    {file = "rcssmin-1.1.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:0451a2c7e7c1ff893ecb7820de862f2ea6336cc69d473ecb0206212e49c817fc"},
+    {file = "rcssmin-1.1.2.tar.gz", hash = "sha256:bc75eb75bd6d345c0c51fd80fc487ddd6f9fd409dd7861b3fe98dee85018e1e9"},
+]
+
+[[package]]
 name = "redis"
 version = "5.0.8"
 requires_python = ">=3.7"
@@ -1629,6 +1709,21 @@ files = [
 ]
 
 [[package]]
+name = "rjsmin"
+version = "1.2.2"
+summary = "Javascript Minifier"
+groups = ["default"]
+files = [
+    {file = "rjsmin-1.2.2-cp312-cp312-manylinux1_i686.whl", hash = "sha256:8982c3ef27fac26dd6b7d0c55ae98fa550fee72da2db010b87211e4b5dd78a67"},
+    {file = "rjsmin-1.2.2-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:3fc27ae4ece99e2c994cd79df2f0d3f7ac650249f632d19aa8ce85118e33bf0f"},
+    {file = "rjsmin-1.2.2-cp312-cp312-manylinux2014_aarch64.whl", hash = "sha256:41113d8d6cae7f7406b30143cc49cc045bbb3fadc2f28df398cea30e1daa60b1"},
+    {file = "rjsmin-1.2.2-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:3aa09a89b2b7aa2b9251329fe0c3e36c2dc2f10f78b8811e5be92a072596348b"},
+    {file = "rjsmin-1.2.2-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:5abb8d1241f4ea97950b872fa97a422ba8413fe02358f64128ff0cf745017f07"},
+    {file = "rjsmin-1.2.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:5abc686a9ef7eaf208f9ad1fb5fb949556ecb7cc1fee27290eb7f194e01d97bd"},
+    {file = "rjsmin-1.2.2.tar.gz", hash = "sha256:8c1bcd821143fecf23242012b55e13610840a839cd467b358f16359010d62dae"},
+]
+
+[[package]]
 name = "scikit-learn"
 version = "1.5.2"
 requires_python = ">=3.9"
@@ -1694,6 +1789,17 @@ groups = ["dev"]
 files = [
     {file = "setuptools-75.1.0-py3-none-any.whl", hash = "sha256:35ab7fd3bcd95e6b7fd704e4a1539513edad446c097797f2985e0e4b960772f2"},
     {file = "setuptools-75.1.0.tar.gz", hash = "sha256:d59a21b17a275fb872a9c3dae73963160ae079f1049ed956880cd7c09b120538"},
+]
+
+[[package]]
+name = "shellingham"
+version = "1.5.4"
+requires_python = ">=3.7"
+summary = "Tool to Detect Surrounding Shell"
+groups = ["default"]
+files = [
+    {file = "shellingham-1.5.4-py2.py3-none-any.whl", hash = "sha256:7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686"},
+    {file = "shellingham-1.5.4.tar.gz", hash = "sha256:8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de"},
 ]
 
 [[package]]
@@ -1803,6 +1909,21 @@ groups = ["dev"]
 files = [
     {file = "traitlets-5.14.3-py3-none-any.whl", hash = "sha256:b74e89e397b1ed28cc831db7aea759ba6640cb3de13090ca145426688ff1ac4f"},
     {file = "traitlets-5.14.3.tar.gz", hash = "sha256:9ed0579d3502c94b4b3732ac120375cda96f923114522847de4b3bb98b96b6b7"},
+]
+
+[[package]]
+name = "typer-slim"
+version = "0.12.5"
+requires_python = ">=3.7"
+summary = "Typer, build great CLIs. Easy to code. Based on Python type hints."
+groups = ["default"]
+dependencies = [
+    "click>=8.0.0",
+    "typing-extensions>=3.7.4.3",
+]
+files = [
+    {file = "typer_slim-0.12.5-py3-none-any.whl", hash = "sha256:9a994f721b828783dbf144e17461b1c720bb4598e0d5eff7c1b3f08ee58cb062"},
+    {file = "typer_slim-0.12.5.tar.gz", hash = "sha256:c8e3fcf93cc7dd584036df8755d2e2363f85f8a4dd028c7911eed3f00cf0ebb1"},
 ]
 
 [[package]]
