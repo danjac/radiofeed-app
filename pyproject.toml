@@ -86,6 +86,7 @@ addopts = [
 testpaths = "radiofeed"
 env = [
     "COVERAGE_CORE=sysmon",
+    "COMPRESS_ENABLED=false",
     "USE_COLLECTSTATIC=false",
     "USE_CONNECTION_POOL=false",
     "USE_HTTPS=false",
