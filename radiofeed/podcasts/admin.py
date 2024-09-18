@@ -162,7 +162,7 @@ class SubscribedFilter(admin.SimpleListFilter):
         """Returns filtered queryset."""
 
         if self.value() == "yes":
-            return queryset.annotate(
+            return queryset.alias(
                 has_subscribers=Exists(
                     Subscription.objects.filter(podcast=OuterRef("pk"))
                 )
