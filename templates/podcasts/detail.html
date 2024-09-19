@@ -15,7 +15,7 @@
                                     hx-disabled-elt="this"
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
-                                    hx-delete="{% url 'podcasts:remove_private_feed' podcast.pk %}"
+                                    hx-delete="{{ podcast.get_remove_private_feed_url }}"
                                     {% hx_headers CSRF_HEADER csrf_token %}>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
@@ -43,7 +43,7 @@
                                         aria-label="Unsubscribe from this Podcast"
                                         title="Unsubscribe from this Podcast"
                                         hx-disabled-elt="this"
-                                        hx-delete="{% url 'podcasts:unsubscribe' podcast.pk %}"
+                                        hx-delete="{{ podcast.get_unsubscribe_url }}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye-slash" class="mr-2" %}
                                     Unsubscribe
@@ -53,7 +53,7 @@
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
                                         hx-disabled-elt="this"
-                                        hx-post="{% url 'podcasts:subscribe' podcast.pk %}"
+                                        hx-post="{{ podcast.get_subscribe_url }}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye" class="mr-2" %}
                                     Subscribe
