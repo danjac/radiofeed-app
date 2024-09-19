@@ -74,7 +74,7 @@
                                             title="Close Player"
                                             class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                             hx-disabled-elt="this"
-                                            hx-post="{% url 'episodes:close_player' %}"
+                                            hx-post="{% url "episodes:close_player" %}"
                                             hx-trigger="click once">
                                         {% heroicon_mini "stop-circle" class="mr-2" %}
                                         Close
@@ -84,7 +84,7 @@
                                             title="Open Episode in Player"
                                             class="inline-flex items-center btn btn-primary btn-lg"
                                             hx-disabled-elt="this"
-                                            hx-post="{% url 'episodes:start_player' episode.pk %}"
+                                            hx-post="{{ episode.get_start_player_url }}"
                                             hx-trigger="click once">
                                         {% heroicon_mini "play-circle" class="mr-2" %}
                                         Play
@@ -111,7 +111,7 @@
                                         title="Remove Episode from your Bookmarks"
                                         class="inline-flex items-center btn btn-default btn-outline"
                                         hx-disabled-elt="this"
-                                        hx-delete="{% url 'episodes:remove_bookmark' episode.pk %}"
+                                        hx-delete="{{ episode.get_remove_bookmark_url }}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark-slash" class="mr-2" %}
                                     Bookmark
@@ -121,7 +121,7 @@
                                         title="Add Episode to your Bookmarks"
                                         class="inline-flex items-center btn btn-default"
                                         hx-disabled-elt="this"
-                                        hx-post="{% url 'episodes:add_bookmark' episode.pk %}"
+                                        hx-post="{{ episode.get_add_bookmark_url }}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark" class="mr-2" %}
                                     Bookmark
@@ -188,7 +188,7 @@
                                     title="Remove episode from your History"
                                     hx-disabled-elt="this"
                                     hx-target="#audio-log"
-                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                                    hx-delete="{{ episode.get_remove_audio_log_url }}"
                                     hx-indicator="this"
                                     hx-push-url="false"
                                     hx-swap="outerHTML"
