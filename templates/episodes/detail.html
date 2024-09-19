@@ -53,7 +53,7 @@
                     {% if episode_type %}<span>{{ episode_type|capfirst }}</span>{% endif %}
                     {% if episode_num %}<span>Episode {{ episode_num }}</span>{% endif %}
                     {% if season %}<span>Season {{ season }}</span>{% endif %}
-                    <a href="{{ podcast.get_episodes_url }}"
+                    <a href="{{ podcast.episodes_url }}"
                        title="See all episodes for {{ podcast.cleaned_title }}"
                        class="inline-block link">See all episodes</a>
                 </div>
