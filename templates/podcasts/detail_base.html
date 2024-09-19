@@ -13,7 +13,7 @@
                 {% cache CACHE_TIMEOUT podcast-detail-links request.path %}
                     <nav class="flex justify-center items-center sm:justify-start">
                         <ul class="flex items-center space-x-6">
-                            {% active_link podcast.get_detail_url as link %}
+                            {% active_link podcast.detail_url as link %}
                             <li>
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
@@ -21,7 +21,7 @@
                                    aria-label="{{ podcast.cleaned_title }} | About"
                                    title="{{ podcast.cleaned_title }} | About">About</a>
                             </li>
-                            {% active_link podcast.get_episodes_url as link %}
+                            {% active_link podcast.episodes_url as link %}
                             <li>
                                 <a class="{{ link.css }}"
                                    href="{{ link.url }}"
@@ -30,7 +30,7 @@
                                    title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
                             </li>
                             {% if podcast.has_similar %}
-                                {% active_link podcast.get_similar_url as link %}
+                                {% active_link podcast.similar_url as link %}
                                 <li>
                                     <a class="{{ link.css }}"
                                        href="{{ link.url }}"

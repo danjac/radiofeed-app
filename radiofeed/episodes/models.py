@@ -91,32 +91,43 @@ class Episode(models.Model):
 
     def get_absolute_url(self) -> str:
         """URL of episode detail page."""
+        return self.detail_url
+
+    @cached_property
+    def detail_url(self) -> str:
+        """URL of episode detail page"""
         return self._get_episode_url("episodes:episode_detail", slug=self.slug)
 
-    def get_start_player_url(self) -> str:
+    @cached_property
+    def start_player_url(self) -> str:
         """URL to start episode in audio player."""
         return self._get_episode_url("episodes:start_player")
 
-    def get_add_bookmark_url(self) -> str:
+    @cached_property
+    def add_bookmark_url(self) -> str:
         """URL to add a bookmark."""
         return self._get_episode_url("episodes:add_bookmark")
 
-    def get_remove_bookmark_url(self) -> str:
+    @cached_property
+    def remove_bookmark_url(self) -> str:
         """URL to remove a bookmark."""
         return self._get_episode_url("episodes:remove_bookmark")
 
-    def get_remove_audio_log_url(self) -> str:
+    @cached_property
+    def remove_audio_log_url(self) -> str:
         """URL to remove current audio log."""
         return self._get_episode_url("episodes:remove_audio_log")
 
-    def get_next_episode(self) -> Optional["Episode"]:
+    @cached_property
+    def next_episode(self) -> Optional["Episode"]:
         """Returns the next episode in this podcast."""
         try:
             return self.get_next_by_pub_date(podcast=self.podcast)
         except self.DoesNotExist:
             return None
 
-    def get_previous_episode(self) -> Optional["Episode"]:
+    @cached_property
+    def previous_episode(self) -> Optional["Episode"]:
         """Returns the previous episode in this podcast."""
         try:
             return self.get_previous_by_pub_date(podcast=self.podcast)

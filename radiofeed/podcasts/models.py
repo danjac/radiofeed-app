@@ -209,33 +209,40 @@ class Podcast(models.Model):
 
     def get_absolute_url(self) -> str:
         """Default absolute URL of podcast."""
-        return self.get_detail_url()
+        return self.detail_url
 
-    def get_detail_url(self) -> str:
+    @cached_property
+    def detail_url(self) -> str:
         """Absolute URL of podcast detail page."""
         return self._get_podcast_url_with_slug("podcasts:podcast_detail")
 
-    def get_episodes_url(self) -> str:
+    @cached_property
+    def episodes_url(self) -> str:
         """URL of podcast episode list page."""
         return self._get_podcast_url_with_slug("podcasts:episodes")
 
-    def get_similar_url(self) -> str:
+    @cached_property
+    def similar_url(self) -> str:
         """URL of podcast similar recommendations page."""
         return self._get_podcast_url_with_slug("podcasts:similar")
 
-    def get_latest_episode_url(self) -> str:
+    @cached_property
+    def latest_episode_url(self) -> str:
         """URL of latest episode."""
         return self._get_podcast_url("podcasts:latest_episode")
 
-    def get_subscribe_url(self) -> str:
+    @cached_property
+    def subscribe_url(self) -> str:
         """URL to subscribe to podcast."""
         return self._get_podcast_url("podcasts:subscribe")
 
-    def get_unsubscribe_url(self) -> str:
+    @cached_property
+    def unsubscribe_url(self) -> str:
         """URL to unsubscribe from podcast."""
         return self._get_podcast_url("podcasts:unsubscribe")
 
-    def get_remove_private_feed_url(self) -> str:
+    @cached_property
+    def remove_private_feed_url(self) -> str:
         """URL to unsubscribe from private feed."""
         return self._get_podcast_url("podcasts:remove_private_feed")
 

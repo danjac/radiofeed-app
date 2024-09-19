@@ -168,7 +168,7 @@ class TestPodcastSimilar:
     def test_get(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
-        response = client.get(podcast.get_similar_url())
+        response = client.get(podcast.similar_url)
 
         assert_200(response)
 
@@ -251,12 +251,12 @@ class TestPodcastDetail:
 class TestLatestEpisode:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
-        response = client.get(episode.podcast.get_latest_episode_url())
+        response = client.get(episode.podcast.latest_episode_url)
         assert response.url == episode.get_absolute_url()
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
-        assert_404(client.get(podcast.get_latest_episode_url()))
+        assert_404(client.get(podcast.latest_episode_url))
 
 
 class TestPodcastEpisodes:
@@ -264,14 +264,14 @@ class TestPodcastEpisodes:
     def test_get_episodes(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
-        response = client.get(self.url(podcast))
+        response = client.get(podcast.episodes_url)
         assert_200(response)
 
         assert len(response.context["page_obj"].object_list) == 30
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
-        response = client.get(self.url(podcast))
+        response = client.get(podcast.episodes_url)
 
         assert_200(response)
         assert len(response.context["page_obj"].object_list) == 0
@@ -281,7 +281,7 @@ class TestPodcastEpisodes:
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
-            self.url(podcast),
+            podcast.episodes_url,
             {"order": "asc"},
         )
         assert_200(response)
@@ -295,14 +295,11 @@ class TestPodcastEpisodes:
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
 
         response = client.get(
-            self.url(podcast),
+            podcast.episodes_url,
             {"search": episode.title},
         )
         assert_200(response)
         assert len(response.context["page_obj"].object_list) == 1
-
-    def url(self, podcast):
-        return podcast.get_episodes_url()
 
 
 class TestCategoryList:
