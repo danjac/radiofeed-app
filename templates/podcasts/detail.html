@@ -78,7 +78,7 @@
                     {% endif %}
                     {% if user.is_staff %}
                         <div>
-                            <a href="{% url 'admin:podcasts_podcast_change' podcast.pk %}"
+                            <a href="{{ podcast.admin_url }}"
                                target="_blank"
                                rel="noopener"
                                class="link">Admin</a>

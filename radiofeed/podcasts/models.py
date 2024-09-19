@@ -247,6 +247,11 @@ class Podcast(models.Model):
         return self._get_podcast_url("podcasts:remove_private_feed")
 
     @cached_property
+    def admin_url(self) -> str:
+        """URL on Django admin."""
+        return reverse("admin:podcasts_podcast_change", args=[self.pk])
+
+    @cached_property
     def cleaned_title(self) -> str:
         """Strips HTML from title field."""
         return strip_html(self.title)
