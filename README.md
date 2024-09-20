@@ -41,7 +41,7 @@ The **Radiofeed** stack includes:
 
 * [Django](https://djangoproject.com)
 * [HTMX](https://htmx.org)
-* [AlpineJS](https://alpinejs.org)
+* [AlpineJS](https://alpinejs.dev)
 * [Tailwind](https://tailwindcss.com)
 * [PostgreSQL](https://www.postgresql.org/)
 
