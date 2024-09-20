@@ -31,4 +31,6 @@ RUN /app/scripts/download-nltk.sh
 
 COPY . /app
 
+# Build static assets
+
 RUN /app/scripts/build-assets.sh
