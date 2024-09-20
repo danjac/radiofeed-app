@@ -25,13 +25,10 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 # Download NLTK files
 
-COPY ./nltk.txt /app/nltk.txt
+COPY ./scripts /app/scripts
 
-RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
+RUN /app/scripts/download-nltk.sh
 
 COPY . /app
 
-# Compile and collect static files
-
-RUN python manage.py tailwind build && \
-    python manage.py collectstatic --no-input
+RUN /app/scripts/build-assets.sh

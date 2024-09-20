@@ -32,7 +32,7 @@ precommitupdate:
 
 .PHONY: nltkdownload
 nltkdownload:
-	pdm run xargs -I{} python -c "import nltk; nltk.download('{}')" < nltk.txt
+	pdm run ./scripts/download-nltk.sh
 
 .PHONY: clean
 clean:
