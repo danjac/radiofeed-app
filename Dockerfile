@@ -30,8 +30,6 @@ FROM python-base AS deployment-assets
 
 COPY ./nltk.txt /app/
 
-COPY ./scripts /app/scripts
-
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 COPY . /app
