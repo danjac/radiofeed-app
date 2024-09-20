@@ -17,22 +17,40 @@ For ease of local development a `docker-compose.yml` file is provided which incl
 
 * PostgreSQL
 * Redis
-* [Mailpit](https://mailpit.axllent.org/) (for local email testing and development)
+* [Mailpit](https://mailpit.axllent.org/) (for local email testing)
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
 Current tested versions are PostgreSQL 16 and Redis 7.
 
-You should run your development environment inside a virtualenv. Alternatively you can just run `make install` (see below) which will install your Python and other dependencies.
-
 The `Makefile` has some convenient shortcuts for local development, including:
 
 * `make install`: download and install local dependencies
 * `make update`: update dependencies to latest available versions
+* `make clean`: remove all non-committed files and other artifacts
+
+The install process should create a virtualenv using pdm.
 
 To run unit tests, just run `pytest`.
 
 To handle Tailwind CSS compilation on the fly, run `./manage.py tailwind runserver`.
+
+## Stack
+
+The **Radiofeed** stack includes:
+
+* [Django](https://djangoproject.com)
+* [HTMX](https://htmx.org)
+* [AlpineJS](https://alpinejs.org)
+* [Tailwind](https://tailwindcss.com)
+* [PostgreSQL](https://www.postgresql.org/)
+
+This stack was chosen for the following reasons:
+
+1. [Locality of behavior](https://htmx.org/essays/locality-of-behaviour/): the behavior of a unit of code should be obvious from looking at the code.
+2. Performance: reduce the burden on end-user devices and bandwidth rampant with heavy SPA frameworks
+3. Batteries included: using popular, well-supported open source tools such as Django and PostgreSQL with a large number of features to avoid reinventing the wheel
+4. Simple: a simple architecture that can be developed by a single developer or small team
 
 ## Deployment
 
