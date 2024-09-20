@@ -25,7 +25,6 @@
 .vscode
 LICENSE
 Makefile
-Procfile
 README.md
 conftest.py
 docker-compose.yml
