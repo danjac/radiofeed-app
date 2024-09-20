@@ -28,5 +28,5 @@ jobs:
                   python-version: "3.12.6"
             - run: pdm install
             - run: pdm run pyright
-            - run: pdm run ./scripts/download-nltk.sh
+            - run: pdm run ./scripts/download-nltk.sh ./nltk.txt
             - run: pdm run python -m pytest

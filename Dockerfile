@@ -25,9 +25,11 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 # Download NLTK files
 
+COPY ./nltk.txt /app/
+
 COPY ./scripts /app/scripts
 
-RUN /app/scripts/download-nltk.sh
+RUN /app/scripts/download-nltk.sh /app/nltk.txt
 
 COPY . /app
 

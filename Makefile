@@ -32,7 +32,7 @@ precommitupdate:
 
 .PHONY: nltkdownload
 nltkdownload:
-	pdm run ./scripts/download-nltk.sh
+	pdm run ./scripts/download-nltk.sh ./nltk.txt
 
 .PHONY: clean
 clean:
