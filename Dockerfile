@@ -32,14 +32,14 @@ COPY ./nltk.txt /app/
 
 COPY ./scripts /app/scripts
 
-RUN /app/scripts/download-nltk.sh /app/nltk.txt
+RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 COPY . /app
 
 # Build static assets
 
-RUN /app/scripts/build-assets.sh
-
+RUN python manage.py tailwind build && \
+    python manage.py collectstatic --no-input
 
 FROM python-base AS webapp
 
