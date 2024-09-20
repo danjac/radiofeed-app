@@ -27,8 +27,8 @@ You should run your development environment inside a virtualenv. Alternatively y
 
 The `Makefile` has some convenient shortcuts for local development, including:
 
-* `make install`: download and install front and backend Javascript and Python dependencies
-* `make update`: update all front and backend dependencies to latest available versions
+* `make install`: download and install local dependencies
+* `make update`: update dependencies to latest available versions
 
 To run unit tests, just run `pytest`.
 
