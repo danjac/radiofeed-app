@@ -13,7 +13,6 @@ from radiofeed.podcasts.tests.factories import (
 )
 from radiofeed.tests.asserts import assert_200, assert_404, assert_409
 
-_index_url = reverse_lazy("podcasts:index")
 _subscriptions_url = reverse_lazy("podcasts:subscriptions")
 _discover_url = reverse_lazy("podcasts:discover")
 
@@ -168,7 +167,7 @@ class TestPodcastSimilar:
     def test_get(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         RecommendationFactory.create_batch(3, podcast=podcast)
-        response = client.get(podcast.similar_url)
+        response = client.get(podcast.get_similar_url())
 
         assert_200(response)
 
@@ -251,12 +250,12 @@ class TestPodcastDetail:
 class TestLatestEpisode:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
-        response = client.get(episode.podcast.latest_episode_url)
+        response = client.get(episode.podcast.get_latest_episode_url())
         assert response.url == episode.get_absolute_url()
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
-        assert_404(client.get(podcast.latest_episode_url))
+        assert_404(client.get(podcast.get_latest_episode_url()))
 
 
 class TestPodcastEpisodes:
@@ -264,14 +263,14 @@ class TestPodcastEpisodes:
     def test_get_episodes(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(33, podcast=podcast)
 
-        response = client.get(podcast.episodes_url)
+        response = client.get(podcast.get_episodes_url())
         assert_200(response)
 
         assert len(response.context["page_obj"].object_list) == 30
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
-        response = client.get(podcast.episodes_url)
+        response = client.get(podcast.get_episodes_url())
 
         assert_200(response)
         assert len(response.context["page_obj"].object_list) == 0
@@ -281,7 +280,7 @@ class TestPodcastEpisodes:
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(
-            podcast.episodes_url,
+            podcast.get_episodes_url(),
             {"order": "asc"},
         )
         assert_200(response)
@@ -295,7 +294,7 @@ class TestPodcastEpisodes:
         episode = EpisodeFactory(title=faker.unique.name(), podcast=podcast)
 
         response = client.get(
-            podcast.episodes_url,
+            podcast.get_episodes_url(),
             {"search": episode.title},
         )
         assert_200(response)
@@ -376,13 +375,10 @@ class TestCategoryDetail:
 
 
 class TestSubscribe:
-    def url(self, podcast):
-        return reverse("podcasts:subscribe", args=[podcast.pk])
-
     @pytest.mark.django_db
     def test_subscribe(self, client, podcast, auth_user):
         response = client.post(
-            self.url(podcast),
+            podcast.get_subscribe_url(),
             headers={
                 "HX-Request": "true",
             },
@@ -399,7 +395,7 @@ class TestSubscribe:
         podcast = PodcastFactory(private=True)
 
         response = client.post(
-            self.url(podcast),
+            podcast.get_subscribe_url(),
             headers={
                 "HX-Request": "true",
                 "HX-Target": "subscribe-button",
@@ -422,7 +418,7 @@ class TestSubscribe:
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         assert_409(
             client.post(
-                self.url(podcast),
+                podcast.get_subscribe_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "subscribe-button",
@@ -436,14 +432,11 @@ class TestSubscribe:
 
 
 class TestUnsubscribe:
-    def url(self, podcast):
-        return reverse("podcasts:unsubscribe", args=[podcast.pk])
-
     @pytest.mark.django_db
     def test_unsubscribe(self, client, auth_user, podcast):
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.delete(
-            self.url(podcast),
+            podcast.get_unsubscribe_url(),
             headers={
                 "HX-Request": "true",
                 "HX-Target": "subscribe-button",
@@ -463,7 +456,7 @@ class TestUnsubscribe:
         ).podcast
 
         response = client.delete(
-            self.url(podcast),
+            podcast.get_unsubscribe_url(),
             headers={
                 "HX-Request": "true",
                 "HX-Target": "subscribe-button",
@@ -522,7 +515,7 @@ class TestRemovePrivateFeed:
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
 
         response = client.delete(
-            reverse("podcasts:remove_private_feed", args=[podcast.pk]),
+            podcast.get_remove_private_feed_url(),
             {"rss": podcast.rss},
         )
         assert response.url == reverse("podcasts:private_feeds")

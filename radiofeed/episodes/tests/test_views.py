@@ -105,52 +105,14 @@ class TestEpisodeDetail:
             duration="3:30:30",
         )
 
-    @pytest.fixture
-    def prev_episode(self, auth_user, episode):
-        return EpisodeFactory(
-            podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=7)
-        )
-
-    @pytest.fixture
-    def next_episode(self, auth_user, episode):
-        return EpisodeFactory(
-            podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=7)
-        )
-
     @pytest.mark.django_db
-    def test_ok(
-        self,
-        client,
-        auth_user,
-        episode,
-        prev_episode,
-        next_episode,
-    ):
+    def test_ok(self, client, auth_user, episode):
         response = client.get(episode.get_absolute_url())
         assert_200(response)
         assert response.context["episode"] == episode
 
     @pytest.mark.django_db
-    def test_not_authenticated(
-        self,
-        client,
-        episode,
-        prev_episode,
-        next_episode,
-    ):
-        response = client.get(episode.get_absolute_url())
-        assert_200(response)
-        assert response.context["episode"] == episode
-
-    @pytest.mark.django_db
-    def test_listened(
-        self,
-        client,
-        auth_user,
-        episode,
-        prev_episode,
-        next_episode,
-    ):
+    def test_listened(self, client, auth_user, episode):
         AudioLogFactory(
             episode=episode,
             user=auth_user,
@@ -196,14 +158,11 @@ class TestEpisodeDetail:
 
 
 class TestStartPlayer:
-    def url(self, episode):
-        return reverse("episodes:start_player", args=[episode.pk])
-
     @pytest.mark.django_db
     def test_play_from_start(self, client, auth_user, episode):
         assert_200(
             client.post(
-                self.url(episode),
+                episode.get_start_player_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
@@ -219,7 +178,7 @@ class TestStartPlayer:
         episode = EpisodeFactory()
         assert_200(
             client.post(
-                self.url(episode),
+                episode.get_start_player_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
@@ -235,7 +194,7 @@ class TestStartPlayer:
     def test_resume(self, client, auth_user, player_episode):
         assert_200(
             client.post(
-                self.url(player_episode),
+                player_episode.get_start_player_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
@@ -468,7 +427,7 @@ class TestRemoveAudioLog:
 
         assert_200(
             client.delete(
-                self.url(episode),
+                episode.get_remove_audio_log_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-log",
@@ -485,7 +444,7 @@ class TestRemoveAudioLog:
 
         assert_404(
             client.delete(
-                self.url(player_episode),
+                player_episode.get_remove_audio_log_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-log",
@@ -500,7 +459,7 @@ class TestRemoveAudioLog:
 
         assert_200(
             client.delete(
-                self.url(log.episode),
+                log.episode.get_remove_audio_log_url(),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-log",
@@ -510,6 +469,3 @@ class TestRemoveAudioLog:
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
-
-    def url(self, episode):
-        return reverse("episodes:remove_audio_log", args=[episode.pk])

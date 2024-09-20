@@ -209,46 +209,38 @@ class Podcast(models.Model):
 
     def get_absolute_url(self) -> str:
         """Default absolute URL of podcast."""
-        return self.detail_url
+        return self.get_detail_url()
 
-    @cached_property
-    def detail_url(self) -> str:
-        """Absolute URL of podcast detail page."""
+    def get_detail_url(self) -> str:
+        """Podcast detail URL"""
         return self._get_podcast_url_with_slug("podcasts:podcast_detail")
 
-    @cached_property
-    def episodes_url(self) -> str:
-        """URL of podcast episode list page."""
+    def get_episodes_url(self) -> str:
+        """Podcast episodes URL"""
         return self._get_podcast_url_with_slug("podcasts:episodes")
 
-    @cached_property
-    def similar_url(self) -> str:
-        """URL of podcast similar recommendations page."""
+    def get_similar_url(self) -> str:
+        """Podcast recommendations URL"""
         return self._get_podcast_url_with_slug("podcasts:similar")
 
-    @cached_property
-    def latest_episode_url(self) -> str:
-        """URL of latest episode."""
+    def get_latest_episode_url(self) -> str:
+        """Podcast latest episode URL"""
         return self._get_podcast_url("podcasts:latest_episode")
 
-    @cached_property
-    def subscribe_url(self) -> str:
-        """URL to subscribe to podcast."""
+    def get_subscribe_url(self) -> str:
+        """Podcast subscribe URL"""
         return self._get_podcast_url("podcasts:subscribe")
 
-    @cached_property
-    def unsubscribe_url(self) -> str:
-        """URL to unsubscribe from podcast."""
+    def get_unsubscribe_url(self) -> str:
+        """Podcast unsubscribe URL"""
         return self._get_podcast_url("podcasts:unsubscribe")
 
-    @cached_property
-    def remove_private_feed_url(self) -> str:
-        """URL to unsubscribe from private feed."""
+    def get_remove_private_feed_url(self) -> str:
+        """Podcast unsubscribe URL"""
         return self._get_podcast_url("podcasts:remove_private_feed")
 
-    @cached_property
-    def admin_url(self) -> str:
-        """URL on Django admin."""
+    def get_admin_url(self) -> str:
+        """Podcast admin site URL"""
         return reverse("admin:podcasts_podcast_change", args=[self.pk])
 
     @cached_property

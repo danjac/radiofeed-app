@@ -43,13 +43,13 @@ class ActiveLink(TypedDict):
 def active_link(
     context: RequestContext,
     to: Any,
-    *,
+    *args,
     css: str = "link",
     active_css: str = "active",
     **kwargs,
 ) -> ActiveLink:
     """Returns url with active link info if matching URL."""
-    url = resolve_url(to, **kwargs)
+    url = resolve_url(to, *args, **kwargs)
     return (
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url

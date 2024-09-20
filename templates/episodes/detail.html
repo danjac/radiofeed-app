@@ -7,7 +7,7 @@
     <header class="pb-3 mb-3 space-y-6 border-b">
         <h1 class="text-xl font-bold lg:text-2xl xl:text-3xl">{{ episode.cleaned_title }}</h1>
         {% cache CACHE_TIMEOUT episode-nav-header episode.pk %}
-            {% with next_episode=episode.next_episode previous_episode=episode.previous_episode %}
+            {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
                 {% if next_episode or previous_episode %}
                     <nav>
                         <ul class="flex justify-between" aria-label="Pagination">
@@ -53,7 +53,7 @@
                     {% if episode_type %}<span>{{ episode_type|capfirst }}</span>{% endif %}
                     {% if episode_num %}<span>Episode {{ episode_num }}</span>{% endif %}
                     {% if season %}<span>Season {{ season }}</span>{% endif %}
-                    <a href="{{ podcast.episodes_url }}"
+                    <a href="{{ podcast.get_episodes_url }}"
                        title="See all episodes for {{ podcast.cleaned_title }}"
                        class="inline-block link">See all episodes</a>
                 </div>
@@ -84,7 +84,7 @@
                                             title="Open Episode in Player"
                                             class="inline-flex items-center btn btn-primary btn-lg"
                                             hx-disabled-elt="this"
-                                            hx-post="{{ episode.start_player_url }}"
+                                            hx-post="{{ episode.get_start_player_url }}"
                                             hx-trigger="click once">
                                         {% heroicon_mini "play-circle" class="mr-2" %}
                                         Play
@@ -111,7 +111,7 @@
                                         title="Remove Episode from your Bookmarks"
                                         class="inline-flex items-center btn btn-default btn-outline"
                                         hx-disabled-elt="this"
-                                        hx-delete="{{ episode.remove_bookmark_url }}"
+                                        hx-delete="{{ episode.get_remove_bookmark_url }}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark-slash" class="mr-2" %}
                                     Bookmark
@@ -121,7 +121,7 @@
                                         title="Add Episode to your Bookmarks"
                                         class="inline-flex items-center btn btn-default"
                                         hx-disabled-elt="this"
-                                        hx-post="{{ episode.add_bookmark_url }}"
+                                        hx-post="{{ episode.get_add_bookmark_url }}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark" class="mr-2" %}
                                     Bookmark
@@ -188,7 +188,7 @@
                                     title="Remove episode from your History"
                                     hx-disabled-elt="this"
                                     hx-target="#audio-log"
-                                    hx-delete="{{ episode.remove_audio_log_url }}"
+                                    hx-delete="{{ episode.get_remove_audio_log_url }}"
                                     hx-indicator="this"
                                     hx-push-url="false"
                                     hx-swap="outerHTML"
