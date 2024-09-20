@@ -14,8 +14,6 @@ ENV LC_CTYPE=C.utf8 \
 
 WORKDIR /app
 
-# Python requirements
-
 RUN pip install pdm==2.18.2
 
 COPY ./pyproject.toml ./pdm.lock /app/
@@ -24,24 +22,26 @@ RUN pdm install --check --prod --no-editable --no-self --fail-fast
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-FROM python-base AS deployment-assets
-
 # Download NLTK files
+
+FROM python-base AS nltk-corpora
 
 COPY ./nltk.txt /app/
 
 RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
-COPY . /app
-
 # Build static assets
+
+FROM python-base AS staticfiles
+
+COPY . /app
 
 RUN python manage.py tailwind build && \
     python manage.py collectstatic --no-input
 
 FROM python-base AS webapp
 
-COPY --from=deployment-assets /app/staticfiles /app/staticfiles
-COPY --from=deployment-assets /root/nltk_data /root/nltk_data
+COPY --from=nltk-corpora /root/nltk_data /root/nltk_data
+COPY --from=staticfiles /app/staticfiles /app/staticfiles
 
 COPY . /app
