@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 import pytest
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains
 
@@ -342,12 +342,11 @@ class TestBookmarks:
 
 
 class TestAddBookmark:
-    def url(self, episode):
-        return reverse("episodes:add_bookmark", args=[episode.pk])
-
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
-        response = client.post(self.url(episode), headers={"HX-Request": "true"})
+        response = client.post(
+            episode.get_add_bookmark_url(), headers={"HX-Request": "true"}
+        )
 
         assert_200(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -356,22 +355,21 @@ class TestAddBookmark:
     def test_already_bookmarked(self, client, auth_user, episode):
         BookmarkFactory(episode=episode, user=auth_user)
 
-        response = client.post(self.url(episode), headers={"HX-Request": "true"})
+        response = client.post(
+            episode.get_add_bookmark_url(), headers={"HX-Request": "true"}
+        )
 
         assert_409(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
 class TestRemoveBookmark:
-    def url(self, episode):
-        return reverse("episodes:remove_bookmark", args=[episode.pk])
-
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
         BookmarkFactory(user=auth_user, episode=episode)
         assert_200(
             client.delete(
-                self.url(episode),
+                episode.get_remove_bookmark_url(),
                 headers={"HX-Request": "true"},
             )
         )

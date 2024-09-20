@@ -6,7 +6,7 @@ from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.http import (
@@ -21,9 +21,6 @@ from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-
-_discover_url: str = reverse_lazy("podcasts:discover")
-_private_feeds_url: str = reverse_lazy("podcasts:private_feeds")
 
 
 @require_safe
@@ -83,6 +80,7 @@ def search_podcasts(
     request: UserRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Search all public podcasts in database."""
+    discover_url = reverse("podcasts:discover")
 
     if request.search:
         podcasts = (
@@ -103,20 +101,22 @@ def search_podcasts(
                 "podcasts/search_podcasts.html",
                 {
                     "page_obj": paginate_lazy(request, podcasts),
-                    "clear_search_url": _discover_url,
+                    "clear_search_url": discover_url,
                 },
             ),
             target="pagination",
             partial="pagination",
         )
 
-    return HttpResponseRedirect(_discover_url)
+    return HttpResponseRedirect(discover_url)
 
 
 @require_safe
 @login_required
 def search_itunes(request: UserRequest) -> HttpResponseRedirect | TemplateResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
+
+    discover_url = reverse("podcasts:discover")
 
     if request.search:
         feeds = itunes.search(
@@ -130,11 +130,11 @@ def search_itunes(request: UserRequest) -> HttpResponseRedirect | TemplateRespon
             "podcasts/search_itunes.html",
             {
                 "feeds": feeds,
-                "clear_search_url": _discover_url,
+                "clear_search_url": discover_url,
             },
         )
 
-    return HttpResponseRedirect(_discover_url)
+    return HttpResponseRedirect(discover_url)
 
 
 @require_safe
@@ -359,7 +359,7 @@ def add_private_feed(
     """Add new private feed to collection."""
     if request.method == "POST":
         if request.POST.get("action") == "cancel":
-            return HttpResponseRedirect(_private_feeds_url)
+            return HttpResponseRedirect(reverse("podcasts:private_feeds"))
 
         form = PrivateFeedForm(request.POST, user=request.user)
 
@@ -369,7 +369,7 @@ def add_private_feed(
                 success_message = (
                     "Podcast added to your Private Feeds and will appear here soon"
                 )
-                redirect_url = _private_feeds_url
+                redirect_url = reverse("podcasts:private_feeds")
             else:
                 success_message = "Podcast added to your Private Feeds"
                 redirect_url = podcast.get_absolute_url()
@@ -400,7 +400,7 @@ def remove_private_feed(request: UserRequest, podcast_id: int) -> HttpResponseRe
     podcast = _get_podcast_or_404(podcast_id, private=True)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Removed from Private Feeds")
-    return HttpResponseRedirect(_private_feeds_url)
+    return HttpResponseRedirect(reverse("podcasts:private_feeds"))
 
 
 def _get_podcasts() -> QuerySet[Podcast]:
