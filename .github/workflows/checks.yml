@@ -27,7 +27,7 @@ jobs:
                 python-version: "3.12.6"
                 cache: "pip"
             - run: pip install uv==0.4
-            - run: uv sync --all-extras
-            - run: uv run pyright
-            - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
-            - run: uv run python -m pytest
+            - run: uv pip install --all-extras
+            - run: pyright
+            - run: xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
+            - run: python -m pytest
