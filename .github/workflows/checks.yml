@@ -33,7 +33,7 @@ jobs:
                 cache-dependency-glob: |
                     **/uv.lock
                     **/pyproject.toml
-            - run: uv sync --all-extras
+            - run: uv sync --frozen --all-extras
             - run: uv run pyright
             - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
             - run: uv run python -m pytest
