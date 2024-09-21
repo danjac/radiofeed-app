@@ -20,7 +20,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.4 /uv /usr/local/bin/uv
 
 COPY ./pyproject.toml ./uv.lock /app/
 
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev --no-install-project
 
 ENV PATH="/app/.venv/bin:$PATH"
 

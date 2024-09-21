@@ -16,7 +16,7 @@ envfile:
 
 .PHONY: pyinstall
 pyinstall:
-	uv sync --frozen --all-extras
+	uv sync --frozen --all-extras --no-install-project
 
 .PHONY: pyupdate
 pyupdate:
