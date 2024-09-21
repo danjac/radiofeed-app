@@ -68,6 +68,11 @@ dev = [
     "django-stubs>=5.0.4",
     "django-stubs-ext>=5.0.4",
 ]
+
+
+[tool.pdm]
+distribution = false
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [
@@ -182,6 +187,3 @@ exclude=[
 
 reportAttributeAccessIssue = false
 reportIncompatibleVariableOverride = false
-
-[tool.pdm]
-distribution = false
