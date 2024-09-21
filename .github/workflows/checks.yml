@@ -29,7 +29,7 @@ jobs:
             - uses: astral-sh/setup-uv@v3
               with:
                 version: "0.4"
-                enable_cache: true
+                enable-cache: true
                 cache-dependency-glob: |
                     **/uv.lock
                     **/pyproject.toml
