@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:988d07f129d9c657e77ddd6af2ad48f67cd7ac89aa8599f1b5fc0625b8e27749"
+content_hash = "sha256:b228ecc4b0aafad29507f27471193fed6396a40e392276b9507ba2fa21db3b06"
 
 [[metadata.targets]]
 requires_python = "==3.12.*"
@@ -1231,20 +1231,6 @@ files = [
     {file = "psycopg_binary-3.2.2-cp312-cp312-musllinux_1_2_ppc64le.whl", hash = "sha256:66de2dd7d37bf66eb234ca9d907f5cd8caca43ff8d8a50dd5c15844d1cf0390c"},
     {file = "psycopg_binary-3.2.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:2eb6f8f410dbbb71b8c633f283b8588b63bee0a7321f00ab76e9c800c593f732"},
     {file = "psycopg_binary-3.2.2-cp312-cp312-win_amd64.whl", hash = "sha256:b45553c6b614d02e1486585980afdfd18f0000aac668e2e87c6e32da1adb051a"},
-]
-
-[[package]]
-name = "psycopg-pool"
-version = "3.2.3"
-requires_python = ">=3.8"
-summary = "Connection Pool for Psycopg"
-groups = ["default"]
-dependencies = [
-    "typing-extensions>=4.6",
-]
-files = [
-    {file = "psycopg_pool-3.2.3-py3-none-any.whl", hash = "sha256:53bd8e640625e01b2927b2ad96df8ed8e8f91caea4597d45e7673fc7bbb85eb1"},
-    {file = "psycopg_pool-3.2.3.tar.gz", hash = "sha256:bb942f123bef4b7fbe4d55421bd3fb01829903c95c0f33fd42b7e94e5ac9b52a"},
 ]
 
 [[package]]

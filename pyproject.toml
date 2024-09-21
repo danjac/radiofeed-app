@@ -27,7 +27,6 @@ dependencies = [
     "nltk>=3.9.1",
     "pillow>=10.4.0",
     "psycopg[binary]>=3.2.1",
-    "psycopg-pool>=3.2.2",
     "pydantic>=2.8.2",
     "python-dateutil>=2.9.0.post0",
     "redis>=5.0.8",
@@ -91,7 +90,6 @@ testpaths = "radiofeed"
 env = [
     "COVERAGE_CORE=sysmon",
     "USE_COLLECTSTATIC=false",
-    "USE_CONNECTION_POOL=false",
     "USE_HTTPS=false",
 ]
 
