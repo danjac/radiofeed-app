@@ -9,7 +9,7 @@ Radiofeed requires the following basic dependencies to get started:
 
 * Python 3.12
 * Node 20+
-* [PDM](https://pdm-project.org/)
+* [uv](https://docs.astral.sh)
 
 **Note:** if you don't have the right version of Python you can use [`pdm python install`](https://pdm-project.org/latest/reference/cli/#python) and likewise [nvm](https://github.com/nvm-sh/nvm) for Node.
 

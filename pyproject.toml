@@ -69,9 +69,6 @@ dev = [
 ]
 
 
-[tool.pdm]
-distribution = false
-
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [

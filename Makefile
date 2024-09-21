@@ -16,11 +16,11 @@ envfile:
 
 .PHONY: pyinstall
 pyinstall:
-	pdm install --no-self
+	uv sync --frozen --all-extras
 
 .PHONY: pyupdate
 pyupdate:
-	pdm update
+	uv sync
 
 .PHONY: precommitinstall
 precommitinstall:
@@ -32,7 +32,7 @@ precommitupdate:
 
 .PHONY: nltkdownload
 nltkdownload:
-	pdm run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
+	uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
 
 .PHONY: clean
 clean:

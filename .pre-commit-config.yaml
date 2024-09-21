@@ -64,8 +64,3 @@ repos:
       rev: v0.19
       hooks:
           - id: validate-pyproject
-    - repo: https://github.com/pdm-project/pdm
-      rev: 2.18.2
-      hooks:
-          - id: pdm-lock-check
-          - id: pdm-sync
