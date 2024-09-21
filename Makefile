@@ -20,7 +20,7 @@ pyinstall:
 
 .PHONY: pyupdate
 pyupdate:
-	uv sync --all-extras
+	uv lock --upgrade
 
 .PHONY: precommitinstall
 precommitinstall:
