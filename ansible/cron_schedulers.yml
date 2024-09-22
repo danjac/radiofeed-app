@@ -1,0 +1,19 @@
+- name: Cron scheduler setup
+  hosts: cron_schedulers
+  remote_user: "{{ user }}"
+  gather_facts: false
+  vars_files:
+    - ./vars/site.yml
+    - ./vars/django.yml
+  roles:
+    - common
+    - django
+    - cron_schedulers
+# - name: Set up logrotate for cron logs
+#   hosts: cron_schedulers
+#   remote_user: root
+#   gather_facts: false
+#   vars_files:
+#     - ./vars/site.yml
+#   roles:
+#     - logrotate

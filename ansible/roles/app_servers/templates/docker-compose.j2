@@ -1,0 +1,12 @@
+services:
+    django:
+        image: "{{ docker_image }}"
+        env_file: .env
+        logging:
+            options:
+                max-size: "10k"
+                max-file: "3"
+        restart: always
+        command: ./entrypoint.sh
+        ports:
+            - "8000:8000"

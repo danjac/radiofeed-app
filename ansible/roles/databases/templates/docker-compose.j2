@@ -1,0 +1,38 @@
+x-logging: &default-logging
+    options:
+        max-size: "10k"
+        max-file: "3"
+
+services:
+    postgres:
+        image: postgres:16.2-bookworm
+        environment:
+            - POSTGRES_PASSWORD={{ postgres_password }}
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        stop_grace_period: "3s"
+        restart: always
+        logging: *default-logging
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 1s
+            timeout: 3s
+            retries: 30
+        ports:
+            - "5432:5432"
+
+    redis:
+        image: redis:7.2-bookworm
+        stop_grace_period: "3s"
+        restart: always
+        logging: *default-logging
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 1s
+            timeout: 3s
+            retries: 30
+        ports:
+            - "6379:6379"
+
+volumes:
+    pg_data: {}

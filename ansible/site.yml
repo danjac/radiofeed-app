@@ -1,0 +1,8 @@
+- name: Install Docker
+  import_playbook: ./docker.yml
+
+- name: Install PostgreSQL and Redis
+  import_playbook: ./databases.yml
+
+- name: Install cron schedulers and app servers
+  import_playbook: ./deploy.yml

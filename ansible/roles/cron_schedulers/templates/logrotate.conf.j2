@@ -1,0 +1,8 @@
+ {{ project_dir }}/logs/{{ item }}.log {
+  su {{ user }} {{ user }}
+  rotate 7
+  daily
+  compress
+  missingok
+  notifempty
+}

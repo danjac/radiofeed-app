@@ -1,0 +1,11 @@
+- name: Deploy docker compose
+  ansible.builtin.include_role:
+      name: compose
+- name: Start Gunicorn
+  changed_when: true
+  ansible.builtin.shell:
+      chdir: "{{ project_dir }}"
+      cmd: |
+        docker compose pull
+        docker compose up -d --remove-orphans
+        docker system prune -f

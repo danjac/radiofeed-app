@@ -1,0 +1,8 @@
+- name: Docker setup
+  hosts: all
+  become: true
+  remote_user: root
+  vars_files:
+    - ./vars/site.yml
+  roles:
+    - docker

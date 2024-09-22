@@ -1,0 +1,3 @@
+user: ubuntu
+docker_image: danjac2018/radiofeed:latest
+project_dir: /home/ubuntu/docker
