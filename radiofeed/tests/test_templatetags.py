@@ -9,6 +9,7 @@ from radiofeed.templatetags import (
     active_link,
     cover_image,
     format_duration,
+    html_attrs,
     html_json_attr,
     hx_headers,
     hx_vals,
@@ -38,9 +39,9 @@ class TestCoverArt:
             "https://www.example.com/test.jpg",
             CoverVariant.DETAIL,
             "test image",
-            classes="hover:grayscale",
+            **{"class": "hover:grayscale"},
         )
-        assert context["classes"] == "size-36 lg:size-40 hover:grayscale"
+        assert context["attrs"]["class"] == "size-36 lg:size-40 hover:grayscale"
         assert context["attrs"]["alt"] == "test image"
         assert context["attrs"]["title"] == "test image"
 
@@ -159,4 +160,14 @@ class TestAbsoluteUri:
     def test_object(self, podcast):
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
+        )
+
+
+class TestHtmlAttrs:
+    def test_with_defaults(self):
+        attrs = {"class": "h-16 w-16", "height": "32", "width": "32", "title": "test"}
+        defaults = {"class": "object-cover", "height": "40", "alt": "ok"}
+        assert (
+            html_attrs(attrs, **defaults)
+            == 'class="object-cover h-16 w-16" height="32" alt="ok" width="32" title="test"'
         )

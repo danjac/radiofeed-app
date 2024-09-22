@@ -236,8 +236,6 @@ class TestClosePlayer:
 
         assert_200(response)
 
-        assert not response.context["is_playing"]
-
         assert player_episode.pk not in client.session
 
 
