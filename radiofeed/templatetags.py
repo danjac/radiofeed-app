@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections
 import functools
 import itertools
 import json
@@ -15,7 +16,7 @@ from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize, stringformat
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 
 from radiofeed import covers, html
 
@@ -61,13 +62,14 @@ def active_link(
 @register.simple_tag
 def html_attrs(attrs: dict, **defaults) -> str:
     """Renders HTML attributes"""
-
-    return " ".join(
+    return format_html_join(
+        " ",
+        '{}="{}"',
         [
-            f"{name.replace("_", "-")}={stringformat(value, "s")}"
-            for name, value in _chain_attrs(attrs, defaults).items()
-            if value is not False and value is not None
-        ]
+            (name.replace("_", "-"), stringformat(value, "s"))
+            for name, value in _chain_attrs(defaults, attrs).items()
+            if value not in (False, None)
+        ],
     )
 
 
@@ -152,8 +154,8 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 get_cover_attrs = register.simple_tag(covers.get_cover_attrs)
 
 
-@register.inclusion_tag("_cover_art.html")
-def cover_art(
+@register.inclusion_tag("_cover_image.html")
+def cover_image(
     cover_url: str,
     variant: CoverVariant,
     title: str,
@@ -217,8 +219,12 @@ def percentage(value: float, total: float) -> int:
 
 
 def _chain_attrs(*attrs: dict) -> dict:
-    # classes are a special case: append to each other
-    classes = [c for c in [a.pop("class", "").strip() for a in attrs] if c]
+    # classes are a special case: append rather than replace
+    classes = collections.OrderedDict.fromkeys(
+        itertools.chain.from_iterable(
+            [c for c in [a.get("class", "").split() for a in attrs] if c]
+        )
+    ).keys()
 
     chained_attrs: dict = functools.reduce(operator.or_, attrs)
 

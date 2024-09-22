@@ -7,7 +7,7 @@ from radiofeed.covers import CoverVariant
 from radiofeed.templatetags import (
     absolute_uri,
     active_link,
-    cover_art,
+    cover_image,
     format_duration,
     html_json_attr,
     hx_headers,
@@ -33,8 +33,8 @@ def auth_req(req, user):
 
 
 class TestCoverArt:
-    def test_cover_art(self):
-        context = cover_art(
+    def test_cover_image(self):
+        context = cover_image(
             "https://www.example.com/test.jpg",
             CoverVariant.DETAIL,
             "test image",
