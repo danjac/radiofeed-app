@@ -64,10 +64,3 @@ repos:
       rev: v0.19
       hooks:
           - id: validate-pyproject
-    - repo: https://github.com/ansible/ansible-lint
-      rev: v24.6.1
-      hooks:
-          - id: ansible-lint
-            args: [--project-dir, "ansible", --exclude, ".github"]
-            additional_dependencies:
-                - ansible
