@@ -2,4 +2,10 @@
 
 set -o errexit
 
-python -m gunicorn -c ./gunicorn.conf.py -b "0.0.0.0:${PORT:=8000}"
+NUM_WORKERS=$(nproc --all)
+
+granian radiofeed.wsgi:application \
+    --host 0.0.0.0 \
+    --port "${PORT:=8000}" \
+    --workers "${NUM_WORKERS}" \
+    --interface wsgi

@@ -33,11 +33,11 @@ dependencies = [
     "scikit-learn>=1.5.1",
     "sentry-sdk>=2.13.0",
     "psutil>=6.0.0",
-    "gunicorn>=23.0.0",
     "whitenoise[brotli]>=6.7.0",
     "django-template-partials>=24.4",
     "environs[django]>=11.0.0",
     "django-tailwind-cli>=2.16.0",
+    "granian>=1.6.0",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
