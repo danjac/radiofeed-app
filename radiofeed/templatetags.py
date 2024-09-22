@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
-from django.template.defaultfilters import pluralize
+from django.template.defaultfilters import pluralize, stringformat
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
 from django.utils.html import format_html
@@ -205,3 +205,27 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
+
+
+@register.filter
+def html_attrs(attrs: dict | None, **defaults) -> str:
+    """Renders HTML attributes"""
+
+    attrs = attrs or {}
+
+    # classes are a special case: append to defaults
+
+    classes = [c for c in [a.pop("class", "").strip() for a in (attrs, defaults)] if c]
+
+    attrs = (attrs or {}) | defaults
+
+    if classes:
+        attrs["class"] = classes
+
+    return " ".join(
+        [
+            f"{name.replace("_", "-")}={stringformat(value, "s")}"
+            for name, value in attrs
+            if value is not False and value is not None
+        ]
+    )
