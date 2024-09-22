@@ -80,6 +80,8 @@ A Dockerfile is provided for standard container deployments which should also wo
 
 Once you have access to the Django Admin, you should configure the default Site instance with the correct production name and domain.
 
+The `ansible` directory contains full Playbooks for a multi-server deployment to a shared hosting provider such as Hetzner or Digital Ocean, this can be copied and modified for your particular use-case.
+
 ### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
