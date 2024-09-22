@@ -10,7 +10,6 @@ services:
             - POSTGRES_PASSWORD={{ postgres_password }}
         volumes:
             - pg_data:/var/lib/postgresql/data
-        command: postgres -c 'max_connections=1000'
         stop_grace_period: "3s"
         restart: always
         logging: *default-logging
