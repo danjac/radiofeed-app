@@ -87,7 +87,6 @@ testpaths = "radiofeed"
 env = [
     "COVERAGE_CORE=sysmon",
     "USE_COLLECTSTATIC=false",
-    "USE_CONNECTION_POOL=false",
     "USE_HTTPS=false",
 ]
 
