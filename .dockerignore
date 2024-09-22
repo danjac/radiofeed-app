@@ -23,6 +23,7 @@
 .venv
 .vim
 .vscode
+ansible
 LICENSE
 Makefile
 README.md
