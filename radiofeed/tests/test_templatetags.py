@@ -38,9 +38,9 @@ class TestCoverArt:
             "https://www.example.com/test.jpg",
             CoverVariant.DETAIL,
             "test image",
-            css_class="hover:grayscale",
+            classes="hover:grayscale",
         )
-        assert context["css_class"] == "size-36 lg:size-40 hover:grayscale"
+        assert context["classes"] == "size-36 lg:size-40 hover:grayscale"
         assert context["attrs"]["alt"] == "test image"
         assert context["attrs"]["title"] == "test image"
 

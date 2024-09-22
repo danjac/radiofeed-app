@@ -144,7 +144,7 @@ def cover_art(
     variant: CoverVariant,
     title: str,
     *,
-    css_class: str = "",
+    classes: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
 
@@ -153,12 +153,12 @@ def cover_art(
         "title": title,
     } | covers.get_cover_attrs(cover_url, variant)
 
-    css_class = covers.get_cover_class(variant, css_class)
+    classes = covers.get_cover_class(variant, classes)
 
     return {
         "attrs": attrs,
         "cover_url": cover_url,
-        "css_class": css_class,
+        "classes": classes,
         "title": title,
     }
 

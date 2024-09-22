@@ -176,7 +176,7 @@
                                             Listened
                                         {% endif %}
                                     </span>
-                                    {% include "_date.html" with value=audio_log.listened title="Listened" css_class="ml-2" %}
+                                    {% include "_date.html" with value=audio_log.listened title="Listened" classes="ml-2" %}
                                     {% if percent_complete > 0 and percent_complete < 100 %}
                                         <span>{{ percent_complete }}% Complete</span>
                                     {% elif percent_complete == 0 and audio_log.current_time %}

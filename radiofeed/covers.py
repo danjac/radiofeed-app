@@ -39,11 +39,7 @@ _MIN_DESKTOP_WIDTH: Final = 1024
 def get_cover_class(variant: CoverVariant, *classes) -> str:
     """Returns default CSS class for the cover image."""
     return " ".join(
-        [
-            css_class.strip()
-            for css_class in [_COVER_CLASSES[variant], *classes]
-            if css_class
-        ]
+        [classes.strip() for classes in [_COVER_CLASSES[variant], *classes] if classes]
     ).strip()
 
 
