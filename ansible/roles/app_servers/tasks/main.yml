@@ -1,7 +1,7 @@
 - name: Deploy docker compose
   ansible.builtin.include_role:
       name: compose
-- name: Start Gunicorn
+- name: Start web application
   changed_when: true
   ansible.builtin.shell:
       chdir: "{{ project_dir }}"
