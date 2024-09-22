@@ -4,6 +4,7 @@ import functools
 import itertools
 import json
 import math
+import operator
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -54,6 +55,19 @@ def active_link(
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
         else ActiveLink(active=False, css=css, url=url)
+    )
+
+
+@register.simple_tag
+def html_attrs(attrs: dict, **defaults) -> str:
+    """Renders HTML attributes"""
+
+    return " ".join(
+        [
+            f"{name.replace("_", "-")}={stringformat(value, "s")}"
+            for name, value in _chain_attrs(attrs, defaults).items()
+            if value is not False and value is not None
+        ]
     )
 
 
@@ -143,23 +157,18 @@ def cover_art(
     cover_url: str,
     variant: CoverVariant,
     title: str,
-    *,
-    classes: str = "",
+    **attrs,
 ) -> dict:
     """Renders a cover image with proxy URL."""
-
-    attrs = {
-        "alt": title,
-        "title": title,
-    } | covers.get_cover_attrs(cover_url, variant)
-
-    classes = covers.get_cover_class(variant, classes)
-
     return {
-        "attrs": attrs,
-        "cover_url": cover_url,
-        "classes": classes,
-        "title": title,
+        "attrs": _chain_attrs(
+            covers.get_cover_attrs(cover_url, variant),
+            {
+                "alt": title,
+                "title": title,
+            },
+            attrs,
+        )
     }
 
 
@@ -207,25 +216,13 @@ def percentage(value: float, total: float) -> int:
     return min(math.ceil((value / total) * 100), 100)
 
 
-@register.filter
-def html_attrs(attrs: dict | None, **defaults) -> str:
-    """Renders HTML attributes"""
+def _chain_attrs(*attrs: dict) -> dict:
+    # classes are a special case: append to each other
+    classes = [c for c in [a.pop("class", "").strip() for a in attrs] if c]
 
-    attrs = attrs or {}
-
-    # classes are a special case: append to defaults
-
-    classes = [c for c in [a.pop("class", "").strip() for a in (attrs, defaults)] if c]
-
-    attrs = (attrs or {}) | defaults
+    chained_attrs: dict = functools.reduce(operator.or_, attrs)
 
     if classes:
-        attrs["class"] = classes
+        chained_attrs["class"] = " ".join(classes)
 
-    return " ".join(
-        [
-            f"{name.replace("_", "-")}={stringformat(value, "s")}"
-            for name, value in attrs
-            if value is not False and value is not None
-        ]
-    )
+    return chained_attrs

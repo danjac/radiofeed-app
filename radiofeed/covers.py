@@ -36,20 +36,13 @@ _MIN_DESKTOP_WIDTH: Final = 1024
 
 
 @functools.cache
-def get_cover_class(variant: CoverVariant, *classes) -> str:
-    """Returns default CSS class for the cover image."""
-    return " ".join(
-        [classes.strip() for classes in [_COVER_CLASSES[variant], *classes] if classes]
-    ).strip()
-
-
-@functools.cache
 def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_SIZES[variant]
     full_src = get_cover_url(cover_url, full_size)
 
     attrs = {
+        "class": get_cover_class(variant),
         "height": full_size,
         "width": full_size,
         "src": full_src,
@@ -95,6 +88,12 @@ def get_cover_url(cover_url: str, size: int) -> str:
         if cover_url
         else get_placeholder_url(size)
     )
+
+
+@functools.cache
+def get_cover_class(variant: CoverVariant) -> str:
+    """Returns default CSS class for the cover image."""
+    return _COVER_CLASSES[variant]
 
 
 @functools.cache
