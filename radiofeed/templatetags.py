@@ -63,7 +63,7 @@ def active_link(
 
 @register.inclusion_tag("_timestamp.html")
 def timestamp(value: datetime | date, **attrs) -> dict:
-    """Returns a <time> string."""
+    """Returns a <time> tag."""
     return {
         "value": value,
         "attrs": attrs,
