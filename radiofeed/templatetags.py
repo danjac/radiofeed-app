@@ -123,12 +123,6 @@ def hx_vals(*pairs: str) -> str:
 
 
 @register.simple_tag
-def x_data(*pairs: str) -> str:
-    """Renders Alpine x-data."""
-    return html_json_attr("x-data", *pairs)
-
-
-@register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config."""
     return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
