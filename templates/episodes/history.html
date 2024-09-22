@@ -30,9 +30,7 @@
                             {% endif %}
                         </li>
                     {% endif %}
-                    <li class="flex justify-center items-center sm:justify-end">
-                        {% include "_search_form.html" with placeholder="Search: History" %}
-                    </li>
+                    <li class="flex justify-center items-center sm:justify-end">{% search_form placeholder="Search: History" %}</li>
                 </ul>
             </nav>
         {% endif %}

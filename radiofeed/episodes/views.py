@@ -61,7 +61,6 @@ def search_episodes(
     request: UserRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
-    index_url = reverse("episodes:index")
 
     if request.search:
         episodes = (
@@ -78,14 +77,13 @@ def search_episodes(
                 "episodes/search.html",
                 {
                     "page_obj": paginate_lazy(request, episodes),
-                    "clear_search_url": index_url,
                 },
             ),
             target="pagination",
             partial="pagination",
         )
 
-    return HttpResponseRedirect(index_url)
+    return HttpResponseRedirect(reverse("episodes:index"))
 
 
 @require_safe

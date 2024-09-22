@@ -61,15 +61,6 @@ def active_link(
     )
 
 
-@register.inclusion_tag("_timestamp.html")
-def timestamp(value: datetime | date, **attrs) -> dict:
-    """Returns a <time> tag."""
-    return {
-        "value": value,
-        "attrs": attrs,
-    }
-
-
 @register.simple_tag
 def html_attrs(attrs: dict | None, **defaults) -> str:
     """Renders HTML attributes"""
@@ -132,6 +123,12 @@ def hx_vals(*pairs: str) -> str:
 
 
 @register.simple_tag
+def x_data(*pairs: str) -> str:
+    """Renders Alpine x-data."""
+    return html_json_attr("x-data", *pairs)
+
+
+@register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config."""
     return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
@@ -183,6 +180,37 @@ def cover_image(
             },
             attrs,
         )
+    }
+
+
+@register.inclusion_tag("_search_form.html", takes_context=True)
+def search_form(
+    context: RequestContext,
+    *,
+    search_url: str = "",
+    clear_search_url: str = "",
+    placeholder: str = "Search",
+    **attrs,
+) -> dict:
+    """Renders search form."""
+    search_url = search_url or context.request.path
+    clear_search_url = clear_search_url or search_url
+
+    return {
+        "request": context.request,
+        "search_url": search_url,
+        "clear_search_url": clear_search_url,
+        "placeholder": placeholder,
+        "attrs": attrs,
+    }
+
+
+@register.inclusion_tag("_timestamp.html")
+def timestamp(value: datetime | date, **attrs) -> dict:
+    """Returns a <time> tag."""
+    return {
+        "value": value,
+        "attrs": attrs,
     }
 
 

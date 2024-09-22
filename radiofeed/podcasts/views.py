@@ -66,7 +66,6 @@ def discover(request: UserRequest) -> TemplateResponse:
             "podcasts/discover.html",
             {
                 "page_obj": paginate_lazy(request, podcasts),
-                "search_url": reverse("podcasts:search_podcasts"),
             },
         ),
         target="pagination",
@@ -80,7 +79,6 @@ def search_podcasts(
     request: UserRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Search all public podcasts in database."""
-    discover_url = reverse("podcasts:discover")
 
     if request.search:
         podcasts = (
@@ -101,22 +99,19 @@ def search_podcasts(
                 "podcasts/search_podcasts.html",
                 {
                     "page_obj": paginate_lazy(request, podcasts),
-                    "clear_search_url": discover_url,
                 },
             ),
             target="pagination",
             partial="pagination",
         )
 
-    return HttpResponseRedirect(discover_url)
+    return HttpResponseRedirect(reverse("podcasts:discover"))
 
 
 @require_safe
 @login_required
 def search_itunes(request: UserRequest) -> HttpResponseRedirect | TemplateResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
-
-    discover_url = reverse("podcasts:discover")
 
     if request.search:
         feeds = itunes.search(
@@ -130,11 +125,10 @@ def search_itunes(request: UserRequest) -> HttpResponseRedirect | TemplateRespon
             "podcasts/search_itunes.html",
             {
                 "feeds": feeds,
-                "clear_search_url": discover_url,
             },
         )
 
-    return HttpResponseRedirect(discover_url)
+    return HttpResponseRedirect(reverse("podcasts:discover"))
 
 
 @require_safe

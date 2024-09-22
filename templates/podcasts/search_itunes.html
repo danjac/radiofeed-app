@@ -18,7 +18,8 @@
                     </a>
                 </li>
                 <li class="flex justify-center items-center sm:justify-end">
-                    {% include "_search_form.html" with placeholder="Search: Podcasts" %}
+                    {% url "podcasts:discover" as discover_url %}
+                    {% search_form clear_search_url=discover_url placeholder="Search: Podcasts" %}
                 </li>
             </ul>
         </nav>
