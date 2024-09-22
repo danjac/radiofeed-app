@@ -179,6 +179,7 @@ def cover_image(
             {
                 "alt": title,
                 "title": title,
+                "class": covers.get_cover_class(variant),
             },
             attrs,
         )

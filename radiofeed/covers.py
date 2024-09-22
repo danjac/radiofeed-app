@@ -42,7 +42,6 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
     full_src = get_cover_url(cover_url, full_size)
 
     attrs = {
-        "class": get_cover_class(variant),
         "height": full_size,
         "width": full_size,
         "src": full_src,
