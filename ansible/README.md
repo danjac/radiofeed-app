@@ -29,3 +29,7 @@ The Ansible playbooks will deploy all of the above using Docker images.
 1. Ensure you have access to a Radiofeed Docker image. The default image is `danjac2018/radiofeed:latest`.
 
 2. Run `ansible-playbook -v -i ./hosts ./site.yml` to deploy to your servers.
+
+## Upgrade
+
+To update server dependencies, run `ansible-playbook -v -i ./hosts ./upgrade.yml`.
