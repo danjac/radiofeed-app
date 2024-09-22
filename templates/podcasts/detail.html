@@ -88,7 +88,7 @@
                 <a href="{{ podcast.get_latest_episode_url }}"
                    class="flex flex-wrap space-x-1 link">
                     <span>Last update</span>
-                    {% include "_date.html" with value=podcast.pub_date title="Last update" %}
+                    {% timestamp podcast.pub_date title="Last update" %}
                 </a>
             </div>
         </div>

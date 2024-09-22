@@ -21,6 +21,8 @@ from django.utils.html import format_html, format_html_join
 from radiofeed import covers, html
 
 if TYPE_CHECKING:  # pragma: nocover
+    from datetime import date, datetime
+
     from django.template.context import RequestContext
 
     from radiofeed.covers import CoverVariant
@@ -59,15 +61,24 @@ def active_link(
     )
 
 
+@register.inclusion_tag("_timestamp.html")
+def timestamp(value: datetime | date, **attrs) -> dict:
+    """Returns a <time> string."""
+    return {
+        "value": value,
+        "attrs": attrs,
+    }
+
+
 @register.simple_tag
-def html_attrs(attrs: dict, **defaults) -> str:
+def html_attrs(attrs: dict | None, **defaults) -> str:
     """Renders HTML attributes"""
     return format_html_join(
         " ",
         '{}="{}"',
         [
             (name.replace("_", "-"), stringformat(value, "s"))
-            for name, value in _chain_attrs(defaults, attrs).items()
+            for name, value in _chain_attrs(defaults, attrs or {}).items()
             if value not in (False, None)
         ],
     )
