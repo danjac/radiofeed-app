@@ -8,11 +8,9 @@ set -o errexit
 # 3. system health checks
 # 4. clear cache
 
-
 python ./manage.py check --deploy --traceback
 
-# increase statement timeout for larger migrations
-STATEMENT_TIMEOUT=300 python ./manage.py migrate --no-input --traceback
+python ./manage.py migrate --no-input --traceback
 
 python ./manage.py health_check --traceback
 

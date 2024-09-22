@@ -88,8 +88,33 @@ MIDDLEWARE: list[str] = [
 
 # Databases
 
-CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=360)
+
 STATEMENT_TIMEOUT = env.int("STATEMENT_TIMEOUT", default=30)
+DATABASE_OPTIONS = {}
+
+if env.bool("USE_CONNECTION_POOL", default=False):
+    CONN_POOL_MIN_SIZE = env.int("CONN_POOL_MIN_SIZE", 2)
+    CONN_POOL_MAX_SIZE = env.int("CONN_POOL_MIN_SIZE", 4)
+
+    DATABASE_OPTIONS = {
+        "OPTIONS": {
+            "pool": {
+                "min_size": CONN_POOL_MIN_SIZE,
+                "max_size": CONN_POOL_MAX_SIZE,
+                "timeout": STATEMENT_TIMEOUT,
+            }
+        }
+    }
+else:
+    CONN_MAX_AGE = env.int("CONN_MAX_AGE", default=360)
+
+    DATABASE_OPTIONS = {
+        "CONN_MAX_AGE": CONN_MAX_AGE,
+        "CONN_HEALTH_CHECKS": CONN_MAX_AGE > 0,
+        "OPTIONS": {
+            "options": f"-c statement_timeout={STATEMENT_TIMEOUT}s",
+        },
+    }
 
 DATABASES = {
     "default": env.dj_db_url(
@@ -98,13 +123,10 @@ DATABASES = {
     )
     | {
         "ATOMIC_REQUESTS": True,
-        "CONN_MAX_AGE": CONN_MAX_AGE,
-        "CONN_HEALTH_CHECKS": CONN_MAX_AGE > 0,
-        "OPTIONS": {
-            "options": f"-c statement_timeout={STATEMENT_TIMEOUT}s",
-        },
     }
+    | DATABASE_OPTIONS
 }
+
 
 # Caches
 
