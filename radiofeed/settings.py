@@ -94,7 +94,7 @@ DATABASE_OPTIONS = {}
 
 if env.bool("USE_CONNECTION_POOL", default=False):
     CONN_POOL_MIN_SIZE = env.int("CONN_POOL_MIN_SIZE", 2)
-    CONN_POOL_MAX_SIZE = env.int("CONN_POOL_MIN_SIZE", 4)
+    CONN_POOL_MAX_SIZE = env.int("CONN_POOL_MAX_SIZE", 4)
 
     DATABASE_OPTIONS = {
         "OPTIONS": {
