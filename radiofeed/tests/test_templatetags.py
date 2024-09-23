@@ -9,11 +9,7 @@ from radiofeed.templatetags import (
     active_link,
     cover_image,
     format_duration,
-    html_attrs,
-    html_json_attr,
-    hx_headers,
-    hx_vals,
-    json_values,
+    json_attr,
     percentage,
 )
 
@@ -36,12 +32,12 @@ def auth_req(req, user):
 class TestCoverArt:
     def test_cover_image(self):
         context = cover_image(
-            "https://www.example.com/test.jpg",
             CoverVariant.DETAIL,
+            "https://www.example.com/test.jpg",
             "test image",
-            **{"class": "hover:grayscale"},
+            css_class="hover:grayscale",
         )
-        assert context["attrs"]["class"] == "size-36 lg:size-40 hover:grayscale"
+        assert context["classes"] == ["size-36 lg:size-40", "hover:grayscale"]
         assert context["attrs"]["alt"] == "test image"
         assert context["attrs"]["title"] == "test image"
 
@@ -105,44 +101,13 @@ class TestActiveLink:
 class TestJsonValues:
     def test_values(self):
         assert (
-            json_values(
+            json_attr(
                 "X-CSRFToken",
                 "abc123",
                 "myHeader",
                 "def456",
             )
             == '{"X-CSRFToken": "abc123", "myHeader": "def456"}'
-        )
-
-
-class TestHtmlJsonAttr:
-    def test_headers(self):
-        assert (
-            html_json_attr(
-                "hx-headers",
-                "X-CSRFToken",
-                "abc123",
-                "myHeader",
-                "def456",
-            )
-            == "hx-headers='{&quot;X-CSRFToken&quot;: &quot;abc123&quot;, &quot;myHeader&quot;: &quot;def456&quot;}'"
-        )
-
-    def test_hx_headers(self):
-        assert (
-            hx_headers(
-                "X-CSRFToken",
-                "abc123",
-                "myHeader",
-                "def456",
-            )
-            == "hx-headers='{&quot;X-CSRFToken&quot;: &quot;abc123&quot;, &quot;myHeader&quot;: &quot;def456&quot;}'"
-        )
-
-    def test_hx_vals(self):
-        assert (
-            hx_vals("action", "cancel")
-            == "hx-vals='{&quot;action&quot;: &quot;cancel&quot;}'"
         )
 
 
@@ -160,14 +125,4 @@ class TestAbsoluteUri:
     def test_object(self, podcast):
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
-        )
-
-
-class TestHtmlAttrs:
-    def test_with_defaults(self):
-        attrs = {"class": "h-16 w-16", "height": "32", "width": "32", "title": "test"}
-        defaults = {"class": "object-cover", "height": "40", "alt": "ok"}
-        assert (
-            html_attrs(attrs, **defaults)
-            == 'class="object-cover h-16 w-16" height="32" alt="ok" width="32" title="test"'
         )

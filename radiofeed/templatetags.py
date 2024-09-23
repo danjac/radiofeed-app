@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import collections
 import functools
 import itertools
 import json
 import math
-import operator
 from typing import TYPE_CHECKING, Any, Final, TypedDict
 
 from django import template
@@ -13,16 +11,13 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
-from django.template.defaultfilters import pluralize, stringformat
+from django.template.defaultfilters import pluralize
 from django.utils.encoding import force_str
 from django.utils.functional import LazyObject
-from django.utils.html import format_html, format_html_join
 
 from radiofeed import covers, html
 
 if TYPE_CHECKING:  # pragma: nocover
-    from datetime import date, datetime
-
     from django.template.context import RequestContext
 
     from radiofeed.covers import CoverVariant
@@ -62,25 +57,11 @@ def active_link(
 
 
 @register.simple_tag
-def html_attrs(attrs: dict | None, **defaults) -> str:
-    """Renders HTML attributes"""
-    return format_html_join(
-        " ",
-        '{}="{}"',
-        [
-            (name.replace("_", "-"), stringformat(value, "s"))
-            for name, value in _chain_attrs(defaults, attrs or {}).items()
-            if value not in (False, None)
-        ],
-    )
-
-
-@register.simple_tag
-def json_values(*pairs: str) -> str:
+def json_attr(*pairs: str) -> str:
     """Renders attribute value containing JSON.
 
     Takes multiple pairs of headers and values e.g.:
-        {% json_values "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
+        {% json_attr "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
 
     This will generate:
         '{"X-CSRF-Token": "...", "myHeader": "form"}'
@@ -95,31 +76,6 @@ def json_values(*pairs: str) -> str:
         },
         cls=DjangoJSONEncoder,
     )
-
-
-@register.simple_tag
-def html_json_attr(name: str, *pairs: str) -> str:
-    """Renders attribute containing JSON.
-
-    Takes multiple pairs of headers and values e.g.:
-        {% html_json_attr "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
-
-    This will generate:
-        hx-headers='{"X-CSRF-Token": "...", "myHeader": "form"}'
-    """
-    return format_html("{}='{}'", name, json_values(*pairs))
-
-
-@register.simple_tag
-def hx_headers(*pairs: str) -> str:
-    """Renders hx-headers."""
-    return html_json_attr("hx-headers", *pairs)
-
-
-@register.simple_tag
-def hx_vals(*pairs: str) -> str:
-    """Renders hx-vals."""
-    return html_json_attr("hx-vals", *pairs)
 
 
 @register.simple_tag
@@ -158,22 +114,24 @@ get_cover_attrs = register.simple_tag(covers.get_cover_attrs)
 
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
-    cover_url: str,
     variant: CoverVariant,
+    cover_url: str,
     title: str,
-    **attrs,
+    *,
+    css_class: str = "",
 ) -> dict:
     """Renders a cover image with proxy URL."""
     return {
-        "attrs": _chain_attrs(
-            covers.get_cover_attrs(cover_url, variant),
-            {
-                "alt": title,
-                "title": title,
-                "class": covers.get_cover_class(variant),
-            },
-            attrs,
-        )
+        "attrs": covers.get_cover_attrs(cover_url, variant)
+        | {
+            "title": title,
+            "alt": title,
+        },
+        "classes": [
+            classes
+            for classes in [covers.get_cover_class(variant), css_class]
+            if classes
+        ],
     }
 
 
@@ -214,15 +172,6 @@ def search_button(
     return context.flatten() | {
         "search_url": search_url,
         "label": label,
-        "attrs": attrs,
-    }
-
-
-@register.inclusion_tag("_timestamp.html")
-def timestamp(value: datetime | date, **attrs) -> dict:
-    """Returns a <time> tag."""
-    return {
-        "value": value,
         "attrs": attrs,
     }
 
@@ -269,19 +218,3 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
-
-
-def _chain_attrs(*attrs: dict) -> dict:
-    # classes are a special case: append rather than replace
-    classes = collections.OrderedDict.fromkeys(
-        itertools.chain.from_iterable(
-            [c for c in [a.get("class", "").strip().split() for a in attrs] if c]
-        )
-    ).keys()
-
-    chained_attrs: dict = functools.reduce(operator.or_, attrs)
-
-    if classes:
-        chained_attrs["class"] = " ".join(classes)
-
-    return chained_attrs

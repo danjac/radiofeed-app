@@ -4,13 +4,13 @@
    href="{{ podcast.get_absolute_url }}"
    aria-label="{{ podcast.cleaned_title }}"
    title="{{ podcast.cleaned_title }}">
-    {% cover_image podcast.cover_url "card" title=podcast.cleaned_title class="group-hover:opacity-75" %}
+    {% cover_image "card" podcast.cover_url title=podcast.cleaned_title css_class="group-hover:opacity-75" %}
     <div class="flex flex-col place-content-between h-16 leading-tight">
         <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
             {{ podcast.cleaned_title }}
         </h2>
         <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
-            {% timestamp podcast.pub_date title="Last update" %}
+            {% include "_date.html" with value=podcast.pub_date title="Last update" %}
         </h3>
     </div>
 </a>

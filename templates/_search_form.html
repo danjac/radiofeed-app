@@ -1,5 +1,7 @@
 {% load heroicons %}
-<form {% html_attrs attrs class="relative bg-transparent" method="get" action=search_url %}
+<form class="relative bg-transparent"
+      method="get"
+      action="{{ search_url }}"
       x-init="$watch('search', value => $dispatch('search', value))"
       x-data="{search: '{{ request.search.value|escapejs }}'}">
     <input type="search"

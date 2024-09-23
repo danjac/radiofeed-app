@@ -4,7 +4,7 @@
     <article class="space-y-3">
         {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            {% cover_image podcast.cover_url "detail" podcast.cleaned_title %}
+            {% cover_image "detail" podcast.cover_url podcast.cleaned_title %}
             <div class="flex flex-col place-content-between h-32">
                 {% if podcast.private %}
                     <div>
@@ -16,7 +16,7 @@
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
                                     hx-delete="{{ podcast.get_remove_private_feed_url }}"
-                                    {% hx_headers CSRF_HEADER csrf_token %}>
+                                    hx-headers="{% json_attr CSRF_HEADER csrf_token %}">
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>
@@ -37,7 +37,7 @@
                              hx-push-url="false"
                              hx-indicator="this"
                              hx-swap="outerHTML"
-                             {% hx_headers CSRF_HEADER csrf_token %}>
+                             hx-headers="{% json_attr CSRF_HEADER csrf_token %}">
                             {% if is_subscribed %}
                                 <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                         aria-label="Unsubscribe from this Podcast"
@@ -88,7 +88,7 @@
                 <a href="{{ podcast.get_latest_episode_url }}"
                    class="flex flex-wrap space-x-1 link">
                     <span>Last update</span>
-                    {% timestamp podcast.pub_date title="Last update" %}
+                    {% include "_date.html" with value=podcast.pub_date title="Last update" %}
                 </a>
             </div>
         </div>

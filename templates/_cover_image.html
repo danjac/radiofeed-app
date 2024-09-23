@@ -1,4 +1,8 @@
 {# vim: set filetype=htmldjango #}
 {# djlint:off #}
-<img {% html_attrs attrs class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900" aria_hidden="true" loading="lazy" decoding="async" %}>
+<img class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900 {{ classes|join:" " }}"
+     aria_hidden="true"
+     loading="lazy"
+     decoding="async"
+     {% include "django/forms/attrs.html" %}>
 {# djlint:on #}

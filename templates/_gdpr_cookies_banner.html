@@ -20,7 +20,7 @@
                             hx-push-url="false"
                             hx-swap="delete"
                             hx-indicator="this"
-                            {% hx_headers CSRF_HEADER csrf_token %}>OK</button>
+                            hx-headers="{% json_attr CSRF_HEADER csrf_token %}">OK</button>
                 </div>
             </div>
         </div>
