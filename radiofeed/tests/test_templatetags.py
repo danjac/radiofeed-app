@@ -9,7 +9,6 @@ from radiofeed.templatetags import (
     active_link,
     cover_image,
     format_duration,
-    json_attr,
     percentage,
 )
 
@@ -96,19 +95,6 @@ class TestActiveLink:
             "css": "link active",
             "active": True,
         }
-
-
-class TestJsonValues:
-    def test_values(self):
-        assert (
-            json_attr(
-                "X-CSRFToken",
-                "abc123",
-                "myHeader",
-                "def456",
-            )
-            == '{"X-CSRFToken": "abc123", "myHeader": "def456"}'
-        )
 
 
 class TestAbsoluteUri:

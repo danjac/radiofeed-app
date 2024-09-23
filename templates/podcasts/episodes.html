@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block podcast_navbar %}
     {{ block.super }}
-    {% cache CACHE_TIMEOUT podcast-episodes-header request.get_full_path %}
+    {% cache 300 podcast-episodes-header request.get_full_path %}
         {% if page_obj.has_other_pages or request.search %}
             <nav class="flex justify-center items-center sm:justify-start">
                 <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
@@ -33,7 +33,7 @@
 {% endblock podcast_navbar %}
 {% block podcast_content %}
     {% partialdef pagination inline=True %}
-        {% cache CACHE_TIMEOUT podcast-episodes request.get_full_path %}
+        {% cache 300 podcast-episodes request.get_full_path %}
             {% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
                 <ul class="divide-y divide-solid" id="{{ pagination_target }}">
                     {% if has_other_pages %}

@@ -4,7 +4,7 @@
     {{ block.super }} | About
 {% endblock title %}
 {% block content %}
-    {% cache CACHE_TIMEOUT about-page %}
+    {% cache 300 about-page %}
         {% with site_name=request.site.name %}
             <h1 class="flex flex-wrap justify-center pb-3 mb-6 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
                 About {{ site_name }}

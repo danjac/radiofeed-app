@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-import itertools
 import json
 import math
 from typing import TYPE_CHECKING, Any, Final, TypedDict
@@ -12,8 +11,6 @@ from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.defaultfilters import pluralize
-from django.utils.encoding import force_str
-from django.utils.functional import LazyObject
 
 from radiofeed import covers, html
 
@@ -56,26 +53,20 @@ def active_link(
     )
 
 
-@register.simple_tag
-def json_attr(*pairs: str) -> str:
-    """Renders attribute value containing JSON.
+@register.simple_tag(takes_context=True)
+def jsonify_csrf(context: RequestContext, **data) -> str:
+    """Returns JSON-rendered CSRF token.
 
-    Takes multiple pairs of headers and values e.g.:
-        {% json_attr "hx-headers" "X-CSRFToken" csrf_token "myHeader" "form" %}
-
-    This will generate:
-        '{"X-CSRF-Token": "...", "myHeader": "form"}'
-
-    Note: LazyObjects will be resolved to strings. Should be ok for the simple case e.g
-    csrf_token but more complex cases should require evaluation of the lazy value first.
+    Example:
+        hx-headers="{% jsonify_csrf %}"
     """
-    return json.dumps(
-        {
-            k: force_str(v) if isinstance(v, LazyObject) else v
-            for k, v in itertools.batched(pairs, 2)
-        },
-        cls=DjangoJSONEncoder,
-    )
+    return jsonify(**{"X-CSRFToken": str(context.get("csrf_token", ""))} | data)
+
+
+@register.simple_tag
+def jsonify(**data) -> str:
+    """Returns JSON-rendered data."""
+    return json.dumps(data, cls=DjangoJSONEncoder)
 
 
 @register.simple_tag

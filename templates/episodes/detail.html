@@ -6,7 +6,7 @@
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b">
         <h1 class="text-xl font-bold lg:text-2xl xl:text-3xl">{{ episode.cleaned_title }}</h1>
-        {% cache CACHE_TIMEOUT episode-nav-header episode.pk %}
+        {% cache 300 episode-nav-header episode.pk %}
             {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
                 {% if next_episode or previous_episode %}
                     <nav>
@@ -68,7 +68,7 @@
                                  hx-target="this"
                                  hx-indicator="this"
                                  hx-swap="outerHTML"
-                                 hx-headers="{% json_attr CSRF_HEADER csrf_token %}">
+                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
                                     <button aria-label="Close Player"
                                             title="Close Player"
@@ -105,7 +105,7 @@
                              hx-target="this"
                              hx-swap="outerHTML"
                              hx-indicator="this"
-                             hx-headers="{% json_attr CSRF_HEADER csrf_token %}">
+                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
                                 <button aria-label="Remove Episode from your Bookmarks"
                                         title="Remove Episode from your Bookmarks"
@@ -193,7 +193,7 @@
                                     hx-push-url="false"
                                     hx-swap="outerHTML"
                                     hx-confirm="Are you sure you want to remove this episode from your History?"
-                                    hx-headers="{% json_attr CSRF_HEADER csrf_token %}">
+                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>

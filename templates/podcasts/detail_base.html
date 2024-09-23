@@ -10,7 +10,7 @@
         </h1>
         <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
             {% block podcast_navbar %}
-                {% cache CACHE_TIMEOUT podcast-detail-links request.path %}
+                {% cache 300 podcast-detail-links request.path %}
                     <nav class="flex justify-center items-center sm:justify-start">
                         <ul class="flex items-center space-x-6">
                             {% active_link podcast.get_detail_url as link %}

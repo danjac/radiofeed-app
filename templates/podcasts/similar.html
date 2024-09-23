@@ -4,7 +4,7 @@
     {{ block.super }} | Similar
 {% endblock title %}
 {% block podcast_content %}
-    {% cache CACHE_TIMEOUT similar-podcasts podcast.pk %}
+    {% cache 300 similar-podcasts podcast.pk %}
         <ul class="divide-y divide-solid">
             {% for recommendation in recommendations %}
                 <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">

@@ -17,7 +17,7 @@
         </nav>
     </header>
     {% partialdef pagination inline=True %}
-        {% cache CACHE_TIMEOUT search-episodes request.get_full_path %}
+        {% cache 300 search-episodes request.get_full_path %}
             {% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
                 <ul class="divide-y divide-solid" id="{{ pagination_target }}">
                     {% if has_other_pages %}
