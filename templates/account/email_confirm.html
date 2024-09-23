@@ -17,9 +17,7 @@
                   action="{% url 'account_confirm_email' confirmation.key %}">
                 {% csrf_token %}
                 <div class="flex items-center">
-                    <button class="inline-flex items-center btn btn-primary"
-                            name="action_add"
-                            value="true">
+                    <button class="inline-flex items-center btn btn-primary">
                         {% heroicon_mini "check" class="mr-2" %}
                         Confirm E-Mail
                     </button>
