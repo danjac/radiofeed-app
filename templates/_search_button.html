@@ -1,0 +1,18 @@
+{# vim: set filetype=htmldjango #}
+{% load heroicons %}
+<button {% html_attrs attrs class="inline-flex items-center btn btn-default" %}
+    {# djlint: off #}
+    x-data="{
+        url: '{{ search_url|escapejs }}',
+        search: '{{ request.search.value|escapejs }}',
+        get searchUrl() { return this.url + '?{{ request.search.param }}=' + this.search },
+    }"
+    hx-push-url="true"
+    :hx-get="searchUrl"
+    :disabled="!search"
+    @search.window="search=$event.detail; htmx.process($el)"
+    {# djlint: on #}
+    >
+    {% heroicon_mini "magnifying-glass" class="mr-2" %}
+    {{ label }}
+</button>

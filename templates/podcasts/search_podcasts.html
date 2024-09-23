@@ -12,16 +12,12 @@
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 {% if request.search %}
                     <li class="flex justify-center items-center sm:justify-end">
-                        <a class="inline-flex items-center btn btn-default"
-                           href="{% url 'podcasts:search_itunes' %}{{ request.search.qs }}">
-                            {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                            Search iTunes
-                        </a>
+                        {% url "podcasts:search_itunes" as search_url %}
+                        {% search_button search_url "Search iTunes" %}
                     </li>
                 {% endif %}
                 <li class="flex justify-center items-center sm:justify-end">
-                    {% url "podcasts:discover" as discover_url %}
-                    {% search_form clear_search_url=discover_url placeholder="Search: Podcasts" %}
+                    {% search_form placeholder="Search: Podcasts" clear_search=False %}
                 </li>
             </ul>
         </nav>

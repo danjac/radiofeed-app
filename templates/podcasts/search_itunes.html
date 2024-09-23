@@ -11,15 +11,11 @@
         <nav>
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 <li class="flex justify-center items-center sm:justify-end">
-                    <a class="inline-flex items-center btn btn-default"
-                       href="{% url "podcasts:search_podcasts" %}{{ request.search.qs }}">
-                        {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                        Search Podcasts
-                    </a>
+                    {% url "podcasts:search_podcasts" as search_url %}
+                    {% search_button search_url "Search Podcasts" %}
                 </li>
                 <li class="flex justify-center items-center sm:justify-end">
-                    {% url "podcasts:discover" as discover_url %}
-                    {% search_form clear_search_url=discover_url placeholder="Search: Podcasts" %}
+                    {% search_form placeholder="Search: Podcasts" clear_search=False %}
                 </li>
             </ul>
         </nav>

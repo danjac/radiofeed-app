@@ -13,11 +13,8 @@
                 <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
                     {% if request.search %}
                         <li class="flex justify-center items-center sm:justify-end">
-                            <a class="inline-flex items-center btn btn-default"
-                               href="{% url "episodes:search_episodes" %}{{ request.search.qs }}">
-                                {% heroicon_mini "magnifying-glass" class="mr-2" %}
-                                Search All Episodes
-                            </a>
+                            {% url "episodes:search_episodes" as search_url %}
+                            {% search_button search_url "Search All Episodes" %}
                         </li>
                     {% else %}
                         <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">

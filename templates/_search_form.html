@@ -9,10 +9,11 @@
            aria-label="{{ placeholder }}"
            hx-validate="true"
            x-model="search"
+           @keyup="$dispatch('search', search)"
            @keydown.ctrl.k.window.prevent="$el.focus()"
            :class="{ 'md:w-72 xl:w-84': !search, 'md:w-72 xl:w-96': search }">
     <div class="flex absolute inset-y-0 right-0 items-center pr-2">
-        {% if request.search %}
+        {% if request.search and clear_search_url %}
             <a href="{{ clear_search_url }}"
                title="Clear Search"
                aria-label="Clear Search"

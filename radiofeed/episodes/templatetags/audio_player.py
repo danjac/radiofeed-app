@@ -11,7 +11,7 @@ register = template.Library()
 
 if TYPE_CHECKING:  # pragma: no cover
     from django.http import HttpRequest
-    from django.template.context import Context, RequestContext
+    from django.template.context import RequestContext
 
     from radiofeed.episodes.models import AudioLog, Episode
 
@@ -30,13 +30,9 @@ class AudioPlayerInfo:
         """Update instance."""
         return dataclasses.replace(self, **fields)
 
-    def as_dict(self) -> dict:
-        """Returns fields as dict."""
-        return dataclasses.asdict(self)
-
-    def merge_with_context(self, context: Context) -> dict:
+    def merge_with_context(self, context: RequestContext) -> dict:
         """Merges template context with instance."""
-        return context.flatten() | self.as_dict()
+        return context.flatten() | dataclasses.asdict(self)
 
 
 @register.simple_tag(takes_context=True)

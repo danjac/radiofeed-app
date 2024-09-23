@@ -182,19 +182,38 @@ def search_form(
     context: RequestContext,
     *,
     search_url: str = "",
-    clear_search_url: str = "",
     placeholder: str = "Search",
+    clear_search: bool = True,
     **attrs,
 ) -> dict:
-    """Renders search form."""
-    search_url = search_url or context.request.path
-    clear_search_url = clear_search_url or search_url
+    """Renders search form.
 
-    return {
-        "request": context.request,
+    If `search_url` is `None`, assumes current URL for search.
+    """
+
+    search_url = search_url or context.request.path
+    clear_search_url = context.request.path if clear_search else None
+
+    return context.flatten() | {
         "search_url": search_url,
         "clear_search_url": clear_search_url,
         "placeholder": placeholder,
+        "attrs": attrs,
+    }
+
+
+@register.inclusion_tag("_search_button.html", takes_context=True)
+def search_button(
+    context: RequestContext,
+    search_url: str,
+    label: str,
+    **attrs,
+) -> dict:
+    """Renders search button."""
+
+    return context.flatten() | {
+        "search_url": search_url,
+        "label": label,
         "attrs": attrs,
     }
 
@@ -212,9 +231,9 @@ def timestamp(value: datetime | date, **attrs) -> dict:
 def gdpr_cookies_banner(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
-    return {
-        "accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES
-    } | context.flatten()
+    return context.flatten() | {
+        "accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES,
+    }
 
 
 @register.inclusion_tag("_markdown.html")
