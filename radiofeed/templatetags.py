@@ -129,15 +129,18 @@ def cover_image(
 @register.inclusion_tag("_search_form.html", takes_context=True)
 def search_form(
     context: RequestContext,
-    *,
-    search_url: str = "",
     placeholder: str = "Search",
+    search_url: str | None = None,
+    *,
     clear_search: bool = True,
-    **attrs,
 ) -> dict:
     """Renders search form.
 
     If `search_url` is `None`, assumes current URL for search.
+
+    If `clear_search` is `True`, the "clear search" button will trigger reload of the same page,
+    without the search query string. If `False` the button will clear the search input, but will not
+    trigger a reload.
     """
 
     search_url = search_url or context.request.path
@@ -147,7 +150,6 @@ def search_form(
         "search_url": search_url,
         "clear_search_url": clear_search_url,
         "placeholder": placeholder,
-        "attrs": attrs,
     }
 
 
@@ -156,15 +158,11 @@ def search_button(
     context: RequestContext,
     search_url: str,
     label: str,
-    **attrs,
 ) -> dict:
-    """Renders search button."""
-
-    return context.flatten() | {
-        "search_url": search_url,
-        "label": label,
-        "attrs": attrs,
-    }
+    """Renders search button.
+    This button will trigger search on a different location, using the same search parameters.
+    """
+    return context.flatten() | {"search_url": search_url, "label": label}
 
 
 @register.inclusion_tag("_gdpr_cookies_banner.html", takes_context=True)

@@ -18,9 +18,7 @@
                                 {% search_button search_url "Search All Podcasts" %}
                             </li>
                         {% endif %}
-                        <li class="flex justify-center items-center sm:justify-end">
-                            {% search_form placeholder="Search: "|add:category.name %}
-                        </li>
+                        <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: "|add:category.name %}</li>
                     </ul>
                 </nav>
             {% endif %}
