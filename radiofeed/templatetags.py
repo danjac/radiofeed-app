@@ -1,29 +1,29 @@
-from __future__ import annotations
-
 import functools
 import json
 import math
-from typing import TYPE_CHECKING, Any, Final, TypedDict
+from typing import Any, Final, TypedDict
 
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
+from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
 
-from radiofeed import covers, html
-
-if TYPE_CHECKING:  # pragma: nocover
-    from django.template.context import RequestContext
-
-    from radiofeed.covers import CoverVariant
-
+from radiofeed.cover_image import (
+    CoverVariant,
+    get_cover_image_attrs,
+    get_cover_image_class,
+)
+from radiofeed.html import markdown
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
 
 register = template.Library()
+
+get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
 class ActiveLink(TypedDict):
@@ -84,9 +84,6 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{path}"
 
 
-get_cover_attrs = register.simple_tag(covers.get_cover_attrs)
-
-
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     variant: CoverVariant,
@@ -97,14 +94,14 @@ def cover_image(
 ) -> dict:
     """Renders a cover image with proxy URL."""
     return {
-        "attrs": covers.get_cover_attrs(cover_url, variant)
+        "attrs": get_cover_image_attrs(variant, cover_url)
         | {
-            "title": title,
             "alt": title,
+            "title": title,
         },
         "classes": [
             classes
-            for classes in [covers.get_cover_class(variant), css_class]
+            for classes in [get_cover_image_class(variant), css_class]
             if classes
         ],
     }
@@ -158,10 +155,10 @@ def gdpr_cookies_banner(context: RequestContext) -> dict:
     }
 
 
-@register.inclusion_tag("_markdown.html")
-def markdown(content: str | None) -> dict:
+@register.inclusion_tag("_markdown.html", name="markdown")
+def markdown_(content: str | None) -> dict:
     """Render content as Markdown."""
-    return {"content": html.markdown(content or "")}
+    return {"content": markdown(content or "")}
 
 
 @register.filter

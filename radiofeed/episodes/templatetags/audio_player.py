@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from django import template
 
-from radiofeed.covers import get_metadata_info
+from radiofeed.cover_image import get_metadata_info
 
 register = template.Library()
 

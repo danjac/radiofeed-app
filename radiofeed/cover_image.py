@@ -36,10 +36,10 @@ _MIN_DESKTOP_WIDTH: Final = 1024
 
 
 @functools.cache
-def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
+def get_cover_image_attrs(variant: CoverVariant, cover_url: str) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_SIZES[variant]
-    full_src = get_cover_url(cover_url, full_size)
+    full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
         "height": full_size,
@@ -51,7 +51,7 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
     if min_size == full_size:
         return attrs
 
-    min_src = get_cover_url(cover_url, min_size)
+    min_src = get_cover_image_url(cover_url, min_size)
 
     srcset = ", ".join(
         [
@@ -71,7 +71,7 @@ def get_cover_attrs(cover_url: str, variant: CoverVariant) -> dict:
 
 
 @functools.cache
-def get_cover_url(cover_url: str, size: int) -> str:
+def get_cover_image_url(cover_url: str, size: int) -> str:
     """Return the cover image URL"""
     return (
         (
@@ -90,9 +90,21 @@ def get_cover_url(cover_url: str, size: int) -> str:
 
 
 @functools.cache
-def get_cover_class(variant: CoverVariant) -> str:
+def get_cover_image_class(variant: CoverVariant) -> str:
     """Returns default CSS class for the cover image."""
     return _COVER_CLASSES[variant]
+
+
+@functools.cache
+def is_cover_image_size(size: int) -> bool:
+    """Check image has correct size."""
+    return size in get_cover_image_sizes()
+
+
+@functools.cache
+def get_cover_image_sizes() -> set[int]:
+    """Returns set of allowed sizes."""
+    return set(itertools.chain.from_iterable(_COVER_SIZES.values()))
 
 
 @functools.cache
@@ -113,25 +125,13 @@ def get_placeholder_path(size: int) -> pathlib.Path:
     return settings.STATIC_SRC / "img" / get_placeholder(size)
 
 
-@functools.cache
-def is_cover_size(size: int) -> bool:
-    """Check image has correct size."""
-    return size in get_cover_sizes()
-
-
-@functools.cache
-def get_cover_sizes() -> set[int]:
-    """Returns set of allowed sizes."""
-    return set(itertools.chain.from_iterable(_COVER_SIZES.values()))
-
-
 def get_metadata_info(request: HttpRequest, cover_url: str) -> list[dict]:
     """Returns media artwork details."""
     return [
         {
-            "src": request.build_absolute_uri(get_cover_url(cover_url, size)),
+            "src": request.build_absolute_uri(get_cover_image_url(cover_url, size)),
             "sizes": f"{size}x{size}",
             "type": "image/webp",
         }
-        for size in get_cover_sizes()
+        for size in get_cover_image_sizes()
     ]

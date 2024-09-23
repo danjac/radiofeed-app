@@ -1,6 +1,11 @@
 import pytest
 
-from radiofeed import covers
+from radiofeed.cover_image import (
+    CoverVariant,
+    get_cover_image_attrs,
+    get_cover_image_sizes,
+    get_placeholder_path,
+)
 
 
 class TestGetPlaceholderUrl:
@@ -8,19 +13,19 @@ class TestGetPlaceholderUrl:
         ("size", "expected"),
         [
             pytest.param(size, f"/static/img/placeholder-{size}.webp", id=f"{size}px")
-            for size in covers.get_cover_sizes()
+            for size in get_cover_image_sizes()
         ],
     )
     def test_check_paths(self, size, expected):
-        assert covers.get_placeholder_path(size).exists()
+        assert get_placeholder_path(size).exists()
 
 
-class TestGetCoverAttrs:
+class TestGetCoverImageAttrs:
     @pytest.mark.parametrize(
         ("variant", "expected"),
         [
             pytest.param(
-                covers.CoverVariant.CARD,
+                CoverVariant.CARD,
                 {
                     "height": 96,
                     "width": 96,
@@ -29,7 +34,7 @@ class TestGetCoverAttrs:
                 id="card",
             ),
             pytest.param(
-                covers.CoverVariant.DETAIL,
+                CoverVariant.DETAIL,
                 {
                     "height": 160,
                     "width": 160,
@@ -40,8 +45,8 @@ class TestGetCoverAttrs:
             ),
         ],
     )
-    def test_get_cover_attrs(self, variant, expected):
-        attrs = covers.get_cover_attrs("test.jpg", variant)
+    def test_get_cover_image_attrs(self, variant, expected):
+        attrs = get_cover_image_attrs(variant, "test.jpg")
         assert attrs["height"] == expected["height"]
         assert attrs["width"] == expected["width"]
         assert attrs["src"].startswith(expected["src"])
