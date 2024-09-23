@@ -5,7 +5,11 @@
     x-data="{
         url: '{{ search_url|escapejs }}',
         search: '{{ request.search.value|escapejs }}',
-        get searchUrl() { return this.url + '?{{ request.search.param }}=' + this.search },
+        get searchUrl() {
+            const params = new URLSearchParams();
+            params.append('{{ request.search.param }}', this.search);
+            return `${this.url}?${params.toString()}`;
+        },
     }"
     hx-push-url="true"
     :hx-get="searchUrl"
