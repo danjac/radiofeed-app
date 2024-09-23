@@ -53,22 +53,6 @@ def active_link(
     )
 
 
-@register.simple_tag(takes_context=True)
-def jsonify_csrf(context: RequestContext, **data) -> str:
-    """Returns JSON-rendered CSRF token.
-
-    Example:
-        hx-headers="{% jsonify_csrf %}"
-    """
-    return jsonify(**{"X-CSRFToken": str(context.get("csrf_token", ""))} | data)
-
-
-@register.simple_tag
-def jsonify(**data) -> str:
-    """Returns JSON-rendered data."""
-    return json.dumps(data, cls=DjangoJSONEncoder)
-
-
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config."""
