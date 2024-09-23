@@ -275,7 +275,7 @@ def _chain_attrs(*attrs: dict) -> dict:
     # classes are a special case: append rather than replace
     classes = collections.OrderedDict.fromkeys(
         itertools.chain.from_iterable(
-            [c for c in [a.get("class", "").split() for a in attrs] if c]
+            [c for c in [a.get("class", "").strip().split() for a in attrs] if c]
         )
     ).keys()
 
