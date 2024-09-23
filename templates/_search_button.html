@@ -10,7 +10,7 @@
     hx-push-url="true"
     :hx-get="searchUrl"
     :disabled="!search"
-    @search.window="search=$event.detail; htmx.process($el)"
+    @search.window="search=$event.detail; $nextTick(() => htmx.process($el));"
     {# djlint: on #}
     >
     {% heroicon_mini "magnifying-glass" class="mr-2" %}
