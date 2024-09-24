@@ -1,8 +1,9 @@
 import datetime
 import functools
 import io
+import itertools
 from collections.abc import Iterator
-from typing import Final
+from typing import Final, TypedDict
 
 import httpx
 from django.conf import settings
@@ -32,6 +33,13 @@ _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
 _cache_page = cache_page(_CACHE_TIMEOUT)
+
+
+class Icon(TypedDict):
+    """PWA icon info."""
+
+    src: str
+    sizes: str
 
 
 @require_safe
@@ -272,45 +280,61 @@ def _app_icons_list() -> list[dict]:
 
 
 def _app_icons() -> Iterator[dict]:
-    icons = [
-        {"src": "android/android-launchericon-512-512.png", "sizes": "512x512"},
-        {"src": "android/android-launchericon-192-192.png", "sizes": "192x192"},
-        {"src": "android/android-launchericon-144-144.png", "sizes": "144x144"},
-        {"src": "android/android-launchericon-96-96.png", "sizes": "96x96"},
-        {"src": "android/android-launchericon-72-72.png", "sizes": "72x72"},
-        {"src": "android/android-launchericon-48-48.png", "sizes": "48x48"},
-        {"src": "ios/16.png", "sizes": "16x16"},
-        {"src": "ios/20.png", "sizes": "20x20"},
-        {"src": "ios/29.png", "sizes": "29x29"},
-        {"src": "ios/32.png", "sizes": "32x32"},
-        {"src": "ios/40.png", "sizes": "40x40"},
-        {"src": "ios/50.png", "sizes": "50x50"},
-        {"src": "ios/57.png", "sizes": "57x57"},
-        {"src": "ios/58.png", "sizes": "58x58"},
-        {"src": "ios/60.png", "sizes": "60x60"},
-        {"src": "ios/64.png", "sizes": "64x64"},
-        {"src": "ios/72.png", "sizes": "72x72"},
-        {"src": "ios/76.png", "sizes": "76x76"},
-        {"src": "ios/80.png", "sizes": "80x80"},
-        {"src": "ios/87.png", "sizes": "87x87"},
-        {"src": "ios/100.png", "sizes": "100x100"},
-        {"src": "ios/114.png", "sizes": "114x114"},
-        {"src": "ios/120.png", "sizes": "120x120"},
-        {"src": "ios/128.png", "sizes": "128x128"},
-        {"src": "ios/144.png", "sizes": "144x144"},
-        {"src": "ios/152.png", "sizes": "152x152"},
-        {"src": "ios/167.png", "sizes": "167x167"},
-        {"src": "ios/180.png", "sizes": "180x180"},
-        {"src": "ios/192.png", "sizes": "192x192"},
-        {"src": "ios/256.png", "sizes": "256x256"},
-        {"src": "ios/512.png", "sizes": "512x512"},
-        {"src": "ios/1024.png", "sizes": "1024x1024"},
-    ]
-    for icon in icons:
+    for icon in itertools.chain(_android_icons(), _ios_icons()):
         app_icon = icon | {
-            "src": static(f"img/icons/{icon['src']}"),
+            "src": static(f"img/icons/{icon.src}"),
             "type": "image/png",
         }
         yield app_icon
         yield app_icon | {"purpose": "maskable"}
         yield app_icon | {"purpose": "any"}
+
+
+def _android_icons() -> Iterator[Icon]:
+    for size in (
+        512,
+        192,
+        144,
+        96,
+        72,
+        48,
+    ):
+        yield Icon(
+            src=f"src-android/android-launchericon-{size}-{size}.png",
+            sizes=f"{size}x{size}",
+        )
+
+
+def _ios_icons() -> Iterator[Icon]:
+    for size in (
+        16,
+        20,
+        29,
+        32,
+        40,
+        50,
+        57,
+        58,
+        60,
+        64,
+        72,
+        76,
+        80,
+        97,
+        100,
+        114,
+        120,
+        128,
+        144,
+        152,
+        167,
+        180,
+        192,
+        256,
+        512,
+        1024,
+    ):
+        yield Icon(
+            src=f"ios/{size}.png",
+            sizes=f"{size}x{size}",
+        )
