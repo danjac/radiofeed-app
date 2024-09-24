@@ -1,5 +1,6 @@
 import functools
 import itertools
+import re
 from collections.abc import Iterator
 from typing import Final
 
@@ -9,43 +10,8 @@ from django.template.defaultfilters import truncatechars
 from django.templatetags.static import static
 from django.urls import reverse
 
-_ANDROID_ICONS: Final = (
-    512,
-    192,
-    144,
-    96,
-    72,
-    48,
-)
-
-_IOS_ICONS: Final = (
-    100,
-    1024,
-    114,
-    120,
-    128,
-    144,
-    152,
-    167,
-    16,
-    180,
-    192,
-    20,
-    256,
-    29,
-    32,
-    40,
-    50,
-    512,
-    57,
-    58,
-    60,
-    64,
-    72,
-    76,
-    80,
-    87,
-)
+_RE_ANDROID_ICON: Final = r"^android-launchericon-([0-9]+)-([0-9]+).png"
+_RE_IOS_ICON: Final = r"([0-9]+).png"
 
 
 def get_manifest(request: HttpRequest) -> dict:
@@ -126,19 +92,17 @@ def get_assetlinks() -> list[dict]:
 
 
 def _android_icons() -> Iterator[dict]:
-    for size in _ANDROID_ICONS:
-        yield {
-            "src": f"android/android-launchericon-{size}-{size}.png",
-            "sizes": f"{size}x{size}",
-        }
+    for filename in (settings.STATIC_SRC / "img" / "icons" / "android").iterdir():
+        if matches := re.match(_RE_ANDROID_ICON, filename):
+            size = matches[1]
+            yield {"src": filename, "sizes": f"{size}x{size}"}
 
 
 def _ios_icons() -> Iterator[dict]:
-    for size in _IOS_ICONS:
-        yield {
-            "src": f"ios/{size}.png",
-            "sizes": f"{size}x{size}",
-        }
+    for filename in (settings.STATIC_SRC / "img" / "icons" / "ios").iterdir():
+        if matches := re.match(_RE_IOS_ICON, filename):
+            size = matches[1]
+            yield {"src": filename, "sizes": f"{size}x{size}"}
 
 
 @functools.cache
