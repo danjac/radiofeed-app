@@ -12,7 +12,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 
 
-class CoverVariant(StrEnum):
+class CoverImageVariant(StrEnum):
     """Possible size variations."""
 
     CARD = "card"
@@ -21,22 +21,22 @@ class CoverVariant(StrEnum):
 
 
 _COVER_SIZES: Final = {
-    CoverVariant.CARD: (96, 96),
-    CoverVariant.DETAIL: (144, 160),
-    CoverVariant.TILE: (160, 224),
+    CoverImageVariant.CARD: (96, 96),
+    CoverImageVariant.DETAIL: (144, 160),
+    CoverImageVariant.TILE: (160, 224),
 }
 
 _COVER_CLASSES: Final = {
-    CoverVariant.CARD: "size-16",
-    CoverVariant.DETAIL: "size-36 lg:size-40",
-    CoverVariant.TILE: "size-40 lg:size-56",
+    CoverImageVariant.CARD: "size-16",
+    CoverImageVariant.DETAIL: "size-36 lg:size-40",
+    CoverImageVariant.TILE: "size-40 lg:size-56",
 }
 
 _MIN_DESKTOP_WIDTH: Final = 1024
 
 
 @functools.cache
-def get_cover_image_attrs(variant: CoverVariant, cover_url: str) -> dict:
+def get_cover_image_attrs(variant: CoverImageVariant, cover_url: str) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
@@ -90,7 +90,7 @@ def get_cover_image_url(cover_url: str, size: int) -> str:
 
 
 @functools.cache
-def get_cover_image_class(variant: CoverVariant) -> str:
+def get_cover_image_class(variant: CoverImageVariant) -> str:
     """Returns default CSS class for the cover image."""
     return _COVER_CLASSES[variant]
 

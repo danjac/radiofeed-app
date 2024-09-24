@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.template import RequestContext
 from django.urls import reverse, reverse_lazy
 
-from radiofeed.cover_image import CoverVariant
+from radiofeed.cover_image import CoverImageVariant
 from radiofeed.templatetags import (
     absolute_uri,
     active_link,
@@ -33,7 +33,7 @@ def auth_req(req, user):
 class TestCoverArt:
     def test_cover_image(self):
         context = cover_image(
-            CoverVariant.DETAIL,
+            CoverImageVariant.DETAIL,
             "https://www.example.com/test.jpg",
             "test image",
             css_class="hover:grayscale",

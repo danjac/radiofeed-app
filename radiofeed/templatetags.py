@@ -14,7 +14,7 @@ from django.template.defaultfilters import pluralize
 from django.utils.html import format_html
 
 from radiofeed.cover_image import (
-    CoverVariant,
+    CoverImageVariant,
     get_cover_image_attrs,
     get_cover_image_class,
 )
@@ -131,7 +131,7 @@ def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
 
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
-    variant: CoverVariant,
+    variant: CoverImageVariant,
     cover_url: str,
     title: str,
     *,
