@@ -128,7 +128,7 @@ def get_assetlinks() -> list[dict]:
 def _android_icons() -> Iterator[dict]:
     for size in _ANDROID_ICONS:
         yield {
-            "src": f"src-android/android-launchericon-{size}-{size}.png",
+            "src": f"android/android-launchericon-{size}-{size}.png",
             "sizes": f"{size}x{size}",
         }
 
