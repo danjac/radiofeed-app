@@ -112,46 +112,6 @@ def cover_image(
     }
 
 
-@register.inclusion_tag("_search_form.html", takes_context=True)
-def search_form(
-    context: RequestContext,
-    placeholder: str = "Search",
-    search_url: str | None = None,
-    *,
-    clear_search: bool = True,
-) -> dict:
-    """Renders search form.
-
-    If `search_url` is `None`, assumes current URL for search.
-
-    If `clear_search` is `True`, the "clear search" button will trigger reload of the same page,
-    without the search query string. If `False` the button will clear the search input, but will not
-    trigger a reload.
-    """
-
-    search_url = search_url or context.request.path
-    clear_search_url = context.request.path if clear_search else None
-
-    return {
-        "request": context.request,
-        "search_url": search_url,
-        "clear_search_url": clear_search_url,
-        "placeholder": placeholder,
-    }
-
-
-@register.inclusion_tag("_search_button.html", takes_context=True)
-def search_button(context: RequestContext, search_url: str, label: str) -> dict:
-    """Renders search button.
-    This button will trigger search on a different location, using the same search parameters.
-    """
-    return {
-        "request": context.request,
-        "search_url": search_url,
-        "label": label,
-    }
-
-
 @register.inclusion_tag("_gdpr_cookies_banner.html", takes_context=True)
 def gdpr_cookies_banner(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
@@ -194,7 +154,3 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
-
-
-def _jsonify(dct: dict) -> str:
-    return json.dumps(dct, cls=DjangoJSONEncoder)

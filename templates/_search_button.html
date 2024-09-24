@@ -1,6 +1,7 @@
 {# vim: set filetype=htmldjango #}
 {% load heroicons %}
 <button class="inline-flex items-center btn btn-default"
+    tabindex="0"
     {# djlint: off #}
     x-data="{
         url: '{{ search_url|escapejs }}',
@@ -18,5 +19,5 @@
     {# djlint: on #}
     >
     {% heroicon_mini "magnifying-glass" class="mr-2" %}
-    {{ label }}
+    {{ text }}
 </button>
