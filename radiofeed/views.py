@@ -1,9 +1,6 @@
 import datetime
-import functools
 import io
-import itertools
-from collections.abc import Iterator
-from typing import Final, TypedDict
+from typing import Final
 
 import httpx
 from django.conf import settings
@@ -16,7 +13,6 @@ from django.http import (
     JsonResponse,
 )
 from django.template.response import TemplateResponse
-from django.templatetags.static import static
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
@@ -32,13 +28,6 @@ _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
 _cache_page = cache_page(_CACHE_TIMEOUT)
-
-
-class Icon(TypedDict):
-    """PWA icon info."""
-
-    src: str
-    sizes: str
 
 
 @require_safe
@@ -205,69 +194,3 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
-
-
-@functools.cache
-def _app_icons_list() -> list[dict]:
-    return list(_app_icons())
-
-
-def _app_icons() -> Iterator[dict]:
-    for icon in itertools.chain(_android_icons(), _ios_icons()):
-        app_icon = icon | {
-            "src": static(f"img/icons/{icon.src}"),
-            "type": "image/png",
-        }
-        yield app_icon
-        yield app_icon | {"purpose": "maskable"}
-        yield app_icon | {"purpose": "any"}
-
-
-def _android_icons() -> Iterator[Icon]:
-    for size in (
-        512,
-        192,
-        144,
-        96,
-        72,
-        48,
-    ):
-        yield Icon(
-            src=f"src-android/android-launchericon-{size}-{size}.png",
-            sizes=f"{size}x{size}",
-        )
-
-
-def _ios_icons() -> Iterator[Icon]:
-    for size in (
-        16,
-        20,
-        29,
-        32,
-        40,
-        50,
-        57,
-        58,
-        60,
-        64,
-        72,
-        76,
-        80,
-        97,
-        100,
-        114,
-        120,
-        128,
-        144,
-        152,
-        167,
-        180,
-        192,
-        256,
-        512,
-        1024,
-    ):
-        yield Icon(
-            src=f"ios/{size}.png",
-            sizes=f"{size}x{size}",
-        )
