@@ -1,7 +1,7 @@
 import functools
 import itertools
 from collections.abc import Iterator
-from typing import Final, TypedDict
+from typing import Final
 
 from django.conf import settings
 from django.http import HttpRequest
@@ -46,13 +46,6 @@ _IOS_ICONS: Final = (
     512,
     1024,
 )
-
-
-class Icon(TypedDict):
-    """PWA icon info."""
-
-    src: str
-    sizes: str
 
 
 def get_manifest(request: HttpRequest) -> dict:
@@ -132,20 +125,20 @@ def get_assetlinks() -> list[dict]:
     ]
 
 
-def _android_icons() -> Iterator[Icon]:
+def _android_icons() -> Iterator[dict]:
     for size in _ANDROID_ICONS:
-        yield Icon(
-            src=f"src-android/android-launchericon-{size}-{size}.png",
-            sizes=f"{size}x{size}",
-        )
+        yield {
+            "src": f"src-android/android-launchericon-{size}-{size}.png",
+            "sizes": f"{size}x{size}",
+        }
 
 
-def _ios_icons() -> Iterator[Icon]:
+def _ios_icons() -> Iterator[dict]:
     for size in _IOS_ICONS:
-        yield Icon(
-            src=f"ios/{size}.png",
-            sizes=f"{size}x{size}",
-        )
+        yield {
+            "src": f"ios/{size}.png",
+            "sizes": f"{size}x{size}",
+        }
 
 
 @functools.cache
@@ -156,7 +149,7 @@ def _app_icons_list() -> list[dict]:
 def _app_icons() -> Iterator[dict]:
     for icon in itertools.chain(_android_icons(), _ios_icons()):
         app_icon = icon | {
-            "src": static(f"img/icons/{icon.src}"),
+            "src": static(f"img/icons/{icon["src"]}"),
             "type": "image/png",
         }
         yield app_icon
