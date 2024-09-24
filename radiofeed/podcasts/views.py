@@ -1,3 +1,5 @@
+from typing import cast
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -20,6 +22,7 @@ from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.users.models import User
 
 
 @require_safe
@@ -354,7 +357,7 @@ def add_private_feed(
         if request.POST.get("action") == "cancel":
             return HttpResponseRedirect(reverse("podcasts:private_feeds"))
 
-        form = PrivateFeedForm(request.POST, user=request.user)
+        form = PrivateFeedForm(request.POST, user=cast(User, request.user))
 
         if form.is_valid():
             podcast, is_new = form.save()
@@ -370,7 +373,7 @@ def add_private_feed(
             messages.success(request, success_message)
             return HttpResponseRedirect(redirect_url)
     else:
-        form = PrivateFeedForm(user=request.user)
+        form = PrivateFeedForm(user=cast(User, request.user))
 
     return render_partial_for_target(
         request,
