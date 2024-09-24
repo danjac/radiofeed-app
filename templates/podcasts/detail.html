@@ -53,7 +53,7 @@
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
                                         hx-disabled-elt="this"
-                                        hx-delete="{% url "podcasts:subscribe" podcast.pk %}"
+                                        hx-post="{% url "podcasts:subscribe" podcast.pk %}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye" class="mr-2" %}
                                     Subscribe
