@@ -39,7 +39,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         )
         if request.search
         else podcasts.order_by("-pub_date")
-    )
+    ).distinct()
 
     return render_partial_for_target(
         request,
