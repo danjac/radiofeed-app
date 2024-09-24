@@ -12,11 +12,11 @@
                             <button class="inline-flex items-center btn btn-danger btn-lg"
                                     aria-label="Remove podcast from your Private Feeds"
                                     title="Remove podcast from your Private Feeds"
-                                    hx-disabled-elt="this"
+                                    hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
-                                    hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
-                                    {% hx_headers csrf=True %}>
+                                    hx-disabled-elt="this"
+                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>
@@ -37,13 +37,13 @@
                              hx-push-url="false"
                              hx-indicator="this"
                              hx-swap="outerHTML"
-                             {% hx_headers csrf=True %}>
+                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_subscribed %}
                                 <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                         aria-label="Unsubscribe from this Podcast"
                                         title="Unsubscribe from this Podcast"
-                                        hx-disabled-elt="this"
                                         hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
+                                        hx-disabled-elt="this"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye-slash" class="mr-2" %}
                                     Unsubscribe
@@ -52,8 +52,8 @@
                                 <button class="inline-flex items-center btn btn-primary btn-lg"
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
-                                        hx-disabled-elt="this"
                                         hx-post="{% url "podcasts:subscribe" podcast.pk %}"
+                                        hx-disabled-elt="this"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye" class="mr-2" %}
                                     Subscribe

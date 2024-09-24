@@ -7,7 +7,6 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpHeaders
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
@@ -56,51 +55,12 @@ def active_link(
     )
 
 
-@functools.cache
-@register.simple_tag
-def csrf_header() -> str:
-    """Returns the CSRF header name."""
-    return HttpHeaders.parse_header_name(settings.CSRF_HEADER_NAME) or "X-CSRFToken"
-
-
-@register.simple_tag(takes_context=True)
-def hx_headers(
-    context: RequestContext,
-    dct: dict | None = None,
-    *,
-    csrf: bool = False,
-    **kwargs,
-) -> str:
-    """Returns hx-headers attribute, with JSON content e.g.
-
-    {% hx_headers my_data action="add" %}
-
-    If `csrf` is `True` will include `X-CSRFToken` header with current token value.
-    """
-
-    data = (dct or {}) | kwargs
-
-    if csrf and (token := context.get("csrf_token")):
-        data |= {csrf_header(): str(token)}
-    return format_html('hx-headers="{}"', _jsonify(data))
-
-
-@register.simple_tag
-def hx_vals(dct: dict | None = None, **kwargs) -> str:
-    """Returns hx-vals attribute, with JSON content e.g.
-
-    {% hx_vals my_data value=1 %}
-    """
-    data = (dct or {}) | kwargs
-    return format_html('hx-vals="{}"', _jsonify(data))
-
-
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
     return format_html(
         '<meta name="htmx-config" content="{}">',
-        _jsonify(settings.HTMX_CONFIG),
+        json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
     )
 
 

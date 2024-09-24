@@ -9,7 +9,7 @@
                     {# djlint:off #}
                     x-data="
                     audioPlayer(
-                        csrfHeader='{% csrf_header %}',
+                        csrfHeader='X-CSRFToken',
                         csrfToken='{{ csrf_token }}',
                         currentTime={{ current_time|default:0 }},
                         metadataTag='audioplayer-metadata',
