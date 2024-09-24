@@ -15,8 +15,8 @@
                                     hx-disabled-elt="this"
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
-                                    hx-delete="{{ podcast.get_remove_private_feed_url }}"
-                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                    hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
+                                    {% hx_headers csrf=True %}>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>
@@ -37,13 +37,13 @@
                              hx-push-url="false"
                              hx-indicator="this"
                              hx-swap="outerHTML"
-                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                             {% hx_headers csrf=True %}>
                             {% if is_subscribed %}
                                 <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                         aria-label="Unsubscribe from this Podcast"
                                         title="Unsubscribe from this Podcast"
                                         hx-disabled-elt="this"
-                                        hx-delete="{{ podcast.get_unsubscribe_url }}"
+                                        hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye-slash" class="mr-2" %}
                                     Unsubscribe
@@ -53,7 +53,7 @@
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
                                         hx-disabled-elt="this"
-                                        hx-post="{{ podcast.get_subscribe_url }}"
+                                        hx-delete="{% url "podcasts:subscribe" podcast.pk %}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye" class="mr-2" %}
                                     Subscribe
@@ -78,14 +78,14 @@
                     {% endif %}
                     {% if user.is_staff %}
                         <div>
-                            <a href="{{ podcast.get_admin_url }}"
+                            <a href="{% url "admin:podcasts_podcast_change" podcast.pk %}"
                                target="_blank"
                                rel="noopener"
                                class="link">Admin</a>
                         </div>
                     {% endif %}
                 </nav>
-                <a href="{{ podcast.get_latest_episode_url }}"
+                <a href="{% url "podcasts:latest_episode" podcast.pk %}"
                    class="flex flex-wrap space-x-1 link">
                     <span>Last update</span>
                     {% include "_date.html" with value=podcast.pub_date title="Last update" %}

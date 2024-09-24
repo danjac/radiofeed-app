@@ -213,35 +213,33 @@ class Podcast(models.Model):
 
     def get_detail_url(self) -> str:
         """Podcast detail URL"""
-        return self._get_podcast_url_with_slug("podcasts:podcast_detail")
+        return reverse(
+            "podcasts:podcast_detail",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_episodes_url(self) -> str:
         """Podcast episodes URL"""
-        return self._get_podcast_url_with_slug("podcasts:episodes")
+        return reverse(
+            "podcasts:episodes",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_similar_url(self) -> str:
         """Podcast recommendations URL"""
-        return self._get_podcast_url_with_slug("podcasts:similar")
-
-    def get_latest_episode_url(self) -> str:
-        """Podcast latest episode URL"""
-        return self._get_podcast_url("podcasts:latest_episode")
-
-    def get_subscribe_url(self) -> str:
-        """Podcast subscribe URL"""
-        return self._get_podcast_url("podcasts:subscribe")
-
-    def get_unsubscribe_url(self) -> str:
-        """Podcast unsubscribe URL"""
-        return self._get_podcast_url("podcasts:unsubscribe")
-
-    def get_remove_private_feed_url(self) -> str:
-        """Podcast unsubscribe URL"""
-        return self._get_podcast_url("podcasts:remove_private_feed")
-
-    def get_admin_url(self) -> str:
-        """Podcast admin site URL"""
-        return reverse("admin:podcasts_podcast_change", args=[self.pk])
+        return reverse(
+            "podcasts:similar",
+            kwargs={
+                "podcast_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     @cached_property
     def cleaned_title(self) -> str:
@@ -267,12 +265,6 @@ class Podcast(models.Model):
     def has_similar(self) -> bool:
         """Returns true if any recommendations."""
         return False if self.private else self.recommendations.exists()
-
-    def _get_podcast_url(self, url_name: str, **kwargs) -> str:
-        return reverse(url_name, kwargs={"podcast_id": self.pk} | kwargs)
-
-    def _get_podcast_url_with_slug(self, url_name: str, **kwargs) -> str:
-        return self._get_podcast_url(url_name, slug=self.slug, **kwargs)
 
 
 class Subscription(models.Model):

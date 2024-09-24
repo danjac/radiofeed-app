@@ -21,11 +21,10 @@
             <meta name="apple-mobile-wep-app-capable" content="yes">
             <meta name="copyright" content="Dan Jacob {% now "Y" %}">
             <meta name="cache-control" content="no-cache">
-            <meta name="robots" content="index,follow">
             <meta name="description" content="Podcast aggregator site">
             <meta name="keywords" content="podcasts, rss, feeds">
-            <meta name="theme-color" content="{% theme_color %}">
-            <meta name="htmx-config" content='{% htmx_config %}'>
+            {% htmx_config %}
+            {% theme_color %}
             <script defer src="{% static "js/vendor/alpine-3.14.1.min.js" %}"></script>
             <script defer src="{% static "js/vendor/htmx-2.0.2.min.js" %}"></script>
         </head>

@@ -7,9 +7,11 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpHeaders
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
+from django.utils.html import format_html
 
 from radiofeed.cover_image import (
     CoverVariant,
@@ -53,16 +55,54 @@ def active_link(
     )
 
 
+@register.simple_tag(takes_context=True)
+def hx_headers(
+    context: RequestContext,
+    dct: dict | None = None,
+    *,
+    csrf: bool = False,
+    **kwargs,
+) -> str:
+    """Returns hx-headers attribute, with JSON content e.g.
+
+    {% hx_headers my_data action="add" %}
+
+    If `csrf` is `True` will include `X-CSRFToken` header with current token value.
+    """
+
+    data = (dct or {}) | kwargs
+
+    if csrf and (token := context.get("csrf_token")):
+        data |= {_csrf_header_name(): str(token)}
+    return format_html('hx-headers="{}"', _jsonify(data))
+
+
+@register.simple_tag
+def hx_vals(dct: dict | None = None, **kwargs) -> str:
+    """Returns hx-vals attribute, with JSON content e.g.
+
+    {% hx_vals my_data value=1 %}
+    """
+    data = (dct or {}) | kwargs
+    return format_html('hx-vals="{}"', _jsonify(data))
+
+
 @register.simple_tag
 def htmx_config() -> str:
-    """Returns HTMX config."""
-    return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
+    """Returns HTMX config in meta tag."""
+    return format_html(
+        '<meta name="htmx-config" content="{}">',
+        _jsonify(settings.HTMX_CONFIG),
+    )
 
 
 @register.simple_tag
-def theme_color() -> dict:
-    """Returns the PWA configuration theme color."""
-    return settings.PWA_CONFIG["manifest"]["theme_color"]
+def theme_color() -> str:
+    """Returns the PWA configuration theme color meta tag."""
+    return format_html(
+        '<meta name="theme-color" content="{}">',
+        settings.PWA_CONFIG["manifest"]["theme_color"],
+    )
 
 
 @register.simple_tag
@@ -135,11 +175,7 @@ def search_form(
 
 
 @register.inclusion_tag("_search_button.html", takes_context=True)
-def search_button(
-    context: RequestContext,
-    search_url: str,
-    label: str,
-) -> dict:
+def search_button(context: RequestContext, search_url: str, label: str) -> dict:
     """Renders search button.
     This button will trigger search on a different location, using the same search parameters.
     """
@@ -188,3 +224,12 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
+
+
+def _jsonify(dct: dict) -> str:
+    return json.dumps(dct, cls=DjangoJSONEncoder)
+
+
+@functools.cache
+def _csrf_header_name() -> str:
+    return HttpHeaders.parse_header_name(settings.CSRF_HEADER_NAME) or "X-CSRFToken"

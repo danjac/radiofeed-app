@@ -250,12 +250,15 @@ class TestPodcastDetail:
 class TestLatestEpisode:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
-        response = client.get(episode.podcast.get_latest_episode_url())
+        response = client.get(self.url(episode.podcast))
         assert response.url == episode.get_absolute_url()
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
-        assert_404(client.get(podcast.get_latest_episode_url()))
+        assert_404(client.get(self.url(podcast)))
+
+    def url(self, podcast):
+        return reverse("podcasts:latest_episode", args=[podcast.pk])
 
 
 class TestPodcastEpisodes:
@@ -378,7 +381,7 @@ class TestSubscribe:
     @pytest.mark.django_db
     def test_subscribe(self, client, podcast, auth_user):
         response = client.post(
-            podcast.get_subscribe_url(),
+            self.url(podcast),
             headers={
                 "HX-Request": "true",
             },
@@ -395,7 +398,7 @@ class TestSubscribe:
         podcast = PodcastFactory(private=True)
 
         response = client.post(
-            podcast.get_subscribe_url(),
+            self.url(podcast),
             headers={
                 "HX-Request": "true",
                 "HX-Target": "subscribe-button",
@@ -418,7 +421,7 @@ class TestSubscribe:
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         assert_409(
             client.post(
-                podcast.get_subscribe_url(),
+                self.url(podcast),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "subscribe-button",
@@ -430,13 +433,16 @@ class TestSubscribe:
             podcast=podcast, subscriber=auth_user
         ).exists()
 
+    def url(self, podcast):
+        return reverse("podcasts:subscribe", args=[podcast.pk])
+
 
 class TestUnsubscribe:
     @pytest.mark.django_db
     def test_unsubscribe(self, client, auth_user, podcast):
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.delete(
-            podcast.get_unsubscribe_url(),
+            self.url(podcast),
             headers={
                 "HX-Request": "true",
                 "HX-Target": "subscribe-button",
@@ -456,7 +462,7 @@ class TestUnsubscribe:
         ).podcast
 
         response = client.delete(
-            podcast.get_unsubscribe_url(),
+            self.url(podcast),
             headers={
                 "HX-Request": "true",
                 "HX-Target": "subscribe-button",
@@ -468,6 +474,9 @@ class TestUnsubscribe:
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
+
+    def url(self, podcast):
+        return reverse("podcasts:unsubscribe", args=[podcast.pk])
 
 
 class TestPrivateFeeds:
@@ -515,7 +524,7 @@ class TestRemovePrivateFeed:
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
 
         response = client.delete(
-            podcast.get_remove_private_feed_url(),
+            self.url(podcast),
             {"rss": podcast.rss},
         )
         assert response.url == reverse("podcasts:private_feeds")
@@ -529,16 +538,14 @@ class TestRemovePrivateFeed:
         podcast = PodcastFactory(private=False)
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
 
-        assert_404(
-            client.delete(
-                reverse("podcasts:remove_private_feed", args=[podcast.pk]),
-                {"rss": podcast.rss},
-            )
-        )
+        assert_404(client.delete(self.url(podcast), {"rss": podcast.rss}))
 
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
         ).exists()
+
+    def url(self, podcast):
+        return reverse("podcasts:remove_private_feed", args=[podcast.pk])
 
 
 class TestAddPrivateFeed:

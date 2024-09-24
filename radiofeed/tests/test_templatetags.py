@@ -9,6 +9,8 @@ from radiofeed.templatetags import (
     active_link,
     cover_image,
     format_duration,
+    hx_headers,
+    hx_vals,
     percentage,
 )
 
@@ -111,4 +113,31 @@ class TestAbsoluteUri:
     def test_object(self, podcast):
         assert (
             absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
+        )
+
+
+class TestHxVals:
+    def test_values(self):
+        assert (
+            hx_vals({"value": 1}, other_value=3)
+            == 'hx-vals="{&quot;value&quot;: 1, &quot;other_value&quot;: 3}"'
+        )
+
+
+class TestHxHeaders:
+    def test_csrf(self, rf):
+        assert (
+            hx_headers(
+                RequestContext(rf.get("/"), {"csrf_token": "aaa"}),
+                {"value": 1},
+                other_value=3,
+                csrf=True,
+            )
+            == 'hx-headers="{&quot;value&quot;: 1, &quot;other_value&quot;: 3, &quot;X-Csrftoken&quot;: &quot;aaa&quot;}"'
+        )
+
+    def test_no_csrf(self, rf):
+        assert (
+            hx_headers(RequestContext(rf.get("/")), {"value": 1}, other_value=3)
+            == 'hx-headers="{&quot;value&quot;: 1, &quot;other_value&quot;: 3}"'
         )

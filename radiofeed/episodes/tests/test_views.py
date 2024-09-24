@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 import pytest
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains
 
@@ -162,7 +162,7 @@ class TestStartPlayer:
     def test_play_from_start(self, client, auth_user, episode):
         assert_200(
             client.post(
-                episode.get_start_player_url(),
+                self.url(episode),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
@@ -178,7 +178,7 @@ class TestStartPlayer:
         episode = EpisodeFactory()
         assert_200(
             client.post(
-                episode.get_start_player_url(),
+                self.url(episode),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
@@ -194,7 +194,7 @@ class TestStartPlayer:
     def test_resume(self, client, auth_user, player_episode):
         assert_200(
             client.post(
-                player_episode.get_start_player_url(),
+                self.url(player_episode),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-player-button",
@@ -203,6 +203,9 @@ class TestStartPlayer:
         )
 
         assert client.session[PlayerDetails.session_id] == player_episode.pk
+
+    def url(self, episode):
+        return reverse("episodes:start_player", args=[episode.pk])
 
 
 class TestClosePlayer:
@@ -252,6 +255,7 @@ class TestPlayerTimeUpdate:
         )
 
         log = AudioLog.objects.first()
+        assert log is not None
 
         assert log.current_time == 1030
 
@@ -268,6 +272,7 @@ class TestPlayerTimeUpdate:
             )
         )
         log = AudioLog.objects.first()
+        assert log is not None
 
         assert log.current_time == 1030
         assert log.episode == episode
@@ -342,9 +347,7 @@ class TestBookmarks:
 class TestAddBookmark:
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
-        response = client.post(
-            episode.get_add_bookmark_url(), headers={"HX-Request": "true"}
-        )
+        response = client.post(self.url(episode), headers={"HX-Request": "true"})
 
         assert_200(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
@@ -353,12 +356,13 @@ class TestAddBookmark:
     def test_already_bookmarked(self, client, auth_user, episode):
         BookmarkFactory(episode=episode, user=auth_user)
 
-        response = client.post(
-            episode.get_add_bookmark_url(), headers={"HX-Request": "true"}
-        )
+        response = client.post(self.url(episode), headers={"HX-Request": "true"})
 
         assert_409(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
+
+    def url(self, episode):
+        return reverse("episodes:add_bookmark", args=[episode.pk])
 
 
 class TestRemoveBookmark:
@@ -367,7 +371,7 @@ class TestRemoveBookmark:
         BookmarkFactory(user=auth_user, episode=episode)
         assert_200(
             client.delete(
-                episode.get_remove_bookmark_url(),
+                reverse("episodes:remove_bookmark", args=[episode.pk]),
                 headers={"HX-Request": "true"},
             )
         )
@@ -423,7 +427,7 @@ class TestRemoveAudioLog:
 
         assert_200(
             client.delete(
-                episode.get_remove_audio_log_url(),
+                self.url(episode),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-log",
@@ -440,7 +444,7 @@ class TestRemoveAudioLog:
 
         assert_404(
             client.delete(
-                player_episode.get_remove_audio_log_url(),
+                self.url(player_episode),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-log",
@@ -455,7 +459,7 @@ class TestRemoveAudioLog:
 
         assert_200(
             client.delete(
-                log.episode.get_remove_audio_log_url(),
+                self.url(log.episode),
                 headers={
                     "HX-Request": "true",
                     "HX-Target": "audio-log",
@@ -465,3 +469,6 @@ class TestRemoveAudioLog:
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
+
+    def url(self, episode):
+        return reverse("episodes:remove_audio_log", args=[episode.pk])

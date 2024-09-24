@@ -91,23 +91,13 @@ class Episode(models.Model):
 
     def get_absolute_url(self) -> str:
         """Canonical episode URL."""
-        return self._get_episode_url("episodes:episode_detail", slug=self.slug)
-
-    def get_add_bookmark_url(self) -> str:
-        """URL to add bookmark."""
-        return self._get_episode_url("episodes:add_bookmark")
-
-    def get_remove_bookmark_url(self) -> str:
-        """URL to remove bookmark."""
-        return self._get_episode_url("episodes:remove_bookmark")
-
-    def get_start_player_url(self) -> str:
-        """URL to start episode in player."""
-        return self._get_episode_url("episodes:start_player")
-
-    def get_remove_audio_log_url(self) -> str:
-        """URL to remove audio log."""
-        return self._get_episode_url("episodes:remove_audio_log")
+        return reverse(
+            "episodes:episode_detail",
+            kwargs={
+                "episode_id": self.pk,
+                "slug": self.slug,
+            },
+        )
 
     def get_next_episode(self) -> Optional["Episode"]:
         """Returns the next episode in this podcast."""
@@ -178,9 +168,6 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
-
-    def _get_episode_url(self, url_name: str, **kwargs) -> str:
-        return reverse(url_name, kwargs={"episode_id": self.pk} | kwargs)
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):

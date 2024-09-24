@@ -68,7 +68,7 @@
                                  hx-target="this"
                                  hx-indicator="this"
                                  hx-swap="outerHTML"
-                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                 {% hx_headers csrf=True %}>
                                 {% if is_playing %}
                                     <button aria-label="Close Player"
                                             title="Close Player"
@@ -84,7 +84,7 @@
                                             title="Open Episode in Player"
                                             class="inline-flex items-center btn btn-primary btn-lg"
                                             hx-disabled-elt="this"
-                                            hx-post="{{ episode.get_start_player_url }}"
+                                            hx-post="{% url "episodes:start_player" episode.pk %}"
                                             hx-trigger="click once">
                                         {% heroicon_mini "play-circle" class="mr-2" %}
                                         Play
@@ -105,13 +105,13 @@
                              hx-target="this"
                              hx-swap="outerHTML"
                              hx-indicator="this"
-                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                             {% hx_headers csrf=True %}>
                             {% if is_bookmarked %}
                                 <button aria-label="Remove Episode from your Bookmarks"
                                         title="Remove Episode from your Bookmarks"
                                         class="inline-flex items-center btn btn-default btn-outline"
                                         hx-disabled-elt="this"
-                                        hx-delete="{{ episode.get_remove_bookmark_url }}"
+                                        hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark-slash" class="mr-2" %}
                                     Bookmark
@@ -121,7 +121,7 @@
                                         title="Add Episode to your Bookmarks"
                                         class="inline-flex items-center btn btn-default"
                                         hx-disabled-elt="this"
-                                        hx-post="{{ episode.get_add_bookmark_url }}"
+                                        hx-post="{% url "episodes:add_bookmark" episode.pk %}"
                                         hx-trigger="click once">
                                     {% heroicon_mini "bookmark" class="mr-2" %}
                                     Bookmark
@@ -188,12 +188,12 @@
                                     title="Remove episode from your History"
                                     hx-disabled-elt="this"
                                     hx-target="#audio-log"
-                                    hx-delete="{{ episode.get_remove_audio_log_url }}"
+                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                                     hx-indicator="this"
                                     hx-push-url="false"
                                     hx-swap="outerHTML"
                                     hx-confirm="Are you sure you want to remove this episode from your History?"
-                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                    {% hx_headers csrf=True %}>
                                 {% heroicon_mini "trash" class="mr-2" %}
                                 Remove
                             </button>

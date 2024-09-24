@@ -16,7 +16,7 @@
               id="private-feed-form"
               hx-swap="outerHTML"
               hx-target="this"
-              hx-vals='{"action": "add"}'>
+              {% hx_vals action="add" %}>
             {% csrf_token %}
             {{ form }}
             <div class="flex items-center space-x-3">
@@ -27,7 +27,7 @@
                 <button class="inline-flex items-center btn btn-default"
                         type="button"
                         hx-post="{{ request.path }}"
-                        hx-vals='{"action": "cancel"}'>
+                        {% hx_vals action="cancel" %}>
                     {% heroicon_mini "arrow-uturn-left" class="mr-2" %}
                     Cancel
                 </button>

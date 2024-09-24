@@ -15,12 +15,12 @@
                             aria-label="OK, I accept cookies"
                             title="OK, I accept cookies"
                             hx-disabled-elt="this"
-                            hx-post="{% url 'accept_gdpr_cookies' %}"
+                            hx-post="{% url "accept_gdpr_cookies" %}"
                             hx-target="#accept-gdpr-cookies"
                             hx-push-url="false"
                             hx-swap="delete"
                             hx-indicator="this"
-                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>OK</button>
+                            {% hx_headers csrf=True %}>OK</button>
                 </div>
             </div>
         </div>
