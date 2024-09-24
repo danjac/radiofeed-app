@@ -1,9 +1,8 @@
-from __future__ import annotations
-
 import contextlib
 import functools
-from datetime import datetime  # noqa: TCH003
-from typing import TYPE_CHECKING, Annotated, Any, ClassVar, Final, TypeVar
+from collections.abc import Iterable
+from datetime import datetime
+from typing import Annotated, Any, ClassVar, Final, TypeVar
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
@@ -21,8 +20,6 @@ from radiofeed.feedparser.date_parser import parse_date
 
 T = TypeVar("T")
 
-if TYPE_CHECKING:  # pragma: nocover
-    from collections.abc import Iterable
 
 _AUDIO_MIMETYPES: Final = frozenset(
     [
@@ -220,7 +217,7 @@ class Item(BaseModel):
             return ""
 
     @model_validator(mode="after")
-    def validate_keywords(self) -> Item:
+    def validate_keywords(self) -> "Item":
         """Set default keywords."""
         self.keywords = " ".join(filter(None, self.categories))
         return self
@@ -267,7 +264,7 @@ class Feed(BaseModel):
         return _one_of(value, values=("yes", "true"))
 
     @model_validator(mode="after")
-    def validate_pub_date(self) -> Feed:
+    def validate_pub_date(self) -> "Feed":
         """Set default pub date based on max items pub date."""
         self.pub_date = max([item.pub_date for item in self.items])
         return self

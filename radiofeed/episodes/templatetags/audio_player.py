@@ -1,19 +1,13 @@
-from __future__ import annotations
-
 import dataclasses
-from typing import TYPE_CHECKING
 
 from django import template
+from django.http import HttpRequest
+from django.template.context import RequestContext
 
 from radiofeed.cover_image import get_metadata_info
+from radiofeed.episodes.models import AudioLog, Episode
 
 register = template.Library()
-
-if TYPE_CHECKING:  # pragma: no cover
-    from django.http import HttpRequest
-    from django.template.context import RequestContext
-
-    from radiofeed.episodes.models import AudioLog, Episode
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True)
@@ -26,7 +20,7 @@ class AudioPlayerInfo:
     is_playing: bool = False
     start_player: bool = False
 
-    def update(self, **fields) -> AudioPlayerInfo:
+    def update(self, **fields) -> "AudioPlayerInfo":
         """Update instance."""
         return dataclasses.replace(self, **fields)
 
