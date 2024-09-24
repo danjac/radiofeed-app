@@ -172,7 +172,8 @@ def search_form(
     search_url = search_url or context.request.path
     clear_search_url = context.request.path if clear_search else None
 
-    return context.flatten() | {
+    return {
+        "request": context.request,
         "search_url": search_url,
         "clear_search_url": clear_search_url,
         "placeholder": placeholder,
@@ -184,14 +185,18 @@ def search_button(context: RequestContext, search_url: str, label: str) -> dict:
     """Renders search button.
     This button will trigger search on a different location, using the same search parameters.
     """
-    return context.flatten() | {"search_url": search_url, "label": label}
+    return {
+        "request": context.request,
+        "search_url": search_url,
+        "label": label,
+    }
 
 
 @register.inclusion_tag("_gdpr_cookies_banner.html", takes_context=True)
 def gdpr_cookies_banner(context: RequestContext) -> dict:
     """Renders GDPR cookie notice. Notice should be hidden once user has clicked
     "Accept Cookies" button."""
-    return context.flatten() | {
+    return {
         "accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES,
     }
 

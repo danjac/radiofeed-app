@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from django.http import HttpRequest as DjangoHttpRequest
 from django.http import HttpResponse
+from django.template.context import RequestContext as DjangoRequestContext
 from django.views.decorators.http import require_http_methods
 
 require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
@@ -28,8 +29,14 @@ if TYPE_CHECKING:  # pragma: no cover
 
         user: User
 
+    class RequestContext(DjangoRequestContext):
+        """Annotated RequestContext"""
+
+        request: HttpRequest
+
 else:
     UserRequest = HttpRequest = DjangoHttpRequest
+    RequestContext = DjangoRequestContext
 
 
 class HttpResponseNoContent(HttpResponse):

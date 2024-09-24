@@ -1,5 +1,5 @@
 {% load static heroicons partials audio_player %}
-{% if user.is_authenticated %}
+{% if request.user.is_authenticated %}
     {% partialdef player inline=True %}
         <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
             {% if episode and is_playing %}
