@@ -15,10 +15,8 @@ from django.http import (
     HttpResponseRedirect,
     JsonResponse,
 )
-from django.template.defaultfilters import truncatechars
 from django.template.response import TemplateResponse
 from django.templatetags.static import static
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
@@ -27,6 +25,7 @@ from PIL import Image
 from radiofeed.cover_image import get_placeholder_path, is_cover_image_size
 from radiofeed.http import HttpRequest
 from radiofeed.http_client import get_client
+from radiofeed.manifest import get_assetlinks, get_manifest
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
@@ -111,23 +110,7 @@ def service_worker(request: HttpRequest) -> TemplateResponse:
 @_cache_page
 def assetlinks(request: HttpRequest) -> JsonResponse:
     """PWA assetlinks"""
-
-    package_name = settings.PWA_CONFIG["assetlinks"]["package_name"]
-    fingerprints = settings.PWA_CONFIG["assetlinks"]["sha256_fingerprints"]
-
-    return JsonResponse(
-        [
-            {
-                "relation": ["delegate_permission/common.handle_all_urls"],
-                "target": {
-                    "namespace": "android_app",
-                    "package_name": package_name,
-                    "sha256_cert_fingerprints": fingerprints,
-                },
-            }
-        ],
-        safe=False,
-    )
+    return JsonResponse(get_assetlinks(), safe=False)
 
 
 @require_safe
@@ -135,57 +118,7 @@ def assetlinks(request: HttpRequest) -> JsonResponse:
 @_cache_page
 def manifest(request: HttpRequest) -> JsonResponse:
     """PWA manifest.json file."""
-    start_url = reverse("index")
-
-    categories = settings.PWA_CONFIG["manifest"]["categories"]
-    description = settings.PWA_CONFIG["manifest"]["description"]
-    background_color = settings.PWA_CONFIG["manifest"]["background_color"]
-    theme_color = settings.PWA_CONFIG["manifest"]["theme_color"]
-
-    return JsonResponse(
-        {
-            "background_color": background_color,
-            "theme_color": theme_color,
-            "description": description,
-            "dir": "ltr",
-            "display": "minimal-ui",
-            "name": request.site.name,
-            "short_name": truncatechars(request.site.name, 12),
-            "prefer_related_applications": False,
-            "orientation": "any",
-            "scope": start_url,
-            "start_url": start_url,
-            "id": "?homescreen=1",
-            "display_override": [
-                "minimal-ui",
-                "window-controls-overlay",
-            ],
-            "launch_handler": {
-                "client_mode": [
-                    "focus-existing",
-                    "auto",
-                ]
-            },
-            "categories": categories,
-            "screenshots": [
-                {
-                    "src": static("img/desktop.png"),
-                    "label": "Desktop homescreen",
-                    "form_factor": "wide",
-                    "type": "image/png",
-                },
-                {
-                    "src": static("img/mobile.png"),
-                    "label": "Mobile homescreen",
-                    "form_factor": "narrow",
-                    "type": "image/png",
-                },
-            ],
-            "icons": _app_icons_list(),
-            "shortcuts": [],
-            "lang": "en",
-        }
-    )
+    return JsonResponse(get_manifest(request))
 
 
 @require_safe
