@@ -93,16 +93,16 @@ def get_assetlinks() -> list[dict]:
 
 def _android_icons() -> Iterator[dict]:
     for filename in (settings.STATIC_SRC / "img" / "icons" / "android").iterdir():
-        if matches := re.match(_RE_ANDROID_ICON, filename):
+        if matches := re.match(_RE_ANDROID_ICON, filename.name):
             size = matches[1]
-            yield {"src": filename, "sizes": f"{size}x{size}"}
+            yield {"src": filename.name, "sizes": f"{size}x{size}"}
 
 
 def _ios_icons() -> Iterator[dict]:
     for filename in (settings.STATIC_SRC / "img" / "icons" / "ios").iterdir():
-        if matches := re.match(_RE_IOS_ICON, filename):
+        if matches := re.match(_RE_IOS_ICON, filename.name):
             size = matches[1]
-            yield {"src": filename, "sizes": f"{size}x{size}"}
+            yield {"src": filename.name, "sizes": f"{size}x{size}"}
 
 
 @functools.cache
