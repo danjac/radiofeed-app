@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import (
     Http404,
+    HttpRequest,
     HttpResponseBadRequest,
     HttpResponseRedirect,
 )
@@ -19,7 +20,6 @@ from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,
     HttpResponseUnauthorized,
-    UserRequest,
     require_DELETE,
 )
 from radiofeed.paginator import paginate, paginate_lazy
@@ -28,7 +28,7 @@ from radiofeed.partials import render_partial_for_target
 
 @require_safe
 @login_required
-def index(request: UserRequest) -> TemplateResponse:
+def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
     episodes = (
@@ -58,7 +58,7 @@ def index(request: UserRequest) -> TemplateResponse:
 @require_safe
 @login_required
 def search_episodes(
-    request: UserRequest,
+    request: HttpRequest,
 ) -> HttpResponseRedirect | TemplateResponse:
     """Search any episodes in the database."""
 
@@ -89,7 +89,7 @@ def search_episodes(
 @require_safe
 @login_required
 def episode_detail(
-    request: UserRequest, episode_id: int, slug: str | None = None
+    request: HttpRequest, episode_id: int, slug: str | None = None
 ) -> TemplateResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
@@ -111,7 +111,7 @@ def episode_detail(
 
 @require_POST
 @login_required
-def start_player(request: UserRequest, episode_id: int) -> TemplateResponse:
+def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
@@ -132,7 +132,7 @@ def start_player(request: UserRequest, episode_id: int) -> TemplateResponse:
 
 @require_POST
 @login_required
-def close_player(request: UserRequest) -> HttpResponseNoContent | TemplateResponse:
+def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateResponse:
     """Closes audio player."""
     if episode_id := request.player.pop():
         audio_log = get_object_or_404(
@@ -145,7 +145,7 @@ def close_player(request: UserRequest) -> HttpResponseNoContent | TemplateRespon
 
 @require_POST
 def player_time_update(
-    request: UserRequest,
+    request: HttpRequest,
 ) -> HttpResponseBadRequest | HttpResponseNoContent | HttpResponseUnauthorized:
     """Update current play time of episode.
 
@@ -173,7 +173,7 @@ def player_time_update(
 
 @require_safe
 @login_required
-def history(request: UserRequest) -> TemplateResponse:
+def history(request: HttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
     ordering_asc = request.GET.get("order", "desc") == "asc"
@@ -201,7 +201,7 @@ def history(request: UserRequest) -> TemplateResponse:
 
 @require_DELETE
 @login_required
-def remove_audio_log(request: UserRequest, episode_id: int) -> TemplateResponse:
+def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Removes audio log from user history and returns HTMX snippet."""
     # cannot remove episode if in player
     if request.player.has(episode_id):
@@ -227,7 +227,7 @@ def remove_audio_log(request: UserRequest, episode_id: int) -> TemplateResponse:
 
 @require_safe
 @login_required
-def bookmarks(request: UserRequest) -> TemplateResponse:
+def bookmarks(request: HttpRequest) -> TemplateResponse:
     """Renders user's bookmarks. User can also search their bookmarks."""
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
@@ -257,7 +257,7 @@ def bookmarks(request: UserRequest) -> TemplateResponse:
 @require_POST
 @login_required
 def add_bookmark(
-    request: UserRequest, episode_id: int
+    request: HttpRequest, episode_id: int
 ) -> HttpResponseConflict | TemplateResponse:
     """Add episode to bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
@@ -274,7 +274,7 @@ def add_bookmark(
 
 @require_DELETE
 @login_required
-def remove_bookmark(request: UserRequest, episode_id: int) -> TemplateResponse:
+def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     """Remove episode from bookmarks."""
     episode = get_object_or_404(Episode, pk=episode_id)
     request.user.bookmarks.filter(episode=episode).delete()
@@ -285,7 +285,7 @@ def remove_bookmark(request: UserRequest, episode_id: int) -> TemplateResponse:
 
 
 def _render_audio_player_action(
-    request: UserRequest,
+    request: HttpRequest,
     audio_log: AudioLog,
     *,
     is_playing: bool,
@@ -302,7 +302,7 @@ def _render_audio_player_action(
 
 
 def _render_bookmark_action(
-    request: UserRequest, episode: Episode, *, is_bookmarked: bool
+    request: HttpRequest, episode: Episode, *, is_bookmarked: bool
 ) -> TemplateResponse:
     return TemplateResponse(
         request,

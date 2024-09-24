@@ -1,8 +1,7 @@
 import dataclasses
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 
-from radiofeed.http import HttpRequest
 from radiofeed.middleware import BaseMiddleware
 
 

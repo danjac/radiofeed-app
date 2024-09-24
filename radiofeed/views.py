@@ -8,6 +8,7 @@ from django.core.signing import BadSignature, Signer
 from django.http import (
     FileResponse,
     Http404,
+    HttpRequest,
     HttpResponse,
     HttpResponseRedirect,
     JsonResponse,
@@ -19,7 +20,6 @@ from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
 from radiofeed.cover_image import get_placeholder_path, is_cover_image_size
-from radiofeed.http import HttpRequest
 from radiofeed.http_client import get_client
 from radiofeed.manifest import get_assetlinks, get_manifest
 

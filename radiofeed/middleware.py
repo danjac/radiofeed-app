@@ -3,14 +3,12 @@ from collections.abc import Callable
 from typing import Final
 
 from django.contrib.messages import get_messages
-from django.http import HttpResponse, QueryDict
+from django.http import HttpRequest, HttpResponse, QueryDict
 from django.template.loader import render_to_string
 from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
-
-from radiofeed.http import HttpRequest
 
 
 class BaseMiddleware:

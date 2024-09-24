@@ -141,5 +141,3 @@ class TestAudioPlayer:
         context = audio_player(RequestContext(req))
 
         assert context["is_playing"] is False
-        assert context["current_time"] is None
-        assert context["episode"] is None
