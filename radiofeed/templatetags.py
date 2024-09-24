@@ -55,6 +55,13 @@ def active_link(
     )
 
 
+@functools.cache
+@register.simple_tag
+def csrf_header() -> str:
+    """Returns the CSRF header name."""
+    return HttpHeaders.parse_header_name(settings.CSRF_HEADER_NAME) or "X-CSRFToken"
+
+
 @register.simple_tag(takes_context=True)
 def hx_headers(
     context: RequestContext,
@@ -73,7 +80,7 @@ def hx_headers(
     data = (dct or {}) | kwargs
 
     if csrf and (token := context.get("csrf_token")):
-        data |= {_csrf_header_name(): str(token)}
+        data |= {csrf_header(): str(token)}
     return format_html('hx-headers="{}"', _jsonify(data))
 
 
@@ -228,8 +235,3 @@ def percentage(value: float, total: float) -> int:
 
 def _jsonify(dct: dict) -> str:
     return json.dumps(dct, cls=DjangoJSONEncoder)
-
-
-@functools.cache
-def _csrf_header_name() -> str:
-    return HttpHeaders.parse_header_name(settings.CSRF_HEADER_NAME) or "X-CSRFToken"
