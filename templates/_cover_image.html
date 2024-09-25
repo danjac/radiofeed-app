@@ -1,8 +1,8 @@
 {# vim: set filetype=htmldjango #}
 {# djlint:off #}
-<img class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900 {{ classes|join:" " }}"
+<img class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900 {{ class }}"
      aria_hidden="true"
      loading="lazy"
      decoding="async"
-     {% include "django/forms/attrs.html" %}>
+     {% for k, v in attrs.items %}{{ k }}="{{ v|stringformat:"s" }}"{% endfor %}>
 {# djlint:on #}

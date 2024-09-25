@@ -104,11 +104,7 @@ def cover_image(
             "alt": title,
             "title": title,
         },
-        "classes": [
-            classes
-            for classes in [get_cover_image_class(variant), css_class]
-            if classes
-        ],
+        "class": get_cover_image_class(variant, css_class),
     }
 
 

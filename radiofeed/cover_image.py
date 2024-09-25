@@ -90,9 +90,9 @@ def get_cover_image_url(cover_url: str, size: int) -> str:
 
 
 @functools.cache
-def get_cover_image_class(variant: CoverImageVariant) -> str:
+def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
     """Returns default CSS class for the cover image."""
-    return _COVER_CLASSES[variant]
+    return " ".join([*[_COVER_CLASSES[variant]], *list(classes)])
 
 
 @functools.cache
