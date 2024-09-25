@@ -21,7 +21,7 @@ from PIL import Image
 
 from radiofeed.cover_image import get_placeholder_path, is_cover_image_size
 from radiofeed.http_client import get_client
-from radiofeed.pwa import get_assetlinks, get_manifest
+from radiofeed.manifest import get_assetlinks, get_manifest
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
