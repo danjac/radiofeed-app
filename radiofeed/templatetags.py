@@ -18,7 +18,7 @@ from radiofeed.cover_image import (
     get_cover_image_class,
 )
 from radiofeed.html import markdown
-from radiofeed.manifest import get_theme_color
+from radiofeed.pwa import get_theme_color
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600

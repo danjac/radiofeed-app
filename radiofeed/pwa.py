@@ -1,5 +1,6 @@
 import functools
 import itertools
+import pathlib
 import re
 from collections.abc import Iterator
 from typing import Final
@@ -91,18 +92,27 @@ def get_assetlinks() -> list[dict]:
     ]
 
 
-def _android_icons() -> Iterator[dict]:
-    for filename in (settings.STATIC_SRC / "img" / "icons" / "android").iterdir():
-        if matches := re.match(_RE_ANDROID_ICON, filename.name):
-            size = matches[1]
-            yield {"src": filename.name, "sizes": f"{size}x{size}"}
+def _app_icons() -> Iterator[dict]:
+    for icon in itertools.chain(
+        _generate_icons("android", _re_android_icon()),
+        _generate_icons("ios", _re_ios_icon()),
+    ):
+        yield icon
+        yield icon | {"purpose": "maskable"}
+        yield icon | {"purpose": "any"}
 
 
-def _ios_icons() -> Iterator[dict]:
-    for filename in (settings.STATIC_SRC / "img" / "icons" / "ios").iterdir():
-        if matches := re.match(_RE_IOS_ICON, filename.name):
+def _generate_icons(dir: str, pattern: re.Pattern) -> Iterator[dict[str, str]]:
+    path = pathlib.Path("img") / "icons" / dir
+
+    for filename in (settings.STATIC_SRC / path).iterdir():
+        if matches := pattern.match(filename.name):
             size = matches[1]
-            yield {"src": filename.name, "sizes": f"{size}x{size}"}
+            yield {
+                "src": static(path / filename.name),
+                "sizes": f"{size}x{size}",
+                "type": "image/png",
+            }
 
 
 @functools.cache
@@ -110,12 +120,11 @@ def _app_icons_list() -> list[dict]:
     return list(_app_icons())
 
 
-def _app_icons() -> Iterator[dict]:
-    for icon in itertools.chain(_android_icons(), _ios_icons()):
-        app_icon = icon | {
-            "src": static(f"img/icons/{icon["src"]}"),
-            "type": "image/png",
-        }
-        yield app_icon
-        yield app_icon | {"purpose": "maskable"}
-        yield app_icon | {"purpose": "any"}
+@functools.cache
+def _re_ios_icon() -> re.Pattern:
+    return re.compile(_RE_IOS_ICON)
+
+
+@functools.cache
+def _re_android_icon() -> re.Pattern:
+    return re.compile(_RE_ANDROID_ICON)
