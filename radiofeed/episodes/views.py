@@ -38,7 +38,7 @@ def index(request: HttpRequest) -> TemplateResponse:
         )
         .select_related("podcast")
         .order_by("-pub_date", "-id")
-    )
+    ).distinct()
 
     return render_partial_for_target(
         request,

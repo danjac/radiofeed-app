@@ -29,7 +29,7 @@ from radiofeed.users.models import User
 @login_required
 def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""
-    podcasts = _get_podcasts().subscribed(request.user)
+    podcasts = _get_podcasts().subscribed(request.user).distinct()
 
     podcasts = (
         podcasts.search(request.search.value).order_by(
@@ -39,7 +39,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         )
         if request.search
         else podcasts.order_by("-pub_date")
-    ).distinct()
+    )
 
     return render_partial_for_target(
         request,
@@ -263,7 +263,11 @@ def category_detail(
     Podcasts can also be searched.
     """
     category = get_object_or_404(Category, pk=category_id)
-    podcasts = category.podcasts.filter(private=False, pub_date__isnull=False)
+
+    podcasts = category.podcasts.filter(
+        private=False,
+        pub_date__isnull=False,
+    ).distinct()
 
     podcasts = (
         podcasts.search(request.search.value).order_by(
@@ -321,7 +325,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
 @login_required
 def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
-    podcasts = _get_podcasts().subscribed(request.user).filter(private=True)
+    podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
 
     podcasts = (
         podcasts.search(request.search.value).order_by(
