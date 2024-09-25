@@ -8,11 +8,13 @@
                     {{ request.site.name }}
                 {% endblock title %}
             </title>
+            {% tailwind_css %}
             <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
             <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
-            {% tailwind_css %}
             <link rel="manifest" href="{% url "manifest" %}">
             <link rel="canonical" href="{{ request.build_absolute_uri }}">
+            {% htmx_config %}
+            {% theme_color %}
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport"
@@ -23,8 +25,6 @@
             <meta name="cache-control" content="no-cache">
             <meta name="description" content="Podcast aggregator site">
             <meta name="keywords" content="podcasts, rss, feeds">
-            {% htmx_config %}
-            {% theme_color %}
             <script defer src="{% static "js/vendor/alpine-3.14.1.min.js" %}"></script>
             <script defer src="{% static "js/vendor/htmx-2.0.2.min.js" %}"></script>
         </head>
