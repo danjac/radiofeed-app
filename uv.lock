@@ -1215,14 +1215,15 @@ crypto = [
 
 [[package]]
 name = "pyright"
-version = "1.1.381"
+version = "1.1.382"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "nodeenv" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/10/f4/8e2374423280cfb221a8eba3cb13d39276a05e592fea36bc06d5feb18c33/pyright-1.1.381.tar.gz", hash = "sha256:314cf0c1351c189524fb10c7ac20688ecd470e8cc505c394d642c9c80bf7c3a5", size = 17488 }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/9d/7fc72c764d5067078303189c9cc4a6629459f0744dc26511981f12abe29b/pyright-1.1.382.tar.gz", hash = "sha256:0c953837aa9f1e1d8d46772ee7ebae845104db657e9216834dbdde567a11f177", size = 21493 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/c0/fec7607edc2459816c49815cd5dac67b28c702ed497102118cdc2757cc8d/pyright-1.1.381-py3-none-any.whl", hash = "sha256:5dc0aa80a265675d36abab59c674ae01dbe476714f91845b61b841d34aa99081", size = 18221 },
+    { url = "https://files.pythonhosted.org/packages/f8/96/dc7bc8bcfb1856bebe273d38faa1b3f4028b46945cd3aceeb0ded050cd9b/pyright-1.1.382-py3-none-any.whl", hash = "sha256:b6658802b2eca1107a6d63b6816903da4c7a53dffebc27cdbc02ebd904b7a18e", size = 18555 },
 ]
 
 [[package]]
