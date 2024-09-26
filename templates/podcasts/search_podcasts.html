@@ -13,7 +13,7 @@
                 {% if request.search %}
                     <li class="flex justify-center items-center sm:justify-end">
                         {% url "podcasts:search_itunes" as search_url %}
-                        {% include "_search_button.html" with text="Search iTunes" %}
+                        {% include "_search_form.html#button" with text="Search iTunes" %}
                     </li>
                 {% endif %}
                 <li class="flex justify-center items-center sm:justify-end">
