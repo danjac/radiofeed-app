@@ -18,7 +18,7 @@ class Item:
     label: str
 
 
-@register.inclusion_tag("account/_settings.html", takes_context=True)
+@register.inclusion_tag("account/settings_base#dropdown.html", takes_context=True)
 def settings_dropdown(context: RequestContext, current: str) -> dict:
     """Renders account settings dropdown menu."""
     items = _get_settings_items(context.request)
