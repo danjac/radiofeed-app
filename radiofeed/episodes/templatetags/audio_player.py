@@ -15,10 +15,10 @@ register = template.Library()
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
-    dct: dict = {"request": context.request}
-    if audio_log := _get_audio_log(context.request):
-        dct["audio_log"] = audio_log
-    return dct
+    return {
+        "request": context.request,
+        "audio_log": _get_audio_log(context.request),
+    }
 
 
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
