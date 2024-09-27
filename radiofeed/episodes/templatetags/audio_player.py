@@ -1,7 +1,6 @@
 from typing import Literal
 
 from django import template
-from django.http import HttpRequest
 from django.template.context import RequestContext
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -15,10 +14,22 @@ register = template.Library()
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player(context: RequestContext) -> dict:
     """Renders audio player if audio log in current session."""
-    return {
-        "request": context.request,
-        "audio_log": _get_audio_log(context.request),
-    }
+
+    dct = {"request": context.request}
+
+    if context.request.user.is_authenticated and (
+        episode_id := context.request.player.get()
+    ):
+        dct["audio_log"] = (
+            context.request.user.audio_logs.filter(episode__pk=episode_id)
+            .select_related(
+                "episode",
+                "episode__podcast",
+            )
+            .first()
+        )
+
+    return dct
 
 
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
@@ -66,16 +77,3 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
         "artist": episode.podcast.owner,
         "artwork": get_metadata_info(context.request, episode.get_cover_url()),
     }
-
-
-def _get_audio_log(request: HttpRequest) -> AudioLog | None:
-    if request.user.is_authenticated and (episode_id := request.player.get()):
-        return (
-            request.user.audio_logs.filter(episode__pk=episode_id)
-            .select_related(
-                "episode",
-                "episode__podcast",
-            )
-            .first()
-        )
-    return None

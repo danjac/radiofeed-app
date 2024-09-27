@@ -100,7 +100,7 @@ class TestAudioPlayer:
 
         context = audio_player(RequestContext(req))
 
-        assert context["audio_log"] is None
+        assert "audio_log" not in context
 
     @pytest.mark.django_db
     def test_is_empty(self, rf, user, defaults):
@@ -110,7 +110,7 @@ class TestAudioPlayer:
         req.player = PlayerDetails(request=req)
         context = audio_player(RequestContext(req))
 
-        assert context["audio_log"] is None
+        assert "audio_log" not in context
 
     @pytest.mark.django_db
     def test_is_playing(self, rf, user, audio_log, defaults):
@@ -134,4 +134,4 @@ class TestAudioPlayer:
         req.player.set(episode.pk)
 
         context = audio_player(RequestContext(req))
-        assert context["audio_log"] is None
+        assert "audio_log" not in context
