@@ -280,12 +280,12 @@ wheels = [
 
 [[package]]
 name = "django-allauth"
-version = "65.0.1"
+version = "65.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c1/5c/6bcf524acfc8bcae2c735dd1f9ab4d34b5538dd45acd9778daa9abf55989/django_allauth-65.0.1.tar.gz", hash = "sha256:1f8281e2dc17d3b977bcd95b99538f128c5cd2fb2551346a7f8ad31aa76f17cc", size = 1275375 }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/98/9013e6859a3fb2716c6e6091583e906e8a48262c4ee9a2a4d2a01f7cfefc/django_allauth-65.0.2.tar.gz", hash = "sha256:6b5b3a7a65b1c28078b6eb0dd234310b58a44e8addfd187dc30437b0b2bc41a5", size = 1278378 }
 
 [package.optional-dependencies]
 socialaccount = [
