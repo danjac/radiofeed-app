@@ -55,6 +55,33 @@ def active_link(
     )
 
 
+@register.simple_tag(takes_context=True)
+def json_data(
+    context: RequestContext,
+    dct: dict | None = None,
+    *,
+    csrf: bool = False,
+    **data,
+) -> str:
+    """Renders JSON strig suitable for attributes such as hx-headers or hx-vals that expect a JSON value.
+
+    If `csrf` is `True` will include the `X-CSRFToken` header with current csrf_token. For example:
+
+        hx-headers="{% json_data crsf=True %}"
+
+    will render something like:
+
+        hx-headers="&quot;X-CSRFToken&quot;=&quot;...&quot;"
+    """
+
+    dct = (dct or {}) | data
+
+    if csrf and (token := context.get("csrf_token")):
+        dct["X-CSRFToken"] = str(token)
+
+    return format_html("{}", json.dumps(dct, cls=DjangoJSONEncoder))
+
+
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
@@ -114,6 +141,56 @@ def gdpr_cookies_banner(context: RequestContext) -> dict:
     "Accept Cookies" button."""
     return {
         "accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES,
+    }
+
+
+@register.inclusion_tag("_search_form.html", takes_context=True)
+def search_form(
+    context: RequestContext,
+    placeholder: str = "Search",
+    to: Any = "",
+    *args,
+    clear_search: bool = True,
+    **kwargs,
+):
+    """Renders a search form.
+
+    If `clear_search` is `True`, clicking the "clear search" button reloads the current page.
+
+    If `False` the user can clear the input field but the page is not reloaded.
+
+    Assumes current URL unless `to` is passed in.
+    """
+
+    search_url = resolve_url(to, *args, **kwargs) if to else context.request.path
+
+    return {
+        "request": context.request,
+        "placeholder": placeholder,
+        "search_url": search_url,
+        "clear_search": clear_search,
+    }
+
+
+@register.inclusion_tag("_search_form.html#button", takes_context=True)
+def search_button(
+    context: RequestContext,
+    text: str,
+    to: Any,
+    *args,
+    **kwargs,
+):
+    """Renders a search button.
+
+    This button redirects search to another page specified in {% search_form %}.
+    """
+
+    search_url = resolve_url(to, *args, **kwargs)
+
+    return {
+        "request": context.request,
+        "text": text,
+        "search_url": search_url,
     }
 
 

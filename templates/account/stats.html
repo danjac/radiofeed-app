@@ -1,8 +1,11 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons %}
+{% load heroicons account_settings %}
 {% block title %}
     {{ block.super }} | Statistics
 {% endblock title %}
+{% block settings_dropdown %}
+    {% settings_dropdown "stats" %}
+{% endblock settings_dropdown %}
 {% block settings_content %}
     <table class="w-full">
         <tbody class="divide-y divide-solid">

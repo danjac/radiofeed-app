@@ -1,8 +1,11 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons %}
+{% load heroicons account_settings %}
 {% block title %}
     {{ block.super }} | Email Addresses
 {% endblock title %}
+{% block settings_dropdown %}
+    {% settings_dropdown "email" %}
+{% endblock settings_dropdown %}
 {% block settings_content %}
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}

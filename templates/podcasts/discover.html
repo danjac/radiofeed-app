@@ -11,8 +11,7 @@
         <nav class="flex justify-center items-center space-x-3 sm:justify-end">
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 <li class="flex justify-center items-center sm:justify-end">
-                    {% url "podcasts:search_podcasts" as search_url %}
-                    {% include "_search_form.html" with placeholder="Search: Podcasts" clear_search=False %}
+                    {% search_form "Search: Podcasts" "podcasts:search_podcasts" clear_search=False %}
                 </li>
             </ul>
         </nav>

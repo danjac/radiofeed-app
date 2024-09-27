@@ -12,12 +12,11 @@
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 {% if request.search %}
                     <li class="flex justify-center items-center sm:justify-end">
-                        {% url "podcasts:search_itunes" as search_url %}
-                        {% include "_search_form.html#button" with text="Search iTunes" %}
+                        {% search_button "Search iTunes" "podcasts:search_itunes" %}
                     </li>
                 {% endif %}
                 <li class="flex justify-center items-center sm:justify-end">
-                    {% include "_search_form.html" with placeholder="Search: Podcasts" clear_search=False %}
+                    {% search_form "Search: Podcasts" clear_search=False %}
                 </li>
             </ul>
         </nav>

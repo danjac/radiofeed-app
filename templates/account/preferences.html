@@ -1,8 +1,11 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons partials %}
+{% load heroicons partials account_settings %}
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
+{% block settings_dropdown %}
+    {% settings_dropdown "preferences" %}
+{% endblock settings_dropdown %}
 {% block settings_content %}
     {% partialdef form inline=True %}
         <form method="post"

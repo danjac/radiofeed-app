@@ -9,6 +9,7 @@ from radiofeed.templatetags import (
     active_link,
     cover_image,
     format_duration,
+    json_data,
     percentage,
 )
 
@@ -28,7 +29,23 @@ def auth_req(req, user):
     return req
 
 
-class TestCoverArt:
+class TestJsonData:
+    def test_data(self, rf):
+        assert json_data(
+            RequestContext(rf.get("/")), action="add"
+        ), "{&quot;action&quot;=&quot;add&quot;}"
+
+    def test_csrf(self, rf):
+        assert json_data(
+            RequestContext(
+                rf.get("/"),
+                {"csrf_token": "RANDOMVALUE"},
+            ),
+            action="add",
+        ), "{&quot;X-CSRFToken&quot;=&quot;RANDOMVALUE&quot;}"
+
+
+class TestCoverImage:
     def test_cover_image(self):
         context = cover_image(
             CoverImageVariant.DETAIL,

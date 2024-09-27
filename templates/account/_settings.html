@@ -1,0 +1,34 @@
+{% load heroicons %}
+<nav x-data="{showDropdown: false}"
+     class="relative"
+     id="settings-dropdown">
+    <button id="settings-dropdown-btn"
+            tabindex="0"
+            @click="showDropdown = !showDropdown"
+            @click.outside="showDropdown=false"
+            @keyup.escape.window="showDropdown=false"
+            class="flex items-center py-1 px-2 rounded-lg border sm:justify-end focus:ring focus:outline-none link md:hover:bg-transparent">
+        <span class="inline-flex items-center">
+            {% heroicon_mini current_item.icon class="mr-2" %}
+            {{ current_item.label }}
+        </span>
+        {% heroicon_mini "chevron-down" class="ml-3" %}
+    </button>
+    <div class="absolute z-20 my-2 w-56 bg-white rounded-lg border shadow-lg sm:right-1 dark:bg-gray-800 dark:border"
+         x-cloak
+         x-show="showDropdown"
+         x-transition.scape.origin.top>
+        <ul class="py-1 list-none" aria-labelledby="settings-dropdown-btn">
+            {% for item in items %}
+                <li>
+                    <a href="{{ item.url }}"
+                       tabindex="{{ forloop.counter1 }}"
+                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
+                        {% heroicon_mini item.icon class="mr-2" %}
+                        {{ item.label }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
