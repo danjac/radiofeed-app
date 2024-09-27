@@ -61,22 +61,20 @@ class TestAudioPlayerUpdate:
     def test_start_player(self, audio_log, req_context):
         data = audio_player_update(req_context, "open", audio_log)
         assert data["hx_oob"] is True
-        assert data["is_playing"] is True
         assert data["start_player"] is True
-        assert data["episode"] == audio_log.episode
-        assert data["current_time"] == audio_log.current_time
+        assert data["audio_log"] == audio_log
 
     @pytest.mark.django_db
     def test_close_player(self, audio_log, req_context):
         data = audio_player_update(req_context, "close", audio_log)
         assert data["hx_oob"] is True
-        assert data["is_playing"] is False
+        assert "audio_log" not in data
 
     @pytest.mark.django_db
     def test_start_player_audio_log_none(self, req_context):
         data = audio_player_update(req_context, "open", None)
         assert data["hx_oob"] is True
-        assert data["is_playing"] is False
+        assert "audio_log" not in data
 
 
 class TestAudioPlayer:
@@ -102,7 +100,7 @@ class TestAudioPlayer:
 
         context = audio_player(RequestContext(req))
 
-        assert context["is_playing"] is False
+        assert "audio_log" not in context
 
     @pytest.mark.django_db
     def test_is_empty(self, rf, user, defaults):
@@ -112,7 +110,7 @@ class TestAudioPlayer:
         req.player = PlayerDetails(request=req)
         context = audio_player(RequestContext(req))
 
-        assert context["is_playing"] is False
+        assert "audio_log" not in context
 
     @pytest.mark.django_db
     def test_is_playing(self, rf, user, audio_log, defaults):
@@ -124,10 +122,7 @@ class TestAudioPlayer:
         req.player.set(audio_log.episode.pk)
 
         context = audio_player(RequestContext(req))
-
-        assert context["is_playing"] is True
-        assert context["current_time"] == 1000
-        assert context["episode"] == audio_log.episode
+        assert context["audio_log"] == audio_log
 
     @pytest.mark.django_db
     def test_is_anonymous_is_playing(self, rf, anonymous_user, episode, defaults):
@@ -139,5 +134,4 @@ class TestAudioPlayer:
         req.player.set(episode.pk)
 
         context = audio_player(RequestContext(req))
-
-        assert context["is_playing"] is False
+        assert "audio_log" not in context
