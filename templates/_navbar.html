@@ -1,4 +1,4 @@
-{% load static heroicons %}
+{% load static heroicons partials %}
 <header class="sticky top-0 z-10 w-full text-white bg-violet-900"
     :class="scrolling ? 'drop-shadow-xl': ''"
     x-data="{showSidebar: false, showUserDropdown: false, scrolling: false}"
@@ -118,7 +118,6 @@
     {% if user.is_authenticated %}
         <nav class="absolute left-0 py-6 px-2 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
              x-cloak
-             x-init="$el.innerHTML = document.getElementById('sidebar').innerHTML"
              x-show.transition="showSidebar"
              x-transition:enter-start="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
              x-transition:enter="transition ease-out duration-100"
@@ -127,7 +126,95 @@
              x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
              @click.outside="showSidebar=false">
+            {% partialdef menu inline=True %}
+                <ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
+                    {% with MENU_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3" %}
+                        <li>
+                            <a href="{% url "podcasts:subscriptions" %}"
+                               accesskey="p"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "rss" class=ICON_CSS %}
+                                Subscriptions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "episodes:index" %}"
+                               accesskey="n"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "sparkles" class=ICON_CSS %}
+                                New Releases
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "podcasts:discover" %}"
+                               accesskey="o"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "magnifying-glass" class=ICON_CSS %}
+                                Discover
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "podcasts:category_list" %}"
+                               accesskey="c"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "tag" class=ICON_CSS %}
+                                Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "episodes:bookmarks" %}"
+                               accesskey="b"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "bookmark" class=ICON_CSS %}
+                                Bookmarks
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "episodes:history" %}"
+                               accesskey="h"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "clock" class=ICON_CSS %}
+                                History
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "podcasts:private_feeds" %}"
+                               accesskey="v"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "lock-closed" class=ICON_CSS %}
+                                Private Feeds
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url "about" %}"
+                               accesskey="a"
+                               tabindex="0"
+                               class="{{ MENU_CSS }}">
+                                {% heroicon_outline "information-circle" class=ICON_CSS %}
+                                About
+                            </a>
+                        </li>
+                    {% endwith %}
+                </ul>
+            {% endpartialdef %}
         </nav>
     {% endif %}
-    {% include "_signup_cta.html" %}
+    {% if user.is_anonymous %}
+        <div id="signup-cta"
+             class="p-3 font-bold text-center text-white bg-blue-600">
+            {% with LINK_CSS="underline text-white hover:opacity-75" %}
+                <a class="{{ LINK_CSS }}" href="{% url 'account_signup' %}">Sign up</a>
+                or
+                <a class="{{ LINK_CSS }}" href="{% url 'account_login' %}">log in</a>
+                to follow your favorite podcasts and episodes!
+            {% endwith %}
+        </div>
+    {% endif %}
 </header>
