@@ -185,12 +185,10 @@ def search_button(
     This button redirects search to another page specified in {% search_form %}.
     """
 
-    search_url = resolve_url(to, *args, **kwargs)
-
     return {
         "request": context.request,
         "text": text,
-        "search_url": search_url,
+        "search_url": resolve_url(to, *args, **kwargs),
     }
 
 
