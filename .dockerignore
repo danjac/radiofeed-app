@@ -32,5 +32,5 @@ docker-compose.yml
 node_modules
 npm-debug.log
 screenshots
-static/css/tailwind.css
+static/tailwind.css
 staticfiles

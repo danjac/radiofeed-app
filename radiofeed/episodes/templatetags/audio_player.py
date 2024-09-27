@@ -1,6 +1,8 @@
 from django import template
 from django.http import HttpRequest
 from django.template.context import RequestContext
+from django.templatetags.static import static
+from django.utils.html import format_html
 
 from radiofeed.cover_image import get_metadata_info
 from radiofeed.episodes.models import AudioLog, Episode
@@ -71,6 +73,14 @@ def audio_player_update(
             }
         )
     return dct
+
+
+@register.simple_tag(takes_context=True)
+def audio_player_script(context: RequestContext) -> str:
+    """Renders the JS required for audio player."""
+    if context.request.user.is_authenticated:
+        return format_html('<script src="{}"></script>', static("audio-player.js"))
+    return ""
 
 
 def _get_audio_log(request: HttpRequest) -> AudioLog | None:
