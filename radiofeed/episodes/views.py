@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Literal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -127,7 +128,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     request.player.set(episode.pk)
 
-    return _render_audio_player_action(request, audio_log, is_playing=True)
+    return _render_player_action(request, audio_log, action="open")
 
 
 @require_POST
@@ -139,7 +140,7 @@ def close_player(request: HttpRequest) -> HttpResponseNoContent | TemplateRespon
             request.user.audio_logs.select_related("episode"),
             episode__pk=episode_id,
         )
-        return _render_audio_player_action(request, audio_log, is_playing=False)
+        return _render_player_action(request, audio_log, action="close")
     return HttpResponseNoContent()
 
 
@@ -284,11 +285,8 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
     return _render_bookmark_action(request, episode, is_bookmarked=False)
 
 
-def _render_audio_player_action(
-    request: HttpRequest,
-    audio_log: AudioLog,
-    *,
-    is_playing: bool,
+def _render_player_action(
+    request: HttpRequest, audio_log: AudioLog, *, action: Literal["open", "close"]
 ) -> TemplateResponse:
     return TemplateResponse(
         request,
@@ -296,8 +294,8 @@ def _render_audio_player_action(
         {
             "audio_log": audio_log,
             "episode": audio_log.episode,
-            "is_playing": is_playing,
-            "action": "open" if is_playing else "close",
+            "is_playing": action == "open",
+            "action": action,
         },
     )
 
