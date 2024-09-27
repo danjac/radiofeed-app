@@ -297,6 +297,7 @@ def _render_audio_player_action(
             "audio_log": audio_log,
             "episode": audio_log.episode,
             "is_playing": is_playing,
+            "action": "open" if is_playing else "close",
         },
     )
 

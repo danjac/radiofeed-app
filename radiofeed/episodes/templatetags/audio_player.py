@@ -1,3 +1,5 @@
+from typing import Literal
+
 from django import template
 from django.http import HttpRequest
 from django.template.context import RequestContext
@@ -49,12 +51,11 @@ def audio_player(context: RequestContext) -> dict:
     return dct
 
 
-@register.inclusion_tag("episodes/_audio_player.html#player", takes_context=True)
+@register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player_update(
     context: RequestContext,
+    action: Literal["open", "close"],
     audio_log: AudioLog | None = None,
-    *,
-    start_player: bool,
 ) -> dict:
     """Renders audio player update to open or close the player."""
     dct = {
@@ -63,7 +64,7 @@ def audio_player_update(
         "is_playing": False,
     }
 
-    if audio_log and start_player:
+    if audio_log is not None and action == "open":
         dct.update(
             {
                 "current_time": audio_log.current_time,

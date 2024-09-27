@@ -59,7 +59,7 @@ class TestAudioPlayerUpdate:
 
     @pytest.mark.django_db
     def test_start_player(self, audio_log, req_context):
-        data = audio_player_update(req_context, audio_log, start_player=True)
+        data = audio_player_update(req_context, "open", audio_log)
         assert data["hx_oob"] is True
         assert data["is_playing"] is True
         assert data["start_player"] is True
@@ -68,13 +68,13 @@ class TestAudioPlayerUpdate:
 
     @pytest.mark.django_db
     def test_close_player(self, audio_log, req_context):
-        data = audio_player_update(req_context, audio_log, start_player=False)
+        data = audio_player_update(req_context, "close", audio_log)
         assert data["hx_oob"] is True
         assert data["is_playing"] is False
 
     @pytest.mark.django_db
     def test_start_player_audio_log_none(self, req_context):
-        data = audio_player_update(req_context, None, start_player=True)
+        data = audio_player_update(req_context, "open", None)
         assert data["hx_oob"] is True
         assert data["is_playing"] is False
 
