@@ -4,5 +4,7 @@
      aria_hidden="true"
      loading="lazy"
      decoding="async"
-     {% for k, v in attrs.items %}{{ k }}="{{ v|stringformat:"s" }}"{% endfor %}>
+     {% for k, v in attrs.items %}
+        {{ k }}="{{ v|stringformat:"s" }}"
+    {% endfor %}>
 {# djlint:on #}
