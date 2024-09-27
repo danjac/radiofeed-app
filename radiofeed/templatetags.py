@@ -17,7 +17,7 @@ from radiofeed.cover_image import (
     get_cover_image_attrs,
     get_cover_image_class,
 )
-from radiofeed.html import markdown
+from radiofeed.html import render_markdown
 from radiofeed.manifest import get_theme_color
 
 _SECONDS_IN_MINUTE: Final = 60
@@ -41,13 +41,13 @@ class ActiveLink(TypedDict):
 def active_link(
     context: RequestContext,
     to: Any,
-    *args,
+    *url_args,
     css: str = "link",
     active_css: str = "active",
-    **kwargs,
+    **url_kwargs,
 ) -> ActiveLink:
     """Returns url with active link info if matching URL."""
-    url = resolve_url(to, *args, **kwargs)
+    url = resolve_url(to, *url_args, **url_kwargs)
     return (
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
@@ -106,11 +106,11 @@ def get_site() -> Site:
 
 
 @register.simple_tag
-def absolute_uri(to: Any | None = None, *args, **kwargs) -> str:
+def absolute_uri(to: Any = None, *url_args, **url_kwargs) -> str:
     """Returns the absolute URL to site domain."""
 
     site = get_site()
-    path = resolve_url(to, *args, **kwargs) if to else ""
+    path = resolve_url(to, *url_args, **url_kwargs) if to else ""
     scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
     return f"{scheme}://{site.domain}{path}"
@@ -148,10 +148,10 @@ def gdpr_cookies_banner(context: RequestContext) -> dict:
 def search_form(
     context: RequestContext,
     placeholder: str = "Search",
-    to: Any = "",
-    *args,
+    to: Any = None,
+    *url_args,
     clear_search: bool = True,
-    **kwargs,
+    **url_kwargs,
 ):
     """Renders a search form.
 
@@ -162,7 +162,9 @@ def search_form(
     Assumes current URL unless `to` is passed in.
     """
 
-    search_url = resolve_url(to, *args, **kwargs) if to else context.request.path
+    search_url = (
+        resolve_url(to, *url_args, **url_kwargs) if to else context.request.path
+    )
 
     return {
         "request": context.request,
@@ -177,8 +179,8 @@ def search_button(
     context: RequestContext,
     text: str,
     to: Any,
-    *args,
-    **kwargs,
+    *url_args,
+    **url_kwargs,
 ):
     """Renders a search button.
 
@@ -188,14 +190,14 @@ def search_button(
     return {
         "request": context.request,
         "text": text,
-        "search_url": resolve_url(to, *args, **kwargs),
+        "search_url": resolve_url(to, *url_args, **url_kwargs),
     }
 
 
-@register.inclusion_tag("_markdown.html", name="markdown")
-def markdown_(content: str | None) -> dict:
+@register.inclusion_tag("_markdown.html")
+def markdown(content: str | None) -> dict:
     """Render content as Markdown."""
-    return {"content": markdown(content or "")}
+    return {"content": render_markdown(content or "")}
 
 
 @register.filter

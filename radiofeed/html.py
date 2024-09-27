@@ -70,7 +70,7 @@ _TAG_ATTRIBUTES: Final = {
 
 
 @mark_safe  # noqa: S308
-def markdown(value: str) -> str:
+def render_markdown(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if value := value.strip():
         return nh3.clean(
@@ -89,7 +89,13 @@ def strip_html(value: str) -> str:
 
     If content is Markdown, will attempt to render to HTML first.
     """
-    return strip_extra_spaces(html.unescape(striptags(markdown(value))))
+    return strip_extra_spaces(
+        html.unescape(
+            striptags(
+                render_markdown(value),
+            )
+        )
+    )
 
 
 def strip_extra_spaces(value: str) -> str:
