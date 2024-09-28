@@ -1,4 +1,4 @@
-import dataclasses
+from typing import TypedDict
 
 from allauth.socialaccount.adapter import get_adapter
 from django import template
@@ -9,8 +9,7 @@ from django.urls import reverse
 register = template.Library()
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class Item:
+class Item(TypedDict):
     """Settings navigation item."""
 
     icon: str

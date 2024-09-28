@@ -26,7 +26,7 @@ class TestSettingsDropdown:
         req = rf.get("/")
         req.user = user
         context = settings_dropdown(RequestContext(req), "preferences")
-        assert context["current_item"].label == "Preferences"
+        assert context["current_item"]["label"] == "Preferences"
         assert len(context["items"]) == 5
 
     @pytest.mark.django_db
@@ -38,7 +38,7 @@ class TestSettingsDropdown:
         req = rf.get("/")
         req.user = user
         context = settings_dropdown(RequestContext(req), "social_logins")
-        assert context["current_item"].label == "Social Logins"
+        assert context["current_item"]["label"] == "Social Logins"
         assert len(context["items"]) == 6
 
     @pytest.mark.django_db
