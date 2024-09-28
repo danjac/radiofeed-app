@@ -14,5 +14,10 @@
         {% endblock error_description %}
     </div>
 {% endblock content %}
-{% block page_footer %}
-{% endblock page_footer %}
+{# override common blocks #}
+{# djlint: off #}
+{% block body_attrs %}{% endblock %}
+{% block notifications %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block scripts %}{% endblock %}
+{# djlint: oon
