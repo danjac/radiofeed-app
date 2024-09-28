@@ -1,6 +1,7 @@
-from typing import Literal
+from typing import Literal, TypedDict
 
 from django import template
+from django.http import HttpRequest
 from django.template.context import RequestContext
 from django.templatetags.static import static
 from django.utils.html import format_html
@@ -11,11 +12,25 @@ from radiofeed.episodes.models import AudioLog, Episode
 register = template.Library()
 
 
+class PlayerInfo(TypedDict):
+    """Audio player context."""
+
+    request: HttpRequest
+    audio_log: AudioLog | None
+    start_player: bool
+    hx_oob: bool
+
+
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
-def audio_player(context: RequestContext) -> dict:
+def audio_player(context: RequestContext) -> PlayerInfo:
     """Renders audio player if audio log in current session."""
 
-    dct = {"request": context.request}
+    dct = PlayerInfo(
+        request=context.request,
+        audio_log=None,
+        start_player=False,
+        hx_oob=False,
+    )
 
     if context.request.user.is_authenticated and (
         episode_id := context.request.player.get()
@@ -37,12 +52,15 @@ def audio_player_update(
     context: RequestContext,
     action: Literal["open", "close"],
     audio_log: AudioLog | None = None,
-) -> dict:
+) -> PlayerInfo:
     """Renders audio player update to open or close the player."""
-    dct = {
-        "request": context.request,
-        "hx_oob": True,
-    }
+
+    dct = PlayerInfo(
+        request=context.request,
+        audio_log=None,
+        start_player=False,
+        hx_oob=True,
+    )
 
     if audio_log is not None and action == "open":
         dct.update(
