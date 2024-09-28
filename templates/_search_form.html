@@ -41,15 +41,15 @@
     <button class="inline-flex items-center btn btn-default"
         tabindex="0"
         {# djlint: off #}
-    x-data="{
-        url: '{{ search_url|escapejs }}',
-        search: '{{ request.search.value|escapejs }}',
-        get searchUrl() {
-            const params = new URLSearchParams();
-            params.append('{{ request.search.param }}', this.search);
-            return `${this.url}?${params.toString()}`;
-        },
-    }"
+        x-data="{
+            url: '{{ search_url|escapejs }}',
+            search: '{{ request.search.value|escapejs }}',
+            get searchUrl() {
+                const params = new URLSearchParams();
+                params.append('{{ request.search.param }}', this.search);
+                return `${this.url}?${params.toString()}`;
+            },
+        }"
         {# djlint: on #}
         hx-push-url="true"
         :hx-get="searchUrl"
