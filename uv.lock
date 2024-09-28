@@ -1215,15 +1215,15 @@ crypto = [
 
 [[package]]
 name = "pyright"
-version = "1.1.382.post0"
+version = "1.1.382.post1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "nodeenv" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5a/7e/bc877dfbde1f486cc0da40c4ad3f609300d9364f83107587b99fb20e6b91/pyright-1.1.382.post0.tar.gz", hash = "sha256:4b84dd4439b0cbc662dff6aaf012cc0860f1c788932ac4c2a4b5d6c1280a5e20", size = 21514 }
+sdist = { url = "https://files.pythonhosted.org/packages/1b/d3/fbf59f51cb74fc62a0c2b791aaa6242c8004db551b30c726783ba4432f05/pyright-1.1.382.post1.tar.gz", hash = "sha256:66a5d4e83be9452853d73e9dd9e95ba0ac3061845270e4e331d0070a597d3445", size = 21965 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/20/7e6ef22601e97055902a8ce7b6310523524d77ad0a6d790bcd2e5ea4c1ca/pyright-1.1.382.post0-py3-none-any.whl", hash = "sha256:a82a20b6a6511d71c6c95de19c0f874f7e50a013f332e3799deaae66a4d237d1", size = 18652 },
+    { url = "https://files.pythonhosted.org/packages/ed/e2/7661f69927bf052e36d9c162c5087a02c346d0269be238cea2f5ae1e80f2/pyright-1.1.382.post1-py3-none-any.whl", hash = "sha256:21a4749dd1740e209f88d3a601e9f40748670d39481ea32b9d77edf7f3f1fb2e", size = 18669 },
 ]
 
 [[package]]
@@ -1513,11 +1513,11 @@ requires-dist = [
 
 [[package]]
 name = "redis"
-version = "5.0.8"
+version = "5.1.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/48/10/defc227d65ea9c2ff5244645870859865cba34da7373477c8376629746ec/redis-5.0.8.tar.gz", hash = "sha256:0c5b10d387568dfe0698c6fad6615750c24170e548ca2deac10c649d463e9870", size = 4595651 }
+sdist = { url = "https://files.pythonhosted.org/packages/9b/b6/7a4b49eadff6bdd1904ef96b7e1dede8754673fe4724969bfae3d418ad8d/redis-5.1.0.tar.gz", hash = "sha256:b756df1e4a3858fcc0ef861f3fc53623a96c41e2b1f5304e09e0fe758d333d40", size = 4607302 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c5/d1/19a9c76811757684a0f74adc25765c8a901d67f9f6472ac9d57c844a23c8/redis-5.0.8-py3-none-any.whl", hash = "sha256:56134ee08ea909106090934adc36f65c9bcbbaecea5b21ba704ba6fb561f8eb4", size = 255608 },
+    { url = "https://files.pythonhosted.org/packages/fd/d6/37ba7502c5144c93e2e63c81fbfd69c8b97c275328eb85734ce996d3dc13/redis-5.1.0-py3-none-any.whl", hash = "sha256:fd4fccba0d7f6aa48c58a78d76ddb4afc698f5da4a2c1d03d916e4fd7ab88cdd", size = 261212 },
 ]
 
 [[package]]
