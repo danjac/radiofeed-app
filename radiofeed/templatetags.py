@@ -1,12 +1,13 @@
 import functools
 import json
 import math
-from typing import Any, Final, TypedDict
+from typing import Final, TypeAlias, TypedDict
 
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Model
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
@@ -27,6 +28,8 @@ register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
+URL: TypeAlias = Model | str
+
 
 class ActiveLink(TypedDict):
     """Provides details on whether a link is currently active, along with its
@@ -40,14 +43,14 @@ class ActiveLink(TypedDict):
 @register.simple_tag(takes_context=True)
 def active_link(
     context: RequestContext,
-    to: Any,
+    url: URL,
     *url_args,
     css: str = "link",
     active_css: str = "active",
     **url_kwargs,
 ) -> ActiveLink:
     """Returns url with active link info if matching URL."""
-    url = resolve_url(to, *url_args, **url_kwargs)
+    url = resolve_url(url, *url_args, **url_kwargs)
     return (
         ActiveLink(active=True, css=f"{css} {active_css}", url=url)
         if context.request.path == url
@@ -106,11 +109,11 @@ def get_site() -> Site:
 
 
 @register.simple_tag
-def absolute_uri(to: Any = None, *url_args, **url_kwargs) -> str:
+def absolute_uri(url: URL | None = None, *url_args, **url_kwargs) -> str:
     """Returns the absolute URL to site domain."""
 
     site = get_site()
-    path = resolve_url(to, *url_args, **url_kwargs) if to else ""
+    path = resolve_url(url, *url_args, **url_kwargs) if url else ""
     scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
     return f"{scheme}://{site.domain}{path}"
@@ -148,7 +151,7 @@ def gdpr_cookies_banner(context: RequestContext) -> dict:
 def search_form(
     context: RequestContext,
     placeholder: str = "Search",
-    to: Any = None,
+    url: URL | None = None,
     *url_args,
     clear_search: bool = True,
     **url_kwargs,
@@ -163,7 +166,7 @@ def search_form(
     """
 
     search_url = (
-        resolve_url(to, *url_args, **url_kwargs) if to else context.request.path
+        resolve_url(url, *url_args, **url_kwargs) if url else context.request.path
     )
 
     return {
@@ -178,7 +181,7 @@ def search_form(
 def search_button(
     context: RequestContext,
     text: str,
-    to: Any,
+    url: URL,
     *url_args,
     **url_kwargs,
 ):
@@ -190,7 +193,7 @@ def search_button(
     return {
         "request": context.request,
         "text": text,
-        "search_url": resolve_url(to, *url_args, **url_kwargs),
+        "search_url": resolve_url(url, *url_args, **url_kwargs),
     }
 
 

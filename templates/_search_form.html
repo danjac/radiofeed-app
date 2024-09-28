@@ -1,7 +1,7 @@
 {% load heroicons partials %}
 <form class="relative bg-transparent"
       method="get"
-      action="{{ search_url|default:request.path }}"
+      action="{{ search_url }}"
       x-init="$watch('search', value => $dispatch('search', value))"
       x-data="{search: '{{ request.search.value|escapejs }}'}">
     <input type="search"
@@ -50,11 +50,11 @@
             return `${this.url}?${params.toString()}`;
         },
     }"
-    hx-push-url="true"
-    :hx-get="searchUrl"
-    :disabled="!search"
-    @search.window="search=$event.detail; $nextTick(() => htmx.process($el));"
         {# djlint: on #}
+        hx-push-url="true"
+        :hx-get="searchUrl"
+        :disabled="!search"
+        @search.window="search=$event.detail; $nextTick(() => htmx.process($el));"
         >
         {% heroicon_mini "magnifying-glass" class="mr-2" %}
         {{ text }}
