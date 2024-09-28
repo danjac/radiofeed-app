@@ -33,3 +33,13 @@ The Ansible playbooks will deploy all of the above using Docker images.
 ## Upgrade
 
 To update server dependencies, run `ansible-playbook -v -i ./hosts ./upgrade.yml`.
+
+## Django management commands
+
+Run `ansible-playbook -v -i ./hosts ./manage.yml` to generate a `manage.sh` script in the `ansible` directory. This will run Django management commands in the cron scheduler server:
+
+```bash
+ansible-playbook -v -i ./hosts ./manage.yml # run once
+
+./manage.sh migrate --check
+```
