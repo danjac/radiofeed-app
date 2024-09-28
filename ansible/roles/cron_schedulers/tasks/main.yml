@@ -1,6 +1,11 @@
 - name: Deploy docker compose
   ansible.builtin.include_role:
       name: compose
+- name: Add manage script
+  ansible.builtin.template:
+    src: templates/manage.sh.j2
+    dest: "/home/{{ user }}/manage.sh"
+    mode: "u+x,g+x"
 - name: Run systems checks and migrations
   changed_when: true
   ansible.builtin.shell:
@@ -41,7 +46,7 @@
       - clearsessions
 - name: Install crontab
   vars:
-      manage_cmd: "LOGURU_LEVEL=DEBUG docker compose --project-directory {{ project_dir }} run -e LOGURU_LEVEL --rm django ./manage.py"
+      manage_cmd: "./manage.sh"
       logs_dir: "{{ project_dir }}/logs/"
   block:
       - name: Install parse feeds cron

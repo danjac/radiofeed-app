@@ -43,3 +43,4 @@ venv
 static/dist/
 vars/*.yml
 hosts
+manage.sh
