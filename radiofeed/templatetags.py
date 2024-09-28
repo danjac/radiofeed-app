@@ -66,7 +66,7 @@ def json_data(
     csrf: bool = False,
     **data,
 ) -> str:
-    """Renders JSON strig suitable for attributes such as hx-headers or hx-vals that expect a JSON value.
+    """Renders JSON string suitable for attributes such as hx-headers or hx-vals that expect a JSON value.
 
     If `csrf` is `True` will include the `X-CSRFToken` header with current csrf_token. For example:
 
@@ -82,7 +82,7 @@ def json_data(
     if csrf and (token := context.get("csrf_token")):
         dct["X-CSRFToken"] = str(token)
 
-    return format_html("{}", json.dumps(dct, cls=DjangoJSONEncoder))
+    return format_html("{}", _jsonify(dct))
 
 
 @register.simple_tag
@@ -90,7 +90,7 @@ def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
     return format_html(
         '<meta name="htmx-config" content="{}">',
-        json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
+        _jsonify(settings.HTMX_CONFIG),
     )
 
 
@@ -230,3 +230,7 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
+
+
+def _jsonify(dct: dict) -> str:
+    return json.dumps(dct, cls=DjangoJSONEncoder)
