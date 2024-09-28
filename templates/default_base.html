@@ -35,7 +35,19 @@
               hx-target="#content"
               hx-swap="innerHTML show:window:top"
               hx-indicator="#hx-indicator">
-            {% include "_hx_indicator.html" %}
+            <div id="hx-indicator"
+                x-data="{width: 0}"
+                {# djlint:off #}
+                 x-init="
+                    setInterval(() => {
+                        if ($el.classList.contains('htmx-request')) {
+                            width = width + (Math.random() / 100) + 1;
+                            width = width > 30 ? width = -30 : width;
+                        } else {
+                            width = 0;
+                        }
+                        $el.style.width = width > 0 ? `${10 + (width * 90)}%` : '0px';
+                }, 36);"{# djlint:on #}></div>
             {% include "_messages.html" %}
             <div class="flex flex-col h-screen">
                 <div class="grow">
