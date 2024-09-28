@@ -1,18 +1,14 @@
 import functools
 import itertools
 import pathlib
-import re
 from collections.abc import Iterator
-from typing import Final
 
 from django.conf import settings
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 from django.templatetags.static import static
 from django.urls import reverse
-
-_RE_ANDROID_ICON: Final = r"^android-launchericon-([0-9]+)-([0-9]+).png"
-_RE_IOS_ICON: Final = r"([0-9]+).png"
+from PIL import Image
 
 
 def get_manifest(request: HttpRequest) -> dict:
@@ -92,39 +88,29 @@ def get_assetlinks() -> list[dict]:
     ]
 
 
-def _app_icons() -> Iterator[dict]:
-    for icon in itertools.chain(
-        _generate_icons("android", _re_android_icon()),
-        _generate_icons("ios", _re_ios_icon()),
-    ):
-        yield icon
-        yield icon | {"purpose": "maskable"}
-        yield icon | {"purpose": "any"}
-
-
-def _generate_icons(dir: str, pattern: re.Pattern) -> Iterator[dict[str, str]]:
-    path = pathlib.Path("img") / "icons" / dir
-
-    for filename in (settings.STATIC_SRC / path).iterdir():
-        if matches := pattern.match(filename.name):
-            size = matches[1]
-            yield {
-                "src": static(path / filename.name),
-                "sizes": f"{size}x{size}",
-                "type": "image/png",
-            }
-
-
 @functools.cache
 def _app_icons_list() -> list[dict]:
     return list(_app_icons())
 
 
 @functools.cache
-def _re_ios_icon() -> re.Pattern:
-    return re.compile(_RE_IOS_ICON)
+def _icon_size(path: pathlib.Path) -> tuple[int, int]:
+    return Image.open(path).size
 
 
-@functools.cache
-def _re_android_icon() -> re.Pattern:
-    return re.compile(_RE_ANDROID_ICON)
+def _app_icons() -> Iterator[dict]:
+    for icon in itertools.chain(_generate_icons("android"), _generate_icons("ios")):
+        yield icon
+        yield icon | {"purpose": "maskable"}
+        yield icon | {"purpose": "any"}
+
+
+def _generate_icons(dir: str) -> Iterator[dict[str, str]]:
+    path = pathlib.Path("img") / "icons" / dir
+    for filename in (settings.STATIC_SRC / path).glob("*.png"):
+        width, height = _icon_size(filename)
+        yield {
+            "src": static(path / filename.name),
+            "sizes": f"{width}x{height}",
+            "type": "image/png",
+        }
