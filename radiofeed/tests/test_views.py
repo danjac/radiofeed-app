@@ -5,10 +5,27 @@ import httpx
 import pytest
 from django.conf import settings
 from django.core.signing import Signer
+from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 
 from radiofeed.http_client import Client
 from radiofeed.tests.asserts import assert_200, assert_404
+
+
+class TestErrorPages:
+    @pytest.mark.parametrize(
+        "template_name",
+        [
+            pytest.param("400.html"),
+            pytest.param("403.html"),
+            pytest.param("403_csrf.html"),
+            pytest.param("405.html"),
+            pytest.param("500.html"),
+        ],
+    )
+    def test_render_page(self, rf, template_name):
+        response = TemplateResponse(rf.get("/"), template_name)
+        assert b"Error" in response.render().content
 
 
 class TestIndex:
