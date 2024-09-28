@@ -127,7 +127,7 @@ def start_player(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     request.player.set(episode.pk)
 
-    return _render_player_action(request, audio_log, action="open")
+    return _render_player_action(request, audio_log, action="play")
 
 
 @require_POST
@@ -285,7 +285,7 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 
 def _render_player_action(
-    request: HttpRequest, audio_log: AudioLog, *, action: Literal["open", "close"]
+    request: HttpRequest, audio_log: AudioLog, *, action: Literal["play", "close"]
 ) -> TemplateResponse:
     return TemplateResponse(
         request,

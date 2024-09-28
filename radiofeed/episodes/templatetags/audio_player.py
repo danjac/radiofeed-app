@@ -50,7 +50,7 @@ def audio_player(context: RequestContext) -> PlayerInfo:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player_update(
     context: RequestContext,
-    action: Literal["open", "close"],
+    action: Literal["play", "close"],
     audio_log: AudioLog | None = None,
 ) -> PlayerInfo:
     """Renders audio player update to open or close the player."""
@@ -62,7 +62,7 @@ def audio_player_update(
         hx_oob=True,
     )
 
-    if audio_log is not None and action == "open":
+    if action == "play" and audio_log is not None:
         dct.update(
             {
                 "audio_log": audio_log,
