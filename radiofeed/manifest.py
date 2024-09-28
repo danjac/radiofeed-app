@@ -110,7 +110,7 @@ def _generate_icons(dir: str) -> Iterator[dict[str, str]]:
     for filename in (settings.STATIC_SRC / path).glob("*.png"):
         width, height = _icon_size(filename)
         yield {
-            "src": static(path / filename.name),
+            "src": static(str(path / filename.name)),
             "sizes": f"{width}x{height}",
             "type": "image/png",
         }
