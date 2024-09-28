@@ -1,7 +1,7 @@
 {% load heroicons partials %}
 <form class="relative bg-transparent"
       method="get"
-      action="{{ search_url }}"
+      action="{{ search_url|default:request.path }}"
       x-init="$watch('search', value => $dispatch('search', value))"
       x-data="{search: '{{ request.search.value|escapejs }}'}">
     <input type="search"

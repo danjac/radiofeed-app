@@ -14,10 +14,13 @@
                     <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                         {% if request.search %}
                             <li class="flex justify-center items-center sm:justify-end">
-                                {% search_button "Search All Podcasts" "podcasts:search_podcasts" %}
+                                {% url "podcasts:search_podcasts" as search_url %}
+                                {% include "_search_form.html#button" with text="Search All Podcasts" %}
                             </li>
                         {% endif %}
-                        <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: "|add:category.name %}</li>
+                        <li class="flex justify-center items-center sm:justify-end">
+                            {% include "_search_form.html" with placeholder="Search: "|add:category.name clear_search=True %}
+                        </li>
                     </ul>
                 </nav>
             {% endif %}

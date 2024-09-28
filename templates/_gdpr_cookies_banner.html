@@ -15,7 +15,7 @@
                             title="OK, I accept cookies"
                             hx-disabled-elt="this"
                             hx-post="{% url "accept_gdpr_cookies" %}"
-                            hx-headers="{% json_data csrf=True %}"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                             hx-target="#accept-gdpr-cookies"
                             hx-push-url="false"
                             hx-swap="delete"

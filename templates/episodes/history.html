@@ -13,7 +13,8 @@
                 <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
                     {% if request.search %}
                         <li class="flex justify-center items-center sm:justify-end">
-                            {% search_button "Search All Episodes" "episodes:search_episodes" %}
+                            {% url "episodes:search_episodes" as search_url %}
+                            {% include "_search_form.html#button" with text="Search All Episodes" %}
                         </li>
                     {% else %}
                         <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
@@ -26,7 +27,9 @@
                             {% endif %}
                         </li>
                     {% endif %}
-                    <li class="flex justify-center items-center sm:justify-end">{% search_form "Search: History" %}</li>
+                    <li class="flex justify-center items-center sm:justify-end">
+                        {% include "_search_form.html" with placeholder="Search: History" clear_search=True %}
+                    </li>
                 </ul>
             </nav>
         {% endif %}

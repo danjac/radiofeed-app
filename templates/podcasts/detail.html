@@ -13,7 +13,7 @@
                                     aria-label="Remove podcast from your Private Feeds"
                                     title="Remove podcast from your Private Feeds"
                                     hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
-                                    hx-headers="{% json_data csrf=True %}"
+                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
                                     hx-disabled-elt="this">
@@ -37,7 +37,7 @@
                              hx-push-url="false"
                              hx-indicator="this"
                              hx-swap="outerHTML"
-                             hx-headers="{% json_data csrf=True %}">
+                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_subscribed %}
                                 <button class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                         aria-label="Unsubscribe from this Podcast"

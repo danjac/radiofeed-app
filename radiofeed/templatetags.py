@@ -58,39 +58,12 @@ def active_link(
     )
 
 
-@register.simple_tag(takes_context=True)
-def json_data(
-    context: RequestContext,
-    dct: dict | None = None,
-    *,
-    csrf: bool = False,
-    **data,
-) -> str:
-    """Renders JSON string suitable for attributes such as hx-headers or hx-vals that expect a JSON value.
-
-    If `csrf` is `True` will include the `X-CSRFToken` header with current csrf_token. For example:
-
-        hx-headers="{% json_data crsf=True %}"
-
-    will render something like:
-
-        hx-headers="&quot;X-CSRFToken&quot;=&quot;...&quot;"
-    """
-
-    dct = (dct or {}) | data
-
-    if csrf and (token := context.get("csrf_token")):
-        dct["X-CSRFToken"] = str(token)
-
-    return format_html("{}", _jsonify(dct))
-
-
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
     return format_html(
         '<meta name="htmx-config" content="{}">',
-        _jsonify(settings.HTMX_CONFIG),
+        json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
     )
 
 
@@ -147,56 +120,6 @@ def gdpr_cookies_banner(context: RequestContext) -> dict:
     }
 
 
-@register.inclusion_tag("_search_form.html", takes_context=True)
-def search_form(
-    context: RequestContext,
-    placeholder: str = "Search",
-    url: URL | None = None,
-    *url_args,
-    clear_search: bool = True,
-    **url_kwargs,
-):
-    """Renders a search form.
-
-    If `clear_search` is `True`, clicking the "clear search" button reloads the current page.
-
-    If `False` the user can clear the input field but the page is not reloaded.
-
-    Assumes current URL unless `to` is passed in.
-    """
-
-    search_url = (
-        resolve_url(url, *url_args, **url_kwargs) if url else context.request.path
-    )
-
-    return {
-        "request": context.request,
-        "placeholder": placeholder,
-        "search_url": search_url,
-        "clear_search": clear_search,
-    }
-
-
-@register.inclusion_tag("_search_form.html#button", takes_context=True)
-def search_button(
-    context: RequestContext,
-    text: str,
-    url: URL,
-    *url_args,
-    **url_kwargs,
-):
-    """Renders a search button.
-
-    This button redirects search to another page specified in {% search_form %}.
-    """
-
-    return {
-        "request": context.request,
-        "text": text,
-        "search_url": resolve_url(url, *url_args, **url_kwargs),
-    }
-
-
 @register.inclusion_tag("_markdown.html")
 def markdown(content: str | None) -> dict:
     """Render content as Markdown."""
@@ -230,7 +153,3 @@ def percentage(value: float, total: float) -> int:
     if 0 in (value, total):
         return 0
     return min(math.ceil((value / total) * 100), 100)
-
-
-def _jsonify(dct: dict) -> str:
-    return json.dumps(dct, cls=DjangoJSONEncoder)
