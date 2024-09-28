@@ -11,7 +11,7 @@
                 <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
                     {% if request.search %}
                         <li class="flex justify-center items-center sm:justify-end">
-                            {% search_button "Search All Episodes" url="episodes:search_episodes" %}
+                            {% search_button "Search All Episodes" "episodes:search_episodes" %}
                         </li>
                     {% else %}
                         <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
