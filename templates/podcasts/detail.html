@@ -86,10 +86,7 @@
                     {% endif %}
                 </nav>
                 <a href="{% url "podcasts:latest_episode" podcast.pk %}"
-                   class="flex flex-wrap space-x-1 link">
-                    <span>Last update</span>
-                    {% include "_date.html" with value=podcast.pub_date title="Last update" %}
-                </a>
+                   class="flex flex-wrap space-x-1 link">Last update {{ podcast.pub_date|date:"DATE_FORMAT" }}</a>
             </div>
         </div>
         {% if podcast.funding_url %}

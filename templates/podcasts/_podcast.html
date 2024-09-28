@@ -10,7 +10,7 @@
             {{ podcast.cleaned_title }}
         </h2>
         <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
-            {% include "_date.html" with value=podcast.pub_date title="Last update" %}
+            {{ podcast.pub_date|date:"DATE_FORMAT" }}
         </h3>
     </div>
 </a>

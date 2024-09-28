@@ -60,9 +60,9 @@
             {% audio_player_script %}
             {% django_htmx_script %}
             <script>
-                        if (typeof navigator.serviceWorker !== 'undefined') {
-                            navigator.serviceWorker.register('{% url "service_worker" %}')
-                        }
+                if (typeof navigator.serviceWorker !== 'undefined') {
+                    navigator.serviceWorker.register('{% url "service_worker" %}')
+                }
             </script>
         </body>
     </html>

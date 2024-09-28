@@ -11,7 +11,7 @@
         <tbody class="divide-y divide-solid">
             <tr class="flex justify-between pt-0 pb-3">
                 <td class="w-1/2">Joined</td>
-                <td class="w-1/2 font-bold text-right">{% include "_date.html" with value=user.date_joined %}</td>
+                <td class="w-1/2 font-bold text-right">{{ user.date_joined|date:"DATE_FORMAT" }}</td>
             </tr>
             {% for item in stats %}
                 {% if item.value > 0 %}

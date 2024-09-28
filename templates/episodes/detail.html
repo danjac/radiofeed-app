@@ -155,7 +155,7 @@
                 </div>
             {% endif %}
             <div class="flex flex-wrap items-center space-x-3 font-semibold">
-                <div>{% include "_date.html" with value=episode.pub_date title="Released" %}</div>
+                <div>{{ episode.pub_date|date:"DATE_FORMAT" }}</div>
                 {% with duration=episode.duration_in_seconds %}
                     {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
                 {% endwith %}
@@ -176,7 +176,7 @@
                                             Listened
                                         {% endif %}
                                     </span>
-                                    {% include "_date.html" with value=audio_log.listened title="Listened" class="ml-2" %}
+                                    <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
                                     {% if percent_complete > 0 and percent_complete < 100 %}
                                         <span>{{ percent_complete }}% Complete</span>
                                     {% elif percent_complete == 0 and audio_log.current_time %}

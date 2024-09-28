@@ -264,11 +264,12 @@ ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 LANGUAGE_CODE = "en"
 
+USE_TZ = True
 TIME_ZONE = "UTC"
 
-USE_I18N = True
+USE_I18N = False
 
-USE_TZ = True
+FORMAT_MODULE_PATH = ["radiofeed.formats"]
 
 # Static files
 
