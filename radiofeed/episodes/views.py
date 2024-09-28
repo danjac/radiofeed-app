@@ -48,7 +48,6 @@ def index(request: HttpRequest) -> TemplateResponse:
             "episodes/index.html",
             {
                 "page_obj": paginate(request, episodes),
-                "search_url": reverse("episodes:search_episodes"),
             },
         ),
         target="pagination",
