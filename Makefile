@@ -8,6 +8,7 @@ install:
 .PHONY: update
 update:
 	@$(MAKE) pyupdate
+	@$(MAKE) pyinstall
 	@$(MAKE) precommitupdate
 
 .PHONY: envfile
