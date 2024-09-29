@@ -33,4 +33,5 @@ jobs:
             - run: uv sync --frozen --all-extras --no-install-project
             - run: uv run pyright
             - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
-            - run: uv run python -m pytest
+            - run: uv run python ./manage.py validate_templates
+            - run: uv run pytest
