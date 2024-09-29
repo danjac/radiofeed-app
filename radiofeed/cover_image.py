@@ -11,6 +11,8 @@ from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 
+from radiofeed.manifest import ImageAsset
+
 
 class CoverImageVariant(StrEnum):
     """Possible size variations."""
@@ -125,13 +127,13 @@ def get_placeholder_path(size: int) -> pathlib.Path:
     return settings.STATIC_SRC / "img" / get_placeholder(size)
 
 
-def get_metadata_info(request: HttpRequest, cover_url: str) -> list[dict]:
+def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageAsset]:
     """Returns media artwork details."""
     return [
-        {
-            "src": request.build_absolute_uri(get_cover_image_url(cover_url, size)),
-            "sizes": f"{size}x{size}",
-            "type": "image/webp",
-        }
+        ImageAsset(
+            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
+            sizes=f"{size}x{size}",
+            type="image/webp",
+        )
         for size in get_cover_image_sizes()
     ]

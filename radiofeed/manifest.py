@@ -2,6 +2,7 @@ import functools
 import itertools
 import pathlib
 from collections.abc import Iterator
+from typing import TypedDict
 
 from django.conf import settings
 from django.http import HttpRequest
@@ -9,6 +10,14 @@ from django.template.defaultfilters import truncatechars
 from django.templatetags.static import static
 from django.urls import reverse
 from PIL import Image
+
+
+class ImageAsset(TypedDict):
+    """Metadata icon or image info."""
+
+    src: str
+    sizes: str
+    type: str
 
 
 def get_manifest(request: HttpRequest) -> dict:
@@ -95,19 +104,19 @@ def _app_icons_list() -> list[dict]:
 
 def _app_icons() -> Iterator[dict]:
     for icon in itertools.chain(_generate_icons("android"), _generate_icons("ios")):
-        yield icon
+        yield icon | {}
         yield icon | {"purpose": "maskable"}
         yield icon | {"purpose": "any"}
 
 
-def _generate_icons(dir: str) -> Iterator[dict[str, str]]:
+def _generate_icons(dir: str) -> Iterator[ImageAsset]:
     path = pathlib.Path("img") / "icons" / dir
     for filename in (settings.STATIC_SRC / path).glob("*.png"):
-        yield {
-            "src": static(f"{path}/{filename.name}"),
-            "sizes": _icon_size(filename),
-            "type": "image/png",
-        }
+        yield ImageAsset(
+            src=static(f"{path}/{filename.name}"),
+            sizes=_icon_size(filename),
+            type="image/png",
+        )
 
 
 @functools.cache
