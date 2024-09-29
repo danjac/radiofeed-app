@@ -54,6 +54,7 @@ repos:
           - id: djhtml
           - id: djcss
           - id: djjs
+            exclude: ^static/vendor
     - repo: https://github.com/adamchainz/djade-pre-commit
       rev: 1.1.1
       hooks:

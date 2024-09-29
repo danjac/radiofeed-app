@@ -32,8 +32,8 @@ document.addEventListener("alpine:init", () => {
                 this.$watch("runtime", value => {
                     const percent =
                         value && this.duration
-                            ? (value / this.duration) * 100
-                            : 0;
+                        ? (value / this.duration) * 100
+                        : 0;
                     this.$refs.range.style.setProperty(
                         "--webkitProgressPercent",
                         `${percent}%`,

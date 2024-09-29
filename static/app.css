@@ -18,8 +18,8 @@
     background: #0076ff;
     z-index: 9999;
     transition:
-        width 300ms ease-out,
-        opacity 150ms 150ms ease-in;
+    width 300ms ease-out,
+    opacity 150ms 150ms ease-in;
     transform: translate3d(0, 0, 0);
 }
 
@@ -46,7 +46,7 @@
     @media (prefers-color-scheme: dark) {
         .has-errors input {
             border: solid theme("borderWidth.DEFAULT")
-                theme("borderColor.red.500");
+                    theme("borderColor.red.500");
         }
     }
 
