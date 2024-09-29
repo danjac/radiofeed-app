@@ -1,12 +1,9 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.template import RequestContext
-from django.urls import reverse, reverse_lazy
 
 from radiofeed.cover_image import CoverImageVariant
 from radiofeed.templatetags import (
     absolute_uri,
-    active_link,
     cover_image,
     format_duration,
     percentage,
@@ -72,29 +69,6 @@ class TestFormatDuration:
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
-
-
-class TestActiveLink:
-    episodes_url = reverse_lazy("episodes:index")
-
-    def test_active_link_no_match(self, rf):
-        url = reverse("account_login")
-        req = rf.get(url)
-
-        assert active_link(RequestContext(req), self.episodes_url) == {
-            "url": self.episodes_url,
-            "css": "link",
-            "active": False,
-        }
-
-    def test_active_link_match(self, rf):
-        req = rf.get(self.episodes_url)
-
-        assert active_link(RequestContext(req), self.episodes_url) == {
-            "url": self.episodes_url,
-            "css": "link active",
-            "active": True,
-        }
 
 
 class TestAbsoluteUri:

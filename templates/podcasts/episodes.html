@@ -4,7 +4,7 @@
     {{ block.super }} | Episodes
 {% endblock title %}
 {% block podcast_navbar %}
-    {{ block.super }}
+    {% include "podcasts/detail_base.html#navbar" with current="episodes" %}
     {% cache 300 podcast-episodes-header request.get_full_path %}
         {% if page_obj.has_other_pages or request.search %}
             <nav class="flex justify-center items-center sm:justify-start">

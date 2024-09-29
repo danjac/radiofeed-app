@@ -3,6 +3,9 @@
 {% block title %}
     {{ block.super }} | Similar
 {% endblock title %}
+{% block podcast_navbar %}
+    {% include "podcasts/detail_base.html#navbar" with current="similar" %}
+{% endblock podcast_navbar %}
 {% block podcast_content %}
     {% cache 300 similar-podcasts podcast.pk %}
         <ul class="divide-y divide-solid">

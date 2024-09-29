@@ -1,7 +1,7 @@
 import functools
 import json
 import math
-from typing import Final, TypeAlias, TypedDict
+from typing import Final
 
 from django import template
 from django.conf import settings
@@ -28,35 +28,6 @@ register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
-URL: TypeAlias = Model | str
-
-
-class ActiveLink(TypedDict):
-    """Provides details on whether a link is currently active, along with its
-    URL and CSS."""
-
-    url: str
-    css: str
-    active: bool
-
-
-@register.simple_tag(takes_context=True)
-def active_link(
-    context: RequestContext,
-    url: URL,
-    *url_args,
-    css: str = "link",
-    active_css: str = "active",
-    **url_kwargs,
-) -> ActiveLink:
-    """Returns url with active link info if matching URL."""
-    url = resolve_url(url, *url_args, **url_kwargs)
-    return (
-        ActiveLink(active=True, css=f"{css} {active_css}", url=url)
-        if context.request.path == url
-        else ActiveLink(active=False, css=css, url=url)
-    )
-
 
 @register.simple_tag
 def htmx_config() -> str:
@@ -82,7 +53,7 @@ def get_site() -> Site:
 
 
 @register.simple_tag
-def absolute_uri(url: URL | None = None, *url_args, **url_kwargs) -> str:
+def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str:
     """Returns the absolute URL to site domain."""
 
     site = get_site()
