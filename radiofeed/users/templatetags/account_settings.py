@@ -13,8 +13,8 @@ class Item(TypedDict):
     """Settings navigation item."""
 
     icon: str
-    url: str
     label: str
+    url: str
 
 
 @register.inclusion_tag("account/settings_base.html#dropdown", takes_context=True)
