@@ -83,12 +83,21 @@ addopts = [
     "--cov-report=term-missing",
     "--tb=short",
 ]
-testpaths = "radiofeed"
+
+testpaths = ["radiofeed", "templates"]
 env = [
     "COVERAGE_CORE=sysmon",
     "USE_COLLECTSTATIC=false",
     "USE_HTTPS=false",
 ]
+
+[tool.pytest-watcher]
+now = true
+clear = true
+delay = 0.2
+runner = "pytest"
+runner_args = []
+patterns = ["*.py", "*.html"]
 
 [tool.coverage.run]
 source=["radiofeed"]

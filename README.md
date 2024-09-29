@@ -30,7 +30,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 The install process should create a virtualenv using pdm.
 
-To run unit tests, just run `pytest`. You can also run [pytest-watcher](https://github.com/olzhasar/pytest-watcher) in a terminal window with the command `ptw`.
+To run unit tests, just run `pytest`. You can also run [pytest-watcher](https://github.com/olzhasar/pytest-watcher) in a terminal window with the command `ptw .`.
 
 To handle Tailwind CSS compilation on the fly, run `./manage.py tailwind runserver`.
 
