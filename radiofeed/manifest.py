@@ -93,11 +93,6 @@ def _app_icons_list() -> list[dict]:
     return list(_app_icons())
 
 
-@functools.cache
-def _icon_size(path: pathlib.Path) -> tuple[int, int]:
-    return Image.open(path).size
-
-
 def _app_icons() -> Iterator[dict]:
     for icon in itertools.chain(_generate_icons("android"), _generate_icons("ios")):
         yield icon
@@ -108,9 +103,13 @@ def _app_icons() -> Iterator[dict]:
 def _generate_icons(dir: str) -> Iterator[dict[str, str]]:
     path = pathlib.Path("img") / "icons" / dir
     for filename in (settings.STATIC_SRC / path).glob("*.png"):
-        width, height = _icon_size(filename)
         yield {
-            "src": static(str(path / filename.name)),
-            "sizes": f"{width}x{height}",
+            "src": static(f"{path}/{filename.name}"),
+            "sizes": _icon_size(filename),
             "type": "image/png",
         }
+
+
+@functools.cache
+def _icon_size(path: pathlib.Path) -> str:
+    return "{}x{}".format(*Image.open(path).size)
