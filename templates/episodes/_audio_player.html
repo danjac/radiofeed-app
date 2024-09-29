@@ -6,7 +6,7 @@
                 {% get_media_metadata episode as metadata %}
                 {{ metadata|json_script:"audioplayer-metadata" }}
                 <div class="h-40 sm:h-28"
-                    {# djlint:off #}
+                    {# fmt:off #}
                     x-data="
                     audioPlayer(
                         csrfHeader='X-CSRFToken',
@@ -15,8 +15,8 @@
                         metadataTag='audioplayer-metadata',
                         startPlayer={{ start_player|yesno:" true,false" }},
                         timeUpdateUrl='{% url "episodes:player_time_update" %}',
-                    )"{# djlint:on #}
-                    @keydown.window="shortcuts">
+                    )"{# fmt:on #}
+                     @keydown.window="shortcuts">
                     <audio x-ref="audio"
                            preload="auto"
                            @loadedmetadata="loaded"

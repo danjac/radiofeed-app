@@ -44,15 +44,15 @@
                     </button>
                 </div>
             </form>
-        {% else %}
-            <p>You currently have no social network accounts connected to this account.</p>
-        {% endif %}
-        <hr />
-        <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
-        <ul class="flex items-center">
-            {% get_providers as socialaccount_providers %}
-            {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-        </ul>
-        {% include "socialaccount/snippets/login_extra.html" %}
+    {% else %}
+        <p>You currently have no social network accounts connected to this account.</p>
+    {% endif %}
+    <hr />
+    <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
+    <ul class="flex items-center">
+        {% get_providers as socialaccount_providers %}
+        {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+    </ul>
+    {% include "socialaccount/snippets/login_extra.html" %}
     </div>
 {% endblock settings_content %}

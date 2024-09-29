@@ -41,12 +41,17 @@ repos:
       rev: v0.3.1
       hooks:
           - id: absolufy-imports
+
     - repo: https://github.com/Riverside-Healthcare/djLint
       rev: v1.35.2
       hooks:
           - id: djlint-django
-            args: ["--lint", "--reformat"]
+            args: ["--lint"]
             exclude: ^static
+    - repo: https://github.com/rtts/djhtml
+      rev: '3.0.6'
+      hooks:
+          - id: djhtml
     - repo: https://github.com/hadolint/hadolint
       rev: v2.13.0-beta
       hooks:

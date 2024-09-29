@@ -39,9 +39,9 @@
 </form>
 {% partialdef button %}
     <button class="inline-flex items-center btn btn-default"
-        tabindex="0"
-        role="link"
-        {# djlint: off #}
+            tabindex="0"
+            role="link"
+        {# fmt:off #}
         x-data="{
             url: '{{ search_url|escapejs }}',
             search: '{{ request.search.value|escapejs }}',
@@ -51,11 +51,11 @@
                 return `${this.url}?${params.toString()}`;
             },
         }"
-        {# djlint: on #}
-        hx-push-url="true"
-        :hx-get="searchUrl"
-        :disabled="!search"
-        @search.window="search=$event.detail; $nextTick(() => htmx.process($el));">
+        {# fmt:on #}
+            hx-push-url="true"
+            :hx-get="searchUrl"
+            :disabled="!search"
+            @search.window="search=$event.detail; $nextTick(() => htmx.process($el));">
         {% heroicon_mini "magnifying-glass" class="mr-2" %}
         {{ text }}
     </button>
