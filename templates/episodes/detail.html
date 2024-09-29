@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% load cache heroicons partials audio_player %}
+{% load audio_player cache heroicons partials %}
 {% block title %}
     {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
+
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b">
         <h1 class="text-xl font-bold lg:text-2xl xl:text-3xl">{{ episode.cleaned_title }}</h1>

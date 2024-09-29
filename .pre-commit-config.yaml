@@ -48,10 +48,11 @@ repos:
           - id: djlint-django
             args: ["--lint"]
             exclude: ^static
-    - repo: https://github.com/rtts/djhtml
-      rev: '3.0.6'
+    - repo: https://github.com/adamchainz/djade-pre-commit
+      rev: 1.1.1
       hooks:
-          - id: djhtml
+          - id: djade
+            args: [--target-version, "5.1"]
     - repo: https://github.com/hadolint/hadolint
       rev: v2.13.0-beta
       hooks:

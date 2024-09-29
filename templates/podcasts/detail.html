@@ -3,6 +3,7 @@
 {% block podcast_navbar %}
     {% include "podcasts/detail_base.html#navbar" with current="detail" %}
 {% endblock podcast_navbar %}
+
 {% block podcast_content %}
     <article class="space-y-3">
         {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}

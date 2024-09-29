@@ -3,6 +3,7 @@
 {% block title %}
     {{ block.super }} | Episodes
 {% endblock title %}
+
 {% block podcast_navbar %}
     {% include "podcasts/detail_base.html#navbar" with current="episodes" %}
     {% cache 300 podcast-episodes-header request.get_full_path %}
@@ -33,6 +34,7 @@
         {% endif %}
     {% endcache %}
 {% endblock podcast_navbar %}
+
 {% block podcast_content %}
     {% partialdef pagination inline=True %}
         {% cache 300 podcast-episodes request.get_full_path %}

@@ -3,6 +3,7 @@
 {% block title %}
     {{ block.super }}  | Signup
 {% endblock title %}
+
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}
         <h1 class="flex justify-center items-center pb-3 mb-3 text-lg font-bold border-b sm:justify-start lg:text-xl">

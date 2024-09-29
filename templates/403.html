@@ -1,10 +1,13 @@
 {% extends "error_base.html" %}
+
 {% block title %}
     {{ block.super }} | 403: Permission Denied
 {% endblock title %}
+
 {% block error_header %}
     403: Permission Denied
 {% endblock error_header %}
+
 {% block error_description %}
     <p>Sorry, you do not have permission to view this page.</p>
 {% endblock error_description %}

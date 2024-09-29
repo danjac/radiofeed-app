@@ -3,6 +3,7 @@
 {% block title %}
     {{ block.super }}| Categories | {{ category.name }} Podcasts
 {% endblock title %}
+
 {% block content %}
     {% cache 300 category-detail request.get_full_path %}
         <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">

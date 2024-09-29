@@ -1,10 +1,13 @@
 {% extends "error_base.html" %}
+
 {% block title %}
     {{ block.super }} | 500: Internal Server Error
 {% endblock title %}
+
 {% block error_header %}
     500: Internal Server Error
 {% endblock error_header %}
+
 {% block error_description %}
     <p>Sorry, an unexpected error has occurred. The site admins have already been notified.</p>
 {% endblock error_description %}

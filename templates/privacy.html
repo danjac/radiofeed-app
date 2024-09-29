@@ -3,6 +3,7 @@
 {% block title %}
     {{ block.super }} | About
 {% endblock title %}
+
 {% block content %}
     {% cache 300 privacy-page %}
         {% with site_name=request.site.name %}

@@ -1,4 +1,4 @@
-{% load static heroicons partials audio_player %}
+{% load audio_player heroicons partials static %}
 {% if request.user.is_authenticated %}
     <div id="audio-player" {% if hx_oob %}hx-swap-oob="true"{% endif %}>
         {% if audio_log %}

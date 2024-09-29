@@ -1,10 +1,13 @@
 {% extends "error_base.html" %}
+
 {% block title %}
     {{ block.super }} | 400: Bad Request
 {% endblock title %}
+
 {% block error_header %}
     400: Bad Request
 {% endblock error_header %}
+
 {% block error_description %}
     <p>Sorry, there seems to have been a problem processing your request.</p>
 {% endblock error_description %}

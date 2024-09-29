@@ -1,10 +1,13 @@
 {% extends "error_base.html" %}
+
 {% block title %}
     {{ block.super }} | 404: Not Found
 {% endblock title %}
+
 {% block error_header %}
     404: Not Found
 {% endblock error_header %}
+
 {% block error_description %}
     <p>Sorry, this page does not exist, or it has been removed.</p>
 {% endblock error_description %}

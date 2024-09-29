@@ -1,11 +1,13 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons socialaccount account_settings %}
+{% load account_settings heroicons socialaccount %}
 {% block title %}
     {{ block.super }} | Social Logins
 {% endblock title %}
+
 {% block settings_dropdown %}
     {% settings_dropdown "social_logins" %}
 {% endblock settings_dropdown %}
+
 {% block settings_content %}
     {% if form.accounts %}
         <div class="space-y-3">

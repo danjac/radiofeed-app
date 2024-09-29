@@ -1,11 +1,13 @@
 {% extends "account/settings_base.html" %}
-{% load heroicons account_settings %}
+{% load account_settings heroicons %}
 {% block title %}
     {{ block.super }} | Delete Account
 {% endblock title %}
+
 {% block settings_dropdown %}
     {% settings_dropdown "delete_account" %}
 {% endblock settings_dropdown %}
+
 {% block settings_content %}
     {% if user.is_authenticated %}
         <div class="space-y-3">

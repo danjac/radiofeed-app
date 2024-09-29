@@ -3,6 +3,7 @@
 {% block title %}
     {{ block.super }} | Login
 {% endblock title %}
+
 {% block content %}
     {% with provider_name=provider.name %}
         {% if process == "connect" %}
