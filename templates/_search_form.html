@@ -40,6 +40,7 @@
 {% partialdef button %}
     <button class="inline-flex items-center btn btn-default"
         tabindex="0"
+        role="link"
         {# djlint: off #}
         x-data="{
             url: '{{ search_url|escapejs }}',
@@ -54,8 +55,7 @@
         hx-push-url="true"
         :hx-get="searchUrl"
         :disabled="!search"
-        @search.window="search=$event.detail; $nextTick(() => htmx.process($el));"
-        >
+        @search.window="search=$event.detail; $nextTick(() => htmx.process($el));">
         {% heroicon_mini "magnifying-glass" class="mr-2" %}
         {{ text }}
     </button>
