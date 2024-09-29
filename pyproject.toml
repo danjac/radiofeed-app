@@ -182,3 +182,8 @@ exclude=[
 
 reportAttributeAccessIssue = false
 reportIncompatibleVariableOverride = false
+
+[tool.uv]
+dev-dependencies = [
+    "pytest-watcher>=0.4.3",
+]
