@@ -2,6 +2,7 @@ from collections.abc import Callable, Generator
 
 import pytest
 from django.conf import Settings
+from django.contrib.auth.signals import user_logged_in
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
@@ -30,6 +31,16 @@ def _locmem_cache(settings: Settings) -> Generator:
     }
     yield
     cache.clear()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _disable_update_last_login() -> None:
+    """
+    Disable the update_last_login signal receiver to reduce login overhead.
+
+    See: https://adamj.eu/tech/2024/09/18/django-test-speed-last-login/
+    """
+    user_logged_in.disconnect(dispatch_uid="update_last_login")
 
 
 @pytest.fixture(scope="session")
