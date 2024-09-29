@@ -1,5 +1,7 @@
 {% extends "account/settings_base.html" %}
-{% load account_settings heroicons %}
+{% load heroicons partials %}
+{% load settings_dropdown from account_settings %}
+
 {% block title %}
     {{ block.super }} | Statistics
 {% endblock title %}
