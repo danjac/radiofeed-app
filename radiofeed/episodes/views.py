@@ -291,10 +291,10 @@ def _render_player_action(
         request,
         "episodes/detail.html#audio_player_button",
         {
+            "action": action,
             "audio_log": audio_log,
             "episode": audio_log.episode,
-            "is_playing": action == "open",
-            "action": action,
+            "is_playing": action == "play",
         },
     )
 
