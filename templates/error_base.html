@@ -10,36 +10,7 @@
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     <header class="sticky top-0 z-10 w-full text-white bg-violet-900">
-                        <nav class="flex justify-between items-center p-2">
-                            {% with site_name=request.site.name %}
-                                <div class="flex flex-shrink-0 items-center">
-                                    <a class="inline-flex items-center text-xl font-bold lg:text-2xl"
-                                       href="{% url 'index' %}"
-                                       hx-disable="true"
-                                       title="{{ site_name }}">
-                                        <img src="{% static 'img/wave-white-36.webp' %}"
-                                             height="32"
-                                             width="32"
-                                             alt="{{ site_name }}"
-                                             class="mr-3 w-6 h-6 lg:w-8 lg:h-8"
-                                             title="{{ site_name }}"
-                                             aria-hidden="true">
-                                        {{ site_name }}
-                                    </a>
-                                </div>
-                            {% endwith %}
-                            <ul class="flex items-center space-x-3">
-                                <li>
-                                    <a href="{% url 'about' %}"
-                                       aria-label="About this Site"
-                                       title="About this Site"
-                                       class="flex items-center space-x-2 font-bold hover:text-blue-300">
-                                        {% heroicon_outline "information-circle" size=30 %}
-                                        <span class="hidden md:inline-block">About</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                        {% include "_navbar.html#navbar" %}
                     </header>
                     <div class="flex relative py-6 px-2 mx-auto min-h-screen">
                         <main class="mx-auto w-full xl:w-5/6">
