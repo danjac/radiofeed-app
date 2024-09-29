@@ -41,7 +41,6 @@
     <button class="inline-flex items-center btn btn-default"
             tabindex="0"
             role="link"
-        {# fmt:off #}
         x-data="{
             url: '{{ search_url|escapejs }}',
             search: '{{ request.search.value|escapejs }}',
@@ -51,7 +50,6 @@
                 return `${this.url}?${params.toString()}`;
             },
         }"
-        {# fmt:on #}
             hx-push-url="true"
             :hx-get="searchUrl"
             :disabled="!search"
