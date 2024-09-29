@@ -43,3 +43,7 @@ requirements-ci.txt
 static/tailwind.css
 staticfiles
 venv
+ansible/.vault_pass
+ansible/hosts
+ansible/manage.sh
+ansible/vars/*.yml
