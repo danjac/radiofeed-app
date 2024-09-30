@@ -26,9 +26,9 @@
             {% for feed in feeds %}
                 <li class="py-3 first:pt-0 last:pb-0">
                     {% if feed.podcast.pub_date %}
-                        {% include "podcasts/_podcast.html" with podcast=feed.podcast %}
+                        {% include "podcasts/_podcasts.html#podcast" with podcast=feed.podcast %}
                     {% else %}
-                        {% include "podcasts/_itunes_feed.html" %}
+                        {% partial itunes_feed %}
                     {% endif %}
                 </li>
             {% empty %}
@@ -41,3 +41,22 @@
         </ul>
     {% endcache %}
 {% endblock content %}
+
+{% partialdef itunes_feed %}
+    <a class="flex items-center space-x-3 cursor-pointer group"
+       tabindex="0"
+       href="{{ feed.url }}"
+       title="{{ feed.title }}"
+       rel="noopener"
+       target="_blank">
+        {% cover_image "card" feed.image feed.title css_class="group-hover:opacity-75" %}
+        <div class="flex flex-col place-content-between h-16 leading-tight">
+            <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
+                {{ feed.title }}
+            </h2>
+            <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
+                View on iTunes
+            </h3>
+        </div>
+    </a>
+{% endpartialdef %}

@@ -35,29 +35,19 @@
         </nav>
     </header>
     {% partialdef pagination inline=True %}
-        {% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
-            <ul class="divide-y divide-solid" id="{{ pagination_target }}">
-                {% if has_other_pages %}
-                    <li class="pb-3">{% include "_pagination_links.html" %}</li>
+        {% if page_obj.paginator.count %}
+            {% include "podcasts/_podcasts.html" %}
+        {% else %}
+            <div class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                {% if request.search %}
+                    No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                {% else %}
+                    <p>You are not subscribed to any Private Feeds.</p>
+                    <p>
+                        To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
+                    </p>
                 {% endif %}
-                {% for podcast in page_obj %}
-                    <li class="py-3 first:pt-0 last:pb-0">{% include "podcasts/_podcast.html" %}</li>
-                {% empty %}
-                    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
-                        {% if request.search %}
-                            No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
-                        {% else %}
-                            <p>You are not subscribed to any Private Feeds.</p>
-                            <p>
-                                To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
-                            </p>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-                {% if has_other_pages %}
-                    <li class="pt-3">{% include "_pagination_links.html" %}</li>
-                {% endif %}
-            </ul>
-        {% endwith %}
+            </div>
+        {% endif %}
     {% endpartialdef pagination %}
 {% endblock content %}

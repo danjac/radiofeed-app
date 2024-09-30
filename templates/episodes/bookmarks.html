@@ -36,30 +36,20 @@
         {% endif %}
     </header>
     {% partialdef pagination inline=True %}
-        {% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
-            <ul class="divide-y divide-solid" id="{{ pagination_target }}">
-                {% if has_other_pages %}
-                    <li class="pb-3">{% include "_pagination_links.html" %}</li>
+        {% if page_obj.paginator.count %}
+            {% include "episodes/_episodes.html" with is_fk=True %}
+        {% else %}
+            <div class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                {% if request.search %}
+                    No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
+                {% else %}
+                    <p>You don't have any Bookmarks yet.</p>
+                    <p>This is where you can save all your favorites or any episodes you want to listen to later.</p>
+                    <p>
+                        To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
+                    </p>
                 {% endif %}
-                {% for bookmark in page_obj %}
-                    <li class="py-3 first:pt-0 last:pb-0">{% include "episodes/_episode.html" with episode=bookmark.episode %}</li>
-                {% empty %}
-                    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
-                        {% if request.search %}
-                            No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
-                        {% else %}
-                            <p>You don't have any Bookmarks yet.</p>
-                            <p>This is where you can save all your favorites or any episodes you want to listen to later.</p>
-                            <p>
-                                To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
-                            </p>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-                {% if has_other_pages %}
-                    <li class="pt-3">{% include "_pagination_links.html" %}</li>
-                {% endif %}
-            </ul>
-        {% endwith %}
+            </div>
+        {% endif %}
     {% endpartialdef pagination %}
 {% endblock content %}

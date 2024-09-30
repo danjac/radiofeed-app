@@ -13,7 +13,7 @@
         <ul class="divide-y divide-solid">
             {% for recommendation in recommendations %}
                 <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
-                    {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
+                    {% include "podcasts/_podcasts.html#podcast" with podcast=recommendation.recommended %}
                 </li>
             {% endfor %}
         </ul>

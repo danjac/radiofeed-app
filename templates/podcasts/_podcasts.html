@@ -1,0 +1,32 @@
+{% load partials %}
+
+{% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
+    <ul class="divide-y divide-solid" id="{{ pagination_target }}">
+        {% if has_other_pages %}
+            <li class="pb-3">{% include "_pagination_links.html" %}</li>
+        {% endif %}
+        {% for podcast in page_obj %}
+            <li class="py-3 first:pt-0 last:pb-0">{% partial podcast %}</li>
+        {% endfor %}
+        {% if has_other_pages %}
+            <li class="pt-3">{% include "_pagination_links.html" %}</li>
+        {% endif %}
+    </ul>
+{% endwith %}
+
+{% partialdef podcast %}
+    <a class="flex items-center space-x-3 cursor-pointer group"
+       tabindex="0"
+       href="{{ podcast.get_absolute_url }}"
+       title="{{ podcast.cleaned_title }}">
+        {% cover_image "card" podcast.cover_url podcast.cleaned_title css_class="group-hover:opacity-75" %}
+        <div class="flex flex-col place-content-between h-16 leading-tight">
+            <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
+                {{ podcast.cleaned_title }}
+            </h2>
+            <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
+                {{ podcast.pub_date|date:"DATE_FORMAT" }}
+            </h3>
+        </div>
+    </a>
+{% endpartialdef %}

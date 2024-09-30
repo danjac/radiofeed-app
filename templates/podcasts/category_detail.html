@@ -28,27 +28,17 @@
         </header>
         {% partialdef pagination inline=True %}
             {% cache 300 category-podcasts request.get_full_path %}
-                {% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
-                    <ul class="divide-y divide-solid" id="{{ pagination_target }}">
-                        {% if has_other_pages %}
-                            <li class="pb-3">{% include "_pagination_links.html" %}</li>
+                {% if page_obj.paginator.count %}
+                    {% include "podcasts/_podcasts.html" %}
+                {% else %}
+                    <div class="text-center prose sm:text-start dark:prose-invert">
+                        {% if request.search %}
+                            No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                        {% else %}
+                            Category {{ category.name }} does not have any podcasts.
                         {% endif %}
-                        {% for podcast in page_obj %}
-                            <li class="py-3 first:pt-0 last:pb-0">{% include "podcasts/_podcast.html" %}</li>
-                        {% empty %}
-                            <li class="text-center prose sm:text-start dark:prose-invert">
-                                {% if request.search %}
-                                    No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                                {% else %}
-                                    Category {{ category.name }} does not have any podcasts.
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                        {% if has_other_pages %}
-                            <li class="pt-3">{% include "_pagination_links.html" %}</li>
-                        {% endif %}
-                    </ul>
-                {% endwith %}
+                    </div>
+                {% endif %}
             {% endcache %}
         {% endpartialdef pagination %}
     {% endcache %}

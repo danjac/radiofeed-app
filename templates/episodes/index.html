@@ -19,27 +19,17 @@
         </nav>
     </header>
     {% partialdef pagination inline=True %}
-        {% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
-            <ul class="divide-y divide-solid" id="{{ pagination_target }}">
-                {% if has_other_pages %}
-                    <li class="pb-3">{% include "_pagination_links.html" %}</li>
-                {% endif %}
-                {% for episode in page_obj %}
-                    <li class="py-3 first:pt-0 last:pb-0">{% include "episodes/_episode.html" %}</li>
-                {% empty %}
-                    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
-                        <p>You're not following any podcasts yet.</p>
-                        <p>
-                            Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
-                        </p>
-                        <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
-                        <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
-                    </li>
-                {% endfor %}
-                {% if has_other_pages %}
-                    <li class="pt-3">{% include "_pagination_links.html" %}</li>
-                {% endif %}
-            </ul>
-        {% endwith %}
+        {% if page_obj.paginator.count %}
+            {% include "episodes/_episodes.html" %}
+        {% else %}
+            <div class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                <p>You're not following any podcasts yet.</p>
+                <p>
+                    Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
+                </p>
+                <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
+                <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
+            </div>
+        {% endif %}
     {% endpartialdef pagination %}
 {% endblock content %}
