@@ -411,6 +411,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-linear-migrations"
+version = "2.13.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/d0/0a4166bbeb120a33401de973062ae1acd57551b7fb699e2bb1f4418cd31b/django_linear_migrations-2.13.0.tar.gz", hash = "sha256:91b5f29c7ba0c56131b5d789c71f5472431569e2f7a5990dec5f939e41b5300f", size = 23200 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6c/75/dff691682e50b1bbd19521eb0ab2ff499a2fc3efca9f7006919ee75c6331/django_linear_migrations-2.13.0-py3-none-any.whl", hash = "sha256:4e26c5b123001371461a0b71b6df56e36e52909afe0538bbceb438f9e33c90fb", size = 19236 },
+]
+
+[[package]]
 name = "django-permissions-policy"
 version = "4.21.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1416,6 +1428,7 @@ dependencies = [
     { name = "django-fast-update" },
     { name = "django-health-check" },
     { name = "django-htmx" },
+    { name = "django-linear-migrations" },
     { name = "django-permissions-policy" },
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
@@ -1486,6 +1499,7 @@ requires-dist = [
     { name = "django-fast-update", specifier = ">=0.2.3" },
     { name = "django-health-check", specifier = ">=3.18.3" },
     { name = "django-htmx", specifier = ">=1.19.0" },
+    { name = "django-linear-migrations", specifier = ">=2.13.0" },
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-stubs", marker = "extra == 'dev'", specifier = ">=5.0.4" },

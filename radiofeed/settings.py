@@ -11,9 +11,6 @@ from sentry_sdk.integrations.logging import ignore_logger
 
 BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
-# by default, environ logs all the variables, which we don't want
-logger.disable("environ.environ")
-
 env = Env()
 env.read_env()
 
@@ -45,6 +42,7 @@ INSTALLED_APPS: list[str] = [
     "csp",
     "django_extensions",
     "django_htmx",
+    "django_linear_migrations",
     "django_tailwind_cli",
     "django_version_checks",
     "health_check",
