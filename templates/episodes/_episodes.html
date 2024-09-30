@@ -1,28 +1,17 @@
+{% extends "_pagination.html" %}
 {% load partials %}
 
-{% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
-    <ul class="divide-y divide-solid" id="{{ pagination_target }}">
-        {% if has_other_pages %}
-            <li class="pb-3">{% include "_pagination_links.html" %}</li>
-        {% endif %}
-        {% for item in page_obj %}
-            <li class="py-3 first:pt-0 last:pb-0">
-                {% if is_fk %}
-                    {% with episode=item.episode %}
-                        {% partial episode %}
-                    {% endwith %}
-                {% else %}
-                    {% with episode=item %}
-                        {% partial episode %}
-                    {% endwith %}
-                {% endif %}
-            </li>
-        {% endfor %}
-        {% if has_other_pages %}
-            <li class="pt-3">{% include "_pagination_links.html" %}</li>
-        {% endif %}
-    </ul>
-{% endwith %}
+{% block item %}
+    {% if is_fk %}
+        {% with episode=item.episode %}
+            {% partial episode %}
+        {% endwith %}
+    {% else %}
+        {% with episode=item %}
+            {% partial episode %}
+        {% endwith %}
+    {% endif %}
+{% endblock item %}
 
 {% partialdef episode %}
     {% with podcast=episode.podcast %}

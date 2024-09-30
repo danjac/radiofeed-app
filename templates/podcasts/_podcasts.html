@@ -1,18 +1,11 @@
+{% extends "_pagination.html" %}
 {% load partials %}
 
-{% with pagination_target="pagination" has_other_pages=page_obj.has_other_pages %}
-    <ul class="divide-y divide-solid" id="{{ pagination_target }}">
-        {% if has_other_pages %}
-            <li class="pb-3">{% include "_pagination_links.html" %}</li>
-        {% endif %}
-        {% for podcast in page_obj %}
-            <li class="py-3 first:pt-0 last:pb-0">{% partial podcast %}</li>
-        {% endfor %}
-        {% if has_other_pages %}
-            <li class="pt-3">{% include "_pagination_links.html" %}</li>
-        {% endif %}
-    </ul>
-{% endwith %}
+{% block item %}
+    {% with podcast=item %}
+        {% partial podcast %}
+    {% endwith %}
+{% endblock item %}
 
 {% partialdef podcast %}
     <a class="flex items-center space-x-3 cursor-pointer group"
