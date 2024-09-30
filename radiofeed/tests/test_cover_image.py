@@ -46,9 +46,11 @@ class TestGetCoverImageAttrs:
         ],
     )
     def test_get_cover_image_attrs(self, variant, expected):
-        attrs = get_cover_image_attrs(variant, "test.jpg")
+        attrs = get_cover_image_attrs(variant, "test.jpg", "test pic")
         assert attrs["height"] == expected["height"]
         assert attrs["width"] == expected["width"]
+        assert attrs["alt"] == "test pic"
+        assert attrs["title"] == "test pic"
         assert attrs["src"].startswith(expected["src"])
 
         if "sizes" in expected:

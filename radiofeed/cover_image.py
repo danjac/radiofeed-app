@@ -38,16 +38,23 @@ _MIN_DESKTOP_WIDTH: Final = 1024
 
 
 @functools.cache
-def get_cover_image_attrs(variant: CoverImageVariant, cover_url: str) -> dict:
+def get_cover_image_attrs(
+    variant: CoverImageVariant,
+    cover_url: str,
+    title: str,
+    **attrs: str,
+) -> dict:
     """Returns the HTML attributes for an image."""
     min_size, full_size = _COVER_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
-        "height": full_size,
-        "width": full_size,
+        "alt": title,
+        "title": title,
         "src": full_src,
-    }
+        "width": full_size,
+        "height": full_size,
+    } | attrs
 
     # no size variations
     if min_size == full_size:

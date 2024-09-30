@@ -18,11 +18,11 @@
                     </tr>
                     <tr>
                         <td>
-                            {% get_cover_image_attrs "detail" podcast.cover_url as cover_image_attrs %}
+                            {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_image_attrs %}
                             <img src="{% absolute_uri cover_image_attrs.src %}"
                                  width="{{ cover_image_attrs.width }}"
                                  height="{{ cover_image_attrs.height }}"
-                                 alt="{{ podcast.cleaned_title }}">
+                                 alt="{{ cover_image_attrs.alt }}">
                         </td>
                     </tr>
                     <tr>

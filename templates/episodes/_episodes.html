@@ -21,9 +21,9 @@
            title="{{ episode.cleaned_title }}">
             {% with COVER_IMAGE_CSS="group-hover:opacity-75" %}
                 {% if is_podcast_detail %}
-                    {% cover_image "card" episode.get_cover_url episode.cleaned_title css_class=COVER_IMAGE_CSS %}
+                    {% cover_image "card" episode.get_cover_url episode.cleaned_title class=COVER_IMAGE_CSS %}
                 {% else %}
-                    {% cover_image "card" podcast.cover_url podcast.cleaned_title css_class=COVER_IMAGE_CSS %}
+                    {% cover_image "card" podcast.cover_url podcast.cleaned_title class=COVER_IMAGE_CSS %}
                 {% endif %}
             {% endwith %}
 
