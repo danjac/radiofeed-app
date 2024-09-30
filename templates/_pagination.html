@@ -1,6 +1,6 @@
 {% load partials %}
 
-{% with pagination_target=pagination_target|default:"pagination" has_other_pages=page_obj.has_other_pages %}
+{% with pagination_target=pagination_target|default:"pagination" has_other_pages=page_obj.has_other_pages has_previous=page_obj.has_previous has_next=page_obj.has_next %}
     <ul class="divide-y divide-solid" id="{{ pagination_target }}">
         {% if has_other_pages %}
             <li class="pb-3">{% partial links %}</li>
@@ -24,7 +24,7 @@
          hx-target="#{{ pagination_target }}">
         <ul class="flex justify-between items-center">
             <li>
-                {% if page_obj.has_previous %}
+                {% if has_previous %}
                     <a class="link"
                        href="{{ request.path }}{% querystring page=page_obj.previous_page_number %}"
                        aria-label="Previous Page"
@@ -36,7 +36,7 @@
                 {% endif %}
             </li>
             <li>
-                {% if page_obj.has_next %}
+                {% if has_next %}
                     <a class="link"
                        aria-label="Next Page"
                        href="{{ request.path }}{% querystring page=page_obj.next_page_number %}"
