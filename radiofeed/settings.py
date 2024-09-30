@@ -482,10 +482,6 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 100,  # in MB
 }
 
-# Pagination
-
-PAGE_SIZE = 30
-
 # HTMX configuration
 # https://htmx.org/docs/#config
 

@@ -1,6 +1,5 @@
 from typing import cast
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -17,7 +16,7 @@ from radiofeed.http import (
     require_form_methods,
 )
 from radiofeed.http_client import get_client
-from radiofeed.paginator import paginate
+from radiofeed.paginator import DEFAULT_PAGE_SIZE, paginate
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -119,7 +118,7 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
         feeds = itunes.search(
             get_client(),
             request.search.value,
-            limit=settings.PAGE_SIZE,
+            limit=DEFAULT_PAGE_SIZE,
         )
 
         return TemplateResponse(
@@ -211,7 +210,7 @@ def similar(
     recommendations = (
         podcast.recommendations.with_relevance()
         .select_related("recommended")
-        .order_by("-relevance")[: settings.PAGE_SIZE]
+        .order_by("-relevance")[:DEFAULT_PAGE_SIZE]
     )
 
     return TemplateResponse(
