@@ -105,12 +105,10 @@ DATABASES = {
 
 # Caches
 
-DEFAULT_CACHE_TIMEOUT = 300
-
 CACHES = {
     "default": env.dj_cache_url("REDIS_URL", default="redis://127.0.0.1:6379/0")
     | {
-        "TIMEOUT": DEFAULT_CACHE_TIMEOUT,
+        "TIMEOUT": 300,
     }
 }
 
