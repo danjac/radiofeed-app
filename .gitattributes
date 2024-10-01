@@ -4,4 +4,26 @@
 .github export-ignore
 .pre-commit-config.yaml export-ignore
 
+# Set default behavior to automatically normalize line endings.
 * text=auto eol=lf
+
+
+# Windows files require CRLF
+
+*.[cC][mM][dD] text eol=crlf
+*.[bB][aA][tT] text eol=crlf
+
+# Shell scripts are LF only
+
+*.sh text eol=lf
+
+
+# Treat SVG files as normalized text instead of binary
+
+*.svg text
+
+# Ensure binary for other images
+
+*.jpg binary
+*.png binary
+*.webp binary
