@@ -46,10 +46,18 @@
                 </li>
             {% empty %}
                 <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+=======
+        {% if page_obj.is_empty %}
+            <div class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                {% if request.search %}
+                    No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your history.
+                {% else %}
+>>>>>>> 21557f12a (refactor: pagination tidyup)
                     <p>Your listening history is empty right now.</p>
                     <p>
                         To start enjoying some podcasts, just click the <strong>Play</strong> button on any episode page. Once you begin listening, episodes will show up here.
                     </p>
+<<<<<<< HEAD
 
                 </li>
             {% endfor %}
@@ -57,5 +65,12 @@
                 <li class="pt-3">{% include "_pagination_links.html" %}</li>
             {% endif %}
         </ul>
+=======
+                {% endif %}
+            </div>
+        {% else %}
+            {% include "episodes/_episodes.html" with is_fk=True %}
+        {% endif %}
+>>>>>>> 21557f12a (refactor: pagination tidyup)
     {% endpartialdef pagination %}
 {% endblock content %}
