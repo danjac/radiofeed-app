@@ -21,14 +21,20 @@ class PrivateFeedForm(forms.Form):
         """Validates RSS."""
         value = self.cleaned_data["rss"]
 
-        if Subscription.objects.filter(
-            subscriber=self.user, podcast__rss=value
-        ).exists():
-            raise forms.ValidationError("You are already subscribed to this podcast")
-
         if Podcast.objects.filter(rss=value, private=False).exists():
             raise forms.ValidationError("This is not a private feed")
 
+        if (
+            subscription := Subscription.objects.filter(podcast__rss=value)
+            .select_related("subscriber")
+            .first()
+        ):
+            message = (
+                "You are already subscribed to this feed"
+                if subscription.subscriber == self.user
+                else "This feed is already subscribed by someone else"
+            )
+            raise forms.ValidationError(message)
         return value
 
     def save(self) -> tuple[Podcast, bool]:

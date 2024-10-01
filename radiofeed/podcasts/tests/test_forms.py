@@ -54,9 +54,15 @@ class TestPrivateFeedForm:
         assert not form.is_valid()
 
     @pytest.mark.django_db
-    def test_user_subscribed(self):
+    def test_same_user_subscribed(self):
         user = SubscriptionFactory(
             podcast=PodcastFactory(private=True, rss=self.rss)
         ).subscriber
+        form = PrivateFeedForm(data={"rss": self.rss}, user=user)
+        assert not form.is_valid()
+
+    @pytest.mark.django_db
+    def test_other_user_subscribed(self, user):
+        SubscriptionFactory(podcast=PodcastFactory(private=True, rss=self.rss))
         form = PrivateFeedForm(data={"rss": self.rss}, user=user)
         assert not form.is_valid()
