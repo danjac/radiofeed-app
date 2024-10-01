@@ -23,7 +23,7 @@ from radiofeed.http import (
     HttpResponseUnauthorized,
     require_DELETE,
 )
-from radiofeed.paginator import paginate
+from radiofeed.paginator import paginate, paginate_lazy
 from radiofeed.partials import render_partial_for_target
 
 
@@ -76,7 +76,7 @@ def search_episodes(
                 request,
                 "episodes/search.html",
                 {
-                    "page_obj": paginate(request, episodes),
+                    "page_obj": paginate_lazy(request, episodes),
                 },
             ),
             target="pagination",

@@ -16,7 +16,7 @@ from radiofeed.http import (
     require_form_methods,
 )
 from radiofeed.http_client import get_client
-from radiofeed.paginator import DEFAULT_PAGE_SIZE, paginate
+from radiofeed.paginator import DEFAULT_PAGE_SIZE, paginate, paginate_lazy
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -66,7 +66,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
             request,
             "podcasts/discover.html",
             {
-                "page_obj": paginate(request, podcasts),
+                "page_obj": paginate_lazy(request, podcasts),
             },
         ),
         target="pagination",
@@ -99,7 +99,7 @@ def search_podcasts(
                 request,
                 "podcasts/search_podcasts.html",
                 {
-                    "page_obj": paginate(request, podcasts),
+                    "page_obj": paginate_lazy(request, podcasts),
                 },
             ),
             target="pagination",
@@ -187,7 +187,7 @@ def episodes(
             "podcasts/episodes.html",
             {
                 "podcast": podcast,
-                "page_obj": paginate(request, episodes),
+                "page_obj": paginate_lazy(request, episodes),
                 "ordering_asc": ordering_asc,
             },
         ),
@@ -285,7 +285,7 @@ def category_detail(
             "podcasts/category_detail.html",
             {
                 "category": category,
-                "page_obj": paginate(request, podcasts),
+                "page_obj": paginate_lazy(request, podcasts),
             },
         ),
         target="pagination",
