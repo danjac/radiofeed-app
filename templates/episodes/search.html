@@ -19,7 +19,7 @@
     </header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-episodes request.get_full_path %}
-            {% if page_obj.paginator.count %}
+            {% if page_obj %}
                 {% include "episodes/_episodes.html" %}
             {% else %}
                 <div class="text-center prose sm:text-start dark:prose-invert">

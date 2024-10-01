@@ -19,7 +19,7 @@
         </nav>
     </header>
     {% partialdef pagination inline=True %}
-        {% if page_obj.paginator.count %}
+        {% if page_obj %}
             {% include "episodes/_episodes.html" %}
         {% else %}
             <div class="space-y-3 text-center prose sm:text-start dark:prose-invert">

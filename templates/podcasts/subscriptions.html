@@ -27,7 +27,7 @@
         {% endif %}
     </header>
     {% partialdef pagination inline=True %}
-        {% if page_obj.paginator.count %}
+        {% if page_obj %}
             {% include "podcasts/_podcasts.html" %}
         {% else %}
             <div class="space-y-3 text-center prose sm:text-start dark:prose-invert">

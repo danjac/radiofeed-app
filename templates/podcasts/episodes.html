@@ -38,7 +38,7 @@
 {% block podcast_content %}
     {% partialdef pagination inline=True %}
         {% cache 300 podcast-episodes request.get_full_path %}
-            {% if page_obj.paginator.count %}
+            {% if page_obj %}
                 {% include "episodes/_episodes.html" with is_podcast_detail=True %}
             {% else %}
                 <div class="text-center prose sm:text-start dark:prose-invert">
