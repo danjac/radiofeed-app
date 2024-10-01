@@ -25,13 +25,23 @@
     </header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-podcasts request.get_full_path %}
-            {% if page_obj %}
-                {% include "podcasts/_podcasts.html" %}
-            {% else %}
-                <div class="text-center prose sm:text-start dark:prose-invert">
-                    No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                </div>
-            {% endif %}
+            <ul class="divide-y divide-solid" id="pagination">
+                {% if page_obj.has_other_pages %}
+                    <li class="pb-3">{% include "_pagination_links.html" %}</li>
+                {% endif %}
+                {% for podcast in page_obj %}
+                    <li class="py-3 first:pt-0 last:pb-0">
+                        {% include "podcasts/_podcast.html" %}
+                    </li>
+                {% empty %}
+                    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                        No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                    </li>
+                {% endfor %}
+                {% if page_obj.has_other_pages %}
+                    <li class="pt-3">{% include "_pagination_links.html" %}</li>
+                {% endif %}
+            </ul>
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

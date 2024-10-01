@@ -38,17 +38,27 @@
 {% block podcast_content %}
     {% partialdef pagination inline=True %}
         {% cache 300 podcast-episodes request.get_full_path %}
-            {% if page_obj %}
-                {% include "episodes/_episodes.html" with is_podcast_detail=True %}
-            {% else %}
-                <div class="text-center prose sm:text-start dark:prose-invert">
-                    {% if request.search %}
-                        No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
-                    {% else %}
-                        This podcast does not have any episodes.
-                    {% endif %}
-                </div>
-            {% endif %}
+            <ul class="divide-y divide-solid" id="pagination">
+                {% if page_obj.has_other_pages %}
+                    <li class="pb-3">{% include "_pagination_links.html" %}</li>
+                {% endif %}
+                {% for episode in page_obj %}
+                    <li class="py-3 first:pt-0 last:pb-0">
+                        {% include "podcasts/_episode.html" %}
+                    </li>
+                {% empty %}
+                    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                        {% if request.search %}
+                            No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
+                        {% else %}
+                            This podcast does not have any episodes.
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                {% if page_obj.has_other_pages %}
+                    <li class="pt-3">{% include "_pagination_links.html" %}</li>
+                {% endif %}
+            </ul>
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock podcast_content %}
