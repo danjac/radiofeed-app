@@ -12,7 +12,7 @@ from django.urls import reverse
 from PIL import Image
 
 
-class ImageAsset(TypedDict):
+class ImageInfo(TypedDict):
     """Metadata icon or image info."""
 
     src: str
@@ -109,10 +109,10 @@ def _app_icons() -> Iterator[dict]:
         yield icon | {"purpose": "any"}
 
 
-def _generate_icons(dir: str) -> Iterator[ImageAsset]:
+def _generate_icons(dir: str) -> Iterator[ImageInfo]:
     path = pathlib.Path("img") / "icons" / dir
     for filename in (settings.STATIC_SRC / path).glob("*.png"):
-        yield ImageAsset(
+        yield ImageInfo(
             src=static(f"{path}/{filename.name}"),
             sizes=_icon_size(filename),
             type="image/png",
