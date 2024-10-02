@@ -131,7 +131,7 @@ class TestPodcastManager:
             pytest.param(
                 {},
                 True,
-                id="parsed and frequency are None",
+                id="parsed is None",
             ),
             pytest.param(
                 {"frequency": timedelta(hours=3)},
@@ -188,9 +188,10 @@ class TestPodcastManager:
     def test_get_scheduled_podcasts(self, kwargs, exists):
         now = timezone.now()
 
-        frequency = kwargs.get("frequency", None)
         parsed = kwargs.get("parsed", None)
         pub_date = kwargs.get("pub_date", None)
+
+        frequency = kwargs.get("frequency", Podcast.DEFAULT_PARSER_FREQUENCY)
 
         PodcastFactory(
             frequency=frequency,
