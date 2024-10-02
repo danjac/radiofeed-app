@@ -2,8 +2,7 @@ import functools
 import itertools
 import pathlib
 import urllib.parse
-from enum import StrEnum
-from typing import Final
+from typing import Final, Literal
 
 from django.conf import settings
 from django.core.signing import Signer
@@ -13,25 +12,18 @@ from django.urls import reverse
 
 from radiofeed.manifest import ImageAsset
 
+CoverImageVariant = Literal["card", "detail", "tile"]
 
-class CoverImageVariant(StrEnum):
-    """Possible size variations."""
-
-    CARD = "card"
-    DETAIL = "detail"
-    TILE = "tile"
-
-
-_COVER_SIZES: Final = {
-    CoverImageVariant.CARD: (96, 96),
-    CoverImageVariant.DETAIL: (144, 160),
-    CoverImageVariant.TILE: (160, 224),
+_COVER_IMAGE_SIZES: Final = {
+    "card": (96, 96),
+    "detail": (144, 160),
+    "tile": (160, 224),
 }
 
-_COVER_CLASSES: Final = {
-    CoverImageVariant.CARD: "size-16",
-    CoverImageVariant.DETAIL: "size-36 lg:size-40",
-    CoverImageVariant.TILE: "size-40 lg:size-56",
+_COVER_IMAGE_CLASSES: Final = {
+    "card": "size-16",
+    "detail": "size-36 lg:size-40",
+    "tile": "size-40 lg:size-56",
 }
 
 _MIN_DESKTOP_WIDTH: Final = 1024
@@ -45,7 +37,7 @@ def get_cover_image_attrs(
     **attrs: str,
 ) -> dict:
     """Returns the HTML attributes for an image."""
-    min_size, full_size = _COVER_SIZES[variant]
+    min_size, full_size = _COVER_IMAGE_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
@@ -101,7 +93,7 @@ def get_cover_image_url(cover_url: str, size: int) -> str:
 @functools.cache
 def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
     """Returns default CSS class for the cover image."""
-    return " ".join([*[_COVER_CLASSES[variant]], *list(classes)])
+    return " ".join([*[_COVER_IMAGE_CLASSES[variant]], *list(classes)])
 
 
 @functools.cache
@@ -113,7 +105,7 @@ def is_cover_image_size(size: int) -> bool:
 @functools.cache
 def get_cover_image_sizes() -> set[int]:
     """Returns set of allowed sizes."""
-    return set(itertools.chain.from_iterable(_COVER_SIZES.values()))
+    return set(itertools.chain.from_iterable(_COVER_IMAGE_SIZES.values()))
 
 
 @functools.cache
