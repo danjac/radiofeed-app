@@ -66,7 +66,7 @@ def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str
 @register.inclusion_tag("_cover_image.html")
 def cover_image(
     variant: CoverImageVariant,
-    cover_url: str,
+    cover_url: str | None,
     title: str,
     **attrs: str,
 ) -> dict:

@@ -72,7 +72,7 @@ def get_cover_image_attrs(
 
 
 @functools.cache
-def get_cover_image_url(cover_url: str, size: int) -> str:
+def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
         (
