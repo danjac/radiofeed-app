@@ -28,8 +28,8 @@ def audio_player(context: RequestContext) -> PlayerInfo:
     dct = PlayerInfo(
         request=context.request,
         audio_log=None,
-        start_player=False,
         hx_oob=False,
+        start_player=False,
     )
 
     if context.request.user.is_authenticated and (
@@ -58,8 +58,8 @@ def audio_player_update(
     dct = PlayerInfo(
         request=context.request,
         audio_log=None,
-        start_player=False,
         hx_oob=True,
+        start_player=False,
     )
 
     if action == "play" and audio_log is not None:
