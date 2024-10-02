@@ -32,7 +32,7 @@ _MIN_DESKTOP_WIDTH: Final = 1024
 @functools.cache
 def get_cover_image_attrs(
     variant: CoverImageVariant,
-    cover_url: str,
+    cover_url: str | None,
     title: str,
     **attrs: str,
 ) -> dict:
