@@ -47,6 +47,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
             "podcasts/subscriptions.html",
             {
                 "page_obj": paginate(request, podcasts),
+                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         ),
         target="pagination",
@@ -67,6 +68,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
             "podcasts/discover.html",
             {
                 "page_obj": paginate_lazy(request, podcasts),
+                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         ),
         target="pagination",
@@ -100,6 +102,7 @@ def search_podcasts(
                 "podcasts/search_podcasts.html",
                 {
                     "page_obj": paginate(request, podcasts),
+                    "search_itunes_url": reverse("podcasts:search_itunes"),
                 },
             ),
             target="pagination",
@@ -126,6 +129,7 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
             "podcasts/search_itunes.html",
             {
                 "feeds": feeds,
+                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         )
 
@@ -188,6 +192,7 @@ def episodes(
             {
                 "podcast": podcast,
                 "page_obj": paginate_lazy(request, episodes),
+                "search_episodes_url": reverse("episodes:search_episodes"),
                 "ordering_asc": ordering_asc,
             },
         ),
@@ -286,6 +291,7 @@ def category_detail(
             {
                 "category": category,
                 "page_obj": paginate_lazy(request, podcasts),
+                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         ),
         target="pagination",
@@ -343,6 +349,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
             "podcasts/private_feeds.html",
             {
                 "page_obj": paginate(request, podcasts),
+                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         ),
         target="pagination",

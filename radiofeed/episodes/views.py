@@ -48,6 +48,7 @@ def index(request: HttpRequest) -> TemplateResponse:
             "episodes/index.html",
             {
                 "page_obj": paginate(request, episodes),
+                "search_episodes_url": reverse("episodes:search_episodes"),
             },
         ),
         target="pagination",
@@ -191,6 +192,7 @@ def history(request: HttpRequest) -> TemplateResponse:
             "episodes/history.html",
             {
                 "page_obj": paginate(request, audio_logs),
+                "search_episodes_url": reverse("episodes:search_episodes"),
                 "ordering_asc": ordering_asc,
             },
         ),
@@ -246,6 +248,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
             "episodes/bookmarks.html",
             {
                 "page_obj": paginate(request, bookmarks),
+                "search_episodes_url": reverse("episodes:search_episodes"),
                 "ordering_asc": ordering_asc,
             },
         ),

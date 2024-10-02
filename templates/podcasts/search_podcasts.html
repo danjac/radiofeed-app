@@ -13,8 +13,7 @@
             <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
                 {% if request.search %}
                     <li class="flex justify-center items-center sm:justify-end">
-                        {% url "podcasts:search_itunes" as search_url %}
-                        {% include "_search_form.html#button" with label="Search iTunes" %}
+                        {% include "_search_form.html#button" with search_url=search_itunes_url label="Search iTunes" %}
                     </li>
                 {% endif %}
                 <li class="flex justify-center items-center sm:justify-end">

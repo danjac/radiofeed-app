@@ -14,8 +14,7 @@
                 <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
                     {% if request.search %}
                         <li class="flex justify-center items-center sm:justify-end">
-                            {% url "episodes:search_episodes" as search_url %}
-                            {% include "_search_form.html#button" with label="Search All Episodes" %}
+                            {% include "_search_form.html#button" with search_url=search_episodes_url label="Search All Episodes" %}
                         </li>
                     {% else %}
                         <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
