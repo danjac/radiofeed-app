@@ -118,7 +118,6 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
 
         return self.filter(
             models.Q(parsed__isnull=True)
-            | models.Q(frequency__isnull=True)
             | models.Q(
                 models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY)
                 | models.Q(
@@ -172,7 +171,7 @@ class Podcast(models.Model):
         max_length=30, choices=ParserError.choices, blank=True
     )
 
-    frequency = models.DurationField(null=True, blank=True)
+    frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
 
     modified = models.DateTimeField(
         null=True,

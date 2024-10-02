@@ -139,11 +139,6 @@ class TestPodcastManager:
                 id="parsed is None",
             ),
             pytest.param(
-                {"parsed": timedelta(hours=3)},
-                True,
-                id="frequency is None",
-            ),
-            pytest.param(
                 {
                     "parsed": timedelta(hours=3),
                     "frequency": timedelta(hours=1),
