@@ -39,9 +39,9 @@
             {% if page_obj.has_other_pages %}
                 <li class="pb-3">{% include "_pagination_links.html" %}</li>
             {% endif %}
-            {% for audio_log in page_obj %}
+            {% for bookmark in page_obj %}
                 <li class="py-3 first:pt-0 last:pb-0">
-                    {% include "episodes/_episode.html" with episode=audio_log.episode %}
+                    {% include "episodes/_episode.html" with episode=bookmark.episode %}
                 </li>
             {% empty %}
                 <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
