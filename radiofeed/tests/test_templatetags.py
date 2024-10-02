@@ -1,7 +1,6 @@
 import pytest
 from django.contrib.sites.models import Site
 
-from radiofeed.cover_image import CoverImageVariant
 from radiofeed.templatetags import (
     absolute_uri,
     cover_image,
@@ -28,7 +27,7 @@ def auth_req(req, user):
 class TestCoverImage:
     def test_cover_image(self):
         context = cover_image(
-            CoverImageVariant.DETAIL,
+            "detail",
             "https://www.example.com/test.jpg",
             "test image",
             **{"class": "hover:grayscale"},

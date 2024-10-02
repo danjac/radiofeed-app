@@ -14,13 +14,13 @@ from radiofeed.manifest import ImageAsset
 
 CoverImageVariant = Literal["card", "detail", "tile"]
 
-_COVER_IMAGE_SIZES: Final = {
+_COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "card": (96, 96),
     "detail": (144, 160),
     "tile": (160, 224),
 }
 
-_COVER_IMAGE_CLASSES: Final = {
+_COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
     "card": "size-16",
     "detail": "size-36 lg:size-40",
     "tile": "size-40 lg:size-56",

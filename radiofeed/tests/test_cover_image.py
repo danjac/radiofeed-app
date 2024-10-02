@@ -1,7 +1,6 @@
 import pytest
 
 from radiofeed.cover_image import (
-    CoverImageVariant,
     get_cover_image_attrs,
     get_cover_image_sizes,
     get_placeholder_path,
@@ -25,7 +24,7 @@ class TestGetCoverImageAttrs:
         ("variant", "expected"),
         [
             pytest.param(
-                CoverImageVariant.CARD,
+                "card",
                 {
                     "height": 96,
                     "width": 96,
@@ -34,7 +33,7 @@ class TestGetCoverImageAttrs:
                 id="card",
             ),
             pytest.param(
-                CoverImageVariant.DETAIL,
+                "detail",
                 {
                     "height": 160,
                     "width": 160,
