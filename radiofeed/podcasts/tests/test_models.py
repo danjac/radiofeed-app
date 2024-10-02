@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 import pytest
+from django.utils import timezone
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
@@ -122,6 +125,86 @@ class TestPodcastManager:
     def test_subscribed_false(self, user, podcast):
         assert Podcast.objects.subscribed(user).exists() is False
 
+    @pytest.mark.parametrize(
+        ("kwargs", "exists"),
+        [
+            pytest.param(
+                {},
+                True,
+                id="parsed and frequency are None",
+            ),
+            pytest.param(
+                {"frequency": timedelta(hours=3)},
+                True,
+                id="parsed is None",
+            ),
+            pytest.param(
+                {"parsed": timedelta(hours=3)},
+                True,
+                id="frequency is None",
+            ),
+            pytest.param(
+                {
+                    "parsed": timedelta(hours=3),
+                    "frequency": timedelta(hours=1),
+                },
+                True,
+                id="pub date is None",
+            ),
+            pytest.param(
+                {
+                    "parsed": timedelta(seconds=1200),
+                    "pub_date": timedelta(days=3),
+                    "frequency": timedelta(hours=3),
+                },
+                False,
+                id="just parsed",
+            ),
+            pytest.param(
+                {
+                    "parsed": timedelta(hours=3),
+                    "pub_date": timedelta(days=3),
+                    "frequency": timedelta(hours=3),
+                },
+                True,
+                id="parsed before pub date+frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": timedelta(days=8),
+                    "pub_date": timedelta(days=8),
+                    "frequency": timedelta(days=15),
+                },
+                True,
+                id="parsed just before max frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": timedelta(days=30),
+                    "pub_date": timedelta(days=90),
+                    "frequency": timedelta(days=30),
+                },
+                True,
+                id="parsed before max frequency",
+            ),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_get_scheduled_podcasts(self, kwargs, exists):
+        now = timezone.now()
+
+        frequency = kwargs.get("frequency", None)
+        parsed = kwargs.get("parsed", None)
+        pub_date = kwargs.get("pub_date", None)
+
+        PodcastFactory(
+            frequency=frequency,
+            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
+        )
+
+        assert Podcast.objects.scheduled().exists() is exists
+
 
 class TestPodcastModel:
     def test_str(self):
@@ -166,6 +249,76 @@ class TestPodcastModel:
     def test_num_episodes(self, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast)
         assert podcast.num_episodes == 3
+
+    def test_get_next_scheduled_update_pub_date_none(self):
+        now = timezone.now()
+        podcast = Podcast(
+            parsed=now - timedelta(hours=1), pub_date=None, frequency=timedelta(hours=3)
+        )
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 2)
+
+    def test_get_next_scheduled_update_frequency_none(self):
+        now = timezone.now()
+        podcast = Podcast(
+            parsed=now - timedelta(hours=1), pub_date=None, frequency=None
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_parsed_none(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(hours=3), parsed=None, frequency=timedelta(hours=3)
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_parsed_gt_max(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now,
+            parsed=now,
+            frequency=timedelta(days=30),
+        )
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 72)
+
+    def test_get_next_scheduled_update_parsed_lt_now(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=5),
+            parsed=now - timedelta(days=16),
+            frequency=timedelta(days=30),
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_pub_date_lt_now(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=33),
+            parsed=now - timedelta(days=3),
+            frequency=timedelta(days=30),
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_pub_date_in_future(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(days=1),
+            parsed=now - timedelta(hours=1),
+            frequency=timedelta(days=7),
+        )
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 71)
+
+    def test_get_next_scheduled_update_pub_date_lt_min(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - timedelta(hours=3),
+            parsed=now - timedelta(minutes=30),
+            frequency=timedelta(hours=3),
+        )
+
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 0.5)
+
+    def assert_hours_diff(self, delta, hours):
+        assert delta.total_seconds() / 3600 == pytest.approx(hours)
 
 
 class TestSubscriptionModel:

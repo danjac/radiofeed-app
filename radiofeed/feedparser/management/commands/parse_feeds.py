@@ -5,7 +5,7 @@ from concurrent.futures import wait
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F, QuerySet
 
-from radiofeed.feedparser import feed_parser, scheduler
+from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.http_client import Client, get_client
 from radiofeed.podcasts.models import Podcast
@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
     def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
         return (
-            scheduler.get_scheduled_podcasts()
+            Podcast.objects.scheduled()
             .alias(subscribers=Count("subscriptions"))
             .filter(active=True)
             .order_by(

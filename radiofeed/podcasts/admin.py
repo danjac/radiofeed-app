@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
 from radiofeed.fast_count import FastCountAdminMixin
-from radiofeed.feedparser import scheduler
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
@@ -187,10 +186,7 @@ class ScheduledFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-
-        if self.value() == "yes":
-            return queryset & scheduler.get_scheduled_podcasts()
-        return queryset
+        return queryset.scheduled() if self.value() == "yes" else queryset
 
 
 @admin.register(Podcast)
@@ -238,7 +234,7 @@ class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     def next_scheduled_update(self, obj: Podcast) -> str:
         """Return estimated next update time."""
         if obj.active:
-            scheduled = scheduler.next_scheduled_update(obj)
+            scheduled = obj.get_next_scheduled_update()
             return (
                 f"{timesince(scheduled)} ago"
                 if scheduled < timezone.now()

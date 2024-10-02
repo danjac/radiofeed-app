@@ -94,7 +94,7 @@ class TestPodcastAdmin:
     @pytest.mark.django_db
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
         mocker.patch(
-            "radiofeed.podcasts.admin.scheduler.next_scheduled_update",
+            "radiofeed.podcasts.admin.Podcast.get_next_scheduled_update",
             return_value=timezone.now() + timedelta(hours=3),
         )
         assert (
@@ -104,7 +104,7 @@ class TestPodcastAdmin:
     @pytest.mark.django_db
     def test_next_scheduled_update_in_past(self, mocker, podcast, podcast_admin):
         mocker.patch(
-            "radiofeed.podcasts.admin.scheduler.next_scheduled_update",
+            "radiofeed.podcasts.admin.Podcast.get_next_scheduled_update",
             return_value=timezone.now() + timedelta(hours=-3),
         )
         assert podcast_admin.next_scheduled_update(podcast) == "3\xa0hours ago"

@@ -1,4 +1,5 @@
-from typing import ClassVar
+from datetime import datetime, timedelta
+from typing import ClassVar, Final
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -7,6 +8,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models.functions import Lower
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -102,9 +104,42 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
             )
         ).filter(is_subscribed=True)
 
+    def scheduled(self) -> models.QuerySet["Podcast"]:
+        """Returns all podcasts scheduled for feed parser update.
+
+        1. If parsed is NULL, should be ASAP.
+        2. If pub date is NULL, add frequency to last parsed
+        3. If pub date is not NULL, add frequency to pub date
+        4. Scheduled time should always be in range of 1-24 hours.
+
+        Podcasts should not be parsed more than once per hour.
+        """
+        now = timezone.now()
+
+        return self.filter(
+            models.Q(parsed__isnull=True)
+            | models.Q(frequency__isnull=True)
+            | models.Q(
+                models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY)
+                | models.Q(
+                    pub_date__isnull=True,
+                    parsed__lt=now - models.F("frequency"),  # type: ignore[operator]
+                )
+                | models.Q(
+                    pub_date__isnull=False,
+                    pub_date__lt=now - models.F("frequency"),  # type: ignore[operator]
+                ),
+                parsed__lt=now - self.model.MIN_PARSER_FREQUENCY,
+            )
+        )
+
 
 class Podcast(models.Model):
     """Podcast channel or feed."""
+
+    DEFAULT_PARSER_FREQUENCY: Final = timedelta(hours=24)
+    MIN_PARSER_FREQUENCY: Final = timedelta(hours=1)
+    MAX_PARSER_FREQUENCY: Final = timedelta(days=3)
 
     class ParserError(models.TextChoices):
         DUPLICATE = "duplicate", "Duplicate"
@@ -265,6 +300,30 @@ class Podcast(models.Model):
     def has_similar(self) -> bool:
         """Returns true if any recommendations."""
         return False if self.private else self.recommendations.exists()
+
+    def get_next_scheduled_update(self) -> datetime:
+        """Returns estimated next update:
+
+        1. If parsed is NULL, should be ASAP.
+        2. If pub date is NULL, add frequency to last parsed
+        3. If pub date is not NULL, add frequency to pub date
+        4. Scheduled time should always be in range of 1-24 hours.
+
+        Note that this is a rough estimate: the precise update time depends
+        on the frequency of the parse feeds cron and the number of other
+        scheduled podcasts in the queue.
+        """
+
+        if self.parsed is None or self.frequency is None:
+            return timezone.now()
+
+        return min(
+            self.parsed + self.MAX_PARSER_FREQUENCY,
+            max(
+                (self.pub_date or self.parsed) + self.frequency,
+                self.parsed + self.MIN_PARSER_FREQUENCY,
+            ),
+        )
 
 
 class Subscription(models.Model):

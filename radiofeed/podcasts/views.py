@@ -306,6 +306,7 @@ def subscribe(
 ) -> HttpResponseConflict | TemplateResponse:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
+
     try:
         request.user.subscriptions.create(podcast=podcast)
     except IntegrityError:
