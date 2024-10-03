@@ -268,10 +268,7 @@ def category_detail(
     """
     category = get_object_or_404(Category, pk=category_id)
 
-    podcasts = category.podcasts.filter(
-        private=False,
-        pub_date__isnull=False,
-    ).distinct()
+    podcasts = category.podcasts.published().filter(private=False).distinct()
 
     podcasts = (
         podcasts.search(request.search.value).order_by(
@@ -411,7 +408,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRe
 
 
 def _get_podcasts() -> QuerySet[Podcast]:
-    return Podcast.objects.filter(pub_date__isnull=False)
+    return Podcast.objects.published()
 
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:

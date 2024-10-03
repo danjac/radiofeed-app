@@ -38,7 +38,8 @@ def send_recommendations_email(
     # include recommended + promoted
 
     podcasts = (
-        Podcast.objects.annotate(
+        Podcast.objects.published()
+        .annotate(
             relevance=Coalesce(
                 Subquery(
                     recommendations.values("relevance")[:1],
@@ -50,7 +51,6 @@ def send_recommendations_email(
         .filter(
             Q(relevance__gt=0) | Q(promoted=True),
             private=False,
-            pub_date__isnull=False,
         )
         .exclude(pk__in=exclude_podcast_ids)
         .order_by("-relevance", "-pub_date")

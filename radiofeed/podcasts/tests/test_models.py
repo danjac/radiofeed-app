@@ -126,6 +126,20 @@ class TestPodcastManager:
         assert Podcast.objects.subscribed(user).exists() is False
 
     @pytest.mark.parametrize(
+        ("published", "arg", "result"),
+        [
+            pytest.param(True, True, True, id="pub_date NOT NULL, arg is True"),
+            pytest.param(True, False, False, id="pub_date NOT NULL, arg is False"),
+            pytest.param(False, True, False, id="pub_date NULL, arg is True"),
+            pytest.param(False, False, True, id="pub_date NULL, arg is False"),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_published_true(self, published, arg, result):
+        PodcastFactory(pub_date=timezone.now() if published else None)
+        assert Podcast.objects.published(published=arg).exists() is result
+
+    @pytest.mark.parametrize(
         ("kwargs", "exists"),
         [
             pytest.param(

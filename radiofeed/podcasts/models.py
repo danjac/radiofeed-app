@@ -104,6 +104,10 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
             )
         ).filter(is_subscribed=True)
 
+    def published(self, *, published: bool = True) -> models.QuerySet["Podcast"]:
+        """Returns only published podcasts (pub_date NOT NULL)."""
+        return self.filter(pub_date__isnull=not published)
+
     def scheduled(self) -> models.QuerySet["Podcast"]:
         """Returns all podcasts scheduled for feed parser update.
 

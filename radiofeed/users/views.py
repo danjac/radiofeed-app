@@ -95,10 +95,10 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
-        Podcast.objects.subscribed(request.user)
+        Podcast.objects.published()
+        .subscribed(request.user)
         .filter(
             private=False,
-            pub_date__isnull=False,
         )
         .order_by("title")
     )

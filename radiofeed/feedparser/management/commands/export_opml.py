@@ -33,10 +33,7 @@ class Command(BaseCommand):
         writer: IO = options["file"]
         promoted: bool = options["promoted"]
 
-        podcasts = Podcast.objects.filter(
-            private=False,
-            pub_date__isnull=False,
-        ).order_by("title")
+        podcasts = Podcast.objects.published().filter(private=False).order_by("title")
 
         if promoted:
             podcasts = podcasts.filter(promoted=True)

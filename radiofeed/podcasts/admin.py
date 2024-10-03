@@ -98,9 +98,9 @@ class PubDateFilter(admin.SimpleListFilter):
         """Returns filtered queryset."""
         match self.value():
             case "yes":
-                return queryset.filter(pub_date__isnull=False)
+                return queryset.published()
             case "no":
-                return queryset.filter(pub_date__isnull=True)
+                return queryset.published(published=False)
             case _:
                 return queryset
 
