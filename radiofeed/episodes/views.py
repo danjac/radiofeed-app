@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Literal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,6 +16,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.episodes.models import AudioLog, Episode
+from radiofeed.episodes.templatetags.audio_player import AudioPlayerAction
 from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,
@@ -288,7 +288,10 @@ def remove_bookmark(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
 
 def _render_player_action(
-    request: HttpRequest, audio_log: AudioLog, *, action: Literal["play", "close"]
+    request: HttpRequest,
+    audio_log: AudioLog,
+    *,
+    action: AudioPlayerAction,
 ) -> TemplateResponse:
     return TemplateResponse(
         request,

@@ -11,6 +11,8 @@ from radiofeed.episodes.models import AudioLog, Episode
 
 register = template.Library()
 
+AudioPlayerAction = Literal["play", "close"]
+
 
 class PlayerInfo(TypedDict):
     """Audio player context."""
@@ -50,7 +52,7 @@ def audio_player(context: RequestContext) -> PlayerInfo:
 @register.inclusion_tag("episodes/_audio_player.html", takes_context=True)
 def audio_player_update(
     context: RequestContext,
-    action: Literal["play", "close"],
+    action: AudioPlayerAction,
     audio_log: AudioLog | None = None,
 ) -> PlayerInfo:
     """Renders audio player update to open or close the player."""
