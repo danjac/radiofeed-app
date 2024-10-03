@@ -157,7 +157,7 @@
                 </div>
             {% endif %}
             <div class="flex flex-wrap items-center space-x-3 font-semibold">
-                <div>{{ episode.pub_date|date:"DATE_FORMAT" }}</div>
+                <div title="Release Date">{{ episode.pub_date|date:"DATE_FORMAT" }}</div>
                 {% with duration=episode.duration_in_seconds %}
                     {% if duration %}<div title="Duration">{{ duration|format_duration }}</div>{% endif %}
                 {% endwith %}
