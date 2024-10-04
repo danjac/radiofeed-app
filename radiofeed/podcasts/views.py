@@ -10,11 +10,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.http import (
-    HttpResponseConflict,
-    require_DELETE,
-    require_form_methods,
-)
+from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.paginator import DEFAULT_PAGE_SIZE, paginate, paginate_lazy
 from radiofeed.partials import render_partial_for_target
