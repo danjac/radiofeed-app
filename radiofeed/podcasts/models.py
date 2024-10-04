@@ -114,7 +114,7 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
         1. If parsed is NULL, should be ASAP.
         2. If pub date is NULL, add frequency to last parsed
         3. If pub date is not NULL, add frequency to pub date
-        4. Scheduled time should always be in range of 1-24 hours.
+        4. Scheduled time should always be in range of 1 hour-3 days.
 
         Podcasts should not be parsed more than once per hour.
         """
