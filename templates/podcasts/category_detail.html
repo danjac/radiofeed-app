@@ -6,8 +6,7 @@
 
 {% block content %}
     {% cache 300 category-detail request.get_full_path %}
-        <c-header>
-            <c-header.title>{{ category.name }} Podcasts</c-header.title>
+        <c-header title="{{ category.name }} Podcasts">
             <c-header.nav>
                 {% if page_obj.has_other_pages or request.search %}
                     {% if request.search %}
@@ -18,9 +17,7 @@
                         </c-header.nav.item>
                     {% endif %}
                     <c-header.nav.item>
-                        {% with placeholder="Search: "|add:category.name %}
-                            <c-search.form :placeholder="placeholder" clear-search />
-                        {% endwith %}
+                        <c-search.form placeholder="Search: {{ category.name }}" clear-search />
                     </c-header.nav.item>
                 {% endif %}
             </c-header.nav>

@@ -1,5 +1,4 @@
-<div id="hx-indicator"
-     x-data="{width: 0}"
+<div x-data="{width: 0}"
      {# fmt:off #}
      x-init="
         setInterval(() => {
@@ -10,4 +9,4 @@
                 width = 0;
             }
             $el.style.width = width > 0 ? `${10 + (width * 90)}%` : '0px';
-        }, 36);"{# fmt:on #}></div>
+    }, 36);"{# fmt:on #} {{ attrs }}></div>
