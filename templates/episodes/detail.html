@@ -74,7 +74,7 @@
                                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
                                     <c-button icon="stop-circle"
-                                              variant="primary"
+                                              type="primary"
                                               size="lg"
                                               outline
                                               aria-label="Close Player"
@@ -87,7 +87,7 @@
                                     </c-button>
                                 {% else %}
                                     <c-button icon="play-circle"
-                                              variant="primary"
+                                              type="primary"
                                               size="lg"
                                               aria-label="Open Episode in Player"
                                               title="Open Episode in Player"
@@ -192,7 +192,7 @@
                                 {% endwith %}
                             </div>
                             <c-button icon="trash"
-                                      variant="danger"
+                                      type="danger"
                                       size="sm"
                                       title="Remove episode from your History"
                                       hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
