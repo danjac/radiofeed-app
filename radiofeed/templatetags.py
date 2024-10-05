@@ -13,11 +13,7 @@ from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
 from django.utils.html import format_html
 
-from radiofeed.cover_image import (
-    CoverImageVariant,
-    get_cover_image_attrs,
-    get_cover_image_class,
-)
+from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
 from radiofeed.html import render_markdown
 from radiofeed.manifest import get_theme_color
 
@@ -62,20 +58,6 @@ def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str
     scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
 
     return f"{scheme}://{site.domain}{path}"
-
-
-@register.inclusion_tag("_cover_image.html")
-def cover_image(
-    variant: CoverImageVariant,
-    cover_url: str | None,
-    title: str,
-    **attrs: str,
-) -> dict:
-    """Renders a cover image with proxy URL."""
-    return {
-        "class": get_cover_image_class(variant, attrs.pop("class", "")),
-        "attrs": get_cover_image_attrs(variant, cover_url, title, **attrs),
-    }
 
 
 @register.simple_tag(takes_context=True)

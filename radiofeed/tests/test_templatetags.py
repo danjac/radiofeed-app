@@ -1,12 +1,7 @@
 import pytest
 from django.contrib.sites.models import Site
 
-from radiofeed.templatetags import (
-    absolute_uri,
-    cover_image,
-    format_duration,
-    percentage,
-)
+from radiofeed.templatetags import absolute_uri, format_duration, percentage
 
 
 @pytest.fixture
@@ -22,19 +17,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-class TestCoverImage:
-    def test_cover_image(self):
-        context = cover_image(
-            "detail",
-            "https://www.example.com/test.jpg",
-            "test image",
-            **{"class": "hover:grayscale"},
-        )
-        assert context["class"] == "size-36 lg:size-40 hover:grayscale"
-        assert context["attrs"]["alt"] == "test image"
-        assert context["attrs"]["title"] == "test image"
 
 
 class TestPercentage:

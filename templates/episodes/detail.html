@@ -60,7 +60,9 @@
                 </div>
             {% endwith %}
             <div class="flex items-center space-x-3 sm:space-x-6">
-                {% cover_image "detail" episode.get_cover_url episode.cleaned_title %}
+                <c-cover-image variant="detail"
+                               :cover_url="episode.get_cover_url"
+                               :title="episode.cleaned_title" />
                 <div class="flex flex-col place-content-between h-32">
                     {% partialdef audio_player_button inline=True %}
                         {% with target="audio-player-button" %}

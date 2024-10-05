@@ -5,30 +5,33 @@
         <article class="space-y-3">
             {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
             <div class="flex items-center space-x-3 sm:space-x-6">
-                {% cover_image "detail" podcast.cover_url podcast.cleaned_title %}
+                <c-cover-image variant="detail"
+                               :cover_url="podcast.cover_url"
+                               :title="podcast.cleaned_title" />
                 <div class="flex flex-col place-content-between h-32">
                     {% if podcast.private %}
                         <div>
                             {% if is_subscribed %}
-                                <button class="inline-flex items-center btn btn-danger btn-lg"
-                                        aria-label="Remove podcast from your Private Feeds"
-                                        title="Remove podcast from your Private Feeds"
-                                        hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
-                                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                                        hx-push-url="true"
-                                        hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
-                                        hx-disabled-elt="this">
-                                    {% heroicon_mini "trash" class="mr-2" %}
+                                <c-button icon="trash"
+                                          size="lg"
+                                          variant="danger"
+                                          aria-label="Remove podcast from your Private Feeds"
+                                          title="Remove podcast from your Private Feeds"
+                                          hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
+                                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                          hx-push-url="true"
+                                          hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
+                                          hx-disabled-elt="this">
                                     Remove
-                                </button>
+                                </c-button>
                             {% else %}
-                                <button class="inline-flex items-center btn btn-primary btn-lg"
-                                        aria-label="This is a private feed, you cannot subscribe to it."
-                                        title="This is a private feed, you cannot subscribe to it."
-                                        disabled>
-                                    {% heroicon_mini "eye-slash" class="mr-2" %}
+                                <c-button icon="eye-slash"
+                                          size="lg"
+                                          aria-label="This is a private feed, you cannot subscribe to it."
+                                          title="This is a private feed, you cannot subscribe to it."
+                                          disabled>
                                     Subscribe
-                                </button>
+                                </c-button>
                             {% endif %}
                         </div>
                     {% else %}
