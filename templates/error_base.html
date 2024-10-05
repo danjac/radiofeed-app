@@ -1,36 +1,27 @@
-{% spaceless %}
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <title>
-                {% block title %}
-                    Error
-                {% endblock title %}
-            </title>
-            {% include "default_base.html#head_tags" %}
-        </head>
-        <body class="mx-auto font-sans antialiased container-xl scroll-smooth">
-            <div class="flex flex-col h-screen">
-                <div class="grow">
-                    <header class="sticky top-0 z-10 w-full text-white bg-violet-900">
-                        <c-navbar.nav />
-                    </header>
-                    <div class="flex relative py-6 px-2 mx-auto min-h-screen">
-                        <main class="mx-auto w-full xl:w-5/6">
-                            <header class="pb-3 mb-3 space-y-3 border-b">
-                                <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
-                                    {% block error_header %}
-                                    {% endblock error_header %}
-                                </h1>
-                            </header>
-                            <div class="space-y-3 text-center sm:text-start">
-                                {% block error_description %}
-                                {% endblock error_description %}
-                            </div>
-                        </main>
-                    </div>
+{% extends "default_base.html" %}
+
+{% block body %}
+    <body class="mx-auto font-sans antialiased container-xl scroll-smooth">
+        <div class="flex flex-col h-screen">
+            <div class="grow">
+                <header class="sticky top-0 z-10 w-full text-white bg-violet-900">
+                    <c-navbar.nav />
+                </header>
+                <div class="flex relative py-6 px-2 mx-auto min-h-screen">
+                    <main class="mx-auto w-full xl:w-5/6">
+                        <header class="pb-3 mb-3 space-y-3 border-b">
+                            <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
+                                {% block error_header %}
+                                {% endblock error_header %}
+                            </h1>
+                        </header>
+                        <div class="space-y-3 text-center sm:text-start">
+                            {% block error_description %}
+                            {% endblock error_description %}
+                        </div>
+                    </main>
                 </div>
             </div>
-        </body>
-    </html>
-{% endspaceless %}
+        </div>
+    </body>
+{% endblock body %}
