@@ -1,5 +1,5 @@
 {% load audio_player heroicons partials static %}
-<c-vars audio-log=None start-player=False action="load" />
+<c-vars audio-log=None action="load" start-player=False />
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
         {% if audio_log and action != "close" %}
