@@ -6,8 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header>
-        <c-header.title>Subscriptions</c-header.title>
+    <c-header title="Subscriptions">
         {% if request.search or page_obj.has_other_pages %}
             <c-header.nav>
                 {% if request.search %}

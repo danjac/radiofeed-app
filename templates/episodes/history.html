@@ -5,10 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header>
-        <c-header.title>
-            History
-        </c-header.title>
+    <c-header title="History">
         {% if request.search or page_obj.has_other_pages %}
             <c-header.nav>
                 <c-header.nav.item>
