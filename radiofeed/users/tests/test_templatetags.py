@@ -1,8 +1,7 @@
 import pytest
-from django.template import TemplateSyntaxError
 from django.template.context import RequestContext
 
-from radiofeed.users.templatetags.account_settings import settings_dropdown
+from radiofeed.users.templatetags.account_settings import get_settings
 
 
 class MockGoogleAdapter:
@@ -15,9 +14,9 @@ class MockEmptyAdapter:
         return []
 
 
-class TestSettingsDropdown:
+class TestGetSettings:
     @pytest.mark.django_db
-    def test_dropdown(self, rf, mocker, user):
+    def test_get_settings(self, rf, mocker, user):
         mocker.patch(
             "radiofeed.users.templatetags.account_settings.get_adapter",
             return_value=MockEmptyAdapter(),
@@ -25,7 +24,7 @@ class TestSettingsDropdown:
 
         req = rf.get("/")
         req.user = user
-        context = settings_dropdown(RequestContext(req), "preferences")
+        context = get_settings(RequestContext(req), "preferences")
         assert context["current_item"]["label"] == "Preferences"
         assert len(context["items"]) == 5
 
@@ -37,7 +36,7 @@ class TestSettingsDropdown:
         )
         req = rf.get("/")
         req.user = user
-        context = settings_dropdown(RequestContext(req), "social_logins")
+        context = get_settings(RequestContext(req), "social_logins")
         assert context["current_item"]["label"] == "Social Logins"
         assert len(context["items"]) == 6
 
@@ -45,5 +44,5 @@ class TestSettingsDropdown:
     def test_invalid_item(self, rf, user):
         req = rf.get("/")
         req.user = user
-        with pytest.raises(TemplateSyntaxError):
-            settings_dropdown(RequestContext(req), "not_found")
+        with pytest.raises(KeyError):
+            get_settings(RequestContext(req), "not_found")

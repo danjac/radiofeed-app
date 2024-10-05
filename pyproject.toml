@@ -39,6 +39,7 @@ dependencies = [
     "django-tailwind-cli>=2.16.0",
     "granian>=1.6.0",
     "django-linear-migrations>=2.13.0",
+    "django-cotton>=1.1.1",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

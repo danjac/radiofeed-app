@@ -1,21 +1,19 @@
-{% extends "podcasts/detail_base.html" %}
+{% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    {{ block.super }} | Similar
+    {{ block.super }} {{ podcast.cleaned_title }} | Similar
 {% endblock title %}
 
-{% block podcast_navbar %}
-    {% include "podcasts/detail_base.html#navbar" with current="similar" %}
-{% endblock podcast_navbar %}
-
-{% block podcast_content %}
-    {% cache 300 similar-podcasts podcast.pk %}
-        <ul class="divide-y divide-solid">
-            {% for recommendation in recommendations %}
-                <li class="py-3 first:pt-0 first:pb-3 last:pt-3 last:pb-0">
-                    {% include "podcasts/_podcast.html" with podcast=recommendation.recommended %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endcache %}
-{% endblock podcast_content %}
+{% block content %}
+    <c-podcasts.detail :podcast="podcast" current="similar">
+        {% cache 300 similar-podcasts podcast.pk %}
+            <c-browse>
+                {% for recommendation in recommendations %}
+                    <c-browse.item>
+                        <c-podcasts.podcast :podcast="recommendation.recommended" />
+                    </c-browse.item>
+                {% endfor %}
+            </c-browse>
+        {% endcache %}
+    </c-podcasts.detail>
+{% endblock content %}

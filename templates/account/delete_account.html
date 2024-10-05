@@ -1,39 +1,25 @@
-{% extends "account/settings_base.html" %}
-{% load heroicons partials %}
-{% load settings_dropdown from account_settings %}
+{% extends "base.html" %}
 
-{% block title %}
-    {{ block.super }} | Delete Account
-{% endblock title %}
-
-{% block settings_dropdown %}
-    {% settings_dropdown "delete_account" %}
-{% endblock settings_dropdown %}
-
-{% block settings_content %}
+{% block content %}
     {% if user.is_authenticated %}
-        <div class="space-y-3">
-            <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
-            <p>This will delete ALL your data including your subscriptions, bookmarks and listening history.</p>
-            <form method="post"
-                  hx-disable="true"
-                  action="{% url 'users:delete_account' %}"
-                  onSubmit="return confirm('Are you sure?')">
-                {% csrf_token %}
-                <div>
-                    <button class="inline-flex items-center btn btn-danger"
-                            name="confirm-delete"
-                            value="true">
-                        {% heroicon_mini "trash" class="mr-2" %}
+        <c-account.settings current="delete_account">
+            <div class="space-y-3">
+                <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
+                <p>This will delete ALL your data including your subscriptions, bookmarks and listening history.</p>
+                <c-form method="post"
+                        hx-disable="true"
+                        action="{% url 'users:delete_account' %}"
+                        onsubmit="return confirm('Are you sure?')">
+                    <c-button icon="trash" variant="danger"
+                              name="confirm-delete"
+                              value="true">
                         Yes, delete my account
-                    </button>
-                </div>
-            </form>
-        </div>
+                    </c-button>
+                </c-form>
+            </div>
+        </c-account.settings>
     {% else %}
-        <h1 class="flex flex-wrap justify-center pb-3 mb-6 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
-            Delete Account
-        </h1>
+        <c-header.title>Delete Account</c-header.title>
         <div class="space-y-3">
             <p>
                 You must be logged in to delete your data. All user data, including subscriptions, bookmarks and listening history, will be irrevocably deleted.
@@ -47,4 +33,4 @@
             </p>
         </div>
     {% endif %}
-{% endblock settings_content %}
+{% endblock content %}

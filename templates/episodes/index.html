@@ -5,40 +5,31 @@
 {% endblock title %}
 
 {% block content %}
-    <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
-        <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
-            New Releases
-        </h1>
-        <nav>
-            <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                <li class="flex justify-center items-center space-x-3 sm:justify-end">
-                    {% include "_search_form.html" with search_url=search_episodes_url placeholder="Search: Episodes" clear_search=False %}
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <c-header>
+        <c-header.title>New Releases</c-header.title>
+        <c-header.nav>
+            <c-header.nav.item>
+                <c-search.form :search-url="search_episodes_url"
+                               placeholder="Search: Episodes" />
+            </c-header.nav.item>
+        </c-header.nav>
+    </c-header>
     {% partialdef pagination inline=True %}
-        <ul class="divide-y divide-solid" id="pagination">
-            {% if page_obj.has_other_pages %}
-                <li class="pb-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
+        <c-paginate :page="page_obj">
             {% for episode in page_obj %}
-                <li class="py-3 first:pt-0 last:pb-0">
-                    {% include "episodes/_episode.html" %}
-                </li>
+                <c-browse.item>
+                    <c-episodes.episode :episode="episode" />
+                </c-browse.item>
             {% empty %}
-                <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                <c-browse.empty>
                     <p>You're not following any podcasts yet.</p>
                     <p>
                         Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
                     </p>
                     <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
                     <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
-                </li>
+                </c-browse.empty>
             {% endfor %}
-            {% if page_obj.has_other_pages %}
-                <li class="pt-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
-        </ul>
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

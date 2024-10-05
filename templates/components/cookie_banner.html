@@ -1,0 +1,28 @@
+{% get_accept_cookies as accept_cookies %}
+{% if not accept_cookies %}
+    <div class="flex fixed bottom-0 z-50 justify-center py-3 w-full text-white bg-black opacity-90"
+         id="accept-gdpr-cookies">
+        <div class="px-2">
+            <div class="items-center md:flex">
+                <p class="mb-3 font-bold text-center md:mr-4 md:mb-0 md:text-start">
+                    This site uses <a href="https://www.internetcookies.com"
+                                      target="_blank"
+                                      rel="noopender"
+                                      class="underline">cookies</a> to ensure you get the best experience.
+                </p>
+                <div class="text-center md:text-start">
+                    <button class="py-1 px-4 text-base border border-white md:text-lg btn btn-primary"
+                            aria-label="OK, I accept cookies"
+                            title="OK, I accept cookies"
+                            hx-disabled-elt="this"
+                            hx-post="{% url "accept_gdpr_cookies" %}"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                            hx-target="#accept-gdpr-cookies"
+                            hx-push-url="false"
+                            hx-swap="delete"
+                            hx-indicator="this">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

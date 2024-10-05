@@ -27,6 +27,7 @@ _SECONDS_IN_HOUR: Final = 3600
 register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
+get_cover_image_class = register.simple_tag(get_cover_image_class)
 
 
 @register.simple_tag
@@ -77,19 +78,16 @@ def cover_image(
     }
 
 
-@register.inclusion_tag("_gdpr_cookies_banner.html", takes_context=True)
-def gdpr_cookies_banner(context: RequestContext) -> dict:
-    """Renders GDPR cookie notice. Notice should be hidden once user has clicked
-    "Accept Cookies" button."""
-    return {
-        "accept_cookies": settings.GDPR_COOKIE_NAME in context.request.COOKIES,
-    }
+@register.simple_tag(takes_context=True)
+def get_accept_cookies(context: RequestContext) -> bool:
+    """Returns True if user has accepted cookies."""
+    return settings.GDPR_COOKIE_NAME in context.request.COOKIES
 
 
-@register.inclusion_tag("_markdown.html")
-def markdown(content: str | None) -> dict:
+@register.filter
+def markdown(content: str | None) -> str:
     """Render content as Markdown."""
-    return {"content": render_markdown(content or "")}
+    return render_markdown(content or "")
 
 
 @register.filter

@@ -1,30 +1,13 @@
-{% extends "account/settings_base.html" %}
-{% load heroicons partials %}
-{% load settings_dropdown from account_settings %}
-{% block title %}
-    {{ block.super }} | Preferences
-{% endblock title %}
-
-{% block settings_dropdown %}
-    {% settings_dropdown "preferences" %}
-{% endblock settings_dropdown %}
-
-{% block settings_content %}
-    {% partialdef form inline=True %}
-        <form method="post"
-              action="{{ request.path }}"
-              class="space-y-3"
-              id="preferences-form"
-              hx-target="this"
-              hx-swap="outerHTML">
-            {% csrf_token %}
-            {{ form }}
-            <div>
-                <button class="inline-flex items-center btn btn-primary">
-                    {% heroicon_mini "check" class="mr-2" %}
-                    Save Changes
-                </button>
-            </div>
-        </form>
-    {% endpartialdef form %}
-{% endblock settings_content %}
+{% extends "base.html" %}
+{% load partials %}
+{% block content %}
+    <c-account.settings current="preferences">
+        {% partialdef form inline=True %}
+            <c-form :form="form"
+                    id="preferences-form"
+                    hx-post>
+                <c-button icon="check" variant="primary">Save Changes</c-button>
+            </c-form>
+        {% endpartialdef form %}
+    </c-account.settings>
+{% endblock content %}

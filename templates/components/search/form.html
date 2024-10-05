@@ -1,0 +1,41 @@
+{% load heroicons %}
+<c-vars search-url=request.path clear-search=False placeholder="Search..." />
+<form class="relative bg-transparent"
+      method="get"
+      action="{{ search_url }}"
+      x-init="$watch('search', value => $dispatch('search', value))"
+      x-data="{search: '{{ request.search.value|escapejs }}'}"
+      {{ attrs }}>
+    <input type="search"
+           name="{{ request.search.param }}"
+           class="py-1 px-2 w-64 placeholder-opacity-100 text-gray-900 rounded dark:text-white dark:bg-gray-900 focus:ring focus:outline-none"
+           autocomplete="off"
+           placeholder="{{ placeholder }}"
+           aria-label="{{ placeholder }}"
+           hx-validate="true"
+           x-model="search"
+           @keydown.ctrl.k.window.prevent="$el.focus()"
+           :class="{ 'md:w-72 xl:w-84': !search, 'md:w-72 xl:w-96': search }">
+    <div class="flex absolute inset-y-0 right-0 items-center pr-2">
+        {% if request.search and clear_search %}
+            <a href="{{ request.path }}"
+               title="Clear Search"
+               aria-label="Clear Search"
+               class="mr-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:shadow-outline">{% heroicon_mini "backspace" title="Clear Search" %}</a>
+        {% else %}
+            <button title="Clear Search"
+                    aria-label="Clear Search"
+                    type="button"
+                    class="mr-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:shadow-outline"
+                    x-show="search"
+                    @click.prevent="search=''">{% heroicon_mini "backspace" title="Clear Search" %}</button>
+        {% endif %}
+        <button type="submit"
+                title="Search"
+                aria-label="Search"
+                :disabled="!search"
+                class="text-gray-900 dark:text-gray-100 focus:outline-none focus:shadow-outline">
+            {% heroicon_mini "magnifying-glass" title="Search" %}
+        </button>
+    </div>
+</form>

@@ -1,6 +1,7 @@
 import pytest
 
 from radiofeed.episodes.middleware import PlayerDetails, PlayerMiddleware
+from radiofeed.episodes.tests.factories import AudioLogFactory
 
 
 class TestPlayerMiddleware:
@@ -45,3 +46,40 @@ class TestPlayerDetails:
     def test_has_true(self, player):
         player.set(self.episode_id)
         assert player.has(self.episode_id)
+
+    @pytest.mark.django_db
+    def test_audio_log_exists(self, user, req):
+        audio_log = AudioLogFactory(user=user)
+        req.user = user
+
+        player = PlayerDetails(request=req)
+        player.set(audio_log.episode_id)
+
+        assert player.audio_log == audio_log
+
+    @pytest.mark.django_db
+    def test_audio_log_empty(self, user, req):
+        req.user = user
+
+        player = PlayerDetails(request=req)
+
+        assert player.audio_log is None
+
+    @pytest.mark.django_db
+    def test_audio_log_anon_user(self, user, anonymous_user, req):
+        audio_log = AudioLogFactory(user=user)
+        req.user = anonymous_user
+
+        player = PlayerDetails(request=req)
+        player.set(audio_log.episode_id)
+
+        assert player.audio_log is None
+
+    @pytest.mark.django_db
+    def test_audio_log_not_exists(self, user, req):
+        req.user = user
+
+        player = PlayerDetails(request=req)
+        player.set(12345)
+
+        assert player.audio_log is None

@@ -5,45 +5,39 @@
 {% endblock title %}
 
 {% block content %}
-    <header class="pb-3 mb-3 border-b space-y-3 {% if not page_obj.has_other_pages %}sm:space-y-0 sm:flex items-center justify-between{% endif %}">
-        <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
-            Private Feeds
-        </h1>
-        <nav>
-            <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
-                {% if not request.search %}
-                    <li class="flex justify-center items-center sm:justify-start">
-                        <a href="{% url "podcasts:add_private_feed" %}"
-                           class="inline-flex items-center btn btn-default">
-                            {% heroicon_mini "plus" class="mr-2" %}
-                            Add Private Feed
-                        </a>
-                    </li>
-                {% endif %}
+    <c-header>
+        <c-header.title>Private Feeds</c-header.title>
+        <c-header.nav>
+            {% if not request.search %}
+                <c-header.nav.item>
+                    <a href="{% url "podcasts:add_private_feed" %}" class="flex items-center btn btn-default">
+                        {% heroicon_mini "plus" class="mr-2" %}
+                        Add Private Feed
+                    </a>
+                </c-header.nav.item>
                 {% if request.search or page_obj.has_other_pages %}
                     {% if request.search %}
-                        <li class="flex justify-center items-center sm:justify-end">
-                            {% include "_search_form.html#button" with search_url=search_podcasts_url label="Search All Podcasts" %}
-                        </li>
+                        <c-header.nav.item>
+                            <c-search.button :search-url="search_podcasts_url">
+                                Search All Podcasts
+                            </c-search.button>
+                        </c-header.nav.item>
                     {% endif %}
-                    <li class="flex justify-center items-center sm:justify-end">
-                        {% include "_search_form.html" with placeholder="Search: Private Feeds" clear_search=True %}
-                    </li>
+                    <c-header.nav.item>
+                        <c-search.form placeholder="Search: Private Feeds" clear-search />
+                    </c-header.nav.item>
                 {% endif %}
-            </ul>
-        </nav>
-    </header>
-    {% partialdef pagination inline=True %}
-        <ul class="divide-y divide-solid" id="pagination">
-            {% if page_obj.has_other_pages %}
-                <li class="pb-3">{% include "_pagination_links.html" %}</li>
             {% endif %}
+        </c-header.nav>
+    </c-header>
+    {% partialdef pagination inline=True %}
+        <c-paginate :page="page_obj">
             {% for podcast in page_obj %}
-                <li class="py-3 first:pt-0 last:pb-0">
-                    {% include "podcasts/_podcast.html" %}
-                </li>
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="podcast" />
+                </c-browse.item>
             {% empty %}
-                <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                <c-browse.empty>
                     {% if request.search %}
                         No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
                     {% else %}
@@ -53,11 +47,8 @@
                         </p>
                     {% endif %}
 
-                </li>
+                </c-browse.empty>
             {% endfor %}
-            {% if page_obj.has_other_pages %}
-                <li class="pt-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
-        </ul>
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

@@ -2,7 +2,6 @@ from typing import TypedDict
 
 from allauth.socialaccount.adapter import get_adapter
 from django import template
-from django.http import HttpRequest
 from django.template.context import RequestContext
 from django.urls import reverse
 
@@ -17,22 +16,9 @@ class Item(TypedDict):
     url: str
 
 
-@register.inclusion_tag("account/settings_base.html#dropdown", takes_context=True)
-def settings_dropdown(context: RequestContext, current: str) -> dict:
-    """Renders account settings dropdown menu."""
-    items = _get_settings_items(context.request)
-
-    try:
-        current_item = items.pop(current)
-    except KeyError as exc:
-        raise template.TemplateSyntaxError(
-            f"{current} is not one of the dropdown items"
-        ) from exc
-
-    return {"current_item": current_item, "items": items.values()}
-
-
-def _get_settings_items(request: HttpRequest) -> dict[str, Item]:
+@register.simple_tag(takes_context=True)
+def get_settings(context: RequestContext, current: str) -> dict:
+    """ "Returns a dictionary of settings items."""
     items = {
         "preferences": Item(
             label="Preferences",
@@ -56,14 +42,14 @@ def _get_settings_items(request: HttpRequest) -> dict[str, Item]:
         ),
     }
 
-    if request.user.has_usable_password:
+    if context.request.user.has_usable_password:
         items["password"] = Item(
             label="Change Password",
             icon="key",
             url=reverse("account_change_password"),
         )
 
-    if get_adapter().list_providers(request):
+    if get_adapter().list_providers(context.request):
         items["social_logins"] = Item(
             label="Social Logins",
             icon="user-group",
@@ -76,4 +62,9 @@ def _get_settings_items(request: HttpRequest) -> dict[str, Item]:
         url=reverse("users:delete_account"),
     )
 
-    return items
+    current_item = items.pop(current)
+
+    return {
+        "items": items.values(),
+        "current_item": current_item,
+    }

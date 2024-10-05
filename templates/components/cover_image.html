@@ -1,0 +1,17 @@
+{# djlint:off #}
+<c-vars variant cover_url class=""/>
+{# djlint:on #}
+{% get_cover_image_attrs variant cover_url title as cover_image_attrs %}
+{% get_cover_image_class variant class as cover_image_class %}
+<img class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900 {{ cover_image_class }}"
+     aria_hidden="true"
+     loading="lazy"
+     decoding="async"
+     src="{{ cover_image_attrs.src }}"
+     width="{{ cover_image_attrs.width }}"
+     height="{{ cover_image_attrs.height }}"
+     alt="{{ cover_image_attrs.title }}"
+     title="{{ cover_image_attrs.title }}"
+     {% if cover_image_attrs.srcset %} srcset="{{ cover_image_attrs.srcset }}"{% endif %}
+     {% if cover_image_attrs.sizes %} sizes="{{ cover_image_attrs.sizes }}"{% endif %}
+     {{ attrs }}>

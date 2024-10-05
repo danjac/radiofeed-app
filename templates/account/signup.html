@@ -1,25 +1,21 @@
 {% extends "account/base.html" %}
-{% load heroicons %}
+
 {% block title %}
     {{ block.super }} | Sign Up
 {% endblock title %}
 
 {% block content %}
+    <c-header>
+        <c-header.title>Sign Up</c-header.title>
+    </c-header>
     <div class="space-y-3">
-        <h1 class="flex justify-center items-center pb-3 mb-3 text-xl font-bold border-b sm:justify-start lg:text-2xl xl:text-3xl">
-            Sign Up
-        </h1>
         {% include "socialaccount/_social_logins.html" %}
         <p class="mb-3">
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
-        <div class="space-y-3">
-            <form method="post"
-                  action="{{ request.path }}"
-                  class="space-y-3"
-                  hx-disable="true">
-                {% csrf_token %}
+        <c-form hx-disable="true">
+            <c-slot name="fields">
                 {% if redirect_field_value %}
                     <input type="hidden"
                            name="{{ redirect_field_name }}"
@@ -31,13 +27,10 @@
                     {{ form.password1.as_field_group }}
                     {{ form.password2.as_field_group }}
                 </div>
-                <div>
-                    <button class="inline-flex items-center btn btn-primary">
-                        {% heroicon_mini "plus" class="mr-2" %}
-                        Sign Up
-                    </button>
-                </div>
-            </form>
-        </div>
+            </c-slot>
+            <c-button icon="plus" variant="primary">
+                Sign Up
+            </c-button>
+        </c-form>
     </div>
 {% endblock content %}

@@ -6,36 +6,31 @@
 {% endblock title %}
 
 {% block content %}
-    <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
-        <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
-            Subscriptions
-        </h1>
+    <c-header>
+        <c-header.title>Subscriptions</c-header.title>
         {% if request.search or page_obj.has_other_pages %}
-            <nav>
-                <ul class="items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
-                    {% if request.search %}
-                        <li class="flex justify-center items-center sm:justify-end">
-                            {% include "_search_form.html#button" with search_url=search_podcasts_url label="Search All Podcasts" %}
-                        </li>
-                    {% endif %}
-                    <li class="flex justify-center items-center space-x-3 sm:justify-end">
-                        {% include "_search_form.html" with placeholder="Search: Subscriptions" clear_search=True %}
-                    </li>
-                </ul>
-            </nav>
+            <c-header.nav>
+                {% if request.search %}
+                    <c-header.nav.item>
+                        <c-search.button :search-url="search_podcasts_url">
+                            Search All Podcasts
+                        </c-search.button>
+                    </c-header.nav.item>
+                {% endif %}
+                <c-header.nav.item>
+                    <c-search.form placeholder="Search: Subscriptions" clear-search />
+                </c-header.nav.item>
+            </c-header.nav>
         {% endif %}
-    </header>
+    </c-header>
     {% partialdef pagination inline=True %}
-        <ul class="divide-y divide-solid" id="pagination">
-            {% if page_obj.has_other_pages %}
-                <li class="pb-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
+        <c-paginate :page="page_obj">
             {% for podcast in page_obj %}
-                <li class="py-3 first:pt-0 last:pb-0">
-                    {% include "podcasts/_podcast.html" %}
-                </li>
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="podcast" />
+                </c-browse.item>
             {% empty %}
-                <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                <c-browse.empty>
                     {% if request.search %}
                         No subscriptions found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                     {% else %}
@@ -44,11 +39,8 @@
                             Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
                         </p>
                     {% endif %}
-                </li>
+                </c-browse.empty>
             {% endfor %}
-            {% if page_obj.has_other_pages %}
-                <li class="pt-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
-        </ul>
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

@@ -5,13 +5,15 @@
 {% endblock title %}
 
 {% block content %}
+    <c-header>
+        <c-header.title>Categories</c-header.title>
+        <c-header.nav>
+            <c-header.nav.item>
+                <c-search.form placeholder="Search: Categories" clear-search></c-search-form>
+            </c-header.nav.item>
+        </c-header.nav>
+    </c-header>
     {% cache 300 categories request.get_full_path %}
-        <header class="justify-between items-center pb-3 mb-3 space-y-3 border-b sm:flex sm:space-y-0">
-            <h1 class="flex justify-center items-center text-xl font-bold sm:justify-start lg:text-2xl xl:text-3xl">Categories</h1>
-            <nav class="flex justify-center items-center space-x-3 sm:justify-end">
-                {% include "_search_form.html" with placeholder="Search: Categories" clear_search=True %}
-            </nav>
-        </header>
         {% if categories %}
             <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
                 {% for category in categories %}

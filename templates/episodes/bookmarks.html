@@ -5,46 +5,41 @@
 {% endblock title %}
 
 {% block content %}
-    <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
-        <h1 class="flex justify-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
+    <c-header>
+        <c-header.title>
             Bookmarks
-        </h1>
+        </c-header.title>
         {% if request.search or page_obj.has_other_pages %}
-            <nav>
-                <ul class="items-center space-y-3 sm:flex sm:space-y-0 sm:space-x-3">
+            <c-header.nav>
+                <c-header.nav.item>
                     {% if request.search %}
-                        <li class="flex justify-center items-center sm:justify-end">
-                            {% include "_search_form.html#button" with search_url=search_episodes_url label="Search All Episodes" %}
-                        </li>
+                        <c-search.button :search-url="search_episodes_url">
+                            Search All Episodes
+                        </c-search.button>
                     {% else %}
-                        <li class="flex justify-center items-center mb-3 sm:justify-start sm:mb-0">
-                            {% if ordering_asc %}
-                                <a href="{{ request.path }}{% querystring order="desc" page=None %}"
-                                   class="link">Newest First</a>
-                            {% else %}
-                                <a href="{{ request.path }}{% querystring order="asc" page=None %}"
-                                   class="link">Oldest First</a>
-                            {% endif %}
-                        </li>
+                        {% if ordering_asc %}
+                            <a href="{{ request.path }}{% querystring order="desc" page=None %}"
+                               class="link">Newest First</a>
+                        {% else %}
+                            <a href="{{ request.path }}{% querystring order="asc" page=None %}"
+                               class="link">Oldest First</a>
+                        {% endif %}
                     {% endif %}
-                    <li class="flex justify-center items-center sm:justify-end">
-                        {% include "_search_form.html" with placeholder="Search: Bookmarks" clear_search=True %}
-                    </li>
-                </ul>
-            </nav>
+                </c-header.nav.item>
+                <c-header.nav.item>
+                    <c-search.form placeholder="Search: Bookmarks" clear-search />
+                </c-header.nav.item>
+            </c-header.nav>
         {% endif %}
-    </header>
+    </c-header>
     {% partialdef pagination inline=True %}
-        <ul class="divide-y divide-solid" id="pagination">
-            {% if page_obj.has_other_pages %}
-                <li class="pb-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
+        <c-paginate :page="page_obj">
             {% for bookmark in page_obj %}
-                <li class="py-3 first:pt-0 last:pb-0">
-                    {% include "episodes/_episode.html" with episode=bookmark.episode %}
-                </li>
+                <c-browse.item>
+                    <c-episodes.episode :episode="bookmark.episode" />
+                </c-browse.item>
             {% empty %}
-                <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                <c-browse.empty>
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
                     {% else %}
@@ -54,12 +49,8 @@
                             To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
                         </p>
                     {% endif %}
-
-                </li>
+                </c-browse.empty>
             {% endfor %}
-            {% if page_obj.has_other_pages %}
-                <li class="pt-3">{% include "_pagination_links.html" %}</li>
-            {% endif %}
-        </ul>
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

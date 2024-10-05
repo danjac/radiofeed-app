@@ -1,0 +1,42 @@
+{# djlint: off #}
+<c-vars form=None
+        action=request.path
+        multipart=False
+        method="post"
+        class="space-y-3"
+        hx-post=False
+        hx-target="this"
+        hx-swap="outerHTML" />
+{# djlint: on #}
+<form method="{{ method }}"
+      class="{{ class }}"
+      {% if hx_post is True %}
+          action="{{ action }}"
+          hx-post="{{ action }}"
+      {% elif hx_post %}
+          action="{{ hx_post }}"
+          hx-post="{{ hx_post }}"
+      {% else %}
+          action="{{ action }}"
+      {% endif %}
+      {% if hx_post %}
+          hx-target="{{ hx_target }}"
+          hx-swap="{{ hx_swap }}"
+      {% endif %}
+      {% if multipart %}
+          enctype="multipart/form-data"
+          {% if hx_post %}
+              hx-encoding="multipart/form-data"
+          {% endif %}
+      {% endif %}
+      {{ attrs }}>
+    {% csrf_token %}
+    {% if form %}
+        {{ form }}
+    {% else %}
+        {{ fields }}
+    {% endif %}
+    <div class="flex items-center space-x-3">
+        {{ slot }}
+    </div>
+</form>

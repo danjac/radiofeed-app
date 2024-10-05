@@ -5,37 +5,27 @@
 {% endblock title %}
 
 {% block content %}
-    <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
-        <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
-            Search Episodes
-        </h1>
-        <nav>
-            <ul class="justify-between items-center space-y-3 sm:flex sm:space-y-0">
-                <li class="flex justify-center items-center space-x-3 sm:justify-end">
-                    {% include "_search_form.html" with placeholder="Search: Episodes" clear_search=False %}
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <c-header>
+        <c-header.title>Search Episodes</c-header.title>
+        <c-header.nav>
+            <c-header.nav.item>
+                <c-search.form placeholder="Search: Episodes" />
+            </c-header.nav.item>
+        </c-header.nav>
+    </c-header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-episodes request.get_full_path %}
-            <ul class="divide-y divide-solid" id="pagination">
-                {% if page_obj.has_other_pages %}
-                    <li class="pb-3">{% include "_pagination_links.html" %}</li>
-                {% endif %}
+            <c-paginate :page="page_obj">
                 {% for episode in page_obj %}
-                    <li class="py-3 first:pt-0 last:pb-0">
-                        {% include "episodes/_episode.html" %}
-                    </li>
+                    <c-browse.item>
+                        <c-episodes.episode :episode="episode" />
+                    </c-browse.item>
                 {% empty %}
-                    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+                    <c-browse.empty>
                         No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                    </li>
+                    </c-browse.empty>
                 {% endfor %}
-                {% if page_obj.has_other_pages %}
-                    <li class="pt-3">{% include "_pagination_links.html" %}</li>
-                {% endif %}
-            </ul>
+            </c-paginate>
         {% endcache %}
     {% endpartialdef %}
 {% endblock content %}
