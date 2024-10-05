@@ -1,8 +1,8 @@
 {% load audio_player heroicons partials static %}
-<c-vars audio-log=None start-player=False />
+<c-vars audio-log=None start-player=False action="load" />
 {% if request.user.is_authenticated %}
-    <div id="audio-player" {{ attrs }}>
-        {% if audio_log %}
+    <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
+        {% if audio_log and action != "close" %}
             {% with episode=audio_log.episode podcast=audio_log.episode.podcast %}
                 {% get_media_metadata episode as metadata %}
                 {{ metadata|json_script:"audioplayer-metadata" }}
@@ -14,7 +14,7 @@
                         csrfToken='{{ csrf_token }}',
                         currentTime={{ audio_log.current_time|default:0 }},
                         metadataTag='audioplayer-metadata',
-                        startPlayer={{ start_player|yesno:"true,false" }},
+                        startPlayer={% if action == "play" %}true{% else %}false{% endif %},
                         timeUpdateUrl='{% url "episodes:player_time_update" %}',
                     )"{# fmt:on #}
                      @keydown.window="shortcuts">

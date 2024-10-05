@@ -98,11 +98,7 @@
                                     </c-button>
                                 {% endif %}
                                 {% if request.htmx.target == target %}
-                                    {% if action == "play" %}
-                                        <c-audio-player :audio-log="audio_log" :start-player hx-swap-oob="true"/>
-                                    {% else %}
-                                        <c-audio-player hx-swap-oob="true"/>
-                                    {% endif %}
+                                    <c-audio-player :audio-log="audio_log" :action="action" />
                                     {% with hx_oob=True %}
                                         {% partial audio_log %}
                                     {% endwith %}

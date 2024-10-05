@@ -58,11 +58,7 @@ class HtmxMessagesMiddleware(BaseMiddleware):
 
         if get_messages(request):
             response.write(
-                render_to_string(
-                    "_messages.html",
-                    {"hx_oob": True},
-                    request=request,
-                )
+                render_to_string("components/messages.html", request=request)
             )
 
         return response
