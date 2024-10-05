@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    <account:settings current="social_logins">
+    <c-account.settings current="social_logins">
         {% if form.accounts %}
             <div class="space-y-3">
                 <p>You can sign in to your account using any of the following third party accounts:</p>
@@ -54,5 +54,5 @@
         </ul>
         {% include "socialaccount/snippets/login_extra.html" %}
     </div>
-    </account:settings>
+    </c-account.settings>
 {% endblock content %}
