@@ -1,11 +1,9 @@
 {# djlint: off #}
 <c-vars form=None
-        method="post"
         class="space-y-3"
 />
 {# djlint: on #}
 <form class="{{ class }}"
-      method="{{ method }}"
       {{ attrs }}>
     {% csrf_token %}
     {% if form %}

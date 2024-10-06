@@ -12,7 +12,7 @@
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
-        <c-form :action="request.path" hx-disable="true">
+        <c-form :action="request.path" method="post" hx-disable="true">
             <c-slot name="fields">
                 {% if redirect_field_value %}
                     <input type="hidden"
