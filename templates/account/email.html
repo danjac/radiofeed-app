@@ -33,13 +33,13 @@
                         </c-slot>
                         {% if num_addresses > 1 %}
                             <c-button icon="hand-thumb-up"
-                                      type="primary"
+                                      variant="primary"
                                       name="action_primary"
                                       value="1">
                                 Primary
                             </c-button>
                             <c-button icon="trash"
-                                      type="danger"
+                                      variant="danger"
                                       name="action_remove"
                                       value="1">
                                 Remove
@@ -63,7 +63,7 @@
                 <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
                 <c-form :form="form">
                     <c-button icon="plus"
-                              type="primary"
+                              variant="primary"
                               name="action_add"
                               value="true">Add E-Mail</c-button>
                 </c-form>

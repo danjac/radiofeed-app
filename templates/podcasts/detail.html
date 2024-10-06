@@ -14,7 +14,7 @@
                             {% if is_subscribed %}
                                 <c-button icon="trash"
                                           size="lg"
-                                          type="danger"
+                                          variant="danger"
                                           aria-label="Remove podcast from your Private Feeds"
                                           title="Remove podcast from your Private Feeds"
                                           hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
@@ -45,7 +45,7 @@
                                 {% if is_subscribed %}
                                     <c-button
                                         icon="eye-slash"
-                                        type="primary"
+                                        variant="primary"
                                         size="lg"
                                         outline
                                         aria-label="Unsubscribe from this Podcast"
@@ -58,7 +58,7 @@
                                 {% else %}
                                     <c-button
                                         icon="eye"
-                                        type="primary"
+                                        variant="primary"
                                         size="lg"
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
