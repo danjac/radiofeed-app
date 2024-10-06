@@ -10,8 +10,8 @@
     </c-header>
     {% partialdef form inline=True %}
         <c-form :form="form"
+                :hx-post="request.path"
                 id="private-feed-form"
-                hx-post
                 hx-vals='{"action": "add"}'>
             <c-button icon="plus" variant="primary">
                 Add Feed

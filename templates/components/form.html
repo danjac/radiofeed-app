@@ -8,20 +8,15 @@
         hx-target="this"
         hx-swap="outerHTML" />
 {# djlint: on #}
-<form method="{{ method }}"
-      class="{{ class }}"
-      {% if hx_post is True %}
-          action="{{ action }}"
-          hx-post="{{ action }}"
-      {% elif hx_post %}
+<form class="{{ class }}"
+      method="{{ method }}"
+      {% if hx_post %}
           action="{{ hx_post }}"
           hx-post="{{ hx_post }}"
-      {% else %}
-          action="{{ action }}"
-      {% endif %}
-      {% if hx_post %}
           hx-target="{{ hx_target }}"
           hx-swap="{{ hx_swap }}"
+      {% else %}
+          action="{{ action }}"
       {% endif %}
       {% if multipart %}
           enctype="multipart/form-data"
