@@ -2,18 +2,10 @@
 <c-vars form=None
         method="post"
         class="space-y-3"
-        hx-post=None
-        hx-encoding=None
 />
 {# djlint: on #}
 <form class="{{ class }}"
       method="{{ method }}"
-      {% if hx_post %}
-          action="{{ hx_post }}"
-      {% endif %}
-      {% if hx_encoding %}
-          enctype="{{ hx_encoding }}"
-      {% endif %}
       {{ attrs }}>
     {% csrf_token %}
     {% if form %}
