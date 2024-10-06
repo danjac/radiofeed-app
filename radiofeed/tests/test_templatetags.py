@@ -1,10 +1,8 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.template import RequestContext
 
 from radiofeed.templatetags import (
     absolute_uri,
-    active_link,
     format_duration,
     percentage,
 )
@@ -23,57 +21,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-class TestActiveUrl:
-    @pytest.mark.parametrize(
-        ("url", "active", "exact"),
-        [
-            pytest.param(
-                "/podcasts/1/similar/",
-                True,
-                False,
-                id="not current must be exact",
-            ),
-            pytest.param(
-                "/podcasts/1/",
-                True,
-                True,
-                id="current must be exact",
-            ),
-            pytest.param(
-                "/podcasts/1/?page=1",
-                True,
-                True,
-                id="current must be exact with query",
-            ),
-            pytest.param(
-                "/podcasts/1/similar/",
-                True,
-                False,
-                id="current not exact match",
-            ),
-            pytest.param(
-                "/podcasts/1/",
-                True,
-                True,
-                id="current exact match",
-            ),
-            pytest.param(
-                "/podcasts/1/?page=1",
-                True,
-                True,
-                id="current exact match with query",
-            ),
-        ],
-    )
-    def test_active_link(self, rf, url, active, exact):
-        req = rf.get(url)
-
-        link = active_link(RequestContext(req), "/podcasts/1/")
-
-        assert link["active"] is active
-        assert link["exact"] is exact
 
 
 class TestPercentage:

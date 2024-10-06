@@ -7,25 +7,22 @@
             <nav class="flex justify-center items-center sm:justify-start">
                 <ul class="flex items-center space-x-6">
                     <li>
-                        {% active_link podcast.get_detail_url as link %}
                         <a class="link {% if current == 'detail' %}active{% endif %}"
                            href="{{ podcast.get_detail_url }}"
-                           {% if active == 'detail' %}aria-current="page"{% endif %}
+                           {% if current == 'detail' %}aria-current="page"{% endif %}
                            title="{{ podcast.cleaned_title }} | About">About</a>
                     </li>
                     <li>
-                        {% active_link podcast.get_detail_url as link %}
                         <a class="link {% if current == 'episodes' %}active{% endif %}"
                            href="{{ podcast.get_episodes_url }}"
-                           {% if active == 'detail' %}aria-current="page"{% endif %}
+                           {% if current == 'episodes' %}aria-current="page"{% endif %}
                            title="{{ podcast.cleaned_title }} | Episodes">Episodes ({{ podcast.num_episodes }})</a>
                     </li>
                     {% if podcast.has_similar %}
                         <li>
-                            {% active_link podcast.get_detail_url as link %}
                             <a class="link {% if current == 'similar' %}active{% endif %}"
                                href="{{ podcast.get_similar_url }}"
-                               {% if active == 'similar' %}aria-current="page"{% endif %}
+                               {% if current == 'similar' %}aria-current="page"{% endif %}
                                title="{{ podcast.cleaned_title }} | Similar">Similar</a>
                         </li>
                     {% endif %}

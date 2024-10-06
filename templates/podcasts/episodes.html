@@ -17,11 +17,11 @@
                         {% else %}
                             <c-header.nav.item>
                                 {% if ordering_asc %}
-                                    <c-link href="{{ request.path }}{% querystring order='desc' page=None %}"
-                                            text="Newest First" />
+                                    <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
+                                        Newest First</a>
                                 {% else %}
-                                    <c-link href="{{ request.path }}{% querystring order='asc' page=None %}"
-                                            text="Oldest First" />
+                                    <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
+                                        Oldest First</a>
                                 {% endif %}
                             </c-header.nav.item>
                         {% endif %}
