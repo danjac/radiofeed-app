@@ -1,77 +1,43 @@
 {% load heroicons %}
 <ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
-    {% with MENU_CSS="inline-flex items-center w-full sm:w-auto link" ICON_CSS="mr-3" %}
-        <li>
-            <a href="{% url "podcasts:subscriptions" %}"
-               accesskey="p"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "rss" class=ICON_CSS %}
-                Subscriptions
-            </a>
-        </li>
-        <li>
-            <a href="{% url "episodes:index" %}"
-               accesskey="n"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "sparkles" class=ICON_CSS %}
-                New Releases
-            </a>
-        </li>
-        <li>
-            <a href="{% url "podcasts:discover" %}"
-               accesskey="o"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "magnifying-glass" class=ICON_CSS %}
-                Discover
-            </a>
-        </li>
-        <li>
-            <a href="{% url "podcasts:category_list" %}"
-               accesskey="c"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "tag" class=ICON_CSS %}
-                Categories
-            </a>
-        </li>
-        <li>
-            <a href="{% url "episodes:bookmarks" %}"
-               accesskey="b"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "bookmark" class=ICON_CSS %}
-                Bookmarks
-            </a>
-        </li>
-        <li>
-            <a href="{% url "episodes:history" %}"
-               accesskey="h"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "clock" class=ICON_CSS %}
-                History
-            </a>
-        </li>
-        <li>
-            <a href="{% url "podcasts:private_feeds" %}"
-               accesskey="v"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "lock-closed" class=ICON_CSS %}
-                Private Feeds
-            </a>
-        </li>
-        <li>
-            <a href="{% url "about" %}"
-               accesskey="a"
-               tabindex="0"
-               class="{{ MENU_CSS }}">
-                {% heroicon_outline "information-circle" class=ICON_CSS %}
-                About
-            </a>
-        </li>
-    {% endwith %}
+    <c-navbar.menu.item href="{% url "podcasts:subscriptions" %}"
+                        accesskey="p"
+                        icon="rss"
+                        text="Subscriptions" />
+
+    <c-navbar.menu.item href="{% url "episodes:index" %}"
+                        accesskey="n"
+                        icon="sparkles"
+                        text="New Releases" />
+
+    <c-navbar.menu.item href="{% url "podcasts:discover" %}"
+                        accesskey="d"
+                        icon="magnifying-glass"
+                        text="Discover" />
+
+    <c-navbar.menu.item href="{% url "podcasts:category_list" %}"
+                        accesskey="c"
+                        icon="tag"
+                        text="Categories" />
+
+    <c-navbar.menu.item href="{% url "episodes:bookmarks" %}"
+                        accesskey="b"
+                        icon="bookmark"
+                        text="Bookmarks" />
+
+    <c-navbar.menu.item href="{% url "episodes:history" %}"
+                        accesskey="h"
+                        icon="clock"
+                        text="History" />
+
+    <c-navbar.menu.item href="{% url "podcasts:private_feeds" %}"
+                        accesskey="v"
+                        icon="lock-closed"
+                        text="Private Feeds" />
+
+    <c-navbar.menu.item href="{% url "about" %}"
+                        accesskey="a"
+                        icon="information-circle"
+                        text="About" />
+
 </ul>

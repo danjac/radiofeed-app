@@ -1,0 +1,11 @@
+{% load heroicons %}
+<c-vars href accesskey icon text />
+<li>
+    <a href="{{ href }}"
+       tabindex="0"
+       accesskey="{{ accesskey }}"
+       class="inline-flex items-center w-full sm:w-auto link" >
+        {% heroicon_outline icon class="mr-3" %}
+        {{ text }}
+    </a>
+</li>

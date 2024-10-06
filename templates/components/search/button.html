@@ -1,5 +1,5 @@
 {% load heroicons %}
-<c-vars search_url />
+<c-vars search_url text=""/>
 <button class="inline-flex items-center btn btn-default"
         tabindex="0"
         role="link"
@@ -18,5 +18,5 @@
         :disabled="!search"
         @search.window="search=$event.detail; $nextTick(() => htmx.process($el));">
     {% heroicon_mini "magnifying-glass" class="mr-2" %}
-    {{ slot }}
+    {% if text %}{{ text }}{% else %}{{ slot }}{% endif %}
 </button>
