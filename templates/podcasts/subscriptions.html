@@ -23,12 +23,8 @@
         {% endif %}
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-paginate :page="page_obj">
-            {% for podcast in page_obj %}
-                <c-browse.item>
-                    <c-podcasts.podcast :podcast="podcast" />
-                </c-browse.item>
-            {% empty %}
+        <c-podcasts.paginate :page="page_obj">
+            <c-slot name="empty">
                 <c-browse.empty>
                     {% if request.search %}
                         No subscriptions found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
@@ -39,7 +35,7 @@
                         </p>
                     {% endif %}
                 </c-browse.empty>
-            {% endfor %}
-        </c-paginate>
+            </c-slot>
+        </c-podcasts.paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

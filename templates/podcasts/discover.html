@@ -14,13 +14,7 @@
     </c-header>
     {% partialdef pagination inline=True %}
         {% cache 300 promoted-podcasts request.get_full_path %}
-            <c-paginate :page="page_obj">
-                {% for podcast in page_obj %}
-                    <c-browse.item>
-                        <c-podcasts.podcast :podcast="podcast" />
-                    </c-browse.item>
-                {% endfor %}
-            </c-paginate>
+            <c-podcasts.paginate :page="page_obj" />
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}
