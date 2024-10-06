@@ -1,12 +1,8 @@
 <c-vars feed />
-{% if feed.podcast.pub_date %}
-    <c-podcasts.podcast :podcast="feed.podcast" />
-{% else %}
-    <c-card :url="feed.url"
-            :title="feed.title"
-            :cover_url="feed.image"
-            rel="noopener noreferrer"
-            target="_blank">
-        View in iTunes
-    </c-card>
-{% endif %}
+<c-card :url="feed.url"
+        :title="feed.title"
+        :cover_url="feed.image"
+        rel="noopener noreferrer"
+        target="_blank">
+    View in iTunes
+</c-card>

@@ -21,7 +21,11 @@
         <c-browse>
             {% for feed in feeds %}
                 <c-browse.item>
-                    <c-podcasts.itunes_feed :feed="feed" />
+                    {% if feed.podcast.pub_date %}
+                        <c-podcasts.podcast :podcast="feed.podcast" />
+                    {% else %}
+                        <c-podcasts.itunes_feed :feed="feed" />
+                    {% endif %}
                 </c-browse.item>
             {% empty %}
                 <c-browse.empty>
