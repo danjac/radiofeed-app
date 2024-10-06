@@ -9,10 +9,11 @@
         <c-header.nav>
             {% if not request.search %}
                 <c-header.nav.item>
-                    <a href="{% url "podcasts:add_private_feed" %}" class="flex items-center btn btn-default">
-                        {% heroicon_mini "plus" class="mr-2" %}
+                    <c-button icon="plus"
+                              hx-get="{% url "podcasts:add_private_feed" %}"
+                              role="link">
                         Add Private Feed
-                    </a>
+                    </c-button>
                 </c-header.nav.item>
                 {% if request.search or page_obj.has_other_pages %}
                     {% if request.search %}
