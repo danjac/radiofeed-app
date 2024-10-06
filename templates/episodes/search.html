@@ -14,17 +14,13 @@
     </c-header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-episodes request.get_full_path %}
-            <c-paginate :page="page_obj">
-                {% for episode in page_obj %}
-                    <c-browse.item>
-                        <c-episodes.episode :episode="episode" />
-                    </c-browse.item>
-                {% empty %}
+            <c-episodes.paginate :page="page_obj">
+                <c-slot name="empty">
                     <c-browse.empty>
                         No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                     </c-browse.empty>
-                {% endfor %}
-            </c-paginate>
+                </c-slot>
+            </c-episodes.paginate>
         {% endcache %}
     {% endpartialdef %}
 {% endblock content %}

@@ -1,0 +1,14 @@
+<c-vars page fk=False />
+<c-paginate :page="page">
+        {% for item in page %}
+                <c-browse.item>
+                        {% if fk %}
+                                <c-episodes.episode :episode="item.episode" />
+                        {% else %}
+                                <c-episodes.episode :episode="item" />
+                        {% endif %}
+                </c-browse.item>
+        {% empty %}
+                {{ empty }}
+        {% endfor %}
+</c-paginate>
