@@ -1,6 +1,5 @@
 {# djlint: off #}
 <c-vars form=None
-        action=request.path
         method="post"
         class="space-y-3"
         hx-post=None
@@ -11,8 +10,6 @@
       method="{{ method }}"
       {% if hx_post %}
           action="{{ hx_post }}"
-      {% else %}
-          action="{{ action }}"
       {% endif %}
       {% if hx_encoding %}
           enctype="{{ hx_encoding }}"

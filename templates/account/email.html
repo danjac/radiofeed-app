@@ -60,7 +60,7 @@
             {% if can_add_email %}
                 <hr />
                 <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
-                <c-form :form="form">
+                <c-form :form="form" :action="request.path">
                     <c-button icon="plus"
                               variant="primary"
                               name="action_add"

@@ -12,7 +12,7 @@
             If you have not created an account yet, then please
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.
         </p>
-        <c-form hx-disable="true">
+        <c-form :action="request.path" hx-disable="true">
             <c-slot name="fields">
                 {% if redirect_field_value %}
                     <input type="hidden"
