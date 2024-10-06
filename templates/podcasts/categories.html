@@ -17,10 +17,7 @@
             <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
                 {% for category in categories %}
                     <li class="py-3 sm:py-1 first:pt-1 first:pb-3 sm:first:pb-0">
-                        <a href="{{ category.get_absolute_url }}"
-                           class="w-full font-semibold link">
-                            <h2>{{ category.name }}</h2>
-                        </a>
+                        <c-link :href="category.get_absolute_url" class="w-full">{{ category.name }}</c-link>
                     </li>
                 {% endfor %}
             </ul>

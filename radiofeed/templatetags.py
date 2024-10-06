@@ -1,7 +1,7 @@
 import functools
 import json
 import math
-from typing import Final
+from typing import Final, TypedDict
 
 from django import template
 from django.conf import settings
@@ -24,6 +24,31 @@ register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 get_cover_image_class = register.simple_tag(get_cover_image_class)
+
+
+class ActiveLink(TypedDict):
+    """ActiveLink data."""
+
+    url: str
+    active: bool
+    exact: bool
+
+
+@register.simple_tag(takes_context=True)
+def active_link(
+    context: RequestContext,
+    url: Model | str | None = None,
+    *url_args,
+    **url_kwargs,
+) -> ActiveLink:
+    """Returns True if current URL matches the given URL."""
+    path = resolve_url(url, *url_args, **url_kwargs) if url else ""
+
+    return ActiveLink(
+        url=path,
+        active=context.request.path.startswith(path),
+        exact=context.request.path == path,
+    )
 
 
 @register.simple_tag
