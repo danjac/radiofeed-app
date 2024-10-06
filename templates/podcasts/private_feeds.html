@@ -30,12 +30,8 @@
         </c-header.nav>
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-paginate :page="page_obj">
-            {% for podcast in page_obj %}
-                <c-browse.item>
-                    <c-podcasts.podcast :podcast="podcast" />
-                </c-browse.item>
-            {% empty %}
+        <c-podcasts.paginate :page="page_obj">
+            <c-slot name="empty">
                 <c-browse.empty>
                     {% if request.search %}
                         No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
@@ -45,9 +41,8 @@
                             To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
                         </p>
                     {% endif %}
-
                 </c-browse.empty>
-            {% endfor %}
+            </c-slot>
         </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}
