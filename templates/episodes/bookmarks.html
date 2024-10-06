@@ -10,19 +10,21 @@
             <c-header.nav>
                 <c-header.nav.item>
                     {% if request.search %}
-                        <c-search.button :search-url="search_episodes_url">
+                        <c-search.button :url="search_episodes_url">
                             Search All Episodes
                         </c-search.button>
                     {% else %}
                         {% if ordering_asc %}
-                            <c-link href="{{ request.path }}{% querystring order="desc" page=None %}">Newest First</c-link>
+                            <c-link href="{{ request.path }}{% querystring order='desc' page=None %}"
+                                    text="Newest First" />
                         {% else %}
-                            <c-link href="{{ request.path }}{% querystring order="asc" page=None %}">Oldest First</c-link>
+                            <c-link href="{{ request.path }}{% querystring order='asc' page=None %}"
+                                    text="Oldest First" />
                         {% endif %}
                     {% endif %}
                 </c-header.nav.item>
                 <c-header.nav.item>
-                    <c-search.form placeholder="Search: Bookmarks" clear-search />
+                    <c-search.form placeholder="Search: Bookmarks" reload />
                 </c-header.nav.item>
             </c-header.nav>
         {% endif %}

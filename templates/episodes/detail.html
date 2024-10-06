@@ -76,26 +76,24 @@
                                     <c-button icon="stop-circle"
                                               variant="primary"
                                               size="lg"
+                                              text="Close"
                                               outline
                                               aria-label="Close Player"
                                               title="Close Player"
                                               class="inline-flex items-center btn btn-primary btn-outline btn-lg"
                                               hx-disabled-elt="this"
                                               hx-post="{% url "episodes:close_player" %}"
-                                              hx-trigger="click once">
-                                        Close
-                                    </c-button>
+                                              hx-trigger="click once" />
                                 {% else %}
                                     <c-button icon="play-circle"
                                               variant="primary"
                                               size="lg"
+                                              text="Play"
                                               aria-label="Open Episode in Player"
                                               title="Open Episode in Player"
                                               hx-disabled-elt="this"
                                               hx-post="{% url "episodes:start_player" episode.pk %}"
-                                              hx-trigger="click once">
-                                        Play
-                                    </c-button>
+                                              hx-trigger="click once" />
                                 {% endif %}
                                 {% if request.htmx.target == target %}
                                     <c-audio-player :audio-log="audio_log" :action="action" />
@@ -115,24 +113,22 @@
                              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
                                 <c-button icon="bookmark-slash"
+                                          text="Bookmark"
                                           aria-label="Remove Episode from your Bookmarks"
                                           title="Remove Episode from your Bookmarks"
                                           class="inline-flex items-center btn btn-default btn-outline"
                                           hx-disabled-elt="this"
                                           hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
-                                          hx-trigger="click once">
-                                    Bookmark
-                                </c-button>
+                                          hx-trigger="click once" />
                             {% else %}
                                 <c-button icon="bookmark"
+                                          text="Bookmark"
                                           aria-label="Add Episode to your Bookmarks"
                                           title="Add Episode to your Bookmarks"
                                           class="inline-flex items-center btn btn-default"
                                           hx-disabled-elt="this"
                                           hx-post="{% url "episodes:add_bookmark" episode.pk %}"
-                                          hx-trigger="click once">
-                                    Bookmark
-                                </c-button>
+                                          hx-trigger="click once" />
                             {% endif %}
                         </div>
                     {% endpartialdef bookmark_button %}
@@ -194,6 +190,7 @@
                             <c-button icon="trash"
                                       variant="danger"
                                       size="sm"
+                                      text="Remove"
                                       title="Remove episode from your History"
                                       hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                                       hx-confirm="Are you sure you want to remove this episode from your History?"
@@ -202,9 +199,7 @@
                                       hx-indicator="this"
                                       hx-push-url="false"
                                       hx-swap="outerHTML"
-                                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                                Remove
-                            </c-button>
+                                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' />
                         </div>
                     {% endif %}
                 </div>

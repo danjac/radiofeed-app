@@ -1,11 +1,11 @@
 {% load heroicons %}
-<c-vars search_url text=""/>
+<c-vars url text=""/>
 <button class="inline-flex items-center btn btn-default"
         tabindex="0"
         role="link"
             {# fmt:off #}
             x-data="{
-                url: '{{ search_url|escapejs }}',
+                url: '{{ url|escapejs }}',
                 search: '{{ request.search.value|escapejs }}',
                 get searchUrl() {
                     const params = new URLSearchParams();

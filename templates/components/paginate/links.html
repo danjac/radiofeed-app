@@ -8,7 +8,8 @@
             {% if page.has_previous %}
                 <c-link href="{{ request.path }}{% querystring page=page.previous_page_number %}"
                         aria-label="Previous Page"
-                        title="Previous Page">Previous</c-link>
+                        text="Previous"
+                        title="Previous Page" />
             {% else %}
                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                       title="First Page"
@@ -18,8 +19,9 @@
         <li>
             {% if page.has_next %}
                 <c-link aria-label="Next Page"
+                        text="Next"
                         href="{{ request.path }}{% querystring page=page.next_page_number %}"
-                        title="Next Page">Next</c-link>
+                        title="Next Page" />
             {% else %}
                 <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
                       title="Last Page"

@@ -18,12 +18,12 @@
                 {% if request.search or page_obj.has_other_pages %}
                     {% if request.search %}
                         <c-header.nav.item>
-                            <c-search.button :search-url="search_podcasts_url"
+                            <c-search.button :url="search_podcasts_url"
                                              text="Search All Podcasts" />
                         </c-header.nav.item>
                     {% endif %}
                     <c-header.nav.item>
-                        <c-search.form placeholder="Search: Private Feeds" clear-search />
+                        <c-search.form placeholder="Search: Private Feeds" reload />
                     </c-header.nav.item>
                 {% endif %}
             {% endif %}

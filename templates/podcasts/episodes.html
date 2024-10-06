@@ -12,16 +12,16 @@
                     <c-header.nav>
                         {% if request.search %}
                             <c-header.nav.item>
-                                <c-search.button :search_url="search_episodes_url">
-                                    Search All Episodes
-                                </c-search.button>
+                                <c-search.button :url="search_episodes_url" text="Search All Episodes" />
                             </c-header.nav.item>
                         {% else %}
                             <c-header.nav.item>
                                 {% if ordering_asc %}
-                                    <c-link href="{{ request.path }}{% querystring order="desc" page=None %}">Newest First</c-link>
+                                    <c-link href="{{ request.path }}{% querystring order='desc' page=None %}"
+                                            text="Newest First" />
                                 {% else %}
-                                    <c-link href="{{ request.path }}{% querystring order="asc" page=None %}">Oldest First</c-link>
+                                    <c-link href="{{ request.path }}{% querystring order='asc' page=None %}"
+                                            text="Oldest First" />
                                 {% endif %}
                             </c-header.nav.item>
                         {% endif %}

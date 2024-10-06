@@ -15,23 +15,20 @@
                                 <c-button icon="trash"
                                           size="lg"
                                           variant="danger"
+                                          text="Remove"
                                           aria-label="Remove podcast from your Private Feeds"
                                           title="Remove podcast from your Private Feeds"
                                           hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
                                           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                           hx-push-url="true"
-                                          hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
-                                          hx-disabled-elt="this">
-                                    Remove
-                                </c-button>
+                                          hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!" />
                             {% else %}
                                 <c-button icon="eye-slash"
                                           size="lg"
+                                          text="Subscribe"
                                           aria-label="This is a private feed, you cannot subscribe to it."
                                           title="This is a private feed, you cannot subscribe to it."
-                                          disabled>
-                                    Subscribe
-                                </c-button>
+                                          disabled />
                             {% endif %}
                         </div>
                     {% else %}
@@ -43,30 +40,27 @@
                                  hx-swap="outerHTML"
                                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% if is_subscribed %}
-                                    <c-button
-                                        icon="eye-slash"
-                                        variant="primary"
-                                        size="lg"
-                                        outline
-                                        aria-label="Unsubscribe from this Podcast"
-                                        title="Unsubscribe from this Podcast"
-                                        hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
-                                        hx-disabled-elt="this"
-                                        hx-trigger="click once">
-                                        Unsubscribe
-                                    </c-button>
+                                    <c-button icon="eye-slash"
+                                              variant="primary"
+                                              size="lg"
+                                              text="Unsubscribe"
+                                              outline
+                                              aria-label="Unsubscribe from this Podcast"
+                                              title="Unsubscribe from this Podcast"
+                                              hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
+                                              hx-disabled-elt="this"
+                                              hx-trigger="click once" />
                                 {% else %}
                                     <c-button
                                         icon="eye"
                                         variant="primary"
                                         size="lg"
+                                        text="Subscribe"
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
                                         hx-post="{% url "podcasts:subscribe" podcast.pk %}"
                                         hx-disabled-elt="this"
-                                        hx-trigger="click once">
-                                        Subscribe
-                                    </c-button>
+                                        hx-trigger="click once" />
                                 {% endif %}
                             </div>
                         {% endpartialdef subscribe_button %}

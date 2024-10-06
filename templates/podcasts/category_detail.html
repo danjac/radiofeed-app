@@ -11,13 +11,13 @@
                 {% if page_obj.has_other_pages or request.search %}
                     {% if request.search %}
                         <c-header.nav.item>
-                            <c-search.button :search-url="search_podcasts_url">
+                            <c-search.button :url="search_podcasts_url">
                                 Search All Podcasts
                             </c-search.button>
                         </c-header.nav.item>
                     {% endif %}
                     <c-header.nav.item>
-                        <c-search.form placeholder="Search: {{ category.name }}" clear-search />
+                        <c-search.form placeholder="Search: {{ category.name }}" reload />
                     </c-header.nav.item>
                 {% endif %}
             </c-header.nav>
