@@ -1,28 +1,21 @@
 {# djlint: off #}
 <c-vars form=None
         action=request.path
-        multipart=False
         method="post"
         class="space-y-3"
-        hx-post=False
-        hx-target="this"
-        hx-swap="outerHTML" />
+        hx-post=None
+        hx-encoding=None
+/>
 {# djlint: on #}
 <form class="{{ class }}"
       method="{{ method }}"
       {% if hx_post %}
           action="{{ hx_post }}"
-          hx-post="{{ hx_post }}"
-          hx-target="{{ hx_target }}"
-          hx-swap="{{ hx_swap }}"
       {% else %}
           action="{{ action }}"
       {% endif %}
-      {% if multipart %}
-          enctype="multipart/form-data"
-          {% if hx_post %}
-              hx-encoding="multipart/form-data"
-          {% endif %}
+      {% if hx_encoding %}
+          enctype="{{ hx_encoding }}"
       {% endif %}
       {{ attrs }}>
     {% csrf_token %}

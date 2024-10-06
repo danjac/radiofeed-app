@@ -12,6 +12,8 @@
         <c-form :form="form"
                 :hx-post="request.path"
                 id="private-feed-form"
+                hx-swap="outerHTML"
+                hx-target="this"
                 hx-vals='{"action": "add"}'>
             <c-button icon="plus" variant="primary">
                 Add Feed

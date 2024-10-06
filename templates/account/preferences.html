@@ -5,6 +5,8 @@
         {% partialdef form inline=True %}
             <c-form :form="form"
                     :hx-post="request.path"
+                    hx-swap="outerHTML"
+                    hx-target="this"
                     id="preferences-form">
                 <c-button icon="check"
                           variant="primary"
