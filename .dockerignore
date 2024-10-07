@@ -28,6 +28,7 @@ LICENSE
 Makefile
 README.md
 conftest.py
+locustfile.py
 docker-compose.yml
 node_modules
 npm-debug.log

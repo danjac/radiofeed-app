@@ -5,6 +5,9 @@ description = "Podcast aggregator app"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"},
 ]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
 dependencies = [
     "django>=5.1",
     "django-allauth[socialaccount]>=64.2.0",
@@ -41,12 +44,11 @@ dependencies = [
     "django-linear-migrations>=2.13.0",
     "django-cotton>=1.1.1",
 ]
-requires-python = "==3.12.*"
-readme = "README.md"
-license = {text = "MIT"}
 
-[project.optional-dependencies]
-dev = [
+[tool.uv]
+dev-dependencies = [
+    "locust>=2.31.8",
+    "pytest-watcher>=0.4.3",
     "pytest>=8.3.2",
     "bandit>=1.7.9",
     "coverage>=7.6.1",
@@ -193,8 +195,3 @@ exclude=[
 
 reportAttributeAccessIssue = false
 reportIncompatibleVariableOverride = false
-
-[tool.uv]
-dev-dependencies = [
-    "pytest-watcher>=0.4.3",
-]
