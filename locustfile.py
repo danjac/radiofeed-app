@@ -1,8 +1,8 @@
 from locust import HttpUser, between, task
 
 
-class QuickstartUser(HttpUser):
-    """Login"""
+class Application(HttpUser):
+    """Test key endpoints"""
 
     wait_time = between(1, 5)
 
@@ -11,6 +11,7 @@ class QuickstartUser(HttpUser):
         """Landing page tests"""
         self.client.get("/")
 
-    def on_start(self):
-        """Login to the application"""
-        self.client.post("/login", json={"username": "foo", "password": "bar"})
+    @task
+    def about(self):
+        """About page"""
+        self.client.get("/about/")
