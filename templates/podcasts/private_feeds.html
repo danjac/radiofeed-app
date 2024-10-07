@@ -11,6 +11,7 @@
                 <c-header.nav.item>
                     <c-button icon="plus"
                               hx-get="{% url "podcasts:add_private_feed" %}"
+                              hx-push-url="true"
                               role="link">
                         Add Private Feed
                     </c-button>
