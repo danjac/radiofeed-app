@@ -6,15 +6,16 @@
             <div class="space-y-3">
                 <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
                 <p>This will delete ALL your data including your subscriptions, bookmarks and listening history.</p>
-                <c-form :action="request.path"
-                        method="post"
-                        hx-disable="true"
+                <c-form hx-disable="true"
                         onsubmit="return confirm('Are you sure?')">
-                    <c-button icon="trash" variant="danger"
-                              name="confirm-delete"
-                              value="true">
-                        Yes, delete my account
-                    </c-button>
+
+                    <c-slot name="buttons">
+                        <c-button icon="trash" variant="danger"
+                                  name="confirm-delete"
+                                  value="true">
+                            Yes, delete my account
+                        </c-button>
+                    </c-slot>
                 </c-form>
             </div>
         </c-account.settings>

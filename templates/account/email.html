@@ -11,8 +11,6 @@
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
                     <c-form id="email-addresses"
-
-                            method="post"
                             action="{% url 'account_email' %}">
                         <c-slot name="fields">
                             {% for emailaddress in emailaddresses %}
@@ -32,25 +30,27 @@
                                 </div>
                             {% endfor %}
                         </c-slot>
-                        {% if num_addresses > 1 %}
-                            <c-button icon="hand-thumb-up"
-                                      variant="primary"
-                                      name="action_primary"
+                        <c-slot name="buttons">
+                            {% if num_addresses > 1 %}
+                                <c-button icon="hand-thumb-up"
+                                          variant="primary"
+                                          name="action_primary"
+                                          value="1">
+                                    Primary
+                                </c-button>
+                                <c-button icon="trash"
+                                          variant="danger"
+                                          name="action_remove"
+                                          value="1">
+                                    Remove
+                                </c-button>
+                            {% endif %}
+                            <c-button icon="envelope"
+                                      name="action_send"
                                       value="1">
-                                Primary
+                                Re-Verify
                             </c-button>
-                            <c-button icon="trash"
-                                      variant="danger"
-                                      name="action_remove"
-                                      value="1">
-                                Remove
-                            </c-button>
-                        {% endif %}
-                        <c-button icon="envelope"
-                                  name="action_send"
-                                  value="1">
-                            Re-Verify
-                        </c-button>
+                        </c-slot>
                     </c-form>
                 {% else %}
                     <p>
@@ -62,11 +62,14 @@
             {% if can_add_email %}
                 <hr />
                 <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
-                <c-form :form="form" :action="request.path" method="post">
-                    <c-button icon="plus"
-                              variant="primary"
-                              name="action_add"
-                              value="true">Add E-Mail</c-button>
+                <c-form :form="form">
+                    <c-slot name="buttons">
+                        <c-button icon="plus"
+                                  text="Add E-Mail"
+                                  variant="primary"
+                                  name="action_add"
+                                  value="true" />
+                    </c-slot>
                 </c-form>
             {% endif %}
         </div>

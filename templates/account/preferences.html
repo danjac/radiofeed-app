@@ -3,15 +3,13 @@
 {% block content %}
     <c-account.settings current="preferences">
         {% partialdef form inline=True %}
-            <c-form :form="form"
-                    :hx-post="request.path"
-                    hx-swap="outerHTML"
-                    hx-target="this"
-                    id="preferences-form">
-                <c-button icon="check"
-                          variant="primary"
-                          text="Save Changes" />
-            </c-form>
+            <c-hx-form :form="form" id="preferences-form">
+                <c-slot name="buttons">
+                    <c-button icon="check"
+                              variant="primary"
+                              text="Save Changes" />
+                </c-slot>
+            </c-hx-form>
         {% endpartialdef form %}
     </c-account.settings>
 {% endblock content %}

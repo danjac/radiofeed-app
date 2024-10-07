@@ -13,9 +13,11 @@
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
             <c-form action="{% url 'account_confirm_email' confirmation.key %}">
-                <c-button icon="check" variant="primary">
-                    Confirm E-Mail
-                </c-button>
+                <c-slot name="buttons">
+                    <c-button icon="check" variant="primary">
+                        Confirm E-Mail
+                    </c-button>
+                </c-slot>
             </c-form>
         {% else %}
             <p>

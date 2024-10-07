@@ -28,16 +28,13 @@
             <div class="space-y-3">
                 <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
                 {% partialdef form inline=True %}
-                    <c-form :form="upload_form"
-                            hx-post="{% url 'users:import_podcast_feeds' %}"
-                            hx-swap="outerHTML"
-                            hx-target="this"
-                            hx-encoding="multipart/form-data"
-                            id="import-feeds-form">
-                        <c-button icon="arrow-up-tray">
-                            Upload OPML
-                        </c-button>
-                    </c-form>
+                    <c-hx-form :form="upload_form"
+                               multipart=True
+                               id="import-feeds-form">
+                        <c-slot name="buttons">
+                            <c-button icon="arrow-up-tray" text="Upload OPML" />
+                        </c-slot>
+                    </c-hx-form>
                 {% endpartialdef form %}
             </div>
         </div>

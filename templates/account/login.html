@@ -21,9 +21,11 @@
                 {% endif %}
                 {{ form }}
             </c-slot>
-            <c-button icon="arrow-right-on-rectangle" variant="primary">
-                Sign In
-            </c-button>
+            <c-slot name="buttons">
+                <c-button icon="arrow-right-on-rectangle" variant="primary">
+                    Sign In
+                </c-button>
+            </c-slot>
         </c-form>
     </div>
 {% endblock content %}
