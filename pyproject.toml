@@ -40,9 +40,9 @@ dependencies = [
     "django-template-partials>=24.4",
     "environs[django]>=11.0.0",
     "django-tailwind-cli>=2.16.0",
-    "granian>=1.6.0",
     "django-linear-migrations>=2.13.0",
     "django-cotton>=1.1.1",
+    "gunicorn>=23.0.0",
 ]
 
 [tool.uv]

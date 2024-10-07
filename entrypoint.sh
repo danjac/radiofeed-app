@@ -2,8 +2,4 @@
 
 set -o errexit
 
-granian radiofeed.wsgi:application \
-    --host 0.0.0.0 \
-    --port "${PORT:=8000}" \
-    --workers "$(nproc --all)" \
-    --interface wsgi
+python -m gunicorn -c ./gunicorn.conf.py -b "0.0.0.0:${PORT:=8000}"
