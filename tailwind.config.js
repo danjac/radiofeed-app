@@ -17,12 +17,10 @@ export default {
         "message-warning",
         "size-16",
         "size-36",
-        "btn-lg",
-        "btn-sm",
+        "lg:size-40",
         "btn-danger",
         "btn-default",
         "btn-primary",
-        "lg:size-40",
     ],
     keyframes: true,
     variants: {
