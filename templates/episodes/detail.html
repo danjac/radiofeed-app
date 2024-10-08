@@ -114,9 +114,9 @@
                             {% if is_bookmarked %}
                                 <c-button icon="bookmark-slash"
                                           text="Bookmark"
+                                          outline
                                           aria-label="Remove Episode from your Bookmarks"
                                           title="Remove Episode from your Bookmarks"
-                                          class="inline-flex items-center btn btn-default btn-outline"
                                           hx-disabled-elt="this"
                                           hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
                                           hx-trigger="click once" />
@@ -125,7 +125,6 @@
                                           text="Bookmark"
                                           aria-label="Add Episode to your Bookmarks"
                                           title="Add Episode to your Bookmarks"
-                                          class="inline-flex items-center btn btn-default"
                                           hx-disabled-elt="this"
                                           hx-post="{% url "episodes:add_bookmark" episode.pk %}"
                                           hx-trigger="click once" />
