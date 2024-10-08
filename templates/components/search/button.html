@@ -13,10 +13,11 @@
                     return `${this.url}?${params.toString()}`;
                 },
             }"{# fmt:on #}
+        x-init="window?.htmx?.process($el)"
         hx-push-url="true"
         :hx-get="searchUrl"
         :disabled="!search"
-        @search.window="search=$event.detail; $nextTick(() => htmx.process($el));">
+        @search.window="search=$event.detail; $nextTick(() => window.htmx.process($el));" {{ attrs }}>
     {% heroicon_mini "magnifying-glass" class="mr-2" %}
     {% if text %}{{ text }}{% else %}{{ slot }}{% endif %}
 </button>
