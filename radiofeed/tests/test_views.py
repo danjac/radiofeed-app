@@ -20,6 +20,7 @@ class TestErrorPages:
             pytest.param("403.html"),
             pytest.param("403_csrf.html"),
             pytest.param("405.html"),
+            pytest.param("429.html"),
             pytest.param("500.html"),
         ],
     )
