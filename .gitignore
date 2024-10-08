@@ -35,6 +35,7 @@ db
 deployments/
 dist/
 hosts
+locust/users.json
 logs
 media/
 node_modules/

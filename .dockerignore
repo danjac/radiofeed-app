@@ -24,6 +24,7 @@
 .vim
 .vscode
 ansible
+locust
 LICENSE
 Makefile
 README.md

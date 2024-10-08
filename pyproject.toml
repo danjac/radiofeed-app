@@ -70,6 +70,7 @@ dev-dependencies = [
     "pyright>=1.1.380",
     "django-stubs>=5.0.4",
     "django-stubs-ext>=5.0.4",
+    "beautifulsoup4>=4.12.3",
 ]
 
 
