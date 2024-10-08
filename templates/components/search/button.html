@@ -20,7 +20,7 @@
         hx-push-url="true"
         :hx-get="searchUrl"
         :disabled="!search"
-        @search.window="search=$event.detail; $nextTick(() => process());" {{ attrs }}>
+        @search.window="search=$event.detail; $nextTick(process);" {{ attrs }}>
     {% heroicon_mini "magnifying-glass" class="mr-2" %}
     {% if text %}{{ text }}{% else %}{{ slot }}{% endif %}
 </button>
