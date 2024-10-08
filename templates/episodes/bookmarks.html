@@ -10,9 +10,7 @@
             <c-header.nav>
                 <c-header.nav.item>
                     {% if request.search %}
-                        <c-search.button :url="search_episodes_url">
-                            Search All Episodes
-                        </c-search.button>
+                        <c-search.button :url="search_episodes_url" text="Search All Episodes" />
                     {% else %}
                         {% if ordering_asc %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
