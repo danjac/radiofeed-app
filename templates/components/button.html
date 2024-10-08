@@ -1,8 +1,8 @@
 {% load heroicons %}
 {# djlint:off #}
-<c-vars icon variant="default" outline=False size="" text="" class=""/>
+<c-vars icon variant="default" outline=False size="base" text="" class=""/>
 {# djlint:oon #}
-<button class="inline-flex items-center btn btn-{{ variant }} {% if outline %}btn-outline{% endif %} {% if size == 'lg' %} text-base lg:text-lg {% elif size == 'sm' %} text-xs lg:text-sm {% endif %} {{ class }}" {{ attrs }}>
+<button class="inline-flex items-center btn btn-{{ variant }} {% if outline %}btn-outline{% endif %} text-{{ size }} {{ class }}" {{ attrs }}>
     {% heroicon_mini icon class="mr-2" %}
     {% if text %}{{ text }}{% else %}{{ slot }}{% endif %}
 </button>
