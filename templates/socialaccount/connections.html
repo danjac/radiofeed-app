@@ -14,7 +14,7 @@
                       action="{% url 'socialaccount_connections' %}">
                     {% csrf_token %}
                     {% for base_account in form.accounts %}
-                        {% with base_account.get_provider_account as account %}
+                        {% with account=base_account.get_provider_account %}
                             <div>
                                 <label for="id_account_{{ base_account.id }}"
                                        class="flex items-center font-semibold">
