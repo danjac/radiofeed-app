@@ -1,5 +1,4 @@
 {% spaceless %}
-    {% load audio_player django_htmx partials static tailwind_cli %}
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -8,34 +7,15 @@
                     {{ request.site.name }}
                 {% endblock title %}
             </title>
-            {% tailwind_css %}
-            <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
-            <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
-            <link rel="manifest" href="{% url "manifest" %}">
-            <link rel="canonical" href="{{ request.build_absolute_uri }}">
-            {% htmx_config %}
-            {% theme_color %}
-            <meta charset="UTF-8" />
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-            <meta name="viewport"
-                  content="width=device-width, initial-scale=1, viewport-fit=no">
-            <meta name="mobile-wep-app-capable" content="yes">
-            <meta name="apple-mobile-wep-app-capable" content="yes">
-            <meta name="copyright" content="Dan Jacob {% now "Y" %}">
-            <meta name="cache-control" content="no-cache">
-            <meta name="description" content="Podcast aggregator site">
-            <meta name="keywords" content="podcasts, rss, feeds">
-            <script defer src="{% static "vendor/alpine-3.14.1.min.js" %}"></script>
-            <script defer src="{% static "vendor/htmx-2.0.2.min.js" %}"></script>
+            {% include "partials.html#head" %}
         </head>
-        {% block body %}
-            <body class="mx-auto font-sans antialiased container-xl scroll-smooth"
-                  hx-boost="true"
-                  hx-target="#content"
-                  hx-swap="innerHTML show:window:top"
-                  hx-indicator="#hx-indicator">
-                <div id="hx-indicator"
-                     x-data="{width: 0}"
+        <body class="mx-auto font-sans antialiased container-xl scroll-smooth"
+              hx-boost="true"
+              hx-target="#content"
+              hx-swap="innerHTML show:window:top"
+              hx-indicator="#hx-indicator">
+            <div id="hx-indicator"
+                 x-data="{width: 0}"
                      {# fmt:off #}
                      x-init="
                         setInterval(() => {
@@ -47,35 +27,28 @@
                             }
                             $el.style.width = width > 0 ? `${10 + (width * 90)}%` : '0px';
                     }, 36);"{# fmt:on #}></div>
-                <c-messages />
-                <div class="flex flex-col h-screen">
-                    <div class="grow">
-                        <c-navbar />
-                        <div class="flex relative py-6 px-2 mx-auto min-h-screen">
-                            {% if user.is_authenticated %}
-                                <aside class="hidden w-full xl:block xl:sticky xl:top-20 xl:w-1/6 xl:h-full">
-                                    <nav>
-                                        <c-navbar.menu />
-                                    </nav>
-                                </aside>
-                            {% endif %}
-                            <main class="mx-auto w-full xl:w-5/6" id="content" hx-history-elt>
-                                {% block content %}
-                                {% endblock content %}
-                            </main>
-                        </div>
+            {% include "partials.html#messages" %}
+            <div class="flex flex-col h-screen">
+                <div class="grow">
+                    <c-navbar />
+                    <div class="flex relative py-6 px-2 mx-auto min-h-screen">
+                        {% if user.is_authenticated %}
+                            <aside class="hidden w-full xl:block xl:sticky xl:top-20 xl:w-1/6 xl:h-full">
+                                <nav>
+                                    <c-navbar.menu />
+                                </nav>
+                            </aside>
+                        {% endif %}
+                        <main class="mx-auto w-full xl:w-5/6" id="content" hx-history-elt>
+                            {% block content %}
+                            {% endblock content %}
+                        </main>
                     </div>
-                    <c-audio-player :audio-log="request.player.audio_log" />
-                    <c-cookie-banner />
                 </div>
-                {% audio_player_script %}
-                {% django_htmx_script %}
-                <script>
-                    if (typeof navigator.serviceWorker !== 'undefined') {
-                        navigator.serviceWorker.register('{% url "service_worker" %}')
-                    }
-                </script>
-            </body>
-        {% endblock body %}
+                <c-audio-player :audio-log="request.player.audio_log" />
+                {% include "partials.html#cookie_banner" %}
+            </div>
+            {% include "partials.html#scripts" %}
+        </body>
     </html>
 {% endspaceless %}
