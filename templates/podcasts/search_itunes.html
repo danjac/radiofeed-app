@@ -15,7 +15,7 @@
             </c-header.nav.item>
         </c-header.nav>
     </c-header>
-    {% cache 300 search-podcasts request.get_full_path %}
+    {% cache 300 search-itunes request.get_full_path %}
         <c-browse>
             {% for feed in feeds %}
                 <c-browse.item>
