@@ -1,0 +1,7 @@
+<c-vars name current url title/>
+<li>
+    <a class="link {% if current == name %}active{% endif %}"
+       href="{{ url }}"
+       title="{{ podcast.cleaned_title }} | {{ title }}"
+       {% if current == name %}aria-current="page"{% endif %}>{{ title }}</a>
+</li>
