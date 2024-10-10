@@ -5,24 +5,24 @@
 {% endblock title %}
 
 {% block content %}
-    <c.header title="Confirm E-mail Address" />
-    <div class="space-y-3">
-        {% if confirmation %}
+    <c-header title="Confirm E-mail Address" />
+    {% if confirmation %}
+        <div class="space-y-6">
             {% user_display confirmation.email_address.user as user_display %}
-            <p class="mb-3">
+            <p>
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
             <c-form action="{% url 'account_confirm_email' confirmation.key %}">
-                <c-slot name="buttons" class="justify-center sm:justify-start">
+                <c-slot name="buttons">
                     <c-button icon="check" variant="primary">
                         Confirm E-Mail
                     </c-button>
                 </c-slot>
             </c-form>
-        {% else %}
-            <p>
-                This e-mail confirmation link expired or is invalid. Please <a href="{% url 'account_email' %}">issue a new e-mail confirmation request</a>.
-            </p>
-        {% endif %}
+    {% else %}
+        <p>
+            This e-mail confirmation link expired or is invalid. Please <a href="{% url 'account_email' %}">issue a new e-mail confirmation request</a>.
+        </p>
+    {% endif %}
     </div>
 {% endblock content %}
