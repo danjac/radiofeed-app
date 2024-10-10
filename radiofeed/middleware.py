@@ -70,6 +70,7 @@ class HtmxMessagesMiddleware(BaseMiddleware):
 class HtmxRedirectMiddleware(BaseMiddleware):
     """If HTMX request will send HX-Location response header if HTTP redirect."""
 
+    # HTMX 2.0.3: must provide explicit target if not `document.body`
     target: str = "#content"
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
