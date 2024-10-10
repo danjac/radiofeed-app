@@ -8,10 +8,10 @@
                     {{ request.site.name }}
                 {% endblock title %}
             </title>
-            {% include "partials.html#head" %}
+            {% include "default_base.html#head" %}
         </head>
         <body class="mx-auto font-sans antialiased text-white bg-gradient-to-b from-violet-900 to-black container-xl scroll-smooth">
-            {% include "partials.html#messages" %}
+            {% include "default_base.html#messages" %}
             {% cache 300 landing-page %}
                 <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
                     <div class="gap-6 py-6 px-6 sm:grid lg:grid-cols-2">
@@ -65,8 +65,8 @@
                     </div>
                 </div>
             {% endcache %}
-            {% include "partials.html#cookie_banner" %}
-            {% include "partials.html#scripts" %}
+            {% include "default_base.html#cookie_banner" %}
+            {% include "default_base.html#scripts" %}
         </body>
     </html>
 {% endspaceless %}
