@@ -59,7 +59,7 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         if get_messages(request):
             response.write(
                 render_to_string(
-                    "default_base.html#messages",
+                    "partials.html#messages",
                     request=request,
                 )
             )
