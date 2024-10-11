@@ -5,9 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header>
-        <c-header.title>Private Feeds</c-header.title>
-    </c-header>
+    <c-header title="Private Feeds" />
     {% partialdef form inline=True %}
         <c-hx-form :form="form"
                    id="private-feed-form"

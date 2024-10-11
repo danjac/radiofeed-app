@@ -10,17 +10,18 @@
             {% if not request.search %}
                 <c-header.nav.item>
                     <c-button icon="plus"
+                              role="link"
+                              text="Add Private Feed"
                               hx-get="{% url "podcasts:add_private_feed" %}"
                               hx-push-url="true"
-                              role="link">
-                        Add Private Feed
-                    </c-button>
+                    />
                 </c-header.nav.item>
                 {% if request.search or page_obj.has_other_pages %}
                     {% if request.search %}
                         <c-header.nav.item>
                             <c-search.button :url="search_podcasts_url"
-                                             text="Search All Podcasts" />
+                                             text="Search All Podcasts"
+                            />
                         </c-header.nav.item>
                     {% endif %}
                     <c-header.nav.item>
