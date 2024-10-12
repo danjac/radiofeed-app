@@ -342,6 +342,7 @@ if env.bool("USE_SECURE_SSL_PROXY", default=True):
             default=["HTTP_X_FORWARDED_PROTO", "https"],
         ),
     )
+    USE_X_FORWARDED_HOST = True
 
 SECURE_SSL_REDIRECT = env.bool("USE_SECURE_SSL_REDIRECT", default=True)
 
