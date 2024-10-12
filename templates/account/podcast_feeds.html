@@ -32,7 +32,9 @@
                                multipart=True
                                id="import-feeds-form">
                         <c-slot name="buttons">
-                            <c-button icon="arrow-up-tray" text="Upload OPML" />
+                            <c-form.buttons>
+                                <c-button icon="arrow-up-tray" text="Upload OPML" />
+                            </c-form.buttons>
                         </c-slot>
                     </c-hx-form>
                 {% endpartialdef form %}

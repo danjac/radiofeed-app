@@ -31,25 +31,27 @@
                             {% endfor %}
                         </c-slot>
                         <c-slot name="buttons">
-                            {% if num_addresses > 1 %}
-                                <c-button icon="hand-thumb-up"
-                                          variant="primary"
-                                          name="action_primary"
+                            <c-form.buttons>
+                                {% if num_addresses > 1 %}
+                                    <c-button icon="hand-thumb-up"
+                                              variant="primary"
+                                              name="action_primary"
+                                              value="1">
+                                        Primary
+                                    </c-button>
+                                    <c-button icon="trash"
+                                              variant="danger"
+                                              name="action_remove"
+                                              value="1">
+                                        Remove
+                                    </c-button>
+                                {% endif %}
+                                <c-button icon="envelope"
+                                          name="action_send"
                                           value="1">
-                                    Primary
+                                    Re-Verify
                                 </c-button>
-                                <c-button icon="trash"
-                                          variant="danger"
-                                          name="action_remove"
-                                          value="1">
-                                    Remove
-                                </c-button>
-                            {% endif %}
-                            <c-button icon="envelope"
-                                      name="action_send"
-                                      value="1">
-                                Re-Verify
-                            </c-button>
+                            </c-form.buttons>
                         </c-slot>
                     </c-form>
                 {% else %}
@@ -64,11 +66,13 @@
                 <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
                 <c-form :form="form">
                     <c-slot name="buttons">
-                        <c-button icon="plus"
-                                  text="Add E-Mail"
-                                  variant="primary"
-                                  name="action_add"
-                                  value="true" />
+                        <c-form.buttons>
+                            <c-button icon="plus"
+                                      text="Add E-Mail"
+                                      variant="primary"
+                                      name="action_add"
+                                      value="true" />
+                        </c-form.buttons>
                     </c-slot>
                 </c-form>
             {% endif %}

@@ -11,12 +11,14 @@
                    id="private-feed-form"
                    hx-vals='{"action": "add"}'>
             <c-slot name="buttons">
-                <c-button icon="plus" variant="primary" text="Add Feed" />
-                <c-button icon="arrow-uturn-left"
-                          type="button"
-                          text="Cancel"
-                          hx-post="{{ request.path }}"
-                          hx-vals='{"action": "cancel"}' />
+                <c-form.buttons>
+                    <c-button icon="plus" variant="primary" text="Add Feed" />
+                    <c-button icon="arrow-uturn-left"
+                              type="button"
+                              text="Cancel"
+                              hx-post="{{ request.path }}"
+                              hx-vals='{"action": "cancel"}' />
+                </c-form.buttons>
             </c-slot>
         </c-hx-form>
     {% endpartialdef form %}
