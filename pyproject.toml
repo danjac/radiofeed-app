@@ -92,8 +92,9 @@ addopts = [
 testpaths = ["radiofeed", "templates"]
 env = [
     "COVERAGE_CORE=sysmon",
-    "USE_COLLECTSTATIC=false",
     "SECURE_SSL_REDIRECT=false",
+    "USE_COLLECTSTATIC=false",
+    "USE_X_FORWARDED_HOST=false",
 ]
 
 [tool.pytest-watcher]
