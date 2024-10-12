@@ -376,13 +376,12 @@ UNSAFE_INLINE = "'unsafe-inline'"
 
 CSP_DEFAULT_SRC = [SELF]
 
-if CSP_SCRIPT_WHITELIST := env.list("CSP_SCRIPT_WHITELIST", default=[]):
-    CSP_SCRIPT_SRC = [
-        SELF,
-        *CSP_SCRIPT_WHITELIST,
-        UNSAFE_EVAL,
-        UNSAFE_INLINE,
-    ]
+CSP_SCRIPT_SRC = [
+    SELF,
+    UNSAFE_EVAL,
+    UNSAFE_INLINE,
+    *env.list("CSP_SCRIPT_WHITELIST", default=[]),
+]
 
 CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
 
