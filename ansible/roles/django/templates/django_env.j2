@@ -21,6 +21,5 @@ SECRET_KEY_FALLBACKS: "{{ secret_key_fallbacks }}"
 {% endif %}
 SENTRY_URL: "{{ sentry_url }}"
 STATIC_URL: "{{ static_url }}"
-USE_HSTS: {{ use_hsts|default(false) }}
-USE_SECURE_SSL_REDIRECT: {{ use_secure_ssl_redirect|default(true) }}
+SECURE_SSL_REDIRECT: {{ use_secure_ssl_redirect|default(true) }}
 USE_SECURE_SSL_PROXY: {{ use_secure_ssl_proxy|default(true) }}

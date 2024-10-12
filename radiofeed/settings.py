@@ -335,26 +335,21 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-if env.bool("USE_SECURE_SSL_PROXY", default=True):
+if USE_X_FORWARDED_HOST := env.bool("USE_X_FORWARDED_HOST", default=True):
     SECURE_PROXY_SSL_HEADER = tuple(
         env.list(
             "SECURE_PROXY_SSL_HEADER",
             default=["HTTP_X_FORWARDED_PROTO", "https"],
         ),
     )
-    USE_X_FORWARDED_HOST = True
 
-SECURE_SSL_REDIRECT = env.bool("USE_SECURE_SSL_REDIRECT", default=True)
+SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
 
-# make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
-# otherwise leave disabled.
-
-if env.bool("USE_HSTS", default=False):
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
-        "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
-    )
-    SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=True)
-    SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=15768001)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False
+)
+SECURE_HSTS_PRELOAD = env.bool("SECURE_HSTS_PRELOAD", default=False)
+SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=0)
 
 # Permissions Policy
 # https://pypi.org/project/django-permissions-policy/

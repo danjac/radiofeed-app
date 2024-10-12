@@ -93,8 +93,7 @@ testpaths = ["radiofeed", "templates"]
 env = [
     "COVERAGE_CORE=sysmon",
     "USE_COLLECTSTATIC=false",
-    "USE_SECURE_SSL_PROXY=false",
-    "USE_SECURE_SSL_REDIRECT=false",
+    "SECURE_SSL_REDIRECT=false",
 ]
 
 [tool.pytest-watcher]
