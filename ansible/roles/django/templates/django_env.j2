@@ -3,6 +3,9 @@ ADMIN_URL: "{{ admin_url }}"
 ADMINS: "{{ admins }}"
 ALLOWED_HOSTS: "{{ allowed_hosts }}"
 CONTACT_EMAIL: "{{ contact_email }}"
+{% if csrf_trusted_origins %}
+CSRF_TRUSTED_ORIGINS: "{{ csrf_trusted_origins }}"
+{% endif %}
 DATABASE_URL: "{{ database_url }}"
 REDIS_URL: "{{ redis_url }}"
 MAILGUN_API_KEY: "{{ mailgun_api_key }}"
@@ -10,8 +13,11 @@ MAILGUN_API_URL: "{{ mailgun_api_url }}"
 MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
 PWA_SHA256_FINGERPRINTS: "{{ pwa_sha256_fingerprints }}"
 SECRET_KEY: "{{ secret_key }}"
+{% if secret_key_fallbacks %}
 SECRET_KEY_FALLBACKS: "{{ secret_key_fallbacks }}"
+{% endif %}
 SENTRY_URL: "{{ sentry_url }}"
 STATIC_URL: "{{ static_url }}"
-USE_HTTPS: {{ use_https|default(true) }}
-USE_HSTS: false { use_hsts|default(false) }}
+USE_HSTS: {{ use_hsts|default(false) }}
+USE_SSL_REDIRECT: {{ use_ssl_redirect|default(true) }}
+USE_SECURE_SSL_PROXY: {{ use_secure_ssl_proxy|default(true) }}

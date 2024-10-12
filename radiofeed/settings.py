@@ -184,6 +184,12 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 CSRF_USE_SESSIONS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    f"{scheme}://{host}"
+    for host in env.list("CSRF_TRUSTED_ORIGINS", default=[])
+    for scheme in ["http", "https"]
+]
+
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 
@@ -329,17 +335,15 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-if env.bool("USE_HTTPS", default=True):
-    SECURE_SSL_REDIRECT = True
-
+if env.bool("USE_SECURE_SSL_PROXY", default=True):
     SECURE_PROXY_SSL_HEADER = tuple(
         env.list(
             "SECURE_PROXY_SSL_HEADER",
             default=["HTTP_X_FORWARDED_PROTO", "https"],
         ),
     )
-else:
-    SECURE_SSL_REDIRECT = False
+
+SECURE_SSL_REDIRECT = env.bool("USE_SECURE_SSL_REDIRECT", default=True)
 
 # make sure to enable USE_HSTS if your load balancer is not using HSTS in production,
 # otherwise leave disabled.
