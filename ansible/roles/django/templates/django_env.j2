@@ -3,6 +3,9 @@ ADMIN_URL: "{{ admin_url }}"
 ADMINS: "{{ admins }}"
 ALLOWED_HOSTS: "{{ allowed_hosts }}"
 CONTACT_EMAIL: "{{ contact_email }}"
+{% if csp_script_whitelist %}
+CSP_SCRIPT_WHITELIST: "{{ csp_script_whitelist }}"
+{% endif %}
 {% if csrf_trusted_origins %}
 CSRF_TRUSTED_ORIGINS: "{{ csrf_trusted_origins }}"
 {% endif %}
@@ -19,5 +22,5 @@ SECRET_KEY_FALLBACKS: "{{ secret_key_fallbacks }}"
 SENTRY_URL: "{{ sentry_url }}"
 STATIC_URL: "{{ static_url }}"
 USE_HSTS: {{ use_hsts|default(false) }}
-USE_SSL_REDIRECT: {{ use_ssl_redirect|default(true) }}
+USE_SECURE_SSL_REDIRECT: {{ use_secure_ssl_redirect|default(true) }}
 USE_SECURE_SSL_PROXY: {{ use_secure_ssl_proxy|default(true) }}

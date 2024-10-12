@@ -380,13 +380,13 @@ UNSAFE_INLINE = "'unsafe-inline'"
 
 CSP_DEFAULT_SRC = [SELF]
 
-CSP_SCRIPT_SRC = [
-    SELF,
-    "*.account.google.com",
-    "*.googleapis.com",
-    UNSAFE_EVAL,
-    UNSAFE_INLINE,
-]
+if CSP_SCRIPT_WHITELIST := env.list("CSP_SCRIPT_WHITELIST", default=[]):
+    CSP_SCRIPT_SRC = [
+        SELF,
+        *CSP_SCRIPT_WHITELIST,
+        UNSAFE_EVAL,
+        UNSAFE_INLINE,
+    ]
 
 CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
 
