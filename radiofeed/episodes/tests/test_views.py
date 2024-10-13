@@ -4,7 +4,7 @@ from datetime import timedelta
 import pytest
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from pytest_django.asserts import assertContains, assertNotContains
+from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
 
 from radiofeed.episodes.middleware import PlayerDetails
 from radiofeed.episodes.models import AudioLog, Bookmark
@@ -14,14 +14,6 @@ from radiofeed.episodes.tests.factories import (
     EpisodeFactory,
 )
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
-from radiofeed.tests.asserts import (
-    assert_200,
-    assert_204,
-    assert_400,
-    assert_401,
-    assert_404,
-    assert_409,
-)
 
 _index_url = reverse_lazy("episodes:index")
 
@@ -161,15 +153,14 @@ class TestEpisodeDetail:
 class TestStartPlayer:
     @pytest.mark.django_db
     def test_play_from_start(self, client, auth_user, episode):
-        assert_200(
-            client.post(
-                self.url(episode),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-player-button",
-                },
-            )
+        response = client.post(
+            self.url(episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-player-button",
+            },
         )
+        assert response.status_code == http.HTTPStatus.OK
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert client.session[PlayerDetails.session_id] == episode.pk
@@ -177,15 +168,15 @@ class TestStartPlayer:
     @pytest.mark.django_db
     def test_another_episode_in_player(self, client, auth_user, player_episode):
         episode = EpisodeFactory()
-        assert_200(
-            client.post(
-                self.url(episode),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-player-button",
-                },
-            )
+        response = client.post(
+            self.url(episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-player-button",
+            },
         )
+
+        assert response.status_code == http.HTTPStatus.OK
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -193,15 +184,15 @@ class TestStartPlayer:
 
     @pytest.mark.django_db
     def test_resume(self, client, auth_user, player_episode):
-        assert_200(
-            client.post(
-                self.url(player_episode),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-player-button",
-                },
-            )
+        response = client.post(
+            self.url(player_episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-player-button",
+            },
         )
+
+        assert response.status_code == http.HTTPStatus.OK
 
         assert client.session[PlayerDetails.session_id] == player_episode.pk
 
@@ -214,15 +205,15 @@ class TestClosePlayer:
 
     @pytest.mark.django_db
     def test_player_empty(self, client, auth_user, episode):
-        assert_204(
-            client.post(
-                self.url,
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-player-button",
-                },
-            )
+        response = client.post(
+            self.url,
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-player-button",
+            },
         )
+
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
 
     @pytest.mark.django_db
     def test_close(
@@ -248,12 +239,12 @@ class TestPlayerTimeUpdate:
 
     @pytest.mark.django_db
     def test_is_running(self, client, player_episode):
-        assert_204(
-            client.post(
-                self.url,
-                {"current_time": "1030"},
-            )
+        response = client.post(
+            self.url,
+            {"current_time": "1030"},
         )
+
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
 
         log = AudioLog.objects.first()
         assert log is not None
@@ -266,12 +257,13 @@ class TestPlayerTimeUpdate:
         session[PlayerDetails.session_id] = episode.pk
         session.save()
 
-        assert_204(
-            client.post(
-                self.url,
-                {"current_time": "1030"},
-            )
+        response = client.post(
+            self.url,
+            {"current_time": "1030"},
         )
+
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
+
         log = AudioLog.objects.first()
         assert log is not None
 
@@ -280,26 +272,29 @@ class TestPlayerTimeUpdate:
 
     @pytest.mark.django_db
     def test_player_not_in_session(self, client, auth_user, episode):
-        assert_204(
-            client.post(
-                self.url,
-                {"current_time": "1030"},
-            )
+        response = client.post(
+            self.url,
+            {"current_time": "1030"},
         )
+
+        assert response.status_code == http.HTTPStatus.NO_CONTENT
 
         assert not AudioLog.objects.exists()
 
     @pytest.mark.django_db
     def test_missing_data(self, client, auth_user, player_episode):
-        assert_400(client.post(self.url))
+        response = client.post(self.url)
+        assert response.status_code == http.HTTPStatus.BAD_REQUEST
 
     @pytest.mark.django_db
     def test_invalid_data(self, client, auth_user, player_episode):
-        assert_400(client.post(self.url, {"current_time": "xyz"}))
+        response = client.post(self.url, {"current_time": "xyz"})
+        assert response.status_code == http.HTTPStatus.BAD_REQUEST
 
     @pytest.mark.django_db
     def test_user_not_authenticated(self, client):
-        assert_401(client.post(self.url, {"current_time": "1000"}))
+        response = client.post(self.url, {"current_time": "1000"})
+        assert response.status_code == http.HTTPStatus.UNAUTHORIZED
 
 
 class TestBookmarks:
@@ -310,7 +305,9 @@ class TestBookmarks:
         BookmarkFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url)
+
         assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed(response, "episodes/bookmarks.html")
 
         assert len(response.context["page"].object_list) == 30
 
@@ -325,7 +322,8 @@ class TestBookmarks:
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
-        assert_200(client.get(self.url))
+        response = client.get(self.url)
+        assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user):
@@ -342,6 +340,8 @@ class TestBookmarks:
         response = client.get(self.url, {"search": "testing"})
 
         assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed(response, "episodes/bookmarks.html")
+
         assert len(response.context["page"].object_list) == 1
 
 
@@ -358,8 +358,8 @@ class TestAddBookmark:
         BookmarkFactory(episode=episode, user=auth_user)
 
         response = client.post(self.url(episode), headers={"HX-Request": "true"})
+        assert response.status_code == http.HTTPStatus.CONFLICT
 
-        assert_409(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     def url(self, episode):
@@ -370,12 +370,12 @@ class TestRemoveBookmark:
     @pytest.mark.django_db
     def test_post(self, client, auth_user, episode):
         BookmarkFactory(user=auth_user, episode=episode)
-        assert_200(
-            client.delete(
-                reverse("episodes:remove_bookmark", args=[episode.pk]),
-                headers={"HX-Request": "true"},
-            )
+        response = client.delete(
+            reverse("episodes:remove_bookmark", args=[episode.pk]),
+            headers={"HX-Request": "true"},
         )
+        assert response.status_code == http.HTTPStatus.OK
+
         assert not Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
 
@@ -386,13 +386,16 @@ class TestHistory:
     def test_get(self, client, auth_user):
         AudioLogFactory.create_batch(33, user=auth_user)
         response = client.get(self.url)
+        assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed(response, "episodes/history.html")
 
         assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
-        assert_200(client.get(self.url))
+        response = client.get(self.url)
+        assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db
     def test_ascending(self, client, auth_user):
@@ -426,15 +429,15 @@ class TestRemoveAudioLog:
         AudioLogFactory(user=auth_user, episode=episode)
         AudioLogFactory(user=auth_user)
 
-        assert_200(
-            client.delete(
-                self.url(episode),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-log",
-                },
-            )
+        response = client.delete(
+            self.url(episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-log",
+            },
         )
+
+        assert response.status_code == http.HTTPStatus.OK
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 1
@@ -443,30 +446,29 @@ class TestRemoveAudioLog:
     def test_is_playing(self, client, auth_user, player_episode):
         """Do not remove log if episode is currently playing"""
 
-        assert_404(
-            client.delete(
-                self.url(player_episode),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-log",
-                },
-            )
+        response = client.delete(
+            self.url(player_episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-log",
+            },
         )
+
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
         assert AudioLog.objects.filter(user=auth_user, episode=player_episode).exists()
 
     @pytest.mark.django_db
     def test_none_remaining(self, client, auth_user, episode):
         log = AudioLogFactory(user=auth_user, episode=episode)
 
-        assert_200(
-            client.delete(
-                self.url(log.episode),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "audio-log",
-                },
-            )
+        response = client.delete(
+            self.url(log.episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-log",
+            },
         )
+        assert response.status_code == http.HTTPStatus.OK
 
         assert not AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert AudioLog.objects.filter(user=auth_user).count() == 0
