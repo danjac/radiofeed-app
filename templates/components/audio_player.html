@@ -3,9 +3,9 @@
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
         {% if audio_log and action != "close" %}
-            {% with episode=audio_log.episode podcast=audio_log.episode.podcast %}
+            {% with episode=audio_log.episode podcast=audio_log.episode.podcast metadata_tag="audioplayer-metadata" %}
                 {% get_media_metadata episode as metadata %}
-                {{ metadata|json_script:"audioplayer-metadata" }}
+                {{ metadata|json_script:metadata_tag }}
                 <div class="h-40 sm:h-28"
                     {# fmt:off #}
                     x-data="
@@ -13,7 +13,7 @@
                         csrfHeader='X-CSRFToken',
                         csrfToken='{{ csrf_token }}',
                         currentTime={{ audio_log.current_time|default:0 }},
-                        metadataTag='audioplayer-metadata',
+                        metadataTag='{{ metadata_tag }}',
                         startPlayer={% if action == "play" %}true{% else %}false{% endif %},
                         timeUpdateUrl='{% url "episodes:player_time_update" %}',
                     )"{# fmt:on #}
