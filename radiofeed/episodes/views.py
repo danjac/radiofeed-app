@@ -213,7 +213,7 @@ def bookmarks(request: HttpRequest) -> TemplateResponse:
 
     return render_pagination_response(
         request,
-        "episodes/history.html",
+        "episodes/bookmarks.html",
         bookmarks,
         {
             "ordering_asc": ordering_asc,
