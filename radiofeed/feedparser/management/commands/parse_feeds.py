@@ -1,9 +1,10 @@
-import argparse
 import contextlib
 from concurrent.futures import wait
+from typing import Annotated
 
-from django.core.management.base import BaseCommand
+import typer
 from django.db.models import Count, F, QuerySet
+from django_typer.management import TyperCommand
 
 from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -12,25 +13,14 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
 
 
-class Command(BaseCommand):
-    """Command implementation."""
+class Command(TyperCommand):
+    """Parse RSS feeds."""
 
-    help = "Parses RSS feeds of all scheduled podcasts."
-
-    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
-        """Add options."""
-        parser.add_argument(
-            "--limit",
-            "-l",
-            type=int,
-            default=360,
-            help="Number of feeds to process",
-        )
-
-    def handle(self, *args, **options) -> None:
-        """Implementation of handle."""
-        limit: int = options["limit"]
-
+    def handle(
+        self,
+        limit: Annotated[int, typer.Option(help="Number of feeds to process")] = 360,
+    ) -> None:
+        """Parses RSS feeds of all scheduled podcasts."""
         client = get_client()
 
         with DatabaseSafeThreadPoolExecutor() as executor:
