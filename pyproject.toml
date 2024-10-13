@@ -43,6 +43,7 @@ dependencies = [
     "django-linear-migrations>=2.13.0",
     "django-cotton>=1.1.1",
     "gunicorn>=23.0.0",
+    "django-typer>=2.3.0",
 ]
 
 [tool.uv]

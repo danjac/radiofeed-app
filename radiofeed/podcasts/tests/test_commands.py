@@ -13,18 +13,7 @@ class TestCreateRecommendations:
                 ("en", RecommendationFactory.create_batch(3)),
             ],
         )
-        call_command("create_recommendations")
-        patched.assert_called()
-
-    @pytest.mark.django_db
-    def test_verbose(self, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.recommender.recommend",
-            return_value=[
-                ("en", RecommendationFactory.create_batch(3)),
-            ],
-        )
-        call_command("create_recommendations", verbosity=2)
+        call_command("recommender", "create")
         patched.assert_called()
 
 
@@ -32,5 +21,5 @@ class TestSendRecommendationsEmails:
     @pytest.mark.django_db()(transaction=True)
     def test_send_emails(self, mocker, user):
         patched = mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
-        call_command("send_recommendations_emails")
+        call_command("recommender", "send")
         patched.assert_called()
