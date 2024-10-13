@@ -1,6 +1,8 @@
+import http
+
 import pytest
 from django.urls import reverse, reverse_lazy
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
@@ -23,6 +25,8 @@ class TestSubscriptions:
         PodcastFactory.create_batch(3, promoted=True)
         assert_200(client.get(_subscriptions_url))
 
+        assertTemplateUsed("podcasts/subscriptions.html")
+
     @pytest.mark.django_db
     def test_user_is_subscribed(self, client, auth_user):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
@@ -31,7 +35,9 @@ class TestSubscriptions:
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(_subscriptions_url)
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
+
+        assertTemplateUsed("podcasts/subscriptions.html")
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == sub.podcast
@@ -48,7 +54,9 @@ class TestSubscriptions:
             },
         )
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
+
+        assertTemplateUsed("podcasts/subscriptions.html#pagination")
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == sub.podcast
@@ -61,7 +69,9 @@ class TestSubscriptions:
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(_subscriptions_url, {"search": sub.podcast.title})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
+
+        assertTemplateUsed("podcasts/subscriptions.html")
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == sub.podcast
@@ -72,7 +82,7 @@ class TestDiscover:
     def test_empty(self, client, auth_user):
         response = client.get(_discover_url)
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 0
 
@@ -85,7 +95,7 @@ class TestDiscover:
         PodcastFactory.create_batch(33, promoted=True)
         response = client.get(_discover_url, {"page": 2})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 3
 
@@ -99,7 +109,7 @@ class TestSearchPodcasts:
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"search": podcast.title})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == podcast
@@ -115,14 +125,14 @@ class TestSearchPodcasts:
         PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
         response = client.get(self.url, {"search": podcast.title})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_search_no_results(self, client, auth_user, faker):
         response = client.get(self.url, {"search": "zzzz"})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 0
 
 
@@ -169,7 +179,7 @@ class TestPodcastSimilar:
         RecommendationFactory.create_batch(3, podcast=podcast)
         response = client.get(podcast.get_similar_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
         assert len(response.context["recommendations"]) == 3
@@ -192,7 +202,7 @@ class TestPodcastDetail:
         podcast = PodcastFactory(website="", owner=faker.name())
         response = client.get(podcast.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
 
@@ -202,7 +212,7 @@ class TestPodcastDetail:
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.get(podcast.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is True
@@ -213,7 +223,7 @@ class TestPodcastDetail:
         SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.get(podcast.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is True
@@ -223,7 +233,7 @@ class TestPodcastDetail:
         podcast = PodcastFactory(private=True)
         response = client.get(podcast.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is False
@@ -232,7 +242,7 @@ class TestPodcastDetail:
     def test_get_podcast_not_subscribed(self, client, auth_user, podcast):
         response = client.get(podcast.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
         assert response.context["is_subscribed"] is False
@@ -241,7 +251,7 @@ class TestPodcastDetail:
     def test_get_podcast_admin(self, client, staff_user, podcast):
         response = client.get(podcast.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert response.context["podcast"] == podcast
         assertContains(response, "Admin")
@@ -267,7 +277,7 @@ class TestPodcastEpisodes:
         EpisodeFactory.create_batch(33, podcast=podcast)
 
         response = client.get(podcast.get_episodes_url())
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 30
 
@@ -275,7 +285,7 @@ class TestPodcastEpisodes:
     def test_no_episodes(self, client, auth_user, podcast):
         response = client.get(podcast.get_episodes_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -286,7 +296,7 @@ class TestPodcastEpisodes:
             podcast.get_episodes_url(),
             {"order": "asc"},
         )
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 30
 
@@ -300,7 +310,7 @@ class TestPodcastEpisodes:
             podcast.get_episodes_url(),
             {"search": episode.title},
         )
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 1
 
 
@@ -314,7 +324,7 @@ class TestCategoryList:
             category.podcasts.add(PodcastFactory())
 
         response = client.get(self.url)
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["categories"]) == 3
 
     @pytest.mark.django_db
@@ -325,7 +335,7 @@ class TestCategoryList:
     ):
         CategoryFactory.create_batch(3)
         response = client.get(self.url)
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["categories"]) == 0
 
     @pytest.mark.django_db
@@ -336,7 +346,7 @@ class TestCategoryList:
         category.podcasts.add(PodcastFactory())
 
         response = client.get(self.url, {"search": "testing"})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["categories"]) == 1
 
     @pytest.mark.django_db
@@ -346,7 +356,7 @@ class TestCategoryList:
         CategoryFactory(name="testing")
 
         response = client.get(self.url, {"search": "testing"})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["categories"]) == 0
 
 
@@ -355,7 +365,7 @@ class TestCategoryDetail:
     def test_get(self, client, auth_user, category):
         PodcastFactory.create_batch(12, categories=[category])
         response = client.get(category.get_absolute_url())
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["category"] == category
 
     @pytest.mark.django_db
@@ -366,14 +376,14 @@ class TestCategoryDetail:
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
         response = client.get(category.get_absolute_url(), {"search": podcast.title})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 1
 
     @pytest.mark.django_db
     def test_no_podcasts(self, client, auth_user, category):
         response = client.get(category.get_absolute_url())
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 0
 
 
@@ -387,7 +397,7 @@ class TestSubscribe:
             },
         )
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -449,7 +459,7 @@ class TestUnsubscribe:
             },
         )
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -487,14 +497,14 @@ class TestPrivateFeeds:
         for podcast in PodcastFactory.create_batch(33, private=True):
             SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.get(self.url)
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["page"].paginator.count == 33
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
         PodcastFactory(private=True)
         response = client.get(self.url)
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["page"].paginator.count == 0
 
     @pytest.mark.django_db
@@ -511,7 +521,7 @@ class TestPrivateFeeds:
 
         response = client.get(self.url, {"search": podcast.title})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == podcast

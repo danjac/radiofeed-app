@@ -1,3 +1,4 @@
+import http
 from datetime import timedelta
 
 import pytest
@@ -40,7 +41,7 @@ class TestIndex:
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user):
         response = client.get(_index_url)
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -48,7 +49,7 @@ class TestIndex:
         EpisodeFactory.create_batch(3)
         response = client.get(_index_url)
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -58,7 +59,7 @@ class TestIndex:
 
         response = client.get(_index_url)
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 1
 
 
@@ -70,14 +71,14 @@ class TestSearchEpisodes:
         EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"search": episode.title})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == episode
 
     @pytest.mark.django_db
     def test_search_no_results(self, auth_user, client):
         response = client.get(self.url, {"search": "zzzz"})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -108,7 +109,7 @@ class TestEpisodeDetail:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
         response = client.get(episode.get_absolute_url())
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["episode"] == episode
 
     @pytest.mark.django_db
@@ -122,7 +123,7 @@ class TestEpisodeDetail:
 
         response = client.get(episode.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["episode"] == episode
 
         assertContains(response, "Remove episode from your History")
@@ -132,7 +133,7 @@ class TestEpisodeDetail:
     def test_no_prev_next_episode(self, client, auth_user, episode):
         response = client.get(episode.get_absolute_url())
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["episode"] == episode
         assertNotContains(response, "No More Episodes")
 
@@ -142,7 +143,7 @@ class TestEpisodeDetail:
             podcast=episode.podcast, pub_date=episode.pub_date - timedelta(days=30)
         )
         response = client.get(episode.get_absolute_url())
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["episode"] == episode
         assertContains(response, "Last Episode")
 
@@ -152,7 +153,7 @@ class TestEpisodeDetail:
             podcast=episode.podcast, pub_date=episode.pub_date + timedelta(days=30)
         )
         response = client.get(episode.get_absolute_url())
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert response.context["episode"] == episode
         assertContains(response, "First Episode")
 
@@ -237,7 +238,7 @@ class TestClosePlayer:
             },
         )
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert player_episode.pk not in client.session
 
@@ -309,7 +310,7 @@ class TestBookmarks:
         BookmarkFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url)
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 30
 
@@ -319,7 +320,7 @@ class TestBookmarks:
 
         response = client.get(self.url, {"order": "asc"})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
@@ -340,7 +341,7 @@ class TestBookmarks:
 
         response = client.get(self.url, {"search": "testing"})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 1
 
 
@@ -349,7 +350,7 @@ class TestAddBookmark:
     def test_post(self, client, auth_user, episode):
         response = client.post(self.url(episode), headers={"HX-Request": "true"})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     @pytest.mark.django_db()(transaction=True)
@@ -386,7 +387,7 @@ class TestHistory:
         AudioLogFactory.create_batch(33, user=auth_user)
         response = client.get(self.url)
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
@@ -398,7 +399,7 @@ class TestHistory:
         AudioLogFactory.create_batch(33, user=auth_user)
 
         response = client.get(self.url, {"order": "asc"})
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
 
         assert len(response.context["page"].object_list) == 30
 
@@ -415,7 +416,7 @@ class TestHistory:
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
         response = client.get(self.url, {"search": "testing"})
 
-        assert_200(response)
+        assert response.status_code == http.HTTPStatus.OK
         assert len(response.context["page"].object_list) == 1
 
 
