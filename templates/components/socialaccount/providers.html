@@ -1,6 +1,5 @@
-{% load socialaccount %}
-<c-vars providers />
-{% if socialaccount_providers %}
+<c-vars providers process=None />
+{% if providers %}
     <div class="flex items-center space-x-3">
         {% for provider in providers %}
             <form method="post"
