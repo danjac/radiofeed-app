@@ -4,7 +4,7 @@ from django.template.response import TemplateResponse
 
 def render_partial_for_target(
     request: HttpRequest, response: TemplateResponse, *, target: str, partial: str
-):
+) -> TemplateResponse:
     """Conditionally renders a template partial if `target` matches the HX-Target header.
 
     Otherwise renders the full template.
