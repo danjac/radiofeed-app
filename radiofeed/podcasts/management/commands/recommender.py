@@ -14,7 +14,7 @@ class Command(TyperCommand):
         """Create recommendations for all supported languages."""
         with DatabaseSafeThreadPoolExecutor() as executor:
             executor.db_safe_map(
-                lambda language: recommender.recommend(language),
+                recommender.recommend,
                 tokenizer.NLTK_LANGUAGES,
             )
 
