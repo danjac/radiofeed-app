@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.signing import Signer
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
-from pytest_django import assertTemplateUsed
+from pytest_django.asserts import assertTemplateUsed
 
 from radiofeed.http_client import Client
 
