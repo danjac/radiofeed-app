@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
-from radiofeed.paginator import DEFAULT_PAGE_SIZE, render_pagination_response
+from radiofeed.paginator import DEFAULT_PAGE_SIZE, render_paginated_response
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
@@ -36,7 +36,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_pagination_response(request, "podcasts/subscriptions.html", podcasts)
+    return render_paginated_response(request, "podcasts/subscriptions.html", podcasts)
 
 
 @require_safe
@@ -44,7 +44,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
-    return render_pagination_response(request, "podcasts/discover.html", podcasts)
+    return render_paginated_response(request, "podcasts/discover.html", podcasts)
 
 
 @require_safe
@@ -66,7 +66,7 @@ def search_podcasts(
             )
         )
 
-        return render_pagination_response(
+        return render_paginated_response(
             request, "podcasts/search_podcasts.html", podcasts
         )
 
@@ -144,7 +144,7 @@ def episodes(
         else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
     )
 
-    return render_pagination_response(
+    return render_paginated_response(
         request,
         "podcasts/episodes.html",
         episodes,
@@ -234,7 +234,7 @@ def category_detail(
         else podcasts.order_by("-pub_date")
     )
 
-    return render_pagination_response(
+    return render_paginated_response(
         request,
         "podcasts/category_detail.html",
         podcasts,
@@ -288,7 +288,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
         else podcasts.order_by("-pub_date")
     )
 
-    return render_pagination_response(request, "podcasts/private_feeds.html", podcasts)
+    return render_paginated_response(request, "podcasts/private_feeds.html", podcasts)
 
 
 @require_form_methods

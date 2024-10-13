@@ -27,7 +27,7 @@ def paginate_lazy(*args, **kwargs) -> SimpleLazyObject:
     return SimpleLazyObject(lambda: paginate(*args, **kwargs))
 
 
-def render_pagination_response(  # noqa: PLR0913
+def render_paginated_response(  # noqa: PLR0913
     request: HttpRequest,
     template_name: str,
     queryset: QuerySet,
