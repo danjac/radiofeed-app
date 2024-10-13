@@ -1,5 +1,4 @@
 import contextlib
-from concurrent.futures import wait
 from typing import Annotated
 
 import typer
@@ -10,7 +9,7 @@ from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.http_client import Client, get_client
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import DatabaseSafeThreadPoolExecutor
+from radiofeed.thread_pool import execute_thread_pool
 
 
 class Command(TyperCommand):
@@ -23,13 +22,10 @@ class Command(TyperCommand):
         """Parses RSS feeds of all scheduled podcasts."""
         client = get_client()
 
-        with DatabaseSafeThreadPoolExecutor() as executor:
-            wait(
-                executor.db_safe_map(
-                    lambda podcast: self._parse_feed(podcast, client),
-                    self._get_scheduled_podcasts(limit),
-                )
-            )
+        execute_thread_pool(
+            lambda podcast: self._parse_feed(podcast, client),
+            self._get_scheduled_podcasts(limit),
+        )
 
     def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
         return (
