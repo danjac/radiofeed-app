@@ -6,8 +6,8 @@
 
 {% block content %}
     <c-account.settings current="social_logins">
-        {% if form.accounts %}
-            <div class="space-y-3">
+        <div class="space-y-3">
+            {% if form.accounts %}
                 <p>You can sign in to your account using any of the following third party accounts:</p>
                 <c-form action="{% url 'socialaccount_connections' %}">
                     <c-slot name="fields">
@@ -42,16 +42,16 @@
                         </c-form.buttons>
                     </c-slot>
                 </c-form>
-        {% else %}
-            <p>You currently have no social network accounts connected to this account.</p>
-        {% endif %}
-        <hr />
-        <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
-        <ul class="flex items-center">
-            {% get_providers as socialaccount_providers %}
-            <c-socialaccount.providers :providers="socialaccount_providers" process="connect" />
-        </ul>
-    </div>
+                <hr />
+            {% else %}
+                <p>You currently have no social network accounts connected to this account.</p>
+            {% endif %}
+            <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
+            <ul class="flex items-center">
+                {% get_providers as socialaccount_providers %}
+                <c-socialaccount.providers :providers="socialaccount_providers" process="connect" />
+            </ul>
+        </div>
     </c-account.settings>
     {% providers_media_js %}
 {% endblock content %}
