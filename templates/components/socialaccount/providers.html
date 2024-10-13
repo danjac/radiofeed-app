@@ -1,7 +1,8 @@
 {% load socialaccount %}
+<c-vars providers />
 {% if socialaccount_providers %}
     <div class="flex items-center space-x-3">
-        {% for provider in socialaccount_providers %}
+        {% for provider in providers %}
             <form method="post"
                   action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
                   hx-disable="true">

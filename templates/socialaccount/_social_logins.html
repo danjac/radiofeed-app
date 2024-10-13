@@ -1,9 +1,0 @@
-{% load socialaccount %}
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-    <div class="flex items-center space-x-3">
-        <span class="font-semibold">Login or Sign up with</span>
-        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-    </div>
-    {% include "socialaccount/snippets/login_extra.html" %}
-{% endif %}
