@@ -3,7 +3,7 @@
 {% if providers %}
     <div class="flex items-center space-x-3">
         <span class="font-semibold">Login or Sign up with</span>
-        <c-socialaccount.providers providers=providers />
+        <c-socialaccount.providers :providers="providers" />
     </div>
     {% providers_media_js %}
 {% endif %}

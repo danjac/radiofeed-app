@@ -49,9 +49,9 @@
         <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
             {% get_providers as socialaccount_providers %}
-            {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+            <c-socialaccount.providers :providers="socialaccount_providers" />
         </ul>
-        {% include "socialaccount/snippets/login_extra.html" %}
     </div>
     </c-account.settings>
+    {% providers_media_js %}
 {% endblock content %}
