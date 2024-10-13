@@ -481,14 +481,14 @@ wheels = [
 
 [[package]]
 name = "django-linear-migrations"
-version = "2.13.0"
+version = "2.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/06/d0/0a4166bbeb120a33401de973062ae1acd57551b7fb699e2bb1f4418cd31b/django_linear_migrations-2.13.0.tar.gz", hash = "sha256:91b5f29c7ba0c56131b5d789c71f5472431569e2f7a5990dec5f939e41b5300f", size = 23200 }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/9d/4cd1afccc6f3ad7927c310bab115166c5a6a5ddd130ad3b48efe17fe1a0a/django_linear_migrations-2.14.0.tar.gz", hash = "sha256:5e53cd47b1619ec70c602eb0efffd202ed856fe26a481e21377d161fda867154", size = 18906 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6c/75/dff691682e50b1bbd19521eb0ab2ff499a2fc3efca9f7006919ee75c6331/django_linear_migrations-2.13.0-py3-none-any.whl", hash = "sha256:4e26c5b123001371461a0b71b6df56e36e52909afe0538bbceb438f9e33c90fb", size = 19236 },
+    { url = "https://files.pythonhosted.org/packages/89/82/b89c62f7297a7592d96abfe72dbc905b31015b8b3659cfe6ce9eb06566f0/django_linear_migrations-2.14.0-py3-none-any.whl", hash = "sha256:618bbef685755077a449a6e73d95ddfa5672d57f6fc2a79d654e9d519380aea8", size = 15515 },
 ]
 
 [[package]]
@@ -575,7 +575,7 @@ wheels = [
 
 [[package]]
 name = "django-typer"
-version = "2.2.2"
+version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -583,9 +583,9 @@ dependencies = [
     { name = "shellingham" },
     { name = "typer-slim" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/32/89/0d45bb83edca98638e558594ae3b96ac37fe6dea53dd1790b4d917407e7f/django_typer-2.2.2.tar.gz", hash = "sha256:c63f294a3bed1156bdd0a8487f4a1aee6247fb9f11d9ba8de8ce25eff5ce80bc", size = 54140 }
+sdist = { url = "https://files.pythonhosted.org/packages/91/d3/dd993ae74426920a38643696a34bdf9a21ab265588b124c0b595968839b0/django_typer-2.3.0.tar.gz", hash = "sha256:3a2f5d8ce72b699df6a17cd83ad9f089903a216458c75d58ac6de18e8bca4dcd", size = 54514 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/e6/4434994dd64e14d97338dfca0bc38ee1f37e4f155916172863649ed19194/django_typer-2.2.2-py3-none-any.whl", hash = "sha256:ad88bd590834402dd5b464e860960f75be7ab83b885bdc41f202b731e16b6dc3", size = 55538 },
+    { url = "https://files.pythonhosted.org/packages/e4/e8/866782b0bc1b4ea50b0e4a0d4d1e232350b4394cf6464656e5f022d7c4a2/django_typer-2.3.0-py3-none-any.whl", hash = "sha256:e7e43019b120e579801bad82c0fca0b0b2c52069be661b0651442b016e558f66", size = 55973 },
 ]
 
 [[package]]
