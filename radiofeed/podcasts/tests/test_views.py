@@ -13,7 +13,6 @@ from radiofeed.podcasts.tests.factories import (
     RecommendationFactory,
     SubscriptionFactory,
 )
-from radiofeed.tests.asserts import assert_200, assert_404, assert_409
 
 _subscriptions_url = reverse_lazy("podcasts:subscriptions")
 _discover_url = reverse_lazy("podcasts:discover")
@@ -23,7 +22,8 @@ class TestSubscriptions:
     @pytest.mark.django_db
     def test_authenticated_no_subscriptions(self, client, auth_user):
         PodcastFactory.create_batch(3, promoted=True)
-        assert_200(client.get(_subscriptions_url))
+        response = client.get(_subscriptions_url)
+        assert response.status_code == http.HTTPStatus.OK
 
         assertTemplateUsed("podcasts/subscriptions.html")
 
@@ -81,14 +81,15 @@ class TestDiscover:
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
         response = client.get(_discover_url)
-
         assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed("podcasts/discover.html")
 
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_invalid_page(self, client, auth_user):
-        assert_200(client.get(_discover_url, {"page": 1000}))
+        response = client.get(_discover_url)
+        assert response.status_code == http.HTTPStatus.OK
 
     @pytest.mark.django_db
     def test_next_page(self, client, auth_user):
@@ -151,7 +152,7 @@ class TestSearchItunes:
                 itunes.Feed(
                     url="https://example.com/id123456",
                     rss="https://feeds.fireside.fm/testandcode/rss",
-                    title="Test & Code : Py4hon Testing",
+                    title="Test & Code : Python Testing",
                     image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
                 ),
                 itunes.Feed(
@@ -167,7 +168,13 @@ class TestSearchItunes:
             "radiofeed.podcasts.itunes.search", return_value=feeds
         )
 
-        assert_200(client.get(self.url, {"search": "test"}))
+        response = client.get(self.url, {"search": "test"})
+        assert response.status_code == http.HTTPStatus.OK
+
+        assertTemplateUsed(response, "podcasts/search_itunes.html")
+
+        assertContains(response, "Test & Code : Python Testing")
+        assertContains(response, podcast.title)
 
         mock_search.assert_called()
 
@@ -265,7 +272,8 @@ class TestLatestEpisode:
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
-        assert_404(client.get(self.url(podcast)))
+        response = client.get(self.url(podcast))
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
     def url(self, podcast):
         return reverse("podcasts:latest_episode", args=[podcast.pk])
@@ -398,6 +406,29 @@ class TestSubscribe:
         )
 
         assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed("podcasts/detail.html#subscribe_button")
+
+        assert Subscription.objects.filter(
+            podcast=podcast, subscriber=auth_user
+        ).exists()
+
+    @pytest.mark.django_db()(transaction=True)
+    def test_already_subscribed(
+        self,
+        client,
+        podcast,
+        auth_user,
+    ):
+        SubscriptionFactory(subscriber=auth_user, podcast=podcast)
+        response = client.post(
+            self.url(podcast),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "subscribe-button",
+            },
+        )
+
+        assert response.status_code == http.HTTPStatus.CONFLICT
 
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -415,31 +446,9 @@ class TestSubscribe:
             },
         )
 
-        assert_404(response)
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         assert not Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    @pytest.mark.django_db()(transaction=True)
-    def test_already_subscribed(
-        self,
-        client,
-        podcast,
-        auth_user,
-    ):
-        SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        assert_409(
-            client.post(
-                self.url(podcast),
-                headers={
-                    "HX-Request": "true",
-                    "HX-Target": "subscribe-button",
-                },
-            )
-        )
-
-        assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
         ).exists()
 
@@ -460,6 +469,7 @@ class TestUnsubscribe:
         )
 
         assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed("podcasts/detail.html#subscribe_button")
 
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -479,7 +489,7 @@ class TestUnsubscribe:
             },
         )
 
-        assert_404(response)
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -547,8 +557,8 @@ class TestRemovePrivateFeed:
     def test_not_private_feed(self, client, auth_user):
         podcast = PodcastFactory(private=False)
         SubscriptionFactory(podcast=podcast, subscriber=auth_user)
-
-        assert_404(client.delete(self.url(podcast), {"rss": podcast.rss}))
+        response = client.delete(self.url(podcast), {"rss": podcast.rss})
+        assert response.status_code == http.HTTPStatus.NOT_FOUND
 
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
@@ -567,12 +577,13 @@ class TestAddPrivateFeed:
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        assert_200(client.get(self.url))
+        response = client.get(self.url)
+        assert response.status_code == http.HTTPStatus.OK
+        assertTemplateUsed("podcasts/add_private_feed.html")
 
     @pytest.mark.django_db
     def test_post_cancel(self, client, auth_user, rss):
         response = client.post(self.url, {"rss": rss, "action": "cancel"})
-
         assert response.url == reverse("podcasts:private_feeds")
         assert Subscription.objects.exists() is False
 
@@ -602,7 +613,8 @@ class TestAddPrivateFeed:
     def test_existing_public(self, client, auth_user):
         podcast = PodcastFactory(private=False)
 
-        assert_200(client.post(self.url, {"rss": podcast.rss}))
+        response = client.post(self.url, {"rss": podcast.rss})
+        assert response.status_code == http.HTTPStatus.OK
 
         assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
