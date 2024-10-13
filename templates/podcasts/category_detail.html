@@ -8,12 +8,12 @@
     {% cache 300 category-detail request.get_full_path %}
         <c-header title="{{ category.name }} Podcasts">
             <c-header.nav>
-                {% if page_obj.has_other_pages or request.search %}
+                {% if page.has_other_pages or request.search %}
                     {% if request.search %}
                         <c-header.nav.item>
-                            <c-search.button :url="search_podcasts_url">
-                                Search All Podcasts
-                            </c-search.button>
+                            <c-search.button url="{% url 'podcasts:search_podcasts' %}"
+                                             text="Search All Podcasts"
+                            />
                         </c-header.nav.item>
                     {% endif %}
                     <c-header.nav.item>
@@ -24,7 +24,7 @@
         </c-header>
         {% partialdef pagination inline=True %}
             {% cache 300 category-podcasts request.get_full_path %}
-                <c-podcasts.paginate :page="page_obj">
+                <c-podcasts.paginate :page="page">
                     <c-slot name="empty">
                         <c-browse.empty>
                             {% if request.search %}

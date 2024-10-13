@@ -41,7 +41,7 @@ class TestIndex:
     def test_no_episodes(self, client, auth_user):
         response = client.get(_index_url)
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_has_no_subscriptions(self, client, auth_user):
@@ -49,7 +49,7 @@ class TestIndex:
         response = client.get(_index_url)
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_has_subscriptions(self, client, auth_user):
@@ -59,7 +59,7 @@ class TestIndex:
         response = client.get(_index_url)
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 1
+        assert len(response.context["page"].object_list) == 1
 
 
 class TestSearchEpisodes:
@@ -71,14 +71,14 @@ class TestSearchEpisodes:
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"search": episode.title})
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == episode
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == episode
 
     @pytest.mark.django_db
     def test_search_no_results(self, auth_user, client):
         response = client.get(self.url, {"search": "zzzz"})
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_search_value_empty(self, auth_user, client):
@@ -311,7 +311,7 @@ class TestBookmarks:
         response = client.get(self.url)
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 30
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_ascending(self, client, auth_user):
@@ -320,7 +320,7 @@ class TestBookmarks:
         response = client.get(self.url, {"order": "asc"})
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 30
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
@@ -341,7 +341,7 @@ class TestBookmarks:
         response = client.get(self.url, {"search": "testing"})
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 1
+        assert len(response.context["page"].object_list) == 1
 
 
 class TestAddBookmark:
@@ -387,7 +387,7 @@ class TestHistory:
         response = client.get(self.url)
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 30
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
@@ -400,7 +400,7 @@ class TestHistory:
         response = client.get(self.url, {"order": "asc"})
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 30
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user):
@@ -416,7 +416,7 @@ class TestHistory:
         response = client.get(self.url, {"search": "testing"})
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 1
+        assert len(response.context["page"].object_list) == 1
 
 
 class TestRemoveAudioLog:

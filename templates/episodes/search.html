@@ -14,7 +14,7 @@
     </c-header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-episodes request.get_full_path %}
-            <c-episodes.paginate :page="page_obj">
+            <c-episodes.paginate :page="page">
                 <c-slot name="empty">
                     <c-browse.empty>
                         No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.

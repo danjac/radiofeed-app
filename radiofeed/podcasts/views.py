@@ -42,8 +42,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
             request,
             "podcasts/subscriptions.html",
             {
-                "page_obj": paginate(request, podcasts),
-                "search_podcasts_url": reverse("podcasts:search_podcasts"),
+                "page": paginate(request, podcasts),
             },
         ),
         target="pagination",
@@ -63,8 +62,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
             request,
             "podcasts/discover.html",
             {
-                "page_obj": paginate_lazy(request, podcasts),
-                "search_podcasts_url": reverse("podcasts:search_podcasts"),
+                "page": paginate_lazy(request, podcasts),
             },
         ),
         target="pagination",
@@ -97,8 +95,7 @@ def search_podcasts(
                 request,
                 "podcasts/search_podcasts.html",
                 {
-                    "page_obj": paginate(request, podcasts),
-                    "search_itunes_url": reverse("podcasts:search_itunes"),
+                    "page": paginate(request, podcasts),
                 },
             ),
             target="pagination",
@@ -125,7 +122,6 @@ def search_itunes(request: HttpRequest) -> HttpResponseRedirect | TemplateRespon
             "podcasts/search_itunes.html",
             {
                 "feeds": feeds,
-                "search_podcasts_url": reverse("podcasts:search_podcasts"),
             },
         )
 
@@ -187,9 +183,8 @@ def episodes(
             "podcasts/episodes.html",
             {
                 "podcast": podcast,
-                "page_obj": paginate_lazy(request, episodes),
-                "search_episodes_url": reverse("episodes:search_episodes"),
                 "ordering_asc": ordering_asc,
+                "page": paginate_lazy(request, episodes),
             },
         ),
         target="pagination",
@@ -283,8 +278,7 @@ def category_detail(
             "podcasts/category_detail.html",
             {
                 "category": category,
-                "page_obj": paginate_lazy(request, podcasts),
-                "search_podcasts_url": reverse("podcasts:search_podcasts"),
+                "page": paginate_lazy(request, podcasts),
             },
         ),
         target="pagination",
@@ -342,8 +336,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
             request,
             "podcasts/private_feeds.html",
             {
-                "page_obj": paginate(request, podcasts),
-                "search_podcasts_url": reverse("podcasts:search_podcasts"),
+                "page": paginate(request, podcasts),
             },
         ),
         target="pagination",

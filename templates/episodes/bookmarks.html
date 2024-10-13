@@ -6,11 +6,13 @@
 
 {% block content %}
     <c-header title="Bookmarks">
-        {% if request.search or page_obj.has_other_pages %}
+        {% if request.search or page.has_other_pages %}
             <c-header.nav>
                 <c-header.nav.item>
                     {% if request.search %}
-                        <c-search.button :url="search_episodes_url" text="Search All Episodes" />
+                        <c-search.button url="{% url 'episodes:search_episodes' %}"
+                                         text="Search All Episodes"
+                        />
                     {% else %}
                         {% if ordering_asc %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
@@ -26,7 +28,7 @@
         {% endif %}
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-episodes.paginate :page="page_obj" fk>
+        <c-episodes.paginate :page="page" fk>
             <c-slot name="empty">
 
                 <c-browse.empty>

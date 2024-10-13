@@ -7,11 +7,13 @@
 
 {% block content %}
     <c-header title="Subscriptions">
-        {% if request.search or page_obj.has_other_pages %}
+        {% if request.search or page.has_other_pages %}
             <c-header.nav>
                 {% if request.search %}
                     <c-header.nav.item>
-                        <c-search.button :url="search_podcasts_url" text="Search All Podcasts" />
+                        <c-search.button url="{% url 'podcasts:search_podcasts' %}"
+                                         text="Search All Podcasts"
+                        />
                     </c-header.nav.item>
                 {% endif %}
                 <c-header.nav.item>
@@ -21,7 +23,7 @@
         {% endif %}
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-podcasts.paginate :page="page_obj">
+        <c-podcasts.paginate :page="page">
             <c-slot name="empty">
                 <c-browse.empty>
                     {% if request.search %}

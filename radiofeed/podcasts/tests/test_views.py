@@ -33,8 +33,8 @@ class TestSubscriptions:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == sub.podcast
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == sub.podcast
 
     @pytest.mark.django_db
     def test_htmx_request(self, client, auth_user):
@@ -50,8 +50,8 @@ class TestSubscriptions:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == sub.podcast
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == sub.podcast
 
     @pytest.mark.django_db
     def test_user_is_subscribed_search(self, client, auth_user):
@@ -63,8 +63,8 @@ class TestSubscriptions:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == sub.podcast
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == sub.podcast
 
 
 class TestDiscover:
@@ -74,7 +74,7 @@ class TestDiscover:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_invalid_page(self, client, auth_user):
@@ -87,7 +87,7 @@ class TestDiscover:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 3
+        assert len(response.context["page"].object_list) == 3
 
 
 class TestSearchPodcasts:
@@ -101,8 +101,8 @@ class TestSearchPodcasts:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == podcast
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == podcast
 
     @pytest.mark.django_db
     def test_search_value_empty(self, client, auth_user, faker):
@@ -117,13 +117,13 @@ class TestSearchPodcasts:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_search_no_results(self, client, auth_user, faker):
         response = client.get(self.url, {"search": "zzzz"})
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
 
 class TestSearchItunes:
@@ -269,14 +269,14 @@ class TestPodcastEpisodes:
         response = client.get(podcast.get_episodes_url())
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 30
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
         response = client.get(podcast.get_episodes_url())
 
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
     def test_ascending(self, client, auth_user, podcast):
@@ -288,7 +288,7 @@ class TestPodcastEpisodes:
         )
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 30
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, podcast, faker):
@@ -301,7 +301,7 @@ class TestPodcastEpisodes:
             {"search": episode.title},
         )
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 1
+        assert len(response.context["page"].object_list) == 1
 
 
 class TestCategoryList:
@@ -368,13 +368,13 @@ class TestCategoryDetail:
         response = client.get(category.get_absolute_url(), {"search": podcast.title})
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 1
+        assert len(response.context["page"].object_list) == 1
 
     @pytest.mark.django_db
     def test_no_podcasts(self, client, auth_user, category):
         response = client.get(category.get_absolute_url())
         assert_200(response)
-        assert len(response.context["page_obj"].object_list) == 0
+        assert len(response.context["page"].object_list) == 0
 
 
 class TestSubscribe:
@@ -488,14 +488,14 @@ class TestPrivateFeeds:
             SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.get(self.url)
         assert_200(response)
-        assert response.context["page_obj"].paginator.count == 33
+        assert response.context["page"].paginator.count == 33
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
         PodcastFactory(private=True)
         response = client.get(self.url)
         assert_200(response)
-        assert response.context["page_obj"].paginator.count == 0
+        assert response.context["page"].paginator.count == 0
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, faker):
@@ -513,8 +513,8 @@ class TestPrivateFeeds:
 
         assert_200(response)
 
-        assert len(response.context["page_obj"].object_list) == 1
-        assert response.context["page_obj"].object_list[0] == podcast
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == podcast
 
 
 class TestRemovePrivateFeed:

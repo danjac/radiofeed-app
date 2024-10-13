@@ -8,13 +8,13 @@
     <c-header title="New Releases">
         <c-header.nav>
             <c-header.nav.item>
-                <c-search.form :url="search_episodes_url"
+                <c-search.form url="{% url 'episodes:search_episodes' %}"
                                placeholder="Search: Episodes" />
             </c-header.nav.item>
         </c-header.nav>
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-episodes.paginate :page="page_obj">
+        <c-episodes.paginate :page="page">
             <c-slot name="empty">
                 <c-browse.empty>
                     <p>You're not following any podcasts yet.</p>
