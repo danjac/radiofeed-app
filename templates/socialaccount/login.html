@@ -6,23 +6,43 @@
 
 {% block content %}
     {% with provider_name=provider.name %}
-        {% if process == "connect" %}
-            <h1 class="pb-3 mb-3 text-lg font-bold border-b lg:text-xl">Connect to {{ provider_name }}</h1>
-            <p class="mb-3">You are about to connect a new third party account from {{ provider_name }}.</p>
-        {% else %}
-            <h1 class="pb-3 mb-3 text-lg font-bold border-b lg:text-xl">Sign In Via {{ provider_name }}</h1>
-            <p class="mb-3">You are about to sign in using a third party account from {{ provider_name }}.</p>
-        {% endif %}
-        <form method="post" hx-disable="true">
-            {% csrf_token %}
-            <button class="inline-flex items-center btn btn-primary" type="submit">
-                {% heroicon_mini "arrow-right-on-rectangle" class="mr-2" %}
+        <c-header>
+            <c-header.title>
                 {% if process == "connect" %}
-                    Connect
+                    Connect to {{ provider_name }}
                 {% else %}
-                    Sign In
+                    Sign In Via {{ provider_name }}
                 {% endif %}
-            </button>
-        </form>
+            </c-header.title>
+        </c-header>
+        <p class="mb-3">
+            {% if process == "connect" %}
+                You are about to connect a new third party account from {{ provider_name }}.
+            {% else %}
+                You are about to sign in using a third party account from {{ provider_name }}.
+            {% endif %}
+        </p>
+        <c-form hx-disable="true">
+            <c-slot name="fields">
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                           name="{{ redirect_field_name }}"
+                           value="{{ redirect_field_value }}" />
+                {% endif %}
+            </c-slot>
+            <c-slot name="buttons">
+                <c-forms.buttons>
+                    <c-button icon="arrow-right-on-rectangle"
+                              type="submit"
+                              variant="primary">
+                        {% if process == "connect" %}
+                            Connect
+                        {% else %}
+                            Sign In
+                        {% endif %}
+                    </c-button>
+                </c-forms.buttons>
+            </c-slot>
+        </c-form>
     {% endwith %}
 {% endblock content %}
