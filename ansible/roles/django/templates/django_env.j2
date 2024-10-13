@@ -6,9 +6,6 @@ CONTACT_EMAIL: "{{ contact_email }}"
 {% if csp_script_whitelist is defined %}
 CSP_SCRIPT_WHITELIST: "{{ csp_script_whitelist }}"
 {% endif %}
-{% if csrf_trusted_origins is defined %}
-CSRF_TRUSTED_ORIGINS: "{{ csrf_trusted_origins }}"
-{% endif %}
 DATABASE_URL: "{{ database_url }}"
 REDIS_URL: "{{ redis_url }}"
 MAILGUN_API_KEY: "{{ mailgun_api_key }}"
