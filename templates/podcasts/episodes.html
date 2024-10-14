@@ -17,7 +17,7 @@
                             </c-header.nav.item>
                         {% else %}
                             <c-header.nav.item>
-                                {% if ordering_asc %}
+                                {% if ordering == "asc" %}
                                     <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
                                         Newest First</a>
                                 {% else %}

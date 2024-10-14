@@ -136,12 +136,12 @@ def episodes(
     podcast = _get_podcast_or_404(podcast_id)
 
     episodes = podcast.episodes.select_related("podcast")
-    ordering_asc = request.GET.get("order", "desc") == "asc"
+    ordering = request.GET.get("order", "desc")
 
     episodes = (
         episodes.search(request.search.value).order_by("-rank", "-pub_date")
         if request.search
-        else episodes.order_by("pub_date" if ordering_asc else "-pub_date")
+        else episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
     )
 
     return render_paginated_response(
@@ -150,7 +150,7 @@ def episodes(
         episodes,
         {
             "podcast": podcast,
-            "ordering_asc": ordering_asc,
+            "ordering": ordering,
         },
     )
 

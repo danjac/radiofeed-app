@@ -14,7 +14,7 @@
                                          text="Search All Episodes"
                         />
                     {% else %}
-                        {% if ordering_asc %}
+                        {% if ordering == "asc" %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
                         {% else %}
                             <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">Oldest First</a>
