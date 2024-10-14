@@ -12,6 +12,8 @@ def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:
 
 
 assert200 = functools.partial(assert_status, status=http.HTTPStatus.OK)
+assert204 = functools.partial(assert_status, status=http.HTTPStatus.NO_CONTENT)
+assert400 = functools.partial(assert_status, status=http.HTTPStatus.BAD_REQUEST)
 assert401 = functools.partial(assert_status, status=http.HTTPStatus.UNAUTHORIZED)
 assert404 = functools.partial(assert_status, status=http.HTTPStatus.NOT_FOUND)
 assert409 = functools.partial(assert_status, status=http.HTTPStatus.CONFLICT)

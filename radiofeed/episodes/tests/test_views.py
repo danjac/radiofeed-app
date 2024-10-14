@@ -1,4 +1,3 @@
-import http
 from datetime import timedelta
 
 import pytest
@@ -14,7 +13,14 @@ from radiofeed.episodes.tests.factories import (
     EpisodeFactory,
 )
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
-from radiofeed.tests.asserts import assert200, assert401, assert404
+from radiofeed.tests.asserts import (
+    assert200,
+    assert204,
+    assert400,
+    assert401,
+    assert404,
+    assert409,
+)
 
 _index_url = reverse_lazy("episodes:index")
 
@@ -214,7 +220,7 @@ class TestClosePlayer:
             },
         )
 
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert204(response)
 
     @pytest.mark.django_db
     def test_close(
@@ -245,7 +251,7 @@ class TestPlayerTimeUpdate:
             {"current_time": "1030"},
         )
 
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert204(response)
 
         log = AudioLog.objects.first()
         assert log is not None
@@ -263,7 +269,7 @@ class TestPlayerTimeUpdate:
             {"current_time": "1030"},
         )
 
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert204(response)
 
         log = AudioLog.objects.first()
         assert log is not None
@@ -278,19 +284,19 @@ class TestPlayerTimeUpdate:
             {"current_time": "1030"},
         )
 
-        assert response.status_code == http.HTTPStatus.NO_CONTENT
+        assert204(response)
 
         assert not AudioLog.objects.exists()
 
     @pytest.mark.django_db
     def test_missing_data(self, client, auth_user, player_episode):
         response = client.post(self.url)
-        assert response.status_code == http.HTTPStatus.BAD_REQUEST
+        assert400(response)
 
     @pytest.mark.django_db
     def test_invalid_data(self, client, auth_user, player_episode):
         response = client.post(self.url, {"current_time": "xyz"})
-        assert response.status_code == http.HTTPStatus.BAD_REQUEST
+        assert400(response)
 
     @pytest.mark.django_db
     def test_user_not_authenticated(self, client):
@@ -359,7 +365,7 @@ class TestAddBookmark:
         BookmarkFactory(episode=episode, user=auth_user)
 
         response = client.post(self.url(episode), headers={"HX-Request": "true"})
-        assert response.status_code == http.HTTPStatus.CONFLICT
+        assert409(response)
 
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
