@@ -1,4 +1,3 @@
-import http
 import pathlib
 
 import pytest
@@ -9,6 +8,7 @@ from pytest_django.asserts import assertTemplateUsed
 from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.tests.asserts import assert200
 from radiofeed.users.models import User
 
 
@@ -18,7 +18,7 @@ class TestUserPreferences:
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         response = client.get(self.url, headers={"HX-Request": "true"})
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assertTemplateUsed(response, "account/preferences.html")
 
     @pytest.mark.django_db
@@ -62,7 +62,7 @@ class TestUserStats:
 
         response = client.get(self.url)
 
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
         assertTemplateUsed(response, self.template)
 
@@ -74,7 +74,7 @@ class TestUserStats:
 
         response = client.get(self.url)
 
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
         assertTemplateUsed(response, self.template)
 
@@ -95,7 +95,7 @@ class TestImportPodcastFeeds:
     def test_get(self, client, auth_user):
         response = client.get(self.url)
         assertTemplateUsed(response, "account/podcast_feeds.html")
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
     @pytest.mark.django_db
     def test_post_has_new_feeds(self, client, auth_user, upload_file):
@@ -123,7 +123,7 @@ class TestImportPodcastFeeds:
             },
         )
 
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
     @pytest.mark.django_db
@@ -136,7 +136,7 @@ class TestImportPodcastFeeds:
                 "HX-Target": "import-feeds-form",
             },
         )
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
         assert Subscription.objects.filter(subscriber=auth_user).count() == 0
 
@@ -158,7 +158,7 @@ class TestImportPodcastFeeds:
             },
         )
 
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assert Subscription.objects.filter(subscriber=auth_user).exists()
 
     @pytest.mark.django_db
@@ -171,7 +171,7 @@ class TestImportPodcastFeeds:
                 "HX-Target": "import-feeds-form",
             },
         )
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
 
@@ -190,26 +190,26 @@ class TestDeleteAccount:
     @pytest.mark.django_db
     def test_get_not_logged_in(self, client):
         response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assertTemplateUsed(response, "account/delete_account.html")
 
     @pytest.mark.django_db
     def test_post_not_logged_in(self, client):
         response = client.post(self.url, {"confirm-delete": True})
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
         response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assertTemplateUsed(response, "account/delete_account.html")
         assert User.objects.exists()
 
     @pytest.mark.django_db
     def test_post_unconfirmed(self, client, auth_user):
         response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assert User.objects.exists()
 
     @pytest.mark.django_db

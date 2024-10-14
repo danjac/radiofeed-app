@@ -10,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
 from radiofeed.http_client import Client
+from radiofeed.tests.asserts import assert200, assert404
 
 
 class TestErrorPages:
@@ -35,7 +36,7 @@ class TestIndex:
     @pytest.mark.django_db
     def test_anonymous(self, client):
         response = client.get(self.url)
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assertTemplateUsed(response, "index.html")
 
     @pytest.mark.django_db
@@ -48,63 +49,63 @@ class TestManifest:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("manifest"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestAssetlinks:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("assetlinks"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestServiceWorker:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("service_worker"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestFavicon:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("favicon"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestRobots:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("robots"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestSecurty:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("security"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestAbout:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("about"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestPrivacy:
     @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("privacy"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
 
 class TestAcceptGdprCookies:
     @pytest.mark.django_db
     def test_post(self, client):
         response = client.post(reverse("accept_gdpr_cookies"))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
         assert "accept-cookies" in response.cookies
 
 
@@ -130,22 +131,22 @@ class TestCoverImage:
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         response = client.get(self.get_url(96, self.encode_url(self.cover_url)))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
     @pytest.mark.django_db
     def test_not_accepted_size(self, client, db, mocker):
         response = client.get(self.get_url(500, self.encode_url(self.cover_url)))
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
+        assert404(response)
 
     @pytest.mark.django_db
     def test_missing_url_param(self, client, db, mocker):
         response = client.get(reverse("cover_image", kwargs={"size": 100}))
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
+        assert404(response)
 
     @pytest.mark.django_db
     def test_unsigned_url(self, client, db):
         response = client.get(self.get_url(96, self.cover_url))
-        assert response.status_code == http.HTTPStatus.NOT_FOUND
+        assert404(response)
 
     @pytest.mark.django_db
     def test_failed_download(self, client, db, mocker):
@@ -156,7 +157,7 @@ class TestCoverImage:
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
 
         response = client.get(self.get_url(96, self.encode_url(self.cover_url)))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
 
     @pytest.mark.django_db
     def test_failed_process(self, client, db, mocker):
@@ -167,4 +168,4 @@ class TestCoverImage:
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
         response = client.get(self.get_url(96, self.encode_url(self.cover_url)))
-        assert response.status_code == http.HTTPStatus.OK
+        assert200(response)
