@@ -24,7 +24,7 @@ class TestSubscriptions:
         response = client.get(_subscriptions_url)
         assert200(response)
 
-        assertTemplateUsed("podcasts/subscriptions.html")
+        assertTemplateUsed(response, "podcasts/subscriptions.html")
 
     @pytest.mark.django_db
     def test_user_is_subscribed(self, client, auth_user):
@@ -36,7 +36,7 @@ class TestSubscriptions:
 
         assert200(response)
 
-        assertTemplateUsed("podcasts/subscriptions.html")
+        assertTemplateUsed(response, "podcasts/subscriptions.html")
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == sub.podcast
@@ -55,7 +55,7 @@ class TestSubscriptions:
 
         assert200(response)
 
-        assertTemplateUsed("podcasts/subscriptions.html#pagination")
+        assertContains(response, 'id="pagination"')
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == sub.podcast
@@ -70,7 +70,7 @@ class TestSubscriptions:
 
         assert200(response)
 
-        assertTemplateUsed("podcasts/subscriptions.html")
+        assertTemplateUsed(response, "podcasts/subscriptions.html")
 
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == sub.podcast
@@ -81,7 +81,7 @@ class TestDiscover:
     def test_empty(self, client, auth_user):
         response = client.get(_discover_url)
         assert200(response)
-        assertTemplateUsed("podcasts/discover.html")
+        assertTemplateUsed(response, "podcasts/discover.html")
 
         assert len(response.context["page"].object_list) == 0
 
@@ -411,7 +411,7 @@ class TestSubscribe:
         )
 
         assert200(response)
-        assertTemplateUsed("podcasts/detail.html#subscribe_button")
+        assertContains(response, 'id="subscribe-button"')
 
         assert Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -474,7 +474,7 @@ class TestUnsubscribe:
         )
 
         assert200(response)
-        assertTemplateUsed("podcasts/detail.html#subscribe_button")
+        assertContains(response, 'id="subscribe-button"')
 
         assert not Subscription.objects.filter(
             podcast=podcast, subscriber=auth_user
@@ -583,7 +583,7 @@ class TestAddPrivateFeed:
     def test_get(self, client, auth_user):
         response = client.get(self.url)
         assert200(response)
-        assertTemplateUsed("podcasts/add_private_feed.html")
+        assertTemplateUsed(response, "podcasts/private_feed_form.html")
 
     @pytest.mark.django_db
     def test_post_cancel(self, client, auth_user, rss):
