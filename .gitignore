@@ -22,6 +22,8 @@
 .pytest_cache/
 .python-version
 .ruff_cache
+.terraform*
+.tsvars
 .vault_pass
 .venv
 .vim/
@@ -44,6 +46,7 @@ npm-debug.log*
 requirements-ci.txt
 static/tailwind.css
 staticfiles
+terraform.tfstate*
 venv
 ansible/.vault_pass
 ansible/hosts
