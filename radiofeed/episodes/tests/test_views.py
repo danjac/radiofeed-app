@@ -41,6 +41,7 @@ class TestIndex:
     def test_no_episodes(self, client, auth_user):
         response = client.get(_index_url)
         assert200(response)
+        assertTemplateUsed(response, "episodes/index.html")
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -49,6 +50,7 @@ class TestIndex:
         response = client.get(_index_url)
 
         assert200(response)
+        assertTemplateUsed(response, "episodes/index.html")
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -59,6 +61,7 @@ class TestIndex:
         response = client.get(_index_url)
 
         assert200(response)
+        assertTemplateUsed(response, "episodes/index.html")
         assert len(response.context["page"].object_list) == 1
 
 
@@ -71,6 +74,7 @@ class TestSearchEpisodes:
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"search": episode.title})
         assert200(response)
+        assertTemplateUsed(response, "episodes/search.html")
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == episode
 
@@ -78,6 +82,7 @@ class TestSearchEpisodes:
     def test_search_no_results(self, auth_user, client):
         response = client.get(self.url, {"search": "zzzz"})
         assert200(response)
+        assertTemplateUsed(response, "episodes/search.html")
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
@@ -109,6 +114,7 @@ class TestEpisodeDetail:
     def test_ok(self, client, auth_user, episode):
         response = client.get(episode.get_absolute_url())
         assert200(response)
+        assertTemplateUsed(response, "episodes/detail.html")
         assert response.context["episode"] == episode
 
     @pytest.mark.django_db
@@ -123,6 +129,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
 
         assert200(response)
+        assertTemplateUsed(response, "episodes/detail.html")
         assert response.context["episode"] == episode
 
         assertContains(response, "Remove episode from your History")
@@ -133,6 +140,7 @@ class TestEpisodeDetail:
         response = client.get(episode.get_absolute_url())
 
         assert200(response)
+        assertTemplateUsed(response, "episodes/detail.html")
         assert response.context["episode"] == episode
         assertNotContains(response, "No More Episodes")
 
@@ -143,6 +151,7 @@ class TestEpisodeDetail:
         )
         response = client.get(episode.get_absolute_url())
         assert200(response)
+        assertTemplateUsed(response, "episodes/detail.html")
         assert response.context["episode"] == episode
         assertContains(response, "Last Episode")
 
@@ -153,6 +162,7 @@ class TestEpisodeDetail:
         )
         response = client.get(episode.get_absolute_url())
         assert200(response)
+        assertTemplateUsed(response, "episodes/detail.html")
         assert response.context["episode"] == episode
         assertContains(response, "First Episode")
 
@@ -168,6 +178,7 @@ class TestStartPlayer:
             },
         )
         assert200(response)
+        assertContains(response, 'id="audio-player-button"')
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
         assert client.session[PlayerDetails.session_id] == episode.pk
@@ -184,6 +195,7 @@ class TestStartPlayer:
         )
 
         assert200(response)
+        assertContains(response, 'id="audio-player-button"')
 
         assert AudioLog.objects.filter(user=auth_user, episode=episode).exists()
 
@@ -200,6 +212,7 @@ class TestStartPlayer:
         )
 
         assert200(response)
+        assertContains(response, 'id="audio-player-button"')
 
         assert client.session[PlayerDetails.session_id] == player_episode.pk
 
@@ -237,6 +250,7 @@ class TestClosePlayer:
         )
 
         assert200(response)
+        assertContains(response, 'id="audio-player-button"')
 
         assert player_episode.pk not in client.session
 

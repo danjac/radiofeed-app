@@ -84,7 +84,7 @@ The `ansible` directory contains full Playbooks for a multi-server deployment to
 
 ### Deployment with Hetzner
 
-A full deployment guide for Hetzner Cloud is available.
+A full deployment guide for Hetzner Cloud is available. You should have a DNS domain set up using e.g. Hetzner DNS or Cloudflare.
 
 1. [Create a new Hetzner Cloud project](https://docs.hetzner.com/cloud/)
 2. Go to Security > API Tokens and create a new token with read/write access
@@ -94,6 +94,7 @@ A full deployment guide for Hetzner Cloud is available.
 6. Change to the `ansible` directory and use `ansible-vault create hosts` to create a new inventory file and add the IP addresses of all the servers
 7. Do the same for `vars/django.yml`, `vars/postgres.yml`, and `vars/site.yml` to create the necessary variables (see example vars files for guidance)
 8. Run `ansible-playbook -i hosts site.yml` to deploy the application
+9. In your DNS configuration, point your domain to the new load balancer IP address
 
 ### Scheduling background tasks
 
