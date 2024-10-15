@@ -1579,18 +1579,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytest-edit"
-version = "1.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d2/41/d896f858e5745019c588b8f2749066899c67088e5e7f52b1215416b1afcc/pytest_edit-1.1.tar.gz", hash = "sha256:9cabc0ca022b0dede14b48444eac80c79f84f58925831ac7ee0575b990e5bd27", size = 4498 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/48/9fce615d523d006e8ed0bd98f99fd2d2abc70edcee816c429afa9c31eefb/pytest_edit-1.1-py3-none-any.whl", hash = "sha256:3f24477f073cf0624bc8542194450851df123c509120bfbaea29cf036a471589", size = 4898 },
-]
-
-[[package]]
 name = "pytest-env"
 version = "1.1.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1841,7 +1829,6 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
-    { name = "pytest-edit" },
     { name = "pytest-env" },
     { name = "pytest-icdiff" },
     { name = "pytest-mock" },
@@ -1909,7 +1896,6 @@ dev = [
     { name = "pytest", specifier = ">=8.3.2" },
     { name = "pytest-cov", specifier = ">=5.0.0" },
     { name = "pytest-django", specifier = ">=4.8.0" },
-    { name = "pytest-edit", specifier = ">=1.1" },
     { name = "pytest-env", specifier = ">=1.1.3" },
     { name = "pytest-icdiff", specifier = ">=0.9" },
     { name = "pytest-mock", specifier = ">=3.14.0" },

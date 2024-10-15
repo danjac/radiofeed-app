@@ -72,7 +72,6 @@ dev-dependencies = [
     "django-stubs>=5.0.4",
     "django-stubs-ext>=5.0.4",
     "beautifulsoup4>=4.12.3",
-    "pytest-edit>=1.1",
 ]
 
 
