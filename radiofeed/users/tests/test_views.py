@@ -2,6 +2,7 @@ import pathlib
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
@@ -10,6 +11,43 @@ from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.asserts import assert200
 from radiofeed.users.models import User
+
+
+class MockGoogleAdapter:
+    def list_providers(self, request):
+        return ["Google"]
+
+
+class Test3rdPartyAuthTemplates:
+    """Test customized 3rd party authentication templates"""
+
+    @pytest.mark.parametrize(
+        "template",
+        [
+            "account/email.html",
+            "account/email_confirm.html",
+            "account/login.html",
+            "account/password_change.html",
+            "account/password_reset.html",
+            "account/password_reset_done.html",
+            "account/signup.html",
+            "socialaccount/connections.html",
+            "socialaccount/login.html",
+            "socialaccount/signup.html",
+        ],
+    )
+    @pytest.mark.django_db
+    def test_template(self, rf, mocker, user, template):
+        req = rf.get("/")
+        req.user = user
+
+        mocker.patch(
+            "radiofeed.users.templatetags.account_settings.get_adapter",
+            return_value=MockGoogleAdapter(),
+        )
+        response = TemplateResponse(req, template)
+        response.render()
+        assert response.template_name == template
 
 
 class TestUserPreferences:
