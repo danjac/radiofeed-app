@@ -44,11 +44,6 @@ variable "cron_server" {
   default = "cron-1"
 }
 
-variable "all_servers" {
-  type    = list(string)
-  default = ["app-1", "app-2", "db-1", "cron-1"]
-}
-
 variable "network" {
   type    = string
   default = "network-1"
