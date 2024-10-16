@@ -75,7 +75,7 @@ repos:
           - id: django-upgrade
             args: [--target-version, "5.1"]
     - repo: https://github.com/abravalheri/validate-pyproject
-      rev: v0.20.2
+      rev: v0.21
       hooks:
           - id: validate-pyproject
     - repo: https://github.com/antonbabenko/pre-commit-terraform
