@@ -30,7 +30,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 
 The install command will also create a `.env` file with default settings for local development, if one does not already exist.
 
-To run unit tests, just run `pytest`. You can also run [pytest-watcher](https://github.com/olzhasar/pytest-watcher) in a terminal window with the command `ptw .`.
+To run unit tests, just run `pytest`.
 
 To handle Tailwind CSS compilation on the fly, run `./manage.py tailwind runserver`.
 
