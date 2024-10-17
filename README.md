@@ -28,7 +28,7 @@ The `Makefile` has some convenient shortcuts for local development, including:
 * `make update`: update dependencies to latest available versions
 * `make clean`: remove all non-committed files and other artifacts
 
-The install process should create a virtualenv using pdm.
+The install command will also create a `.env` file with default settings for local development, if one does not already exist.
 
 To run unit tests, just run `pytest`. You can also run [pytest-watcher](https://github.com/olzhasar/pytest-watcher) in a terminal window with the command `ptw .`.
 
