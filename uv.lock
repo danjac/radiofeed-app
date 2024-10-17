@@ -389,14 +389,14 @@ wheels = [
 
 [[package]]
 name = "django-cotton"
-version = "1.2.0"
+version = "1.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/73/61/5f10a45fa25086352069ff4a3cc2a0ae0b1e2d209a59b91db73887e104e5/django_cotton-1.2.0.tar.gz", hash = "sha256:cb6c3ea3a74daddd8c3639fb56a587e3e0269554c6d379b217e37336c06c1b7a", size = 20687 }
+sdist = { url = "https://files.pythonhosted.org/packages/3c/74/291f902bf07eb9acf17d4c09b6f0a968283330e20591bd3dad0bf80c8b95/django_cotton-1.2.1.tar.gz", hash = "sha256:2ad65df214104e6103ea55d134c3d971e3887ead3bc9a92fed713249561572f9", size = 20692 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a1/33/ff77449eb17905293f403492c12f2434595ba3977483585c7a72a7698c6d/django_cotton-1.2.0-py3-none-any.whl", hash = "sha256:d01b88eaf210bbb9974174806ecd66b984a4f0162c9c1b680f230695471e7b85", size = 19921 },
+    { url = "https://files.pythonhosted.org/packages/19/37/0873ff2dcda8215ccf26ce8773f152c2474d22b4a5bbaccda084a9eda88d/django_cotton-1.2.1-py3-none-any.whl", hash = "sha256:395b7b6e0b00206be762bc9f20ac6a56e960e24d5ebaf4fb41ac08929f58c4dc", size = 19882 },
 ]
 
 [[package]]
@@ -653,15 +653,15 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "30.4.0"
+version = "30.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "python-dateutil" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/30/50/353a4653ddbb028f6b921715e16d2e210567d6a022755d72e23ad70338d7/faker-30.4.0.tar.gz", hash = "sha256:6fd328db7195e70cdee479ee687fef6623c9b57b8023c582adbe88a01dc54297", size = 1799432 }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/8d/50e36ea8b2bd3f24bcdd00316c8b4bab2d9f14da7be1b7d98b3d4bc5293d/faker-30.6.0.tar.gz", hash = "sha256:be0e548352c1be6f6d9c982003848a0d305868f160bb1fb7f945acffc347e676", size = 1806340 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/99/03/d9674870d7484423fa5600b09cb98a2075736f70e1559e7178a1eaec92cb/Faker-30.4.0-py3-none-any.whl", hash = "sha256:b6c2d61861dcf1084b8e10959418fe3380a1a3dcd2796a73d43f738a42aabb4c", size = 1838532 },
+    { url = "https://files.pythonhosted.org/packages/8d/21/a64005857a7b209ce00e555ad38dfd27ef0aa56d2229904ea9c2e02f79ef/Faker-30.6.0-py3-none-any.whl", hash = "sha256:37b5ab951f7367ea93edb865120e9717a7a649d6a4b223f1e4a47a8a20d9e85f", size = 1844390 },
 ]
 
 [[package]]
@@ -2070,11 +2070,11 @@ wheels = [
 
 [[package]]
 name = "setuptools"
-version = "75.1.0"
+version = "75.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/27/b8/f21073fde99492b33ca357876430822e4800cdf522011f18041351dfa74b/setuptools-75.1.0.tar.gz", hash = "sha256:d59a21b17a275fb872a9c3dae73963160ae079f1049ed956880cd7c09b120538", size = 1348057 }
+sdist = { url = "https://files.pythonhosted.org/packages/07/37/b31be7e4b9f13b59cde9dcaeff112d401d49e0dc5b37ed4a9fc8fb12f409/setuptools-75.2.0.tar.gz", hash = "sha256:753bb6ebf1f465a1912e19ed1d41f403a79173a9acf66a42e7e6aec45c3c16ec", size = 1350308 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/ae/f19306b5a221f6a436d8f2238d5b80925004093fa3edea59835b514d9057/setuptools-75.1.0-py3-none-any.whl", hash = "sha256:35ab7fd3bcd95e6b7fd704e4a1539513edad446c097797f2985e0e4b960772f2", size = 1248506 },
+    { url = "https://files.pythonhosted.org/packages/31/2d/90165d51ecd38f9a02c6832198c13a4e48652485e2ccf863ebb942c531b6/setuptools-75.2.0-py3-none-any.whl", hash = "sha256:a7fcb66f68b4d9e8e66b42f9876150a3371558f98fa32222ffaa5bced76406f8", size = 1249825 },
 ]
 
 [[package]]
