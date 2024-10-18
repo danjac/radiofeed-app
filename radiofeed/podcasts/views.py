@@ -43,8 +43,11 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
 @login_required
 def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
-    podcasts = _get_podcasts().filter(promoted=True).order_by("-pub_date")
-    return render_paginated_response(request, "podcasts/discover.html", podcasts)
+    return render_paginated_response(
+        request,
+        "podcasts/discover.html",
+        _get_podcasts().filter(promoted=True).order_by("-pub_date"),
+    )
 
 
 @require_safe
