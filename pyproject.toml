@@ -44,6 +44,7 @@ dependencies = [
     "django-cotton>=1.1.1",
     "gunicorn>=23.0.0",
     "django-typer>=2.3.0",
+    "django-pgactivity>=1.5.0",
 ]
 
 [tool.uv]
