@@ -5,10 +5,12 @@ from concurrent import futures
 from django.db import connections
 
 
-def execute_thread_pool(fn: Callable, *args, **kwargs) -> list[futures.Future]:
+def execute_thread_pool(
+    fn: Callable, *iterables: Iterable, **kwargs
+) -> list[futures.Future]:
     """Executes a function in a thread pool."""
     with DatabaseSafeThreadPoolExecutor() as executor:
-        return executor.db_safe_map(fn, *args, **kwargs)
+        return executor.db_safe_map(fn, *iterables, **kwargs)
 
 
 class DatabaseSafeThreadPoolExecutor(futures.ThreadPoolExecutor):
