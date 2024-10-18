@@ -22,17 +22,15 @@ You can use these images if you want, or use a local install of PostgreSQL or Re
 
 Current tested versions are PostgreSQL 16 and Redis 7.
 
-The `Makefile` has some convenient shortcuts for local development, including:
+The [justfile](https://github.com/casey/just) has some convenient shortcuts for local development, including:
 
-* `make install`: download and install local dependencies
-* `make update`: update dependencies to latest available versions
-* `make clean`: remove all non-committed files and other artifacts
+* `just install`: download and install local dependencies
+* `just update`: update dependencies to latest available versions
+* `just clean`: remove all non-committed files and other artifacts
+* `just serve`: run the development server and Tailwind JIT compiler
+* `just test`: run the test suite
 
 The install command will also create a `.env` file with default settings for local development, if one does not already exist.
-
-To run unit tests, just run `pytest`.
-
-To handle Tailwind CSS compilation on the fly, run `./manage.py tailwind runserver`.
 
 ## Stack
 
