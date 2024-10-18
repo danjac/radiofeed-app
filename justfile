@@ -5,8 +5,8 @@ update: pyupdate pyinstall precommitupdate
 serve:
     ./manage.py tailwind runserver
 
-test:
-    pytest
+test +ARGS:
+    pytest {{ ARGS }}
 
 clean:
     git clean -Xdf
