@@ -172,7 +172,7 @@ class TestSearchItunes:
 
         assertTemplateUsed(response, "podcasts/search_itunes.html")
 
-        assertContains(response, "Test & Code : Python Testing")
+        assertContains(response, "Test &amp; Code : Python Testing")
         assertContains(response, podcast.title)
 
         mock_search.assert_called()
