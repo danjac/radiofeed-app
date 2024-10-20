@@ -3,11 +3,13 @@
 {% get_settings current as settings %}
 <c-header>
     <c-header.title> Settings for {{ user.username }} </c-header.title>
-    <div class="flex justify-center items-center space-y-3 sm:justify-end sm:space-y-0 sm:space-x-3">
-        <c-header.nav.dropdown id="settings-dropdown"
-                               :items="settings.items"
-                               :current="settings.current_item"
-        />
-    </div>
+    <c-header.nav>
+        <c-header.nav.item>
+            <c-header.nav.dropdown id="settings-dropdown"
+                                   :items="settings.items"
+                                   :current="settings.current_item"
+            />
+        </c-header.nav.item>
+    </c-header.nav>
 </c-header>
 {{ slot }}
