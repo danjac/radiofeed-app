@@ -1,6 +1,6 @@
 <c-vars field class="space-y-3 form-control"/>
 {% with widget_type=field.field.widget.input_type required=field.field.required %}
-    <div class="{{ class }} is-{{ widget_type }}{% if field.errors %} has-errors{% endif %}" {{ attrs }}>
+    <fieldset class="{{ class }} is-{{ widget_type }}{% if field.errors %} has-errors{% endif %}" {{ attrs }}>
         {% if widget_type == "checkbox" %}
             <c-form.checkbox :field="field" />
         {% else %}
@@ -9,5 +9,5 @@
         {% endif %}
         <c-form.errors :errors="field.errors" />
         <c-form.hint :hint="field.help_text" />
-    </div>
+    </fieldset>
 {% endwith %}
