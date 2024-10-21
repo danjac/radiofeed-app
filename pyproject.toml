@@ -13,7 +13,6 @@ dependencies = [
     "django-allauth[socialaccount]>=64.2.0",
     "django-anymail>=11.1",
     "django-csp>=3.8",
-    "django-environ>=0.11.2",
     "django-extensions>=3.2.3",
     "django-fast-update>=0.2.3",
     "django-health-check>=3.18.3",
