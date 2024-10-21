@@ -97,14 +97,6 @@ env = [
     "USE_X_FORWARDED_HOST=false",
 ]
 
-[tool.pytest-watcher]
-now = true
-clear = true
-delay = 0.2
-runner = "pytest"
-runner_args = []
-patterns = ["*.py", "*.html"]
-
 [tool.coverage.run]
 source=["radiofeed"]
 omit=[
