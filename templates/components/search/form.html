@@ -1,6 +1,6 @@
 {% load heroicons %}
 <c-vars url=request.path reload-on-clear=False placeholder="Search..." />
-<form class="relative bg-transparent"
+<form class="flex relative items-center bg-transparent"
       method="get"
       action="{{ url }}"
       x-init="$watch('search', value => $dispatch('search', value))"
