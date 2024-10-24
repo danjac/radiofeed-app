@@ -11,7 +11,7 @@
             {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
             <div class="flex items-center space-x-3 sm:space-x-6">
                 <c-cover-image variant="detail"
-                               :cover_url="podcast.cover_url"
+                               :cover-url="podcast.cover_url"
                                :title="podcast.cleaned_title" />
                 <div class="flex flex-col place-content-between h-32">
                     {% if podcast.private %}
