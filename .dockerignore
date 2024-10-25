@@ -29,6 +29,7 @@ locust
 LICENSE
 Makefile
 README.md
+SECURITY.md
 conftest.py
 locustfile.py
 docker-compose.yml
