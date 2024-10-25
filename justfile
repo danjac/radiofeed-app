@@ -3,7 +3,7 @@ install: envfile pyinstall precommmitinstall nltkdownload
 update: pyupdate pyinstall precommitupdate
 
 serve:
-    ./manage.py tailwind runserver
+    ./manage.py tailwind runserver_plus
 
 test *args:
     pytest {{ args }}
