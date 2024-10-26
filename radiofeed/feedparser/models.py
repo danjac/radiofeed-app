@@ -129,7 +129,7 @@ class Item(BaseModel):
     guid: str = Field(..., min_length=1)
     title: str = Field(..., min_length=1)
 
-    categories: list[str] = Field(default_factory=list)
+    categories: set[str] = Field(default_factory=set)
 
     description: EmptyIfNone = ""
     keywords: EmptyIfNone = ""
@@ -157,6 +157,12 @@ class Item(BaseModel):
             functools.partial(_default_if_none, default=DEFAULT_EPISODE_TYPE),
         ),
     ] = DEFAULT_EPISODE_TYPE
+
+    @field_validator("categories", mode="after")
+    @classmethod
+    def validate_categories(cls, value: Any) -> set[str]:
+        """Ensure categories are unique and not empty."""
+        return {c.casefold() for c in set(filter(None, value))}
 
     @field_validator("pub_date", mode="before")
     @classmethod
@@ -247,7 +253,7 @@ class Feed(BaseModel):
 
     items: list[Item]
 
-    categories: list[str] = Field(default_factory=list)
+    categories: set[str] = Field(default_factory=set)
 
     @field_validator("language", mode="before")
     @classmethod
@@ -256,6 +262,12 @@ class Feed(BaseModel):
         return (
             value.casefold()[:2] if value and len(value) > 1 else cls.DEFAULT_LANGUAGE
         )
+
+    @field_validator("categories", mode="after")
+    @classmethod
+    def validate_categories(cls, value: Any) -> set[str]:
+        """Ensure categories are unique and not empty."""
+        return {c.casefold() for c in set(filter(None, value))}
 
     @field_validator("complete", mode="before")
     @classmethod

@@ -123,20 +123,18 @@ class _FeedParser:
         content_hash: str,
         feed: Feed,
     ) -> None:
-        categories, keywords = self._parse_taxonomy(feed)
-
         try:
             with transaction.atomic():
                 self._podcast_update(
                     num_retries=0,
                     parser_error="",
                     content_hash=content_hash,
-                    keywords=keywords,
                     rss=response.url,
                     active=not (feed.complete),
                     etag=self._parse_etag(response),
                     modified=self._parse_modified(response),
-                    extracted_text=self._extract_text(feed),
+                    extracted_text=self._tokenize_content(feed),
+                    keywords=" ".join(self._parse_keywords(feed)),
                     frequency=scheduler.schedule(feed),
                     **feed.model_dump(
                         exclude={
@@ -147,7 +145,7 @@ class _FeedParser:
                     ),
                 )
 
-                self._podcast.categories.set(categories)
+                self._podcast.categories.set(self._parse_categories(feed))
                 self._episode_updates(feed)
                 self._logger.success("Feed updated")
         except DataError as exc:
@@ -238,26 +236,21 @@ class _FeedParser:
             **fields,
         )
 
-    def _parse_taxonomy(self, feed: Feed) -> tuple[list[Category], str]:
-        categories: list[Category] = []
-        keywords: str = ""
+    def _parse_keywords(self, feed: Feed) -> Iterator[str]:
+        categories_dct = get_categories()
 
-        if category_names := {c.casefold() for c in feed.categories}:
-            categories_dct = get_categories()
+        for value in feed.categories:
+            if value not in categories_dct:
+                yield value
 
-            categories = [
-                categories_dct[name]
-                for name in category_names
-                if name in categories_dct
-            ]
+    def _parse_categories(self, feed: Feed) -> Iterator[Category]:
+        categories_dct = get_categories()
 
-            keywords = " ".join(
-                [name for name in category_names if name not in categories_dct]
-            )
+        for value in feed.categories:
+            if value in categories_dct:
+                yield categories_dct[value]
 
-        return categories, keywords
-
-    def _extract_text(self, feed: Feed) -> str:
+    def _tokenize_content(self, feed: Feed) -> str:
         text = " ".join(
             value
             for value in [
@@ -265,7 +258,7 @@ class _FeedParser:
                 feed.description,
                 feed.owner,
             ]
-            + feed.categories
+            + list(feed.categories)
             + [item.title for item in feed.items][:6]
             if value
         )
