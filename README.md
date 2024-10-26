@@ -28,7 +28,9 @@ The [justfile](https://github.com/casey/just) has some convenient shortcuts for 
 * `just update`: update dependencies to latest available versions
 * `just clean`: remove all non-committed files and other artifacts
 * `just serve`: run the development server and Tailwind JIT compiler
-* `just test`: run the test suite
+* `just shell`: open a shell in the development environment
+* `just test`: run unit tests
+* `just check`: run unit tests and linters
 
 The install command will also create a `.env` file with default settings for local development, if one does not already exist.
 
