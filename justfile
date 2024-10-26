@@ -6,6 +6,7 @@ serve:
     ./manage.py tailwind runserver_plus
 
 test *args:
+    pyright
     pytest {{ args }}
 
 clean:
