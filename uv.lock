@@ -420,15 +420,15 @@ wheels = [
 
 [[package]]
 name = "django-htmx"
-version = "1.19.0"
+version = "1.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c7/38/3b5b53b158f3e75da6b68f798514f1b533b0c88f87dd7bb59eb3e4836c32/django_htmx-1.19.0.tar.gz", hash = "sha256:e7e17304e78e07f96eca0affc3ce1806edfdf3538bb7cb1912452b101f3e627d", size = 9791 }
+sdist = { url = "https://files.pythonhosted.org/packages/db/71/3173fb7a6c8cbba5a0a34142f83a2138ed91bf2f28d630808f1f93d58dc4/django_htmx-1.20.0.tar.gz", hash = "sha256:6a97ff0256a247a2c20c85c1f81358fa0c9650af52e6064cb6664ae8619c9294", size = 9643 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/af/a8/831374e1b117c345ee63690186bfdc56ad0b578b0f5ad2361de65d82757e/django_htmx-1.19.0-py3-none-any.whl", hash = "sha256:875a642814e52278c1728842436beda2001847a493ab79fd82da3fb46ead140f", size = 6904 },
+    { url = "https://files.pythonhosted.org/packages/6f/ea/e4dcc076c86dc2d930de00ccfc985c35c1c7c0063033884ff9ef379fb592/django_htmx-1.20.0-py3-none-any.whl", hash = "sha256:e36c0e0cfe53572674f0f885b7bd1d1281088cf3f8a803566ddf3e90d9b69fce", size = 6911 },
 ]
 
 [[package]]
