@@ -39,13 +39,13 @@ class TestItem:
 
     def test_default_keywords_from_categories(self):
         item = Item(**ItemFactory(categories=["Gaming", "Hobbies", "Video Games"]))
-        assert item.keywords == "Gaming Hobbies Video Games"
+        assert set(item.keywords.split()) == {"gaming", "hobbies", "video", "games"}
 
     def test_defaults(self):
         item = Item(**ItemFactory())
         assert item.explicit is False
         assert item.episode_type == "full"
-        assert item.categories == []
+        assert item.categories == set()
         assert item.keywords == ""
 
     @pytest.mark.parametrize(
@@ -102,5 +102,5 @@ class TestFeed:
         assert feed.explicit is False
         assert feed.language == "en"
         assert feed.description == ""
-        assert feed.categories == []
+        assert feed.categories == set()
         assert feed.pub_date == item.pub_date

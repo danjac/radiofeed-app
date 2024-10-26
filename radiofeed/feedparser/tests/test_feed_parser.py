@@ -158,9 +158,10 @@ class TestFeedParser:
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
         assert podcast.owner == "8th Kind"
 
-        assert (
-            podcast.extracted_text
-            == "mysterious universe blog specializing offbeat th kind science medicine science social science religion spirituality spirituality society culture philosophy mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton"
+        tokens = set(podcast.extracted_text.split())
+
+        assert tokens == set(
+            "mysterious universe blog specializing offbeat th kind science spirituality science medicine society culture philosophy social science religion spirituality mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton".split()
         )
 
         assert podcast.modified
