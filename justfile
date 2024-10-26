@@ -24,9 +24,6 @@ clean:
 test *args:
     pytest {{ args }}
 
-precommitall:
-    pre-commit run -a
-
 typecheck:
     pyright
 
@@ -47,6 +44,9 @@ precommmitinstall:
 
 precommitupdate:
 	pre-commit autoupdate
+
+precommitall:
+    pre-commit run -a
 
 nltkdownload:
     uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
