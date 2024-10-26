@@ -10,8 +10,9 @@ update:
     @just precommitupdate
 
 check:
-    @just test
     @just typecheck
+    @just templatecheck
+    @just test
     @just precommitall
 
 serve:
@@ -28,6 +29,9 @@ precommitall:
 
 typecheck:
     pyright
+
+templatecheck:
+    ./manage.py validate_templates
 
 envfile:
 	cp -R -u -p .env.example .env
