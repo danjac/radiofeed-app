@@ -1,16 +1,33 @@
-install: envfile pyinstall precommmitinstall nltkdownload
+install:
+    @just envfile
+    @just pyinstall
+    @just precommmitinstall
+    @just nltkdownload
 
-update: pyupdate pyinstall precommitupdate
+update:
+    @just pyupdate
+    @just pyinstall
+    @just precommitupdate
+
+check:
+    @just test
+    @just typecheck
+    @just precommitall
 
 serve:
     ./manage.py tailwind runserver_plus
 
-test *args:
-    pyright
-    pytest {{ args }}
-
 clean:
     git clean -Xdf
+
+test *args:
+    pytest {{ args }}
+
+precommitall:
+    pre-commit run -a
+
+typecheck:
+    pyright
 
 envfile:
 	cp -R -u -p .env.example .env
