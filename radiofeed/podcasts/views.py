@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST, require_safe
 
@@ -118,7 +118,7 @@ def podcast_detail(request: HttpRequest, podcast_id: int, slug: str) -> HttpResp
 
 @require_safe
 @login_required
-def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
+def latest_episode(_, podcast_id: int) -> HttpResponse:
     """Redirects to latest episode."""
     podcast = _get_podcast_or_404(podcast_id)
     if episode := podcast.episodes.order_by("-pub_date").first():
