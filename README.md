@@ -10,7 +10,7 @@ Radiofeed requires the following basic dependencies to get started:
 * Python 3.12
 * [uv](https://docs.astral.sh)
 
-**Note:** if you don't have the right version of Python you can use `uv python install 3.12.x`.
+**Note:** if you don't have the right version of Python you can use `uv python install 3.13.x`.
 
 For ease of local development a `docker-compose.yml` file is provided which includes Docker images:
 
