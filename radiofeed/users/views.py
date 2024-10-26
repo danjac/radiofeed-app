@@ -3,9 +3,9 @@ from typing import TypedDict, cast
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
-from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
@@ -30,26 +30,23 @@ class UserStat(TypedDict):
 @login_required
 def user_preferences(
     request: HttpRequest,
-) -> HttpResponseRedirect | TemplateResponse:
+) -> HttpResponse:
     """Allow user to edit their preferences."""
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return HttpResponseRedirect(reverse("users:preferences"))
+            return redirect("users:preferences")
     else:
         form = UserPreferencesForm(instance=request.user)
 
     return render_partial_for_target(
         request,
-        TemplateResponse(
-            request,
-            "account/preferences.html",
-            {
-                "form": form,
-            },
-        ),
+        "account/preferences.html",
+        {
+            "form": form,
+        },
         target="preferences-form",
         partial="form",
     )
@@ -59,7 +56,7 @@ def user_preferences(
 @login_required
 def import_podcast_feeds(
     request: HttpRequest,
-) -> HttpResponseRedirect | TemplateResponse:
+) -> HttpResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
@@ -71,19 +68,16 @@ def import_podcast_feeds(
                 )
             else:
                 messages.info(request, "No new podcasts found in uploaded file")
-            return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
+            return redirect("users:import_podcast_feeds")
     else:
         form = OpmlUploadForm()
 
     return render_partial_for_target(
         request,
-        TemplateResponse(
-            request,
-            "account/podcast_feeds.html",
-            {
-                "upload_form": form,
-            },
-        ),
+        "account/podcast_feeds.html",
+        {
+            "upload_form": form,
+        },
         target="import-feeds-form",
         partial="form",
     )
@@ -91,7 +85,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
@@ -103,7 +97,7 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
         .order_by("title")
     )
 
-    return TemplateResponse(
+    response = render(
         request,
         "feedparser/podcasts.opml",
         {
@@ -111,16 +105,16 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
             "podcasts": podcasts,
         },
         content_type="text/x-opml",
-        headers={
-            "Content-Disposition": "attachment;"
-            f"filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-        },
     )
+    response["Content-Disposition"] = (
+        f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+    )
+    return response
 
 
 @require_safe
 @login_required
-def user_stats(request: HttpRequest) -> TemplateResponse:
+def user_stats(request: HttpRequest) -> HttpResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
         UserStat(
@@ -148,11 +142,11 @@ def user_stats(request: HttpRequest) -> TemplateResponse:
             url=reverse("episodes:history"),
         ),
     ]
-    return TemplateResponse(request, "account/stats.html", {"stats": stats})
+    return render(request, "account/stats.html", {"stats": stats})
 
 
 @require_form_methods
-def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateResponse:
+def delete_account(request: HttpRequest) -> HttpResponse:
     """Delete account on confirmation."""
     if (
         request.user.is_authenticated
@@ -162,5 +156,5 @@ def delete_account(request: HttpRequest) -> HttpResponseRedirect | TemplateRespo
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return HttpResponseRedirect(reverse("index"))
-    return TemplateResponse(request, "account/delete_account.html")
+        return redirect("index")
+    return render(request, "account/delete_account.html")

@@ -10,10 +10,9 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
-    HttpResponseRedirect,
     JsonResponse,
 )
-from django.template.response import TemplateResponse
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
@@ -31,19 +30,19 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def index(request) -> HttpResponseRedirect | TemplateResponse:
+def index(request) -> HttpResponse:
     """Landing page of site."""
 
     # if user logged in, redirect to their home page
     if request.user.is_authenticated:
-        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
-    return TemplateResponse(request, "index.html")
+        return redirect(settings.LOGIN_REDIRECT_URL)
+    return render(request, "index.html")
 
 
 @require_safe
-def about(request: HttpRequest) -> TemplateResponse:
+def about(request: HttpRequest) -> HttpResponse:
     """Renders About page."""
-    return TemplateResponse(
+    return render(
         request,
         "about.html",
         {
@@ -53,9 +52,9 @@ def about(request: HttpRequest) -> TemplateResponse:
 
 
 @require_safe
-def privacy(request: HttpRequest) -> TemplateResponse:
+def privacy(request: HttpRequest) -> HttpResponse:
     """Renders Privacy page."""
-    return TemplateResponse(request, "privacy.html")
+    return render(request, "privacy.html")
 
 
 @require_POST
@@ -85,9 +84,9 @@ def favicon(_) -> FileResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def service_worker(request: HttpRequest) -> TemplateResponse:
+def service_worker(request: HttpRequest) -> HttpResponse:
     """PWA service worker."""
-    return TemplateResponse(
+    return render(
         request,
         "service_worker.js",
         content_type="application/javascript",
@@ -97,7 +96,7 @@ def service_worker(request: HttpRequest) -> TemplateResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def assetlinks(request: HttpRequest) -> JsonResponse:
+def assetlinks(_) -> HttpResponse:
     """PWA assetlinks"""
     return JsonResponse(get_assetlinks(), safe=False)
 
@@ -105,7 +104,7 @@ def assetlinks(request: HttpRequest) -> JsonResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def manifest(request: HttpRequest) -> JsonResponse:
+def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
     return JsonResponse(get_manifest(request))
 

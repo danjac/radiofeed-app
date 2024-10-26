@@ -2,8 +2,7 @@ from typing import Final
 
 from django.core.paginator import Page, Paginator
 from django.db.models import QuerySet
-from django.http import HttpRequest
-from django.template.response import TemplateResponse
+from django.http import HttpRequest, HttpResponse
 from django.utils.functional import SimpleLazyObject
 
 from radiofeed.partials import render_partial_for_target
@@ -35,18 +34,15 @@ def render_paginated_response(  # noqa: PLR0913
     target: str = "pagination",
     partial: str = "pagination",
     **pagination_kwargs,
-) -> TemplateResponse:
+) -> HttpResponse:
     """Render pagination response."""
     return render_partial_for_target(
         request,
-        TemplateResponse(
-            request,
-            template_name,
-            {
-                "page": paginate_lazy(request, queryset, **pagination_kwargs),
-                **(extra_context or {}),
-            },
-        ),
+        template_name,
+        {
+            "page": paginate_lazy(request, queryset, **pagination_kwargs),
+            **(extra_context or {}),
+        },
         target=target,
         partial=partial,
     )
