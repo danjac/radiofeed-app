@@ -18,6 +18,9 @@ check:
 serve:
     ./manage.py tailwind runserver_plus
 
+shell:
+    ./manage.py shell_plus
+
 clean:
     git clean -Xdf
 
