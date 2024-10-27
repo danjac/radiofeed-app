@@ -95,17 +95,21 @@ DATABASES = {
         "DATABASE_URL",
         default="postgresql://postgres:password@127.0.0.1:5432/postgres",
     )
-    | {
-        "ATOMIC_REQUESTS": True,
-        "OPTIONS": {
-            "pool": {
+}
+
+if env.bool("USE_CONNECTION_POOL", default=True):
+    DATABASES["default"]["OPTIONS"] = {
+        "pool": (
+            {
                 "min_size": env.int("CONN_POOL_MIN_SIZE", 2),
                 "max_size": env.int("CONN_POOL_MAX_SIZE", 4),
                 "timeout": env.int("CONN_POOL_TIMEOUT", default=30),
             }
-        },
+        ),
     }
-}
+else:
+    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=0)
+
 
 # Caches
 
