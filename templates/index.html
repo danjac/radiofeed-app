@@ -14,14 +14,16 @@
 
             <c-messages />
             {% cache 300 landing-page %}
-                <div class="flex relative justify-center py-6 mx-auto min-h-screen sm:px-2">
-                    <div class="gap-6 py-6 px-6 sm:grid lg:grid-cols-2">
-                        <div class="justify-center pb-6 mb-6 space-y-12 border-b border-white lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0 lg:border-r">
+                <div class="py-12 mx-auto space-y-3 min-h-screen sm:px-2 lg:space-y-12">
+                    <div class="px-6 pb-6 space-y-3 border-b">
+                        <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ request.site.name }}</h1>
+                        <h2 class="text-xl font-bold text-center lg:text-2xl">
+                            <strong>{{ request.site.name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts in your browser.
+                        </h2>
+                    </div>
+                    <div class="gap-6 px-6 lg:grid lg:grid-cols-2 lg:py-6">
+                        <div class="justify-center pb-6 mb-6 space-y-12 border-b border-white lg:content-center lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0">
                             <div class="space-y-6">
-                                <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ request.site.name }}</h1>
-                                <h2 class="text-xl font-bold text-center lg:mb-12 lg:text-2xl">
-                                    <strong>{{ request.site.name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts in your browser.
-                                </h2>
                             </div>
                             <div class="space-y-3 lg:space-y-6">
                                 <div class="flex justify-center items-center">
@@ -42,26 +44,15 @@
                                 </p>
                             </div>
                         </div>
-                        <div>
-                            <div class="grid-cols-2 gap-3 pl-3 lg:grid">
-                                <ul class="space-y-3 font-semibold text-base pl-3 lg:px-0 lg:space-y-6 lg:text-lg list-outside list-image-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=')]">
-                                    <li class="pl-2">Subscribe to your favorite podcasts</li>
-                                    <li class="pl-2">Listen to episodes online using our audio player</li>
-                                    <li class="pl-2">Find exciting and interesting new content</li>
-                                    <li class="pl-2">Receive a weekly AI-generated email with personalized recommendations</li>
-                                    <li class="pl-2">Bookmark your favorite episodes or those you want to listen to later</li>
-                                    <li class="pl-2">Subscribe to private feeds from Patreon and other services</li>
-                                </ul>
-                                <div class="hidden lg:block">
-                                    <img src="{% static "img/mobile.webp" %}"
-                                         alt="Mobile"
-                                         class="object-cover text-transparent bg-transparent rounded-xl border-2 border-white"
-                                         width="360"
-                                         height="803"
-                                         loading="lazy"
-                                         decoding="async">
-                                </div>
-                            </div>
+                        <div class="justify-center items-center pl-3 sm:flex sm:content-center">
+                            <ul class="space-y-3 font-semibold text-base pl-3 lg:px-0 lg:space-y-6 lg:text-lg list-outside list-image-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=')]">
+                                <li class="pl-2">Subscribe to your favorite podcasts</li>
+                                <li class="pl-2">Listen to episodes online using our audio player</li>
+                                <li class="pl-2">Find exciting and interesting new content</li>
+                                <li class="pl-2">Receive a weekly AI-generated email with personalized recommendations</li>
+                                <li class="pl-2">Bookmark your favorite episodes or those you want to listen to later</li>
+                                <li class="pl-2">Subscribe to private feeds from Patreon and other services</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
