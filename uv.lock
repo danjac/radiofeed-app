@@ -424,15 +424,15 @@ wheels = [
 
 [[package]]
 name = "django-htmx"
-version = "1.20.0"
+version = "1.21.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/71/3173fb7a6c8cbba5a0a34142f83a2138ed91bf2f28d630808f1f93d58dc4/django_htmx-1.20.0.tar.gz", hash = "sha256:6a97ff0256a247a2c20c85c1f81358fa0c9650af52e6064cb6664ae8619c9294", size = 9643 }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/5c/f6b7e9102a86c69b018142c5e3255b7f983b4f6545fe8e9bbb326e903be1/django_htmx-1.21.0.tar.gz", hash = "sha256:6ed3b42effd5980f22e68f36cd14ee4311bff3b6cb8435a89e27f45995691572", size = 9611 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/ea/e4dcc076c86dc2d930de00ccfc985c35c1c7c0063033884ff9ef379fb592/django_htmx-1.20.0-py3-none-any.whl", hash = "sha256:e36c0e0cfe53572674f0f885b7bd1d1281088cf3f8a803566ddf3e90d9b69fce", size = 6911 },
+    { url = "https://files.pythonhosted.org/packages/9f/ec/0d68c022dac4a539cdd2cf8b2e23a034da9d6ef864e4bc324a5fe2b50c28/django_htmx-1.21.0-py3-none-any.whl", hash = "sha256:64bc31463017a80552b767bc216ee5700248fa72e7ccd2963495e69afbdb6abe", size = 6901 },
 ]
 
 [[package]]
@@ -558,15 +558,15 @@ wheels = [
 
 [[package]]
 name = "django-version-checks"
-version = "1.12.0"
+version = "1.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d1/05/47cd569f7a29358a8e1f15920ef190d1c9f0698b6a88e4c734a2475999e8/django_version_checks-1.12.0.tar.gz", hash = "sha256:29fb03837c4dbc4e649c29b37570a3cc7af7019406cfccb560524a3f651be7df", size = 9856 }
+sdist = { url = "https://files.pythonhosted.org/packages/8f/54/ea88f20e97e4a61f1f156a0b693e06c8e8411ed6231f7542724f8d0f4d12/django_version_checks-1.13.0.tar.gz", hash = "sha256:4e106589791d8c10150ba1e9af75a398d26fb28474855276b6340a044033b923", size = 9776 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/66/9d516b377f4906de39b8e4f509079385b7ca167aa0ffaa2553d827ab686d/django_version_checks-1.12.0-py3-none-any.whl", hash = "sha256:7988587b2cdf6c2e489a0997cd96ce66f1015846feba2838c7fd76893bcefd94", size = 7666 },
+    { url = "https://files.pythonhosted.org/packages/f3/33/19fbd9bf51146bf5a86064a6b43e4bf07130a78a0b1531295b7db95f9082/django_version_checks-1.13.0-py3-none-any.whl", hash = "sha256:6b9bebc8cc100611082d80d82ee84825722903a761e4470d1b1c5a4bc20715f9", size = 7671 },
 ]
 
 [[package]]
