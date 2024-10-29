@@ -56,10 +56,13 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         if set(response.headers) & self._hx_redirect_headers:
             return response
 
-        if get_messages(request):
+        if messages := get_messages(request):
             response.write(
                 render_to_string(
                     "components/messages.html",
+                    {
+                        "messages": messages,
+                    },
                     request=request,
                 )
             )
