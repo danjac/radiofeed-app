@@ -1,3 +1,6 @@
+@_default:
+    just --list
+
 @install:
     @just envfile
     @just pyinstall
