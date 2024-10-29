@@ -1,55 +1,55 @@
-install:
+@install:
     @just envfile
     @just pyinstall
     @just precommmitinstall
     @just nltkdownload
 
-update:
+@update:
     @just pyupdate
     @just pyinstall
     @just precommitupdate
 
-check:
+@check:
     @just typecheck
     @just templatecheck
     @just test
     @just precommitall
 
-serve:
+@serve:
     ./manage.py tailwind runserver_plus
 
-shell:
+@shell:
     ./manage.py shell_plus
 
-clean:
+@clean:
     git clean -Xdf
 
-test *args:
+@test *args:
     pytest {{ args }}
 
-typecheck:
+@typecheck:
     pyright
 
-templatecheck:
+@templatecheck:
     ./manage.py validate_templates
 
-envfile:
+@envfile:
 	cp -R -u -p .env.example .env
 
-pyinstall:
+@pyinstall:
     uv sync --frozen --all-extras --no-install-project
 
-pyupdate:
+@pyupdate:
     uv lock --upgrade
 
-precommmitinstall:
+@precommmitinstall:
     pre-commit install && pre-commit install --hook-type commit-msg
 
-precommitupdate:
+@precommitupdate:
 	pre-commit autoupdate
 
-precommitall:
+@precommitall:
     pre-commit run -a
 
-nltkdownload:
+@nltkdownload:
     uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
