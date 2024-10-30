@@ -55,7 +55,7 @@ repos:
           - id: djade
             args: [--target-version, "5.1"]
     - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.35.2
+      rev: v1.35.3
       hooks:
           - id: djlint-django
             args: ["--lint"]
