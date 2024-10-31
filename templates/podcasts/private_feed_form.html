@@ -7,9 +7,13 @@
 {% block content %}
     <c-header title="Private Feeds" />
     {% partialdef form inline=True %}
-        <c-hx-form :form="form"
-                   id="private-feed-form"
-                   hx-vals='{"action": "add"}'>
+        <c-form :form="form"
+                :hx-post="request.path"
+                hx-target="this"
+                hx-swap="outerHTML"
+                id="private-feed-form"
+                hx-vals='{"action": "add"}'
+        >
             <c-slot name="buttons">
                 <c-form.buttons>
                     <c-button icon="plus" variant="primary" text="Add Feed" />
@@ -20,6 +24,6 @@
                               hx-vals='{"action": "cancel"}' />
                 </c-form.buttons>
             </c-slot>
-        </c-hx-form>
+        </c-form>
     {% endpartialdef form %}
 {% endblock content %}
