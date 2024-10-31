@@ -7,7 +7,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 Radiofeed requires the following basic dependencies to get started:
 
-* Python 3.12
+* Python 3.13
 * [uv](https://docs.astral.sh)
 
 **Note:** if you don't have the right version of Python you can use `uv python install 3.13.x`.
