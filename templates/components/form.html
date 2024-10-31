@@ -3,15 +3,11 @@
         class="space-y-3"
         action=request.path
         method="post"
-        multipart=False
 />
 {# djlint: on #}
 <form class="{{ class }}"
       action="{{ action }}"
       method="{{ method }}"
-      {% if multipart %}
-          enctype="multipart/form-data"
-      {% endif %}
       {{ attrs }}>
     {% csrf_token %}
     {% if form %}
