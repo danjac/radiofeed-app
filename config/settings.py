@@ -175,7 +175,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ROOT_URLCONF = "radiofeed.urls"
+ROOT_URLCONF = "config.urls"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 

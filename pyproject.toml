@@ -75,7 +75,7 @@ dev-dependencies = [
 
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.settings"
+DJANGO_SETTINGS_MODULE="config.settings"
 addopts = [
     "-v",
     "-x",
