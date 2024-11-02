@@ -27,8 +27,8 @@
 @clean:
     git clean -Xdf
 
-@test *args:
-    pytest {{ args }}
+@test *ARGS:
+    pytest {{ ARGS }}
 
 @typecheck:
     pyright
