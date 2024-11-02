@@ -39,7 +39,7 @@
     @just dj shell_plus
 
 @templatecheck:
-    @dj validate_templates
+    @just dj validate_templates
 
 @clean:
     git clean -Xdf
