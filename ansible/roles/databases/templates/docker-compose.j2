@@ -5,7 +5,7 @@ x-logging: &default-logging
 
 services:
     postgres:
-        image: postgres:16.2-bookworm
+        image: postgres:16.4-bookworm
         environment:
             - POSTGRES_PASSWORD={{ postgres_password }}
         volumes:
