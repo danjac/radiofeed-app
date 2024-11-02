@@ -18,6 +18,13 @@
     @just test
     @just precommitall
 
+@start:
+    @just dockerup
+    @just serve
+
+@stop:
+    @just dockerdown
+
 @serve:
     ./manage.py tailwind runserver_plus
 
@@ -29,6 +36,12 @@
 
 @test *ARGS:
     pytest {{ ARGS }}
+
+@dockerup *ARGS:
+    docker compose up -d {{ ARGS }}
+
+@dockerdown *ARGS:
+    docker compose down {{ ARGS }}
 
 @typecheck:
     pyright
