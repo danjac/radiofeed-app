@@ -26,16 +26,16 @@
     @just dockerdown
 
 @serve:
-    ./manage.py tailwind runserver_plus
+    @just dj tailwind runserver_plus
 
 @shell:
-    ./manage.py shell_plus
+    @just dj shell_plus
 
 @clean:
     git clean -Xdf
 
 @test *ARGS:
-    pytest {{ ARGS }}
+    uv run pytest {{ ARGS }}
 
 @dockerup *ARGS:
     docker compose up -d {{ ARGS }}
@@ -43,8 +43,11 @@
 @dockerdown *ARGS:
     docker compose down {{ ARGS }}
 
-@typecheck:
-    pyright
+@dj *ARGS:
+    uv run python ./manage.py {{ ARGS }}
+
+@typecheck *ARGS:
+    uv run pyright {{ ARGS }}
 
 @templatecheck:
     ./manage.py validate_templates
@@ -58,14 +61,18 @@
 @pyupdate:
     uv lock --upgrade
 
+@precommit *ARGS:
+    uv run --with pre-commit-uv pre-commit {{ ARGS }}
+
 @precommmitinstall:
-    pre-commit install && pre-commit install --hook-type commit-msg
+    @just precommit install
+    @just precommit install --hook-type commit-msg
 
 @precommitupdate:
-	pre-commit autoupdate
+	@just precommit autoupdate
 
 @precommitall:
-    pre-commit run -a
+    @just precommit run --all-files
 
 @nltkdownload:
     uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
