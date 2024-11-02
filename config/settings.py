@@ -506,6 +506,33 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 100,  # in MB
 }
 
+# Dev tools
+
+# Django browser reload
+# https://github.com/adamchainz/django-browser-reload
+
+if env.bool("USE_BROWSER_RELOAD", default=False):
+    INSTALLED_APPS += ["django_browser_reload"]
+
+    MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
+
+# Debug toolbar
+# https://github.com/jazzband/django-debug-toolbar
+
+if env.bool("USE_DEBUG_TOOLBAR", default=False):
+    INSTALLED_APPS += ["debug_toolbar"]
+
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
+
+    DEBUG_TOOLBAR_CONFIG = {"ROOT_TAG_EXTRA_ATTRS": "hx-preserve"}
+
+    # INTERNAL_IPS required for debug toolbar
+    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
+
+# Project settings
+
+DEFAULT_PAGE_SIZE = 30
+
 # HTMX configuration
 # https://htmx.org/docs/#config
 
@@ -543,26 +570,3 @@ PWA_CONFIG = {
         "theme_color": env("PWA_THEME_COLOR", default="#26323C"),
     },
 }
-
-# Dev tools
-
-# Django browser reload
-# https://github.com/adamchainz/django-browser-reload
-
-if env.bool("USE_BROWSER_RELOAD", default=False):
-    INSTALLED_APPS += ["django_browser_reload"]
-
-    MIDDLEWARE += ["django_browser_reload.middleware.BrowserReloadMiddleware"]
-
-# Debug toolbar
-# https://github.com/jazzband/django-debug-toolbar
-
-if env.bool("USE_DEBUG_TOOLBAR", default=False):
-    INSTALLED_APPS += ["debug_toolbar"]
-
-    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
-
-    DEBUG_TOOLBAR_CONFIG = {"ROOT_TAG_EXTRA_ATTRS": "hx-preserve"}
-
-    # INTERNAL_IPS required for debug toolbar
-    INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
