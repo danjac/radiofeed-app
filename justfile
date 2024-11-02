@@ -19,12 +19,15 @@
     @just precommitall
 
 @start:
-    @just dockerup
+    @just dcup
     @just migrate
     @just serve
 
 @stop:
-    @just dockerdown
+    @just dcdn
+
+@restart:
+    @just dcrestart
 
 @dj *ARGS:
     uv run python ./manage.py {{ ARGS }}
@@ -50,11 +53,14 @@
 @typecheck *ARGS:
     uv run pyright {{ ARGS }}
 
-@dockerup *ARGS:
+@dcup *ARGS:
     docker compose up -d {{ ARGS }}
 
-@dockerdown *ARGS:
+@dcdn *ARGS:
     docker compose down {{ ARGS }}
+
+@dcrestart *ARGS:
+    docker compose restart {{ ARGS }}
 
 @envfile:
 	cp -R -u -p .env.example .env
