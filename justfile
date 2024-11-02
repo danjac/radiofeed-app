@@ -1,5 +1,5 @@
 @_default:
-    @just --choose
+    @just --list
 
 @install:
     @just envfile
