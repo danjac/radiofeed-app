@@ -298,7 +298,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = False
 
-FORMAT_MODULE_PATH = ["radiofeed.formats"]
+FORMAT_MODULE_PATH = ["config.formats"]
 
 # Static files
 
