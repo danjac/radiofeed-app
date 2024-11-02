@@ -1,5 +1,5 @@
 @_default:
-    just --list
+    @just --choose
 
 @install:
     @just envfile
@@ -20,16 +20,26 @@
 
 @start:
     @just dockerup
+    @just migrate
     @just serve
 
 @stop:
     @just dockerdown
 
+@dj *ARGS:
+    uv run python ./manage.py {{ ARGS }}
+
 @serve:
     @just dj tailwind runserver_plus
 
+@migrate:
+    @just dj migrate
+
 @shell:
     @just dj shell_plus
+
+@templatecheck:
+    @dj validate_templates
 
 @clean:
     git clean -Xdf
@@ -37,20 +47,14 @@
 @test *ARGS:
     uv run pytest {{ ARGS }}
 
+@typecheck *ARGS:
+    uv run pyright {{ ARGS }}
+
 @dockerup *ARGS:
     docker compose up -d {{ ARGS }}
 
 @dockerdown *ARGS:
     docker compose down {{ ARGS }}
-
-@dj *ARGS:
-    uv run python ./manage.py {{ ARGS }}
-
-@typecheck *ARGS:
-    uv run pyright {{ ARGS }}
-
-@templatecheck:
-    ./manage.py validate_templates
 
 @envfile:
 	cp -R -u -p .env.example .env
@@ -76,3 +80,14 @@
 
 @nltkdownload:
     uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
+
+@dbclean:
+    #!/usr/bin/env bash
+    while true; do
+        read -p "Do you wish to remove the database? [y/n] " yn
+        case $yn in
+            [Yy]* ) docker volume rm radiofeed-app_pg_data; break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
