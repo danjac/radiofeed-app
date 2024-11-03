@@ -78,10 +78,6 @@
 @down *ARGS:
    docker compose down {{ ARGS }}
 
-# Restart all Docker services
-@dcrestart *ARGS:
-   docker compose restart {{ ARGS }}
-
 # Create a new .env file from .env.example if it doesn't exist
 @envfile:
    cp -R -u -p .env.example .env
