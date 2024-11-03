@@ -23,12 +23,20 @@
 
 # Start Docker services, run migrations, and start the Django development server
 @start:
-   @just dcup
+   @just up
    @just migrate
    @just serve
 
+# Run the Django management command
 @dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
+
+# Create a superuser
+@superuser username="admin" email="admin@localhost":
+   @just dj createsuperuser \
+        --noinput \
+        --username="{{ username }}" \
+        --email="{{ email }}"
 
 # Run the Django development server
 @serve:
@@ -63,11 +71,11 @@
    uv run pyright {{ ARGS }}
 
 # Start all Docker services
-@dcup *ARGS:
+@up *ARGS:
    docker compose up -d {{ ARGS }}
 
 # Stop all Docker services
-@dcdn *ARGS:
+@down *ARGS:
    docker compose down {{ ARGS }}
 
 # Restart all Docker services
@@ -111,6 +119,12 @@
 [confirm]
 @clean:
    git clean -Xdf
+
+# Build local database and add default data
+@dbinit:
+   @just migrate
+   @just defaultsite
+   @just superuser
 
 # Delete local database volume
 [confirm]
