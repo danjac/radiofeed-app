@@ -1,95 +1,98 @@
 @_default:
     @just --choose
 
-install:
+@install:
    @just envfile
    @just pyinstall
    @just precommmitinstall
    @just nltkdownload
 
-update:
+@update:
    @just pyupdate
    @just pyinstall
    @just precommitupdate
 
-check:
+@check:
    @just typecheck
    @just templatecheck
    @just test
    @just precommitall
 
-start:
+@start:
    @just dcup
    @just migrate
    @just serve
 
-stop:
+@stop:
    @just dcdn
 
-restart:
+@restart:
    @just dcrestart
 
-dj *ARGS:
+@dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
 
-serve:
+@serve:
    @just dj tailwind runserver_plus
 
-migrate:
+@migrate:
    @just dj migrate
 
-shell:
+@shell:
    @just dj shell_plus
 
-templatecheck:
+@clearcache:
+   @just dj clear_cache
+
+@templatecheck:
    @just dj validate_templates
 
-defaultsite:
-    @just dj set_default_site --domain=$(site_domain) --name=$(site_name)
+@defaultsite name="RadioFeed" domain="localhost:8000":
+    @just dj set_default_site --domain="{{ domain }}" --name="{{ name }}"
 
-clean:
+@clean:
    git clean -Xdf
 
-test *ARGS:
+@test *ARGS:
    uv run pytest {{ ARGS }}
 
-typecheck *ARGS:
+@typecheck *ARGS:
    uv run pyright {{ ARGS }}
 
-dcup *ARGS:
+@dcup *ARGS:
    docker compose up -d {{ ARGS }}
 
-dcdn *ARGS:
+@dcdn *ARGS:
    docker compose down {{ ARGS }}
 
-dcrestart *ARGS:
+@dcrestart *ARGS:
    docker compose restart {{ ARGS }}
 
-envfile:
+@envfile:
    cp -R -u -p .env.example .env
 
-pyinstall:
+@pyinstall:
    uv sync --frozen --all-extras --no-install-project
 
-pyupdate:
+@pyupdate:
    uv lock --upgrade
 
-precommit *ARGS:
+@precommit *ARGS:
    uv run --with pre-commit-uv pre-commit {{ ARGS }}
 
-precommmitinstall:
+@precommmitinstall:
    @just precommit install
    @just precommit install --hook-type commit-msg
 
-precommitupdate:
+@precommitupdate:
    @just precommit autoupdate
 
-precommitall:
+@precommitall:
    @just precommit run --all-files
 
-nltkdownload:
+@nltkdownload:
    uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
 
 [confirm]
-dbremove:
+@dbremove:
     docker volume rm radiofeed-app_pg_data
