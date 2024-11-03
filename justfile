@@ -27,6 +27,10 @@
    @just migrate
    @just serve
 
+# Deploy application using Github Actions
+@deploy:
+    gh workflow run deploy_production.yml
+
 # Run the Django management command
 @dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
