@@ -3,9 +3,7 @@ repos:
       rev: v5.0.0
       hooks:
           - id: trailing-whitespace
-            exclude: ^assets/dist
           - id: end-of-file-fixer
-            exclude: ^assets/dist
           - id: check-builtin-literals
           - id: check-json
           - id: check-merge-conflict
