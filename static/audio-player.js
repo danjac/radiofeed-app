@@ -17,6 +17,7 @@ document.addEventListener("alpine:init", () => {
             isLoaded: false,
             isPlaying: false,
             runtime: 0,
+            skipBy: 10,
             timer: null,
             counters: {
                 current: "00:00:00",
@@ -106,10 +107,10 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             skipBack() {
-                this.skipTo(-10);
+                this.skipTo(-this.skipBy);
             },
             skipForward() {
-                this.skipTo(10);
+                this.skipTo(this.skipBy);
             },
             shortcuts(event) {
                 if (
