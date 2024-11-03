@@ -1,99 +1,95 @@
 @_default:
-    @just --list
+    @just --choose
 
-@install:
-    @just envfile
-    @just pyinstall
-    @just precommmitinstall
-    @just nltkdownload
+install:
+   @just envfile
+   @just pyinstall
+   @just precommmitinstall
+   @just nltkdownload
 
-@update:
-    @just pyupdate
-    @just pyinstall
-    @just precommitupdate
+update:
+   @just pyupdate
+   @just pyinstall
+   @just precommitupdate
 
-@check:
-    @just typecheck
-    @just templatecheck
-    @just test
-    @just precommitall
+check:
+   @just typecheck
+   @just templatecheck
+   @just test
+   @just precommitall
 
-@start:
-    @just dcup
-    @just migrate
-    @just serve
+start:
+   @just dcup
+   @just migrate
+   @just serve
 
-@stop:
-    @just dcdn
+stop:
+   @just dcdn
 
-@restart:
-    @just dcrestart
+restart:
+   @just dcrestart
 
-@dj *ARGS:
-    uv run python ./manage.py {{ ARGS }}
+dj *ARGS:
+   uv run python ./manage.py {{ ARGS }}
 
-@serve:
-    @just dj tailwind runserver_plus
+serve:
+   @just dj tailwind runserver_plus
 
-@migrate:
-    @just dj migrate
+migrate:
+   @just dj migrate
 
-@shell:
-    @just dj shell_plus
+shell:
+   @just dj shell_plus
 
-@templatecheck:
-    @just dj validate_templates
+templatecheck:
+   @just dj validate_templates
 
-@clean:
-    git clean -Xdf
+defaultsite:
+    @just dj set_default_site --domain=$(site_domain) --name=$(site_name)
 
-@test *ARGS:
-    uv run pytest {{ ARGS }}
+clean:
+   git clean -Xdf
 
-@typecheck *ARGS:
-    uv run pyright {{ ARGS }}
+test *ARGS:
+   uv run pytest {{ ARGS }}
 
-@dcup *ARGS:
-    docker compose up -d {{ ARGS }}
+typecheck *ARGS:
+   uv run pyright {{ ARGS }}
 
-@dcdn *ARGS:
-    docker compose down {{ ARGS }}
+dcup *ARGS:
+   docker compose up -d {{ ARGS }}
 
-@dcrestart *ARGS:
-    docker compose restart {{ ARGS }}
+dcdn *ARGS:
+   docker compose down {{ ARGS }}
 
-@envfile:
-	cp -R -u -p .env.example .env
+dcrestart *ARGS:
+   docker compose restart {{ ARGS }}
 
-@pyinstall:
-    uv sync --frozen --all-extras --no-install-project
+envfile:
+   cp -R -u -p .env.example .env
 
-@pyupdate:
-    uv lock --upgrade
+pyinstall:
+   uv sync --frozen --all-extras --no-install-project
 
-@precommit *ARGS:
-    uv run --with pre-commit-uv pre-commit {{ ARGS }}
+pyupdate:
+   uv lock --upgrade
 
-@precommmitinstall:
-    @just precommit install
-    @just precommit install --hook-type commit-msg
+precommit *ARGS:
+   uv run --with pre-commit-uv pre-commit {{ ARGS }}
 
-@precommitupdate:
-	@just precommit autoupdate
+precommmitinstall:
+   @just precommit install
+   @just precommit install --hook-type commit-msg
 
-@precommitall:
-    @just precommit run --all-files
+precommitupdate:
+   @just precommit autoupdate
 
-@nltkdownload:
-    uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
+precommitall:
+   @just precommit run --all-files
 
-@dbclean:
-    #!/usr/bin/env bash
-    while true; do
-        read -p "Do you wish to remove the database? [y/n] " yn
-        case $yn in
-            [Yy]* ) docker volume rm radiofeed-app_pg_data; break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
+nltkdownload:
+   uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
+
+[confirm]
+dbremove:
+    docker volume rm radiofeed-app_pg_data
