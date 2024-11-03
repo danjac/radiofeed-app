@@ -1,3 +1,9 @@
+site_domain := "localhost:8000"
+site_name := "RadioFeed"
+
+admin_username := "admin"
+admin_email := "admin@localhost"
+
 @_default:
     @just --list
 
@@ -44,7 +50,7 @@
    uv run python ./manage.py {{ ARGS }}
 
 # Create a superuser
-@superuser username="admin" email="admin@localhost":
+@superuser username=admin_username email=admin_email:
    @just dj createsuperuser \
         --noinput \
         --username="{{ username }}" \
@@ -71,7 +77,7 @@
    @just dj validate_templates
 
 # Set the default site name and domain
-@defaultsite name="RadioFeed" domain="localhost:8000":
+@defaultsite name=site_name domain=site_domain:
     @just dj set_default_site --domain="{{ domain }}" --name="{{ name }}"
 
 # Run unit tests
