@@ -8,30 +8,13 @@ admin_email := "admin@localhost"
     @just --list
 
 # Install all dependencies
-@install:
-   @just envfile
-   @just pyinstall
-   @just precommmitinstall
-   @just nltkdownload
+@install: envfile pyinstall precommmitinstall nltkdownload
 
 # Update all dependencies
-@update:
-   @just pyupdate
-   @just pyinstall
-   @just precommitupdate
+@update: pyupdate pyinstall precommitupdate
 
 # Run all checks and tests
-@check:
-   @just typecheck
-   @just templatecheck
-   @just test
-   @just precommitall
-
-# Start Docker services, run migrations, and start the Django development server
-@start:
-   @just up
-   @just migrate
-   @just serve
+@check: typecheck templatecheck test precommitall
 
 # Deploy application using Github Actions
 @deploy:
@@ -102,7 +85,6 @@ admin_email := "admin@localhost"
 
 # Install pre-commit hooks
 @precommmitinstall:
-   @just precommit install
    @just precommit install --hook-type commit-msg
 
 # Update pre-commit hooks
@@ -136,3 +118,4 @@ admin_email := "admin@localhost"
 [confirm]
 @clean:
    git clean -Xdf
+   pre-commit uninstall
