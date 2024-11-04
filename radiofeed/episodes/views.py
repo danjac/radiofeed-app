@@ -142,7 +142,7 @@ def player_time_update(
             except (KeyError, ValueError):
                 return HttpResponseBadRequest()
 
-        return HttpResponseNoContent()
+        return HttpResponseNoContent(content_type="application/json")
     return HttpResponseUnauthorized()
 
 

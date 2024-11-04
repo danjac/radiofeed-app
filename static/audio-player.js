@@ -17,8 +17,9 @@ document.addEventListener("alpine:init", () => {
             isLoaded: false,
             isPlaying: false,
             runtime: 0,
-            skipBy: 10,
+            skipSeconds: 10,
             timer: null,
+            updateSeconds: 5,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -30,11 +31,11 @@ document.addEventListener("alpine:init", () => {
                         this.getMediaMetadata(metadataTag);
                 }
 
-                this.$watch("runtime", value => {
+                this.$watch("runtime", (value) => {
                     const percent =
                         value && this.duration
-                        ? (value / this.duration) * 100
-                        : 0;
+                            ? (value / this.duration) * 100
+                            : 0;
                     this.$refs.range.style.setProperty(
                         "--webkitProgressPercent",
                         `${percent}%`,
@@ -45,7 +46,7 @@ document.addEventListener("alpine:init", () => {
                     );
                 });
 
-                this.$watch("duration", value => {
+                this.$watch("duration", (value) => {
                     this.counters.remaining = this.formatCounter(value);
                 });
 
@@ -107,10 +108,10 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             skipBack() {
-                this.skipTo(-this.skipBy);
+                this.skipTo(-this.skipSeconds);
             },
             skipForward() {
-                this.skipTo(this.skipBy);
+                this.skipTo(this.skipSeconds);
             },
             shortcuts(event) {
                 if (
@@ -121,7 +122,7 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
-                const handleEvent = fn => {
+                const handleEvent = (fn) => {
                     event.preventDefault();
                     event.stopPropagation();
                     fn.bind(this)();
@@ -142,7 +143,7 @@ document.addEventListener("alpine:init", () => {
                         if (this.isPlaying) {
                             this.sendTimeUpdate();
                         }
-                    }, 5000);
+                    }, this.updateSeconds * 1000);
                 }
             },
             clearTimer() {
@@ -183,7 +184,7 @@ document.addEventListener("alpine:init", () => {
                     Math.floor((duration % 3600) / 60),
                     Math.floor(duration % 60),
                 ]
-                    .map(t => t.toString().padStart(2, "0"))
+                    .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
             },
             getMediaMetadata(tagName) {
