@@ -85,6 +85,7 @@ admin_email := "admin@localhost"
 
 # Install pre-commit hooks
 @precommmitinstall:
+   @just precommit install
    @just precommit install --hook-type commit-msg
 
 # Update pre-commit hooks
