@@ -179,9 +179,6 @@ ROOT_URLCONF = "config.urls"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
-# User-Agent header for API calls from this site
-USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
-
 SITE_ID = 1
 
 # Session and cookies
@@ -529,7 +526,13 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
-# Project settings
+# PROJECT-SPECIFIC SETTINGS
+
+# User-Agent header for API calls from this site
+
+USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
+
+# Default page size for paginated views
 
 DEFAULT_PAGE_SIZE = 30
 
