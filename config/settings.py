@@ -196,7 +196,6 @@ CSRF_TRUSTED_ORIGINS = [
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 
-GDPR_COOKIE_NAME = "accept-cookies"
 
 # Email configuration
 
@@ -527,6 +526,10 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # PROJECT-SPECIFIC SETTINGS
+
+# Cookie used to check user accepts cookies
+
+GDPR_COOKIE_NAME = "accept-cookies"
 
 # User-Agent header for API calls from this site
 
