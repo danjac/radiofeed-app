@@ -24,8 +24,6 @@ export default {
         "btn-danger",
         "btn-default",
         "btn-primary",
-        "form-checkbox",
-        "form-input",
     ],
     keyframes: true,
     variants: {
@@ -46,7 +44,9 @@ export default {
             ]);
             addVariant("htmx-added", ["&.htmx-added", ".htmx-added &"]);
         }),
-        require("@tailwindcss/forms"),
+        require("@tailwindcss/forms", {
+            strategy: "class",
+        }),
         require("@tailwindcss/typography"),
     ],
     theme: {
