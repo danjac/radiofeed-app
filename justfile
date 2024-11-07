@@ -1,5 +1,5 @@
 site_domain := "localhost:8000"
-site_name := "RadioFeed"
+site_name := "Radiofeed\\ Local"
 
 admin_username := "admin"
 admin_email := "admin@localhost"

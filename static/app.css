@@ -30,7 +30,10 @@
 @layer components {
     /* FORMS */
 
-    .form-input {
+    .form-input,
+    .form-select,
+    .form-multiselect,
+    .form-textarea {
         background: inherit;
         color: inherit;
         border-radius: theme("borderRadius.DEFAULT");

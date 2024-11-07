@@ -1,15 +1,21 @@
 {% load widget_tweaks %}
 <c-vars field class />
-{% with widget_type=field.field.widget.input_type %}
-    <fieldset class="space-y-3 {{ class }}" {{ attrs }}>
+{% with widget_type=field|widget_type %}
+    <fieldset class="space-y-3 form-control {{ class }}" {{ attrs }}>
         {% if slot %}
             {{ slot }}
         {% else %}
-            {% if widget_type == "checkbox" %}
+            {% if widget_type == "checkboxinput" %}
                 <c-form.checkbox :field="field" />
             {% else %}
                 <c-form.label :field="field" />
-                {% render_field field class="form-input" %}
+                {% if widget_type == "select" %}
+                    {% render_field field|add_class:"form-select" %}
+                {% elif widget_type == "textarea" %}
+                    {% render_field field|add_class:"form-textarea" %}
+                {% else %}
+                    {% render_field field|add_class:"form-input" %}
+                {% endif %}
             {% endif %}
         {% endif %}
         <c-form.errors :errors="field.errors" />
