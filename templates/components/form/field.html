@@ -1,6 +1,7 @@
-<c-vars field class="space-y-3 form-control"/>
+{% load widget_tweaks %}
+<c-vars field class />
 {% with widget_type=field.field.widget.input_type %}
-    <fieldset class="{{ class }} is-{{ widget_type }}{% if field.errors %} has-errors{% endif %}" {{ attrs }}>
+    <fieldset class="space-y-3 {{ class }}" {{ attrs }}>
         {% if slot %}
             {{ slot }}
         {% else %}
@@ -8,7 +9,7 @@
                 <c-form.checkbox :field="field" />
             {% else %}
                 <c-form.label :field="field" />
-                {{ field }}
+                {% render_field field class="form-input" %}
             {% endif %}
         {% endif %}
         <c-form.errors :errors="field.errors" />

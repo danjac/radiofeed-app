@@ -18,6 +18,7 @@
                                     <input id="email_radio_{{ forloop.counter }}"
                                            type="radio"
                                            name="email"
+                                           class="form-radio"
                                            {% if emailaddress.primary or num_addresses == 1 %}checked="checked"{% endif %}
                                            value="{{ emailaddress.email }}" />
                                     <label for="email_radio_{{ forloop.counter }}"

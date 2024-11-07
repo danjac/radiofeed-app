@@ -24,6 +24,8 @@ export default {
         "btn-danger",
         "btn-default",
         "btn-primary",
+        "form-checkbox",
+        "form-input",
     ],
     keyframes: true,
     variants: {

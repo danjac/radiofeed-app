@@ -30,24 +30,14 @@
 @layer components {
     /* FORMS */
 
-    .form-control:not(.is-checkbox) input {
-        background-color: inherit;
+    .form-input {
+        background: inherit;
         color: inherit;
-        font-size: inherit;
-        padding: theme("spacing.1");
-        width: theme("width.64");
-        border-radius: 0.25rem;
     }
 
-    .has-errors input {
-        border: solid theme("borderWidth.DEFAULT") theme("borderColor.red.800");
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .has-errors input {
-            border: solid theme("borderWidth.DEFAULT")
-                    theme("borderColor.red.500");
-        }
+    .form-input {
+        border-radius: theme("borderRadius.DEFAULT");
+        padding: theme("padding.1") theme("padding.2");
     }
 
     /* search inputs */

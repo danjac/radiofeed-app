@@ -54,6 +54,7 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.redis",
     "heroicons",
     "pgactivity",
+    "widget_tweaks",
     # https://django-cotton.com/docs/django-template-partials
     "django_cotton.apps.SimpleAppConfig",
     "template_partials.apps.SimpleAppConfig",
