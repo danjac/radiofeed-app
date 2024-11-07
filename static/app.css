@@ -33,9 +33,6 @@
     .form-input {
         background: inherit;
         color: inherit;
-    }
-
-    .form-input {
         border-radius: theme("borderRadius.DEFAULT");
         padding: theme("padding.1") theme("padding.2");
     }
