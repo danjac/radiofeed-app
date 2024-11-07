@@ -465,18 +465,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-pgactivity"
-version = "1.7.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/82/32/3a83b1801cb1ced0278b67fcd2fa1a67410378649a6a78a5a05a11147c5d/django_pgactivity-1.7.0.tar.gz", hash = "sha256:7af8e8b47959b8aaa0155c9b08510a1cf892c07609579212dbf7f8df8a0cdec2", size = 13062 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/57/185d745b1e5feff89d4ba1f684053eee1b15757010302da456e81a2c7677/django_pgactivity-1.7.0-py3-none-any.whl", hash = "sha256:16e5826a80140f149f343c4101a9098319212239cbdf57a73e68978db918da19", size = 14423 },
-]
-
-[[package]]
 name = "django-redis"
 version = "5.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1625,7 +1613,6 @@ dependencies = [
     { name = "django-htmx" },
     { name = "django-linear-migrations" },
     { name = "django-permissions-policy" },
-    { name = "django-pgactivity" },
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
     { name = "django-template-partials" },
@@ -1692,7 +1679,6 @@ requires-dist = [
     { name = "django-htmx", specifier = ">=1.19.0" },
     { name = "django-linear-migrations", specifier = ">=2.13.0" },
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
-    { name = "django-pgactivity", specifier = ">=1.5.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
     { name = "django-template-partials", specifier = ">=24.4" },

@@ -19,7 +19,6 @@ dependencies = [
     "django-htmx>=1.19.0",
     "django-linear-migrations>=2.13.0",
     "django-permissions-policy>=4.21.0",
-    "django-pgactivity>=1.5.0",
     "django-redis>=5.4.0",
     "django-tailwind-cli>=2.16.0",
     "django-template-partials>=24.4",
