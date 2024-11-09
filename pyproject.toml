@@ -86,7 +86,6 @@ addopts = [
     "--no-cov-on-fail",
     "--cov-fail-under=100",
     "--cov-report=term-missing",
-    "--numprocesses=auto",
     "--tb=short",
 ]
 
