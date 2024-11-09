@@ -23,7 +23,7 @@
                     {% if feed.podcast.pub_date %}
                         <c-podcasts.podcast :podcast="feed.podcast" />
                     {% else %}
-                        <c-podcasts.itunes_feed :feed="feed" />
+                        <c-podcasts.itunes-feed :feed="feed" />
                     {% endif %}
                 </c-browse.item>
             {% empty %}
