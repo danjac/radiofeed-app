@@ -16,10 +16,12 @@
         >
             <c-slot name="buttons">
                 <c-form.buttons>
-                    <c-button icon="plus" variant="primary" text="Add Feed" />
+                    <c-button icon="plus"
+                              variant="primary"
+                              label="Add Feed" />
                     <c-button icon="arrow-uturn-left"
                               type="button"
-                              text="Cancel"
+                              label="Cancel"
                               hx-get="{{ request.path }}"
                               hx-vals='{"action": "cancel"}' />
                 </c-form.buttons>

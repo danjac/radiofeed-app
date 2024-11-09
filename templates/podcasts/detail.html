@@ -20,7 +20,7 @@
                                 <c-button icon="trash"
                                           size="lg"
                                           variant="danger"
-                                          text="Remove"
+                                          label="Remove"
                                           aria-label="Remove podcast from your Private Feeds"
                                           title="Remove podcast from your Private Feeds"
                                           hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
@@ -30,9 +30,9 @@
                             {% else %}
                                 <c-button icon="eye-slash"
                                           size="lg"
-                                          text="Subscribe"
+                                          label="Subscribe"
                                           aria-label="This is a private feed, you cannot subscribe to it."
-                                          title="This is a private feed, you cannot subscribe to it."
+                                          label="This is a private feed, you cannot subscribe to it."
                                           disabled />
                             {% endif %}
                         </div>
@@ -48,7 +48,7 @@
                                     <c-button icon="eye-slash"
                                               variant="primary"
                                               size="lg"
-                                              text="Unsubscribe"
+                                              label="Unsubscribe"
                                               outline
                                               aria-label="Unsubscribe from this Podcast"
                                               title="Unsubscribe from this Podcast"
@@ -60,7 +60,7 @@
                                         icon="eye"
                                         variant="primary"
                                         size="lg"
-                                        text="Subscribe"
+                                        label="Subscribe"
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
                                         hx-post="{% url "podcasts:subscribe" podcast.pk %}"

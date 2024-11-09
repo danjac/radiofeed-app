@@ -11,7 +11,7 @@
                 <c-header.nav.item>
                     {% if request.search %}
                         <c-search.button url="{% url 'episodes:search_episodes' %}"
-                                         text="Search All Episodes"
+                                         label="Search All Episodes"
                         />
                     {% else %}
                         {% if ordering == "asc" %}
