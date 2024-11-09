@@ -1,10 +1,6 @@
-{# djlint: off #}
-<c-vars form=None
-        class="space-y-3"
-        action=request.path
-        method="post"
-/>
-{# djlint: on #}
+{# djlint:off #}
+<c-vars form=None action=request.path method="post" class="space-y-3" />
+{# djlint:on #}
 <form class="{{ class }}"
       action="{{ action }}"
       method="{{ method }}"
