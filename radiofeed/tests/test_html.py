@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.html import render_markdown, strip_extra_spaces, strip_html
+from radiofeed.html import render_markdown, strip_extra_spaces, strip_html, urlize
 
 
 class TestRenderMarkdown:
@@ -55,3 +55,16 @@ class TestStripExtraSpaces:
         expected = "This is some text\nwith a line break\nand some extra line breaks!"
 
         assert strip_extra_spaces(value) == expected
+
+
+class TestUrlize:
+    def test_urlize(self):
+        text = """I was surfing http://www.google.com, where I found my tweet,
+check it out <a href="http://tinyurl.com/blah">http://tinyurl.com/blah</a>
+<span>http://www.google.com</span>"""
+        assert (
+            urlize(text)
+            == """I was surfing <a href="http://www.google.com">http://www.google.com</a>, where I found my tweet,
+check it out <a href="http://tinyurl.com/blah">http://tinyurl.com/blah</a>
+<span><a href="http://www.google.com">http://www.google.com</a></span>"""
+        )
