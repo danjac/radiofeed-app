@@ -11,6 +11,12 @@ from markdown_it import MarkdownIt
 
 _RE_EXTRA_SPACES: Final = r" +"
 
+_RE_URL: Final = (
+    r'((?:<a href[^>]+>)|(?:<a href="))?'
+    r"((?:https?):(?:(?://)|(?:\\\\))+"
+    r"(?:[\w\d:#@%/;$()~_?\+\-=\\\.&](?:#!)?)*)"
+)
+
 _ALLOWED_TAGS: Final = {
     "a",
     "abbr",
@@ -74,7 +80,7 @@ def render_markdown(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if value := value.strip():
         return nh3.clean(
-            value if nh3.is_html(value) else _markdown().render(value),
+            urlize(value if nh3.is_html(value) else _markdown().render(value)),
             clean_content_tags=_CLEAN_TAGS,
             link_rel=_LINK_REL,
             set_tag_attribute_values=_TAG_ATTRIBUTES,
@@ -96,6 +102,20 @@ def strip_html(value: str) -> str:
             )
         )
     )
+
+
+def urlize(value: str) -> str:
+    """Converts URLs in text to HTML links, unless already in a link."""
+    return re.sub(_re_url(), _urlize, value)
+
+
+def _urlize(match: re.Match) -> str:
+    href_tag, url = match.groups()
+    if href_tag:
+        # Since it has an href tag, this isn't what we want to change,
+        # so return the whole match.
+        return match.group(0)
+    return f'<a href="{url}">{url}</a>'
 
 
 def strip_extra_spaces(value: str) -> str:
@@ -124,3 +144,8 @@ def _markdown():
             "smartquotes",
         ]
     )
+
+
+@functools.cache
+def _re_url():
+    return re.compile(_RE_URL, flags=re.IGNORECASE)
