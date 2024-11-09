@@ -11,7 +11,7 @@
                 <c-header.nav.item>
                     <c-button icon="plus"
                               role="link"
-                              text="Add Private Feed"
+                              label="Add Private Feed"
                               hx-get="{% url "podcasts:add_private_feed" %}"
                               hx-push-url="true"
                     />
@@ -20,7 +20,7 @@
                     {% if request.search %}
                         <c-header.nav.item>
                             <c-search.button url="{% url 'podcasts:search_podcasts' %}"
-                                             text="Search All Podcasts"
+                                             label="Search All Podcasts"
                             />
                         </c-header.nav.item>
                     {% endif %}

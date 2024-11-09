@@ -78,7 +78,7 @@
                                     <c-button icon="stop-circle"
                                               variant="primary"
                                               size="lg"
-                                              text="Close"
+                                              label="Close"
                                               outline
                                               aria-label="Close Player"
                                               title="Close Player"
@@ -91,7 +91,7 @@
                                               variant="primary"
                                               variant="primary"
                                               size="lg"
-                                              text="Play"
+                                              label="Play"
                                               aria-label="Open Episode in Player"
                                               title="Open Episode in Player"
                                               hx-disabled-elt="this"
@@ -116,7 +116,7 @@
                              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
                                 <c-button icon="bookmark-slash"
-                                          text="Bookmark"
+                                          label="Bookmark"
                                           outline
                                           aria-label="Remove Episode from your Bookmarks"
                                           title="Remove Episode from your Bookmarks"
@@ -125,7 +125,7 @@
                                           hx-trigger="click once" />
                             {% else %}
                                 <c-button icon="bookmark"
-                                          text="Bookmark"
+                                          label="Bookmark"
                                           aria-label="Add Episode to your Bookmarks"
                                           title="Add Episode to your Bookmarks"
                                           hx-disabled-elt="this"
@@ -192,7 +192,7 @@
                             <c-button icon="trash"
                                       variant="danger"
                                       size="sm"
-                                      text="Remove"
+                                      label="Remove"
                                       title="Remove episode from your History"
                                       hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                                       hx-confirm="Are you sure you want to remove this episode from your History?"
