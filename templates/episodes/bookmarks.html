@@ -30,12 +30,11 @@
     {% partialdef pagination inline=True %}
         <c-episodes.paginate :page="page" fk>
             <c-slot name="empty">
-
                 <c-browse.empty>
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
                     {% else %}
-                        <p>You don't have any Bookmarks yet.</p>
+                        <p>You don't have any Bookmarks at the moment.</p>
                         <p>This is where you can save all your favorites or any episodes you want to listen to later.</p>
                         <p>
                             To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
