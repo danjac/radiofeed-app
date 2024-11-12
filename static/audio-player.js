@@ -202,7 +202,7 @@ document.addEventListener("alpine:init", () => {
                 console.error(error);
             },
             // properties
-            get title() {
+            get status() {
                 if (!this.isLoaded) {
                     return "Loading";
                 }

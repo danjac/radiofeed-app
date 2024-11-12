@@ -110,7 +110,7 @@
                                            x-model="runtime"
                                            @change="skip"
                                            @mouseover="setPreviewCounter($event.offsetX)"
-                                           :title="title"
+                                           :title="status"
                                            :max="duration"
                                            :disabled="!isPlaying"
                                            :class="{'cursor-pointer': isPlaying, 'cursor-not-allowed': !isPlaying}">
