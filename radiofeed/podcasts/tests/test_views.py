@@ -78,26 +78,19 @@ class TestSubscriptions:
 
 class TestDiscover:
     @pytest.mark.django_db
+    def test_get(self, client, auth_user):
+        PodcastFactory.create_batch(3, promoted=True)
+        response = client.get(_discover_url)
+        assert200(response)
+        assertTemplateUsed(response, "podcasts/discover.html")
+
+    @pytest.mark.django_db
     def test_empty(self, client, auth_user):
         response = client.get(_discover_url)
         assert200(response)
         assertTemplateUsed(response, "podcasts/discover.html")
 
-        assert len(response.context["page"].object_list) == 0
-
-    @pytest.mark.django_db
-    def test_invalid_page(self, client, auth_user):
-        response = client.get(_discover_url)
-        assert200(response)
-
-    @pytest.mark.django_db
-    def test_next_page(self, client, auth_user):
-        PodcastFactory.create_batch(33, promoted=True)
-        response = client.get(_discover_url, {"page": 2})
-
-        assert200(response)
-
-        assert len(response.context["page"].object_list) == 3
+        assert len(response.context["podcasts"]) == 0
 
 
 class TestSearchPodcasts:

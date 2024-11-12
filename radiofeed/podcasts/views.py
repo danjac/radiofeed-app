@@ -4,7 +4,11 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, QuerySet
+from django.db.models import (
+    Exists,
+    OuterRef,
+    QuerySet,
+)
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST, require_safe
@@ -42,10 +46,21 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 @login_required
 def discover(request: HttpRequest) -> HttpResponse:
     """Shows all promoted podcasts."""
-    return render_paginated_response(
+    podcasts = (
+        _get_podcasts()
+        .recommended(request.user)
+        .order_by(
+            "-relevance",
+            "-pub_date",
+        )
+    )[: settings.DEFAULT_PAGE_SIZE]
+
+    return render(
         request,
         "podcasts/discover.html",
-        _get_podcasts().filter(promoted=True).order_by("-pub_date"),
+        {
+            "podcasts": podcasts,
+        },
     )
 
 

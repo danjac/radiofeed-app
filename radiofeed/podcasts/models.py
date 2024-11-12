@@ -6,7 +6,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models.functions import Lower
+from django.db.models.functions import Coalesce, Lower
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
@@ -134,6 +134,45 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
                 ),
                 parsed__lt=now - self.model.MIN_PARSER_FREQUENCY,
             )
+        )
+
+    def recommended(self, user: User) -> models.QuerySet["Podcast"]:
+        """Returns recommended podcasts for user based on subscriptions. Includes `relevance` annotation.
+        Backfills results with promoted podcasts if no recommendations are found.
+        """
+
+        subscribed_podcast_ids = set(
+            user.subscriptions.values_list("podcast", flat=True)
+        )
+
+        # pick highest matches
+
+        recommendations = (
+            Recommendation.objects.with_relevance()
+            .filter(
+                podcast__pk__in=subscribed_podcast_ids,
+                recommended=models.OuterRef("pk"),
+            )
+            .exclude(recommended__pk__in=subscribed_podcast_ids)
+        ).order_by("-relevance")
+
+        # include recommended + promoted
+
+        return (
+            self.annotate(
+                relevance=Coalesce(
+                    models.Subquery(
+                        recommendations.values("relevance")[:1],
+                    ),
+                    0,
+                    output_field=models.DecimalField(),
+                )
+            )
+            .filter(
+                models.Q(relevance__gt=0) | models.Q(promoted=True),
+                private=False,
+            )
+            .exclude(pk__in=subscribed_podcast_ids)
         )
 
 
