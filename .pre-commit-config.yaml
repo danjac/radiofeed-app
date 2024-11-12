@@ -73,6 +73,6 @@ repos:
           - id: django-upgrade
             args: [--target-version, "5.1"]
     - repo: https://github.com/abravalheri/validate-pyproject
-      rev: v0.22
+      rev: v0.23
       hooks:
           - id: validate-pyproject
