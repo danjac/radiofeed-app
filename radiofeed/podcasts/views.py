@@ -4,11 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import (
-    Exists,
-    OuterRef,
-    QuerySet,
-)
+from django.db.models import Exists, OuterRef, QuerySet
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST, require_safe
@@ -52,8 +48,8 @@ def discover(request: HttpRequest) -> HttpResponse:
         .order_by(
             "-pub_date__date",
             "-relevance",
-        )
-    )[: settings.DEFAULT_PAGE_SIZE]
+        )[: settings.DEFAULT_PAGE_SIZE]
+    )
 
     return render(
         request,

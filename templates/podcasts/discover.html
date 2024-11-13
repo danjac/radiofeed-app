@@ -15,11 +15,13 @@
         </c-header.nav>
     </c-header>
     <c-browse>
-        {% for podcast in podcasts %}
-            <c-browse.item>
+        {% cache 600 discover request.user.username %}
+            {% for podcast in podcasts %}
+                <c-browse.item>
                 <!-- Relevance: {{ podcast.relevance }} -->
-                <c-podcasts.podcast :podcast="podcast" />
-            </c-browse.item>
-        {% endfor %}
+                    <c-podcasts.podcast :podcast="podcast" />
+                </c-browse.item>
+            {% endfor %}
+        {% endcache %}
     </c-browse>
 {% endblock content %}
