@@ -50,8 +50,8 @@ def discover(request: HttpRequest) -> HttpResponse:
         _get_podcasts()
         .recommended(request.user)
         .order_by(
-            "-relevance",
             "-pub_date",
+            "-relevance",
         )
     )[: settings.DEFAULT_PAGE_SIZE]
 
