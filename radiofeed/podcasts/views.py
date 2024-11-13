@@ -45,7 +45,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 @require_safe
 @login_required
 def discover(request: HttpRequest) -> HttpResponse:
-    """Shows all promoted podcasts."""
+    """Shows all promoted and recommended podcasts."""
     podcasts = (
         _get_podcasts()
         .recommended(request.user)
