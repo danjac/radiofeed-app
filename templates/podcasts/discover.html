@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache partials %}
+
 {% block title %}
     {{ block.super }} | Discover
 {% endblock title %}
@@ -15,13 +15,11 @@
         </c-header.nav>
     </c-header>
     <c-browse>
-        {% cache 600 discover request.user.username %}
-            {% for podcast in podcasts %}
-                <c-browse.item>
+        {% for podcast in podcasts %}
+            <c-browse.item>
                 <!-- Relevance: {{ podcast.relevance }} -->
-                    <c-podcasts.podcast :podcast="podcast" />
-                </c-browse.item>
-            {% endfor %}
-        {% endcache %}
+                <c-podcasts.podcast :podcast="podcast" />
+            </c-browse.item>
+        {% endfor %}
     </c-browse>
 {% endblock content %}
