@@ -17,6 +17,7 @@
     <c-browse>
         {% for podcast in podcasts %}
             <c-browse.item>
+                <!-- Relevance: {{ podcast.relevance }} -->
                 <c-podcasts.podcast :podcast="podcast" />
             </c-browse.item>
         {% endfor %}
