@@ -154,6 +154,7 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
                 podcast__pk__in=subscribed_podcast_ids,
                 recommended=models.OuterRef("pk"),
             )
+            .exclude(recommended__pk__in=subscribed_podcast_ids)
             .annotate(score=models.Sum("relevance"))
             .values("recommended", "score")
         )
@@ -172,7 +173,6 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
             )
             .filter(
                 models.Q(relevance__gt=0) | models.Q(promoted=True),
-                private=False,
             )
             .exclude(pk__in=subscribed_podcast_ids)
         )
