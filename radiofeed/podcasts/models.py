@@ -145,6 +145,10 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
             user.subscriptions.values_list("podcast", flat=True)
         )
 
+        exclude_podcast_ids = subscribed_podcast_ids | set(
+            user.recommended_podcasts.values_list("pk", flat=True)
+        )
+
         # pick highest matches
         # we want the sum of the relevance of the recommendations, grouped by recommended
 
@@ -154,7 +158,7 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
                 podcast__pk__in=subscribed_podcast_ids,
                 recommended=models.OuterRef("pk"),
             )
-            .exclude(recommended__pk__in=subscribed_podcast_ids)
+            .exclude(recommended__pk__in=exclude_podcast_ids)
             .annotate(score=models.Sum("relevance"))
             .values("recommended", "score")
         )
@@ -174,7 +178,7 @@ class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QueryS
             .filter(
                 models.Q(relevance__gt=0) | models.Q(promoted=True),
             )
-            .exclude(pk__in=subscribed_podcast_ids)
+            .exclude(pk__in=exclude_podcast_ids)
         )
 
 

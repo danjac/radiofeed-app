@@ -44,9 +44,8 @@ def discover(request: HttpRequest) -> HttpResponse:
     """Shows all promoted and recommended podcasts."""
     podcasts = (
         _get_podcasts()
-        .recommended(request.user)
+        .filter(promoted=True)
         .order_by(
-            "-relevance",
             "-pub_date",
         )[: settings.DEFAULT_PAGE_SIZE]
     )

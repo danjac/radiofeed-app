@@ -22,7 +22,6 @@ def send_recommendations_email(
     podcasts = (
         Podcast.objects.published()
         .recommended(user)
-        .exclude(pk__in=user.recommended_podcasts.values_list("pk", flat=True))
         .order_by("-relevance", "-pub_date")
     )[:num_podcasts]
 
