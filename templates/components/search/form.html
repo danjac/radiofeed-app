@@ -16,7 +16,7 @@
                hx-validate="true"
                x-model="search"
                @keydown.ctrl.k.window.prevent="$el.focus()"
-               :class="{ 'md:w-72 xl:w-84': !search, 'md:w-72 xl:w-96': search }">
+               :class="{ 'w-72 xl:w-80': !search, 'w-80 xl:w-96': search }">
         <div class="flex absolute inset-y-0 right-0 items-center pr-2">
             {% if clearable and request.search %}
                 <a href="{{ url }}"
