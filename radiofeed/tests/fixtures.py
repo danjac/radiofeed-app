@@ -6,17 +6,11 @@ from django.contrib.auth.signals import user_logged_in
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
-from faker import Faker
 
 
 @pytest.fixture
 def site():
     return Site.objects.get_current()
-
-
-@pytest.fixture
-def faker():
-    return Faker()
 
 
 @pytest.fixture(autouse=True)
