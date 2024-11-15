@@ -279,7 +279,7 @@ class TestPodcastEpisodes:
         response = client.get(podcast.get_episodes_url())
         assert200(response)
 
-        assert len(response.context["page"].object_list) == 30
+        assert len(response.context["page"].object_list) == 31
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):
@@ -298,7 +298,7 @@ class TestPodcastEpisodes:
         )
         assert200(response)
 
-        assert len(response.context["page"].object_list) == 30
+        assert len(response.context["page"].object_list) == 31
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, podcast, faker):
@@ -506,14 +506,16 @@ class TestPrivateFeeds:
             SubscriptionFactory(subscriber=auth_user, podcast=podcast)
         response = client.get(self.url)
         assert200(response)
-        assert response.context["page"].paginator.count == 33
+        assert len(response.context["page"]) == 31
+        assert response.context["page"].has_other_pages() is True
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
         PodcastFactory(private=True)
         response = client.get(self.url)
         assert200(response)
-        assert response.context["page"].paginator.count == 0
+        assert len(response.context["page"]) == 0
+        assert response.context["page"].has_other_pages() is False
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, faker):
