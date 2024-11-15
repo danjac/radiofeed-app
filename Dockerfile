@@ -30,7 +30,7 @@ FROM python-base AS nltk-corpora
 
 COPY ./nltk.txt /app/
 
-RUN xargs -I{} python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
+RUN xargs -I{} uv run python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 # Build static assets
 
@@ -38,8 +38,8 @@ FROM python-base AS staticfiles
 
 COPY . /app
 
-RUN python manage.py tailwind build && \
-    python manage.py collectstatic --no-input
+RUN uv run python manage.py tailwind build && \
+    uv run python manage.py collectstatic --no-input
 
 FROM python-base AS webapp
 
