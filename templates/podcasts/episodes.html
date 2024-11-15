@@ -5,9 +5,9 @@
 {% endblock title %}
 
 {% block content %}
-    <c-podcasts.detail :podcast="podcast" current="episodes">
-        <c-slot name="nav">
-            {% cache 300 podcast-episodes-header request.get_full_path %}
+    {% cache 300 podcast-detail-episodes request.get_full_path %}
+        <c-podcasts.detail :podcast="podcast" current="episodes">
+            <c-slot name="nav">
                 {% if page.has_other_pages or request.search %}
                     <c-header.nav>
                         {% if request.search %}
@@ -31,26 +31,26 @@
                         </c-header.nav.item>
                     </c-header.nav>
                 {% endif %}
-            {% endcache %}
-        </c-slot>
-        {% partialdef pagination inline=True %}
-            {% cache 300 podcast-episodes request.get_full_path %}
-                <c-paginate :page="page">
-                    {% for episode in page %}
-                        <c-browse.item>
-                            <c-podcasts.episode :episode="episode" />
-                        </c-browse.item>
-                    {% empty %}
-                        <c-browse.empty>
-                            {% if request.search %}
-                                No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
-                            {% else %}
-                                This podcast does not have any episodes.
-                            {% endif %}
-                        </c-browse.empty>
-                    {% endfor %}
-                </c-paginate>
-            {% endcache %}
-        {% endpartialdef pagination %}
-    </c-podcasts.detail>
+            </c-slot>
+            {% partialdef pagination inline=True %}
+                {% cache 300 podcast-episodes request.get_full_path %}
+                    <c-paginate :page="page">
+                        {% for episode in page %}
+                            <c-browse.item>
+                                <c-podcasts.episode :episode="episode" />
+                            </c-browse.item>
+                        {% empty %}
+                            <c-browse.empty>
+                                {% if request.search %}
+                                    No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
+                                {% else %}
+                                    This podcast does not have any episodes.
+                                {% endif %}
+                            </c-browse.empty>
+                        {% endfor %}
+                    </c-paginate>
+                {% endcache %}
+            {% endpartialdef pagination %}
+        </c-podcasts.detail>
+    {% endcache %}
 {% endblock content %}
