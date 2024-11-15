@@ -13,7 +13,6 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 
-from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
@@ -67,7 +66,7 @@ class Category(models.Model):
         return slugify(self.name, allow_unicode=False)
 
 
-class PodcastQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, models.QuerySet):
+class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
     def search(self, search_term) -> models.QuerySet["Podcast"]:
