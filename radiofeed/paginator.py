@@ -10,7 +10,7 @@ from django.utils.functional import SimpleLazyObject
 from radiofeed.partials import render_partial_for_target
 
 
-class CountlessPage(Sequence):
+class Page(Sequence):
     """Pagination without COUNT(*) queries.
 
     See: https://testdriven.io/blog/django-avoid-counting/
@@ -67,7 +67,7 @@ class CountlessPage(Sequence):
         return self.has_previous() or self.has_next()
 
 
-class CountlessPaginator:
+class Paginator:
     """Paginator without COUNT(*) queries."""
 
     def __init__(self, object_list: QuerySet | list, per_page: int) -> None:
@@ -84,7 +84,7 @@ class CountlessPaginator:
             raise EmptyPage("Page number is less than 1")
         return number
 
-    def get_page(self, number: int | str) -> CountlessPage:
+    def get_page(self, number: int | str) -> Page:
         """Returns a page object."""
         try:
             number = self.validate_number(number)
@@ -100,7 +100,7 @@ class CountlessPaginator:
         has_next = len(object_list) > len(page_object_list)
         has_previous = number > 1
 
-        return CountlessPage(
+        return Page(
             object_list=page_object_list,
             number=number,
             has_next=has_next,
@@ -114,9 +114,9 @@ def paginate(
     *,
     page_size: int | None = None,
     param: str = "page",
-) -> CountlessPage:
+) -> Page:
     """Returns paginated object."""
-    return CountlessPaginator(
+    return Paginator(
         queryset,
         page_size or settings.DEFAULT_PAGE_SIZE,
     ).get_page(request.GET.get(param, ""))
