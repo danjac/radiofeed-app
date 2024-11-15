@@ -140,24 +140,36 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         Backfills results with promoted podcasts if no recommendations are found.
         """
 
-        subscribed_podcast_ids = set(
-            user.subscriptions.values_list("podcast", flat=True)
-        )
-
-        exclude_podcast_ids = subscribed_podcast_ids | set(
-            user.recommended_podcasts.values_list("pk", flat=True)
-        )
-
         # pick highest matches
         # we want the sum of the relevance of the recommendations, grouped by recommended
 
+        is_recommended = models.Exists(
+            user.recommended_podcasts.filter(
+                pk=models.OuterRef("pk"),
+            )
+        )
+
         scores = (
             Recommendation.objects.with_relevance()
+            .alias(
+                is_podcast_subscribed=models.Exists(
+                    user.subscriptions.filter(
+                        podcast=models.OuterRef("podcast"),
+                    )
+                ),
+                is_recommended_subscribed=models.Exists(
+                    user.subscriptions.filter(
+                        podcast=models.OuterRef("recommended"),
+                    )
+                ),
+                is_recommended=is_recommended,
+            )
             .filter(
-                podcast__pk__in=subscribed_podcast_ids,
+                is_podcast_subscribed=True,
+                is_recommended_subscribed=False,
+                is_recommended=False,
                 recommended=models.OuterRef("pk"),
             )
-            .exclude(recommended__pk__in=exclude_podcast_ids)
             .annotate(score=models.Sum("relevance"))
             .values("recommended", "score")
         )
@@ -174,10 +186,13 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                     output_field=models.DecimalField(),
                 )
             )
+            .alias(
+                is_recommended=is_recommended,
+            )
             .filter(
                 models.Q(relevance__gt=0) | models.Q(promoted=True),
+                is_recommended=False,
             )
-            .exclude(pk__in=exclude_podcast_ids)
         )
 
 
