@@ -90,11 +90,7 @@ class CountlessPaginator:
             number = self.validate_number(number)
         except (PageNotAnInteger, EmptyPage):
             number = 1
-        return self.page(number)
 
-    def page(self, number: int | str) -> CountlessPage:
-        """Returns CountlessPage instance."""
-        number = self.validate_number(number)
         start = (number - 1) * self.per_page
         end = start + self.per_page + 1
 
