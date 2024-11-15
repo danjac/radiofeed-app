@@ -4,11 +4,10 @@ from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
 from radiofeed.episodes.models import Episode
-from radiofeed.fast_count import FastCountAdminMixin
 
 
 @admin.register(Episode)
-class EpisodeAdmin(FastCountAdminMixin, admin.ModelAdmin):
+class EpisodeAdmin(admin.ModelAdmin):
     """Django admin for Episode model."""
 
     list_display = ("episode_title", "podcast_title", "pub_date")

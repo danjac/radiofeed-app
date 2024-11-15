@@ -4,7 +4,6 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
-from radiofeed.fast_count import FastCountAdminMixin
 from radiofeed.podcasts.models import Category, Podcast, Subscription
 
 
@@ -190,7 +189,7 @@ class ScheduledFilter(admin.SimpleListFilter):
 
 
 @admin.register(Podcast)
-class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
+class PodcastAdmin(admin.ModelAdmin):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"

@@ -10,13 +10,12 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from fast_update.query import FastUpdateQuerySet
 
-from radiofeed.fast_count import FastCountQuerySetMixin
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
-class EpisodeQuerySet(FastCountQuerySetMixin, SearchQuerySetMixin, FastUpdateQuerySet):
+class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
     def subscribed(self, user: User) -> models.QuerySet["Episode"]:
