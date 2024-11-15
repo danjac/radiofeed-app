@@ -143,12 +143,6 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         # pick highest matches
         # we want the sum of the relevance of the recommendations, grouped by recommended
 
-        is_recommended = models.Exists(
-            user.recommended_podcasts.filter(
-                pk=models.OuterRef("pk"),
-            )
-        )
-
         scores = (
             Recommendation.objects.with_relevance()
             .alias(
@@ -162,12 +156,10 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                         podcast=models.OuterRef("recommended"),
                     )
                 ),
-                is_recommended=is_recommended,
             )
             .filter(
                 is_podcast_subscribed=True,
                 is_recommended_subscribed=False,
-                is_recommended=False,
                 recommended=models.OuterRef("pk"),
             )
             .annotate(score=models.Sum("relevance"))
@@ -176,23 +168,22 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
 
         # include recommended + promoted
 
-        return (
-            self.annotate(
-                relevance=Coalesce(
-                    models.Subquery(
-                        scores.values("score")[:1],
-                    ),
-                    0,
-                    output_field=models.DecimalField(),
+        return self.annotate(
+            relevance=Coalesce(
+                models.Subquery(
+                    scores.values("score")[:1],
+                ),
+                0,
+                output_field=models.DecimalField(),
+            ),
+            is_recommended=models.Exists(
+                user.recommended_podcasts.filter(
+                    pk=models.OuterRef("pk"),
                 )
-            )
-            .alias(
-                is_recommended=is_recommended,
-            )
-            .filter(
-                models.Q(relevance__gt=0) | models.Q(promoted=True),
-                is_recommended=False,
-            )
+            ),
+        ).filter(
+            models.Q(relevance__gt=0) | models.Q(promoted=True),
+            is_recommended=False,
         )
 
 
