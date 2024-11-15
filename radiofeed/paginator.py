@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.utils.functional import SimpleLazyObject, cached_property
+from django.utils.functional import SimpleLazyObject
 
 from radiofeed.partials import render_partial_for_target
 
@@ -18,16 +18,17 @@ class CountlessPage(Sequence):
 
     def __init__(
         self,
-        paginator: "CountlessPaginator",
-        object_list: QuerySet | list,
+        *,
+        object_list: Sequence,
         number: int,
-        page_size: int,
+        has_next: bool,
+        has_previous: bool,
     ) -> None:
-        self.paginator = paginator
-        self.page_size = page_size
+        self.object_list = object_list
         self.number = number
 
-        self._object_list = object_list
+        self._has_next = has_next
+        self._has_previous = has_previous
 
     def __repr__(self) -> str:
         """Object representation."""
@@ -35,28 +36,11 @@ class CountlessPage(Sequence):
 
     def __len__(self) -> int:
         """Returns total number of items"""
-        return self._num_objects
+        return len(self.object_list)
 
     def __getitem__(self, index: int | slice) -> Any:
         """Returns indexed item."""
         return self.object_list[index]
-
-    @cached_property
-    def object_list(self) -> list:
-        """Returns the object list for this page."""
-        return list(self._object_list)
-
-    def has_next(self) -> bool:
-        """Returns whether there's a next page."""
-        return self._has_next
-
-    def has_previous(self) -> bool:
-        """Returns whether there's a previous page."""
-        return self._has_previous
-
-    def has_other_pages(self) -> bool:
-        """Returns whether there's other pages."""
-        return self.has_next() or self.has_previous()
 
     def next_page_number(self) -> int:
         """Returns the next page number."""
@@ -70,17 +54,17 @@ class CountlessPage(Sequence):
             return self.number - 1
         raise EmptyPage("Previous page does not exist")
 
-    @cached_property
-    def _num_objects(self) -> int:
-        return len(self.object_list)
+    def has_next(self) -> bool:
+        """Checks if there is a next page."""
+        return self._has_next
 
-    @cached_property
-    def _has_next(self) -> bool:
-        return len(self) > len(self.object_list[: self.page_size])
+    def has_previous(self) -> bool:
+        """Checks if there is a previous page."""
+        return self._has_previous
 
-    @cached_property
-    def _has_previous(self) -> bool:
-        return self.number > 1
+    def has_other_pages(self) -> bool:
+        """Checks if there are other pages."""
+        return self.has_previous() or self.has_next()
 
 
 class CountlessPaginator:
@@ -111,14 +95,20 @@ class CountlessPaginator:
     def page(self, number: int | str) -> CountlessPage:
         """Returns CountlessPage instance."""
         number = self.validate_number(number)
-        bottom = (number - 1) * self.per_page
-        top = bottom + self.per_page + 1
+        start = (number - 1) * self.per_page
+        end = start + self.per_page + 1
+
+        object_list = list(self.object_list[start:end])
+        page_object_list = object_list[: self.per_page]
+
+        has_next = len(object_list) > len(page_object_list)
+        has_previous = number > 1
 
         return CountlessPage(
-            self,
-            object_list=self.object_list[bottom:top],
+            object_list=page_object_list,
             number=number,
-            page_size=self.per_page,
+            has_next=has_next,
+            has_previous=has_previous,
         )
 
 

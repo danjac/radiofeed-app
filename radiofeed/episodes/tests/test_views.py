@@ -330,7 +330,7 @@ class TestBookmarks:
         assert200(response)
         assertTemplateUsed(response, "episodes/bookmarks.html")
 
-        assert len(response.context["page"].object_list) == 31
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_ascending(self, client, auth_user):
@@ -339,7 +339,7 @@ class TestBookmarks:
         response = client.get(self.url, {"order": "asc"})
 
         assert200(response)
-        assert len(response.context["page"].object_list) == 31
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
@@ -411,7 +411,7 @@ class TestHistory:
         assertTemplateUsed(response, "episodes/history.html")
 
         assert200(response)
-        assert len(response.context["page"].object_list) == 31
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
@@ -425,7 +425,7 @@ class TestHistory:
         response = client.get(self.url, {"order": "asc"})
         assert200(response)
 
-        assert len(response.context["page"].object_list) == 31
+        assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user):
