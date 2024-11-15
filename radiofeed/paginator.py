@@ -19,16 +19,16 @@ class Page(Sequence):
     def __init__(
         self,
         *,
-        object_list: Sequence,
+        object_list: list,
         number: int,
-        has_next: bool,
-        has_previous: bool,
+        page_size: int,
     ) -> None:
-        self.object_list = object_list
         self.number = number
+        self.page_size = page_size
+        self.object_list = object_list[: self.page_size]
 
-        self._has_next = has_next
-        self._has_previous = has_previous
+        self._has_next = len(object_list) > self.page_size
+        self._has_previous = number > 1
 
     def __repr__(self) -> str:
         """Object representation."""
@@ -95,16 +95,11 @@ class Paginator:
         end = start + self.per_page + 1
 
         object_list = list(self.object_list[start:end])
-        page_object_list = object_list[: self.per_page]
-
-        has_next = len(object_list) > len(page_object_list)
-        has_previous = number > 1
 
         return Page(
-            object_list=page_object_list,
+            object_list=object_list,
             number=number,
-            has_next=has_next,
-            has_previous=has_previous,
+            page_size=self.per_page,
         )
 
 
