@@ -8,6 +8,11 @@
     <c-header title="Search Episodes">
         <c-header.nav>
             <c-header.nav.item>
+                <c-search.button url="{% url 'podcasts:search_podcasts' %}"
+                                 label="Search Podcasts"
+                />
+            </c-header.nav.item>
+            <c-header.nav.item>
                 <c-search.form placeholder="Search: Episodes" />
             </c-header.nav.item>
         </c-header.nav>
