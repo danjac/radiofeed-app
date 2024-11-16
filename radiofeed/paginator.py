@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.utils.functional import SimpleLazyObject
+from django.utils.functional import cached_property
 
 from radiofeed.partials import render_partial_for_target
 
@@ -14,21 +14,19 @@ class Page(Sequence):
     """Pagination without COUNT(*) queries.
 
     See: https://testdriven.io/blog/django-avoid-counting/
+
+    The pagination should be done lazily, so we don't execute any database queries until the object list is accessed.
     """
 
     def __init__(
         self,
         *,
-        object_list: list,
+        paginator: "Paginator",
         number: int,
-        page_size: int,
     ) -> None:
+        self.paginator = paginator
+        self.page_size = paginator.per_page
         self.number = number
-        self.page_size = page_size
-        self.object_list = object_list[: self.page_size]
-
-        self._has_next = len(object_list) > self.page_size
-        self._has_previous = number > 1
 
     def __repr__(self) -> str:
         """Object representation."""
@@ -36,7 +34,7 @@ class Page(Sequence):
 
     def __len__(self) -> int:
         """Returns total number of items"""
-        return len(self.object_list)
+        return self._length
 
     def __getitem__(self, index: int | slice) -> Any:
         """Returns indexed item."""
@@ -66,11 +64,38 @@ class Page(Sequence):
         """Checks if there are other pages."""
         return self.has_previous() or self.has_next()
 
+    @cached_property
+    def object_list(self) -> list:
+        """Returns the object list."""
+        # Returns the object list for the current page. This should be bounded by the page size.
+        return self._object_list[: self.page_size]
+
+    @cached_property
+    def _has_next(self) -> bool:
+        # If the object list is greater than the page size, then there is a next page.
+        return len(self._object_list) > self.page_size
+
+    @cached_property
+    def _has_previous(self) -> bool:
+        return self.number > 1
+
+    @cached_property
+    def _length(self) -> int:
+        return len(self.object_list)
+
+    @cached_property
+    def _object_list(self) -> list:
+        # Returns the object list for the current page. This should be slightly more than the page size.
+        start = (self.number - 1) * self.page_size
+        end = start + self.page_size + 1
+        # Database query executed here with LIMIT and OFFSET
+        return list(self.paginator.object_list[start:end])
+
 
 class Paginator:
     """Paginator without COUNT(*) queries."""
 
-    def __init__(self, object_list: QuerySet | list, per_page: int) -> None:
+    def __init__(self, object_list: list | QuerySet, per_page: int) -> None:
         self.object_list = object_list
         self.per_page = per_page
 
@@ -91,35 +116,20 @@ class Paginator:
         except (PageNotAnInteger, EmptyPage):
             number = 1
 
-        start = (number - 1) * self.per_page
-        end = start + self.per_page + 1
-
-        object_list = list(self.object_list[start:end])
-
-        return Page(
-            object_list=object_list,
-            number=number,
-            page_size=self.per_page,
-        )
+        return Page(paginator=self, number=number)
 
 
 def paginate(
     request: HttpRequest,
-    queryset: QuerySet,
+    queryset: QuerySet | list,
     *,
     page_size: int | None = None,
     param: str = "page",
 ) -> Page:
     """Returns paginated object."""
-    return Paginator(
-        queryset,
-        page_size or settings.DEFAULT_PAGE_SIZE,
-    ).get_page(request.GET.get(param, ""))
-
-
-def paginate_lazy(*args, **kwargs) -> SimpleLazyObject:
-    """Returns lazily-evaluated paginated object."""
-    return SimpleLazyObject(lambda: paginate(*args, **kwargs))
+    return Paginator(queryset, page_size or settings.DEFAULT_PAGE_SIZE).get_page(
+        request.GET.get(param, "")
+    )
 
 
 def render_paginated_response(  # noqa: PLR0913
@@ -131,12 +141,15 @@ def render_paginated_response(  # noqa: PLR0913
     partial: str = "pagination",
     **pagination_kwargs,
 ) -> HttpResponse:
-    """Render pagination response."""
+    """Render pagination response.
+
+    This function is a wrapper around `render_partial_for_target` function. It renders a partial template with paginated data. The `Page` object is passed to the template context as `page`.
+    """
     return render_partial_for_target(
         request,
         template_name,
         {
-            "page": paginate_lazy(request, queryset, **pagination_kwargs),
+            "page": paginate(request, queryset, **pagination_kwargs),
             **(extra_context or {}),
         },
         target=target,
