@@ -3,7 +3,7 @@
 <header class="pb-3 mb-3 space-y-6 border-b">
     <c-header.title>{{ podcast.cleaned_title }}</c-header.title>
     <div class="space-y-3 sm:flex sm:justify-between sm:space-y-0">
-        {% cache 300 podcast-detail-links request.path %}
+        {% cache 300 podcast-detail-nav request.path %}
             <nav class="flex justify-center items-center sm:justify-start">
                 <ul class="flex items-center space-x-6">
                     <c-podcasts.detail.item name="detail"

@@ -4,13 +4,13 @@
     {% with has_other_pages=page.has_other_pages %}
         {% if has_other_pages %}
             <c-browse.header>
-                <c-paginate.links :page=page :target="target" />
+                <c-paginate.links :page="page" :target="target" />
             </c-browse.header>
         {% endif %}
         {{ slot }}
         {% if has_other_pages %}
             <c-browse.footer>
-                <c-paginate.links :page=page :target="target" />
+                <c-paginate.links :page="page" :target="target" />
             </c-browse.footer>
         {% endif %}
     {% endwith %}
