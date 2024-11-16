@@ -508,7 +508,7 @@ wheels = [
 
 [[package]]
 name = "django-tailwind-cli"
-version = "2.19.0"
+version = "2.19.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
@@ -516,9 +516,9 @@ dependencies = [
     { name = "django-appconf" },
     { name = "django-typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/4f/171e05c4fa3af3589252426049002357685a1f437f04b2b7d947b61ba457/django_tailwind_cli-2.19.0.tar.gz", hash = "sha256:38d26e63d81551ae00eeea7eac5da1e1259d5a6ea374352cefbd6ca970ab2e48", size = 43952 }
+sdist = { url = "https://files.pythonhosted.org/packages/12/7e/c5cccb7a6210cfefeab3b9074baed04a00250f6515e605226f6a3540d398/django_tailwind_cli-2.19.3.tar.gz", hash = "sha256:dabd0644a14b1ad4e86fe8767a4fcc2230dcdde258518b9a78932ac5085e7c5c", size = 43936 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/5b/403c862b2a46a9eb68b3ccad987986118444ecd9adcc1c6c37fd070828e5/django_tailwind_cli-2.19.0-py3-none-any.whl", hash = "sha256:6213bdc7d6b727dae0cb1478901f5f9a1787bd67db6d34123d6bfbc1a803409b", size = 11825 },
+    { url = "https://files.pythonhosted.org/packages/ff/47/68f35d1cd045a4f66385b35266e595aec5ec5a65a94747431f2e9d037ef1/django_tailwind_cli-2.19.3-py3-none-any.whl", hash = "sha256:153ee5d8857f60a39ffe38bfeb876c153cf1bfa300f402453fc795fce4b31ca1", size = 11814 },
 ]
 
 [[package]]
