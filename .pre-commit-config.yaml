@@ -46,7 +46,7 @@ repos:
           - id: djhtml
           - id: djcss
           - id: djjs
-            exclude: ^static/vendor|^static/sw.js|^static/workbox-*.js
+            exclude: ^static/vendor|^static/sw.js|^static/workbox-*
     - repo: https://github.com/adamchainz/djade-pre-commit
       rev: 1.3.2
       hooks:
