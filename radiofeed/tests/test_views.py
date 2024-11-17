@@ -59,13 +59,6 @@ class TestAssetlinks:
         assert200(response)
 
 
-class TestServiceWorker:
-    @pytest.mark.django_db
-    def test_get(self, client):
-        response = client.get(reverse("service_worker"))
-        assert200(response)
-
-
 class TestFavicon:
     @pytest.mark.django_db
     def test_get(self, client):

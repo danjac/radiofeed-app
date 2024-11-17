@@ -39,3 +39,4 @@ screenshots
 static/tailwind.css
 staticfiles
 tf
+workbox-config.js

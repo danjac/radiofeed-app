@@ -84,18 +84,6 @@ def favicon(_) -> FileResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def service_worker(request: HttpRequest) -> HttpResponse:
-    """PWA service worker."""
-    return render(
-        request,
-        "service_worker.js",
-        content_type="application/javascript",
-    )
-
-
-@require_safe
-@_cache_control
-@_cache_page
 def assetlinks(_) -> HttpResponse:
     """PWA assetlinks"""
     return JsonResponse(get_assetlinks(), safe=False)
