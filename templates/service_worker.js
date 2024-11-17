@@ -2,10 +2,10 @@
 // This is the "Offline page" service worker
 
 importScripts(
-    "https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js",
+    "https://storage.googleapis.com/workbox-cdn/releases/7.3.0/workbox-sw.js",
 );
 
-const CACHE = "serviceworker-{{ request.site.domain }}";
+const CACHE = "radiofeed-cache";
 
 const offlineFallbackPage = "{% static 'offline.html' %}";
 
