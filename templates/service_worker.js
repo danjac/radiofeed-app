@@ -1,4 +1,5 @@
-/* {% load static %} */
+{% load static %}
+
 // This is the "Offline page" service worker
 
 importScripts(
@@ -8,6 +9,10 @@ importScripts(
 const CACHE = "radiofeed-cache";
 
 const offlineFallbackPage = "{% static 'offline.html' %}";
+
+if (workbox.navigationPreload.isSupported()) {
+    workbox.navigationPreload.enable();
+}
 
 self.addEventListener("message", (event) => {
     if (event.data && event.data.type === "SKIP_WAITING") {
@@ -20,10 +25,6 @@ self.addEventListener("install", async (event) => {
         caches.open(CACHE).then((cache) => cache.add(offlineFallbackPage)),
     );
 });
-
-if (workbox.navigationPreload.isSupported()) {
-    workbox.navigationPreload.enable();
-}
 
 self.addEventListener("fetch", (event) => {
     if (event.request.mode === "navigate") {
