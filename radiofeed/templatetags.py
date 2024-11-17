@@ -11,6 +11,7 @@ from django.db.models import Model
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
+from django.templatetags.static import static
 from django.utils.html import format_html
 
 from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
@@ -33,6 +34,18 @@ def htmx_config() -> str:
         '<meta name="htmx-config" content="{}">',
         json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
     )
+
+
+@register.simple_tag
+@functools.cache
+def get_static_assets() -> list[str]:
+    """Returns list of all assets in static folder."""
+    assets = []
+    for path in settings.STATICFILES_DIRS:
+        for item in path.rglob("*"):
+            if item.is_file():
+                assets.append(static(item.relative_to(path)))
+    return assets
 
 
 @register.simple_tag
