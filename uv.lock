@@ -323,18 +323,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-appconf"
-version = "1.0.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/65/e0/704b6453f21fac22f0ab128150e9782b7d38bc1ed09710ac2197ddc1751f/django-appconf-1.0.6.tar.gz", hash = "sha256:cfe87ea827c4ee04b9a70fab90b86d704cb02f2981f89da8423cb0fabf88efbf", size = 15895 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c0/98/1cb3d9e8b1c6d0a74539b998474796fc5c0c0888b6201e5c95ba2f7a0677/django_appconf-1.0.6-py3-none-any.whl", hash = "sha256:c3ae442fba1ff7ec830412c5184b17169a7a1e71cf0864a4c3f93cf4c98a1993", size = 6424 },
-]
-
-[[package]]
 name = "django-browser-reload"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -508,17 +496,16 @@ wheels = [
 
 [[package]]
 name = "django-tailwind-cli"
-version = "2.19.3"
+version = "2.20.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "django" },
-    { name = "django-appconf" },
     { name = "django-typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/12/7e/c5cccb7a6210cfefeab3b9074baed04a00250f6515e605226f6a3540d398/django_tailwind_cli-2.19.3.tar.gz", hash = "sha256:dabd0644a14b1ad4e86fe8767a4fcc2230dcdde258518b9a78932ac5085e7c5c", size = 43936 }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/86/2e2f39f4ea1204970dd21ce6d7c31505d89998ca2373910f62e3ba34c17e/django_tailwind_cli-2.20.0.tar.gz", hash = "sha256:6e9dfaae7a53ef45b2634544dee42fb6e0318cfa2e7b13f5c583f0e6011f1489", size = 49223 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/47/68f35d1cd045a4f66385b35266e595aec5ec5a65a94747431f2e9d037ef1/django_tailwind_cli-2.19.3-py3-none-any.whl", hash = "sha256:153ee5d8857f60a39ffe38bfeb876c153cf1bfa300f402453fc795fce4b31ca1", size = 11814 },
+    { url = "https://files.pythonhosted.org/packages/11/ed/c2511ca5023ce50cb04718bc4f864a9ff78725989e71fe6de6ecf5123f02/django_tailwind_cli-2.20.0-py3-none-any.whl", hash = "sha256:758adcbb5c10470c42ec627307bb614f2589bf4ee6918073558f4453d04cafb7", size = 11980 },
 ]
 
 [[package]]
@@ -899,7 +886,7 @@ wheels = [
 
 [[package]]
 name = "locust"
-version = "2.32.2"
+version = "2.32.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "configargparse" },
@@ -913,11 +900,12 @@ dependencies = [
     { name = "pywin32", marker = "sys_platform == 'win32'" },
     { name = "pyzmq" },
     { name = "requests" },
+    { name = "setuptools" },
     { name = "werkzeug" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fa/e0/4edfb0d7481854b0f9333dc2a217754f8f7d748e85eaa7024b791c5fa920/locust-2.32.2.tar.gz", hash = "sha256:d2920bc7f19d7f3bedee6cc2cafddc547ba128cba51e5e339c308e14fb88f1a7", size = 1193192 }
+sdist = { url = "https://files.pythonhosted.org/packages/cc/4c/3f7ab09636188379d8d76748fe87ce115a36d725d2103a6f9c012e462408/locust-2.32.3.tar.gz", hash = "sha256:2b92df32c414a272dde321da4afd9e148b5fec32213fe2a260885a469374132b", size = 1193799 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e7/da/f2ab3fafec35a483f3e5e19c86c11dae3ad3eb43aba5f2c1cf4550a92390/locust-2.32.2-py3-none-any.whl", hash = "sha256:54a4ec106ec0ee79305deda4659b3f325c1e87b134face75d5da6525adde6316", size = 1210542 },
+    { url = "https://files.pythonhosted.org/packages/fe/87/a95d82cace086cfb0dc8d5417dc068779a653aaaf7aa5b266aa47f142131/locust-2.32.3-py3-none-any.whl", hash = "sha256:ebfce96f82b0b31418a498ae97724fdba9a41754e88471de56920339f3974347", size = 1211120 },
 ]
 
 [[package]]
@@ -1375,11 +1363,11 @@ wheels = [
 
 [[package]]
 name = "pyjwt"
-version = "2.9.0"
+version = "2.10.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fb/68/ce067f09fca4abeca8771fe667d89cc347d1e99da3e093112ac329c6020e/pyjwt-2.9.0.tar.gz", hash = "sha256:7e1e5b56cc735432a7369cbfa0efe50fa113ebecdc04ae6922deba8b84582d0c", size = 78825 }
+sdist = { url = "https://files.pythonhosted.org/packages/b5/05/324952ded002de746f87b21066b9373080bb5058f64cf01c4d62784b8186/pyjwt-2.10.0.tar.gz", hash = "sha256:7628a7eb7938959ac1b26e819a1df0fd3259505627b575e4bad6d08f76db695c", size = 87687 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/84/0fdf9b18ba31d69877bd39c9cd6052b47f3761e9910c15de788e519f079f/PyJWT-2.9.0-py3-none-any.whl", hash = "sha256:3b02fb0f44517787776cf48f2ae25d8e14f300e6d7545a4315cee571a415e850", size = 22344 },
+    { url = "https://files.pythonhosted.org/packages/6f/1d/ef9b066e7ef60494c94173dc9f0b9adf5d9ec5f888109f5c669f53d4144b/PyJWT-2.10.0-py3-none-any.whl", hash = "sha256:543b77207db656de204372350926bed5a86201c4cbff159f623f79c7bb487a15", size = 23002 },
 ]
 
 [package.optional-dependencies]
