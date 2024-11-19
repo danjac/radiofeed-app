@@ -1,7 +1,6 @@
 <c-vars variant cover-url title class />
-{% get_cover_image_attrs variant cover_url title as cover_image_attrs %}
-{% get_cover_image_class variant class as cover_image_class %}
-<img class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900 {{ cover_image_class }}"
+{% get_cover_image_attrs variant cover_url title class as cover_image_attrs %}
+<img class="object-cover text-transparent bg-transparent bg-gray-100 border dark:bg-gray-900 {{ cover_image_attrs.class }}"
      aria_hidden="true"
      loading="lazy"
      decoding="async"

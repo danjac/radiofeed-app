@@ -34,6 +34,7 @@ def get_cover_image_attrs(
     variant: CoverImageVariant,
     cover_url: str | None,
     title: str,
+    *classes,
     **attrs: str,
 ) -> dict:
     """Returns the HTML attributes for an image."""
@@ -46,6 +47,7 @@ def get_cover_image_attrs(
         "src": full_src,
         "width": full_size,
         "height": full_size,
+        "class": get_cover_image_class(variant, *classes),
     } | attrs
 
     # no size variations
