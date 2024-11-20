@@ -1,16 +1,21 @@
 from collections.abc import Sequence
-from typing import Any
+from typing import TypeAlias, TypeVar
 
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger
-from django.db.models import QuerySet
+from django.db.models import Model, QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.utils.functional import cached_property
 
 from radiofeed.partials import render_partial_for_target
 
+T = TypeVar("T")
+T_Model = TypeVar("T_Model", bound=Model)
 
-class Page(Sequence):
+ObjectList: TypeAlias = Sequence[T | T_Model] | QuerySet[T_Model]
+
+
+class Page:
     """Pagination without COUNT(*) queries.
 
     See: https://testdriven.io/blog/django-avoid-counting/
@@ -36,7 +41,7 @@ class Page(Sequence):
         """Returns total number of items"""
         return self._num_objects
 
-    def __getitem__(self, index: int | slice) -> Any:
+    def __getitem__(self, index: int | slice) -> ObjectList:
         """Returns indexed item."""
         return self.object_list[index]
 
@@ -107,7 +112,7 @@ class Page(Sequence):
 class Paginator:
     """Paginator without COUNT(*) queries."""
 
-    def __init__(self, object_list: list | QuerySet, per_page: int) -> None:
+    def __init__(self, object_list: ObjectList, per_page: int) -> None:
         self.object_list = object_list
         self.per_page = per_page
 
