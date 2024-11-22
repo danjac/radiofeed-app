@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% load partials %}
+
+{% block title %}
+    {{ block.super }} | Preferences
+{% endblock title %}
+
 {% block content %}
     <c-account.settings current="preferences">
         {% partialdef form inline=True %}
