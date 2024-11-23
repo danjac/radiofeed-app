@@ -2,4 +2,4 @@
 
 set -o errexit
 
-LOGURU_LEVEL=DEBUG docker compose --project-directory {{ project_dir }} run -e LOGURU_LEVEL --rm django uv run ./manage.py "$@"
+LOGURU_LEVEL=DEBUG docker compose --project-directory {{ project_dir }} run -e LOGURU_LEVEL --rm django python ./manage.py "$@"

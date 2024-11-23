@@ -9,7 +9,7 @@ set -o errexit
 # 4. clear cache
 #
 
-MANAGE="uv run python ./manage.py"
+MANAGE="python ./manage.py"
 
 $MANAGE check --deploy --traceback
 
