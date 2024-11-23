@@ -82,20 +82,6 @@ Once you have access to the Django Admin, you should configure the default Site 
 
 The `ansible` directory contains full Playbooks for a multi-server deployment to a shared hosting provider such as Hetzner or Digital Ocean, this can be copied and modified for your particular use-case.
 
-### Deployment with Hetzner
-
-A full deployment guide for Hetzner Cloud is available. You should have a DNS domain set up using e.g. Hetzner DNS or Cloudflare.
-
-1. [Create a new Hetzner Cloud project](https://docs.hetzner.com/cloud/)
-2. Go to Security > API Tokens and create a new token with read/write access
-3. Copy the token and add it to your environment as `HCLOUD_TOKEN`
-4. Run `terraform -chdir=tf init` to download the Hetzner provider
-5. Run `terraform -chdir=rf apply -var hcloud_token=$HCLOUD_TOKEN` to create the necessary resources
-6. Change to the `ansible` directory and use `ansible-vault create hosts` to create a new inventory file and add the IP addresses of all the servers
-7. Do the same for `vars/django.yml`, `vars/postgres.yml`, and `vars/site.yml` to create the necessary variables (see example vars files for guidance)
-8. Run `ansible-playbook -i hosts site.yml` to deploy the application
-9. In your DNS configuration, point your domain to the new load balancer IP address
-
 ### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
