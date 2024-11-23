@@ -7,11 +7,14 @@ set -o errexit
 # 2. database migrations
 # 3. system health checks
 # 4. clear cache
+#
 
-python ./manage.py check --deploy --traceback
+MANAGE="uv run python ./manage.py"
 
-python ./manage.py migrate --no-input --traceback
+$MANAGE check --deploy --traceback
 
-python ./manage.py health_check --traceback
+$MANAGE migrate --no-input --traceback
 
-python ./manage.py clear_cache --traceback
+$MANAGE health_check --traceback
+
+$MANAGE clear_cache --traceback
