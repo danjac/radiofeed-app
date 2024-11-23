@@ -13,9 +13,9 @@ class TestMediaMetadata:
             podcast=PodcastFactory(cover_url="https://mysite.com/test.jpg")
         )
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
-        assert data["title"] == episode.title
-        assert data["album"] == episode.podcast.title
-        assert data["artist"] == episode.podcast.owner
+        assert data["title"] == episode.cleaned_title
+        assert data["album"] == episode.podcast.cleaned_title
+        assert data["artist"] == episode.podcast.cleaned_title
 
         assert len(data["artwork"]) == 4
 
@@ -29,9 +29,10 @@ class TestMediaMetadata:
     def test_get_media_metadata_no_cover_url(self, rf):
         episode = EpisodeFactory(podcast=PodcastFactory(cover_url=""))
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
-        assert data["title"] == episode.title
-        assert data["album"] == episode.podcast.title
-        assert data["artist"] == episode.podcast.owner
+
+        assert data["title"] == episode.cleaned_title
+        assert data["album"] == episode.podcast.cleaned_title
+        assert data["artist"] == episode.podcast.cleaned_title
 
         assert len(data["artwork"]) == 4
 

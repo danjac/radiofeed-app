@@ -29,6 +29,6 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
     return {
         "title": episode.cleaned_title,
         "album": episode.podcast.cleaned_title,
-        "artist": episode.podcast.owner,
+        "artist": episode.podcast.cleaned_title,
         "artwork": get_metadata_info(context.request, episode.get_cover_url()),
     }
