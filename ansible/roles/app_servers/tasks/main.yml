@@ -1,6 +1,11 @@
 - name: Deploy docker compose
   ansible.builtin.include_role:
       name: compose
+- name: Add deploy script
+  ansible.builtin.template:
+    src: templates/deploy.sh.j2
+    dest: "/home/{{ user }}/deploy.sh"
+    mode: "u+x,g+x"
 - name: Start web application
   changed_when: true
   ansible.builtin.shell:

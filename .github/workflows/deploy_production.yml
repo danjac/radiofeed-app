@@ -25,10 +25,7 @@ jobs:
                   host: ${{ secrets.CRON_SCHEDULER_IP }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: |
-                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
-                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} run --rm django ./release.sh
-                    docker system prune -f
+                  script: ./deploy.sh
     deploy_app_servers:
         runs-on: ubuntu-latest
         needs: deploy_cron_scheduler
@@ -48,7 +45,4 @@ jobs:
                   host: ${{ secrets[matrix.server_ip] }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: |
-                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} pull
-                    docker compose --project-directory ${{ secrets.PROJECT_DIR }} up -d --remove-orphans
-                    docker system prune -f
+                  script: ./deploy.sh

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+# Update the images and restart the containers
+
+docker compose --project-directory {{ project_dir }} pull
+docker compose --project-directory {{ project_dir }} up -d --remove-orphans
+docker system prune -f

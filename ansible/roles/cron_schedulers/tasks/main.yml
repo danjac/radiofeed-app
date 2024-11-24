@@ -6,6 +6,11 @@
     src: templates/manage.sh.j2
     dest: "/home/{{ user }}/manage.sh"
     mode: "u+x,g+x"
+- name: Add deploy script
+  ansible.builtin.template:
+    src: templates/deploy.sh.j2
+    dest: "/home/{{ user }}/deploy.sh"
+    mode: "u+x,g+x"
 - name: Run systems checks and migrations
   changed_when: true
   ansible.builtin.shell:
