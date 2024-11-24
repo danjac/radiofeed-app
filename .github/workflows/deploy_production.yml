@@ -16,7 +16,6 @@ jobs:
         uses: ./.github/workflows/cron_scheduler.yml
         secrets: inherit
     deploy_app_servers:
-        runs-on: ubuntu-latest
         needs: deploy_cron_scheduler
         uses: ./.github/workflows/app_servers.yml
         secrets: inherit
