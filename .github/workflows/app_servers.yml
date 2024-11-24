@@ -1,0 +1,22 @@
+name: radiofeed_app_servers
+on: workflow_call
+jobs:
+    deploy_app_servers:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                # list of references in JSON array e.g. ["APP_SERVER_1", "APP_SERVER_2"]
+                # each reference should be value in secrets e.g. APP_SERVER_1=169.0.0.1
+                server_ip: ${{ fromJson(vars.APP_SERVER_IP_REFS) }}
+        steps:
+            - name: Cloning repo
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Deploy to app server
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets[matrix.server_ip] }}
+                  username: ${{ secrets.DEPLOY_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: ./deploy.sh

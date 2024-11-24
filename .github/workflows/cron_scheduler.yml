@@ -1,4 +1,4 @@
-name: radiofeed_deploy_cron_scheduler
+name: radiofeed_cron_scheduler
 on: workflow_call
 jobs:
     deploy_cron_scheduler:
