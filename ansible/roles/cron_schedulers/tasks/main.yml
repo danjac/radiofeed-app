@@ -14,11 +14,7 @@
 - name: Run systems checks and migrations
   changed_when: true
   ansible.builtin.shell:
-      chdir: "{{ project_dir }}"
-      cmd: |
-        docker compose pull
-        docker compose run --rm django ./release.sh
-        docker system prune -f
+      cmd: ./deploy.sh
 - name: Create log directory
   ansible.builtin.file:
       path: "{{ project_dir }}/logs"

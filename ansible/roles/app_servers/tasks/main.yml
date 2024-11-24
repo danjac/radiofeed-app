@@ -9,8 +9,4 @@
 - name: Start web application
   changed_when: true
   ansible.builtin.shell:
-      chdir: "{{ project_dir }}"
-      cmd: |
-        docker compose pull
-        docker compose up -d --remove-orphans
-        docker system prune -f
+      cmd: ./deploy.sh
