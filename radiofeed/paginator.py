@@ -136,39 +136,29 @@ class Paginator:
         return Page(paginator=self, number=number)
 
 
-def paginate(
-    request: HttpRequest,
-    queryset: QuerySet | list,
-    *,
-    page_size: int | None = None,
-    param: str = "page",
-) -> Page:
-    """Returns paginated object."""
-    return Paginator(queryset, page_size or settings.DEFAULT_PAGE_SIZE).get_page(
-        request.GET.get(param, "")
-    )
-
-
 def render_paginated_response(  # noqa: PLR0913
     request: HttpRequest,
     template_name: str,
     queryset: QuerySet,
     extra_context: dict | None = None,
+    page_size: int | None = None,
+    param: str = "page",
     target: str = "pagination",
     partial: str = "pagination",
-    **pagination_kwargs,
 ) -> HttpResponse:
     """Render pagination response.
 
     This function is a wrapper around `render_partial_for_target` function. It renders a partial template with paginated data. The `Page` object is passed to the template context as `page`.
     """
+    page = Paginator(
+        queryset,
+        page_size or settings.DEFAULT_PAGE_SIZE,
+    ).get_page(request.GET.get(param, ""))
+
     return render_partial_for_target(
         request,
         template_name,
-        {
-            "page": paginate(request, queryset, **pagination_kwargs),
-            **(extra_context or {}),
-        },
+        context={"page": page} | (extra_context or {}),
         target=target,
         partial=partial,
     )
