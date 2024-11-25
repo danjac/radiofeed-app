@@ -141,6 +141,7 @@ def render_paginated_response(  # noqa: PLR0913
     template_name: str,
     queryset: QuerySet,
     extra_context: dict | None = None,
+    *,
     page_size: int | None = None,
     param: str = "page",
     target: str = "pagination",
