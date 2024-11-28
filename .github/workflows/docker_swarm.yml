@@ -1,4 +1,4 @@
-name: radiofeed_cron_scheduler
+name: radiofeed_docker_swarm
 on: workflow_call
 jobs:
     deploy_cron_scheduler:
@@ -8,10 +8,10 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-            - name: Deploy to cron scheduler
+            - name: Deploy to swarm manager
               uses: appleboy/ssh-action@master
               with:
-                  host: ${{ secrets.CRON_SCHEDULER_IP }}
+                  host: ${{ secrets.SWARM_MANAGER_IP }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: ./deploy.sh
+                  script: ./swarm.sh

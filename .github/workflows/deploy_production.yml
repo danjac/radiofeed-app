@@ -15,7 +15,7 @@ jobs:
         needs: build_docker
         uses: ./.github/workflows/cron_scheduler.yml
         secrets: inherit
-    # deploy_app_servers:
-    #     needs: deploy_cron_scheduler
-    #     uses: ./.github/workflows/app_servers.yml
-    #     secrets: inherit
+    deploy_docker_swarm:
+        needs: deploy_cron_scheduler
+        uses: ./.github/workflows/docker_swarm.yml
+        secrets: inherit
