@@ -7,3 +7,6 @@
 
 [cron_schedulers]
 103.203.303.403
+
+[swarm_managers]
+103.203.303.404
