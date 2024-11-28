@@ -5,6 +5,7 @@
   vars_files:
     - ./vars/site.yml
     - ./vars/django.yml
+    - ./vars/swarm.yml
   roles:
     - common
     - swarm_managers
@@ -14,6 +15,7 @@
   hosts: app_servers
   vars_files:
     - ./vars/site.yml
+    - ./vars/swarm.yml
   roles:
     - common
     - app_servers
