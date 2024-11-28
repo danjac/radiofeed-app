@@ -18,5 +18,4 @@
     - ./vars/site.yml
     - ./vars/swarm.yml
   roles:
-    - common
     - app_servers
