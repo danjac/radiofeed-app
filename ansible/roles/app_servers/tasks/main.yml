@@ -1,0 +1,8 @@
+- name: Ensure we have the right vars
+  debug:
+    var: hostvars[groups['cron_schedulers'][0]].swarm.swarm_facts.JoinTokens.Worker
+- name: Join swarm node
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ hostvars[groups['cron_schedulers'][0]].swarm.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: [ "{{ swarm_manager }}" ]

@@ -1,0 +1,13 @@
+- name: Copy Docker swarm config file
+  ansible.builtin.template:
+    src: templates/stack.yml.j2
+    dest: "{{ project_dir }}/stack.yml"
+    mode: "u+rw,g+rw"
+- name: Initialize Docker swarm
+  community.docker.docker_swarm:
+      state: present
+      advertise_addr: "{{ swarm_manager }}"
+  register: swarm
+- name: Deploy stack
+  ansible.builtin.shell:
+    cmd: docker stack deploy -c {{ project_dir }}/stack.yml app
