@@ -1,7 +1,7 @@
 name: radiofeed_docker_swarm
 on: workflow_call
 jobs:
-    deploy_cron_scheduler:
+    deploy_docker_swarm:
         runs-on: ubuntu-latest
         steps:
             - name: Cloning repo
