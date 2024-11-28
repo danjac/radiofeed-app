@@ -1,6 +1,6 @@
 - name: Generate Docker swarm config file
   ansible.builtin.template:
-    src: templates/deploy_stack.yml.j2
+    src: templates/stack.yml.j2
     dest: "{{ project_dir }}/stack.yml"
     mode: "u+rw,g+rw"
 - name: Add script
