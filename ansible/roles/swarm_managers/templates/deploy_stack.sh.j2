@@ -3,3 +3,4 @@
 set -o errexit
 
 docker stack deploy --compose-file {{ project_dir }}/stack.yml {{ stack_name }}
+docker system prune -f
