@@ -14,6 +14,4 @@ jobs:
                   host: ${{ secrets.CRON_SCHEDULER_IP }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: |
-                      ./deploy.sh
-                      docker stack deploy -c /home/ubuntu/docker/stack.yml app
+                  script: ./deploy.sh && ./stack.sh
