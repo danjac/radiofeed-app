@@ -9,6 +9,7 @@
     - curl
     - gnupg-agent
     - software-properties-common
+    - python3-docker
 - name: Add GPG key
   ansible.builtin.apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg

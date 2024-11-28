@@ -1,5 +1,2 @@
-- name: Install cron schedulers
+- name: Install cron scheduler and Docker swarm
   import_playbook: ./cron_schedulers.yml
-
-- name: Install app servers
-  import_playbook: ./app_servers.yml

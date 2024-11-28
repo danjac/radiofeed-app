@@ -1,0 +1,34 @@
+version: "3.11"
+services:
+  django:
+    image: ghcr.io/danjac/radiofeed-app:main
+    command: ./entrypoint.sh
+    environment:
+       ADMIN_SITE_HEADER: "{{ admin_site_header }}"
+       ADMIN_URL: "{{ admin_url }}"
+       ADMINS: "{{ admins }}"
+       ALLOWED_HOSTS: "{{ allowed_hosts }}"
+       CONTACT_EMAIL: "{{ contact_email }}"
+       CSP_SCRIPT_WHITELIST: "{{ csp_script_whitelist }}"
+       DATABASE_URL: "{{ database_url }}"
+       REDIS_URL: "{{ redis_url }}"
+       MAILGUN_API_KEY: "{{ mailgun_api_key }}"
+       MAILGUN_API_URL: "{{ mailgun_api_url }}"
+       MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
+       PWA_SHA256_FINGERPRINTS: "{{ pwa_sha256_fingerprints }}"
+       SECRET_KEY: "{{ secret_key }}"
+       SENTRY_URL: "{{ sentry_url }}"
+       SECRET_KEY_FALLBACKS: "{{ secret_key_fallbacks }}"
+    logging:
+      options:
+        max-file: "3"
+        max-size: 10k
+    deploy:
+      replicas: {{ groups['app_servers']|length }}
+      placement:
+        constraints:
+          - node.role != manager
+    ports:
+      - published: 8000
+        target: 8000
+        mode: host

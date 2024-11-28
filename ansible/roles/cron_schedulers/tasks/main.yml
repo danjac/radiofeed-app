@@ -6,6 +6,11 @@
     src: templates/manage.sh.j2
     dest: "/home/{{ user }}/manage.sh"
     mode: "u+x,g+x"
+- name: Copy Docker swarm config file
+  ansible.builtin.template:
+    src: templates/stack.yml.j2
+    dest: "{{ project_dir }}/stack.yml"
+    mode: "u+rw,g+rw"
 - name: Add deploy script
   ansible.builtin.template:
     src: templates/deploy.sh.j2
@@ -15,6 +20,19 @@
   changed_when: true
   ansible.builtin.shell:
       cmd: ./deploy.sh
+- name: Initialize Docker swarm
+  community.docker.docker_swarm:
+      state: present
+  register: swarm
+- name: Add nodes
+  community.general.docker_swarm:
+    state: join
+    advertise_addr: "{{ swarm_manager }}"
+    join_token: "{{ swarm.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: "{{ groups['app_servers']|list }}"
+- name: Deploy stack
+  ansible.builtin.shell:
+    cmd: docker stack deploy -c {{ project_dir }}/stack.yml app
 - name: Create log directory
   ansible.builtin.file:
       path: "{{ project_dir }}/logs"
