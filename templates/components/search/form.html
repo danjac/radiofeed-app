@@ -30,6 +30,7 @@
                         type="button"
                         class="mr-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:shadow-outline"
                         x-show="search"
+                        x-cloak
                         @click.prevent="search=''; $refs.input.focus()">{% heroicon_mini "backspace" title="Clear Search" %}</button>
             {% endif %}
             <button type="submit"
