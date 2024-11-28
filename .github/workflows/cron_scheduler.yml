@@ -16,4 +16,4 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
                       ./deploy.sh
-                      docker stack deploy -c stack.yml app
+                      docker stack deploy -c /home/ubuntu/docker/stack.yml app
