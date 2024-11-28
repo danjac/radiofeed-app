@@ -14,4 +14,4 @@ jobs:
                   host: ${{ secrets.SWARM_MANAGER_IP }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  script: ./swarm.sh
+                  script: ./deploy_stack.sh

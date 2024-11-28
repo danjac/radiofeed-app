@@ -6,7 +6,7 @@
 - name: Add script
   ansible.builtin.template:
     src: templates/stack.sh.j2
-    dest: "/home/{{ user }}/stack.sh"
+    dest: "/home/{{ user }}/deploy_stack.sh"
     mode: "u+x,g+x"
 - name: Initialize Docker swarm
   community.docker.docker_swarm:
@@ -15,4 +15,4 @@
   register: swarm
 - name: Deploy stack
   ansible.builtin.shell:
-    cmd: ./stack.sh
+    cmd: ./deploy_stack.sh
