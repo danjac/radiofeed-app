@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -o errexit
-
-docker compose --project-directory {{ project_dir }} pull
-docker compose --project-directory {{ project_dir }} run --rm django ./release.sh
-docker system prune -f

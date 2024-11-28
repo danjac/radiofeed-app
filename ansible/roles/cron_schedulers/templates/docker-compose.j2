@@ -1,8 +1,0 @@
-services:
-    django:
-        image: "{{ docker_image }}"
-        env_file: .env
-        logging:
-            options:
-              max-size: "10k"
-              max-file: "3"

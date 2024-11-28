@@ -11,11 +11,7 @@ jobs:
         needs: run_checks
         uses: ./.github/workflows/docker.yml
         secrets: inherit
-    deploy_cron_scheduler:
-        needs: build_docker
-        uses: ./.github/workflows/cron_scheduler.yml
-        secrets: inherit
     deploy_docker_swarm:
-        needs: deploy_cron_scheduler
+        needs: build_docker
         uses: ./.github/workflows/docker_swarm.yml
         secrets: inherit

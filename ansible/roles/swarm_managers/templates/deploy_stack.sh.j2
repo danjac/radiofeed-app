@@ -2,5 +2,9 @@
 
 set -o errexit
 
-docker stack deploy --compose-file {{ project_dir }}/stack.yml {{ stack_name }}
+export COMPOSE_FILE={{ project_dir }}/stack.yml
+
+docker compose -f $COMPOSE_FILE pull
+docker compose -f $COMPOSE_FILE run --rm django ./release.sh
+docker stack deploy --compose-file $COMPOSE_FILE {{ stack_name }}
 docker system prune -f
