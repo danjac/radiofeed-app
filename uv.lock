@@ -350,14 +350,14 @@ wheels = [
 
 [[package]]
 name = "django-cotton"
-version = "1.4.0"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f8/fa/6e900b8f4cb47c97fae66dec5dba90f6379a9d02680d27f0aa221d3136a2/django_cotton-1.4.0.tar.gz", hash = "sha256:9b9e87c8d87ebf2cf8e01db549ff2968c104f532e37bf5e06021a5d392e44ad8", size = 21240 }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/56/42516236190995007c28f1a85f3bd1fc4b901607c2092f98000479bcc3bc/django_cotton-1.5.0.tar.gz", hash = "sha256:f85aac9f7247fbbc9c984310929cba15f76db0ffd3dca1d85f74319b13a75c9c", size = 21300 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/64/6c3cd8e4b517805618c8e704811d6d11c032101b32f10c52778fea7179f2/django_cotton-1.4.0-py3-none-any.whl", hash = "sha256:b49364a5175d9952cfe463f7c8e5d202cd7004d62056643fcefecf13d6f8a460", size = 20354 },
+    { url = "https://files.pythonhosted.org/packages/9e/5a/436c838e8ce2bbf31a8bcc1142fa6ee9bd4509ac83d081d44d300f40dc45/django_cotton-1.5.0-py3-none-any.whl", hash = "sha256:1ebcde0e0db89df5972facfda93164854466f0317feb3365e835a43dde7bfeaf", size = 20400 },
 ]
 
 [[package]]
@@ -830,7 +830,7 @@ wheels = [
 
 [[package]]
 name = "ipython"
-version = "8.29.0"
+version = "8.30.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -843,9 +843,9 @@ dependencies = [
     { name = "stack-data" },
     { name = "traitlets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/85/e0/a3f36dde97e12121106807d80485423ae4c5b27ce60d40d4ab0bab18a9db/ipython-8.29.0.tar.gz", hash = "sha256:40b60e15b22591450eef73e40a027cf77bd652e757523eebc5bd7c7c498290eb", size = 5497513 }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/8b/710af065ab8ed05649afa5bd1e07401637c9ec9fb7cfda9eac7e91e9fbd4/ipython-8.30.0.tar.gz", hash = "sha256:cb0a405a306d2995a5cbb9901894d240784a9f341394c6ba3f4fe8c6eb89ff6e", size = 5592205 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c5/a5/c15ed187f1b3fac445bb42a2dedd8dec1eee1718b35129242049a13a962f/ipython-8.29.0-py3-none-any.whl", hash = "sha256:0188a1bd83267192123ccea7f4a8ed0a78910535dbaa3f37671dca76ebd429c8", size = 819911 },
+    { url = "https://files.pythonhosted.org/packages/1d/f3/1332ba2f682b07b304ad34cad2f003adcfeb349486103f4b632335074a7c/ipython-8.30.0-py3-none-any.whl", hash = "sha256:85ec56a7e20f6c38fce7727dcca699ae4ffc85985aa7b23635a8008f918ae321", size = 820765 },
 ]
 
 [[package]]
