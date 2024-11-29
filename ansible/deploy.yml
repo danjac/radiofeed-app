@@ -1,2 +1,5 @@
 - name: install Docker swarm
   import_playbook: ./swarm.yml
+
+- name: install cron jobs
+  import_playbook: ./crons.yml
