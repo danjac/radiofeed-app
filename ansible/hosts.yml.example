@@ -1,0 +1,13 @@
+databases:
+  hosts:
+    101.102.103.101:
+
+managers:
+  hosts:
+    101.102.103.102:
+      private_ip: 10.0.0.1
+
+workers:
+  hosts:
+    101.102.103.103:
+    101.102.103.104:

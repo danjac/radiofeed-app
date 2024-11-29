@@ -1,7 +1,7 @@
 version: "3.11"
 services:
   django:
-    image: ghcr.io/danjac/radiofeed-app:main
+    image: {{ docker_image }}
     command: ./entrypoint.sh
     environment:
        ADMIN_SITE_HEADER: "{{ admin_site_header }}"
@@ -24,7 +24,7 @@ services:
         max-file: "3"
         max-size: 10k
     deploy:
-      replicas: {{ groups['app_servers']|length }}
+      replicas: {{ groups['workers']|length }}
       placement:
         constraints:
           - node.role != manager

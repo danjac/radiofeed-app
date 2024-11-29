@@ -1,5 +1,5 @@
-- name: Swarm setup
-  hosts: swarm_managers
+- name: Manager setup
+  hosts: managers
   remote_user: "{{ user }}"
   gather_facts: false
   vars_files:
@@ -8,14 +8,14 @@
     - ./vars/swarm.yml
   roles:
     - common
-    - swarm_managers
+    - managers
 
-- name: App server setup
+- name: Workers setup
+  hosts: workers
   remote_user: "{{ user }}"
   gather_facts: false
-  hosts: app_servers
   vars_files:
     - ./vars/site.yml
     - ./vars/swarm.yml
   roles:
-    - app_servers
+    - workers
