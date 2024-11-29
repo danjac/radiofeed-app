@@ -150,7 +150,7 @@ def paginate(
     ).get_page(request.GET.get(param, ""))
 
 
-def render_paginated_response(  # noqa: PLR0913
+def render_pagination(  # noqa: PLR0913
     request: HttpRequest,
     template_name: str,
     object_list: ObjectList,
