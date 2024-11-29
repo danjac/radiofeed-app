@@ -27,20 +27,22 @@ The Ansible playbooks will deploy all of the above using Docker images.
 
 ## Deployment
 
+For ease of use, a [justfile](https://github.com/casey/just) has been provided for running the Ansible playbooks.
+
 1. Ensure you have access to a Radiofeed Docker image. The default image is `danjac2018/radiofeed:latest`.
 
-2. Run `ansible-playbook -v -i ./hosts.yml ./site.yml` to deploy to your servers.
+2. Run `just site` to deploy to your servers.
 
 ## Upgrade
 
-To update server dependencies, run `ansible-playbook -v -i ./hosts.yml ./upgrade.yml`.
+To update server dependencies, run `just upgrade`.
 
 ## Django management commands
 
-Run `ansible-playbook -v -i ./hosts.yml ./dj-manage.yml` to generate a `manage.sh` script in the local `ansible` directory. This will run Django management commands in the cron scheduler server:
+Run `just djmanage` to generate a `manage.sh` script in the local `ansible` directory. This will run Django management commands in the cron scheduler server:
 
 ```bash
-ansible-playbook -v -i ./hosts.yml ./dj-manage.yml # run once
+just djmanage # run once to create the bash script
 
 ./manage.sh migrate --check
 ```
