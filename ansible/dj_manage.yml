@@ -1,5 +1,5 @@
 - name: Generate a remote Django manage script
-  hosts: public.managers
+  hosts: managers
   remote_user: "{{ user }}"
   gather_facts: false
   vars_files:
