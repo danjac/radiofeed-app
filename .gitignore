@@ -38,6 +38,7 @@ db
 deployments/
 dist/
 hosts
+hosts.yml
 locust/users.json
 logs
 media/
