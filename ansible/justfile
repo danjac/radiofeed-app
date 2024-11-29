@@ -1,0 +1,17 @@
+@_default:
+    @just --list
+
+@playbook *ARGS:
+    ansible-playbook -i hosts.yml {{ ARGS }}
+
+@site:
+    @just playbook site.yml
+
+@deploy:
+    @just playbook deploy.yml
+
+@upgrade:
+    @just playbook upgrade.yml
+
+@djmanage:
+    @just playbook manage.yml
