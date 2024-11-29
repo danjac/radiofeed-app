@@ -1,6 +1,3 @@
-- name: Ensure we have the right vars
-  debug:
-    var: hostvars[groups['swarm_managers'][0]].swarm.swarm_facts.JoinTokens.Worker
 - name: Join swarm node
   community.docker.docker_swarm:
     state: join
