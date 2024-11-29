@@ -14,4 +14,4 @@
     @just playbook upgrade.yml
 
 @djmanage:
-    @just playbook manage.yml
+    @just playbook dj_manage.yml
