@@ -29,7 +29,7 @@ The Ansible playbooks will deploy all of the above using Docker images.
 
 For ease of use, a [justfile](https://github.com/casey/just) has been provided for running the Ansible playbooks.
 
-1. Ensure you have access to a Radiofeed Docker image. The default image is `danjac2018/radiofeed:latest`.
+1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`.
 
 2. Run `just site` to deploy to your servers.
 
