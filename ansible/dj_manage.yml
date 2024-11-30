@@ -5,4 +5,4 @@
   vars_files:
     - ./vars/site.yml
   roles:
-    - manage
+    - dj_manage
