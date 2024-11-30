@@ -5,7 +5,7 @@ x-logging: &default-logging
 
 services:
     postgres:
-        image: postgres:16.4-bookworm
+        image: postgres:16.6-bookworm
         environment:
             - POSTGRES_PASSWORD={{ postgres_password }}
         volumes:
@@ -22,7 +22,7 @@ services:
             - "5432:5432"
 
     redis:
-        image: redis:7.2-bookworm
+        image: redis:7.4.1-bookworm
         stop_grace_period: "3s"
         restart: always
         logging: *default-logging
