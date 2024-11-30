@@ -33,6 +33,7 @@
                         <p>
                             Head over to the <a class="link" href="{% url 'podcasts:discover' %}">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
                         </p>
+                        <p>You can also <a href="{% url 'users:import_podcast_feeds' %}">import </a>an <a href="https://en.wikipedia.org/wiki/OPML" target="_blank" rel="noopener nofollow">OPML</a> file containing your favorite feeds from other podcast applications.</p>
                     {% endif %}
                 </c-browse.empty>
             </c-slot>
