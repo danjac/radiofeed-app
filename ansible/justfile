@@ -2,7 +2,7 @@
     @just --list
 
 @playbook *ARGS:
-    ansible-playbook -i hosts.yml {{ ARGS }}
+    ansible-playbook -v -i hosts.yml {{ ARGS }}
 
 @site:
     @just playbook site.yml
