@@ -38,14 +38,11 @@ wheels = [
 
 [[package]]
 name = "asttokens"
-version = "2.4.1"
+version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/45/1d/f03bcb60c4a3212e15f99a56085d93093a497718adf828d050b9d675da81/asttokens-2.4.1.tar.gz", hash = "sha256:b03869718ba9a6eb027e134bfdf69f38a236d681c83c160d510768af11254ba0", size = 62284 }
+sdist = { url = "https://files.pythonhosted.org/packages/4a/e7/82da0a03e7ba5141f05cce0d302e6eed121ae055e0456ca228bf693984bc/asttokens-3.0.0.tar.gz", hash = "sha256:0dcd8baa8d62b0c1d118b399b2ddba3c4aff271d0d7a9e0d4c1681c79035bbc7", size = 61978 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/45/86/4736ac618d82a20d87d2f92ae19441ebc7ac9e7a581d7e58bbe79233b24a/asttokens-2.4.1-py2.py3-none-any.whl", hash = "sha256:051ed49c3dcae8913ea7cd08e46a606dba30b79993209636c4875bc1d637bc24", size = 27764 },
+    { url = "https://files.pythonhosted.org/packages/25/8a/c46dcc25341b5bce5472c718902eb3d38600a903b14fa6aeecef3f21a46f/asttokens-3.0.0-py3-none-any.whl", hash = "sha256:e3078351a059199dd5138cb1c706e6430c05eff2ff136af5eb4790f9d28932e2", size = 26918 },
 ]
 
 [[package]]
@@ -526,7 +523,7 @@ wheels = [
 
 [[package]]
 name = "django-typer"
-version = "2.4.0"
+version = "2.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -534,9 +531,9 @@ dependencies = [
     { name = "shellingham" },
     { name = "typer-slim" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/90/4e/053ff75d152b83c1e7c6d9f1d561c4be2dcb00ed94c74377a913d9ecc767/django_typer-2.4.0.tar.gz", hash = "sha256:1ab5454c15c3bc40c48b001ed210a591d0e48ba9b8a47ab09a1c977cd8e9c5d1", size = 54509 }
+sdist = { url = "https://files.pythonhosted.org/packages/ac/b1/1bea6c9cd2324b1f28eb8fba05708b942b64a428caf8bb641235f70e6434/django_typer-2.5.0.tar.gz", hash = "sha256:b7e5df8a3e8bbc198e0665f770b7aa4840a29c678b02f329860f8bb84542a5ce", size = 54577 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2b/2f/13082d6adb2eff56f9c5ee64ef83cf7f9cda28a6a91a36d073cb75333ddc/django_typer-2.4.0-py3-none-any.whl", hash = "sha256:f628ba253cd330fa393994c8d23ad0e9927d7158b868edd54bd7a51ec397646b", size = 55970 },
+    { url = "https://files.pythonhosted.org/packages/32/29/07d27368938dc393999790a240ac903ea1cb4ecd6367e0c24fccbee85d9f/django_typer-2.5.0-py3-none-any.whl", hash = "sha256:c6fb9c1cc043808befda0fdb1a40df0bf6d755dbdb2065cd527f4c8a88c020d1", size = 56050 },
 ]
 
 [[package]]
@@ -1065,6 +1062,7 @@ wheels = [
 name = "nh3"
 version = "0.2.19"
 source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1d/32/3b8d8471d006333bac3175ad37402414d985ed3f8650a01a33e0e86b9824/nh3-0.2.19.tar.gz", hash = "sha256:790056b54c068ff8dceb443eaefb696b84beff58cca6c07afd754d17692a4804", size = 17327 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e8/1d/cbd75a2313d96cd3903111667d3d07548fb45c8ecf5c315f37a8f6c202fa/nh3-0.2.19-cp313-cp313t-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:ec9c8bf86e397cb88c560361f60fdce478b5edb8b93f04ead419b72fbe937ea6", size = 1205181 },
     { url = "https://files.pythonhosted.org/packages/f0/30/8e9ec472ce575fa6b98935920c91df637bf9342862bd943745441aec99eb/nh3-0.2.19-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d0adf00e2b2026fa10a42537b60d161e516f206781c7515e4e97e09f72a8c5d0", size = 739174 },
@@ -1994,15 +1992,15 @@ wheels = [
 
 [[package]]
 name = "typer-slim"
-version = "0.13.1"
+version = "0.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/25/71/bde59468013cf8c87034e6c7cadb97b0478f7e193ff018b5798fd7a9b1c5/typer_slim-0.13.1.tar.gz", hash = "sha256:cc880af8c1d4fafff9dbbbae0b37348372f8633bb0e7d1baa46074c4fcdde810", size = 98740 }
+sdist = { url = "https://files.pythonhosted.org/packages/d2/5f/4409263caf0583280cfcd67c5839b22d2399cb04393155d6e4d66e34f67c/typer_slim-0.14.0.tar.gz", hash = "sha256:28e9a54502e74fe3da66c51c9e4730e615eeb796ef33dbcc424dd2269f53838a", size = 98846 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/f8/d44ccac8b4c09185f0c153d6fd31f02cd1d9a51cfeffde8384913de71e94/typer_slim-0.13.1-py3-none-any.whl", hash = "sha256:13f23cf414fb3de3d9163c4beebe0c6569eabcb85b71c89ffe42887a5332eb3b", size = 44785 },
+    { url = "https://files.pythonhosted.org/packages/80/a7/742592cdc96dbd3087cff1db8288450ae48aafb5774ba9138e73622727a2/typer_slim-0.14.0-py3-none-any.whl", hash = "sha256:710d23c5956583aed4662871df759232f38f30bfa2c91b1aea54e4a1ce027c54", size = 44766 },
 ]
 
 [[package]]
