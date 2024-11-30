@@ -1,5 +1,0 @@
-- name: Copy env file
-  ansible.builtin.template:
-    src: templates/django_env.j2
-    dest: "{{ project_dir }}/.env"
-    mode: "u+rw,g+rw"

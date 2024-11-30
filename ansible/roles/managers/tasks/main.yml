@@ -1,4 +1,6 @@
 - name: Generate Docker swarm config file
+  vars:
+      database_ip: "{{ hostvars[groups['databases'][0]].private_ip }}"
   ansible.builtin.template:
     src: templates/stack.yml.j2
     dest: "{{ project_dir }}/stack.yml"

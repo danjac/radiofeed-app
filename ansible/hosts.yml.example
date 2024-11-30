@@ -1,11 +1,12 @@
 databases:
   hosts:
     101.102.103.101:
+      private_ip: 10.0.0.1
 
 managers:
   hosts:
     101.102.103.102:
-      private_ip: 10.0.0.1
+      private_ip: 10.0.0.2
 
 workers:
   hosts:
