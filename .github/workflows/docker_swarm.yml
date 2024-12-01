@@ -4,10 +4,6 @@ jobs:
     deploy_docker_swarm:
         runs-on: ubuntu-latest
         steps:
-            - name: Cloning repo
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
             - name: Deploy to swarm manager
               uses: appleboy/ssh-action@master
               with:
