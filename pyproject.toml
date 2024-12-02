@@ -58,7 +58,6 @@ dev-dependencies = [
     "factory-boy>=3.3.1",
     "faker>=33.0.0",
     "ipython>=8.27.0",
-    "locust>=2.31.8",
     "pyright>=1.1.380",
     "pytest-cov>=5.0.0",
     "pytest-django>=4.8.0",
