@@ -1,21 +1,33 @@
 @_default:
     @just --list
 
+# Setup the project with default settings
+@setup:
+    cp -R -u -p hosts.yml.example hosts.yml
+    cp -R -u -p vars/secrets.yml.example vars/secrets.yml
+    cp -R -u -p vars/settings.yml.example vars/settings.yml
+
+# Run Ansible playbook
 @playbook *ARGS:
     ansible-playbook -v -i hosts.yml {{ ARGS }}
 
+# Deploy to all servers
 @site:
     @just playbook site.yml
 
+# Deploy cron scheduler and app servers
 @deploy:
     @just playbook deploy.yml
 
+# Upgrade all servers
 @upgrade:
     @just playbook upgrade.yml
 
+# Generate manage.sh script
 @djmanage:
     @just playbook dj_manage.yml
 
+# Run Django manage.py commands
 dj *ARGS:
     #!/usr/bin/bash
     if [ ! -f "./manage.sh" ]; then
