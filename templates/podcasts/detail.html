@@ -122,7 +122,9 @@
                     {% endif %}
                 {% endwith %}
             {% endcache %}
-            <c-markdown :content="podcast.description" />
+            {% cache 300 podcast-description podcast.pk %}
+                <c-markdown :content="podcast.description" />
+            {% endcache %}
         </article>
     </c-podcasts.detail>
 {% endblock content %}

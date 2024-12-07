@@ -206,7 +206,9 @@
                     {% endif %}
                 </div>
             {% endpartialdef audio_log %}
-            <c-markdown :content="episode.description" />
+            {% cache 300 episode-description episode.pk %}
+                <c-markdown :content="episode.description" />
+            {% endcache %}
         </article>
     {% endwith %}
 {% endblock content %}
