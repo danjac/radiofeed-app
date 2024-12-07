@@ -1,17 +1,25 @@
 @_default:
     @just --list
 
-@playbook *ARGS:
+playbook *ARGS:
     ansible-playbook -v -i hosts.yml {{ ARGS }}
 
-@site:
+site:
     @just playbook site.yml
 
-@deploy:
+deploy:
     @just playbook deploy.yml
 
-@upgrade:
+upgrade:
     @just playbook upgrade.yml
 
-@djmanage:
+djmanage:
     @just playbook dj_manage.yml
+
+dj *ARGS:
+    #!/usr/bin/bash
+    if [ ! -f "./manage.sh" ]; then
+        echo "manage.sh not found, run 'just djmanage' first"
+        exit 1
+    fi
+    ./manage.sh {{ ARGS }}
