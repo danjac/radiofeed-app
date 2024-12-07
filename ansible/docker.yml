@@ -3,6 +3,6 @@
   become: true
   remote_user: root
   vars_files:
-    - ./vars/site.yml
+    - ./vars/settings.yml
   roles:
     - docker

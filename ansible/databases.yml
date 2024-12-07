@@ -3,8 +3,8 @@
   remote_user: "{{ user }}"
   gather_facts: false
   vars_files:
-    - ./vars/site.yml
-    - ./vars/postgresql.yml
+    - ./vars/secrets.yml
+    - ./vars/settings.yml
   roles:
     - common
     - databases

@@ -1,0 +1,8 @@
+admin_site_header: "Radiofeed Admin [Production]"
+allowed_hosts: "*"
+contact_email: "danjac2018@gmail.com"
+csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
+docker_image: ghcr.io/danjac/radiofeed-app:main
+project_dir: /home/ubuntu/docker
+stack_name: radiofeed-app
+user: ubuntu

@@ -1,3 +1,0 @@
-user: ubuntu
-docker_image: ghcr.io/danjac/radiofeed-app:main
-project_dir: /home/ubuntu/docker
