@@ -16,9 +16,18 @@ class TestRenderMarkdown:
         assert render_markdown(text) == "<p>testing with paras</p>"
 
     def test_has_link(self):
-        cleaned = render_markdown('<a href="http://reddit.com">Reddit</a>')
+        cleaned = render_markdown('<a href="https://reddit.com">Reddit</a>')
         assert 'rel="noopener noreferrer nofollow"' in cleaned
         assert 'target="_blank"' in cleaned
+
+    def test_is_unlinked(self):
+        cleaned = str(
+            render_markdown(
+                '<div><a href="https://reddit.com">Reddit</a> https://example.com</div>'
+            )
+        )
+        assert cleaned.count('href="https://example.com"') == 1
+        assert cleaned.count('href="https://reddit.com"') == 1
 
     def test_unsafe(self):
         assert render_markdown("<script>alert('xss ahoy!')</script>") == ""

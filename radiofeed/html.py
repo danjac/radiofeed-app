@@ -4,12 +4,14 @@ import re
 from collections.abc import Iterator
 from typing import Final
 
+import bs4
 import nh3
 from django.template.defaultfilters import striptags
 from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 
 _RE_EXTRA_SPACES: Final = r" +"
+_RE_LINK: Final = r"(https?://[^\s<]+)"
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -74,7 +76,9 @@ def render_markdown(value: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if value := value.strip():
         return nh3.clean(
-            value if nh3.is_html(value) else _markdown().render(value),
+            _convert_unlinked_urls(
+                value if nh3.is_html(value) else _markdown().render(value)
+            ),
             clean_content_tags=_CLEAN_TAGS,
             link_rel=_LINK_REL,
             set_tag_attribute_values=_TAG_ATTRIBUTES,
@@ -105,8 +109,34 @@ def strip_extra_spaces(value: str) -> str:
 
 def _strip_spaces_from_lines(value: str) -> Iterator[str]:
     for line in value.splitlines():
-        if stripped := re.sub(_RE_EXTRA_SPACES, " ", line).strip():
+        if stripped := _re_extra_spaces().sub(" ", line).strip():
             yield stripped
+
+
+def _convert_unlinked_urls(html: str) -> str:
+    # Convert unlinked URLs to links
+    soup = bs4.BeautifulSoup(html, "html.parser")
+    link_re = _re_link()
+    for node in soup.find_all(string=True):
+        # skip if parent is a link
+        if node.parent.name != "a":
+            updated = link_re.sub(_linkify, node)
+            node.replace_with(bs4.BeautifulSoup(updated, "html.parser"))
+    return str(soup)
+
+
+def _linkify(match: re.Match) -> str:
+    return f'<a href="{match.group(0)}">{match.group(0)}</a>'
+
+
+@functools.cache
+def _re_extra_spaces() -> re.Pattern:
+    return re.compile(_RE_EXTRA_SPACES)
+
+
+@functools.cache
+def _re_link() -> re.Pattern:
+    return re.compile(_RE_LINK)
 
 
 @functools.cache
