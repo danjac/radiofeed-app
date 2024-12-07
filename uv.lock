@@ -475,16 +475,16 @@ wheels = [
 
 [[package]]
 name = "django-tailwind-cli"
-version = "2.20.2"
+version = "2.21.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "certifi" },
     { name = "django" },
     { name = "django-typer" },
+    { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a3/45/f09793719a20b1974abe48ba13de127189a602de595946473e6594ffef43/django_tailwind_cli-2.20.2.tar.gz", hash = "sha256:4aec49f60a32988ebba7c4504b1e27d0fcc3b3cc9ba0eb04408493441051b0b1", size = 49122 }
+sdist = { url = "https://files.pythonhosted.org/packages/4b/54/f242a4052aa620920e53fa5351af0b095d98e75d4f921a676fd6a43f35bb/django_tailwind_cli-2.21.1.tar.gz", hash = "sha256:181f69dc172f50914823632dfec6d1d4d52150fcde4358b7439da37da025110b", size = 66542 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/82/212f6ddcc6dd78717a2976ce74104e272be586f57562b407093fb7855b05/django_tailwind_cli-2.20.2-py3-none-any.whl", hash = "sha256:56e29d5e2e62b11d350cd85d54d31a7b15051e8dd70d8816e6078399fd14cb5a", size = 11981 },
+    { url = "https://files.pythonhosted.org/packages/fb/50/3cfd29be03ea1abdc64121aff1e30182b6e9b06524e29661c112652b129a/django_tailwind_cli-2.21.1-py3-none-any.whl", hash = "sha256:5e6df422341844ce3dd76bab3e63bbd74f760e71c3df1005792be23066e78257", size = 12927 },
 ]
 
 [[package]]
@@ -1861,9 +1861,9 @@ brotli = [
 
 [[package]]
 name = "win32-setctime"
-version = "1.1.0"
+version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/6b/dd/f95a13d2b235a28d613ba23ebad55191514550debb968b46aab99f2e3a30/win32_setctime-1.1.0.tar.gz", hash = "sha256:15cf5750465118d6929ae4de4eb46e8edae9a5634350c01ba582df868e932cb2", size = 3676 }
+sdist = { url = "https://files.pythonhosted.org/packages/b3/8f/705086c9d734d3b663af0e9bb3d4de6578d08f46b1b101c2442fd9aecaa2/win32_setctime-1.2.0.tar.gz", hash = "sha256:ae1fdf948f5640aae05c511ade119313fb6a30d7eabe25fef9764dca5873c4c0", size = 4867 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0a/e6/a7d828fef907843b2a5773ebff47fb79ac0c1c88d60c0ca9530ee941e248/win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad", size = 3604 },
+    { url = "https://files.pythonhosted.org/packages/e1/07/c6fe3ad3e685340704d314d765b7912993bcb8dc198f0e7a89382d37974b/win32_setctime-1.2.0-py3-none-any.whl", hash = "sha256:95d644c4e708aba81dc3704a116d8cbc974d70b3bdb8be1d150e36be6e9d1390", size = 4083 },
 ]
