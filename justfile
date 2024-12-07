@@ -4,6 +4,8 @@ site_name := "Radiofeed\\ Local"
 admin_username := "admin"
 admin_email := "admin@localhost"
 
+db_volume := "radiofeed-app_pg_data"
+
 @_default:
     @just --list
 
@@ -109,7 +111,7 @@ admin_email := "admin@localhost"
 # Delete local database volume
 [confirm]
 @dbremove:
-    docker volume rm radiofeed-app_pg_data
+    docker volume rm {{ db_volume }}
 
 # Create a new .env file from .env.example if it doesn't exist
 @envfile:
