@@ -72,11 +72,11 @@ admin_email := "admin@localhost"
    uv run pyright {{ ARGS }}
 
 # Start all Docker services
-@up *ARGS:
+@dcup *ARGS:
    docker compose up -d {{ ARGS }}
 
 # Stop all Docker services
-@down *ARGS:
+@dcdn *ARGS:
    docker compose down {{ ARGS }}
 
 # Run pre-commit manually
