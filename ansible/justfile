@@ -19,7 +19,7 @@
 dj *ARGS:
     #!/usr/bin/bash
     if [ ! -f "./manage.sh" ]; then
-        echo "manage.sh not found, run 'just djmanage' first"
-        exit 1
+        echo "manage.sh not found, generating it..."
+        just djmanage
     fi
     ./manage.sh {{ ARGS }}
