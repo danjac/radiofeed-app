@@ -1,5 +1,6 @@
 import functools
 import html
+import io
 import re
 from collections.abc import Iterator
 from typing import Final
@@ -119,14 +120,19 @@ def _render_markdown(content: str) -> str:
 
 def _convert_unlinked_urls(html: str) -> str:
     # Convert unlinked URLs to links
-    soup = bs4.BeautifulSoup(html, "html.parser")
     link_re = _re_link()
+    soup = _make_soup(html)
     for node in soup.find_all(string=True):
         # skip if parent is a link
         if node.parent.name != "a":
             updated = link_re.sub(_linkify, node)
-            node.replace_with(bs4.BeautifulSoup(updated, "html.parser"))
+            node.replace_with(_make_soup(updated))
     return str(soup)
+
+
+def _make_soup(content: str) -> bs4.BeautifulSoup:
+    with io.StringIO(content) as fp:
+        return bs4.BeautifulSoup(fp, "html.parser")
 
 
 def _linkify(match: re.Match) -> str:
