@@ -136,7 +136,8 @@ def _make_soup(content: str) -> bs4.BeautifulSoup:
 
 
 def _make_link(match: re.Match) -> str:
-    return f'<a href="{match.group(0)}">{match.group(0)}</a>'
+    url = match.group(0)
+    return f'<a href="{url}">{url}</a>'
 
 
 @functools.cache
