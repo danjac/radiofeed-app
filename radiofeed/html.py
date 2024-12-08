@@ -115,17 +115,17 @@ def _strip_spaces_from_lines(value: str) -> Iterator[str]:
 def _render_markdown(content: str) -> str:
     if not nh3.is_html(content):
         content = _markdown().render(content)
-    return _convert_unlinked_urls(content)
+    return _linkify(content)
 
 
-def _convert_unlinked_urls(html: str) -> str:
+def _linkify(html: str) -> str:
     # Convert unlinked URLs to links
     link_re = _re_link()
     soup = _make_soup(html)
     for node in soup.find_all(string=True):
         # skip if parent is a link
         if node.parent.name != "a":
-            updated = link_re.sub(_linkify, node)
+            updated = link_re.sub(_make_link, node)
             node.replace_with(_make_soup(updated))
     return str(soup)
 
@@ -135,7 +135,7 @@ def _make_soup(content: str) -> bs4.BeautifulSoup:
         return bs4.BeautifulSoup(fp, "html.parser")
 
 
-def _linkify(match: re.Match) -> str:
+def _make_link(match: re.Match) -> str:
     return f'<a href="{match.group(0)}">{match.group(0)}</a>'
 
 
