@@ -72,13 +72,11 @@ _TAG_ATTRIBUTES: Final = {
 
 
 @mark_safe  # noqa: S308
-def render_markdown(value: str) -> str:
+def render_markdown(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
-    if value := value.strip():
+    if content := content.strip():
         return nh3.clean(
-            _convert_unlinked_urls(
-                value if nh3.is_html(value) else _markdown().render(value)
-            ),
+            _render_markdown(content),
             clean_content_tags=_CLEAN_TAGS,
             link_rel=_LINK_REL,
             set_tag_attribute_values=_TAG_ATTRIBUTES,
@@ -87,7 +85,7 @@ def render_markdown(value: str) -> str:
     return ""
 
 
-def strip_html(value: str) -> str:
+def strip_html(content: str) -> str:
     """Scrubs all HTML tags and entities from text.
     Removes content from any style or script tags.
 
@@ -96,7 +94,7 @@ def strip_html(value: str) -> str:
     return strip_extra_spaces(
         html.unescape(
             striptags(
-                render_markdown(value),
+                render_markdown(content),
             )
         )
     )
@@ -111,6 +109,12 @@ def _strip_spaces_from_lines(value: str) -> Iterator[str]:
     for line in value.splitlines():
         if stripped := _re_extra_spaces().sub(" ", line).strip():
             yield stripped
+
+
+def _render_markdown(content: str) -> str:
+    if not nh3.is_html(content):
+        content = _markdown().render(content)
+    return _convert_unlinked_urls(content)
 
 
 def _convert_unlinked_urls(html: str) -> str:
