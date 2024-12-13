@@ -7,12 +7,11 @@ from typing import Final
 
 import bs4
 import nh3
-from django.template.defaultfilters import striptags
+from django.template.defaultfilters import striptags, urlize
 from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 
 _RE_EXTRA_SPACES: Final = r" +"
-_RE_LINK: Final = r"(https?://[^\s<]+)"
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -120,13 +119,11 @@ def _render_markdown(content: str) -> str:
 
 def _linkify(html: str) -> str:
     # Convert unlinked URLs to links
-    link_re = _re_link()
     soup = _make_soup(html)
     for node in soup.find_all(string=True):
         # skip if parent is a link
         if node.parent.name != "a":
-            updated = link_re.sub(_make_link, node)
-            node.replace_with(_make_soup(updated))
+            node.replace_with(_make_soup(urlize(node)))
     return str(soup)
 
 
@@ -135,19 +132,9 @@ def _make_soup(content: str) -> bs4.BeautifulSoup:
         return bs4.BeautifulSoup(fp, "html.parser")
 
 
-def _make_link(match: re.Match) -> str:
-    url = match.group(0)
-    return f'<a href="{url}">{url}</a>'
-
-
 @functools.cache
 def _re_extra_spaces() -> re.Pattern:
     return re.compile(_RE_EXTRA_SPACES)
-
-
-@functools.cache
-def _re_link() -> re.Pattern:
-    return re.compile(_RE_LINK)
 
 
 @functools.cache
