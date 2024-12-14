@@ -26,8 +26,6 @@ _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
     "tile": "size-40 lg:size-56",
 }
 
-_MIN_DESKTOP_WIDTH: Final = 1024
-
 
 @functools.cache
 def get_cover_image_attrs(
@@ -65,8 +63,8 @@ def get_cover_image_attrs(
 
     sizes = ", ".join(
         [
-            f"(max-width: {_MIN_DESKTOP_WIDTH-0.01}px) {min_size}px",
-            f"(min-width: {_MIN_DESKTOP_WIDTH}px) {full_size}px",
+            f"(max-width: 1023.99px) {min_size}px",
+            f"(min-width: 1024px) {full_size}px",
         ]
     )
 
