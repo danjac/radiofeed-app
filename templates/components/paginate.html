@@ -1,6 +1,6 @@
 <c-vars page target="pagination" />
 
-<c-browse :id="target" {{ attrs }}>
+<c-browse :id="target">
     {% with has_other_pages=page.has_other_pages %}
         {% if has_other_pages %}
             <c-browse.header>
