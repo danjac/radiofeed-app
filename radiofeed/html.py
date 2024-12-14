@@ -79,15 +79,8 @@ def render_markdown(content: str) -> str:
             content = _markdown().render(content)
 
         # linkify URLs not in <a> tags
-        soup = _make_soup(content)
-        for node in soup.find_all(string=True):
-            # skip if parent is a link
-            if node.parent.name != "a":
-                node.replace_with(_make_soup(urlize(node)))
-        content = str(soup)
-
         return nh3.clean(
-            content,
+            linkify(content),
             clean_content_tags=_CLEAN_TAGS,
             link_rel=_LINK_REL,
             set_tag_attribute_values=_TAG_ATTRIBUTES,
@@ -123,6 +116,16 @@ def strip_extra_spaces(value: str) -> str:
         ]
         return "\n".join(lines)
     return value
+
+
+def linkify(content: str) -> str:
+    """Converts URLs to links, if not already in <a> tags."""
+    soup = _make_soup(content)
+    for node in soup.find_all(string=True):
+        # skip if parent is a link
+        if node.parent.name != "a":
+            node.replace_with(_make_soup(urlize(node)))
+    return str(soup)
 
 
 def _make_soup(content: str) -> bs4.BeautifulSoup:

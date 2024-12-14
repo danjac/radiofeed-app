@@ -1,6 +1,23 @@
 import pytest
 
-from radiofeed.html import render_markdown, strip_extra_spaces, strip_html
+from radiofeed.html import linkify, render_markdown, strip_extra_spaces, strip_html
+
+
+class TestLinkify:
+    def test_no_links(self):
+        assert linkify("no links here") == "no links here"
+
+    def test_already_in_link(self):
+        assert (
+            linkify('<a href="https://example.com">example</a>')
+            == '<a href="https://example.com">example</a>'
+        )
+
+    def test_not_linked(self):
+        assert (
+            linkify("<p>https://example.com</p>")
+            == '<p><a href="https://example.com" rel="nofollow">https://example.com</a></p>'
+        )
 
 
 class TestRenderMarkdown:
