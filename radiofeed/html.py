@@ -106,16 +106,14 @@ def strip_html(content: str) -> str:
 
 def strip_extra_spaces(value: str) -> str:
     """Removes any extra linebreaks and spaces."""
-    if value := value.strip():
-        lines = [
-            line
-            for line in [
-                _re_extra_spaces().sub(" ", line).strip() for line in value.splitlines()
-            ]
-            if line
+    lines = [
+        line
+        for line in [
+            _re_extra_spaces().sub(" ", line).strip() for line in value.splitlines()
         ]
-        return "\n".join(lines)
-    return value
+        if line
+    ]
+    return "\n".join(lines)
 
 
 def linkify(content: str) -> str:
