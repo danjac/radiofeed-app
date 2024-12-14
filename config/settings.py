@@ -261,7 +261,7 @@ LOGIN_URL = reverse_lazy("account_login")
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_PREVENT_ENUMERATION = False
