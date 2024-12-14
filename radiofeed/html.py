@@ -2,7 +2,6 @@ import functools
 import html
 import io
 import re
-from collections.abc import Iterator
 from typing import Final
 
 import bs4
@@ -75,8 +74,20 @@ _TAG_ATTRIBUTES: Final = {
 def render_markdown(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if content := content.strip():
+        # render Markdown if not already HTML
+        if not nh3.is_html(content):
+            content = _markdown().render(content)
+
+        # linkify URLs not in <a> tags
+        soup = _make_soup(content)
+        for node in soup.find_all(string=True):
+            # skip if parent is a link
+            if node.parent.name != "a":
+                node.replace_with(_make_soup(urlize(node)))
+        content = str(soup)
+
         return nh3.clean(
-            _render_markdown(content),
+            content,
             clean_content_tags=_CLEAN_TAGS,
             link_rel=_LINK_REL,
             set_tag_attribute_values=_TAG_ATTRIBUTES,
@@ -102,29 +113,16 @@ def strip_html(content: str) -> str:
 
 def strip_extra_spaces(value: str) -> str:
     """Removes any extra linebreaks and spaces."""
-    return "\n".join(_strip_spaces_from_lines(value)).strip()
-
-
-def _strip_spaces_from_lines(value: str) -> Iterator[str]:
-    for line in value.splitlines():
-        if stripped := _re_extra_spaces().sub(" ", line).strip():
-            yield stripped
-
-
-def _render_markdown(content: str) -> str:
-    if not nh3.is_html(content):
-        content = _markdown().render(content)
-    return _linkify(content)
-
-
-def _linkify(html: str) -> str:
-    # Convert unlinked URLs to links
-    soup = _make_soup(html)
-    for node in soup.find_all(string=True):
-        # skip if parent is a link
-        if node.parent.name != "a":
-            node.replace_with(_make_soup(urlize(node)))
-    return str(soup)
+    if value := value.strip():
+        lines = [
+            line
+            for line in [
+                _re_extra_spaces().sub(" ", line).strip() for line in value.splitlines()
+            ]
+            if line
+        ]
+        return "\n".join(lines)
+    return value
 
 
 def _make_soup(content: str) -> bs4.BeautifulSoup:
