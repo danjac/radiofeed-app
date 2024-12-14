@@ -75,9 +75,7 @@ class TestHtmxRedirectMiddleware:
         req = rf.get("/")
         req.htmx = True
         response = HtmxRedirectMiddleware(get_redirect_response)(req)
-        assert response["HX-Location"] == json.dumps(
-            {"path": "/", "target": "#content"}
-        )
+        assert response["HX-Location"] == json.dumps({"path": "/"})
 
     def test_not_htmx_redirect(self, rf, get_redirect_response):
         req = rf.get("/")
