@@ -30,19 +30,17 @@ class Feed:
 def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Feed]:
     """Search iTunes podcast API."""
     return _insert_podcasts(
-        _parse_feeds_from_json(
-            _fetch_itunes_results(
-                client,
-                search_term,
-                limit,
-            ),
-        )
+        _fetch_itunes_results(
+            client,
+            search_term,
+            limit,
+        ),
     )
 
 
 def _fetch_itunes_results(
     client: Client, search_term: str, limit: int
-) -> Iterator[dict[str, str]]:
+) -> Iterator[Feed]:
     try:
         response = client.get(
             "https://itunes.apple.com/search",
@@ -55,26 +53,23 @@ def _fetch_itunes_results(
                 "Accept": "application/json",
             },
         )
-        yield from response.json().get("results", [])
+        for result in response.json().get("results", []):
+            try:
+                yield Feed(
+                    rss=result["feedUrl"],
+                    url=result["collectionViewUrl"],
+                    title=result["collectionName"],
+                    image=result["artworkUrl600"],
+                )
+            except KeyError:
+                continue
 
     except httpx.HTTPError:
         return
 
 
-def _parse_feeds_from_json(results: Iterator[dict[str, str]]) -> Iterator[Feed]:
-    for result in results:
-        try:
-            yield Feed(
-                rss=result["feedUrl"],
-                url=result["collectionViewUrl"],
-                title=result["collectionName"],
-                image=result["artworkUrl600"],
-            )
-        except KeyError:
-            continue
-
-
 def _insert_podcasts(feeds: Iterator[Feed]) -> Iterator[Feed]:
+    # find or insert podcasts from local database into feeds
     feeds_for_podcasts, feeds = itertools.tee(feeds)
 
     podcasts = Podcast.objects.filter(
