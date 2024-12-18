@@ -16,7 +16,7 @@ db_volume := "radiofeed-app_pg_data"
 @update: pyupdate pyinstall precommitupdate
 
 # Run all checks and tests
-@check: typecheck templatecheck test precommitall
+@check: precommitall typecheck templatecheck test
 
 # Deploy application using Github Actions
 @deploy:
