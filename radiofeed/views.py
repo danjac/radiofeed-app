@@ -13,6 +13,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
@@ -114,25 +115,20 @@ def manifest(request: HttpRequest) -> HttpResponse:
 @_cache_page
 def robots(_) -> HttpResponse:
     """Generates robots.txt file."""
+
     return HttpResponse(
         "\n".join(
             [
                 "User-Agent: *",
                 *[
-                    f"Disallow: {url}"
-                    for url in [
-                        "/bookmarks/",
-                        "/categories/",
-                        "/discover/",
-                        "/episodes/",
-                        "/history/",
-                        "/new/",
-                        "/podcasts/",
-                        "/private-feeds/",
-                        "/search/",
-                        "/subscriptions/",
+                    f"Allow: {reverse(url_name)}$"
+                    for url_name in [
+                        "index",
+                        "about",
+                        "privacy",
                     ]
                 ],
+                "Disallow: /",
             ]
         ),
         content_type="text/plain",
