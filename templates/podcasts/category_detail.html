@@ -24,8 +24,12 @@
         </c-header>
         {% partialdef pagination inline=True %}
             {% cache 300 category-podcasts request.get_full_path %}
-                <c-podcasts.paginate :page="page">
-                    <c-slot name="empty">
+                <c-paginate :page="page">
+                    {% for podcast in page %}
+                        <c-browse.item>
+                            <c-podcasts.podcast :podcast="podcast" />
+                        </c-browse.item>
+                    {% empty %}
                         <c-browse.empty>
                             {% if request.search %}
                                 No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
@@ -33,8 +37,8 @@
                                 Category {{ category.name }} does not have any podcasts.
                             {% endif %}
                         </c-browse.empty>
-                    </c-slot>
-                </c-podcasts.paginate>
+                    {% endfor %}
+                </c-paginate>
             {% endcache %}
         {% endpartialdef pagination %}
     {% endcache %}

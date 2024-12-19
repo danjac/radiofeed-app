@@ -19,13 +19,17 @@
     </c-header>
     {% partialdef pagination inline=True %}
         {% cache 300 search-podcasts request.get_full_path %}
-            <c-podcasts.paginate :page="page">
-                <c-slot name="empty">
+            <c-paginate :page="page">
+                {% for podcast in page %}
+                    <c-browse.item>
+                        <c-podcasts.podcast :podcast="podcast" />
+                    </c-browse.item>
+                {% empty %}
                     <c-browse.empty>
                         No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                     </c-browse.empty>
-                </c-slot>
-            </c-podcasts.paginate>
+                {% endfor %}
+            </c-paginate>
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

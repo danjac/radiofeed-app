@@ -14,8 +14,12 @@
         </c-header.nav>
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-episodes.paginate :page="page">
-            <c-slot name="empty">
+        <c-paginate :page="page">
+            {% for episode in page %}
+                <c-browse.item>
+                    <c-episodes.episode :episode="episode" />
+                </c-browse.item>
+            {% empty %}
                 <c-browse.empty>
                     <p>You're not following any podcasts yet.</p>
                     <p>
@@ -24,7 +28,7 @@
                     <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
                     <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
                 </c-browse.empty>
-            </c-slot>
-        </c-episodes.paginate>
+            {% endfor %}
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

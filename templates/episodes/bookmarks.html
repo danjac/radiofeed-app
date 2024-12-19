@@ -28,8 +28,12 @@
         {% endif %}
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-episodes.paginate :page="page" fk>
-            <c-slot name="empty">
+        <c-paginate :page="page" fk>
+            {% for bookmark in page %}
+                <c-browse.item>
+                    <c-episodes.episode :episode="bookmark.episode" />
+                </c-browse.item>
+            {% empty %}
                 <c-browse.empty>
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
@@ -41,7 +45,7 @@
                         </p>
                     {% endif %}
                 </c-browse.empty>
-            </c-slot>
-        </c-episodes.paginate>
+            {% endfor %}
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

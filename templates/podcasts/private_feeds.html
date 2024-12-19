@@ -32,8 +32,12 @@
         </c-header.nav>
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-podcasts.paginate :page="page">
-            <c-slot name="empty">
+        <c-paginate :page="page">
+            {% for podcast in page %}
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="podcast" />
+                </c-browse.item>
+            {% empty %}
                 <c-browse.empty>
                     {% if request.search %}
                         No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
@@ -44,7 +48,7 @@
                         </p>
                     {% endif %}
                 </c-browse.empty>
-            </c-slot>
-        </c-podcasts.paginate>
+            {% endfor %}
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

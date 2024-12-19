@@ -23,8 +23,12 @@
         {% endif %}
     </c-header>
     {% partialdef pagination inline=True %}
-        <c-podcasts.paginate :page="page">
-            <c-slot name="empty">
+        <c-paginate :page="page">
+            {% for podcast in page %}
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="podcast" />
+                </c-browse.item>
+            {% empty %}
                 <c-browse.empty>
                     {% if request.search %}
                         No subscriptions found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
@@ -36,7 +40,7 @@
                         <p>You can also <a href="{% url 'users:import_podcast_feeds' %}">import </a>an <a href="https://en.wikipedia.org/wiki/OPML" target="_blank" rel="noopener nofollow">OPML</a> file containing your favorite feeds from other podcast applications.</p>
                     {% endif %}
                 </c-browse.empty>
-            </c-slot>
-        </c-podcasts.paginate>
+            {% endfor %}
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}

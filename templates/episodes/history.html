@@ -29,8 +29,12 @@
     </c-header>
 
     {% partialdef pagination inline=True %}
-        <c-episodes.paginate :page="page" fk>
-            <c-slot name="empty">
+        <c-paginate :page="page" fk>
+            {% for audio_log in page %}
+                <c-browse.item>
+                    <c-episodes.episode :episode="audio_log.episode" />
+                </c-browse.item>
+            {% empty %}
                 <c-browse.empty>
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your history.
@@ -41,7 +45,7 @@
                         </p>
                     {% endif %}
                 </c-browse.empty>
-            </c-slot>
-        </c-episodes.paginate>
+            {% endfor %}
+        </c-paginate>
     {% endpartialdef pagination %}
 {% endblock content %}
