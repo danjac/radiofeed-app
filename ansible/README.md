@@ -18,10 +18,9 @@ The Ansible playbooks will deploy all of the above using Docker images.
 
     * `hosts.yml.example` > `hosts.yml`
     * `vars/settings.yml.example` > `vars/settings.yml`
-    * `vars/secrets.yml.example` > `vars/secrets.yml`
 
 2. Edit the above files as required, adding your server-specific settings.
-3. Encrypt sensitive files (in particular, `secrets.yml`) using `ansible-vault` and make backups to a secure place.
+3. Encrypt the files using `ansible-vault` and make backups to a secure place.
 
 ## Deployment
 

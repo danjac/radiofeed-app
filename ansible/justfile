@@ -4,7 +4,6 @@
 # Setup the project with default settings
 @setup:
     cp -R -u -p hosts.yml.example hosts.yml
-    cp -R -u -p vars/secrets.yml.example vars/secrets.yml
     cp -R -u -p vars/settings.yml.example vars/settings.yml
 
 # Run Ansible playbook

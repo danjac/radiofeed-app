@@ -1,8 +1,18 @@
 admin_site_header: "Radiofeed Admin [Production]"
+admin_url: "my-admin/"
+admins: "my-user@gmail.com"
 allowed_hosts: "*"
 contact_email: "danjac2018@gmail.com"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
 docker_image: ghcr.io/danjac/radiofeed-app:main
+mailgun_api_key: ""
+mailgun_api_url: "https://api.eu.mailgun.net/v3"
+mailgun_sender_domain: "mg.radiofeed.app"
+postgres_password: ""
 project_dir: /home/ubuntu/docker
+pwa_sha256_fingerprints: ""
+secret_key: ""
+secret_key_fallbacks: ""
+sentry_url: ""
 stack_name: radiofeed-app
 user: ubuntu
