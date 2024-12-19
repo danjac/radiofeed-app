@@ -29,7 +29,7 @@
     </c-header>
 
     {% partialdef pagination inline=True %}
-        <c-paginate :page="page" fk>
+        <c-paginate :page="page">
             {% for audio_log in page %}
                 <c-browse.item>
                     <c-episodes.episode :episode="audio_log.episode" />
