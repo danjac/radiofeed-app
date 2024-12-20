@@ -26,7 +26,13 @@
                     </c-browse.item>
                 {% empty %}
                     <c-browse.empty>
-                        No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                        <p>
+
+                            No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                        </p>
+                        <p>
+                            Click the <strong>Search iTunes</strong> button above to search the iTunes podcast directory.
+                        </p>
                     </c-browse.empty>
                 {% endfor %}
             </c-paginate>
