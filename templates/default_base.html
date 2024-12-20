@@ -74,7 +74,7 @@
                 {% django_htmx_script %}
                 <script>
                     if (typeof navigator.serviceWorker !== 'undefined') {
-                        navigator.serviceWorker.register('{% url "service_worker" %}')
+                        navigator.serviceWorker.register('{% static "service-worker.js" %}')
                     }
                 </script>
             {% endpartialdef %}
