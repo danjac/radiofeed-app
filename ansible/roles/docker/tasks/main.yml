@@ -41,11 +41,6 @@
     name: "{{ user }}"
     groups: docker
     append: true
-- name: Deploy SSH Key
-  ansible.posix.authorized_key:
-    user: "{{ user }}"
-    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-    state: present
 - name: Copy daemon.json file
   ansible.builtin.copy:
     src: files/daemon.json

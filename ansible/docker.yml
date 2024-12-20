@@ -5,4 +5,5 @@
   vars_files:
     - ./vars/settings.yml
   roles:
+    - common
     - docker
