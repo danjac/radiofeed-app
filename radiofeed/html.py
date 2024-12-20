@@ -78,7 +78,6 @@ def render_markdown(content: str) -> str:
         if not nh3.is_html(content):
             content = _markdown().render(content)
 
-        # linkify URLs not in <a> tags
         return nh3.clean(
             linkify(content),
             clean_content_tags=_CLEAN_TAGS,
