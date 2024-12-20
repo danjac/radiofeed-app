@@ -37,7 +37,7 @@ def user_preferences(
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return redirect("users:preferences")
+            return redirect(request.path)
     else:
         form = UserPreferencesForm(instance=request.user)
 
@@ -68,7 +68,7 @@ def import_podcast_feeds(
                 )
             else:
                 messages.info(request, "No new podcasts found in uploaded file")
-            return redirect("users:import_podcast_feeds")
+            return redirect(request.path)
     else:
         form = OpmlUploadForm()
 
