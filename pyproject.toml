@@ -50,7 +50,6 @@ dependencies = [
 [tool.uv]
 dev-dependencies = [
     "bandit>=1.7.9",
-    "beautifulsoup4>=4.12.3",
     "coverage>=7.6.1",
     "django-browser-reload>=1.15.0",
     "django-debug-toolbar>=4.4.6",

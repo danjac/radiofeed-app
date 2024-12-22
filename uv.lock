@@ -1412,7 +1412,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "bandit" },
-    { name = "beautifulsoup4" },
     { name = "coverage" },
     { name = "django-browser-reload" },
     { name = "django-debug-toolbar" },
@@ -1480,7 +1479,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "bandit", specifier = ">=1.7.9" },
-    { name = "beautifulsoup4", specifier = ">=4.12.3" },
     { name = "coverage", specifier = ">=7.6.1" },
     { name = "django-browser-reload", specifier = ">=1.15.0" },
     { name = "django-debug-toolbar", specifier = ">=4.4.6" },
