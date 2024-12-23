@@ -1,7 +1,8 @@
 {% get_accept_cookies as accept_cookies %}
+<c-vars target="cookie-banner" />
 {% if not accept_cookies %}
     <div class="flex fixed bottom-0 z-50 justify-center py-3 w-full text-white bg-black opacity-90"
-         id="cookie-banner"
+         id="{{ target }}"
          {{ attrs }}>
         <div class="px-2">
             <div class="items-center md:flex">
@@ -18,7 +19,7 @@
                             hx-disabled-elt="this"
                             hx-post="{% url "accept_gdpr_cookies" %}"
                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                            hx-target="#{{ id }}"
+                            hx-target="#{{ target }}"
                             hx-push-url="false"
                             hx-swap="delete"
                             hx-indicator="this">OK</button>
