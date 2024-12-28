@@ -1,0 +1,13 @@
+{{ errors }}
+{% if errors and not fields %}
+  {% for field in hidden_fields %}{{ field }}{% endfor %}
+{% endif %}
+{% for field, errors in fields %}
+  {{ field.as_field_group }}
+  {% if forloop.last %}
+    {% for field in hidden_fields %}{{ field }}{% endfor %}
+  {% endif %}
+{% endfor %}
+{% if not fields and not errors %}
+  {% for field in hidden_fields %}{{ field }}{% endfor %}
+{% endif %}
