@@ -1,6 +1,9 @@
+from django.conf import settings
+from django.core.mail import send_mail
+from django.template import loader
 from loguru import logger
 
-from radiofeed.mail import send_templated_mail
+from radiofeed.html import strip_html
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.models import User
 
@@ -34,13 +37,19 @@ def send_recommendations_email(
 
         user.recommended_podcasts.add(*podcasts)
 
-        send_templated_mail(
-            f"Hi {user.first_name or user.username}, here are some new podcasts you might like!",
-            [user.email],
+        html_message = loader.render_to_string(
             "podcasts/emails/recommendations.html",
             {
                 "podcasts": podcasts,
                 "recipient": user,
             },
+        )
+
+        send_mail(
+            f"Hi {user.first_name or user.username}, here are some new podcasts you might like!",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            message=strip_html(html_message),
+            html_message=html_message,
             **email_settings,
         )
