@@ -19,9 +19,9 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
+from radiofeed import pwa
 from radiofeed.cover_image import get_placeholder_path, is_cover_image_size
 from radiofeed.http_client import get_client
-from radiofeed.manifest import get_assetlinks, get_manifest
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
@@ -87,7 +87,7 @@ def favicon(_) -> FileResponse:
 @_cache_page
 def assetlinks(_) -> HttpResponse:
     """PWA assetlinks"""
-    return JsonResponse(get_assetlinks(), safe=False)
+    return JsonResponse(pwa.get_assetlinks(), safe=False)
 
 
 @require_safe
@@ -95,7 +95,7 @@ def assetlinks(_) -> HttpResponse:
 @_cache_page
 def manifest(request: HttpRequest) -> HttpResponse:
     """PWA manifest.json file."""
-    return JsonResponse(get_manifest(request))
+    return JsonResponse(pwa.get_manifest(request))
 
 
 @require_safe

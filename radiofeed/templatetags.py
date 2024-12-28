@@ -13,9 +13,9 @@ from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
 from django.utils.html import format_html
 
+from radiofeed import pwa
 from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
 from radiofeed.html import render_markdown
-from radiofeed.manifest import get_theme_color
 
 _SECONDS_IN_MINUTE: Final = 60
 _SECONDS_IN_HOUR: Final = 3600
@@ -38,7 +38,7 @@ def htmx_config() -> str:
 @register.simple_tag
 def theme_color() -> str:
     """Returns the PWA configuration theme color meta tag."""
-    return format_html('<meta name="theme-color" content="{}">', get_theme_color())
+    return format_html('<meta name="theme-color" content="{}">', pwa.get_theme_color())
 
 
 @register.simple_tag
