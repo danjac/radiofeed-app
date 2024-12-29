@@ -17,7 +17,7 @@ class Item(TypedDict):
 
 
 @register.simple_tag(takes_context=True)
-def get_settings(context: RequestContext, current: str) -> dict:
+def get_account_settings(context: RequestContext, current: str) -> dict:
     """ "Returns a dictionary of settings items."""
     items = {
         "preferences": Item(
