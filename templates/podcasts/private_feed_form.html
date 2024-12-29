@@ -12,7 +12,6 @@
                 hx-target="this"
                 hx-swap="outerHTML"
                 id="private-feed-form"
-                hx-vals='{"action": "add"}'
         >
             <c-slot name="buttons">
                 <c-form.buttons>
@@ -20,10 +19,13 @@
                               variant="primary"
                               label="Add Feed" />
                     <c-button icon="arrow-uturn-left"
+                              role="link"
                               type="button"
                               label="Cancel"
-                              hx-get="{{ request.path }}"
-                              hx-vals='{"action": "cancel"}' />
+                              hx-get="{% url 'podcasts:private_feeds' %}"
+                              hx-swap="innerHTML show:window:top"
+                              hx-target="#content"
+                    />
                 </c-form.buttons>
             </c-slot>
         </c-form>

@@ -303,11 +303,11 @@ def add_private_feed(
     request: HttpRequest,
 ) -> HttpResponse:
     """Add new private feed to collection."""
-    if request.GET.get("action") == "cancel":
-        return redirect("podcasts:private_feeds")
+
+    user = cast(User, request.user)
 
     if request.method == "POST":
-        form = PrivateFeedForm(request.POST, user=cast(User, request.user))
+        form = PrivateFeedForm(request.POST, user=user)
 
         if form.is_valid():
             podcast, is_new = form.save()
@@ -321,7 +321,7 @@ def add_private_feed(
             messages.success(request, "Podcast added to your Private Feeds")
             return redirect(podcast)
     else:
-        form = PrivateFeedForm(user=cast(User, request.user))
+        form = PrivateFeedForm(user=user)
 
     return render_partial_for_target(
         request,
