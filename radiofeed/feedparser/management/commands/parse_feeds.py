@@ -1,4 +1,3 @@
-import contextlib
 from typing import Annotated
 
 import typer
@@ -40,5 +39,8 @@ class Command(TyperCommand):
         )
 
     def _parse_feed(self, podcast: Podcast, client: Client) -> None:
-        with contextlib.suppress(FeedParserError):
+        try:
             feed_parser.parse_feed(podcast, client)
+            self.stdout.write(self.style.SUCCESS(f"{podcast}: success"))
+        except FeedParserError as e:
+            self.stdout.write(self.style.ERROR(f"{podcast}: {e.parser_error}"))

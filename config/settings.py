@@ -1,11 +1,9 @@
 import pathlib
-import sys
 from email.utils import getaddresses
 
 import sentry_sdk
 from django.urls import reverse_lazy
 from environs import Env
-from loguru import logger
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
@@ -444,37 +442,10 @@ LOGGING = {
     },
 }
 
-# Loguru
-# https://loguru.readthedocs.io/en/stable
-
-LOGURU_LEVEL = env("LOGURU_LEVEL", default="DEBUG")
-
-logger.configure(
-    handlers=[
-        {
-            "sink": sys.stderr,
-            "level": LOGURU_LEVEL,
-            "format": " | ".join(
-                [
-                    "<green>{time:YYYY-MM-DD HH:mm:ss}</green>",
-                    "<level>{level}</level>",
-                    "<cyan>{name}:{function}:{line}</cyan>",
-                    "<green>{message}</green>",
-                    "<green>{extra}</green>",
-                ]
-            ),
-            "colorize": True,
-            "backtrace": False,
-            "diagnose": False,
-        },
-    ],
-)
-
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
 if SENTRY_URL := env("SENTRY_URL", default=None):
-    logger.disable("sentry_sdk.integrations.logging")
     ignore_logger("django.security.DisallowedHost")
 
     sentry_sdk.init(

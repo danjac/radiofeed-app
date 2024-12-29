@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template import loader
-from loguru import logger
 
 from radiofeed.html import strip_html
 from radiofeed.podcasts.models import Podcast
@@ -29,12 +28,6 @@ def send_recommendations_email(
     )[:num_podcasts]
 
     if podcasts:
-        logger.debug(
-            "Sending recommendations email",
-            email=user.email,
-            num_podcasts=len(podcasts),
-        )
-
         user.recommended_podcasts.add(*podcasts)
 
         html_message = loader.render_to_string(

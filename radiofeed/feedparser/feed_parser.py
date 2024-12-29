@@ -12,7 +12,6 @@ from django.db.models.functions import Lower
 from django.db.utils import DataError
 from django.utils import timezone
 from django.utils.http import http_date, quote_etag
-from loguru import logger
 
 from radiofeed import tokenizer
 from radiofeed.episodes.models import Episode
@@ -67,14 +66,6 @@ class _FeedParser:
 
     def __init__(self, podcast: Podcast) -> None:
         self._podcast = podcast
-
-        self._logger = logger.bind(
-            podcast={
-                "title": self._podcast.title,
-                "rss": self._podcast.rss,
-                "id": self._podcast.pk,
-            }
-        )
 
     def parse(self, client: Client) -> None:
         """Syncs Podcast instance with RSS or Atom feed source.
@@ -137,7 +128,6 @@ class _FeedParser:
 
                 self._episode_updates(feed)
 
-                self._logger.success("Feed updated")
         except DataError as exc:
             raise InvalidDataError from exc
 
@@ -156,15 +146,12 @@ class _FeedParser:
         match exc:
             case DuplicateError():
                 active = False
-                self._logger.error("Duplicate feed")
 
             case NotModifiedError():
                 num_retries = 0
-                self._logger.info("Feed not modified")
 
             case _:
                 num_retries += 1
-                self._logger.error("Feed error", error=exc.parser_error.label)  # type: ignore[union-attr]
 
         # if number of errors exceeds threshold then deactivate the podcast
         active = active and self._max_retries > num_retries

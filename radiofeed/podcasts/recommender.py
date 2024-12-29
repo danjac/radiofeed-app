@@ -8,7 +8,6 @@ from datetime import timedelta
 
 from django.db.models import QuerySet
 from django.utils import timezone
-from loguru import logger
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -42,13 +41,10 @@ class _Recommender:
             stop_words=list(tokenizer.get_stopwords(self._language))
         )
 
-        self._logger = logger.bind(language=self._language)
-
     def recommend(self) -> None:
         """Creates recommendation instances."""
 
         # Delete existing recommendations first
-        self._logger.debug("Deleting current recommendations")
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in itertools.batched(self._build_matches_dict().items(), 1000):
@@ -72,7 +68,6 @@ class _Recommender:
         matches = collections.defaultdict(list)
 
         for category in get_categories():
-            self._logger.debug("Recommendations for category", category=category.name)
             for batch in itertools.batched(
                 self._get_podcasts(category)
                 .values_list("id", "extracted_text")
