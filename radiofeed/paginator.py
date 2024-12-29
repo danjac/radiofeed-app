@@ -39,7 +39,7 @@ class Page:
 
     def __len__(self) -> int:
         """Returns total number of items"""
-        return self._num_objects
+        return len(self.object_list)
 
     def __getitem__(self, index: int | slice) -> ObjectList:
         """Returns indexed item."""
@@ -87,10 +87,6 @@ class Page:
     @cached_property
     def _has_previous(self) -> bool:
         return self.number > 1
-
-    @cached_property
-    def _num_objects(self) -> int:
-        return len(self.object_list)
 
     @cached_property
     def _next_page_number(self) -> int:
