@@ -3,9 +3,10 @@ from typing import Annotated
 import typer
 from django.db.models import Count, F, QuerySet
 from django_typer.management import TyperCommand
+from rich import print
 
 from radiofeed.feedparser import feed_parser
-from radiofeed.feedparser.exceptions import FeedParserError
+from radiofeed.feedparser.exceptions import FeedParserError, NotModifiedError
 from radiofeed.http_client import Client, get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
@@ -41,6 +42,8 @@ class Command(TyperCommand):
     def _parse_feed(self, podcast: Podcast, client: Client) -> None:
         try:
             feed_parser.parse_feed(podcast, client)
-            self.stdout.write(self.style.SUCCESS(f"{podcast}: success"))
+            print(f"[green][bold]{podcast}:[/bold] Success[/green]")
+        except NotModifiedError as e:
+            print(f"[bold]{podcast}:[/bold] {e.parser_error.label}")
         except FeedParserError as e:
-            self.stdout.write(self.style.ERROR(f"{podcast}: {e.parser_error}"))
+            print(f"[red][bold]{podcast}:[/bold] {e.parser_error.label}[/red]")
