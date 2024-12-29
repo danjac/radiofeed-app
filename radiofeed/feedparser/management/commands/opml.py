@@ -36,9 +36,9 @@ class Command(TyperCommand):
         )
 
         if num_podcasts := len(podcasts):
-            typer.secho(f"{num_podcasts} podcasts imported", fg=typer.colors.GREEN)
+            self.stdout.write(self.style.SUCCESS(f"{num_podcasts} podcasts imported"))
         else:
-            typer.secho("No podcasts found in OPML", fg=typer.colors.RED)
+            self.stdout.write(self.style.ERROR("No podcasts found in OPML"))
 
     @command()
     def export(
