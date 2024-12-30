@@ -18,7 +18,8 @@
                         <div>
                             {% if is_subscribed %}
                                 <c-button icon="trash"
-                                          size="lg"
+                                          size=24
+                                          class="text-lg"
                                           variant="danger"
                                           label="Remove"
                                           aria-label="Remove podcast from your Private Feeds"
@@ -29,7 +30,8 @@
                                           hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!" />
                             {% else %}
                                 <c-button icon="eye-slash"
-                                          size="lg"
+                                          size=24
+                                          class="text-lg"
                                           label="Subscribe"
                                           aria-label="This is a private feed, you cannot subscribe to it."
                                           label="This is a private feed, you cannot subscribe to it."
@@ -47,7 +49,8 @@
                                 {% if is_subscribed %}
                                     <c-button icon="eye-slash"
                                               variant="primary"
-                                              size="lg"
+                                              size=24
+                                              class="text-lg"
                                               label="Unsubscribe"
                                               outline
                                               aria-label="Unsubscribe from this Podcast"
@@ -59,7 +62,8 @@
                                     <c-button
                                         icon="eye"
                                         variant="primary"
-                                        size="lg"
+                                        size=24
+                                        class="text-lg"
                                         label="Subscribe"
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"

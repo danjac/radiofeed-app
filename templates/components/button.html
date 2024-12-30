@@ -1,14 +1,6 @@
 {% load heroicons %}
-<c-vars icon variant="default" outline=False size="base" label class />
-<button class="inline-flex items-center btn btn-{{ variant }} {% if outline %}btn-outline{% endif %} text-{{ size }} {{ class }}" {{ attrs }}>
-    {% with ICON_CSS="mr-2" %}
-        {% if size == "lg" %}
-            {% heroicon_mini icon class=ICON_CSS size=24 %}
-        {% elif size == "sm" %}
-            {% heroicon_mini icon class=ICON_CSS size=16 %}
-        {% else %}
-            {% heroicon_mini icon class=ICON_CSS %}
-        {% endif %}
-    {% endwith %}
+<c-vars icon variant="default" outline=False size=20 label class />
+<button class="inline-flex items-center btn btn-{{ variant }} {% if outline %}btn-outline{% endif %} {{ class }}" {{ attrs }}>
+    {% heroicon_mini icon class="mr-2" size=size %}
     {% if label %}{{ label }}{% else %}{{ slot }}{% endif %}
 </button>
