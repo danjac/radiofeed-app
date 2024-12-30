@@ -18,7 +18,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_command(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("opml", "parse", filename)
+        call_command("parse_opml", filename)
         assert Podcast.objects.count() == 1
         podcast = Podcast.objects.first()
         assert podcast is not None
@@ -28,7 +28,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_promote(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("opml", "parse", filename, promote=True)
+        call_command("parse_opml", filename, promote=True)
         assert Podcast.objects.count() == 1
         podcast = Podcast.objects.first()
         assert podcast is not None
@@ -38,7 +38,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_empty(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter([]))
-        call_command("opml", "parse", filename)
+        call_command("parse_opml", filename)
         assert Podcast.objects.count() == 0
         patched.assert_called()
 
@@ -46,11 +46,11 @@ class TestParseOpml:
 class TestExportFeeds:
     @pytest.mark.django_db
     def test_ok(self, podcast):
-        call_command("opml", "export", "-")
+        call_command("export_opml", "-")
 
     @pytest.mark.django_db
     def test_promoted(self, podcast):
-        call_command("opml", "export", "-", promoted=True)
+        call_command("export_opml", "-", promoted=True)
 
 
 class TestParseFeeds:

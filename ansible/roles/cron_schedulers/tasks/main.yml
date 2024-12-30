@@ -53,7 +53,7 @@
             user: "{{ user }}"
             minute: "20"
             hour: "6"
-            job: "{{ manage_cmd }} recommender create >> {{ logs_dir }}recommendations.log 2>&1"
+            job: "{{ manage_cmd }} create_recommendations >> {{ logs_dir }}recommendations.log 2>&1"
       - name: Install send recommendations emails cron
         ansible.builtin.cron:
             name: Send recommendations emails
@@ -61,7 +61,7 @@
             minute: "45"
             hour: "12"
             weekday: "1"
-            job: "{{ manage_cmd }} recommender send >> {{ logs_dir }}emails.log 2>&1"
+            job: "{{ manage_cmd }} send_recommendations >> {{ logs_dir }}emails.log 2>&1"
       - name: Install clear Django sessions cron
         ansible.builtin.cron:
             name: Clear Django sessions

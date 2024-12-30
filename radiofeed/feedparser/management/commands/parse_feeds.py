@@ -1,8 +1,5 @@
-from typing import Annotated
-
-import typer
+from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Count, F, QuerySet
-from django_typer.management import TyperCommand
 
 from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -11,19 +8,30 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
 
-class Command(TyperCommand):
-    """Parse RSS feeds."""
+class Command(BaseCommand):
+    """Django management command to parse RSS feeds of all scheduled podcasts."""
+
+    help = """Parse RSS feeds."""
+
+    def add_arguments(self, parser: CommandParser) -> None:
+        """Add command arguments."""
+        parser.add_argument(
+            "--limit",
+            type=int,
+            help="Number of feeds to process",
+            default=360,
+        )
 
     def handle(
         self,
-        limit: Annotated[int, typer.Option(help="Number of feeds to process")] = 360,
+        **options,
     ) -> None:
         """Parses RSS feeds of all scheduled podcasts."""
         client = get_client()
 
         execute_thread_pool(
             lambda podcast: self._parse_feed(podcast, client),
-            self._get_scheduled_podcasts(limit),
+            self._get_scheduled_podcasts(options["limit"]),
         )
 
     def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:

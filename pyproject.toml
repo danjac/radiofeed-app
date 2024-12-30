@@ -23,7 +23,6 @@ dependencies = [
     "django-redis>=5.4.0",
     "django-tailwind-cli>=2.16.0",
     "django-template-partials>=24.4",
-    "django-typer>=2.3.0",
     "django-version-checks>=1.12.0",
     "django-widget-tweaks>=1.5.0",
     "django>=5.1",

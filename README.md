@@ -101,7 +101,7 @@ In production you should set up the following cron jobs to run these Django comm
 #### Send podcast recommendations to users:
 
 ```bash
-15 9 * * 1 python manage.py send_recommendations_emails
+15 9 * * 1 python manage.py send_recommendations
 ```
 
 **Note:** ansible will set up these cron jobs for you if you use the provided Playbooks.
