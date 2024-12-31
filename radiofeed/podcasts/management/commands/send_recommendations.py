@@ -1,8 +1,9 @@
+from allauth.account.models import EmailAddress
 from django.core.management.base import BaseCommand
+from django.db.models import QuerySet
 
 from radiofeed.podcasts import emails
 from radiofeed.thread_pool import execute_thread_pool
-from radiofeed.users.models import User
 
 
 class Command(BaseCommand):
@@ -14,8 +15,15 @@ class Command(BaseCommand):
         """Handle implementation."""
         execute_thread_pool(
             emails.send_recommendations_email,
-            User.objects.filter(
-                is_active=True,
-                send_email_notifications=True,
-            ),
+            self._get_email_addresses(),
         )
+
+    def _get_email_addresses(self) -> QuerySet[EmailAddress]:
+        # Return only active users with email notifications enabled
+
+        return EmailAddress.objects.filter(
+            verified=True,
+            primary=True,
+            user__is_active=True,
+            user__send_email_notifications=True,
+        ).select_related("user")
