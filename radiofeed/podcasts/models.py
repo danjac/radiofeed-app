@@ -463,7 +463,7 @@ class Recommendation(models.Model):
         indexes: ClassVar[list] = [
             models.Index(fields=["podcast"]),
             models.Index(fields=["recommended"]),
-            models.Index(fields=["-similarity", "-frequency"]),
+            models.Index(fields=["-score"]),
         ]
         constraints: ClassVar[list] = [
             models.UniqueConstraint(
