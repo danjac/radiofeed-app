@@ -174,11 +174,9 @@ def similar(
 
     podcast = _get_podcast_or_404(podcast_id)
 
-    recommendations = (
-        podcast.recommendations.with_relevance()
-        .select_related("recommended")
-        .order_by("-relevance")[: settings.DEFAULT_PAGE_SIZE]
-    )
+    recommendations = podcast.recommendations.select_related("recommended").order_by(
+        "-score"
+    )[: settings.DEFAULT_PAGE_SIZE]
 
     return render(
         request,

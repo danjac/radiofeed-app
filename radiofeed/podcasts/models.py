@@ -144,8 +144,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         # we want the sum of the relevance of the recommendations, grouped by recommended
 
         scores = (
-            Recommendation.objects.with_relevance()
-            .alias(
+            Recommendation.objects.alias(
                 is_podcast_subscribed=models.Exists(
                     user.subscriptions.filter(
                         podcast=models.OuterRef("podcast"),
@@ -162,11 +161,9 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                 is_recommended_subscribed=False,
                 recommended=models.OuterRef("pk"),
             )
-            .annotate(score=models.Sum("relevance"))
-            .values("recommended", "score")
+            .values("score")
+            .order_by("-score")
         )
-
-        # include recommended + promoted
 
         return self.annotate(
             relevance=Coalesce(
@@ -418,10 +415,6 @@ class Subscription(models.Model):
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
 
-    def with_relevance(self) -> models.QuerySet["Recommendation"]:
-        """Returns factor of frequency and similarity as annotated value `relevance`."""
-        return self.annotate(relevance=models.F("frequency") * models.F("similarity"))
-
     def bulk_delete(self) -> int:
         """More efficient quick delete.
 
@@ -453,6 +446,15 @@ class Recommendation(models.Model):
         max_digits=100,
         null=True,
         blank=True,
+    )
+
+    score = models.GeneratedField(
+        expression=models.F("frequency") * models.F("similarity"),
+        db_persist=True,
+        output_field=models.DecimalField(
+            decimal_places=10,
+            max_digits=100,
+        ),
     )
 
     objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()

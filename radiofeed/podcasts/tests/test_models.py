@@ -20,12 +20,6 @@ class TestRecommendationManager:
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
 
-    @pytest.mark.django_db
-    def test_with_relevance(self):
-        RecommendationFactory(similarity=0.5, frequency=3)
-        recommendation = Recommendation.objects.with_relevance().first()
-        assert recommendation.relevance == 1.5
-
 
 class TestRecommendationModel:
     def test_str(self):
@@ -33,6 +27,11 @@ class TestRecommendationModel:
             str(Recommendation(podcast_id=1, recommended_id=2))
             == "podcast 1 | recommended 2"
         )
+
+    @pytest.mark.django_db
+    def test_score(self):
+        recommendation = RecommendationFactory(similarity=0.5, frequency=3)
+        assert recommendation.score == 1.5
 
 
 class TestCategoryManager:

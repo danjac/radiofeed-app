@@ -12,7 +12,7 @@ def send_recommendations_email(
 ) -> None:
     """Sends email to user with a list of recommended podcasts.
 
-    Recommendations based on their subscriptions or latest promoted podcasts.
+    Recommendations based on their subscriptions or promoted podcasts.
 
     Recommended podcasts are saved to the database, so the user is not recommended the same podcasts more than once.
 
@@ -20,8 +20,6 @@ def send_recommendations_email(
     """
 
     user = email_address.user
-
-    # include recommended + promoted
 
     podcasts = (
         Podcast.objects.published()
