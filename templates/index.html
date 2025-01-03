@@ -4,11 +4,10 @@
     <html lang="en">
         <head>
             <title>{{ request.site.name }}</title>
-            {% include "default_base.html#head" %}
+            {% include "partials.html#head" %}
         </head>
         <body class="mx-auto font-sans antialiased text-white bg-gradient-to-b from-purple-900 to-black container-xl scroll-smooth">
-
-            <c-messages />
+            {% include "partials.html#messages" %}
             {% cache 300 landing-page %}
                 <div class="py-12 mx-auto space-y-3 min-h-screen sm:px-2 lg:space-y-12">
                     <div class="px-6 pb-6 space-y-3 border-b">
@@ -51,8 +50,8 @@
                     </div>
                 </div>
             {% endcache %}
-            <c-cookie-banner />
-            {% include "default_base.html#scripts" %}
+            {% include "partials.html#cookie_banner" %}
+            {% include "partials.html#scripts" %}
         </body>
     </html>
 {% endspaceless %}
