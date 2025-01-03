@@ -1,4 +1,5 @@
 import collections
+import contextlib
 import functools
 import itertools
 import operator
@@ -97,34 +98,24 @@ class _Recommender:
     ) -> Iterator[tuple[int, int, float]]:
         # build a data model of podcasts with same language and category
 
-        if not rows:
-            return  # pragma: no cover
-
-        try:
+        with contextlib.suppress(ValueError):
             cosine_sim = cosine_similarity(self._vectorizer.transform(rows.values()))
-        except ValueError:  # pragma: no cover
-            return
-
-        podcast_ids = list(rows.keys())
-
-        for current_id, similar in zip(podcast_ids, cosine_sim, strict=True):
-            try:
-                for index, similarity in itertools.islice(
-                    sorted(
-                        enumerate(similar),
-                        key=operator.itemgetter(1),
-                        reverse=True,
-                    ),
-                    self._num_matches,
-                ):
-                    if (
-                        similarity > 0
-                        and (recommended_id := podcast_ids[index]) != current_id
+            podcast_ids = list(rows.keys())
+            for current_id, similar in zip(podcast_ids, cosine_sim, strict=True):
+                with contextlib.suppress(IndexError):
+                    for index, similarity in itertools.islice(
+                        sorted(
+                            enumerate(similar),
+                            key=operator.itemgetter(1),
+                            reverse=True,
+                        ),
+                        self._num_matches,
                     ):
-                        yield current_id, recommended_id, similarity
-
-            except IndexError:  # pragma: no cover
-                continue
+                        if (
+                            similarity > 0
+                            and (recommended_id := podcast_ids[index]) != current_id
+                        ):
+                            yield current_id, recommended_id, similarity
 
 
 @functools.cache
