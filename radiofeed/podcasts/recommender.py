@@ -16,7 +16,7 @@ from radiofeed import tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
 
 
-def recommend(language: str) -> None:
+def recommend(language: str, **kwargs) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by
     language and category.
 
@@ -25,18 +25,23 @@ def recommend(language: str) -> None:
     Only podcasts matching certain languages and updated within the past 90 days are
     included.
     """
-    _Recommender(language).recommend()
+    _Recommender(language, **kwargs).recommend()
 
 
 class _Recommender:
     """Creates recommendations for given language, based around text content and common
     categories."""
 
-    _num_matches: int = 12
-    _since: timedelta = timedelta(days=90)
-
-    def __init__(self, language: str) -> None:
+    def __init__(
+        self,
+        language: str,
+        *,
+        since: timedelta = timedelta(days=90),
+        num_matches: int = 12,
+    ) -> None:
         self._language = language
+        self._since = since
+        self._num_matches = num_matches
 
         self._vectorizer = HashingVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language))
@@ -100,7 +105,9 @@ class _Recommender:
 
         with contextlib.suppress(ValueError):
             cosine_sim = cosine_similarity(self._vectorizer.transform(rows.values()))
+
             podcast_ids = list(rows.keys())
+
             for current_id, similar in zip(podcast_ids, cosine_sim, strict=True):
                 with contextlib.suppress(IndexError):
                     for index, similarity in itertools.islice(
