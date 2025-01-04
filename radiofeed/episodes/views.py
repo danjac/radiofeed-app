@@ -153,11 +153,15 @@ def history(request: HttpRequest) -> HttpResponse:
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
     ordering = request.GET.get("order", "desc")
 
-    audio_logs = (
-        audio_logs.search(request.search.value).order_by("-rank", "-listened")
-        if request.search
-        else audio_logs.order_by("listened" if ordering == "asc" else "-listened")
-    )
+    if request.search:
+        audio_logs = audio_logs.search(request.search.value).order_by(
+            "-rank",
+            "-listened",
+        )
+    else:
+        audio_logs = audio_logs.order_by(
+            "listened" if ordering == "asc" else "-listened"
+        )
 
     return render_pagination(
         request,
@@ -203,11 +207,10 @@ def bookmarks(request: HttpRequest) -> HttpResponse:
 
     ordering = request.GET.get("order", "desc")
 
-    bookmarks = (
-        bookmarks.search(request.search.value).order_by("-rank", "-created")
-        if request.search
-        else bookmarks.order_by("created" if ordering == "asc" else "-created")
-    )
+    if request.search:
+        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
+    else:
+        bookmarks = bookmarks.order_by("created" if ordering == "asc" else "-created")
 
     return render_pagination(
         request,

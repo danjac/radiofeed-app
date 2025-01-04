@@ -25,15 +25,14 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
     """Render podcast index page."""
     podcasts = _get_podcasts().subscribed(request.user).distinct()
 
-    podcasts = (
-        podcasts.search(request.search.value).order_by(
+    if request.search:
+        podcasts = podcasts.search(request.search.value).order_by(
             "-exact_match",
             "-rank",
             "-pub_date",
         )
-        if request.search
-        else podcasts.order_by("-pub_date")
-    )
+    else:
+        podcasts = podcasts.order_by("-pub_date")
 
     return render_pagination(request, "podcasts/subscriptions.html", podcasts)
 
@@ -146,11 +145,13 @@ def episodes(
     episodes = podcast.episodes.select_related("podcast")
     ordering = request.GET.get("order", "desc")
 
-    episodes = (
-        episodes.search(request.search.value).order_by("-rank", "-pub_date")
-        if request.search
-        else episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
-    )
+    if request.search:
+        episodes = episodes.search(request.search.value).order_by(
+            "-rank",
+            "-pub_date",
+        )
+    else:
+        episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
     return render_pagination(
         request,
@@ -230,15 +231,14 @@ def category_detail(
 
     podcasts = category.podcasts.published().filter(private=False).distinct()
 
-    podcasts = (
-        podcasts.search(request.search.value).order_by(
+    if request.search:
+        podcasts = podcasts.search(request.search.value).order_by(
             "-exact_match",
             "-rank",
             "-pub_date",
         )
-        if request.search
-        else podcasts.order_by("-pub_date")
-    )
+    else:
+        podcasts = podcasts.order_by("-pub_date")
 
     return render_pagination(
         request,
@@ -282,15 +282,14 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
     """Lists user's private feeds."""
     podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
 
-    podcasts = (
-        podcasts.search(request.search.value).order_by(
+    if request.search:
+        podcasts = podcasts.search(request.search.value).order_by(
             "-exact_match",
             "-rank",
             "-pub_date",
         )
-        if request.search
-        else podcasts.order_by("-pub_date")
-    )
+    else:
+        podcasts = podcasts.order_by("-pub_date")
 
     return render_pagination(request, "podcasts/private_feeds.html", podcasts)
 
