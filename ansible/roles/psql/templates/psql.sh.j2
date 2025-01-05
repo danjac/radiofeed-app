@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+ssh -t "{{ user }}@{{ inventory_hostname }}" -- ./psql.sh $@

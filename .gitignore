@@ -51,5 +51,6 @@ terraform.tfstate*
 venv
 ansible/.vault_pass
 ansible/hosts
+ansible/psql.sh
 ansible/manage.sh
 ansible/vars/*.yml

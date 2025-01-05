@@ -3,6 +3,11 @@
       src: templates/docker-compose.j2
       dest: "{{ project_dir }}/docker-compose.yml"
       mode: "u+rw,g+rw"
+- name: Add psql script
+  ansible.builtin.template:
+    src: templates/psql.sh.j2
+    dest: "/home/{{ user }}/psql.sh"
+    mode: "u+x,g+x"
 - name: Start Redis and PostgreSQL
   changed_when: true
   ansible.builtin.shell:

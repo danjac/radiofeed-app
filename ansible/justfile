@@ -26,6 +26,10 @@
 @djmanage:
     @just playbook dj_manage.yml
 
+# Generate manage.sh script
+@psqlcreate:
+    @just playbook psql.yml
+
 # Run Django manage.py commands
 dj *ARGS:
     #!/usr/bin/bash
@@ -34,3 +38,12 @@ dj *ARGS:
         just djmanage
     fi
     ./manage.sh {{ ARGS }}
+
+# Run Psql commands
+psql *ARGS:
+    #!/usr/bin/bash
+    if [ ! -f "./psql.sh" ]; then
+        echo "pql.sh not found, generating it..."
+        just psqlcreate
+    fi
+    ./psql.sh {{ ARGS }}
