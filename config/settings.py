@@ -101,7 +101,7 @@ if env.bool("USE_CONNECTION_POOL", default=True):
             {
                 "min_size": env.int("CONN_POOL_MIN_SIZE", 2),
                 "max_size": env.int("CONN_POOL_MAX_SIZE", 4),
-                "timeout": env.int("CONN_POOL_TIMEOUT", default=30),
+                "timeout": env.int("CONN_POOL_TIMEOUT", default=10),
             }
         ),
     }
