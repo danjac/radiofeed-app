@@ -100,33 +100,6 @@ class TestEpisodeModel:
     def test_slug_if_title_empty(self):
         assert Episode().slug == "no-title"
 
-    def test_duration_in_seconds_hours_minutes_seconds(self):
-        assert Episode(duration="2:30:40").duration_in_seconds == 9040
-
-    def test_duration_in_seconds_hours_minutes_seconds_extra_digit(self):
-        assert Episode(duration="2:30:40:2903903").duration_in_seconds == 9040
-
-    def test_duration_in_seconds_minutes_seconds(self):
-        assert Episode(duration="30:40").duration_in_seconds == 1840
-
-    def test_duration_in_seconds_seconds_only(self):
-        assert Episode(duration="40").duration_in_seconds == 40
-
-    def test_get_duration_in_seconds_if_empty(self):
-        assert Episode(duration="").duration_in_seconds == 0
-
-    def test_duration_in_seconds_if_non_numeric(self):
-        assert Episode(duration="NaN").duration_in_seconds == 0
-
-    def test_duration_in_seconds_if_seconds_only(self):
-        assert Episode(duration="60").duration_in_seconds == 60
-
-    def test_duration_in_seconds_if_minutes_and_seconds(self):
-        assert Episode(duration="2:30").duration_in_seconds == 150
-
-    def test_duration_in_seconds_if_hours_minutes_and_seconds(self):
-        assert Episode(duration="2:30:30").duration_in_seconds == 9030
-
     def test_str(self):
         assert str(Episode(title="testing")) == "testing"
 
@@ -175,6 +148,20 @@ class TestEpisodeModel:
     )
     def test_get_episode_type(self, episode_type, expected):
         return Episode(episode_type=episode_type) == expected
+
+    @pytest.mark.parametrize(
+        ("duration", "expected"),
+        [
+            pytest.param("2:30:40", 9040, id="hours"),
+            pytest.param("2:30:40:2903903", 9040, id="extra digit"),
+            pytest.param("30:40", 1840, id="minutes and seconds"),
+            pytest.param("40", 40, id="seconds"),
+            pytest.param("NaN", 0, id="non-numeric"),
+            pytest.param("", 0, id="empty"),
+        ],
+    )
+    def test_duration_in_seconds(self, duration, expected):
+        assert Episode(duration=duration).duration_in_seconds == expected
 
 
 class TestBookmarkManager:
