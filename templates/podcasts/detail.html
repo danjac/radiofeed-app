@@ -59,17 +59,16 @@
                                               hx-disabled-elt="this"
                                               hx-trigger="click once" />
                                 {% else %}
-                                    <c-button
-                                        icon="eye"
-                                        variant="primary"
-                                        size=24
-                                        class="text-lg"
-                                        label="Subscribe"
-                                        aria-label="Subscribe to this Podcast"
-                                        title="Subscribe to this Podcast"
-                                        hx-post="{% url "podcasts:subscribe" podcast.pk %}"
-                                        hx-disabled-elt="this"
-                                        hx-trigger="click once" />
+                                    <c-button icon="eye"
+                                              variant="primary"
+                                              size=24
+                                              class="text-lg"
+                                              label="Subscribe"
+                                              aria-label="Subscribe to this Podcast"
+                                              title="Subscribe to this Podcast"
+                                              hx-post="{% url "podcasts:subscribe" podcast.pk %}"
+                                              hx-disabled-elt="this"
+                                              hx-trigger="click once" />
                                 {% endif %}
                             </div>
                         {% endpartialdef subscribe_button %}
