@@ -176,19 +176,13 @@
                     {% if audio_log and not is_playing %}
                         <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
                             <div class="flex flex-wrap items-center space-x-2">
+                                <span>
+                                    Listened
+                                </span>
+                                <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
                                 {% with percent_complete=audio_log.current_time|percentage:episode.duration_in_seconds %}
-                                    <span>
-                                        {% if audio_log.current_time == 0 or percent_complete == 100 %}
-                                            Completed
-                                        {% else %}
-                                            Listened
-                                        {% endif %}
-                                    </span>
-                                    <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
                                     {% if percent_complete > 0 and percent_complete < 100 %}
                                         <span>{{ percent_complete }}% Complete</span>
-                                    {% elif percent_complete == 0 and audio_log.current_time %}
-                                        <span>{{ audio_log.current_time|format_duration }}</span>
                                     {% endif %}
                                 {% endwith %}
                             </div>
