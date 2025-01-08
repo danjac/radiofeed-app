@@ -416,15 +416,15 @@ wheels = [
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.23.0"
+version = "4.24.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d6/6d/2732b51e70bc5254d0213cb510b3f4831fff0ebf8544c92cbbb6da81862c/django_permissions_policy-4.23.0.tar.gz", hash = "sha256:11a9b481bb0cfe5925534f2edd7ce1307a4ed81d1e33c59f6b8fddb511badf74", size = 10021 }
+sdist = { url = "https://files.pythonhosted.org/packages/b5/b3/43da16a6e3caab7e86c2799d17d96fd9b54137187a49ed46a1e2623fd56b/django_permissions_policy-4.24.0.tar.gz", hash = "sha256:540388c7f7a19ec20d6d314ffdccb730ca164c177354c742cb0f51f27d3bae07", size = 10034 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0a/c9/50fd6f84647648dbf1f67b2d46784888fee65c58ff021c75ff942370d824/django_permissions_policy-4.23.0-py3-none-any.whl", hash = "sha256:54e67d50fce3f93e5288e0e56a4292731b5dd1afe8c1322ec001b236eb21ecbe", size = 6696 },
+    { url = "https://files.pythonhosted.org/packages/0a/fd/c944f2a8a411b6444d02797daeaf3bc77ee15625da8a40c258cbaeb87ff4/django_permissions_policy-4.24.0-py3-none-any.whl", hash = "sha256:0839eefb0d376a055f9f3336e4fd917fc8d2b110426ba6a387a07a8897c5b94d", size = 6666 },
 ]
 
 [[package]]
@@ -534,15 +534,15 @@ wheels = [
 
 [[package]]
 name = "environs"
-version = "12.0.0"
+version = "14.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "marshmallow" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/52/97/d711048c5f277de3a45077fc35764c7d78ebb6670d8d8714ccc7c475e24b/environs-12.0.0.tar.gz", hash = "sha256:6150ddeb05562a80cc789b308c650d33b98a5f9c3f4c63d9ed465c433f1cb9e2", size = 28245 }
+sdist = { url = "https://files.pythonhosted.org/packages/e3/f7/274da454859d81460a0fc17251926084f7a020b26425d9bab3bdb54d16cd/environs-14.0.0.tar.gz", hash = "sha256:02c50088c459a2b21d6530cacd173c7528c38a723aae2791a863266ca41d9eeb", size = 30291 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/16/23e5b8fe9d3b8de33713d0b3ad478d0eafd3912051fad358a5f5f697cbb9/environs-12.0.0-py3-none-any.whl", hash = "sha256:152068ba62185b99d87df5f6d6044c0e533261777119037e718c1397fc7d697f", size = 13148 },
+    { url = "https://files.pythonhosted.org/packages/4b/34/babb396d0907c894ab8c451b87c55d042caa6c17f8a1e236c9b8db251264/environs-14.0.0-py3-none-any.whl", hash = "sha256:7b19816c2766b683a40946dc030fdee97eb108751ea1789a0850e93ee4aa1d6f", size = 15180 },
 ]
 
 [package.optional-dependencies]
