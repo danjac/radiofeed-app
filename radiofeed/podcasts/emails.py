@@ -1,14 +1,14 @@
-from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template import loader
 
 from radiofeed.html import strip_html
 from radiofeed.podcasts.models import Podcast
+from radiofeed.users.models import User
 
 
 def send_recommendations_email(
-    email_address: EmailAddress, num_podcasts: int = 6, **email_settings
+    user: User, num_podcasts: int = 6, **email_settings
 ) -> None:
     """Sends email to user with a list of recommended podcasts.
 
@@ -18,8 +18,6 @@ def send_recommendations_email(
 
     If no matching podcasts are found, no email is sent.
     """
-
-    user = email_address.user
 
     podcasts = (
         Podcast.objects.published()
@@ -41,7 +39,7 @@ def send_recommendations_email(
         send_mail(
             f"Hi {user.first_name or user.username}, here are some new podcasts you might like!",
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email_address.email],
+            recipient_list=[user.email],
             message=strip_html(html_message),
             html_message=html_message,
             **email_settings,
