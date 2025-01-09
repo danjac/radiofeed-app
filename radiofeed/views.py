@@ -85,7 +85,7 @@ def favicon(_) -> FileResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def assetlinks(_) -> HttpResponse:
+def assetlinks(_) -> JsonResponse:
     """PWA assetlinks"""
     return JsonResponse(pwa.get_assetlinks(), safe=False)
 
@@ -93,7 +93,7 @@ def assetlinks(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def manifest(request: HttpRequest) -> HttpResponse:
+def manifest(request: HttpRequest) -> JsonResponse:
     """PWA manifest.json file."""
     return JsonResponse(pwa.get_manifest(request))
 
