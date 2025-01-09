@@ -1,3 +1,4 @@
+{% load audio_player django_htmx partials static tailwind_cli %}
 {% spaceless %}
     <!DOCTYPE html>
     <html lang="en">
@@ -7,15 +8,35 @@
                     {{ request.site.name }}
                 {% endblock title %}
             </title>
-            {% include "partials.html#head" %}
+            {% partialdef head inline=True %}
+                {% tailwind_css %}
+                <link rel="icon" type="image/png" href="{% static "img/wave-ico.png" %}">
+                <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
+                <link rel="manifest" href="{% url "manifest" %}">
+                <link rel="canonical" href="{{ request.build_absolute_uri }}">
+                {% htmx_config %}
+                {% theme_color %}
+                <meta charset="UTF-8" />
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1, viewport-fit=no">
+                <meta name="mobile-wep-app-capable" content="yes">
+                <meta name="apple-mobile-wep-app-capable" content="yes">
+                <meta name="copyright" content="Dan Jacob {% now "Y" %}">
+                <meta name="cache-control" content="no-cache">
+                <meta name="description" content="Podcast aggregator site">
+                <meta name="keywords" content="podcasts, rss, feeds">
+                <script defer src="{% static "vendor/alpine-3.14.7.min.js" %}"></script>
+                <script defer src="{% static "vendor/htmx-2.0.4.min.js" %}"></script>
+            {% endpartialdef %}
         </head>
         <body class="mx-auto font-sans antialiased container-xl scroll-smooth"
               hx-boost="true"
               hx-target="#content"
               hx-swap="innerHTML show:window:top"
               hx-indicator="#hx-indicator">
-            {% include "partials.html#hx_indicator" %}
-            {% include "partials.html#messages" %}
+            <c-hx-indicator />
+            <c-messages />
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     <c-navbar />
@@ -34,9 +55,17 @@
                     </div>
                 </div>
                 <c-audio-player :audio-log="request.player.audio_log" />
-                {% include "partials.html#cookie_banner" %}
+                <c-cookie-banner />
             </div>
-            {% include "partials.html#scripts" %}
+            {% partialdef scripts inline=True %}
+                {% audio_player_script %}
+                {% django_htmx_script %}
+                <script>
+                    if (typeof navigator.serviceWorker !== 'undefined') {
+                        navigator.serviceWorker.register('{% static "service-worker.js" %}')
+                    }
+                </script>
+            {% endpartialdef %}
         </body>
     </html>
 {% endspaceless %}
