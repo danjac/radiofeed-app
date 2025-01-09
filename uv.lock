@@ -810,14 +810,14 @@ wheels = [
 
 [[package]]
 name = "marshmallow"
-version = "3.24.2"
+version = "3.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3b/1f/52fa79445669322ee42fdd11b591c2e9c8dbab33eaf7059ca881b349ae09/marshmallow-3.24.2.tar.gz", hash = "sha256:0822c3701de396b51d3f8ac97319aea5493998ba4e7d0e4c05f6fce7777bf3a2", size = 176520 }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/5c/cbfa41491d6c83b36471f2a2f75602349d20a8f88afd94f83c1e68bbc298/marshmallow-3.25.0.tar.gz", hash = "sha256:5ba94a4eb68894ad6761a505eb225daf7e5cb7b4c32af62d4a45e9d42665bc31", size = 176751 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/67/40/7802bb90b1ecbb284ae613da2cfde9ce0177b77d76cbb276acf976296aa8/marshmallow-3.24.2-py3-none-any.whl", hash = "sha256:bf3c56db473bb160e5191f1c5e32e3fc8bfb58998eb2b35d6747de023e31f9e7", size = 49333 },
+    { url = "https://files.pythonhosted.org/packages/76/26/b347619b719d4c048e038929769f8f6b28c6d930149b40d950bbdde31d48/marshmallow-3.25.0-py3-none-any.whl", hash = "sha256:50894cd57c6b097a6c6ed2bf216af47d10146990a54db52d03e32edb0448c905", size = 49480 },
 ]
 
 [[package]]
@@ -1123,16 +1123,16 @@ wheels = [
 
 [[package]]
 name = "pydantic"
-version = "2.10.4"
+version = "2.10.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
     { name = "pydantic-core" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/70/7e/fb60e6fee04d0ef8f15e4e01ff187a196fa976eb0f0ab524af4599e5754c/pydantic-2.10.4.tar.gz", hash = "sha256:82f12e9723da6de4fe2ba888b5971157b3be7ad914267dea8f05f82b28254f06", size = 762094 }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/c7/ca334c2ef6f2e046b1144fe4bb2a5da8a4c574e7f2ebf7e16b34a6a2fa92/pydantic-2.10.5.tar.gz", hash = "sha256:278b38dbbaec562011d659ee05f63346951b3a248a6f3642e1bc68894ea2b4ff", size = 761287 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/26/3e1bbe954fde7ee22a6e7d31582c642aad9e84ffe4b5fb61e63b87cd326f/pydantic-2.10.4-py3-none-any.whl", hash = "sha256:597e135ea68be3a37552fb524bc7d0d66dcf93d395acd93a00682f1efcb8ee3d", size = 431765 },
+    { url = "https://files.pythonhosted.org/packages/58/26/82663c79010b28eddf29dcdd0ea723439535fa917fce5905885c0e9ba562/pydantic-2.10.5-py3-none-any.whl", hash = "sha256:4dd4e322dbe55472cb7ca7e73f4b63574eecccf2835ffa2af9021ce113c83c53", size = 431426 },
 ]
 
 [[package]]
