@@ -1,3 +1,4 @@
+import contextlib
 import dataclasses
 
 from django.http import HttpRequest, HttpResponse
@@ -44,12 +45,9 @@ class PlayerDetails:
     def audio_log(self) -> AudioLog | None:
         """Returns audio log for the current episode in player."""
         if self.request.user.is_authenticated and (episode_id := self.get()):
-            return (
-                self.request.user.audio_logs.filter(episode_id=episode_id)
-                .select_related(
+            with contextlib.suppress(AudioLog.DoesNotExist):
+                return self.request.user.audio_logs.select_related(
                     "episode",
                     "episode__podcast",
-                )
-                .first()
-            )
+                ).get(episode_id=episode_id)
         return None
