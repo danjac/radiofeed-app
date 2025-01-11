@@ -64,6 +64,7 @@ dev-dependencies = [
     "pytest-mock>=3.14.0",
     "pytest-randomly>=3.15.0",
     "pytest-sugar>=1.0.0",
+    "pytest-watcher>=0.4.3",
     "pytest-xdist>=3.6.1",
     "pytest>=8.3.2",
     "rich>=13.9.4",
@@ -97,6 +98,14 @@ env = [
     "USE_COLLECTSTATIC=false",
     "USE_X_FORWARDED_HOST=false",
 ]
+
+
+[tool.pytest-watcher]
+now = false
+clear = true
+delay = 0.2
+runner = "pytest"
+patterns = ["*.py", "*.html"]
 
 [tool.coverage.run]
 source=["radiofeed"]
