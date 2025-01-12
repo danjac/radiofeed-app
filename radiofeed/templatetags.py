@@ -87,15 +87,3 @@ def format_duration(total_seconds: int | None) -> str:
         rv.append(f"{total_minutes} minute{pluralize(total_minutes)}")
 
     return " ".join(rv)
-
-
-@register.filter
-def percentage(value: float, total: float) -> int:
-    """Returns % value.
-
-    Example:
-    {{ value|percentage:total }}% done
-    """
-    if 0 in (value, total):
-        return 0
-    return min(math.ceil((value / total) * 100), 100)

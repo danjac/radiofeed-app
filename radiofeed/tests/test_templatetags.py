@@ -1,11 +1,7 @@
 import pytest
 from django.contrib.sites.models import Site
 
-from radiofeed.templatetags import (
-    absolute_uri,
-    format_duration,
-    percentage,
-)
+from radiofeed.templatetags import absolute_uri, format_duration
 
 
 @pytest.fixture
@@ -21,22 +17,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-class TestPercentage:
-    @pytest.mark.parametrize(
-        ("value", "total", "expected"),
-        [
-            pytest.param(0, 0, 0, id="all zero"),
-            pytest.param(50, 0, 0, id="total zero"),
-            pytest.param(0, 50, 0, id="value zero"),
-            pytest.param(50, 100, 50, id="50%"),
-            pytest.param(150, 100, 100, id="150%"),
-            pytest.param(100, 100, 100, id="100%"),
-        ],
-    )
-    def test_percentage(self, value, total, expected):
-        assert percentage(value, total) == expected
 
 
 class TestFormatDuration:

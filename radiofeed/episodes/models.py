@@ -267,3 +267,8 @@ class AudioLog(models.Model):
                 self.listened.isoformat(),
             ]
         )
+
+    @cached_property
+    def time_remaining(self) -> int:
+        """Returns the time remaining in the episode in seconds."""
+        return max(self.episode.duration_in_seconds - self.current_time, 0)

@@ -193,3 +193,19 @@ class TestAudioLogModel:
             listened=datetime.datetime(year=2024, month=9, day=10),
         )
         assert str(audio_log) == "user 1 | episode 2 | 2024-09-10T00:00:00"
+
+    @pytest.mark.django_db
+    def test_time_remaining(self):
+        audio_log = AudioLogFactory(
+            episode__duration="1:00:00",
+            current_time=60 * 10,
+        )
+        assert audio_log.time_remaining == 50 * 60
+
+    @pytest.mark.django_db
+    def test_time_remaining_negative(self):
+        audio_log = AudioLogFactory(
+            episode__duration="1:00:00",
+            current_time=60 * 70,
+        )
+        assert audio_log.time_remaining == 0
