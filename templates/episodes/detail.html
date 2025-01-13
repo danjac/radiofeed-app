@@ -180,6 +180,11 @@
                                     Listened
                                 </span>
                                 <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
+                                {% with current_time=audio_log.current_time|format_duration %}
+                                    {% if current_time %}
+                                        <span>{{ current_time }}</span>
+                                    {% endif %}
+                                {% endwith %}
                             </div>
                             <c-button icon="trash"
                                       variant="danger"
