@@ -1,6 +1,5 @@
 import functools
 import json
-from datetime import timedelta
 from typing import Final
 
 from django import template
@@ -10,16 +9,17 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
-from django.utils import timezone
+from django.template.defaultfilters import pluralize
 from django.utils.html import format_html
-from django.utils.timesince import timesince
 
 from radiofeed import pwa
 from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
 from radiofeed.html import render_markdown
 
-_SECONDS_IN_MINUTE: Final = 60
-_SECONDS_IN_HOUR: Final = 3600
+_TIME_PARTS: Final = [
+    ("hour", 60 * 60),
+    ("minute", 60),
+]
 
 register = template.Library()
 
@@ -74,8 +74,12 @@ def markdown(content: str | None) -> str:
 
 
 @register.filter
-def format_duration(total_seconds: int | None, min_seconds: int = 60) -> str:
+def format_duration(total_seconds: int) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
-    if total_seconds and total_seconds > min_seconds:
-        return timesince(timezone.now() - timedelta(seconds=total_seconds))
-    return ""
+    parts: list[str] = []
+    for label, seconds in _TIME_PARTS:
+        value = total_seconds // seconds
+        total_seconds -= value * seconds
+        if value:
+            parts.append(f"{value} {label}{pluralize(value)}")
+    return " ".join(parts)
