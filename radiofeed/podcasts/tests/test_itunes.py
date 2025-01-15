@@ -247,14 +247,22 @@ class TestTopChart:
     def test_get_top_chart(self, good_client):
         podcasts = itunes.top_chart(good_client)
         assert len(podcasts) == 1
-        assert Podcast.objects.filter(rss=podcasts[0].rss, promoted=True).exists()
+        assert Podcast.objects.filter(
+            rss=podcasts[0].rss,
+            promoted=True,
+            itunes_ranking=1,
+        ).exists()
 
     @pytest.mark.django_db
     def test_already_exists(self, good_client):
         PodcastFactory(rss=MOCK_RESULT["results"][0]["feedUrl"], promoted=False)
         podcasts = itunes.top_chart(good_client)
         assert len(podcasts) == 1
-        assert Podcast.objects.filter(rss=podcasts[0].rss, promoted=True).exists()
+        assert Podcast.objects.filter(
+            rss=podcasts[0].rss,
+            promoted=True,
+            itunes_ranking=1,
+        ).exists()
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):

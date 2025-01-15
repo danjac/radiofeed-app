@@ -238,6 +238,8 @@ class Podcast(models.Model):
     funding_url = models.URLField(max_length=2083, blank=True)
     funding_text = models.TextField(blank=True)
 
+    itunes_ranking = models.PositiveSmallIntegerField(null=True, blank=True)
+
     language = models.CharField(
         max_length=2,
         default="en",
@@ -279,6 +281,7 @@ class Podcast(models.Model):
         indexes: ClassVar[list] = [
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
+            models.Index(fields=["itunes_ranking"]),
             models.Index(fields=["promoted"]),
             models.Index(fields=["content_hash"]),
             models.Index(

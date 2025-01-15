@@ -60,16 +60,20 @@ def top_chart(client: Client) -> list[Podcast]:
                             result,
                         )
                     )
-            feed_urls = {process.result() for process in processes}
+            feed_urls = dict.fromkeys([process.result() for process in processes])
             podcasts = [
-                Podcast(rss=feed_url, promoted=True)
-                for feed_url in feed_urls
+                Podcast(
+                    rss=feed_url,
+                    promoted=True,
+                    itunes_ranking=ranking,
+                )
+                for ranking, feed_url in enumerate(feed_urls, 1)
                 if feed_url
             ]
             return Podcast.objects.bulk_create(
                 podcasts,
                 unique_fields=["rss"],
-                update_fields=["promoted"],
+                update_fields=["promoted", "itunes_ranking"],
                 update_conflicts=True,
             )
     return []
