@@ -124,7 +124,7 @@ class _ChartUpdater:
         "https://rss.marketingtools.apple.com/api/v2/us/podcasts/top/10/podcasts.json"
     )
 
-    podcast_url = "https://itunes.apple.com/lookup"
+    podcast_url: str = "https://itunes.apple.com/lookup"
 
     def update(self) -> list[Podcast]:
         """Fetch top chart from iTunes podcast API."""
