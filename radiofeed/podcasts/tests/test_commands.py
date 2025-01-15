@@ -1,7 +1,7 @@
 import pytest
 from django.core.management import call_command
 
-from radiofeed.podcasts.tests.factories import PodcastFactory, RecommendationFactory
+from radiofeed.podcasts.tests.factories import RecommendationFactory
 from radiofeed.users.tests.factories import EmailAddressFactory
 
 
@@ -15,19 +15,6 @@ class TestCreateRecommendations:
             ],
         )
         call_command("create_recommendations")
-        patched.assert_called()
-
-
-class TestUpdateItunesChart:
-    @pytest.mark.django_db
-    def test_update_itunes_chart(self, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.itunes.update_chart",
-            return_value=[
-                PodcastFactory(),
-            ],
-        )
-        call_command("update_itunes_chart")
         patched.assert_called()
 
 

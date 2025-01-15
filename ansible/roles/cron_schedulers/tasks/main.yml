@@ -21,7 +21,6 @@
       mode: "0666"
   loop:
       - feedparser.log
-      - ituneschart.log
       - recommendations.log
       - emails.log
       - clearsessions.log
@@ -55,13 +54,6 @@
             minute: "20"
             hour: "6"
             job: "{{ manage_cmd }} create_recommendations >> {{ logs_dir }}recommendations.log 2>&1"
-      - name: Install iTunes top chart cron
-        ansible.builtin.cron:
-            name: Check iTunes top chart
-            user: "{{ user }}"
-            minute: "20"
-            hour: "7"
-            job: "{{ manage_cmd }} update_itunes_chart >> {{ logs_dir }}ituneschart.log 2>&1"
       - name: Install send recommendations emails cron
         ansible.builtin.cron:
             name: Send recommendations emails
