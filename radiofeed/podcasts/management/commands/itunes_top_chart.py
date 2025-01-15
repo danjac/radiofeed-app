@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from radiofeed.http_client import get_client
-from radiofeed.podcasts.itunes import top_chart
+from radiofeed.podcasts.itunes import update_chart
 
 
 class Command(BaseCommand):
@@ -11,5 +11,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Crawl iTunes Top Chart."""
-        if podcasts := top_chart(get_client()):
+        if podcasts := update_chart(get_client()):
             self.stdout.write(self.style.SUCCESS(f"Found {len(podcasts)} podcasts"))

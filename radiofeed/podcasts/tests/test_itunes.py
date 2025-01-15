@@ -207,7 +207,7 @@ MOCK_CHART_RESULT = {
 }
 
 
-class TestTopChart:
+class TestUpdateChart:
     @pytest.fixture
     def good_client(self):
         def _get_result(request):
@@ -244,8 +244,8 @@ class TestTopChart:
         )
 
     @pytest.mark.django_db
-    def test_get_top_chart(self, good_client):
-        podcasts = itunes.top_chart(good_client)
+    def test_get_update_chart(self, good_client):
+        podcasts = itunes.update_chart(good_client)
         assert len(podcasts) == 1
         assert Podcast.objects.filter(
             rss=podcasts[0].rss,
@@ -256,7 +256,7 @@ class TestTopChart:
     @pytest.mark.django_db
     def test_already_exists(self, good_client):
         PodcastFactory(rss=MOCK_RESULT["results"][0]["feedUrl"], promoted=False)
-        podcasts = itunes.top_chart(good_client)
+        podcasts = itunes.update_chart(good_client)
         assert len(podcasts) == 1
         assert Podcast.objects.filter(
             rss=podcasts[0].rss,
@@ -266,13 +266,13 @@ class TestTopChart:
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
-        podcasts = itunes.top_chart(bad_client)
+        podcasts = itunes.update_chart(bad_client)
         assert len(podcasts) == 0
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_result(self, bad_result_client):
-        podcasts = itunes.top_chart(bad_result_client)
+        podcasts = itunes.update_chart(bad_result_client)
         assert len(podcasts) == 0
         assert not Podcast.objects.exists()
 

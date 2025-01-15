@@ -22,7 +22,7 @@ class TestItunesTopChart:
     @pytest.mark.django_db
     def test_itunes_top_chart(self, mocker):
         patched = mocker.patch(
-            "radiofeed.podcasts.itunes.top_chart",
+            "radiofeed.podcasts.itunes.update_chart",
             return_value=[
                 PodcastFactory(),
             ],
