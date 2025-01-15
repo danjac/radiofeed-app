@@ -1,11 +1,18 @@
+import contextlib
 import dataclasses
 import itertools
 from collections.abc import Iterator
+from concurrent import futures
+from typing import Final
 
 import httpx
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
+
+_CHART_URL: Final = (
+    "https://rss.marketingtools.apple.com/api/v2/us/podcasts/top/10/podcasts.json"
+)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -38,6 +45,46 @@ def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Fee
     )
 
 
+def top_chart(client: Client) -> list[Podcast]:
+    """Fetch top chart from iTunes podcast API."""
+    with contextlib.suppress(httpx.HTTPError):
+        response = client.get(_CHART_URL)
+        if results := response.json().get("feed", {}).get("results", []):
+            processes = []
+            with futures.ThreadPoolExecutor() as executor:
+                for result in results:
+                    processes.append(
+                        executor.submit(
+                            _parse_top_chart_result,
+                            client,
+                            result,
+                        )
+                    )
+            processed = {process.result() for process in processes}
+            podcasts = [
+                Podcast(rss=feed_url, promoted=True)
+                for feed_url in processed
+                if feed_url
+            ]
+            return Podcast.objects.bulk_create(
+                podcasts,
+                unique_fields=["rss"],
+                update_fields=["promoted"],
+                update_conflicts=True,
+            )
+    return []
+
+
+def _parse_top_chart_result(client: Client, result: dict) -> str | None:
+    with contextlib.suppress(KeyError, IndexError, httpx.HTTPError):
+        response = client.get(
+            "https://itunes.apple.com/lookup",
+            params={"id": result["id"]},
+        )
+        return response.json()["results"][0]["feedUrl"]
+    return None
+
+
 def _fetch_itunes_results(
     client: Client, search_term: str, limit: int
 ) -> Iterator[Feed]:
@@ -68,7 +115,11 @@ def _fetch_itunes_results(
         return
 
 
-def _insert_podcasts(feeds: Iterator[Feed]) -> Iterator[Feed]:
+def _insert_podcasts(
+    feeds: Iterator[Feed],
+    *,
+    promoted: bool = False,
+) -> Iterator[Feed]:
     # find or insert podcasts from local database into feeds
     feeds_for_podcasts, feeds = itertools.tee(feeds)
 
@@ -86,7 +137,7 @@ def _insert_podcasts(feeds: Iterator[Feed]) -> Iterator[Feed]:
 
     Podcast.objects.bulk_create(
         [
-            Podcast(title=feed.title, rss=feed.rss)
+            Podcast(title=feed.title, rss=feed.rss, promoted=promoted)
             for feed in set(feeds_for_insert)
             if feed.podcast is None
         ],
