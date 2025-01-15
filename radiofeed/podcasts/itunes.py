@@ -70,6 +70,10 @@ def top_chart(client: Client) -> list[Podcast]:
                 for ranking, feed_url in enumerate(feed_urls, 1)
                 if feed_url
             ]
+            # Clear existing itunes rankings
+            Podcast.objects.filter(itunes_ranking__isnull=False).update(
+                itunes_ranking=None
+            )
             return Podcast.objects.bulk_create(
                 podcasts,
                 unique_fields=["rss"],
