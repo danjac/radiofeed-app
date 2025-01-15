@@ -14,7 +14,7 @@ MOCK_RESULT = {
             "feedUrl": "https://feeds.fireside.fm/testandcode/rss",
             "collectionName": "Test & Code : Python Testing",
             "collectionViewUrl": "https//itunes.com/id123345",
-            "artworkUrl600": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+            "artworkUrl100": "https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
         }
     ],
     "resultCount": 1,
@@ -245,10 +245,9 @@ class TestUpdateChart:
 
     @pytest.mark.django_db
     def test_get_update_chart(self, good_client):
-        podcasts = itunes.update_chart(good_client)
-        assert len(podcasts) == 1
+        feeds = list(itunes.update_chart(good_client))
+        assert len(feeds) == 1
         assert Podcast.objects.filter(
-            rss=podcasts[0].rss,
             promoted=True,
             itunes_ranking=1,
         ).exists()
@@ -256,24 +255,23 @@ class TestUpdateChart:
     @pytest.mark.django_db
     def test_already_exists(self, good_client):
         PodcastFactory(rss=MOCK_RESULT["results"][0]["feedUrl"], promoted=False)
-        podcasts = itunes.update_chart(good_client)
-        assert len(podcasts) == 1
+        feeds = list(itunes.update_chart(good_client))
+        assert len(feeds) == 1
         assert Podcast.objects.filter(
-            rss=podcasts[0].rss,
             promoted=True,
             itunes_ranking=1,
         ).exists()
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
-        podcasts = itunes.update_chart(bad_client)
-        assert len(podcasts) == 0
+        feeds = list(itunes.update_chart(bad_client))
+        assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_result(self, bad_result_client):
-        podcasts = itunes.update_chart(bad_result_client)
-        assert len(podcasts) == 0
+        feeds = list(itunes.update_chart(bad_result_client))
+        assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
 
@@ -309,7 +307,7 @@ class TestSearch:
 
     @pytest.fixture
     def bad_client(self):
-        def _handle(request):
+        def _handle(_):
             raise httpx.HTTPError("fail")
 
         return Client(transport=httpx.MockTransport(_handle))

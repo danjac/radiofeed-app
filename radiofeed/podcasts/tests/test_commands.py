@@ -18,16 +18,16 @@ class TestCreateRecommendations:
         patched.assert_called()
 
 
-class TestItunesTopChart:
+class TestUpdateItunesChart:
     @pytest.mark.django_db
-    def test_itunes_top_chart(self, mocker):
+    def test_update_itunes_chart(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.update_chart",
             return_value=[
                 PodcastFactory(),
             ],
         )
-        call_command("itunes_top_chart")
+        call_command("update_itunes_chart")
         patched.assert_called()
 
 

@@ -3,6 +3,7 @@ import dataclasses
 import itertools
 from collections.abc import Iterator
 from concurrent import futures
+from typing import Optional
 
 import httpx
 
@@ -28,13 +29,29 @@ class Feed:
     image: str = ""
     podcast: Podcast | None = None
 
+    def __eq__(self, other) -> bool:
+        """Compare two Feed instances."""
+        return self.rss == other.rss
+
+    @classmethod
+    def from_result(cls, result: dict) -> Optional["Feed"]:
+        """Returns instance from iTunes API result."""
+        with contextlib.suppress(KeyError):
+            return cls(
+                rss=result["feedUrl"],
+                url=result["collectionViewUrl"],
+                title=result["collectionName"],
+                image=result["artworkUrl100"],
+            )
+        return None
+
 
 def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Feed]:
     """Search iTunes podcast API."""
     return _Search(client).search(search_term, limit=limit)
 
 
-def update_chart(client: Client) -> list[Podcast]:
+def update_chart(client: Client) -> Iterator[Feed]:
     """Fetch top chart from iTunes podcast API."""
     return _ChartUpdater(client).update()
 
@@ -70,15 +87,8 @@ class _Search:
                 },
             )
             for result in response.json().get("results", []):
-                try:
-                    yield Feed(
-                        rss=result["feedUrl"],
-                        url=result["collectionViewUrl"],
-                        title=result["collectionName"],
-                        image=result["artworkUrl600"],
-                    )
-                except KeyError:
-                    continue
+                if feed := Feed.from_result(result):
+                    yield feed
 
         except httpx.HTTPError:
             return
@@ -126,51 +136,52 @@ class _ChartUpdater:
 
     podcast_url: str = "https://itunes.apple.com/lookup"
 
-    def update(self) -> list[Podcast]:
+    def update(self) -> Iterator[Feed]:
         """Fetch top chart from iTunes podcast API."""
         return self._update_or_insert_chart_results(
             self._parse_chart_results(),
         )
 
-    def _update_or_insert_chart_results(
-        self, feed_urls: Iterator[str]
-    ) -> list[Podcast]:
+    def _update_or_insert_chart_results(self, feeds: Iterator[Feed]) -> Iterator[Feed]:
+        feeds_for_podcasts, feeds = itertools.tee(feeds)
+
         if podcasts := [
             Podcast(
-                rss=feed_url,
+                rss=feed.rss,
                 promoted=True,
                 itunes_ranking=ranking,
             )
-            for ranking, feed_url in enumerate(feed_urls, 1)
+            for ranking, feed in enumerate(feeds_for_podcasts, 1)
         ]:
             # Clear existing itunes rankings
             Podcast.objects.filter(itunes_ranking__isnull=False).update(
                 itunes_ranking=None
             )
 
-            return Podcast.objects.bulk_create(
+            Podcast.objects.bulk_create(
                 podcasts,
                 unique_fields=["rss"],
                 update_fields=["promoted", "itunes_ranking"],
                 update_conflicts=True,
             )
-        return []
 
-    def _parse_chart_results(self) -> Iterator[str]:
+        yield from feeds
+
+    def _parse_chart_results(self) -> Iterator[Feed]:
         with contextlib.suppress(httpx.HTTPError):
             response = self.client.get(self.chart_url)
             processes = []
             with futures.ThreadPoolExecutor() as executor:
                 for result in response.json().get("feed", {}).get("results", []):
                     processes.append(executor.submit(self._parse_chart_result, result))
-            feed_urls = [process.result() for process in processes]
-            yield from dict.fromkeys(feed_url for feed_url in feed_urls if feed_url)
+            feeds = [process.result() for process in processes]
+            yield from dict.fromkeys(feed for feed in feeds if feed)
 
-    def _parse_chart_result(self, result: dict) -> str | None:
+    def _parse_chart_result(self, result: dict) -> Feed | None:
         with contextlib.suppress(KeyError, IndexError, httpx.HTTPError):
             response = self.client.get(
                 self.podcast_url,
                 params={"id": result["id"]},
             )
-            return response.json()["results"][0]["feedUrl"]
+            return Feed.from_result(response.json()["results"][0])
         return None
