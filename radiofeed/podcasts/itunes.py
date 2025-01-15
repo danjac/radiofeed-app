@@ -60,10 +60,10 @@ def top_chart(client: Client) -> list[Podcast]:
                             result,
                         )
                     )
-            processed = {process.result() for process in processes}
+            feed_urls = {process.result() for process in processes}
             podcasts = [
                 Podcast(rss=feed_url, promoted=True)
-                for feed_url in processed
+                for feed_url in feed_urls
                 if feed_url
             ]
             return Podcast.objects.bulk_create(
