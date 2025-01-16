@@ -1,4 +1,4 @@
-name: radiofeed_deploy_production
+name: deploy
 run-name: ${{ github.actor }} is deploying to production servers
 on:
     workflow_dispatch:
