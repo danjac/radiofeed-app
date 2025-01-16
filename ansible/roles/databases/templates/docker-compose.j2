@@ -6,6 +6,7 @@ x-logging: &default-logging
 services:
     postgres:
         image: postgres:16.6-bookworm
+        shm_size: 10g
         environment:
             - POSTGRES_PASSWORD={{ postgres_password }}
         volumes:
