@@ -44,7 +44,7 @@ def _fetch_search_results(
     search_term: str,
     limit: int,
 ) -> Iterator[Feed]:
-    try:
+    with contextlib.suppress(httpx.HTTPError):
         response = client.get(
             "https://itunes.apple.com/search",
             params={
@@ -64,9 +64,6 @@ def _fetch_search_results(
                     title=result["collectionName"],
                     image=result["artworkUrl100"],
                 )
-
-    except httpx.HTTPError:
-        return
 
 
 def _insert_search_results(feeds: Iterator[Feed]) -> Iterator[Feed]:
