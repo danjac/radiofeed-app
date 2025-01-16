@@ -28,15 +28,15 @@ For ease of use, a [justfile](https://github.com/casey/just) has been provided f
 
 1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`.
 
-2. Run `just site` to deploy to your servers.
+2. Run `just pb site` to deploy to your servers.
 
 ## Upgrade
 
-To update server dependencies, run `just upgrade`.
+To update server dependencies, run `just pb upgrade`.
 
 ## Django management commands
 
-Run `just djmanage` to generate a `manage.sh` script in the local `ansible` directory. This will run Django management commands in the cron scheduler server:
+Run `just pb dj_manage` to generate a `manage.sh` script in the local `ansible` directory. This will run Django management commands in the cron scheduler server:
 
 ```bash
 just djmanage # run once to create the bash script
