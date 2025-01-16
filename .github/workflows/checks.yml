@@ -1,4 +1,4 @@
-name: checks
+name: radiofeed:checks
 on: workflow_call
 jobs:
     precommit:

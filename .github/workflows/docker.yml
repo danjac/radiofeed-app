@@ -1,4 +1,4 @@
-name: docker
+name: radiofeed:docker
 on: workflow_call
 jobs:
     build_docker:

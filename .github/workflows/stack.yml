@@ -1,4 +1,4 @@
-name: stack
+name: radiofeed:stack
 on: workflow_call
 jobs:
     deploy_stack:
