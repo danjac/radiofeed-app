@@ -20,7 +20,7 @@ db_volume := "radiofeed-app_pg_data"
 
 # Deploy application using Github Actions
 @deploy:
-    gh workflow run deploy_production.yml
+    gh workflow run deploy.yml
 
 # Install all Python dependencies
 @pyinstall:
