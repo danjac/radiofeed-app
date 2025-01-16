@@ -11,7 +11,7 @@ jobs:
         needs: run_checks
         uses: ./.github/workflows/docker.yml
         secrets: inherit
-    deploy_docker_swarm:
+    deploy_stack:
         needs: build_docker
-        uses: ./.github/workflows/docker_swarm.yml
+        uses: ./.github/workflows/stack.yml
         secrets: inherit
