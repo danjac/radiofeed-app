@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Exists, OuterRef
 from django.template import loader
 
 from radiofeed.html import strip_html
@@ -22,6 +23,14 @@ def send_recommendations_email(
     podcasts = (
         Podcast.objects.published()
         .recommended(user)
+        .annotate(
+            is_recommended=Exists(
+                user.recommended_podcasts.filter(
+                    pk=OuterRef("pk"),
+                )
+            ),
+        )
+        .filter(is_recommended=False)
         .order_by("-relevance", "-pub_date")
     )[:num_podcasts]
 

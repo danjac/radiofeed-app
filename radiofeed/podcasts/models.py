@@ -173,14 +173,8 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                 0,
                 output_field=models.DecimalField(),
             ),
-            is_recommended=models.Exists(
-                user.recommended_podcasts.filter(
-                    pk=models.OuterRef("pk"),
-                )
-            ),
         ).filter(
             models.Q(relevance__gt=0) | models.Q(promoted=True),
-            is_recommended=False,
         )
 
 
