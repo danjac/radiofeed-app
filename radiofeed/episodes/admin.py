@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
-from radiofeed.episodes.models import Episode
+from radiofeed.episodes.models import AudioLog, Episode
 
 
 @admin.register(Episode)
@@ -47,3 +47,24 @@ class EpisodeAdmin(admin.ModelAdmin):
                 "-id",
             ]
         )
+
+
+@admin.register(AudioLog)
+class AudioLogAdmin(admin.ModelAdmin):
+    """Django admin for AudioLog model."""
+
+    list_display = (
+        "episode",
+        "user",
+    )
+    readonly_fields = (
+        "episode",
+        "user",
+        "current_time",
+        "listened",
+    )
+    ordering = ("-listened",)
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[AudioLog]:
+        """Optimize queryset for admin."""
+        return super().get_queryset(request).select_related("episode", "user")
