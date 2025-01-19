@@ -249,3 +249,8 @@ class PodcastAdmin(admin.ModelAdmin):
     def make_promoted(self, request: HttpRequest, queryset: QuerySet[Podcast]) -> None:
         """Promotes podcasts."""
         queryset.update(promoted=True)
+
+    @admin.action(description="Demote podcasts")
+    def make_demoted(self, request: HttpRequest, queryset: QuerySet[Podcast]) -> None:
+        """Demotes podcasts."""
+        queryset.update(promoted=False)
