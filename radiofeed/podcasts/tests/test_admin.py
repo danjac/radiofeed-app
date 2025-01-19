@@ -15,8 +15,9 @@ from radiofeed.podcasts.admin import (
     PubDateFilter,
     ScheduledFilter,
     SubscribedFilter,
+    SubscriptionAdmin,
 )
-from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.podcasts.models import Category, Podcast, Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 
 
@@ -270,3 +271,12 @@ class TestSubscribedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
+
+
+class TestSubscriptionAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, rf):
+        SubscriptionFactory()
+        admin = SubscriptionAdmin(Subscription, AdminSite())
+        qs = admin.get_queryset(rf.get("/"))
+        assert qs.count() == 1

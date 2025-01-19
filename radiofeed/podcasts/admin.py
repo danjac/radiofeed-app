@@ -254,3 +254,25 @@ class PodcastAdmin(admin.ModelAdmin):
     def make_demoted(self, request: HttpRequest, queryset: QuerySet[Podcast]) -> None:
         """Demotes podcasts."""
         queryset.update(promoted=False)
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    """Admin for podcast subscriptions."""
+
+    list_display = (
+        "podcast",
+        "subscriber",
+        "created",
+    )
+
+    readonly_fields = (
+        "podcast",
+        "subscriber",
+    )
+
+    ordering = ("-created",)
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Subscription]:
+        """Returns queryset with related fields."""
+        return super().get_queryset(request).select_related("podcast", "subscriber")
