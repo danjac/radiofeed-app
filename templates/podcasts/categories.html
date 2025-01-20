@@ -5,14 +5,14 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Categories">
-        <c-header.nav>
-            <c-header.nav.item>
-                <c-search.form placeholder="Search: Categories" clearable />
-            </c-header.nav.item>
-        </c-header.nav>
-    </c-header>
     {% cache 300 categories request.get_full_path %}
+        <c-header title="Categories">
+            <c-header.nav>
+                <c-header.nav.item>
+                    <c-search.form placeholder="Search: Categories" clearable />
+                </c-header.nav.item>
+            </c-header.nav>
+        </c-header>
         {% if categories %}
             <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
                 {% for category in categories %}
