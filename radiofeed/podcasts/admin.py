@@ -212,6 +212,8 @@ class PodcastAdmin(admin.ModelAdmin):
         "parsed",
     )
 
+    list_editable = ("active", "promoted")
+
     search_fields = ("title", "rss")
 
     raw_id_fields = ("recipients",)
@@ -226,8 +228,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "etag",
         "content_hash",
     )
-
-    actions = ("make_promoted",)
 
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast) -> str:
@@ -244,16 +244,6 @@ class PodcastAdmin(admin.ModelAdmin):
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
-
-    @admin.action(description="Promote podcasts")
-    def make_promoted(self, request: HttpRequest, queryset: QuerySet[Podcast]) -> None:
-        """Promotes podcasts."""
-        queryset.update(promoted=True)
-
-    @admin.action(description="Demote podcasts")
-    def make_demoted(self, request: HttpRequest, queryset: QuerySet[Podcast]) -> None:
-        """Demotes podcasts."""
-        queryset.update(promoted=False)
 
 
 @admin.register(Subscription)
