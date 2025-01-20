@@ -155,7 +155,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         )
 
         return (
-            self.annotate(
+            self.alias(
                 relevance=Coalesce(
                     models.Subquery(
                         scores.values("score")[:1],
