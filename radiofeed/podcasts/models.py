@@ -143,38 +143,31 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         # pick highest matches
         # we want the sum of the relevance of the recommendations, grouped by recommended
 
+        subscribed = set(user.subscriptions.values_list("podcast", flat=True))
+
         scores = (
-            Recommendation.objects.alias(
-                is_podcast_subscribed=models.Exists(
-                    user.subscriptions.filter(
-                        podcast=models.OuterRef("podcast"),
-                    )
-                ),
-                is_recommended_subscribed=models.Exists(
-                    user.subscriptions.filter(
-                        podcast=models.OuterRef("recommended"),
-                    )
-                ),
-            )
-            .filter(
-                is_podcast_subscribed=True,
-                is_recommended_subscribed=False,
+            Recommendation.objects.filter(
+                podcast__in=subscribed,
                 recommended=models.OuterRef("pk"),
             )
             .values("score")
             .order_by("-score")
         )
 
-        return self.annotate(
-            relevance=Coalesce(
-                models.Subquery(
-                    scores.values("score")[:1],
+        return (
+            self.annotate(
+                relevance=Coalesce(
+                    models.Subquery(
+                        scores.values("score")[:1],
+                    ),
+                    0,
+                    output_field=models.DecimalField(),
                 ),
-                0,
-                output_field=models.DecimalField(),
-            ),
-        ).filter(
-            models.Q(relevance__gt=0) | models.Q(promoted=True),
+            )
+            .filter(
+                models.Q(relevance__gt=0) | models.Q(promoted=True),
+            )
+            .exclude(pk__in=subscribed)
         )
 
 
