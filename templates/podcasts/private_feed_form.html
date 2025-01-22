@@ -30,4 +30,14 @@
             </c-slot>
         </c-form>
     {% endpartialdef form %}
+    <div class="mt-3 space-y-3 text-center prose sm:text-start dark:prose-invert">
+        <p>
+            If you have a private podcast feed that requires a username and password, you can add it here with this format:
+        </p>
+        <pre>https://username:password@feed-url</pre>
+        <p>Use a <a class="link"
+                    href="https://www.urlencoder.org/"
+                    rel="noopener"
+                    target="_blank">URL encoding service</a> to encode the username and password if required.</p>
+    </div>
 {% endblock content %}
