@@ -38,4 +38,5 @@ npm-debug.log
 screenshots
 static/tailwind.css
 staticfiles
+tailwind.config.js
 tf

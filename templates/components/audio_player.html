@@ -28,7 +28,7 @@
                            @error.prevent="error">
                         <source src="{{ episode.media_url }}" type="{{ episode.media_type }}">
                     </audio>
-                    <div class="fixed bottom-0 p-2 w-full font-semibold text-white bg-gradient-to-b from-purple-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24">
+                    <div class="fixed bottom-0 p-2 w-full font-semibold text-white from-purple-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 bg-linear-to-b htmx-added:opacity-0 htmx-added:translate-y-24">
                         <div class="items-center space-y-2 w-full divide-y divide-gray-300 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x dark:divide-gray-600">
                             <div class="sm:w-1/2">
                                 <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
@@ -58,7 +58,7 @@
                                          title="Current Time"
                                          class="flex justify-start items-center font-mono text-sm"
                                          :class="{'text-gray-300': !isPlaying}"></div>
-                                    {% with BUTTON_CSS="focus:outline-none hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
+                                    {% with BUTTON_CSS="focus:outline-hidden hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
                                         <div class="flex justify-center items-center space-x-6">
                                             <button aria-label="Skip Back 10 Seconds"
                                                     title="Skip Back 10 Seconds"
@@ -104,7 +104,7 @@
                                 <div class="w-full h-4">
                                     <input type="range"
                                            aria-label="Progress"
-                                           class="flex items-center mx-auto w-full bg-transparent focus:outline-none"
+                                           class="flex items-center mx-auto w-full bg-transparent focus:outline-hidden"
                                            min="0"
                                            x-ref="range"
                                            x-model="runtime"

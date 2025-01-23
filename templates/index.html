@@ -6,7 +6,7 @@
             <title>{{ request.site.name }}</title>
             {% include "default_base.html#head" %}
         </head>
-        <body class="mx-auto font-sans antialiased text-white bg-gradient-to-b from-purple-900 to-black container-xl scroll-smooth">
+        <body class="mx-auto font-sans antialiased text-white from-purple-900 to-black bg-linear-to-b container-xl scroll-smooth">
             <c-messages />
             {% cache 300 landing-page %}
                 <div class="py-12 mx-auto space-y-3 min-h-screen sm:px-2 lg:space-y-12">
@@ -24,13 +24,13 @@
                                        class="flex justify-center items-center py-3 w-full text-xl sm:w-1/2 md:w-full lg:text-3xl xl:w-2/3 btn btn-lg btn-primary">{% heroicon_solid "plus" class="mr-2" %}Sign up to {{ request.site.name }}</a>
                                 </div>
                                 <div class="flex relative items-center py-5">
-                                    <div class="flex-grow border-t border-white"></div>
-                                    <span class="flex-shrink mx-4 font-bold">OR</span>
-                                    <div class="flex-grow border-t border-white"></div>
+                                    <div class="border-t border-white grow"></div>
+                                    <span class="mx-4 font-bold shrink">OR</span>
+                                    <div class="border-t border-white grow"></div>
                                 </div>
                                 <div class="flex justify-center items-center">
                                     <a href="{% url "account_login" %}"
-                                       class="flex justify-center items-center py-3 w-full sm:w-1/2 md:w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline !text-white hover:!bg-inherit">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
+                                       class="flex justify-center items-center py-3 w-full sm:w-1/2 md:w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline text-white! hover:bg-inherit!">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
                                 </div>
                                 <p class="text-lg text-center lg:text-xl">
                                     Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ request.site.name }}</a>

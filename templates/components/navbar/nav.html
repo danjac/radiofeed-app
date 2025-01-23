@@ -1,7 +1,7 @@
 {% load heroicons static %}
 <nav class="flex justify-between items-center p-2">
     {% with site_name=request.site.name %}
-        <div class="flex flex-shrink-0 items-center">
+        <div class="flex items-center shrink-0">
             <a class="inline-flex items-center text-xl font-bold lg:text-2xl"
                {% if user.is_authenticated %} href="{% url 'podcasts:subscriptions' %}" {% else %} href="{% url 'index' %}" hx-disable="true" {% endif %}
                title="{{ site_name }}">
@@ -28,7 +28,7 @@
                             @click="showUserDropdown = !showUserDropdown"
                             @click.outside="showUserDropdown=false"
                             @keyup.escape.window="showUserDropdown=false"
-                            class="flex items-center rounded-lg sm:justify-end hover:text-gray-300 md:hover:bg-transparent">
+                            class="flex items-center rounded-lg sm:justify-end hover:text-gray-300 hover:cursor-pointer md:hover:bg-transparent">
                         {% heroicon_outline "user-circle" size=30 x_show="!showUserDropdown" %}
                         {% heroicon_solid "user-circle" size=30 x_show="showUserDropdown" %}
                     </button>
@@ -49,13 +49,13 @@
                                 </a>
                             </li>
                             <li>
-                                <form class="items-center py-2 px-4 hover:bg-gray-300 flex-inline w-42 dark:hover:bg-gray-700"
+                                <form class="items-center py-2 px-4 w-full hover:bg-gray-300 flex-inline dark:hover:bg-gray-700"
                                       hx-disable="true"
                                       action="{% url "account_logout" %}"
                                       method="post">
                                     {% csrf_token %}
                                     <button accesskey="l"
-                                            class="flex items-center w-full font-semibold text-gray-700 dark:text-gray-100">
+                                            class="flex items-center w-full font-semibold text-gray-700 dark:text-gray-100 hover:cursor-pointer">
                                         {% heroicon_mini "arrow-left-start-on-rectangle" class="mr-2" %}
                                         Logout
                                     </button>
@@ -66,7 +66,7 @@
                 </nav>
             </li>
             <li class="flex items-center xl:hidden">
-                <button class="transition transform focus:outline-none"
+                <button class="transition transform hover:cursor-pointer focus:outline-hidden"
                         aria-label="Show Site Navigation"
                         title="Show Site Navigation"
                         accesskey="m"
@@ -78,7 +78,7 @@
                         @click="showSidebar=true">
                     {% heroicon_outline "bars-3" size=30 title="Toggle Menu" %}
                 </button>
-                <button class="transition transform focus:outline-none"
+                <button class="transition transform hover:cursor-pointer focus:outline-hidden"
                         aria-label="Hide Site Navigation"
                         title="Hide Site Navigation"
                         accesskey="m"

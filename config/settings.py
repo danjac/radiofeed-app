@@ -304,10 +304,9 @@ STATICFILES_DIRS = [STATIC_SRC]
 # Tailwind CLI
 # https://django-tailwind-cli.andrich.me/settings/#settings
 
-TAILWIND_CLI_CONFIG_FILE = BASE_DIR / "tailwind.config.js"
-TAILWIND_CLI_SRC_CSS = STATIC_SRC / "app.css"
+TAILWIND_CLI_SRC_CSS = BASE_DIR / "tailwind" / "app.css"
 TAILWIND_CLI_DIST_CSS = "tailwind.css"
-TAILWIND_CLI_VERSION = "3.4.14"
+TAILWIND_CLI_VERSION = "4.0.0"
 
 # Whitenoise
 # https://whitenoise.readthedocs.io/en/latest/django.html

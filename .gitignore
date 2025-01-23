@@ -47,6 +47,7 @@ npm-debug.log*
 requirements-ci.txt
 static/tailwind.css
 staticfiles
+tailwind.config.js
 terraform.tfstate*
 venv
 ansible/.vault_pass
