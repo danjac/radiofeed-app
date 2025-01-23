@@ -5,7 +5,7 @@
     {% if messages %}
         <ul class="space-y-3">
             {% for message in messages %}
-                <li class="flex flex-wrap items-center justify-center px-3 py-2 font-bold text-center text-white rounded shadow-xl message-{{ message.tags }}"
+                <li class="flex flex-wrap items-center justify-center px-3 py-2 font-bold text-center text-white rounded-sm shadow-xl message-{{ message.tags }}"
                     role="alert"
                     x-data="{show: true}"
                     x-show="show"
