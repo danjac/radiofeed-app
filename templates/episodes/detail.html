@@ -78,7 +78,6 @@
                                     <c-button icon="stop-circle"
                                               variant="primary"
                                               size=24
-
                                               class="text-lg"
                                               label="Close"
                                               outline
@@ -180,11 +179,13 @@
                                     Listened
                                 </span>
                                 <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
-                                {% with current_time=audio_log.current_time|format_duration %}
-                                    {% if current_time %}
-                                        <span>{{ current_time }}</span>
-                                    {% endif %}
-                                {% endwith %}
+                                {% if episode.duration_in_seconds > audio_log.current_time %}
+                                    {% with current_time=audio_log.current_time|format_duration %}
+                                        {% if current_time %}
+                                            <span>{{ current_time }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
                             </div>
                             <c-button icon="trash"
                                       variant="danger"
