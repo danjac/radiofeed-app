@@ -71,68 +71,6 @@
     }
 }
 
-@utility markdown {
-    & a {
-        font-weight: var(--font-weight-semibold);
-        color: var(--color-black);
-    }
-    & a:active {
-        color: var(--color-blue-600);
-    }
-    & a:hover {
-        color: var(--color-blue-600);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        & a {
-            color: var(--color-white);
-        }
-
-        & a:active {
-            color: var(--color-blue-300);
-        }
-
-        & a:hover {
-            color: var(--color-blue-300);
-        }
-    }
-}
-
-@utility link {
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-black);
-    &.active {
-        color: var(--color-blue-600);
-    }
-    &:hover {
-        color: var(--color-blue-600);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        color: var(--color-white);
-
-        &.active {
-            color: var(--color-blue-300);
-        }
-
-        &:hover {
-            color: var(--color-blue-300);
-        }
-    }
-}
-
-@utility active {
-    & .link {
-        color: var(--color-blue-600);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        & .link {
-            color: var(--color-blue-300);
-        }
-    }
-}
-
 @utility divide-x {
     @media (prefers-color-scheme: dark) {
         & > * + *,
@@ -234,8 +172,9 @@
         background-color: var(--color-yellow-600);
     }
 
+    /* BUTTONS */
+
     .btn {
-        /* BUTTONS */
         padding: theme("padding.1") theme("padding.2");
         border-radius: var(--radius-md);
         font-weight: var(--font-weight-semibold);
@@ -364,6 +303,60 @@
                 color: var(--color-red-500);
                 background-color: inherit;
                 border-color: var(--color-red-500);
+            }
+        }
+    }
+
+    /* LINKS */
+
+    .link {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+        &.active {
+            color: var(--color-blue-600);
+        }
+        &:hover {
+            color: var(--color-blue-600);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            color: var(--color-white);
+
+            &.active {
+                color: var(--color-blue-300);
+            }
+
+            &:hover {
+                color: var(--color-blue-300);
+            }
+        }
+    }
+
+    /* MARKDOWN */
+
+    .markdown {
+        & a {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-black);
+        }
+        & a:active {
+            color: var(--color-blue-600);
+        }
+        & a:hover {
+            color: var(--color-blue-600);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            & a {
+                color: var(--color-white);
+            }
+
+            & a:active {
+                color: var(--color-blue-300);
+            }
+
+            & a:hover {
+                color: var(--color-blue-300);
             }
         }
     }
