@@ -36,7 +36,7 @@ docker-compose.yml
 node_modules
 npm-debug.log
 screenshots
-static/tailwind.css
+static/app.css
 staticfiles
 tailwind.config.js
 tf
