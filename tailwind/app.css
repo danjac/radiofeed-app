@@ -42,148 +42,6 @@
     padding: theme("padding.1") theme("padding.2");
 }
 
-@utility btn {
-    /* BUTTONS */
-    padding: theme("padding.1") theme("padding.2");
-    border-radius: var(--radius-md);
-    font-weight: var(--font-weight-semibold);
-
-    &:hover {
-        cursor: pointer;
-    }
-
-    &:focus {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-        cursor: pointer;
-    }
-
-    &:disabled {
-        background-color: var(--color-gray-600);
-        color: var(--color-white);
-        border-color: var(--color-gray-600);
-        cursor: not-allowed;
-    }
-
-    &:hover:disabled {
-        background-color: var(--color-gray-600);
-        color: var(--color-white);
-        border-color: var(--color-gray-600);
-        cursor: not-allowed;
-    }
-}
-
-@utility focus {
-    &.btn {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-        cursor: pointer;
-    }
-}
-
-@utility btn-primary {
-    color: var(--color-white);
-    background-color: var(--color-blue-800);
-    border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
-
-    &:hover {
-        background-color: var(--color-blue-600);
-    }
-
-    &.btn-outline {
-        color: var(--color-blue-800);
-        background-color: inherit;
-        border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
-    }
-
-    &.btn-outline:hover {
-        color: var(--color-blue-600);
-        background-color: var(--color-gray-100);
-        border-color: var(--color-blue-800);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        &.btn-outline {
-            color: var(--color-white);
-            border-color: var(--color-gray-500);
-        }
-
-        &.btn-outline:hover {
-            color: var(--color-blue-300);
-            background-color: inherit;
-            border-color: var(--color-blue-300);
-        }
-    }
-}
-
-@utility btn-default {
-    color: var(--color-white);
-    background-color: var(--color-purple-800);
-    border: solid theme("borderWidth.DEFAULT") var(--color-purple-800);
-
-    &:hover {
-        background-color: var(--color-purple-600);
-    }
-
-    &.btn-outline {
-        color: var(--color-gray-800);
-        background-color: inherit;
-        border: solid theme("borderWidth.DEFAULT") var(--color-gray-600);
-    }
-
-    &.btn-outline:hover {
-        color: var(--color-purple-600);
-        background-color: var(--color-gray-100);
-        border: solid theme("borderWidth.DEFAULT") var(--color-purple-600);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        &.btn-outline {
-            color: var(--color-white);
-            border-color: var(--color-gray-500);
-        }
-
-        &.btn-outline:hover {
-            color: var(--color-purple-400);
-            background-color: inherit;
-            border-color: var(--color-purple-300);
-        }
-    }
-}
-
-@utility btn-danger {
-    color: var(--color-white);
-    background-color: var(--color-red-800);
-
-    &:hover {
-        background-color: var(--color-red-600);
-    }
-
-    &.btn-outline {
-        color: var(--color-red-800);
-        border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
-    }
-
-    &.btn-outline:hover {
-        color: var(--color-red-600);
-        background-color: var(--color-gray-100);
-        border-color: var(--color-red-800);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        &.btn-outline {
-            color: var(--color-red-500);
-            border-color: var(--color-red-500);
-        }
-
-        &.btn-outline:hover {
-            color: var(--color-red-500);
-            background-color: inherit;
-            border-color: var(--color-red-500);
-        }
-    }
-}
-
 @utility form-control {
     /* LINKS */
 
@@ -374,6 +232,140 @@
 
     .message-warning {
         background-color: var(--color-yellow-600);
+    }
+
+    .btn {
+        /* BUTTONS */
+        padding: theme("padding.1") theme("padding.2");
+        border-radius: var(--radius-md);
+        font-weight: var(--font-weight-semibold);
+
+        &:hover {
+            cursor: pointer;
+        }
+        &:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            cursor: pointer;
+        }
+
+        &:disabled {
+            background-color: var(--color-gray-600);
+            color: var(--color-white);
+            border-color: var(--color-gray-600);
+            cursor: not-allowed;
+        }
+
+        &:hover:disabled {
+            background-color: var(--color-gray-600);
+            color: var(--color-white);
+            border-color: var(--color-gray-600);
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-primary {
+        color: var(--color-white);
+        background-color: var(--color-blue-800);
+        border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
+
+        &:hover {
+            background-color: var(--color-blue-600);
+        }
+
+        &.btn-outline {
+            color: var(--color-blue-800);
+            background-color: inherit;
+            border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
+        }
+
+        &.btn-outline:hover {
+            color: var(--color-blue-600);
+            background-color: var(--color-gray-100);
+            border-color: var(--color-blue-800);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            &.btn-outline {
+                color: var(--color-white);
+                border-color: var(--color-gray-500);
+            }
+
+            &.btn-outline:hover {
+                color: var(--color-blue-300);
+                background-color: inherit;
+                border-color: var(--color-blue-300);
+            }
+        }
+    }
+
+    .btn-default {
+        color: var(--color-white);
+        background-color: var(--color-purple-800);
+        border: solid theme("borderWidth.DEFAULT") var(--color-purple-800);
+
+        &:hover {
+            background-color: var(--color-purple-600);
+        }
+
+        &.btn-outline {
+            color: var(--color-gray-800);
+            background-color: inherit;
+            border: solid theme("borderWidth.DEFAULT") var(--color-gray-600);
+        }
+
+        &.btn-outline:hover {
+            color: var(--color-purple-600);
+            background-color: var(--color-gray-100);
+            border: solid theme("borderWidth.DEFAULT") var(--color-purple-600);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            &.btn-outline {
+                color: var(--color-white);
+                border-color: var(--color-gray-500);
+            }
+
+            &.btn-outline:hover {
+                color: var(--color-purple-400);
+                background-color: inherit;
+                border-color: var(--color-purple-300);
+            }
+        }
+    }
+
+    .btn-danger {
+        color: var(--color-white);
+        background-color: var(--color-red-800);
+        border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
+
+        &:hover {
+            background-color: var(--color-red-600);
+        }
+
+        &.btn-outline {
+            color: var(--color-red-800);
+            border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
+        }
+
+        &.btn-outline:hover {
+            color: var(--color-red-600);
+            background-color: var(--color-gray-100);
+            border-color: var(--color-red-800);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            &.btn-outline {
+                color: var(--color-red-500);
+                border-color: var(--color-red-500);
+            }
+
+            &.btn-outline:hover {
+                color: var(--color-red-500);
+                background-color: inherit;
+                border-color: var(--color-red-500);
+            }
+        }
     }
 }
 
