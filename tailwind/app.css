@@ -3,6 +3,9 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
+/* Custom CSS for HTMX transitions */
+@custom-variant htmx-added (& .htmx-added,.htmx-added &);
+
 @layer base {
     *,
     ::after,
@@ -56,7 +59,7 @@
         color: var(--color-blue-600);
     }
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         & a {
             color: var(--color-white);
         }
@@ -72,7 +75,7 @@
 }
 
 @utility divide-x {
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         & > * + *,
         & > * {
             border-color: var(--color-gray-600);
@@ -81,7 +84,7 @@
 }
 
 @utility divide-y {
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         & > * + *,
         & > * {
             border-color: var(--color-gray-600);
@@ -92,7 +95,7 @@
 @utility border {
     /* BORDERS */
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         border-color: var(--color-gray-600);
     }
 }
@@ -100,7 +103,7 @@
 @utility border-t {
     /* BORDERS */
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         border-color: var(--color-gray-600);
     }
 }
@@ -108,7 +111,7 @@
 @utility border-l {
     /* BORDERS */
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         border-color: var(--color-gray-600);
     }
 }
@@ -116,7 +119,7 @@
 @utility border-r {
     /* BORDERS */
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         border-color: var(--color-gray-600);
     }
 }
@@ -124,7 +127,7 @@
 @utility border-b {
     /* BORDERS */
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         border-color: var(--color-gray-600);
     }
 }
@@ -208,7 +211,7 @@
         background-color: var(--color-blue-800);
         border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
 
-        &:hover {
+        @variant hover {
             background-color: var(--color-blue-600);
         }
 
@@ -216,24 +219,22 @@
             color: var(--color-blue-800);
             background-color: inherit;
             border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
-        }
 
-        &.btn-outline:hover {
-            color: var(--color-blue-600);
-            background-color: var(--color-gray-100);
-            border-color: var(--color-blue-800);
-        }
+            @variant hover {
+                color: var(--color-blue-600);
+                background-color: var(--color-gray-100);
+                border-color: var(--color-blue-800);
 
-        @media (prefers-color-scheme: dark) {
-            &.btn-outline {
-                color: var(--color-white);
-                border-color: var(--color-gray-500);
-            }
+                @variant dark {
+                    color: var(--color-white);
+                    border-color: var(--color-gray-500);
 
-            &.btn-outline:hover {
-                color: var(--color-blue-300);
-                background-color: inherit;
-                border-color: var(--color-blue-300);
+                    @variant hover {
+                        color: var(--color-blue-300);
+                        background-color: inherit;
+                        border-color: var(--color-blue-300);
+                    }
+                }
             }
         }
     }
@@ -243,7 +244,7 @@
         background-color: var(--color-purple-800);
         border: solid theme("borderWidth.DEFAULT") var(--color-purple-800);
 
-        &:hover {
+        @variant hover {
             background-color: var(--color-purple-600);
         }
 
@@ -251,24 +252,23 @@
             color: var(--color-gray-800);
             background-color: inherit;
             border: solid theme("borderWidth.DEFAULT") var(--color-gray-600);
-        }
 
-        &.btn-outline:hover {
-            color: var(--color-purple-600);
-            background-color: var(--color-gray-100);
-            border: solid theme("borderWidth.DEFAULT") var(--color-purple-600);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            &.btn-outline {
-                color: var(--color-white);
-                border-color: var(--color-gray-500);
+            @variant hover {
+                color: var(--color-purple-600);
+                background-color: var(--color-gray-100);
+                border: solid theme("borderWidth.DEFAULT")
+                        var(--color-purple-600);
             }
 
-            &.btn-outline:hover {
-                color: var(--color-purple-400);
-                background-color: inherit;
-                border-color: var(--color-purple-300);
+            @variant dark {
+                color: var(--color-white);
+                border-color: var(--color-gray-500);
+
+                @variant hover {
+                    color: var(--color-purple-400);
+                    background-color: inherit;
+                    border-color: var(--color-purple-300);
+                }
             }
         }
     }
@@ -278,31 +278,30 @@
         background-color: var(--color-red-800);
         border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
 
-        &:hover {
+        @variant hover {
             background-color: var(--color-red-600);
         }
 
         &.btn-outline {
             color: var(--color-red-800);
             border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
-        }
+            background-color: inherit;
 
-        &.btn-outline:hover {
-            color: var(--color-red-600);
-            background-color: var(--color-gray-100);
-            border-color: var(--color-red-800);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            &.btn-outline {
-                color: var(--color-red-500);
-                border-color: var(--color-red-500);
+            @variant hover {
+                color: var(--color-red-600);
+                background-color: var(--color-gray-100);
+                border-color: var(--color-red-800);
             }
 
-            &.btn-outline:hover {
+            @variant dark {
                 color: var(--color-red-500);
-                background-color: inherit;
                 border-color: var(--color-red-500);
+
+                @variant hover {
+                    color: var(--color-red-500);
+                    background-color: inherit;
+                    border-color: var(--color-red-500);
+                }
             }
         }
     }
@@ -312,21 +311,23 @@
     .link {
         font-weight: var(--font-weight-semibold);
         color: var(--color-black);
+
         &.active {
             color: var(--color-blue-600);
         }
-        &:hover {
+
+        @variant hover {
             color: var(--color-blue-600);
         }
 
-        @media (prefers-color-scheme: dark) {
+        @variant dark {
             color: var(--color-white);
 
             &.active {
                 color: var(--color-blue-300);
             }
 
-            &:hover {
+            @variant hover {
                 color: var(--color-blue-300);
             }
         }
@@ -338,25 +339,25 @@
         & a {
             font-weight: var(--font-weight-semibold);
             color: var(--color-black);
-        }
-        & a:active {
-            color: var(--color-blue-600);
-        }
-        & a:hover {
-            color: var(--color-blue-600);
-        }
 
-        @media (prefers-color-scheme: dark) {
-            & a {
+            @variant active {
+                color: var(--color-blue-600);
+            }
+
+            @variant hover {
+                color: var(--color-blue-600);
+            }
+
+            @variant dark {
                 color: var(--color-white);
-            }
 
-            & a:active {
-                color: var(--color-blue-300);
-            }
+                @variant active {
+                    color: var(--color-blue-300);
+                }
 
-            & a:hover {
-                color: var(--color-blue-300);
+                @variant hover {
+                    color: var(--color-blue-300);
+                }
             }
         }
     }
@@ -475,11 +476,9 @@
         border-radius: calc(var(--trackSize) / 2) 0 0 calc(var(--trackSize) / 2);
     }
 
-    @media (prefers-color-scheme: dark) {
+    @variant dark {
         :root {
             color-scheme: dark;
         }
     }
 }
-
-@custom-variant htmx-added (& .htmx-added,.htmx-added &);
