@@ -73,7 +73,7 @@
                                  hx-target="this"
                                  hx-indicator="this"
                                  hx-swap="outerHTML"
-                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                 hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
                                     <c-button icon="stop-circle"
                                               variant="primary"
@@ -115,7 +115,7 @@
                              hx-target="this"
                              hx-swap="outerHTML"
                              hx-indicator="this"
-                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                             hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
                                 <c-button icon="bookmark-slash"
                                           label="Bookmark"
@@ -200,7 +200,7 @@
                                       hx-indicator="this"
                                       hx-push-url="false"
                                       hx-swap="outerHTML"
-                                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' />
+                                      hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}' />
                         </div>
                     {% endif %}
                 </div>
