@@ -1,0 +1,236 @@
+@layer utilities {
+    @variant dark {
+        :root {
+            color-scheme: dark;
+        }
+    }
+
+    /* ALPINEJS */
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* HTMX */
+    #hx-indicator {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: #0076ff;
+        z-index: 9999;
+        transition:
+        width 300ms ease-out,
+        opacity 150ms 150ms ease-in;
+        transform: translate3d(0, 0, 0);
+    }
+
+    #hx-indicator.htmx-request {
+        display: block !important;
+    }
+    /* MESSAGES */
+
+    .message-error {
+        background-color: var(--color-red-600);
+    }
+
+    .message-info {
+        background-color: var(--color-blue-600);
+    }
+
+    .message-success {
+        background-color: var(--color-green-600);
+    }
+
+    .message-warning {
+        background-color: var(--color-yellow-600);
+    }
+
+    /* BUTTONS */
+
+    .btn {
+        padding: theme("padding.1") theme("padding.2");
+        border-radius: var(--radius-md);
+        font-weight: var(--font-weight-semibold);
+
+        &:hover {
+            cursor: pointer;
+        }
+        &:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            cursor: pointer;
+        }
+
+        &:disabled {
+            background-color: var(--color-gray-600);
+            color: var(--color-white);
+            border-color: var(--color-gray-600);
+            cursor: not-allowed;
+        }
+
+        &:hover:disabled {
+            background-color: var(--color-gray-600);
+            color: var(--color-white);
+            border-color: var(--color-gray-600);
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-primary {
+        color: var(--color-white);
+        background-color: var(--color-blue-800);
+        border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
+
+        @variant hover {
+            background-color: var(--color-blue-600);
+        }
+
+        &.btn-outline {
+            color: var(--color-blue-800);
+            background-color: inherit;
+            border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
+
+            @variant hover {
+                color: var(--color-blue-600);
+                background-color: var(--color-gray-100);
+                border-color: var(--color-blue-800);
+            }
+
+            @variant dark {
+                color: var(--color-white);
+                border-color: var(--color-gray-500);
+
+                @variant hover {
+                    color: var(--color-blue-300);
+                    background-color: inherit;
+                    border-color: var(--color-blue-300);
+                }
+            }
+        }
+    }
+
+    .btn-default {
+        color: var(--color-white);
+        background-color: var(--color-purple-800);
+        border: solid theme("borderWidth.DEFAULT") var(--color-purple-800);
+
+        @variant hover {
+            background-color: var(--color-purple-600);
+        }
+
+        &.btn-outline {
+            color: var(--color-gray-800);
+            background-color: inherit;
+            border: solid theme("borderWidth.DEFAULT") var(--color-gray-600);
+
+            @variant hover {
+                color: var(--color-purple-600);
+                background-color: var(--color-gray-100);
+                border: solid theme("borderWidth.DEFAULT")
+                        var(--color-purple-600);
+            }
+
+            @variant dark {
+                color: var(--color-white);
+                border-color: var(--color-gray-500);
+
+                @variant hover {
+                    color: var(--color-purple-400);
+                    background-color: inherit;
+                    border-color: var(--color-purple-300);
+                }
+            }
+        }
+    }
+
+    .btn-danger {
+        color: var(--color-white);
+        background-color: var(--color-red-800);
+        border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
+
+        @variant hover {
+            background-color: var(--color-red-600);
+        }
+
+        &.btn-outline {
+            color: var(--color-red-800);
+            border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
+            background-color: inherit;
+
+            @variant hover {
+                color: var(--color-red-600);
+                background-color: var(--color-gray-100);
+                border-color: var(--color-red-800);
+            }
+
+            @variant dark {
+                color: var(--color-red-500);
+                border-color: var(--color-red-500);
+
+                @variant hover {
+                    color: var(--color-red-500);
+                    background-color: inherit;
+                    border-color: var(--color-red-500);
+                }
+            }
+        }
+    }
+
+    /* LINKS */
+
+    .link {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+
+        &.active {
+            color: var(--color-blue-600);
+        }
+
+        @variant hover {
+            color: var(--color-blue-600);
+        }
+
+        @variant dark {
+            color: var(--color-white);
+
+            &.active {
+                color: var(--color-blue-300);
+            }
+
+            @variant hover {
+                color: var(--color-blue-300);
+            }
+        }
+    }
+
+    /* MARKDOWN */
+
+    .markdown {
+        & a {
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-black);
+
+            @variant active {
+                color: var(--color-blue-600);
+            }
+
+            @variant hover {
+                color: var(--color-blue-600);
+            }
+
+            @variant dark {
+                color: var(--color-white);
+
+                @variant active {
+                    color: var(--color-blue-300);
+                }
+
+                @variant hover {
+                    color: var(--color-blue-300);
+                }
+            }
+        }
+    }
+}
