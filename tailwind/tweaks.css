@@ -1,3 +1,5 @@
+/* DIVIDES */
+
 @utility divide-x {
     @variant dark {
         & > * + *,
@@ -16,41 +18,32 @@
     }
 }
 
+/* BORDERS */
 @utility border {
-    /* BORDERS */
-
     @variant dark {
         border-color: var(--color-gray-600);
     }
 }
 
 @utility border-t {
-    /* BORDERS */
-
     @variant dark {
         border-color: var(--color-gray-600);
     }
 }
 
 @utility border-l {
-    /* BORDERS */
-
     @variant dark {
         border-color: var(--color-gray-600);
     }
 }
 
 @utility border-r {
-    /* BORDERS */
-
     @variant dark {
         border-color: var(--color-gray-600);
     }
 }
 
 @utility border-b {
-    /* BORDERS */
-
     @variant dark {
         border-color: var(--color-gray-600);
     }
