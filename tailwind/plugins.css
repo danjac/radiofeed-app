@@ -38,25 +38,24 @@
     & a {
         font-weight: var(--font-weight-semibold);
         color: var(--color-black);
-    }
-    & a:active {
-        color: var(--color-blue-600);
-    }
-    & a:hover {
-        color: var(--color-blue-600);
-    }
 
-    @variant dark {
-        & a {
+        @variant active {
+            color: var(--color-blue-600);
+        }
+
+        @variant hover {
+            color: var(--color-blue-600);
+        }
+        @variant dark {
             color: var(--color-white);
-        }
 
-        & a:active {
-            color: var(--color-blue-300);
-        }
+            @variant active {
+                color: var(--color-blue-300);
+            }
 
-        & a:hover {
-            color: var(--color-blue-300);
+            @variant hover {
+                color: var(--color-blue-300);
+            }
         }
     }
 }
