@@ -54,27 +54,21 @@
         border-radius: var(--radius-md);
         font-weight: var(--font-weight-semibold);
 
-        &:hover {
+        @variant hover {
             cursor: pointer;
         }
-        &:focus {
+
+        @variant focus {
             outline: 2px solid transparent;
             outline-offset: 2px;
             cursor: pointer;
         }
 
-        &:disabled {
-            background-color: var(--color-gray-600);
-            color: var(--color-white);
-            border-color: var(--color-gray-600);
-            cursor: not-allowed;
-        }
-
-        &:hover:disabled {
-            background-color: var(--color-gray-600);
-            color: var(--color-white);
-            border-color: var(--color-gray-600);
-            cursor: not-allowed;
+        @variant disabled {
+            background-color: var(--color-gray-600) !important;
+            color: var(--color-white) !important;
+            border-color: var(--color-gray-600) !important;
+            cursor: not-allowed !important;
         }
     }
 
