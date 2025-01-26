@@ -175,6 +175,8 @@ class TestFeedParser:
         assert podcast.explicit
         assert podcast.cover_url
 
+        assert podcast.is_episodic()
+
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
         assert "science & medicine" in podcast.keywords
@@ -185,6 +187,35 @@ class TestFeedParser:
         assert "Religion & Spirituality" in assigned_categories
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
+
+    @pytest.mark.django_db
+    def test_parse_serial(self, categories):
+        podcast = PodcastFactory(
+            rss="https://feeds.acast.com/public/shows/867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5",
+        )
+        client = _mock_client(
+            url=podcast.rss,
+            status_code=http.HTTPStatus.OK,
+            content=self.get_rss_content("rss_serial.xml"),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
+        )
+
+        parse_feed(podcast, client)
+
+        assert podcast.episodes.count() == 10
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss
+        assert podcast.parser_error == ""
+        assert podcast.active
+        assert podcast.num_retries == 0
+        assert podcast.content_hash
+
+        assert podcast.is_serial()
 
     @pytest.mark.django_db
     def test_parse_links_as_ids(self, categories):

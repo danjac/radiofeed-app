@@ -95,6 +95,10 @@ class TestFeed:
 
         assert feed.complete is True
 
+    def test_is_serial(self, item):
+        feed = Feed(**FeedFactory(items=[item], podcast_type="serial"))
+        assert feed.podcast_type == "serial"
+
     def test_defaults(self, item):
         feed = Feed(**FeedFactory(items=[item]))
 

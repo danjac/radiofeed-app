@@ -186,6 +186,10 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         UNAVAILABLE = "unavailable", "Unavailable"
 
+    class PodcastType(models.TextChoices):
+        EPISODIC = "episodic", "Episodic"
+        SERIAL = "serial", "Serial"
+
     rss = models.URLField(unique=True, max_length=500)
 
     active = models.BooleanField(
@@ -236,6 +240,12 @@ class Podcast(models.Model):
     keywords = models.TextField(blank=True)
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
+
+    podcast_type = models.CharField(
+        max_length=10,
+        choices=PodcastType.choices,
+        default=PodcastType.EPISODIC,
+    )
 
     created = models.DateTimeField(auto_now_add=True)
 
@@ -361,6 +371,14 @@ class Podcast(models.Model):
                 self.parsed + self.MIN_PARSER_FREQUENCY,
             ),
         )
+
+    def is_episodic(self) -> bool:
+        """Returns true if podcast is episodic."""
+        return self.podcast_type == self.PodcastType.EPISODIC
+
+    def is_serial(self) -> bool:
+        """Returns true if podcast is serial."""
+        return self.podcast_type == self.PodcastType.SERIAL
 
 
 class Subscription(models.Model):

@@ -17,6 +17,7 @@ from pydantic import (
 )
 
 from radiofeed.feedparser.date_parser import parse_date
+from radiofeed.podcasts.models import Podcast
 
 T = TypeVar("T")
 
@@ -254,6 +255,17 @@ class Feed(BaseModel):
     items: list[Item]
 
     categories: set[str] = Field(default_factory=set)
+
+    podcast_type: str = Podcast.PodcastType.EPISODIC
+
+    @field_validator("podcast_type", mode="before")
+    @classmethod
+    def validate_podcast_type(cls, value: Any) -> str:
+        """Validate podcast type."""
+        value = (value or "").casefold()
+        if value in Podcast.PodcastType:
+            return value
+        return Podcast.PodcastType.EPISODIC
 
     @field_validator("language", mode="before")
     @classmethod

@@ -339,6 +339,16 @@ class TestPodcastModel:
 
         self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 0.5)
 
+    def test_is_episodic(self):
+        podcast = Podcast(podcast_type=Podcast.PodcastType.EPISODIC)
+        assert podcast.is_episodic() is True
+        assert podcast.is_serial() is False
+
+    def test_is_serial(self):
+        podcast = Podcast(podcast_type=Podcast.PodcastType.SERIAL)
+        assert podcast.is_episodic() is False
+        assert podcast.is_serial() is True
+
     def assert_hours_diff(self, delta, hours):
         assert delta.total_seconds() / 3600 == pytest.approx(hours)
 
