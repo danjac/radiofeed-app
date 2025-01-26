@@ -1,0 +1,38 @@
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+    @variant dark {
+        :root {
+            color-scheme: dark;
+        }
+    }
+    /* ALPINEJS */
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* HTMX */
+    #hx-indicator {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: #0076ff;
+        z-index: 9999;
+        transition:
+        width 300ms ease-out,
+        opacity 150ms 150ms ease-in;
+        transform: translate3d(0, 0, 0);
+    }
+
+    #hx-indicator.htmx-request {
+        display: block !important;
+    }
+}

@@ -1,0 +1,17 @@
+@layer messages {
+    .message-error {
+        background-color: var(--color-red-600);
+    }
+
+    .message-info {
+        background-color: var(--color-blue-600);
+    }
+
+    .message-success {
+        background-color: var(--color-green-600);
+    }
+
+    .message-warning {
+        background-color: var(--color-yellow-600);
+    }
+}

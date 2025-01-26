@@ -1,54 +1,4 @@
-@layer utilities {
-    @variant dark {
-        :root {
-            color-scheme: dark;
-        }
-    }
-
-    /* ALPINEJS */
-
-    [x-cloak] {
-        display: none !important;
-    }
-
-    /* HTMX */
-    #hx-indicator {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 3px;
-        background: #0076ff;
-        z-index: 9999;
-        transition:
-        width 300ms ease-out,
-        opacity 150ms 150ms ease-in;
-        transform: translate3d(0, 0, 0);
-    }
-
-    #hx-indicator.htmx-request {
-        display: block !important;
-    }
-    /* MESSAGES */
-
-    .message-error {
-        background-color: var(--color-red-600);
-    }
-
-    .message-info {
-        background-color: var(--color-blue-600);
-    }
-
-    .message-success {
-        background-color: var(--color-green-600);
-    }
-
-    .message-warning {
-        background-color: var(--color-yellow-600);
-    }
-
-    /* BUTTONS */
-
+@layer buttons {
     .btn {
         padding: theme("padding.1") theme("padding.2");
         border-radius: var(--radius-md);
@@ -167,62 +117,6 @@
                     color: var(--color-red-500);
                     background-color: inherit;
                     border-color: var(--color-red-500);
-                }
-            }
-        }
-    }
-
-    /* LINKS */
-
-    .link {
-        font-weight: var(--font-weight-semibold);
-        color: var(--color-black);
-
-        &.active {
-            color: var(--color-blue-600);
-        }
-
-        @variant hover {
-            color: var(--color-blue-600);
-        }
-
-        @variant dark {
-            color: var(--color-white);
-
-            &.active {
-                color: var(--color-blue-300);
-            }
-
-            @variant hover {
-                color: var(--color-blue-300);
-            }
-        }
-    }
-
-    /* MARKDOWN */
-
-    .markdown {
-        & a {
-            font-weight: var(--font-weight-semibold);
-            color: var(--color-black);
-
-            @variant active {
-                color: var(--color-blue-600);
-            }
-
-            @variant hover {
-                color: var(--color-blue-600);
-            }
-
-            @variant dark {
-                color: var(--color-white);
-
-                @variant active {
-                    color: var(--color-blue-300);
-                }
-
-                @variant hover {
-                    color: var(--color-blue-300);
                 }
             }
         }

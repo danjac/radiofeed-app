@@ -19,6 +19,7 @@
 }
 
 /* BORDERS */
+
 @utility border {
     @variant dark {
         border-color: var(--color-gray-600);

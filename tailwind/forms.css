@@ -1,4 +1,14 @@
-@layer components {
+@layer forms {
+    .form-input,
+    .form-select,
+    .form-multiselect,
+    .form-textarea {
+        background: inherit;
+        color: inherit;
+        border-radius: var(--radius-md);
+        padding: theme("padding.1") theme("padding.2");
+    }
+
     /* search inputs */
 
     input[type="search"]::-webkit-search-decoration,

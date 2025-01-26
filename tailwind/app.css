@@ -1,24 +1,16 @@
 @import "tailwindcss";
 
+/* Plugins */
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
 /* Custom CSS for HTMX transitions */
 @custom-variant htmx-added (& .htmx-added,.htmx-added &);
 
-@layer base {
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
-    }
-    @variant dark {
-        :root {
-            color-scheme: dark;
-        }
-    }
-}
-
-@import "./plugins.css";
-@import "./utilities.css";
-@import "./components.css";
+@import "./base.css";
+@import "./buttons.css";
+@import "./forms.css";
+@import "./links.css";
+@import "./messages.css";
 @import "./tweaks.css";

@@ -1,0 +1,28 @@
+@layer links {
+    .link,
+    .form-control a,
+    .markdown a {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-black);
+
+        &.active {
+            color: var(--color-blue-600);
+        }
+
+        @variant hover {
+            color: var(--color-blue-600);
+        }
+
+        @variant dark {
+            color: var(--color-white);
+
+            &.active {
+                color: var(--color-blue-300);
+            }
+
+            @variant hover {
+                color: var(--color-blue-300);
+            }
+        }
+    }
+}
