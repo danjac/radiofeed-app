@@ -6,31 +6,37 @@ from radiofeed.podcasts.tests.factories import (
     RecommendationFactory,
     SubscriptionFactory,
 )
+from radiofeed.users.tests.factories import EmailAddressFactory
 
 
 class TestRecommendations:
+    @pytest.fixture
+    def address(self, user):
+        return EmailAddressFactory(user=user)
+
     @pytest.mark.django_db
-    def test_send_if_no_recommendations(self, user, mailoutbox):
+    def test_send_if_no_recommendations(self, address, mailoutbox):
         """If no recommendations, don't send."""
         PodcastFactory.create_batch(3)
 
-        assert not emails.send_recommendations_email(user)
+        assert not emails.send_recommendations_email(address)
         assert len(mailoutbox) == 0
 
     @pytest.mark.django_db
-    def test_send_promoted(self, user, mailoutbox):
+    def test_send_promoted(self, address, mailoutbox):
         PodcastFactory.create_batch(3, promoted=True)
-        emails.send_recommendations_email(user)
+
+        emails.send_recommendations_email(address)
         assert len(mailoutbox) == 1
 
-        assert mailoutbox[0].to == [user.email]
-        assert user.recommended_podcasts.count() == 3
+        assert mailoutbox[0].to == [address.email]
+        assert address.user.recommended_podcasts.count() == 3
 
     @pytest.mark.django_db
-    def test_has_recommendations(self, user, mailoutbox):
-        first = SubscriptionFactory(subscriber=user).podcast
-        second = SubscriptionFactory(subscriber=user).podcast
-        third = SubscriptionFactory(subscriber=user).podcast
+    def test_has_recommendations(self, address, mailoutbox):
+        first = SubscriptionFactory(subscriber=address.user).podcast
+        second = SubscriptionFactory(subscriber=address.user).podcast
+        third = SubscriptionFactory(subscriber=address.user).podcast
 
         RecommendationFactory(podcast=first)
         RecommendationFactory(podcast=second)
@@ -39,17 +45,17 @@ class TestRecommendations:
         # promoted
         PodcastFactory(promoted=True)
 
-        emails.send_recommendations_email(user)
+        emails.send_recommendations_email(address)
 
         assert len(mailoutbox) == 1
-        assert mailoutbox[0].to == [user.email]
-        assert user.recommended_podcasts.count() == 4
+        assert mailoutbox[0].to == [address.email]
+        assert address.user.recommended_podcasts.count() == 4
 
     @pytest.mark.django_db
-    def test_already_recommended(self, user, mailoutbox):
-        subscribed = SubscriptionFactory(subscriber=user).podcast
+    def test_already_recommended(self, address, mailoutbox):
+        subscribed = SubscriptionFactory(subscriber=address.user).podcast
         recommended = RecommendationFactory(podcast=subscribed).recommended
-        user.recommended_podcasts.add(recommended)
+        address.user.recommended_podcasts.add(recommended)
 
-        assert not emails.send_recommendations_email(user)
+        assert not emails.send_recommendations_email(address)
         assert len(mailoutbox) == 0
