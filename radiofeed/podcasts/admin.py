@@ -76,6 +76,28 @@ class ParserErrorFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class PodcastTypeFilter(admin.SimpleListFilter):
+    """Filters based on parser error."""
+
+    title = "PodcastType"
+    parameter_name = "podcast_type"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> list[tuple[str, str]]:
+        """Returns lookup values/labels."""
+        return Podcast.PodcastType.choices
+
+    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
+        """Returns filtered queryset."""
+
+        match self.value():
+            case value if value in Podcast.PodcastType:  # type: ignore[attr-defined]
+                return queryset.filter(podcast_type=value)
+            case _:
+                return queryset
+
+
 class PubDateFilter(admin.SimpleListFilter):
     """Filters podcasts based on last pub date."""
 
@@ -196,12 +218,13 @@ class PodcastAdmin(admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        PubDateFilter,
-        SubscribedFilter,
-        PromotedFilter,
-        PrivateFilter,
-        ScheduledFilter,
         ParserErrorFilter,
+        PodcastTypeFilter,
+        PrivateFilter,
+        PromotedFilter,
+        PubDateFilter,
+        ScheduledFilter,
+        SubscribedFilter,
     )
 
     list_display = (

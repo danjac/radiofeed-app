@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="/global/feed/rss.xslt" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/" xmlns:podaccess="https://access.acast.com/schema/1.0/" xmlns:acast="https://schema.acast.com/1.0/">
+    <channel>
+				<ttl>60</ttl>
+
+				<generator>acast.com</generator>
+
+				<title>Demain, Le Soleil Se Couchera Deux Fois</title>
+
+				<link>https://podcast.allianz.fr/allianz-demain-le-soleil-se-couchera-deux-fois/</link>
+
+				<atom:link href="https://feeds.acast.com/public/shows/867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5" rel="self" type="application/rss+xml"/>
+				<language>fr</language>
+
+				<copyright>Allianz France</copyright>
+
+				<itunes:keywords/>
+
+				<itunes:author>Allianz France</itunes:author>
+
+				<itunes:subtitle><![CDATA[Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n&apos;avancent qu&apos;à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu&apos;ils ont ...]]></itunes:subtitle>
+
+				<itunes:summary><![CDATA[Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu'ils ont décollé. Pour découvrir l'origine de ces phénomènes qui sèment la panique, Müller et Sally, un duo de choc en quête de reconnaissance, mènent une enquête internationale perturbée par la constante reconfiguration du monde. Déterminés à résoudre le mystère malgré l'adversité, le prudent Müller et l'impétueuse Sally peuvent compter sur Ana, une intelligence artificielle à l'ironie mordante, pour surmonter les catastrophes qui ne tardent pas à s'accumuler.<br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+
+				<description><![CDATA[Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu'ils ont décollé. Pour découvrir l'origine de ces phénomènes qui sèment la panique, Müller et Sally, un duo de choc en quête de reconnaissance, mènent une enquête internationale perturbée par la constante reconfiguration du monde. Déterminés à résoudre le mystère malgré l'adversité, le prudent Müller et l'impétueuse Sally peuvent compter sur Ana, une intelligence artificielle à l'ironie mordante, pour surmonter les catastrophes qui ne tardent pas à s'accumuler.<br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+
+				<itunes:explicit>false</itunes:explicit>
+
+				<itunes:owner>
+					<itunes:name>Allianz France</itunes:name>
+					<itunes:email>l.thulin@ba-ba-bam.com</itunes:email>
+				</itunes:owner>
+
+				<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+				<acast:showUrl>demain-le-soleil-se-couchera-deux-fois</acast:showUrl>
+
+			<acast:signature key="EXAMPLE" algorithm="aes-256-cbc"><![CDATA[wbG1Z7+6h9QOi+CR1Dv0uQ==]]></acast:signature>
+				<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmblLqaMBMajpJXu7yp0mzceMUa8Wm6Y8p3SVOtS1XRsdgmw/pXyWW+ul729wGfUGJVh9Nb0xR6pMaE01kSUU4oa3hbybMsJmKe5j2uIkk6EXq7NAsR6CPg6WgvMU7qJBvIVTbpPmT2nsdxWg8d8P+DdCAqDWVQZ8x4549C8O7mMiN4GNW2v5sb/yaKSrWESQlchepnpqYRe5pbbMe3OcRag=]]></acast:settings>
+
+        <acast:network id="f59f2762-b5a3-066d-ca84-51aaf5c2ef68" slug=""><![CDATA[Bababam Brand]]></acast:network>
+
+				<acast:importedFeed>https://rss.acast.com/demain-le-soleil-se-couchera-deux-fois</acast:importedFeed>
+
+				<itunes:type>serial</itunes:type>
+
+					<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/show-cover.jpg"/>
+					<image>
+						<url>https://assets.pippa.io/shows/611d241106c05e6630f406d3/show-cover.jpg</url>
+						<link>https://podcast.allianz.fr/allianz-demain-le-soleil-se-couchera-deux-fois/</link>
+						<title>Demain, Le Soleil Se Couchera Deux Fois</title>
+					</image>
+
+					<itunes:new-feed-url>https://feeds.acast.com/public/shows/867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</itunes:new-feed-url>
+
+
+				<item>
+						<title><![CDATA[Demain, Le Soleil Se Couchera Deux Fois : L'intégrale]]></title>
+
+						<itunes:title><![CDATA[Demain, Le Soleil Se Couchera Deux Fois : L'intégrale]]></itunes:title>
+
+						<pubDate>Fri, 24 Sep 2021 10:30:46 GMT</pubDate>
+
+						<itunes:duration>1:45:16</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/p/acast/s/demain-le-soleil-se-couchera-deux-fois/e/614da3143ec8840014f75c0f/media.mp3" length="101065944" type="audio/mpeg"/>
+						<guid isPermaLink="false">614da3143ec8840014f75c0f</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/demain-le-soleil-se-couchera-deux-fois-lintegrale</link>
+
+						<acast:episodeId>614da3143ec8840014f75c0f</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>demain-le-soleil-se-couchera-deux-fois-lintegrale</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tdZcw4nzNpKy8paE/xxSv+Wno2nHPLxOmQS3m1107wgqT/3i1Jw7AG8hePpITcYM4L2ZciR06TWBgPXnx1O/pIe5yefDCKL274cLIrK0wpEe55otaYwVqUCFNMVwLW6yULm7qbwLLvoy8lWrm5umdHoDXmawEJPvAO6ISBmkZhhlBd5QGnVeuG0sCxjyv6eMxH5qxjmhAYIdRF4u+pgdRvXd]]></acast:settings>
+
+
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/1632477443289-27b29f34bf249d0cae611c3105155c6a.jpeg"/>
+						<description><![CDATA[<p><strong><em>Redécouvrez Demain, Le Soleil Se Couchera Deux Fois, en version intégrale.</em></strong></p><br><p>Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu'ils ont décollé. Pour découvrir l'origine de ces phénomènes qui sèment la panique, Müller et Sally, un duo de choc en quête de reconnaissance, mènent une enquête internationale perturbée par la constante reconfiguration du monde. Déterminés à résoudre le mystère malgré l'adversité, le prudent Müller et l'impétueuse Sally peuvent compter sur Ana, une intelligence artificielle à l'ironie mordante, pour surmonter les catastrophes qui ne tardent pas à s'accumuler.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><p>Production : BABABAM</p><br><p><u>Distribution :</u></p><p>Sally J.Sally : Camille Lockhart</p><p>Jacques Muller : François Briault</p><p>ANA : Ariane Brousse</p><p>Mr. AZ : Olivier Cruveiller&nbsp;</p><p>Taxi Driver, Pilote : Nicolas Perrochet&nbsp;</p><p>Réceptionniste : Capucine Lespinas</p><p>Journaliste radio : Andréa Brusque</p><p>Yegor et Mishka Poliakoff : Miglen Mirtchev</p><p>Dr. René Rameaux : Philippe Mambon</p><p>Cheffe de bord : Dalia Bonnet&nbsp;</p><p>Hôtesse de l’air : Capucine Lespinas</p><p>Milton Hatch : Stephan Druet</p><p>Homme de Milton : Justin Blanckaert&nbsp;</p><p>Officiel : Nicolas Perrochet</p><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p><strong><em>Redécouvrez Demain, Le Soleil Se Couchera Deux Fois, en version intégrale.</em></strong></p><br><p>Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu'ils ont décollé. Pour découvrir l'origine de ces phénomènes qui sèment la panique, Müller et Sally, un duo de choc en quête de reconnaissance, mènent une enquête internationale perturbée par la constante reconfiguration du monde. Déterminés à résoudre le mystère malgré l'adversité, le prudent Müller et l'impétueuse Sally peuvent compter sur Ana, une intelligence artificielle à l'ironie mordante, pour surmonter les catastrophes qui ne tardent pas à s'accumuler.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><p>Production : BABABAM</p><br><p><u>Distribution :</u></p><p>Sally J.Sally : Camille Lockhart</p><p>Jacques Muller : François Briault</p><p>ANA : Ariane Brousse</p><p>Mr. AZ : Olivier Cruveiller&nbsp;</p><p>Taxi Driver, Pilote : Nicolas Perrochet&nbsp;</p><p>Réceptionniste : Capucine Lespinas</p><p>Journaliste radio : Andréa Brusque</p><p>Yegor et Mishka Poliakoff : Miglen Mirtchev</p><p>Dr. René Rameaux : Philippe Mambon</p><p>Cheffe de bord : Dalia Bonnet&nbsp;</p><p>Hôtesse de l’air : Capucine Lespinas</p><p>Milton Hatch : Stephan Druet</p><p>Homme de Milton : Justin Blanckaert&nbsp;</p><p>Officiel : Nicolas Perrochet</p><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title><![CDATA[Épisode 8 – 2021, L'Odyssée de l'espèce]]></title>
+
+						<itunes:title><![CDATA[Épisode 8 – 2021, L'Odyssée de l'espèce]]></itunes:title>
+
+						<pubDate>Mon, 16 Aug 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>15:30</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode8-2021-lodysseedelespece/media.mp3" length="14894463" type="audio/mpeg"/>
+						<guid isPermaLink="false">6fc3217a-0b54-4ec2-9add-dba798c08af9</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode8-2021-lodysseedelespece</link>
+
+						<acast:episodeId>6fc3217a-0b54-4ec2-9add-dba798c08af9</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode8-2021-lodysseedelespece</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tda9iCl5rsGteTwj1DhnV5HCjFPByh9Dg2vXHKbBblvrW3HR/u2W4Rk2hRGXXADCWLgCYjlmck1IHWfCFDzGPBkhXuVysGk/pvrki953mTTir/WDlAgGxlC5k6PCZTVvKiqroacK4DIXMuO5n/iO4nbCMX+noo5SLFEizE7M8vFyMtS+fr9OJbiSCWcQg45W1m8=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[ANA, Müller et Sally sont parvenus à quitter le bunker de Milton Hatch en un seul morceau. Mais un dernier défi les attend pour mener à bien leur mission&nbsp;: désactiver le satellite de Milton Hatch. Ils se rendent sur la base de lancement de Kou...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>8</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b63.jpg"/>
+						<description><![CDATA[<p>ANA, Müller et Sally sont parvenus à quitter le bunker de Milton Hatch en un seul morceau. Mais un dernier défi les attend pour mener à bien leur mission&nbsp;: désactiver le satellite de Milton Hatch. Ils se rendent sur la base de lancement de Kourou afin de monter dans la prochaine fusée en partance pour les étoiles. Le monde entier compte sur eux. Seront-ils à la hauteur&nbsp;?</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Dr. René Rameaux :</strong> Philippe Mambon&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Officiel :</strong> Nicolas Perrochet&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>ANA, Müller et Sally sont parvenus à quitter le bunker de Milton Hatch en un seul morceau. Mais un dernier défi les attend pour mener à bien leur mission&nbsp;: désactiver le satellite de Milton Hatch. Ils se rendent sur la base de lancement de Kourou afin de monter dans la prochaine fusée en partance pour les étoiles. Le monde entier compte sur eux. Seront-ils à la hauteur&nbsp;?</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Dr. René Rameaux :</strong> Philippe Mambon&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Officiel :</strong> Nicolas Perrochet&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title>Épisode 7 – Arme à Milton</title>
+
+						<itunes:title>Épisode 7 – Arme à Milton</itunes:title>
+
+						<pubDate>Mon, 09 Aug 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>14:30</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode7-armeamilton/media.mp3" length="13921454" type="audio/mpeg"/>
+						<guid isPermaLink="false">63a79566-bbb0-49cf-b85f-9af6470170ed</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode7-armeamilton</link>
+
+						<acast:episodeId>63a79566-bbb0-49cf-b85f-9af6470170ed</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode7-armeamilton</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tdb+WCCFX1sKvttwnbDN7hf0akDdkYtPp9T8eCKH/vW/00v0n8GYxLC3bthL29dF7FHYIAGEdtux4sk7cNmBhMSKo+mwfuWEukMyPFAzXGd4uV7ziptBeLM9lqfD9n4ZLX4XkXjhaE5YGFitpUe+vebr/xR4xwgDfjK9cgiqeoR+nMtjxj6+6GxavW9inMGbHQg=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Milton Hatch tient ANA, Müller et Sally à sa merci. Ils n'ont aucun moyen d'en réchapper. C'est sans compter Yegor et Mishka qui s'introduisent dans le bunker avec toute la subtilité soviétique dont ils sont capables. Milton Hatch p...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>7</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b68.jpg"/>
+						<description><![CDATA[<p>Milton Hatch tient ANA, Müller et Sally à sa merci. Ils n'ont aucun moyen d'en réchapper. C'est sans compter Yegor et Mishka qui s'introduisent dans le bunker avec toute la subtilité soviétique dont ils sont capables. Milton Hatch profite de la confusion pour déclencher l'autodestruction du bâtiment et se faire la malle. Les ennemis d'hier vont devoir s'allier s'ils ne veulent pas finir grillés.&nbsp;</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Dr. René Rameaux :</strong> Philippe Mambon&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Milton Hatch tient ANA, Müller et Sally à sa merci. Ils n'ont aucun moyen d'en réchapper. C'est sans compter Yegor et Mishka qui s'introduisent dans le bunker avec toute la subtilité soviétique dont ils sont capables. Milton Hatch profite de la confusion pour déclencher l'autodestruction du bâtiment et se faire la malle. Les ennemis d'hier vont devoir s'allier s'ils ne veulent pas finir grillés.&nbsp;</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Dr. René Rameaux :</strong> Philippe Mambon&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title><![CDATA[Épisode 6 – Confessions d'un homme assommant]]></title>
+
+						<itunes:title><![CDATA[Épisode 6 – Confessions d'un homme assommant]]></itunes:title>
+
+						<pubDate>Mon, 02 Aug 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>14:20</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode6-confessionsdunhommeassommant/media.mp3" length="13770571" type="audio/mpeg"/>
+						<guid isPermaLink="false">ec6d37ca-db2e-4309-8bdc-3ad4d34d793b</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode6-confessionsdunhommeassommant</link>
+
+						<acast:episodeId>ec6d37ca-db2e-4309-8bdc-3ad4d34d793b</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode6-confessionsdunhommeassommant</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tdamGXT+fixa6Zdpphrx51o8Fw+xkV1iaGN9KPH49zBliOUR0X/yCQkrPa1jpyd+/4Ox2NWmxdY9ybQqQLUhS7N0l8zzGHbnns7LnpJAJ+ifN+e9xCEg9vVvDRduXeijHGieEsjchZ3HHUwegEOMD1m9PuUkNLgvZc3Fro2tqaza9tDS8fKG8PYiY+sFofJi1dk=]]></acast:settings>
+
+						<itunes:subtitle>ANA, Müller et Sally ont retrouvé Milton Hatch sur son île privée. Le milliardaire les accueille avec une hospitalité bien à lui qui, si elle ne laisse pas Müller indifférent, convainc ANA et Sally de sa culpabilité. Pourtant, la terrible découverte qu...</itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>6</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b6d.jpg"/>
+						<description><![CDATA[<p>ANA, Müller et Sally ont retrouvé Milton Hatch sur son île privée. Le milliardaire les accueille avec une hospitalité bien à lui qui, si elle ne laisse pas Müller indifférent, convainc ANA et Sally de sa culpabilité. Pourtant, la terrible découverte qu'ils font au cours de la nuit va changer à jamais le cours de leur vie.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart</p><p><strong>Jacques Muller :</strong> François Briault</p><p><strong>ANA :</strong> Ariane Brousse</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>ANA, Müller et Sally ont retrouvé Milton Hatch sur son île privée. Le milliardaire les accueille avec une hospitalité bien à lui qui, si elle ne laisse pas Müller indifférent, convainc ANA et Sally de sa culpabilité. Pourtant, la terrible découverte qu'ils font au cours de la nuit va changer à jamais le cours de leur vie.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart</p><p><strong>Jacques Muller :</strong> François Briault</p><p><strong>ANA :</strong> Ariane Brousse</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title>Épisode 5 – Miltonpolis</title>
+
+						<itunes:title>Épisode 5 – Miltonpolis</itunes:title>
+
+						<pubDate>Mon, 26 Jul 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>14:23</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode5-miltonpolis/media.mp3" length="13808605" type="audio/mpeg"/>
+						<guid isPermaLink="false">3d895a12-2b5f-4910-8c54-f56b8cd99797</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode5-miltonpolis</link>
+
+						<acast:episodeId>3d895a12-2b5f-4910-8c54-f56b8cd99797</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode5-miltonpolis</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tdaZhJgg5Od983d7KbHDWQvUWsBCxOUkZgZA52RQaAMlHtm+B86eQgGyy5OY8Jyl5/9Z6oYmS2Y7arTnnxdcpluAfZzY2f+OC9zfNcqgj+eCCohcH+jBebwMAX44UkxrC2u2Vmx0HWnj3GbQmynWZAhaAUJqprsy2ljnO2j+4Z5UB57j6ZddkBDt1hC1jiPg9lI=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Milton Hatch, le célèbre milliardaire, ne serait-il pas à l'origine des phénomènes qui bouleversent le monde&nbsp;? ANA, Müller et Sally sont bien décidés à en avoir le cœur net. Ils se rendent à la Milton Tower dans le but de rencontrer l...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>5</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b72.jpg"/>
+						<description><![CDATA[<p>Milton Hatch, le célèbre milliardaire, ne serait-il pas à l'origine des phénomènes qui bouleversent le monde&nbsp;? ANA, Müller et Sally sont bien décidés à en avoir le cœur net. Ils se rendent à la Milton Tower dans le but de rencontrer l'homme le plus riche du monde. Ils ne se doutent pas que la tranquillité bureaucratique qui y règne sera de courte durée.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><p>&nbsp;</p><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Homme de Milton :</strong> Justin Blanckaert&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Milton Hatch, le célèbre milliardaire, ne serait-il pas à l'origine des phénomènes qui bouleversent le monde&nbsp;? ANA, Müller et Sally sont bien décidés à en avoir le cœur net. Ils se rendent à la Milton Tower dans le but de rencontrer l'homme le plus riche du monde. Ils ne se doutent pas que la tranquillité bureaucratique qui y règne sera de courte durée.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><p>&nbsp;</p><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Milton Hatch :</strong> Stephan Druet</p><p><strong>Homme de Milton :</strong> Justin Blanckaert&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title>Épisode 4 - Les Insubmersibles</title>
+
+						<itunes:title>Épisode 4 - Les Insubmersibles</itunes:title>
+
+						<pubDate>Mon, 19 Jul 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>13:56</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode4-lesinsubmersibles/media.mp3" length="13381451" type="audio/mpeg"/>
+						<guid isPermaLink="false">61d4f47d-17aa-4d67-a9fb-268b0e60b251</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode4-lesinsubmersibles</link>
+
+						<acast:episodeId>61d4f47d-17aa-4d67-a9fb-268b0e60b251</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode4-lesinsubmersibles</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tdYzvjO1ZWy/ie3NR1HxmGCt1juGAw/4On/vz27ToWG0Mgz7PLTe/J0d9bK61qs43fY3bXnkzgfto2SF+w6yLnHbKLH9o1LgfKTpfj6yMwI4IJnSqUpOD9wlD67C2ovWlkYz8lgjTg9dCOzcdxEvidzK2zsohhaRhCwtK6bwMlS/Fo2AgxBIJM/aUX/FtWuwRZY=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Müller et Sally sont tombés entre les griffes de Yegor et Mishka. Emprisonnés à bord d'un cargo voguant vers la Russie, ils réussissent à s'évader grâce au sens de l'orientation inégalable d'ANA. Alors que des épisodes glaciaires so...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>4</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b77.jpg"/>
+						<description><![CDATA[<p>Müller et Sally sont tombés entre les griffes de Yegor et Mishka. Emprisonnés à bord d'un cargo voguant vers la Russie, ils réussissent à s'évader grâce au sens de l'orientation inégalable d'ANA. Alors que des épisodes glaciaires soudains favorisent l'apparition d'icebergs en plein milieu de la Méditerranée, parviendront-ils à rejoindre les côtes turques sur une planche de bois trop petite pour eux&nbsp;?</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Müller et Sally sont tombés entre les griffes de Yegor et Mishka. Emprisonnés à bord d'un cargo voguant vers la Russie, ils réussissent à s'évader grâce au sens de l'orientation inégalable d'ANA. Alors que des épisodes glaciaires soudains favorisent l'apparition d'icebergs en plein milieu de la Méditerranée, parviendront-ils à rejoindre les côtes turques sur une planche de bois trop petite pour eux&nbsp;?</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title>Épisode 3 – Nous, moches et méchants</title>
+
+						<itunes:title>Épisode 3 – Nous, moches et méchants</itunes:title>
+
+						<pubDate>Mon, 12 Jul 2021 07:35:36 GMT</pubDate>
+
+						<itunes:duration>14:04</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode3-nous-mochesetmechants/media.mp3" length="13518052" type="audio/mpeg"/>
+						<guid isPermaLink="false">7e115cd5-f614-4b60-9f19-2470bc635b20</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode3-nous-mochesetmechants</link>
+
+						<acast:episodeId>7e115cd5-f614-4b60-9f19-2470bc635b20</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode3-nous-mochesetmechants</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6O95gGg1G5VX1qUALnMwOy84DIRWdD816dQkEuoT9tdbUaw7L2OVW+S8R8AKI4b1pCqPH9II5Q64U+Cn2LIG5Uwq6J5tB677TpvOWlgVbIM9QaD20aMfXP6j2xMwYMCX+OiAcvlkQGyTIPclC6OEd1OSxyx3BMvy3qZjfskJzFYEbG9Le6DGcsc3ad9c1u7JDD6xTeg7ePVR19c4s3lFrkZlDXRtvSV117Bmd3W+gpuU=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Alors qu'ANA leur a révélé qu'ils étaient victimes d'un effet placebo, Müller et Sally décident de retourner demander des comptes au Docteur Rameaux. Mais, à la place du scientifique qui a disparu, ils trouvent Yegor et Mishka Poliakoff,...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>3</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b7c.jpg"/>
+						<description><![CDATA[<p>Alors qu'ANA leur a révélé qu'ils étaient victimes d'un effet placebo, Müller et Sally décident de retourner demander des comptes au Docteur Rameaux. Mais, à la place du scientifique qui a disparu, ils trouvent Yegor et Mishka Poliakoff, des jumeaux à la botte des services de renseignements russes. ANA, Müller et Sally usent de tous les moyens pour les faire parler.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Alors qu'ANA leur a révélé qu'ils étaient victimes d'un effet placebo, Müller et Sally décident de retourner demander des comptes au Docteur Rameaux. Mais, à la place du scientifique qui a disparu, ils trouvent Yegor et Mishka Poliakoff, des jumeaux à la botte des services de renseignements russes. ANA, Müller et Sally usent de tous les moyens pour les faire parler.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p><strong>Scénario et dialogues :</strong> Cyril Legrais</p><p><strong>Réalisation : </strong>Andréa Brusque</p><p><strong>Composition musicale :</strong> Julien Boulfray&nbsp;</p><p><strong>Supervision musicale :</strong> Phantom Punch</p><br><p><strong>Production :</strong> BABABAM&nbsp;</p><p><strong>Montage et sound-design : </strong>Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p><strong>Enregistrements :</strong> L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p><strong>Sally J.Sally :</strong> Camille Lockhart,</p><p><strong>Jacques Muller :</strong> François Briault,</p><p><strong>ANA :</strong> Ariane Brousse,&nbsp;</p><p><strong>Yegor et Mishka Poliakoff : </strong>Miglen Mirtchev,&nbsp;</p><p><strong>Journaliste radio :</strong> Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title><![CDATA[Épisode 2 – L'homme qui murmurait à l'oreille du chaos]]></title>
+
+						<itunes:title><![CDATA[Épisode 2 – L'homme qui murmurait à l'oreille du chaos]]></itunes:title>
+
+						<pubDate>Mon, 05 Jul 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>14:38</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode2-lhommequimurmuraitaloreilleduchaos/media.mp3" length="14054712" type="audio/mpeg"/>
+						<guid isPermaLink="false">b9d45fb4-5b74-458c-b007-837108591b00</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode2-lhommequimurmuraitaloreilleduchaos</link>
+
+						<acast:episodeId>b9d45fb4-5b74-458c-b007-837108591b00</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode2-lhommequimurmuraitaloreilleduchaos</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6OL9STZKc6KKAydaONDE2t9VbAdmkyH89EAhi7bEjVlUUfyR/PmqirQidZNprls97BlBdR+BGn4ift2T4YjAnslg9DdR3F+YrrOPyTc6Md24TopiyEWX1G3fFJGG/voFRgyMrv/LwcCb29S3BIJxvi/6Bb+tZ4xqd7R3ZSTdigYYK4WdW2QcnK7kbKTCd1eCegc6RbJMdY3bjFh5BubwCV8Yr2JlpsTRYXwULZzQEgjU=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Après avoir échappé à une mort certaine à New York, ANA, Müller et Sally débarquent à Marseille pour rencontrer le Docteur René Rameaux, spécialiste en chaotologie, une science dont il est l'inventeur. L'homme a la solution pour mettre fin au...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>2</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b81.jpg"/>
+						<description><![CDATA[<p>Après avoir échappé à une mort certaine à New York, ANA, Müller et Sally débarquent à Marseille pour rencontrer le Docteur René Rameaux, spécialiste en chaotologie, une science dont il est l'inventeur. L'homme a la solution pour mettre fin au désordre planétaire&nbsp;: le reconfigurateur moléculaire à faisceaux quantiques divergents. Il leur propose de faire une démonstration.</p><br><p>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.&nbsp;</p><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><br><p>Production : BABABAM&nbsp;</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p>Sally J.Sally : Camille Lockhart,</p><p>Jacques Muller : François Briault,</p><p>ANA : Ariane Brousse,&nbsp;</p><p>Yegor et Mishka Poliakoff : Miglen Mirtchev,&nbsp;</p><p>Dr. René Rameaux : Philippe Mambon,&nbsp;</p><p>Cheffe de bord : Dalia Bonnet&nbsp;</p><p>Hôtesse de l’air : Capucine Lespinas</p><p>Journaliste radio : Andréa Brusque</p><br><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Après avoir échappé à une mort certaine à New York, ANA, Müller et Sally débarquent à Marseille pour rencontrer le Docteur René Rameaux, spécialiste en chaotologie, une science dont il est l'inventeur. L'homme a la solution pour mettre fin au désordre planétaire&nbsp;: le reconfigurateur moléculaire à faisceaux quantiques divergents. Il leur propose de faire une démonstration.</p><br><p>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.&nbsp;</p><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><br><p>Production : BABABAM&nbsp;</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p>Sally J.Sally : Camille Lockhart,</p><p>Jacques Muller : François Briault,</p><p>ANA : Ariane Brousse,&nbsp;</p><p>Yegor et Mishka Poliakoff : Miglen Mirtchev,&nbsp;</p><p>Dr. René Rameaux : Philippe Mambon,&nbsp;</p><p>Cheffe de bord : Dalia Bonnet&nbsp;</p><p>Hôtesse de l’air : Capucine Lespinas</p><p>Journaliste radio : Andréa Brusque</p><br><p><br></p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title>Épisode 1 – Quand Müller rencontre Sally</title>
+
+						<itunes:title>Épisode 1 – Quand Müller rencontre Sally</itunes:title>
+
+						<pubDate>Mon, 28 Jun 2021 03:00:00 GMT</pubDate>
+
+						<itunes:duration>12:49</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/episode1-quandmullerrencontresally/media.mp3" length="12308479" type="audio/mpeg"/>
+						<guid isPermaLink="false">4d5906dd-1bf8-4150-a212-897ea0bcc50e</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/episode1-quandmullerrencontresally</link>
+
+						<acast:episodeId>4d5906dd-1bf8-4150-a212-897ea0bcc50e</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>episode1-quandmullerrencontresally</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6T98zRebbkf1eyfUrTq/TOna/Rs0wjA6uKBIQbZ7AcdUW4DqXv9sghDZjAWOIwd7kvFRGBqxQmFPKM/imiSRvgHCJ/KV32EC7qj2MTv1UcVJSsdCs/4M+JyaHfd1CiyUelrxtf9IbEa/KOj3xQ11WgZM4z+6zLqQixq8zJG9ktlgET8W+TCcjOdlXg4/TBLmnR/Y3j3VbMwQdcDSKUqm88qZSLKZzXY2OtWC1E/uE44U=]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Le monde est plongé dans le chaos par une succession de phénomènes absurdes. Réunis pour le meilleur et pour le pire, les agents Müller et Sally sont chargés de mener l'enquête pour comprendre l'origine de ces perturbations et y mettre fin. I...]]></itunes:subtitle>
+
+						<itunes:episodeType>full</itunes:episodeType>
+
+
+
+						<itunes:episode>1</itunes:episode>
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b86.jpg"/>
+						<description><![CDATA[<p>Le monde est plongé dans le chaos par une succession de phénomènes absurdes. Réunis pour le meilleur et pour le pire, les agents Müller et Sally sont chargés de mener l'enquête pour comprendre l'origine de ces perturbations et y mettre fin. Ils pourront compter sur l'aide d'ANA, une intelligence artificielle un brin sarcastique.</p><br><p>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.&nbsp;</p><br><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><br><p>Production : BABABAM&nbsp;</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p>Sally J.Sally : Camille Lockhart,</p><p>Jacques Muller : François Briault,</p><p>ANA : Ariane Brousse,&nbsp;</p><p>Mr. AZ : Olivier Cruveiller&nbsp;</p><p>Taxi Driver, Pilote : Nicolas Perrochet&nbsp;</p><p>Réceptionniste : Capucine Lespinas</p><p>Journaliste radio : Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Le monde est plongé dans le chaos par une succession de phénomènes absurdes. Réunis pour le meilleur et pour le pire, les agents Müller et Sally sont chargés de mener l'enquête pour comprendre l'origine de ces perturbations et y mettre fin. Ils pourront compter sur l'aide d'ANA, une intelligence artificielle un brin sarcastique.</p><br><p>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.&nbsp;</p><br><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><br><p>Production : BABABAM&nbsp;</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><br><p>Distribution :&nbsp;</p><p>Sally J.Sally : Camille Lockhart,</p><p>Jacques Muller : François Briault,</p><p>ANA : Ariane Brousse,&nbsp;</p><p>Mr. AZ : Olivier Cruveiller&nbsp;</p><p>Taxi Driver, Pilote : Nicolas Perrochet&nbsp;</p><p>Réceptionniste : Capucine Lespinas</p><p>Journaliste radio : Andréa Brusque</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+				<item>
+						<title>Bande-Annonce</title>
+
+						<itunes:title>Bande-Annonce</itunes:title>
+
+						<pubDate>Fri, 21 May 2021 19:30:00 GMT</pubDate>
+
+						<itunes:duration>1:24</itunes:duration>
+
+						<enclosure url="https://sphinx.acast.com/demain-le-soleil-se-couchera-deux-fois/bande-annonce/media.mp3" length="3387908" type="audio/mpeg"/>
+						<guid isPermaLink="false">4595d025-86ba-4d64-9dd0-a0005db3b3a9</guid>
+						<itunes:explicit>false</itunes:explicit>
+
+						<link>https://shows.acast.com/demain-le-soleil-se-couchera-deux-fois/episodes/bande-annonce</link>
+
+						<acast:episodeId>4595d025-86ba-4d64-9dd0-a0005db3b3a9</acast:episodeId>
+						<acast:showId>867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5</acast:showId>
+
+						<acast:episodeUrl>bande-annonce</acast:episodeUrl>
+
+						<acast:settings><![CDATA[FYjHyZbXWHZ7gmX8Pp1rmfwL2jaMW9OfVjpl1A481t14TmPPNBt/QBdFV0cjQSq6XFyOdri0ZhFGuhKx1eUO5KrQ2+eNXqz4xaQwU5B3UccN55SO4PaQDITBGP/SV8sI8XVfyer4eb0qIBMh9nQbhWDg7zbSgh3b5m2pCaGHrn5dzTrumAWMXIiX+8xY11cIiSSo/LkhuG80j9RLN87e0cc0LGly19l8cuOkISQZ+xWO+RtMWjTcAHBR7VLHLBgrOr3HRFL4L+fG3QYj95/Cjc2eyQylJaE5DE3gq5tWaQTFGYnQdvL4IwuUZf3ud9SZ]]></acast:settings>
+
+						<itunes:subtitle><![CDATA[Découvrez prochainement Demain, Le Soleil Se Couchera Deux Fois la première fiction audio Allianz.Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à re...]]></itunes:subtitle>
+
+						<itunes:episodeType>trailer</itunes:episodeType>
+
+
+
+
+
+
+
+							<itunes:image href="https://assets.pippa.io/shows/611d241106c05e6630f406d3/611d24193142190013721b8b.jpg"/>
+						<description><![CDATA[<p>Découvrez prochainement Demain, Le Soleil Se Couchera Deux Fois la première fiction audio Allianz.</p><br><p>Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu'ils ont décollé. Pour découvrir l'origine de ces phénomènes qui sèment la panique, Müller et Sally, un duo de choc en quête de reconnaissance, mènent une enquête internationale perturbée par la constante reconfiguration du monde. Déterminés à résoudre le mystère malgré l'adversité, le prudent Müller et l'impétueuse Sally peuvent compter sur Ana, une intelligence artificielle à l'ironie mordante, pour surmonter les catastrophes qui ne tardent pas à s'accumuler.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><p>Production : BABABAM</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></description>
+						<itunes:summary><![CDATA[<p>Découvrez prochainement Demain, Le Soleil Se Couchera Deux Fois la première fiction audio Allianz.</p><br><p>Du jour au lendemain, le monde devient totalement imprévisible : les toilettes changent constamment de place, les voitures n'avancent qu'à reculons, les chiens miaulent et nul ne peut dire où les avions vont atterrir une fois qu'ils ont décollé. Pour découvrir l'origine de ces phénomènes qui sèment la panique, Müller et Sally, un duo de choc en quête de reconnaissance, mènent une enquête internationale perturbée par la constante reconfiguration du monde. Déterminés à résoudre le mystère malgré l'adversité, le prudent Müller et l'impétueuse Sally peuvent compter sur Ana, une intelligence artificielle à l'ironie mordante, pour surmonter les catastrophes qui ne tardent pas à s'accumuler.</p><br><p><em>Demain, le Soleil se couchera deux fois est une fiction audio Allianz.</em>&nbsp;</p><p>Scénario et dialogues : Cyril Legrais</p><p>Réalisation : Andréa Brusque</p><p>Composition musicale : Julien Boulfray&nbsp;</p><p>Supervision musicale : Phantom Punch</p><p>Montage et sound-design : Célia Brondeau et Jean-Gabriel Rassat&nbsp;</p><p>Enregistrements : L’Arrière Boutique Studio</p><p>Production : BABABAM</p><br /><hr><p style='color:grey; font-size:0.75em;'> Hébergé par Acast. Visitez <a style='color:grey;' target='_blank' rel='noopener noreferrer' href='https://acast.com/privacy'>acast.com/privacy</a> pour plus d'informations.</p>]]></itunes:summary>
+					</item>
+
+
+			<itunes:category text="Fiction">
+					<itunes:category text="Comedy Fiction"/>
+			</itunes:category>
+    </channel>
+</rss>

@@ -4,7 +4,7 @@ from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.models import Subscription
+from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -280,6 +280,18 @@ class TestPodcastEpisodes:
         assert200(response)
 
         assert len(response.context["page"].object_list) == 30
+        assert response.context["ordering"] == "desc"
+
+    @pytest.mark.django_db
+    def test_serial(self, client, auth_user):
+        podcast = PodcastFactory(podcast_type=Podcast.PodcastType.SERIAL)
+        EpisodeFactory.create_batch(33, podcast=podcast)
+
+        response = client.get(podcast.get_episodes_url())
+        assert200(response)
+
+        assert len(response.context["page"].object_list) == 30
+        assert response.context["ordering"] == "asc"
 
     @pytest.mark.django_db
     def test_no_episodes(self, client, auth_user, podcast):

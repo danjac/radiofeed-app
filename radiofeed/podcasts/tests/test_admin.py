@@ -10,6 +10,7 @@ from radiofeed.podcasts.admin import (
     CategoryAdmin,
     ParserErrorFilter,
     PodcastAdmin,
+    PodcastTypeFilter,
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
@@ -217,6 +218,42 @@ class TestParserErrorFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert duplicate in qs
+
+
+class TestPodcastTypeFilter:
+    @pytest.fixture
+    def serial(self):
+        return PodcastFactory(podcast_type=Podcast.PodcastType.SERIAL)
+
+    @pytest.mark.django_db
+    def test_all(self, podcasts, podcast_admin, req, serial):
+        f = PodcastTypeFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_serial(self, podcasts, podcast_admin, req, serial):
+        f = PodcastTypeFilter(
+            req,
+            {"podcast_type": [Podcast.PodcastType.SERIAL]},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert serial in qs
+
+    @pytest.mark.django_db
+    def test_episodic(self, podcasts, podcast_admin, req, serial):
+        f = PodcastTypeFilter(
+            req,
+            {"podcast_type": [Podcast.PodcastType.EPISODIC]},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert serial not in qs
 
 
 class TestScheduledFilter:

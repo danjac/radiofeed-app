@@ -49,6 +49,7 @@ class Episode(models.Model):
     website = models.URLField(max_length=2083, blank=True)
 
     episode_type = models.CharField(max_length=30, default="full")
+
     episode = models.IntegerField(null=True, blank=True)
     season = models.IntegerField(null=True, blank=True)
 

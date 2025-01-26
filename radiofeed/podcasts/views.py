@@ -141,7 +141,8 @@ def episodes(
     podcast = _get_podcast_or_404(podcast_id)
 
     episodes = podcast.episodes.select_related("podcast")
-    ordering = request.GET.get("order", "desc")
+    default_ordering = "asc" if podcast.is_serial() else "desc"
+    ordering = request.GET.get("order", default_ordering)
 
     if request.search:
         episodes = episodes.search(request.search.value).order_by(
