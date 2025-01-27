@@ -6,6 +6,7 @@ from typing import Annotated, Any, ClassVar, Final, TypeVar
 
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
+from django.db.models import TextChoices
 from django.utils import timezone
 from pydantic import (
     AfterValidator,
@@ -96,6 +97,17 @@ def _default_if_none(value: Any, *, default: T) -> T:
     return default if value is None else value
 
 
+def _one_of_choices(
+    value: str | None,
+    *,
+    choices: type[TextChoices],
+    default: str,
+) -> str:
+    if (value := (value or "").casefold()) in choices:
+        return value
+    return default
+
+
 def _url(value: str | None) -> str:
     if value:
         if not value.startswith("http"):
@@ -120,6 +132,28 @@ Explicit = Annotated[
 
 EmptyIfNone = Annotated[
     str, BeforeValidator(functools.partial(_default_if_none, default=""))
+]
+
+EpisodeType = Annotated[
+    str,
+    BeforeValidator(
+        functools.partial(
+            _one_of_choices,
+            choices=Episode.EpisodeType,
+            default=Episode.EpisodeType.FULL,
+        )
+    ),
+]
+
+PodcastType = Annotated[
+    str,
+    BeforeValidator(
+        functools.partial(
+            _one_of_choices,
+            choices=Podcast.PodcastType,
+            default=Podcast.PodcastType.EPISODIC,
+        )
+    ),
 ]
 
 
@@ -151,7 +185,7 @@ class Item(BaseModel):
     season: PgInteger = None
     episode: PgInteger = None
 
-    episode_type: str = Episode.EpisodeType.FULL
+    episode_type: EpisodeType = Episode.EpisodeType.FULL
 
     @field_validator("categories", mode="after")
     @classmethod
@@ -169,15 +203,6 @@ class Item(BaseModel):
         if value > timezone.now():
             raise ValueError("pub_date cannot be in future")
         return value
-
-    @field_validator("episode_type", mode="before")
-    @classmethod
-    def validate_episode_type(cls, value: Any) -> str:
-        """Validate episode type."""
-        value = (value or "").casefold()
-        if value in Episode.EpisodeType:
-            return value
-        return Episode.EpisodeType.FULL
 
     @field_validator("media_url", mode="after")
     @classmethod
@@ -259,16 +284,7 @@ class Feed(BaseModel):
 
     categories: set[str] = Field(default_factory=set)
 
-    podcast_type: str = Podcast.PodcastType.EPISODIC
-
-    @field_validator("podcast_type", mode="before")
-    @classmethod
-    def validate_podcast_type(cls, value: Any) -> str:
-        """Validate podcast type."""
-        value = (value or "").casefold()
-        if value in Podcast.PodcastType:
-            return value
-        return Podcast.PodcastType.EPISODIC
+    podcast_type: PodcastType = Podcast.PodcastType.EPISODIC
 
     @field_validator("language", mode="before")
     @classmethod
