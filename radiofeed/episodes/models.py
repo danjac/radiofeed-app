@@ -32,6 +32,11 @@ class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
 class Episode(models.Model):
     """Individual podcast episode."""
 
+    class EpisodeType(models.TextChoices):
+        FULL = "full", "Full episode"
+        TRAILER = "trailer", "Trailer"
+        BONUS = "bonus", "Bonus"
+
     podcast = models.ForeignKey(
         "podcasts.Podcast",
         on_delete=models.CASCADE,
@@ -48,7 +53,11 @@ class Episode(models.Model):
 
     website = models.URLField(max_length=2083, blank=True)
 
-    episode_type = models.CharField(max_length=30, default="full")
+    episode_type = models.CharField(
+        max_length=12,
+        choices=EpisodeType.choices,
+        default=EpisodeType.FULL,
+    )
 
     episode = models.IntegerField(null=True, blank=True)
     season = models.IntegerField(null=True, blank=True)
@@ -117,14 +126,6 @@ class Episode(models.Model):
         """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
 
-    def get_episode_type(self) -> str | None:
-        """Get the episode type (if not 'full')"""
-        return (
-            self.episode_type
-            if self.episode_type and self.episode_type.casefold() != "full"
-            else None
-        )
-
     def get_file_size(self) -> str | None:
         """Returns human readable file size e.g. 30MB.
 
@@ -168,6 +169,18 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
+
+    def is_full_episode(self) -> bool:
+        """Check if episode type is 'full'."""
+        return self.episode_type == self.EpisodeType.FULL
+
+    def is_bonus_episode(self) -> bool:
+        """Check if episode type is 'bonus'."""
+        return self.episode_type == self.EpisodeType.BONUS
+
+    def is_trailer(self) -> bool:
+        """Check if episode type is 'trailer'."""
+        return self.episode_type == self.EpisodeType.TRAILER
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):

@@ -16,6 +16,7 @@ from pydantic import (
     model_validator,
 )
 
+from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.podcasts.models import Podcast
 
@@ -125,8 +126,6 @@ EmptyIfNone = Annotated[
 class Item(BaseModel):
     """Individual item or episode in RSS or Atom podcast feed."""
 
-    DEFAULT_EPISODE_TYPE: ClassVar = "full"
-
     guid: str = Field(..., min_length=1)
     title: str = Field(..., min_length=1)
 
@@ -152,12 +151,7 @@ class Item(BaseModel):
     season: PgInteger = None
     episode: PgInteger = None
 
-    episode_type: Annotated[
-        str,
-        BeforeValidator(
-            functools.partial(_default_if_none, default=DEFAULT_EPISODE_TYPE),
-        ),
-    ] = DEFAULT_EPISODE_TYPE
+    episode_type: str = Episode.EpisodeType.FULL
 
     @field_validator("categories", mode="after")
     @classmethod
@@ -175,6 +169,15 @@ class Item(BaseModel):
         if value > timezone.now():
             raise ValueError("pub_date cannot be in future")
         return value
+
+    @field_validator("episode_type", mode="before")
+    @classmethod
+    def validate_episode_type(cls, value: Any) -> str:
+        """Validate episode type."""
+        value = (value or "").casefold()
+        if value in Episode.EpisodeType:
+            return value
+        return Episode.EpisodeType.FULL
 
     @field_validator("media_url", mode="after")
     @classmethod

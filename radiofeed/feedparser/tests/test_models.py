@@ -4,6 +4,7 @@ import pytest
 from django.utils import timezone
 from pydantic import ValidationError
 
+from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.feedparser.tests.factories import FeedFactory, ItemFactory
 
@@ -37,6 +38,14 @@ class TestItem:
         item = Item(**ItemFactory(length="1000"))
         assert item.length == 1000
 
+    def test_trailer(self):
+        item = Item(**ItemFactory(episode_type=Episode.EpisodeType.TRAILER))
+        assert item.episode_type == "trailer"
+
+    def test_bonus(self):
+        item = Item(**ItemFactory(episode_type=Episode.EpisodeType.BONUS))
+        assert item.episode_type == "bonus"
+
     def test_default_keywords_from_categories(self):
         item = Item(**ItemFactory(categories=["Gaming", "Hobbies", "Video Games"]))
         assert set(item.keywords.split()) == {"gaming", "hobbies", "video", "games"}
@@ -44,9 +53,9 @@ class TestItem:
     def test_defaults(self):
         item = Item(**ItemFactory())
         assert item.explicit is False
-        assert item.episode_type == "full"
         assert item.categories == set()
         assert item.keywords == ""
+        assert item.episode_type == "full"
 
     @pytest.mark.parametrize(
         ("value", "expected"),

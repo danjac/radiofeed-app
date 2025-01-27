@@ -51,9 +51,10 @@
                    class="link"
                    title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</a>
             </h2>
-            {% with episode_type=episode.get_episode_type episode_num=episode.episode season=episode.season %}
+            {% with episode_num=episode.episode season=episode.season %}
                 <div class="flex flex-wrap items-center space-x-3 font-semibold">
-                    {% if episode_type %}<span>{{ episode_type|capfirst }}</span>{% endif %}
+                    {% if episode.is_trailer %}<span>Trailer</span>{% endif %}
+                    {% if episode.is_bonus_episode %}<span>Bonus episode</span>{% endif %}
                     {% if episode_num %}<span>Episode {{ episode_num }}</span>{% endif %}
                     {% if season %}<span>Season {{ season }}</span>{% endif %}
                     <a href="{{ podcast.get_episodes_url }}"
