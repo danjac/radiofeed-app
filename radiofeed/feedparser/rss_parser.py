@@ -119,7 +119,7 @@ class _RSSParser:
                 "episode": self._parser.value(item, "itunes:episode/text()"),
                 "episode_type": self._parser.value(
                     item,
-                    "itunes:episodetype/text()",
+                    "itunes:episodeType/text()",
                 ),
                 "explicit": self._parser.value(
                     item,
