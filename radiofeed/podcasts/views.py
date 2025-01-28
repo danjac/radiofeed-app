@@ -1,3 +1,4 @@
+import contextlib
 from typing import cast
 
 from django.conf import settings
@@ -15,7 +16,7 @@ from radiofeed.paginator import render_pagination
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
-from radiofeed.podcasts.models import Category, Podcast, Season
+from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.users.models import User
 
 
@@ -142,8 +143,8 @@ def episodes(
 
     episodes = podcast.episodes.select_related("podcast")
 
-    current_season: Season | None = None
     ordering: str = "desc"
+    season: int | None = None
 
     if request.search:
         episodes = episodes.search(request.search.value).order_by(
@@ -154,12 +155,9 @@ def episodes(
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = request.GET.get("order", default_ordering)
 
-        if (season := request.GET.get("season", "")) and season.isdigit():
-            episodes = episodes.filter(season=season)
-            current_season = Season(
-                label=f"Season {season}",
-                url=request.get_full_path(),
-            )
+        with contextlib.suppress(ValueError):
+            if season := int(request.GET.get("season", "")):
+                episodes = episodes.filter(season=season)
 
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
@@ -169,8 +167,8 @@ def episodes(
         episodes,
         {
             "podcast": podcast,
-            "current_season": current_season,
             "ordering": ordering,
+            "season": season,
         },
     )
 

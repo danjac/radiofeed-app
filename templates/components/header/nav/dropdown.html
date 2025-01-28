@@ -45,18 +45,16 @@
     >
         <ul class="py-1 list-none" aria-labelledby="{{ id }}-btn">
             {% for item in items %}
-                {% if item.url != current.url %}
-                    <li>
-                        <a href="{{ item.url }}"
-                           tabindex="{{ forloop.counter }}"
-                           class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
-                            {% if item.icon %}
-                                {% heroicon_mini item.icon class="mr-2" %}
-                            {% endif %}
-                            {{ item.label }}
-                        </a>
-                    </li>
-                {% endif %}
+                <li>
+                    <a href="{{ item.url }}"
+                       tabindex="{{ forloop.counter }}"
+                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
+                        {% if item.icon %}
+                            {% heroicon_mini item.icon class="mr-2" %}
+                        {% endif %}
+                        {{ item.label }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     </div>

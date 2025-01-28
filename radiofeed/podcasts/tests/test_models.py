@@ -251,19 +251,6 @@ class TestPodcastModel:
         assert podcast.cleaned_description == "Test & Code"
 
     @pytest.mark.django_db
-    def test_seasons_none(self, podcast):
-        assert podcast.seasons == []
-
-    @pytest.mark.django_db
-    def test_seasons(self, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast, season=1)
-        EpisodeFactory.create_batch(2, podcast=podcast, season=2)
-        assert len(podcast.seasons) == 3
-        assert podcast.seasons[0]["label"] == "All Seasons"
-        assert podcast.seasons[1]["label"] == "Season 1"
-        assert podcast.seasons[2]["label"] == "Season 2"
-
-    @pytest.mark.django_db
     def test_has_similar_none(self, podcast):
         assert podcast.has_similar is False
 

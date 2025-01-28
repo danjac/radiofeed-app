@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load cache partials %}
+{% load get_podcast_seasons from podcasts %}
+
 {% block title %}
     {{ block.super }} | {{ podcast.cleaned_title }} | Episodes
 {% endblock title %}
@@ -8,23 +10,24 @@
     {% cache 300 podcast-detail-episodes request.get_full_path %}
         <c-podcasts.detail :podcast="podcast" current="episodes">
             <c-slot name="nav">
-                {% with seasons=podcast.seasons num_episodes=podcast.num_episodes %}
-                    {% if request.search or current_season or num_episodes > page.page_size %}
+                {% get_podcast_seasons podcast season as seasons %}
+                {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
+                    {% if request.search or current_season or num_episodes > page_size %}
                         <c-header.nav class="justify-center items-center space-y-3 sm:flex sm:justify-start sm:space-y-0 sm:space-x-3 md:justify-end">
                             {% if request.search %}
                                 <c-header.nav.item>
                                     <c-search.button url="{% url 'episodes:search_episodes' %}"
                                                      label="Search All Episodes" />
                                 </c-header.nav.item>
-                            {% elif current_season and seasons %}
+                            {% elif seasons.current %}
                                 <c-header.nav.item>
-                                    <c-header.nav.dropdown :items="seasons"
-                                                           :current="current_season"
+                                    <c-header.nav.dropdown :items="seasons.items"
+                                                           :current="seasons.current"
                                                            id="seasons-dropdown"
                                     />
                                 </c-header.nav.item>
                             {% endif %}
-                            {% if not current_season and not request.search and num_episodes > page.page_size %}
+                            {% if not seasons.current and not request.search and num_episodes > page_size %}
                                 <c-header.nav.item>
                                     {% if ordering == "asc" %}
                                         <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
@@ -35,7 +38,7 @@
                                     {% endif %}
                                 </c-header.nav.item>
                             {% endif %}
-                            {% if request.search or num_episodes > page.page_size %}
+                            {% if request.search or num_episodes > page_size %}
                                 <c-header.nav.item>
                                     <c-search.form placeholder="Search: Podcast" clearable />
                                 </c-header.nav.item>
