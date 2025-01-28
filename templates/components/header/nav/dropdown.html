@@ -24,18 +24,18 @@
          x-transition.scale.origin.top
          x-ref="dropdown"
          x-init="$watch('showDropdown', () => $nextTick(() => checkSize()))"
-        {# djlint:off #}
+        {# fmt:off #}
          x-data="{
-                 isLeft: false,
-                 isRight: false,
-                 checkSize() {
-                 const windowWidth = document.body.getBoundingClientRect().width
-                 const boxRight = this.$refs.dropdown.getBoundingClientRect().right
-                 this.isLeft = windowWidth < boxRight
-                 this.isRight = !this.isLeft
-                 }
-                 }"
-        {# djlint:on #}
+             isLeft: false,
+             isRight: false,
+             checkSize() {
+                 const windowWidth = document.body.getBoundingClientRect().width;
+                 const boxRight = this.$refs.dropdown.getBoundingClientRect().right;
+                 this.isLeft = windowWidth < boxRight;
+                 this.isRight = !this.isLeft;
+             }
+        }"
+        {# fmt:on #}
          @click.away="showDropdown = false"
          @keydown.escape.window="showDropdown = false"
          @keydown.tab.prevent="showDropdown = false"
