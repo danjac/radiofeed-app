@@ -12,7 +12,8 @@
                     {% if request.search %}
                         <c-header.nav.item>
                             <c-search.button url="{% url 'podcasts:search_podcasts' %}"
-                                             label="Search All Podcasts"
+                                             title="Search All Podcasts"
+                                             label="Search All"
                             />
                         </c-header.nav.item>
                     {% endif %}

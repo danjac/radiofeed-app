@@ -17,7 +17,8 @@
                             {% if request.search %}
                                 <c-header.nav.item>
                                     <c-search.button url="{% url 'episodes:search_episodes' %}"
-                                                     label="Search All Episodes" />
+                                                     title="Search All Episodes"
+                                                     label="Search All" />
                                 </c-header.nav.item>
                             {% elif seasons.current %}
                                 <c-header.nav.item>
