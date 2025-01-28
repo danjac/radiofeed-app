@@ -10,7 +10,7 @@
             <c-slot name="nav">
                 {% with seasons=podcast.seasons has_other_pages=page.has_other_pages %}
                     {% if has_other_pages or request.search or seasons %}
-                        <c-header.nav>
+                        <c-header.nav class="justify-center items-center space-y-3 sm:flex sm:justify-start sm:space-y-0 sm:space-x-3 md:justify-end">
                             {% if request.search %}
                                 <c-header.nav.item>
                                     <c-search.button url="{% url 'episodes:search_episodes' %}"
@@ -35,11 +35,11 @@
                                                 Oldest First</a>
                                         {% endif %}
                                     </c-header.nav.item>
+                                    <c-header.nav.item>
+                                        <c-search.form placeholder="Search: Podcast" clearable />
+                                    </c-header.nav.item>
                                 {% endif %}
                             {% endif %}
-                            <c-header.nav.item>
-                                <c-search.form placeholder="Search: Podcast" clearable />
-                            </c-header.nav.item>
                         </c-header.nav>
                     {% endif %}
                 {% endwith %}
