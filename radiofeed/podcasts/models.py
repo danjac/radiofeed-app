@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import ClassVar, Final
+from typing import ClassVar, Final, TypedDict
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -16,6 +16,13 @@ from django.utils.text import slugify
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
+
+
+class Season(TypedDict):
+    """Season dictionary."""
+
+    label: str
+    url: str
 
 
 class CategoryQuerySet(models.QuerySet):
@@ -342,6 +349,28 @@ class Podcast(models.Model):
     def num_episodes(self) -> int:
         """Returns number of episodes."""
         return self.episodes.count()
+
+    @cached_property
+    def seasons(self) -> list[Season]:
+        """Returns list of seasons."""
+        if (
+            seasons := self.episodes.filter(season__isnull=False)
+            .values_list("season", flat=True)
+            .order_by("season")
+            .distinct()
+        ):
+            episodes_url = self.get_episodes_url()
+            return [
+                Season(label="All Seasons", url=episodes_url),
+                *[
+                    Season(
+                        label=f"Season {season}",
+                        url=f"{episodes_url}?season={season}",
+                    )
+                    for season in seasons
+                ],
+            ]
+        return []
 
     @cached_property
     def has_similar(self) -> bool:

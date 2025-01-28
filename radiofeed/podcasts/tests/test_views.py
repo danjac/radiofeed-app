@@ -283,6 +283,17 @@ class TestPodcastEpisodes:
         assert response.context["ordering"] == "desc"
 
     @pytest.mark.django_db
+    def test_get_episodes_for_season(self, client, auth_user, podcast):
+        EpisodeFactory.create_batch(20, podcast=podcast, season=1)
+        EpisodeFactory.create_batch(10, podcast=podcast, season=2)
+
+        response = client.get(f"{podcast.get_episodes_url()}?season=1")
+        assert200(response)
+
+        assert len(response.context["page"].object_list) == 20
+        assert response.context["ordering"] == "desc"
+
+    @pytest.mark.django_db
     def test_serial(self, client, auth_user):
         podcast = PodcastFactory(podcast_type=Podcast.PodcastType.SERIAL)
         EpisodeFactory.create_batch(33, podcast=podcast)

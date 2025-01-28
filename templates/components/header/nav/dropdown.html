@@ -10,7 +10,9 @@
             @keyup.escape.window="showDropdown=false"
             class="flex items-center py-1 px-2 rounded-lg border sm:justify-end link md:hover:bg-transparent focus:ring-3 focus:outline-hidden">
         <span class="inline-flex items-center">
-            {% heroicon_mini current.icon class="mr-2" %}
+            {% if current.icon %}
+                {% heroicon_mini current.icon class="mr-2" %}
+            {% endif %}
             {{ current.label }}
         </span>
         {% heroicon_mini "chevron-down" class="ml-3" %}
@@ -25,7 +27,9 @@
                     <a href="{{ item.url }}"
                        tabindex="{{ forloop.counter }}"
                        class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
-                        {% heroicon_mini item.icon class="mr-2" %}
+                        {% if item.icon %}
+                            {% heroicon_mini item.icon class="mr-2" %}
+                        {% endif %}
                         {{ item.label }}
                     </a>
                 </li>
