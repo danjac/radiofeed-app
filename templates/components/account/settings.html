@@ -1,4 +1,5 @@
-{% load account_settings heroicons %}
+{% load heroicons %}
+{% load get_account_settings from users %}
 <c-vars current />
 {% get_account_settings current as settings %}
 <c-header>

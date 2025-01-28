@@ -1,7 +1,7 @@
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.users.templatetags.account_settings import get_account_settings
+from radiofeed.users.templatetags.users import get_account_settings
 
 
 class MockGoogleAdapter:
@@ -18,7 +18,7 @@ class TestGetAccountSettings:
     @pytest.mark.django_db
     def test_get_account_settings(self, rf, mocker, user):
         mocker.patch(
-            "radiofeed.users.templatetags.account_settings.get_adapter",
+            "radiofeed.users.templatetags.users.get_adapter",
             return_value=MockEmptyAdapter(),
         )
 
@@ -31,7 +31,7 @@ class TestGetAccountSettings:
     @pytest.mark.django_db
     def test_connections(self, rf, mocker, user):
         mocker.patch(
-            "radiofeed.users.templatetags.account_settings.get_adapter",
+            "radiofeed.users.templatetags.users.get_adapter",
             return_value=MockGoogleAdapter(),
         )
         req = rf.get("/")

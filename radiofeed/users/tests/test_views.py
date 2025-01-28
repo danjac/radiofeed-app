@@ -42,7 +42,7 @@ class Test3rdPartyAuthTemplates:
         req.user = user
 
         mocker.patch(
-            "radiofeed.users.templatetags.account_settings.get_adapter",
+            "radiofeed.users.templatetags.users.get_adapter",
             return_value=MockGoogleAdapter(),
         )
         response = TemplateResponse(req, template)

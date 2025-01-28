@@ -1,7 +1,7 @@
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.templatetags.audio_player import get_media_metadata
+from radiofeed.episodes.templatetags.episodes import get_media_metadata
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
