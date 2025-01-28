@@ -1,4 +1,3 @@
-import contextlib
 from typing import cast
 
 from django.conf import settings
@@ -154,16 +153,13 @@ def episodes(
     else:
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = request.GET.get("order", default_ordering)
-        season: int | None = None
 
-        with contextlib.suppress(ValueError):
-            season = int(request.GET.get("season", ""))
-
-        if season:
+        if (season := request.GET.get("season", "")) and season.isdigit():
             episodes = episodes.filter(season=season)
-            current_season = Season(label=f"Season {season}", url="")
-        else:
-            current_season = Season(label="All Seasons", url="")
+            current_season = Season(
+                label=f"Season {season}",
+                url=request.get_full_path(),
+            )
 
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
@@ -173,7 +169,7 @@ def episodes(
         episodes,
         {
             "podcast": podcast,
-            "season": current_season,
+            "current_season": current_season,
             "ordering": ordering,
         },
     )

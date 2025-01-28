@@ -8,37 +8,37 @@
     {% cache 300 podcast-detail-episodes request.get_full_path %}
         <c-podcasts.detail :podcast="podcast" current="episodes">
             <c-slot name="nav">
-                {% with seasons=podcast.seasons has_other_pages=page.has_other_pages %}
-                    {% if has_other_pages or request.search or seasons %}
+                {% with seasons=podcast.seasons num_episodes=podcast.num_episodes %}
+                    {% if request.search or current_season or num_episodes > page.page_size %}
                         <c-header.nav class="justify-center items-center space-y-3 sm:flex sm:justify-start sm:space-y-0 sm:space-x-3 md:justify-end">
                             {% if request.search %}
                                 <c-header.nav.item>
                                     <c-search.button url="{% url 'episodes:search_episodes' %}"
                                                      label="Search All Episodes" />
                                 </c-header.nav.item>
-                            {% else %}
-                                {% if seasons %}
-                                    <c-header.nav.item>
-                                        <c-header.nav.dropdown :items="seasons"
-                                                               :current="season"
-                                                               id="seasons-dropdown"
-                                        />
-                                    </c-header.nav.item>
-                                {% endif %}
-                                {% if has_other_pages %}
-                                    <c-header.nav.item>
-                                        {% if ordering == "asc" %}
-                                            <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
-                                                Newest First</a>
-                                        {% else %}
-                                            <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
-                                                Oldest First</a>
-                                        {% endif %}
-                                    </c-header.nav.item>
-                                    <c-header.nav.item>
-                                        <c-search.form placeholder="Search: Podcast" clearable />
-                                    </c-header.nav.item>
-                                {% endif %}
+                            {% elif current_season and seasons %}
+                                <c-header.nav.item>
+                                    <c-header.nav.dropdown :items="seasons"
+                                                           :current="current_season"
+                                                           id="seasons-dropdown"
+                                    />
+                                </c-header.nav.item>
+                            {% endif %}
+                            {% if not current_season and not request.search and num_episodes > page.page_size %}
+                                <c-header.nav.item>
+                                    {% if ordering == "asc" %}
+                                        <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
+                                            Newest First</a>
+                                    {% else %}
+                                        <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
+                                            Oldest First</a>
+                                    {% endif %}
+                                </c-header.nav.item>
+                            {% endif %}
+                            {% if request.search or num_episodes > page.page_size %}
+                                <c-header.nav.item>
+                                    <c-search.form placeholder="Search: Podcast" clearable />
+                                </c-header.nav.item>
                             {% endif %}
                         </c-header.nav>
                     {% endif %}
