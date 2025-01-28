@@ -1,8 +1,9 @@
 {% load heroicons %}
-<c-vars url label />
+<c-vars url label title />
 <button class="inline-flex items-center btn btn-default"
         tabindex="0"
         role="link"
+        title="{{ title|default:label }}"
         {# fmt:off #}
         x-data="{
             url: '{{ url|escapejs }}',
