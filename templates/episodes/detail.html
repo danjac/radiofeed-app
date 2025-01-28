@@ -51,21 +51,19 @@
                    class="link"
                    title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</a>
             </h2>
-            <div class="flex flex-wrap items-center space-x-3 font-semibold">
-                {% if episode.is_trailer %}
-                    <span>Trailer</span>
-                {% elif episode.is_bonus_episode %}
-                    <span>Bonus</span>
-                {% elif episode.episode %}
-                    <span>Episode {{ episode.episode }}</span>
-                {% endif %}
-                {% if episode.season %}
-                    <span>Season {{ episode.season }}</span>
-                {% endif %}
-                <a href="{{ podcast.get_episodes_url }}"
-                   title="See all episodes for {{ podcast.cleaned_title }}"
-                   class="inline-block link">See all episodes</a>
-            </div>
+            {% with episodes_url=podcast.get_episodes_url %}
+                <div class="flex flex-wrap items-center space-x-3 font-semibold">
+                    {% if episode.episode %}
+                        <span>Episode {{ episode.episode }}</span>
+                    {% endif %}
+                    {% if episode.season %}
+                        <a class="link" href="{{ episodes_url }}?season={{ episode.season }}">Season {{ episode.season }}</a>
+                    {% endif %}
+                    <a href="{{ episodes_url }}"
+                       title="See all episodes for {{ podcast.cleaned_title }}"
+                       class="inline-block link">See all episodes</a>
+                </div>
+            {% endwith %}
             <div class="flex items-center space-x-3 sm:space-x-6">
                 <c-cover-image variant="detail"
                                :cover-url="episode.get_cover_url"
