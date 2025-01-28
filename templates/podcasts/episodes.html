@@ -8,8 +8,8 @@
     {% cache 300 podcast-detail-episodes request.get_full_path %}
         <c-podcasts.detail :podcast="podcast" current="episodes">
             <c-slot name="nav">
-                {% with seasons=podcast.seasons %}
-                    {% if page.has_other_pages or request.search or seasons %}
+                {% with seasons=podcast.seasons has_other_pages=page.has_other_pages %}
+                    {% if has_other_pages or request.search or seasons %}
                         <c-header.nav>
                             {% if request.search %}
                                 <c-header.nav.item>
@@ -25,15 +25,17 @@
                                         />
                                     </c-header.nav.item>
                                 {% endif %}
-                                <c-header.nav.item>
-                                    {% if ordering == "asc" %}
-                                        <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
-                                            Newest First</a>
-                                    {% else %}
-                                        <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
-                                            Oldest First</a>
-                                    {% endif %}
-                                </c-header.nav.item>
+                                {% if has_other_pages %}
+                                    <c-header.nav.item>
+                                        {% if ordering == "asc" %}
+                                            <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
+                                                Newest First</a>
+                                        {% else %}
+                                            <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
+                                                Oldest First</a>
+                                        {% endif %}
+                                    </c-header.nav.item>
+                                {% endif %}
                             {% endif %}
                             <c-header.nav.item>
                                 <c-search.form placeholder="Search: Podcast" clearable />
