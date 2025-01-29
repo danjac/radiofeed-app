@@ -1,6 +1,8 @@
+import dataclasses
 import functools
 import json
-from typing import Final
+from collections.abc import Iterator
+from typing import Any, Final
 
 from django import template
 from django.conf import settings
@@ -27,19 +29,62 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 get_cover_image_class = register.simple_tag(get_cover_image_class)
 
 
+@dataclasses.dataclass(frozen=True)
+class DropdownItem:
+    """Dropdown navigation item."""
+
+    label: str
+    url: str
+    icon: str = ""
+    key: Any = None
+
+
+@dataclasses.dataclass
+class DropdownContext:
+    """Info on dropdown."""
+
+    selected: Any = None
+    current: DropdownItem | None = None
+    items: list[DropdownItem] = dataclasses.field(default_factory=list)
+
+    def __bool__(self) -> bool:
+        """Check if dropdown has any items."""
+        return bool(self.items)
+
+    def __len__(self) -> int:
+        """Return number of items."""
+        return len(self.items)
+
+    def __iter__(self) -> Iterator[DropdownItem]:
+        """Iterate over items."""
+        return iter(self.items)
+
+    def add(self, **kwargs) -> DropdownItem:
+        """Add dropdown item."""
+        item = DropdownItem(**kwargs)
+        if item.key == self.selected:
+            self.current = item
+        else:
+            self.items.append(item)
+        return item
+
+
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
     return format_html(
-        '<meta name="htmx-config" content="{}">',
-        json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
+        '<meta name="htmx-config" content="{config}">',
+        config=json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
     )
 
 
 @register.simple_tag
 def theme_color() -> str:
     """Returns the PWA configuration theme color meta tag."""
-    return format_html('<meta name="theme-color" content="{}">', pwa.get_theme_color())
+    return format_html(
+        '<meta name="theme-color" content="{color}">',
+        color=pwa.get_theme_color(),
+    )
 
 
 @register.simple_tag

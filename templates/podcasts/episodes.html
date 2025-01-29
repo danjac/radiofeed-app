@@ -19,11 +19,10 @@
                                 />
                             </c-header.nav.item>
                         {% elif season %}
-                            {% get_podcast_seasons podcast season as seasons %}
+                            {% get_podcast_seasons podcast season as dropdown_context %}
                             <c-header.nav.item>
-                                <c-header.nav.dropdown :items="seasons.items"
-                                                       :current="seasons.current"
-                                                       id="seasons-dropdown"
+                                <c-header.nav.dropdown  id="seasons-dropdown"
+                                                       :context="dropdown_context"
                                 />
                             </c-header.nav.item>
                         {% else %}

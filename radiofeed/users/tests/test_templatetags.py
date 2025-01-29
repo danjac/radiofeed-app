@@ -25,8 +25,9 @@ class TestGetAccountSettings:
         req = rf.get("/")
         req.user = user
         context = get_account_settings(RequestContext(req), "preferences")
-        assert context["current_item"]["label"] == "Preferences"
-        assert len(context["items"]) == 5
+        assert context.current
+        assert context.current.label == "Preferences"
+        assert len(context.items) == 5
 
     @pytest.mark.django_db
     def test_connections(self, rf, mocker, user):
@@ -37,12 +38,13 @@ class TestGetAccountSettings:
         req = rf.get("/")
         req.user = user
         context = get_account_settings(RequestContext(req), "social_logins")
-        assert context["current_item"]["label"] == "Social Logins"
-        assert len(context["items"]) == 6
+        assert context.current
+        assert context.current.label == "Social Logins"
+        assert len(context.items) == 6
 
     @pytest.mark.django_db
     def test_invalid_item(self, rf, user):
         req = rf.get("/")
         req.user = user
-        with pytest.raises(KeyError):
-            get_account_settings(RequestContext(req), "not_found")
+        context = get_account_settings(RequestContext(req), "not_found")
+        assert context.current is None
