@@ -2,8 +2,7 @@
 {% load get_account_settings from users %}
 <c-vars current />
 {% get_account_settings current as dropdown_context %}
-<c-header>
-    <c-header.title> Settings for {{ user.username }} </c-header.title>
+<c-header title="Settings for {{ user.username }}">
     <c-header.nav>
         <c-header.nav.item>
             <c-header.nav.dropdown id="settings-dropdown"
