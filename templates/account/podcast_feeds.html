@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-account.settings current="feeds" />
+    <c-account.header current="feeds" />
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">

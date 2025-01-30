@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-account.settings current="email" />
+    <c-account.header current="email" />
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}
             {% if num_addresses %}
