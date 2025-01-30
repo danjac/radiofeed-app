@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.sites.models import Site
 
-from radiofeed.templatetags import DropdownContext, absolute_uri, format_duration
+from radiofeed.templatetags import absolute_uri, format_duration
 
 
 @pytest.fixture
@@ -17,23 +17,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-class TestDropdownContext:
-    def test_empty(self):
-        context = DropdownContext()
-        assert bool(context) is False
-        assert len(context) == 0
-
-    def test_non_empty(self):
-        context = DropdownContext(selected="test")
-        context.add(key="test", label="test", url="/test")
-        context.add(key="test2", label="test2", url="/test/2")
-        assert bool(context) is True
-        assert context.current
-        assert context.current.label == "test"
-        assert len(context) == 1
-        assert context.items[0].label == "test2"
 
 
 class TestFormatDuration:

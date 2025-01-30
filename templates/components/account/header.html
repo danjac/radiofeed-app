@@ -1,13 +1,21 @@
 {% load heroicons %}
 {% load get_account_settings from users %}
 <c-vars current />
-{% get_account_settings current as dropdown_context %}
+{% get_account_settings current as settings %}
 <c-header title="Settings for {{ user.username }}">
     <c-header.nav>
         <c-header.nav.item>
             <c-header.nav.dropdown id="settings-dropdown"
-                                   :context="dropdown_context"
-            />
+                                   :icon="settings.current.icon"
+                                   :label="settings.current.label">
+                {% for item in settings.items %}
+                    <c-header.nav.dropdown.item
+                        :url="item.url"
+                        :icon="item.icon"
+                        :label="item.label"
+                    />
+                {% endfor %}
+            </c-header.nav.dropdown>
         </c-header.nav.item>
     </c-header.nav>
 </c-header>

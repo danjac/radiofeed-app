@@ -272,6 +272,13 @@ class TestPodcastModel:
         EpisodeFactory.create_batch(3, podcast=podcast)
         assert podcast.num_episodes == 3
 
+    @pytest.mark.django_db
+    def test_seasons(self, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast, season=2)
+        EpisodeFactory.create_batch(3, podcast=podcast, season=1)
+        EpisodeFactory.create_batch(1, podcast=podcast, season=None)
+        assert podcast.seasons == [1, 2]
+
     def test_get_next_scheduled_update_pub_date_none(self):
         now = timezone.now()
         podcast = Podcast(

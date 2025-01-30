@@ -1,5 +1,5 @@
 {% load heroicons %}
-<c-vars id context is-left=False />
+<c-vars id label icon="" />
 <nav x-data="{showDropdown: false}"
      class="relative"
      id="{{ id }}" {{ attrs }}>
@@ -9,16 +9,12 @@
             @click.outside="showDropdown=false"
             @keyup.escape.window="showDropdown=false"
             class="flex items-center py-1 px-2 rounded-lg border sm:justify-end link md:hover:bg-transparent focus:ring-3 focus:outline-hidden">
-        {% with current=context.current %}
-            {% if current %}
-                <span class="inline-flex items-center">
-                    {% if current.icon %}
-                        {% heroicon_mini current.icon class="mr-2" %}
-                    {% endif %}
-                    {{ current.label }}
-                </span>
+        <span class="inline-flex items-center">
+            {% if icon %}
+                {% heroicon_mini icon class="mr-2" %}
             {% endif %}
-        {% endwith %}
+            {{ label }}
+        </span>
         {% heroicon_mini "chevron-down" class="ml-3" %}
     </button>
     <div class="overflow-y-auto absolute z-20 my-2 w-56 bg-white rounded-lg border shadow-lg sm:w-60 dark:bg-gray-800 dark:border max-h-[50dvh]"
@@ -49,18 +45,7 @@
          @keydown.arrow-down.prevent="$refs.dropdown.focus()"
     >
         <ul class="py-1 list-none" aria-labelledby="{{ id }}-btn">
-            {% for item in context %}
-                <li>
-                    <a href="{{ item.url }}"
-                       tabindex="{{ forloop.counter }}"
-                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
-                        {% if item.icon %}
-                            {% heroicon_mini item.icon class="mr-2" %}
-                        {% endif %}
-                        {{ item.label }}
-                    </a>
-                </li>
-            {% endfor %}
+            {{ slot }}
         </ul>
     </div>
 </nav>

@@ -1,8 +1,6 @@
-import dataclasses
 import functools
 import json
-from collections.abc import Iterator
-from typing import Any, Final
+from typing import Final
 
 from django import template
 from django.conf import settings
@@ -27,46 +25,6 @@ register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 get_cover_image_class = register.simple_tag(get_cover_image_class)
-
-
-@dataclasses.dataclass(frozen=True)
-class DropdownItem:
-    """Dropdown navigation item."""
-
-    label: str
-    url: str
-    icon: str = ""
-    key: Any = None
-
-
-@dataclasses.dataclass
-class DropdownContext:
-    """Info on dropdown."""
-
-    selected: Any = None
-    current: DropdownItem | None = None
-    items: list[DropdownItem] = dataclasses.field(default_factory=list)
-
-    def __bool__(self) -> bool:
-        """Check if dropdown has any items."""
-        return bool(self.items)
-
-    def __len__(self) -> int:
-        """Return number of items."""
-        return len(self.items)
-
-    def __iter__(self) -> Iterator[DropdownItem]:
-        """Iterate over items."""
-        return iter(self.items)
-
-    def add(self, **kwargs) -> DropdownItem:
-        """Add dropdown item."""
-        item = DropdownItem(**kwargs)
-        if item.key == self.selected:
-            self.current = item
-        else:
-            self.items.append(item)
-        return item
 
 
 @register.simple_tag

@@ -348,6 +348,16 @@ class Podcast(models.Model):
         """Returns true if any recommendations."""
         return False if self.private else self.recommendations.exists()
 
+    @cached_property
+    def seasons(self) -> list[int]:
+        """Returns list of seasons."""
+        return list(
+            self.episodes.filter(season__isnull=False)
+            .values_list("season", flat=True)
+            .order_by("season")
+            .distinct()
+        )
+
     def get_next_scheduled_update(self) -> datetime:
         """Returns estimated next update:
 

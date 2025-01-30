@@ -1,61 +1,75 @@
+from typing import TypedDict
+
 from allauth.socialaccount.adapter import get_adapter
 from django import template
 from django.template.context import RequestContext
 from django.urls import reverse
 
-from radiofeed.templatetags import DropdownContext
-
 register = template.Library()
 
 
-@register.simple_tag(takes_context=True)
-def get_account_settings(context: RequestContext, selected: str) -> DropdownContext:
-    """ "Returns a dictionary of settings items."""
-    dropdown = DropdownContext(selected=selected)
+class SettingsItem(TypedDict):
+    """A dictionary of settings items."""
 
-    dropdown.add(
-        key="preferences",
-        label="Preferences",
-        icon="adjustments-horizontal",
-        url=reverse("users:preferences"),
-    )
-    dropdown.add(
-        key="stats",
-        label="Statistics",
-        icon="chart-bar",
-        url=reverse("users:stats"),
-    )
-    dropdown.add(
-        key="feeds",
-        label="Import/Export Feeds",
-        icon="rss",
-        url=reverse("users:import_podcast_feeds"),
-    )
-    dropdown.add(
-        key="email",
-        label="Email Addresses",
-        icon="envelope",
-        url=reverse("account_email"),
-    )
+    label: str
+    icon: str
+    url: str
+
+
+class Settings(TypedDict):
+    """A dictionary of settings items."""
+
+    current: SettingsItem
+    items: list[SettingsItem]
+
+
+@register.simple_tag(takes_context=True)
+def get_account_settings(context: RequestContext, current: str) -> Settings:
+    """ "Returns a dictionary of settings items."""
+
+    items = {
+        "preferences": SettingsItem(
+            label="Preferences",
+            icon="adjustments-horizontal",
+            url=reverse("users:preferences"),
+        ),
+        "stats": SettingsItem(
+            label="Statistics",
+            icon="chart-bar",
+            url=reverse("users:stats"),
+        ),
+        "feeds": SettingsItem(
+            label="Import/Export Feeds",
+            icon="rss",
+            url=reverse("users:import_podcast_feeds"),
+        ),
+        "email": SettingsItem(
+            label="Email Addresses",
+            icon="envelope",
+            url=reverse("account_email"),
+        ),
+    }
+
     if context.request.user.has_usable_password:
-        dropdown.add(
-            key="password",
+        items["password"] = SettingsItem(
             label="Change Password",
             icon="key",
             url=reverse("account_change_password"),
         )
     if get_adapter().list_providers(context.request):
-        dropdown.add(
-            key="social_logins",
+        items["social_logins"] = SettingsItem(
             label="Social Logins",
             icon="user-group",
             url=reverse("socialaccount_connections"),
         )
 
-    dropdown.add(
-        key="delete_account",
+    items["delete_account"] = SettingsItem(
         label="Delete Account",
         icon="trash",
         url=reverse("users:delete_account"),
     )
-    return dropdown
+
+    return Settings(
+        current=items.get(current, items["preferences"]),
+        items=list(items.values()),
+    )

@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load cache partials %}
-{% load get_podcast_seasons from podcasts %}
 
 {% block title %}
     {{ block.super }} | {{ podcast.cleaned_title }} | Episodes
@@ -18,14 +17,22 @@
                             />
                         </c-header.nav.item>
                     {% elif season %}
-                        {% get_podcast_seasons podcast season as dropdown_context %}
-                        {% if dropdown_context %}
-                            <c-header.nav.item>
-                                <c-header.nav.dropdown id="seasons-dropdown"
-                                                       :context="dropdown_context"
-                                />
-                            </c-header.nav.item>
-                        {% endif %}
+                        {% with seasons=podcast.seasons %}
+                            {% if seasons %}
+                                <c-header.nav.item>
+                                    <c-header.nav.dropdown id="seasons-dropdown"
+                                                           label="Season {{ season }}">
+                                        <c-header.nav.dropdown.item url="{{ request.path }}"
+                                                                    label="All Seasons" />
+                                        {% for season in seasons %}
+                                            <c-header.nav.dropdown.item url="{{ request.path }}{% querystring season=season %}"
+                                                                        label="Season {{ season }}"
+                                            />
+                                        {% endfor %}
+                                    </c-header.nav.dropdown>
+                                </c-header.nav.item>
+                            {% endif %}
+                        {% endwith %}
                     {% else %}
                         <c-header.nav.item>
                             {% if ordering == "asc" %}
