@@ -5,15 +5,14 @@
 {% endblock title %}
 
 {% block content %}
-    <c-podcasts.detail :podcast="podcast" current="similar">
-        {% cache 300 similar-podcasts podcast.pk %}
-            <c-browse>
-                {% for recommendation in recommendations %}
-                    <c-browse.item>
-                        <c-podcasts.podcast :podcast="recommendation.recommended" />
-                    </c-browse.item>
-                {% endfor %}
-            </c-browse>
-        {% endcache %}
-    </c-podcasts.detail>
+    <c-podcasts.header :podcast="podcast" current="similar" />
+    {% cache 300 similar-podcasts podcast.pk %}
+        <c-browse>
+            {% for recommendation in recommendations %}
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="recommendation.recommended" />
+                </c-browse.item>
+            {% endfor %}
+        </c-browse>
+    {% endcache %}
 {% endblock content %}

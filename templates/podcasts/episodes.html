@@ -7,62 +7,60 @@
 {% endblock title %}
 
 {% block content %}
-    {% cache 300 podcast-detail-episodes request.get_full_path %}
-        <c-podcasts.detail :podcast="podcast" current="episodes">
-            <c-slot name="nav">
-                {% if request.search or podcast.num_episodes > page.page_size %}
-                    <c-header.nav class="justify-center items-center space-y-3 sm:flex sm:justify-start sm:space-y-0 sm:space-x-3 md:justify-end">
-                        {% if request.search %}
+    <c-podcasts.header :podcast="podcast" current="episodes">
+        <c-slot name="nav">
+            {% if request.search or podcast.num_episodes > page.page_size %}
+                <c-header.nav class="justify-center items-center space-y-3 sm:flex sm:justify-start sm:space-y-0 sm:space-x-3 md:justify-end">
+                    {% if request.search %}
+                        <c-header.nav.item>
+                            <c-search.button url="{% url 'episodes:search_episodes' %}"
+                                             label="Search Episodes"
+                            />
+                        </c-header.nav.item>
+                    {% elif season %}
+                        {% get_podcast_seasons podcast season as dropdown_context %}
+                        {% if dropdown_context %}
                             <c-header.nav.item>
-                                <c-search.button url="{% url 'episodes:search_episodes' %}"
-                                                 label="Search Episodes"
+                                <c-header.nav.dropdown id="seasons-dropdown"
+                                                       :context="dropdown_context"
                                 />
                             </c-header.nav.item>
-                        {% elif season %}
-                            {% get_podcast_seasons podcast season as dropdown_context %}
-                            {% if dropdown_context %}
-                                <c-header.nav.item>
-                                    <c-header.nav.dropdown id="seasons-dropdown"
-                                                           :context="dropdown_context"
-                                    />
-                                </c-header.nav.item>
-                            {% endif %}
-                        {% else %}
-                            <c-header.nav.item>
-                                {% if ordering == "asc" %}
-                                    <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
-                                        Newest First</a>
-                                {% else %}
-                                    <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
-                                        Oldest First</a>
-                                {% endif %}
-                            </c-header.nav.item>
                         {% endif %}
+                    {% else %}
                         <c-header.nav.item>
-                            <c-search.form placeholder="Search: Podcast" clearable />
+                            {% if ordering == "asc" %}
+                                <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
+                                    Newest First</a>
+                            {% else %}
+                                <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
+                                    Oldest First</a>
+                            {% endif %}
                         </c-header.nav.item>
-                    </c-header.nav>
-                {% endif %}
-            </c-slot>
-            {% partialdef pagination inline=True %}
-                {% cache 300 podcast-episodes request.get_full_path %}
-                    <c-paginate :page="page">
-                        {% for episode in page %}
-                            <c-browse.item>
-                                <c-podcasts.episode :episode="episode" />
-                            </c-browse.item>
-                        {% empty %}
-                            <c-browse.empty>
-                                {% if request.search %}
-                                    No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
-                                {% else %}
-                                    This podcast does not have any episodes.
-                                {% endif %}
-                            </c-browse.empty>
-                        {% endfor %}
-                    </c-paginate>
-                {% endcache %}
-            {% endpartialdef pagination %}
-        </c-podcasts.detail>
-    {% endcache %}
+                    {% endif %}
+                    <c-header.nav.item>
+                        <c-search.form placeholder="Search: Podcast" clearable />
+                    </c-header.nav.item>
+                </c-header.nav>
+            {% endif %}
+        </c-slot>
+    </c-podcasts.header>
+    {% partialdef pagination inline=True %}
+        {% cache 300 podcast-episodes request.get_full_path %}
+            <c-paginate :page="page">
+                {% for episode in page %}
+                    <c-browse.item>
+                        <c-podcasts.episode :episode="episode" />
+                    </c-browse.item>
+                {% empty %}
+                    <c-browse.empty>
+                        {% if request.search %}
+                            No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
+                        {% else %}
+                            This podcast does not have any episodes.
+                        {% endif %}
+                    </c-browse.empty>
+                {% endfor %}
+            </c-paginate>
+        {% endcache %}
+    {% endpartialdef pagination %}
 {% endblock content %}
