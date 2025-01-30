@@ -6,43 +6,42 @@
 {% endblock title %}
 
 {% block content %}
-    <c-account.settings current="feeds">
-        <div class="space-y-3">
-            {% if user.subscriptions.exists %}
-                <div class="space-y-3">
-                    <h2 class="text-base font-semibold lg:text-lg">Export feeds</h2>
-                    <div>
-                        <a class="inline-flex items-center btn btn-default"
-                           href="{% url 'users:export_podcast_feeds' %}"
-                           hx-disable="true">
-                            {% heroicon_mini "arrow-down-tray" class="mr-2" %}
-                            Download OPML
-                        </a>
-                    </div>
-                    <p>
-                        <strong>Note:</strong> private feeds will not be included.
-                    </p>
-                    <hr />
-                </div>
-            {% endif %}
+    <c-account.settings current="feeds" />
+    <div class="space-y-3">
+        {% if user.subscriptions.exists %}
             <div class="space-y-3">
-                <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
-                {% partialdef form inline=True %}
-                    <c-form :form="upload_form"
-                            :hx-post="request.path"
-                            hx-target="this"
-                            hx-swap="outerHTML"
-                            hx-encoding="multipart/form-data"
-                            enctype="multipart/form-data"
-                            id="import-feeds-form">
-                        <c-slot name="buttons">
-                            <c-form.buttons>
-                                <c-button icon="arrow-up-tray" label="Upload OPML" />
-                            </c-form.buttons>
-                        </c-slot>
-                    </c-form>
-                {% endpartialdef form %}
+                <h2 class="text-base font-semibold lg:text-lg">Export feeds</h2>
+                <div>
+                    <a class="inline-flex items-center btn btn-default"
+                       href="{% url 'users:export_podcast_feeds' %}"
+                       hx-disable="true">
+                        {% heroicon_mini "arrow-down-tray" class="mr-2" %}
+                        Download OPML
+                    </a>
+                </div>
+                <p>
+                    <strong>Note:</strong> private feeds will not be included.
+                </p>
+                <hr />
             </div>
+        {% endif %}
+        <div class="space-y-3">
+            <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
+            {% partialdef form inline=True %}
+                <c-form :form="upload_form"
+                        :hx-post="request.path"
+                        hx-target="this"
+                        hx-swap="outerHTML"
+                        hx-encoding="multipart/form-data"
+                        enctype="multipart/form-data"
+                        id="import-feeds-form">
+                    <c-slot name="buttons">
+                        <c-form.buttons>
+                            <c-button icon="arrow-up-tray" label="Upload OPML" />
+                        </c-form.buttons>
+                    </c-slot>
+                </c-form>
+            {% endpartialdef form %}
         </div>
-    </c-account.settings>
+    </div>
 {% endblock content %}
