@@ -59,42 +59,52 @@
                                          title="Current Time"
                                          class="flex justify-start items-center font-mono text-sm"
                                          :class="{'text-gray-300': !isPlaying}"></div>
-                                    {% with BUTTON_CSS="focus:outline-hidden hover:text-blue-300 inline-block" INACTIVE_CSS="opacity-75 cursor-not-allowed pointer-events-none" %}
-                                        <div class="flex justify-center items-center space-x-6">
-                                            <button aria-label="Skip Back 10 Seconds"
-                                                    title="Skip Back 10 Seconds"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    x-cloak
-                                                    @click="skipBack"
-                                                    :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "backward" size=30 %}
-                                            </button>
-                                            <button aria-label="Play"
-                                                    :title="isLoaded ? 'Play' : 'Loading...'"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    x-cloak
-                                                    :class="isLoaded || '{{ INACTIVE_CSS }}'"
-                                                    @click="togglePlayPause"
-                                                    x-show="!isPlaying">
-                                                {% heroicon_outline "play-circle" size=36 %}
-                                            </button>
-                                            <button aria-label="Pause"
-                                                    title="Pause"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    x-cloak
-                                                    @click="togglePlayPause"
-                                                    x-show="isPlaying">
-                                                {% heroicon_outline "pause-circle" size=36 %}
-                                            </button>
-                                            <button aria-label="Skip Forward 10 Seconds"
-                                                    title="Skip Forward 10 Seconds"
-                                                    class="{{ BUTTON_CSS }}"
-                                                    x-cloak
-                                                    @click="skipForward"
-                                                    :class="isPlaying || '{{ INACTIVE_CSS }}'">
-                                                {% heroicon_outline "forward" size=30 %}
-                                            </button>
-                                        </div>
+                                    {% with BUTTON_CSS="focus:outline-hidden inline-block" %}
+                                        <div class="flex justify-center items-center space-x-6"
+                                            {# fmt:off #}
+                                             x-data="{
+                                                 activeCss: 'hover:text-blue-300 cursor-pointer',
+                                                 inactiveCss: 'opacity-75 cursor-not-allowed'
+                                            }"{# fmt:on #}>
+                                                <button aria-label="Skip Back 10 Seconds"
+                                                        title="Skip Back 10 Seconds"
+                                                        class="{{ BUTTON_CSS }}"
+                                                        x-cloak
+                                                        @click="skipBack"
+                                                        :class="isPlaying ? activeCss : inactiveCss"
+                                                >
+                                                    {% heroicon_outline "backward" size=30 %}
+                                                </button>
+                                                <button aria-label="Play"
+                                                        :title="isLoaded ? 'Play' : 'Loading...'"
+                                                        class="{{ BUTTON_CSS }}"
+                                                        x-cloak
+                                                        @click="togglePlayPause"
+                                                        x-show="!isPlaying"
+                                                        :class="isLoaded ? activeCss : inactiveCss"
+                                                >
+                                                    {% heroicon_outline "play-circle" size=36 %}
+                                                </button>
+                                                <button aria-label="Pause"
+                                                        title="Pause"
+                                                        class="{{ BUTTON_CSS }}"
+                                                        x-cloak
+                                                        @click="togglePlayPause"
+                                                        x-show="isPlaying"
+                                                        :class="isLoaded ? activeCss : inactiveCss"
+                                                >
+                                                    {% heroicon_outline "pause-circle" size=36 %}
+                                                </button>
+                                                <button aria-label="Skip Forward 10 Seconds"
+                                                        title="Skip Forward 10 Seconds"
+                                                        class="{{ BUTTON_CSS }}"
+                                                        x-cloak
+                                                        @click="skipForward"
+                                                        :class="isPlaying ? activeCss : inactiveCss"
+                                                >
+                                                    {% heroicon_outline "forward" size=30 %}
+                                                </button>
+                                            </div>
                                     {% endwith %}
                                     <div x-text="counters.remaining"
                                          aria-label="Time Remaining"
