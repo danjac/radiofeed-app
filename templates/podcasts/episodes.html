@@ -16,23 +16,19 @@
                                              label="Search Episodes"
                             />
                         </c-header.nav.item>
-                    {% elif season %}
-                        {% with seasons=podcast.seasons %}
-                            {% if seasons %}
-                                <c-header.nav.item>
-                                    <c-header.nav.dropdown id="seasons-dropdown"
-                                                           label="Season {{ season }}">
-                                        <c-header.nav.dropdown.item url="{{ request.path }}"
-                                                                    label="All Seasons" />
-                                        {% for season in seasons %}
-                                            <c-header.nav.dropdown.item url="{{ request.path }}{% querystring season=season %}"
-                                                                        label="Season {{ season }}"
-                                            />
-                                        {% endfor %}
-                                    </c-header.nav.dropdown>
-                                </c-header.nav.item>
-                            {% endif %}
-                        {% endwith %}
+                    {% elif season and season in podcast.seasons %}
+                        <c-header.nav.item>
+                            <c-header.nav.dropdown id="seasons-dropdown"
+                                                   label="Season {{ season }}">
+                                <c-header.nav.dropdown.item url="{{ request.path }}"
+                                                            label="All Seasons" />
+                                {% for season in podcast.seasons %}
+                                    <c-header.nav.dropdown.item url="{{ request.path }}{% querystring season=season %}"
+                                                                label="Season {{ season }}"
+                                    />
+                                {% endfor %}
+                            </c-header.nav.dropdown>
+                        </c-header.nav.item>
                     {% else %}
                         <c-header.nav.item>
                             {% if ordering == "asc" %}
