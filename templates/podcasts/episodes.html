@@ -2,7 +2,7 @@
 {% load cache partials %}
 
 {% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }} | Episodes
+    {{ block.super }} | {{ podcast.cleaned_title }} | Episodes{% if season %} | Season {{ season }} {% endif %}
 {% endblock title %}
 
 {% block content %}
