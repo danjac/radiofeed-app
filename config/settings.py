@@ -187,7 +187,7 @@ CSRF_USE_SESSIONS = True
 
 CSRF_TRUSTED_ORIGINS = [
     f"{scheme}://{host}"
-    for host in env.list("CSRF_TRUSTED_ORIGINS", default=[])
+    for host in env.list("CSRF_TRUSTED_ORIGINS", default=[]) or []
     for scheme in ["http", "https"]
 ]
 
@@ -339,7 +339,8 @@ if USE_X_FORWARDED_HOST := env.bool("USE_X_FORWARDED_HOST", default=True):
         env.list(
             "SECURE_PROXY_SSL_HEADER",
             default=["HTTP_X_FORWARDED_PROTO", "https"],
-        ),
+        )
+        or []
     )
 
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
@@ -379,7 +380,7 @@ CSP_SCRIPT_SRC = [
     SELF,
     UNSAFE_EVAL,
     UNSAFE_INLINE,
-    *env.list("CSP_SCRIPT_WHITELIST", default=[]),
+    *(env.list("CSP_SCRIPT_WHITELIST", default=[]) or []),
 ]
 
 CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
