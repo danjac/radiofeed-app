@@ -8,7 +8,7 @@
             @click="showDropdown = !showDropdown"
             @click.outside="showDropdown=false"
             @keyup.escape.window="showDropdown=false"
-            class="flex items-center py-1 px-2 rounded-lg border sm:justify-end link md:hover:bg-transparent focus:ring-3 focus:outline-hidden">
+            class="flex items-center py-1 px-2 rounded-lg border cursor-pointer sm:justify-end link md:hover:bg-transparent focus:ring-3 focus:outline-hidden">
         <span class="inline-flex items-center">
             {% if icon %}
                 {% heroicon_mini icon class="mr-2" %}
