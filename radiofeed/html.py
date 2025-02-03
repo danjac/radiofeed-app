@@ -120,8 +120,8 @@ def linkify(content: str) -> str:
     soup = _make_soup(content)
     for node in soup.find_all(string=True):
         # skip if parent is a link
-        if node.parent.name != "a":
-            node.replace_with(_make_soup(urlize(node)))
+        if node.parent and node.parent.name != "a":
+            node.replace_with(_make_soup(urlize(str(node))))
     return str(soup)
 
 
