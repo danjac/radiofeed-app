@@ -6,11 +6,15 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
-    @variant dark {
-        :root {
+
+    :root {
+        scrollbar-width: thin;
+
+        @variant dark {
             color-scheme: dark;
         }
     }
+
     /* ALPINEJS */
 
     [x-cloak] {
