@@ -1,3 +1,8 @@
+- name: Create deploy user
+  ansible.builtin.user:
+    name: "{{ user }}"
+    createhome: yes
+    state: present
 - name: Create deploy directory
   ansible.builtin.file:
       path: "{{ project_dir }}"

@@ -5,7 +5,6 @@
   vars_files:
     - ./vars/settings.yml
   roles:
-    - common
     - managers
 
 - name: Workers setup

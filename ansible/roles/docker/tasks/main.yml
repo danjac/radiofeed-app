@@ -32,15 +32,11 @@
     name: docker
     state: started
     enabled: true
-- name: Ensure group "docker" exists
-  ansible.builtin.group:
-    name: docker
-    state: present
-- name: Add user to docker group
-  ansible.builtin.user:
-    name: "{{ user }}"
-    groups: docker
-    append: true
+- name: Create a restricted sudoers rule for Docker
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/docker"
+    content: "{{ user }} ALL=(ALL) NOPASSWD: /usr/bin/docker"
+    mode: "0440"
 - name: Copy daemon.json file
   ansible.builtin.copy:
     src: files/daemon.json
