@@ -5,5 +5,4 @@
   vars_files:
     - ./vars/settings.yml
   roles:
-    - common
     - cron_schedulers

@@ -2,4 +2,4 @@
 
 set -o errexit
 
-docker compose -f {{ project_dir }}/stack.yml run --rm django python ./manage.py "$@"
+/usr/bin/docker compose -f {{ project_dir }}/stack.yml run --rm django python ./manage.py "$@"

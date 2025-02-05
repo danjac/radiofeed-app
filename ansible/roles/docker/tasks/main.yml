@@ -55,4 +55,4 @@
     user: "{{ user }}"
     minute: "0"
     hour: "3"
-    job: docker system prune -f
+    job: /usr/bin/docker system prune -f > /dev/null 2>&1
