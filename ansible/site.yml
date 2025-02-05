@@ -1,3 +1,6 @@
+- name: Create deploy user
+  import_playbook: ./user.yml
+
 - name: Install Docker
   import_playbook: ./docker.yml
 
