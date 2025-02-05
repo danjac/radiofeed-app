@@ -1,11 +1,45 @@
-- name: Create deploy user
-  import_playbook: ./user.yml
+- name: User setup
+  hosts: all
+  become: true
+  remote_user: root
+  vars_files:
+      - ./vars/settings.yml
+  roles:
+      - user
 
-- name: Install Docker
-  import_playbook: ./docker.yml
+- name: Docker setup
+  hosts: all
+  become: true
+  remote_user: root
+  vars_files:
+      - ./vars/settings.yml
+  roles:
+      - docker
 
-- name: Install PostgreSQL and Redis
-  import_playbook: ./databases.yml
+- name: Postgresql and Redis setup
+  hosts: databases
+  remote_user: "{{ user }}"
+  gather_facts: false
+  vars_files:
+      - ./vars/settings.yml
+  roles:
+      - databases
 
-- name: Install cron schedulers and app servers
-  import_playbook: ./deploy.yml
+- name: Swarm manager and crons setup
+  hosts: managers
+  remote_user: "{{ user }}"
+  gather_facts: false
+  vars_files:
+      - ./vars/settings.yml
+  roles:
+      - managers
+      - cron_schedulers
+
+- name: Swarm workers setup
+  hosts: workers
+  remote_user: "{{ user }}"
+  gather_facts: false
+  vars_files:
+      - ./vars/settings.yml
+  roles:
+      - workers

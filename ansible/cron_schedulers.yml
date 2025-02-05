@@ -1,8 +1,0 @@
-- name: Setup crons
-  hosts: managers
-  remote_user: "{{ user }}"
-  gather_facts: false
-  vars_files:
-    - ./vars/settings.yml
-  roles:
-    - cron_schedulers

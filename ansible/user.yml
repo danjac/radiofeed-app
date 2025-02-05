@@ -1,8 +1,0 @@
-- name: User setup
-  hosts: all
-  become: true
-  remote_user: root
-  vars_files:
-      - ./vars/settings.yml
-  roles:
-      - user
