@@ -45,7 +45,9 @@
   ansible.builtin.copy:
     src: files/daemon.json
     dest: /etc/docker/daemon.json
-    mode: "u+rw,g+rw"
+    mode: "0644"
+    owner: root
+    group: root
 - name: Daily docker cleanup crontab
   ansible.builtin.cron:
     name: "Docker cleanup"
