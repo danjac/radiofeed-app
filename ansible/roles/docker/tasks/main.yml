@@ -10,9 +10,14 @@
     - gnupg-agent
     - software-properties-common
     - python3-docker
-- name: Add GPG key
+- name: Copy Docker GPG key
+  ansible.builtin.copy:
+    src: files/docker.gpg
+    dest: /tmp/docker.gpg
+    mode: '0644'
+- name: Add Docker GPG key
   ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
+    file: /tmp/docker.gpg
     state: present
 - name: Add docker repository to apt
   ansible.builtin.apt_repository:
