@@ -1,4 +1,4 @@
-- name: User setup
+- name: Set up user and docker
   hosts: all
   become: true
   remote_user: root
@@ -6,17 +6,9 @@
       - ./vars/settings.yml
   roles:
       - user
-
-- name: Docker setup
-  hosts: all
-  become: true
-  remote_user: root
-  vars_files:
-      - ./vars/settings.yml
-  roles:
       - docker
 
-- name: Postgresql and Redis setup
+- name: Set up Postgresql and Redis
   hosts: databases
   remote_user: "{{ user }}"
   gather_facts: false
@@ -25,7 +17,7 @@
   roles:
       - databases
 
-- name: Swarm manager and crons setup
+- name: Set up swarm managers and cronjobs
   hosts: managers
   remote_user: "{{ user }}"
   gather_facts: false
@@ -35,7 +27,7 @@
       - managers
       - cron_schedulers
 
-- name: Swarm workers setup
+- name: Set up swarm workers
   hosts: workers
   remote_user: "{{ user }}"
   gather_facts: false
