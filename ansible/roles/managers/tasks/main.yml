@@ -4,13 +4,13 @@
   ansible.builtin.template:
     src: templates/stack.yml.j2
     dest: "{{ project_dir }}/stack.yml"
-    mode: "u+rw,g+rw"
+    mode: "u+r"
 
-- name: Add deploy script
+- name: Create deploy script
   ansible.builtin.template:
     src: templates/deploy_stack.sh.j2
     dest: "/home/{{ user }}/deploy_stack.sh"
-    mode: "u+x,g+x"
+    mode: "u+x"
 
 - name: Initialize Docker swarm
   community.docker.docker_swarm:
