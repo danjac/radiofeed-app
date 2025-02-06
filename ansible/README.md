@@ -21,7 +21,6 @@ The Ansible playbooks will deploy all of the above using Docker images.
 
 2. Edit the above files as required, adding your server-specific settings.
 3. Encrypt the files using `ansible-vault` and make backups to a secure place.
-4. Copy the private and public keys for the deployment user to the `ssh-keys` directory as `id_rsa` and `id_rsa.pub` respectively.
 
 ## Deployment
 
