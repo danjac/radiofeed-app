@@ -2,4 +2,4 @@
 
 set -o errexit
 
-ssh -t "{{ user }}@{{ inventory_hostname }}" -- ./manage.sh $@
+ssh -i ./ssh-keys/id_rsa -t "{{ user }}@{{ inventory_hostname }}" -- ./manage.sh $@
