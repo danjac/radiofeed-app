@@ -21,10 +21,13 @@ The Ansible playbooks will deploy all of the above using Docker images.
 
 2. Edit the above files as required, adding your server-specific settings.
 3. Encrypt the files using `ansible-vault` and make backups to a secure place.
+4. Copy the private and public keys for the deployment user to the `ssh-keys` directory as `id_rsa` and `id_rsa.pub` respectively.
 
 ## Deployment
 
 For ease of use, a [justfile](https://github.com/casey/just) has been provided for running the Ansible playbooks.
+
+You should have root SSH access to your servers.
 
 1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`.
 

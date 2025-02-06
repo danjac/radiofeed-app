@@ -54,4 +54,5 @@ ansible/.vault_pass
 ansible/hosts
 ansible/psql.sh
 ansible/manage.sh
+ansible/ssh-keys
 ansible/vars/*.yml
