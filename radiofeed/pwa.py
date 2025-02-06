@@ -22,25 +22,32 @@ class ImageInfo(TypedDict):
 
 def get_manifest(request: HttpRequest) -> dict:
     """Returns PWA manifest."""
-    start_url = reverse("index")
 
-    categories = settings.PWA_CONFIG["manifest"]["categories"]
-    description = settings.PWA_CONFIG["manifest"]["description"]
-    background_color = settings.PWA_CONFIG["manifest"]["background_color"]
+    manifest = settings.PWA_CONFIG["manifest"]
+
+    background_color = manifest["background_color"]
+    categories = manifest["categories"]
+    description = manifest["description"]
+
+    start_url = reverse("index")
 
     return {
         "background_color": background_color,
-        "theme_color": get_theme_color(),
+        "categories": categories,
         "description": description,
         "dir": "ltr",
         "display": "minimal-ui",
-        "name": request.site.name,
-        "short_name": truncatechars(request.site.name, 12),
-        "prefer_related_applications": False,
-        "orientation": "any",
-        "scope": start_url,
-        "start_url": start_url,
+        "icons": _app_icons_list(),
         "id": "?homescreen=1",
+        "lang": "en",
+        "name": request.site.name,
+        "orientation": "any",
+        "prefer_related_applications": False,
+        "scope": start_url,
+        "shortcuts": [],
+        "short_name": truncatechars(request.site.name, 12),
+        "start_url": start_url,
+        "theme_color": get_theme_color(),
         "display_override": [
             "minimal-ui",
             "window-controls-overlay",
@@ -51,7 +58,6 @@ def get_manifest(request: HttpRequest) -> dict:
                 "auto",
             ]
         },
-        "categories": categories,
         "screenshots": [
             {
                 "src": static("img/desktop.png"),
@@ -66,9 +72,6 @@ def get_manifest(request: HttpRequest) -> dict:
                 "type": "image/png",
             },
         ],
-        "icons": _app_icons_list(),
-        "shortcuts": [],
-        "lang": "en",
     }
 
 
@@ -82,8 +85,10 @@ def get_theme_color() -> str:
 def get_assetlinks() -> list[dict]:
     """Return asset links."""
 
-    package_name = settings.PWA_CONFIG["assetlinks"]["package_name"]
-    fingerprints = settings.PWA_CONFIG["assetlinks"]["sha256_fingerprints"]
+    assetlinks = settings.PWA_CONFIG["assetlinks"]
+
+    package_name = assetlinks["package_name"]
+    fingerprints = assetlinks["sha256_fingerprints"]
 
     return [
         {
