@@ -31,7 +31,7 @@ You should have root SSH access to your servers.
 
 1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`.
 
-2. Run `just pb site` to deploy to your servers.
+2. Run `just deploy` to deploy to your servers.
 
 ## Upgrade
 
