@@ -10,6 +10,10 @@
 @pb playbook *ARGS:
     ansible-playbook -v -i hosts.yml {{ playbook }}.yml {{ ARGS }}
 
+# Deploy the project
+deploy:
+    just pb site
+
 # Run Django manage.py commands
 dj *ARGS:
     #!/usr/bin/bash
