@@ -1,10 +1,8 @@
 - name: Add manage script
   ansible.builtin.template:
-    src: templates/manage.sh.j2
-    dest: "/home/{{ user }}/manage.sh"
-    user: "{{ user }}"
-    group: "{{ user }}"
-    mode: "u+x"
+      src: templates/manage.sh.j2
+      dest: "/home/{{ user }}/manage.sh"
+      mode: "u+x"
 
 - name: Create log directory
   ansible.builtin.file:
