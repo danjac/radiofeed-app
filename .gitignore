@@ -44,15 +44,13 @@ logs
 media/
 node_modules/
 npm-debug.log*
-requirements-ci.txt
 static/app.css
 staticfiles
 tailwind.config.js
-terraform.tfstate*
 venv
 ansible/.vault_pass
 ansible/hosts
 ansible/psql.sh
 ansible/manage.sh
-ansible/ssh-keys
+ansible/ssh_keys
 ansible/vars/*.yml
