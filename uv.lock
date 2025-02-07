@@ -269,13 +269,13 @@ wheels = [
 
 [[package]]
 name = "django-allauth"
-version = "65.4.0"
+version = "65.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b4/f0/8aca7cc8c63b432565472e231ace2edfe3966304884f0ab106362e586ff8/django_allauth-65.4.0.tar.gz", hash = "sha256:1b6eb5d4a781a9a18dcd5ccf2bcae7ae542a56baea8e7b8f33a54c743cb54b0a", size = 1559056 }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/e7/b3232c27da9f43e3db72d16addd90891ee233fa058ddd0588bafcded2ea7/django_allauth-65.4.1.tar.gz", hash = "sha256:60b32aef7dbbcc213319aa4fd8f570e985266ea1162ae6ef7a26a24efca85c8c", size = 1558220 }
 
 [package.optional-dependencies]
 socialaccount = [
@@ -300,15 +300,15 @@ wheels = [
 
 [[package]]
 name = "django-browser-reload"
-version = "1.17.0"
+version = "1.18.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/bc/3c67f7daca53b826ec51888576fe5e117d9442d2d0acb58f4264d48b9dba/django_browser_reload-1.17.0.tar.gz", hash = "sha256:3667939cde0eee1a6d698dbe3b78cf10b573dabc4e711fb7933f1ba91fb98da4", size = 14312 }
+sdist = { url = "https://files.pythonhosted.org/packages/3b/41/84eaa4f2b7f764e56e01c4ee49aa12bdea30ae50fd0d3ef7c2690b0c4ec2/django_browser_reload-1.18.0.tar.gz", hash = "sha256:c5f0b134723cbf2a0dc9ae1ee1d38e42db28fe23c74cdee613ba3ef286d04735", size = 14319 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/8f/62fc4fbf5c05c2210e6cb616f1c2a3da53871dfecbaa4c44b1f482ca3e8f/django_browser_reload-1.17.0-py3-none-any.whl", hash = "sha256:d372c12c1c5962c02279a53cac7e8a020c48f104592c637a06d0768b28d2d6be", size = 12228 },
+    { url = "https://files.pythonhosted.org/packages/e4/9d/1322dc4bce4982d1eadd3a62802c996ae0303aad13d9ad88c1d35025f73d/django_browser_reload-1.18.0-py3-none-any.whl", hash = "sha256:ed4cc2fb83c3bf6c30b54107a1a6736c0b896e62e4eba666d81005b9f2ecf6f8", size = 12230 },
 ]
 
 [[package]]
@@ -392,40 +392,40 @@ wheels = [
 
 [[package]]
 name = "django-htmx"
-version = "1.21.0"
+version = "1.22.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c7/5c/f6b7e9102a86c69b018142c5e3255b7f983b4f6545fe8e9bbb326e903be1/django_htmx-1.21.0.tar.gz", hash = "sha256:6ed3b42effd5980f22e68f36cd14ee4311bff3b6cb8435a89e27f45995691572", size = 9611 }
+sdist = { url = "https://files.pythonhosted.org/packages/e2/59/bac8c1873a676ea661babd5d8bc1a04cfcfe1176b0bf526bcd058e6ec05a/django_htmx-1.22.0.tar.gz", hash = "sha256:7306e1aba4e407496f30a57ec2e0b2974a9b96c8c6036f7ec6a8b5753ea0abdd", size = 9621 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/ec/0d68c022dac4a539cdd2cf8b2e23a034da9d6ef864e4bc324a5fe2b50c28/django_htmx-1.21.0-py3-none-any.whl", hash = "sha256:64bc31463017a80552b767bc216ee5700248fa72e7ccd2963495e69afbdb6abe", size = 6901 },
+    { url = "https://files.pythonhosted.org/packages/62/6d/c99d5d5a9edb759ebd295ec96479254b6cc7b80f40d1ee66ebb7d677fc0d/django_htmx-1.22.0-py3-none-any.whl", hash = "sha256:9f1fcf239125a42d6dadc814b3796b8d6faad8ded444a14ae021d0241fa9a40f", size = 6904 },
 ]
 
 [[package]]
 name = "django-linear-migrations"
-version = "2.16.0"
+version = "2.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/d1/283714818633fbef2b01ee0c967ecc3466ecabcfd666fe3ab68bf68ae423/django_linear_migrations-2.16.0.tar.gz", hash = "sha256:49219552dca0948029a4116ff2352fb1625e59a1eb26afc7dd1e168480adb673", size = 18792 }
+sdist = { url = "https://files.pythonhosted.org/packages/5d/47/b56cd02fa31a26972e489f0ae42b112dc73343f7bc0243581a5947921818/django_linear_migrations-2.17.0.tar.gz", hash = "sha256:29ce3710e1334494d5bcc8b707bde0253e1eacc5a8bf163d7234c88fe3493242", size = 18820 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bb/f0/6f1b20b15a52b43629426f11c32c6c10d30b29a280f432b1cfa8fff0f59f/django_linear_migrations-2.16.0-py3-none-any.whl", hash = "sha256:c696b8ca2903f84359e900814fab986c9568856fb445132f5c51830dcce8d43a", size = 15530 },
+    { url = "https://files.pythonhosted.org/packages/a2/ba/0843be5ea568831d144c56fe1cf31b5741aac98e7583c783fad16b197ab6/django_linear_migrations-2.17.0-py3-none-any.whl", hash = "sha256:5960fd156071127e25e51f41c00a2fb4388ab64da5f581defe7933b7414b33ff", size = 15535 },
 ]
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.24.0"
+version = "4.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b5/b3/43da16a6e3caab7e86c2799d17d96fd9b54137187a49ed46a1e2623fd56b/django_permissions_policy-4.24.0.tar.gz", hash = "sha256:540388c7f7a19ec20d6d314ffdccb730ca164c177354c742cb0f51f27d3bae07", size = 10034 }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/29/27252a33e78014c6d31d200c19269d5b5d49b6e0d9306f1adc85bfb5644c/django_permissions_policy-4.25.0.tar.gz", hash = "sha256:2757397fb6299e187ef146809a047b636584e7431527255615752db6dc2e94f7", size = 10074 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0a/fd/c944f2a8a411b6444d02797daeaf3bc77ee15625da8a40c258cbaeb87ff4/django_permissions_policy-4.24.0-py3-none-any.whl", hash = "sha256:0839eefb0d376a055f9f3336e4fd917fc8d2b110426ba6a387a07a8897c5b94d", size = 6666 },
+    { url = "https://files.pythonhosted.org/packages/ea/5a/9584102478089aa56f71f5b1f4fc973a37f8107f55b4a67a96d90f6819f3/django_permissions_policy-4.25.0-py3-none-any.whl", hash = "sha256:083a411c31964dd06c9aec4058147dda46bc1c3e04a799cbae7603578d979944", size = 6668 },
 ]
 
 [[package]]
@@ -513,15 +513,15 @@ wheels = [
 
 [[package]]
 name = "django-version-checks"
-version = "1.13.0"
+version = "1.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8f/54/ea88f20e97e4a61f1f156a0b693e06c8e8411ed6231f7542724f8d0f4d12/django_version_checks-1.13.0.tar.gz", hash = "sha256:4e106589791d8c10150ba1e9af75a398d26fb28474855276b6340a044033b923", size = 9776 }
+sdist = { url = "https://files.pythonhosted.org/packages/47/ff/cbb197e4b6e4c851631e987a64c6caf18b7f871939700e4b5ea069f17922/django_version_checks-1.14.0.tar.gz", hash = "sha256:ca8ed0777d173c32c047522bf79b8f054317a5e0ff14b798ee6806ddf1627348", size = 9814 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/33/19fbd9bf51146bf5a86064a6b43e4bf07130a78a0b1531295b7db95f9082/django_version_checks-1.13.0-py3-none-any.whl", hash = "sha256:6b9bebc8cc100611082d80d82ee84825722903a761e4470d1b1c5a4bc20715f9", size = 7671 },
+    { url = "https://files.pythonhosted.org/packages/75/47/35026ed44ea67cc2c26016d30cd9220f314df5303edb073fc911cc493536/django_version_checks-1.14.0-py3-none-any.whl", hash = "sha256:b5ca9d2d792190f8b5afbb70d228e0feb2dbea7b3d42a2c5dc17b8fe5d1618eb", size = 7675 },
 ]
 
 [[package]]
@@ -619,11 +619,11 @@ wheels = [
 
 [[package]]
 name = "heroicons"
-version = "2.10.0"
+version = "2.11.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d5/10/46f53e0b221fdbcb469a34e69f72d497c83051a4138e67c81673175c13ef/heroicons-2.10.0.tar.gz", hash = "sha256:3e739e1ca74e126874d02385b7ada988b589bd579a4e3932b98a2c5e0dccb75a", size = 420248 }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/1a/c0fdcfc83a94337a8518d571d30bcac73b3f36f95dbd40eaed13c6155921/heroicons-2.11.0.tar.gz", hash = "sha256:36fed4e7a2fc134f70fd22597a73012b74904cec19968f85a5bad8ae97fb7cc2", size = 420258 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/ad/290ce8d66543fa4c3ed6dedcddcd2c60644b8a8177a739ce28731eac69d7/heroicons-2.10.0-py3-none-any.whl", hash = "sha256:af8a525c5691c66c4f8a7544210109c578c6a65625db6f3bee529512968c3882", size = 414890 },
+    { url = "https://files.pythonhosted.org/packages/8d/ea/c080dd9cb1074fbc2334d7bec99eed22305cdf0b74c7b6a479bfb2c1505d/heroicons-2.11.0-py3-none-any.whl", hash = "sha256:68d8c754076b0c12f7f60157bcc47fb89135ccb4f0f7d3ac53791546132bf92d", size = 414894 },
 ]
 
 [package.optional-dependencies]
@@ -1878,11 +1878,11 @@ wheels = [
 
 [[package]]
 name = "whitenoise"
-version = "6.8.2"
+version = "6.9.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/68/49/c21ebb5b911888c349a849ec7d1ead2dffbbcc4e2be0f6af2a7dbac03393/whitenoise-6.8.2.tar.gz", hash = "sha256:486bd7267a375fa9650b136daaec156ac572971acc8bf99add90817a530dd1d4", size = 25892 }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/cf/c15c2f21aee6b22a9f6fc9be3f7e477e2442ec22848273db7f4eb73d6162/whitenoise-6.9.0.tar.gz", hash = "sha256:8c4a7c9d384694990c26f3047e118c691557481d624f069b7f7752a2f735d609", size = 25920 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8c/3a/8d22513e1942899270dcdbd47f9886309836442cd7ede4b0d00be79715f5/whitenoise-6.8.2-py3-none-any.whl", hash = "sha256:df12dce147a043d1956d81d288c6f0044147c6d2ab9726e5772ac50fb45d2280", size = 20158 },
+    { url = "https://files.pythonhosted.org/packages/64/b2/2ce9263149fbde9701d352bda24ea1362c154e196d2fda2201f18fc585d7/whitenoise-6.9.0-py3-none-any.whl", hash = "sha256:c8a489049b7ee9889617bb4c274a153f3d979e8f51d2efd0f5b403caf41c57df", size = 20161 },
 ]
 
 [package.optional-dependencies]
