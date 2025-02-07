@@ -2,19 +2,16 @@
 
 set -o errexit
 
-# commands run on new deployment:
-# 1. security and other checks
-# 2. database migrations
-# 3. system health checks
-# 4. clear cache
-#
-
 MANAGE="python ./manage.py"
 
+# Run system checks
 $MANAGE check --deploy --traceback
 
+# Run database migrations
 $MANAGE migrate --no-input --traceback
 
+# Run health checks
 $MANAGE health_check --traceback
 
+# Clear cache
 $MANAGE clear_cache --traceback
