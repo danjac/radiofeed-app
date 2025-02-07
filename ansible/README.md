@@ -21,7 +21,6 @@ The Ansible playbooks will deploy all of the above using Docker images.
 
 2. Edit the above files as required, adding your server-specific settings.
 3. Encrypt the files using `ansible-vault` and make backups to a secure place.
-4. Run `ssh-keygen -t rsa -b 4096 -f ~/.ssh/radiofeed` to create a key pair for the deployment user (or copy the keys from a secure place).
 
 ## Deployment
 
