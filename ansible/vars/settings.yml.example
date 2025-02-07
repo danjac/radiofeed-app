@@ -14,6 +14,6 @@ pwa_sha256_fingerprints: ""
 secret_key: ""
 secret_key_fallbacks: ""
 sentry_url: ""
-ssh_public_key_path: ~/.ssh/id_rsa.pub
+ssh_public_key_path: ~/.ssh/radiofeed.pub
 stack_name: radiofeed-app
 user: ubuntu
