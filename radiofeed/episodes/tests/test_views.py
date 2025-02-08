@@ -317,6 +317,15 @@ class TestPlayerTimeUpdate:
         response = client.post(self.url, {"current_time": "1000"})
         assert401(response)
 
+    @pytest.mark.django_db()(transaction=True)
+    def test_episode_does_not_exist(self, client, auth_user):
+        session = client.session
+        session[PlayerDetails.session_id] = 12345
+        session.save()
+
+        response = client.post(self.url, {"current_time": 1000})
+        assert400(response)
+
 
 class TestBookmarks:
     url = reverse_lazy("episodes:bookmarks")
