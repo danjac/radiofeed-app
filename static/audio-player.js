@@ -16,10 +16,11 @@ document.addEventListener("alpine:init", () => {
             duration: 0,
             isLoaded: false,
             isPlaying: false,
+            isUpdating: false,
             runtime: 0,
             skipSeconds: 10,
             timer: null,
-            updateSeconds: 5,
+            updateSeconds: 6,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -140,7 +141,7 @@ document.addEventListener("alpine:init", () => {
             startTimer() {
                 if (!this.timer) {
                     this.timer = setInterval(() => {
-                        if (this.isPlaying) {
+                        if (this.isPlaying & !this.isUpdating) {
                             this.sendTimeUpdate();
                         }
                     }, this.updateSeconds * 1000);
@@ -149,21 +150,22 @@ document.addEventListener("alpine:init", () => {
             clearTimer() {
                 if (this.timer) {
                     clearInterval(this.timer);
+                    this.isUpdating = false;
                     this.timer = null;
                 }
             },
-            sendTimeUpdate() {
-                if (timeUpdateUrl) {
-                    fetch(this.timeUpdateUrl, {
-                        method: "POST",
-                        headers: {
-                            [this.csrfHeader]: this.csrfToken,
-                        },
-                        body: new URLSearchParams({
-                            current_time: this.runtime,
-                        }),
-                    });
-                }
+            async sendTimeUpdate() {
+                this.isUpdating = true;
+                await fetch(this.timeUpdateUrl, {
+                    method: "POST",
+                    headers: {
+                        [this.csrfHeader]: this.csrfToken,
+                    },
+                    body: new URLSearchParams({
+                        current_time: this.runtime,
+                    }),
+                });
+                this.isUpdating = false;
             },
             setPreviewCounter(position) {
                 if (this.isPlaying) {
