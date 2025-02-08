@@ -3,7 +3,7 @@ from typing import Literal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.http import (
     Http404,
     HttpRequest,
@@ -131,15 +131,34 @@ def player_time_update(
     """
     if request.user.is_authenticated:
         if episode_id := request.player.get():
+            episode = get_object_or_404(Episode, pk=episode_id)
             try:
-                request.user.audio_logs.update_or_create(
-                    episode_id=episode_id,
-                    defaults={
-                        "current_time": int(request.POST["current_time"]),
-                        "listened": timezone.now(),
-                    },
-                )
-            except (IntegrityError, KeyError, ValueError):
+                current_time = int(request.POST["current_time"])
+                now = timezone.now()
+
+                # Note: update_or_create uses SELECT FOR UPDATE to lock the row
+                # but we want to call skip_locked=True to avoid deadlocks
+
+                with transaction.atomic():
+                    try:
+                        audio_log = AudioLog.objects.select_for_update(
+                            skip_locked=True
+                        ).get(
+                            user=request.user,
+                            episode=episode,
+                        )
+                        audio_log.current_time = current_time
+                        audio_log.listened = now
+                        audio_log.save(update_fields=["current_time", "listened"])
+                    except AudioLog.DoesNotExist:
+                        AudioLog.objects.create(
+                            user=request.user,
+                            episode=episode,
+                            current_time=current_time,
+                            listened=now,
+                        )
+
+            except (KeyError, ValueError):
                 return HttpResponseBadRequest()
 
         return HttpResponseNoContent(content_type="application/json")

@@ -324,7 +324,7 @@ class TestPlayerTimeUpdate:
         session.save()
 
         response = client.post(self.url, {"current_time": 1000})
-        assert400(response)
+        assert404(response)
 
 
 class TestBookmarks:
