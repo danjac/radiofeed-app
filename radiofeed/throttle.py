@@ -18,20 +18,30 @@ def throttle(rate_limit: int) -> Callable:
     def _decorator(view: Callable) -> Callable:
         @functools.wraps(view)
         def _wrapper(request: HttpRequest, *args, **kwargs) -> HttpResponse:
-            parts: list[str] = ["throttle", request.path]
-
-            if request.user.is_authenticated:
-                parts.append(str(request.user.pk))
-            else:
-                parts.append(request.META["REMOTE_ADDR"])
-
-            key = ":".join(parts)
+            key = ":".join(
+                [
+                    "throttle",
+                    request.path,
+                    _get_ident(request),
+                ]
+            )
 
             if cache.get(key):
                 return HttpResponseTooManyRequests()
+
             cache.set(key, value=True, timeout=rate_limit)
             return view(request, *args, **kwargs)
 
         return _wrapper
 
     return _decorator
+
+
+def _get_ident(request: HttpRequest) -> str:
+    if request.user.is_authenticated:
+        return str(request.user.pk)
+
+    if xff := request.headers.get("x-forwarded-for"):
+        return xff.split(",")[0]
+
+    return request.META["REMOTE_ADDR"]

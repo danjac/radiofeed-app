@@ -15,15 +15,30 @@ class TestThrottle:
 
         return _view
 
-    def test_ok_anon(self, rf, anonymous_user, view):
+    def test_ok_ip_addr(self, rf, anonymous_user, view):
         req = rf.get("/")
         req.user = anonymous_user
         response = view(req)
         assert response.status_code == http.HTTPStatus.OK
 
-    def test_throttled_anon(self, rf, anonymous_user, view, mocker):
+    def test_ok_x_forwarded_for(self, rf, anonymous_user, view):
+        req = rf.get("/", HTTP_X_FORWARDED_FOR="8.8.8.8")
+        req.user = anonymous_user
+        response = view(req)
+        assert response.status_code == http.HTTPStatus.OK
+
+    def test_throttled_ip_addr(self, rf, anonymous_user, view, mocker):
         mocker.patch("django.core.cache.cache.get", return_value=True)
         req = rf.get("/")
+        req.user = anonymous_user
+
+        view(req)
+        response = view(req)
+        assert response.status_code == http.HTTPStatus.TOO_MANY_REQUESTS
+
+    def test_throttled_x_forwarded(self, rf, anonymous_user, view, mocker):
+        mocker.patch("django.core.cache.cache.get", return_value=True)
+        req = rf.get("/", HTTP_X_FORWARDED_FOR="8.8.8.8")
         req.user = anonymous_user
 
         view(req)
