@@ -8,6 +8,8 @@ wsgi_app = "config.wsgi"
 
 accesslog = "-"
 
+worker_class = "gthread"
+
 # Calculate the number of workers (CPU * 2 + 1)
 workers = (multiprocessing.cpu_count() * 2) + 1
 
