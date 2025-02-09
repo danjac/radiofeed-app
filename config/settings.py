@@ -106,7 +106,7 @@ if env.bool("USE_CONNECTION_POOL", default=True):
                 "max_idle": env.int("CONN_POOL_MAX_IDLE", 120),
                 "max_waiting": env.int("CONN_POOL_MAX_WAITING", 25),
                 # assumes 30s statement_timeout in PostgreSQL
-                "timeout": env.int("CONN_POOL_TIMEOUT", default=30),
+                "timeout": env.int("CONN_POOL_TIMEOUT", default=20),
             }
         ),
     }
