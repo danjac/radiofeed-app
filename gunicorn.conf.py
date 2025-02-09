@@ -6,13 +6,13 @@ import psutil
 
 wsgi_app = "config.wsgi"
 
+
+# Basic settings
+
 accesslog = "-"
-
-# Set timeout and keepalive
 timeout = 35
-
 graceful_timeout = 40
-
+threads = 2
 keepalive = 5
 
 # Calculate the number of workers (CPU * 2 + 1)
