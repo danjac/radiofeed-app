@@ -43,7 +43,7 @@ db_volume := "radiofeed-app_pg_data"
 
 # Run the Django development server
 @serve:
-   @just dj tailwind runserver_plus
+   @just dj tailwind runserver
 
 # Run pytest-watcher
 @watch:

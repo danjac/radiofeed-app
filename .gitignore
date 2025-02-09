@@ -46,7 +46,6 @@ node_modules/
 npm-debug.log*
 static/app.css
 staticfiles
-tailwind.config.js
 venv
 ansible/.vault_pass
 ansible/hosts
