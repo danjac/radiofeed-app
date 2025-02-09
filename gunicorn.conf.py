@@ -1,4 +1,3 @@
-import math
 import multiprocessing
 
 import psutil
@@ -9,16 +8,21 @@ wsgi_app = "config.wsgi"
 
 accesslog = "-"
 
-# number of workers should be CPU*2 + 1
+# Set timeout and keepalive
+timeout = 35
+
+graceful_timeout = 40
+
+keepalive = 5
+
+# Calculate the number of workers (CPU * 2 + 1)
 workers = (multiprocessing.cpu_count() * 2) + 1
 
-# total available memory in GB
-memory = math.floor(psutil.virtual_memory().total / (pow(1000, 3)))
+# Get total available memory in GiB
+memory = psutil.virtual_memory().total // (2**30)
 
-# set max_requests to arbitrary value of memory * 50
-# e.g. 4GB = 200 max requests
+# Set max_requests based on memory
 max_requests = memory * 50
 
-# set max_requests_jitter to 5% of max_requests
-# e.g. max_requests 200 = (200 / 20) 10 max_requests_jitter
-max_requests_jitter = math.floor(max_requests / 20)
+# Set max_requests_jitter to 5% of max_requests
+max_requests_jitter = max_requests // 20
