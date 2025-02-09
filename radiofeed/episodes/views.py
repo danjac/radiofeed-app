@@ -22,6 +22,7 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_pagination
+from radiofeed.throttle import throttle
 
 
 @require_safe
@@ -119,12 +120,13 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def player_time_update(
-    request: HttpRequest,
-) -> HttpResponse:
+@throttle(rate_limit=5)
+def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode.
 
     Time should be passed in POST as `current_time` integer value.
+
+    `rate_limit` is the time in seconds to prevent spamming the endpoint.
 
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
