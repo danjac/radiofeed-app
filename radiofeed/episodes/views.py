@@ -133,13 +133,13 @@ def player_time_update(
         if episode_id := request.player.get():
             try:
                 request.user.audio_logs.update_or_create(
-                    episode=get_object_or_404(Episode, pk=episode_id),
+                    episode_id=episode_id,
                     defaults={
                         "listened": timezone.now(),
                         "current_time": int(request.POST["current_time"]),
                     },
                 )
-            except (KeyError, ValueError):
+            except (IntegrityError, KeyError, ValueError):
                 return HttpResponseBadRequest()
 
         return HttpResponseNoContent(content_type="application/json")

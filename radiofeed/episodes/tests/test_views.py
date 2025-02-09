@@ -312,11 +312,6 @@ class TestPlayerTimeUpdate:
         response = client.post(self.url, {"current_time": "xyz"})
         assert400(response)
 
-    @pytest.mark.django_db
-    def test_user_not_authenticated(self, client):
-        response = client.post(self.url, {"current_time": "1000"})
-        assert401(response)
-
     @pytest.mark.django_db()(transaction=True)
     def test_episode_does_not_exist(self, client, auth_user):
         session = client.session
@@ -324,7 +319,12 @@ class TestPlayerTimeUpdate:
         session.save()
 
         response = client.post(self.url, {"current_time": 1000})
-        assert404(response)
+        assert400(response)
+
+    @pytest.mark.django_db
+    def test_user_not_authenticated(self, client):
+        response = client.post(self.url, {"current_time": "1000"})
+        assert401(response)
 
 
 class TestBookmarks:
