@@ -6,23 +6,22 @@ import psutil
 
 wsgi_app = "config.wsgi"
 
-# Basic settings
-
 accesslog = "-"
 
 # Calculate the number of workers (CPU * 2 + 1)
 workers = (multiprocessing.cpu_count() * 2) + 1
 
-# Get total available memory in GiB
-memory = psutil.virtual_memory().total >> 30
+# Get total available memory in MiB
+memory = psutil.virtual_memory().total // (2**20)
 
 # Estimate max threads per worker (based on memory)
-memory_per_worker = memory / workers  # Available memory per worker (in GiB)
+memory_per_worker = memory // workers
 
-threads = max(2, int(memory_per_worker * 2))  # Allocate ~2 threads per GiB per worker
+# Threads should be at least 2
+threads = max(2, memory_per_worker // 128)
 
 # Calculate max_requests (prevent memory leaks)
-max_requests = max(300, int(memory * 50))  # 50 requests per GiB, minimum 300
+max_requests = max(300, memory * 50 // 1024)
 
 # Set max_requests_jitter to 5% of max_requests
 max_requests_jitter = max_requests // 20
