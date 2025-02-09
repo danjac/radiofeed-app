@@ -95,6 +95,8 @@ DATABASES = {
 }
 
 if env.bool("USE_CONNECTION_POOL", default=True):
+    # Connection pool settings
+    # https://www.psycopg.org/psycopg3/docs/api/pool.html#psycopg_pool.ConnectionPool
     DATABASES["default"]["OPTIONS"] = {
         "pool": (
             {
@@ -103,7 +105,8 @@ if env.bool("USE_CONNECTION_POOL", default=True):
                 "max_lifetime": env.int("CONN_POOL_MAX_LIFETIME", 1800),
                 "max_idle": env.int("CONN_POOL_MAX_IDLE", 300),
                 "max_waiting": env.int("CONN_POOL_MAX_WAITING", 25),
-                "timeout": env.int("CONN_POOL_TIMEOUT", default=5),
+                # assumes 30s statement_timeout in PostgreSQL
+                "timeout": env.int("CONN_POOL_TIMEOUT", default=20),
             }
         ),
     }
