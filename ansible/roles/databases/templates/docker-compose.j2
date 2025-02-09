@@ -7,6 +7,15 @@ services:
     postgres:
         image: postgres:16.6-bookworm
         shm_size: 10g
+        command: >
+          postgres
+          -c lock_timeout=5s
+          -c log_destination=stderr
+          -c log_statement=all
+          -c max_connections=200
+          -c max_wal_size=4GB
+          -c statement_timeout=30s
+          -c wal_buffers=32MB
         environment:
             - POSTGRES_PASSWORD={{ postgres_password }}
         volumes:
