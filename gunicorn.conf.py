@@ -28,23 +28,8 @@ max_requests = max(300, memory * 50 // 1024)
 # Set max_requests_jitter to 5% of max_requests
 max_requests_jitter = max_requests // 20
 
-# Base timeout: slightly above the database statement timeout (30s in PostgreSQL settings)
-base_timeout = 35
-
 # Scale timeout based on threading: more threads = less per-thread CPU time
-timeout = max(30, base_timeout + (threads * 2))
+timeout = max(30, 35 + (threads * 2))
 
 # Graceful timeout: allow extra time for clean shutdown
 graceful_timeout = timeout + 10  # Give workers 10 extra seconds to finish tasks
-
-base_keepalive_timeout = (
-    20  # 20 seconds, slightly shorter than the connection pool timeout
-)
-
-# Adjust keep-alive based on number of threads and CPU count (to scale with worker load)
-keepalive_timeout = max(
-    15, base_keepalive_timeout + (threads * 2)
-)  # Ensure a reasonable value
-
-# Add a max limit to avoid excessively long keep-alive times
-keepalive_timeout = min(30, keepalive_timeout)  # Max keep-alive timeout capped at 30s
