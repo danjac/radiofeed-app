@@ -20,7 +20,7 @@ document.addEventListener("alpine:init", () => {
             runtime: 0,
             skipSeconds: 10,
             timer: null,
-            updateSeconds: 6,
+            updateInterval: 6,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -144,7 +144,7 @@ document.addEventListener("alpine:init", () => {
                         if (this.isPlaying & !this.isUpdating) {
                             this.sendTimeUpdate();
                         }
-                    }, this.updateSeconds * 1000);
+                    }, this.updateInterval * 1000);
                 }
             },
             clearTimer() {
