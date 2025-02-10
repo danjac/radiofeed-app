@@ -126,8 +126,6 @@ def player_time_update(request: HttpRequest) -> HttpResponse:
 
     Time should be passed in POST as `current_time` integer value.
 
-    `rate_limit` is the time in seconds to prevent spamming the endpoint.
-
     Returns:
         HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
     """
