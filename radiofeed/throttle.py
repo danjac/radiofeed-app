@@ -10,7 +10,9 @@ from radiofeed.http import HttpResponseTooManyRequests
 def throttle(*, limit: int, duration: int) -> Callable:
     """Decorator to throttle requests.
 
-    A cache key is checked with a timeout of `duration` seconds. If the key exists, the request is throttled.
+    A cache key is checked with a timeout of `duration` seconds for a counter.
+
+    If the counter is greater than `limit`, the request is throttled.
 
     For example, to limit requests to 10 per minute:
 
