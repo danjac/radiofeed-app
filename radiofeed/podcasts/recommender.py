@@ -9,7 +9,7 @@ from datetime import timedelta
 
 from django.db.models import QuerySet
 from django.utils import timezone
-from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed import tokenizer
@@ -38,13 +38,15 @@ class _Recommender:
         *,
         since: timedelta = timedelta(days=90),
         num_matches: int = 12,
+        max_features: int = 5000,
     ) -> None:
         self._language = language
         self._since = since
         self._num_matches = num_matches
 
-        self._vectorizer = HashingVectorizer(
-            stop_words=list(tokenizer.get_stopwords(self._language))
+        self._vectorizer = TfidfVectorizer(
+            stop_words=list(tokenizer.get_stopwords(self._language)),
+            max_features=max_features,
         )
 
     def recommend(self) -> None:
@@ -104,7 +106,9 @@ class _Recommender:
         # build a data model of podcasts with same language and category
 
         with contextlib.suppress(ValueError):
-            cosine_sim = cosine_similarity(self._vectorizer.transform(rows.values()))
+            cosine_sim = cosine_similarity(
+                self._vectorizer.fit_transform(rows.values())
+            )
 
             podcast_ids = list(rows.keys())
 
