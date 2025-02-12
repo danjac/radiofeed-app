@@ -1194,15 +1194,15 @@ crypto = [
 
 [[package]]
 name = "pyright"
-version = "1.1.393"
+version = "1.1.394"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "nodeenv" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f4/c1/aede6c74e664ab103673e4f1b7fd3d058fef32276be5c43572f4067d4a8e/pyright-1.1.393.tar.gz", hash = "sha256:aeeb7ff4e0364775ef416a80111613f91a05c8e01e58ecfefc370ca0db7aed9c", size = 3790430 }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/e4/79f4d8a342eed6790fdebdb500e95062f319ee3d7d75ae27304ff995ae8c/pyright-1.1.394.tar.gz", hash = "sha256:56f2a3ab88c5214a451eb71d8f2792b7700434f841ea219119ade7f42ca93608", size = 3809348 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/92/47/f0dd0f8afce13d92e406421ecac6df0990daee84335fc36717678577d3e0/pyright-1.1.393-py3-none-any.whl", hash = "sha256:8320629bb7a44ca90944ba599390162bf59307f3d9fb6e27da3b7011b8c17ae5", size = 5646057 },
+    { url = "https://files.pythonhosted.org/packages/d6/4c/50c74e3d589517a9712a61a26143b587dba6285434a17aebf2ce6b82d2c3/pyright-1.1.394-py3-none-any.whl", hash = "sha256:5f74cce0a795a295fb768759bbeeec62561215dea657edcaab48a932b031ddbb", size = 5679540 },
 ]
 
 [[package]]
@@ -1642,15 +1642,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.20.0"
+version = "2.21.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/68/e8/6a366c0cd5e129dda6ecb20ff097f70b18182c248d4c27e813c21f98992a/sentry_sdk-2.20.0.tar.gz", hash = "sha256:afa82713a92facf847df3c6f63cec71eb488d826a50965def3d7722aa6f0fdab", size = 300125 }
+sdist = { url = "https://files.pythonhosted.org/packages/08/63/3f0e88709cf4af992e2813c27d8ba628a891db0805e3fcc6dc834e142c5b/sentry_sdk-2.21.0.tar.gz", hash = "sha256:a6d38e0fb35edda191acf80b188ec713c863aaa5ad8d5798decb8671d02077b6", size = 301965 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/0f/6f7e6cd0f4a141752caef3f79300148422fdf2b8b68b531f30b2b0c0cbda/sentry_sdk-2.20.0-py2.py3-none-any.whl", hash = "sha256:c359a1edf950eb5e80cffd7d9111f3dbeef57994cb4415df37d39fda2cf22364", size = 322576 },
+    { url = "https://files.pythonhosted.org/packages/a4/18/7587660cb5e4d07134913d8e74137efcd4903fda873bf612c30eb34c7ab4/sentry_sdk-2.21.0-py2.py3-none-any.whl", hash = "sha256:7623cfa9e2c8150948a81ca253b8e2bfe4ce0b96ab12f8cd78e3ac9c490fd92f", size = 324096 },
 ]
 
 [[package]]
