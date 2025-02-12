@@ -6,5 +6,5 @@ export COMPOSE_FILE={{ project_dir }}/stack.yml
 
 docker compose -f $COMPOSE_FILE pull
 docker compose -f $COMPOSE_FILE run --rm django ./release.sh
-docker stack deploy --compose-file $COMPOSE_FILE {{ stack_name }}
+docker stack deploy --compose-file $COMPOSE_FILE {{ stack_name }} --detach=false
 docker system prune -f
