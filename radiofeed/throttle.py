@@ -7,12 +7,16 @@ from django.http import HttpRequest, HttpResponse
 from radiofeed.http import HttpResponseTooManyRequests
 
 
-def throttle(rate_limit: int) -> Callable:
-    """Decorator to throttle requests based on rate limit.
+def throttle(*, limit: int, duration: int) -> Callable:
+    """Decorator to throttle requests.
 
-    If the rate limit is exceeded, return a 429 status code.
+    A cache key is checked with a timeout of `duration` seconds. If the key exists, the request is throttled.
 
-    If user is authenticated, use user's primary key as part of the cache key, otherwise use IP address.
+    For example, to limit requests to 10 per minute:
+
+        @throttle(10, 60)
+
+    If user is authenticated, use user's primary key as part of the cache key, otherwise uses IP address.
     """
 
     def _decorator(view: Callable) -> Callable:
@@ -22,14 +26,16 @@ def throttle(rate_limit: int) -> Callable:
                 [
                     "throttle",
                     request.path,
-                    _get_ident(request),
+                    get_ident(request),
                 ]
             )
 
-            if cache.get(key):
+            count = cache.get(key, 0)
+
+            if count > limit:
                 return HttpResponseTooManyRequests()
 
-            cache.set(key, value=True, timeout=rate_limit)
+            cache.set(key, count + 1, timeout=duration)
             return view(request, *args, **kwargs)
 
         return _wrapper
@@ -37,7 +43,8 @@ def throttle(rate_limit: int) -> Callable:
     return _decorator
 
 
-def _get_ident(request: HttpRequest) -> str:
+def get_ident(request: HttpRequest) -> str:
+    """Returns throttle identifier based on user or IP address."""
     if request.user.is_authenticated:
         return f"user:{request.user.pk}"
 

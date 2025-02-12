@@ -120,7 +120,7 @@ def close_player(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@throttle(rate_limit=5)
+@throttle(limit=1, duration=5)
 def player_time_update(request: HttpRequest) -> HttpResponse:
     """Update current play time of episode.
 
