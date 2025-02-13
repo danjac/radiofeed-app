@@ -9,7 +9,7 @@
 - name: Create deploy script
   ansible.builtin.template:
     src: templates/deploy_stack.sh.j2
-    dest: "/home/{{ user }}/deploy_stack.sh"
+    dest: "/home/{{ ansible_user }}/deploy_stack.sh"
     mode: "u+x"
 
 - name: Initialize Docker swarm

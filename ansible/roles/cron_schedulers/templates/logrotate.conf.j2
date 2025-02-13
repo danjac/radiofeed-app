@@ -1,5 +1,5 @@
  {{ project_dir }}/logs/{{ item }}.log {
-  su {{ user }} {{ user }}
+  su {{ ansible_user }} {{ ansible_user }}
   rotate 7
   daily
   compress
