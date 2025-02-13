@@ -5,7 +5,7 @@
 - name: Add psql script
   ansible.builtin.template:
       src: templates/psql.sh.j2
-      dest: "/home/{{ ansible_user }}/psql.sh"
+      dest: "/home/{{ user }}/psql.sh"
       mode: "u+x"
 - name: Start Redis and PostgreSQL
   ansible.builtin.command:

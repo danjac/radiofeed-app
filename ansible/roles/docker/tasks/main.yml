@@ -43,7 +43,7 @@
     state: present
 - name: Add user to docker group
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: "{{ user }}"
     groups: docker
     append: true
 - name: Copy daemon.json file
@@ -54,7 +54,7 @@
 - name: Daily docker cleanup crontab
   ansible.builtin.cron:
     name: "Docker cleanup"
-    user: "{{ ansible_user }}"
+    user: "{{ user }}"
     minute: "0"
     hour: "3"
     job: /usr/bin/docker system prune -f > /dev/null 2>&1

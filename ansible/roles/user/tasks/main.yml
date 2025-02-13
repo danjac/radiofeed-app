@@ -1,18 +1,18 @@
 - name: Create deploy user
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: "{{ user }}"
     createhome: yes
     state: present
 - name: Create deploy directory
   ansible.builtin.file:
       path: "{{ project_dir }}"
       state: directory
-      owner: "{{ ansible_user }}"
-      group: "{{ ansible_user }}"
+      owner: "{{ user }}"
+      group: "{{ user }}"
       mode: "u+rw"
 - name: Deploy SSH Key
   ansible.posix.authorized_key:
-      user: "{{ ansible_user }}"
+      user: "{{ user }}"
       key: "{{ lookup('file', ssh_public_key_path) }}"
       exclusive: true
       state: present
