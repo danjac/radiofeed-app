@@ -6,18 +6,8 @@
     dest: "{{ project_dir }}/stack.yml"
     mode: "u+r"
 
-- name: Create deploy script
-  ansible.builtin.template:
-    src: templates/deploy_stack.sh.j2
-    dest: "/home/{{ user }}/deploy_stack.sh"
-    mode: "u+x"
-
 - name: Initialize Docker swarm
   community.docker.docker_swarm:
       state: present
       advertise_addr: "{{ hostvars[groups['managers'][0]].private_ip  }}"
   register: swarm
-
-- name: Deploy stack
-  ansible.builtin.shell:
-    cmd: ./deploy_stack.sh
