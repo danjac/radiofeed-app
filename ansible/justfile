@@ -8,7 +8,7 @@
 
 # Run Ansible playbook
 @pb playbook *ARGS:
-    ansible-playbook -v -i hosts.yml {{ playbook }}.yml {{ ARGS }}
+    ansible-playbook -v -i hosts.yml playbooks/{{ playbook }}.yml {{ ARGS }}
 
 # Deploy the project
 deploy:
