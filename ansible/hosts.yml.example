@@ -1,14 +1,16 @@
-databases:
-  hosts:
-    101.102.103.101:
-      private_ip: 10.0.0.1
-
-managers:
-  hosts:
-    101.102.103.102:
-      private_ip: 10.0.0.2
-
-workers:
-  hosts:
-    101.102.103.103:
-    101.102.103.104:
+all:
+  vars:
+    ansible_user: ubuntu
+  children:
+    manager:
+      hosts:
+        123.34.5.678:
+          private_ip: 10.0.0.3
+    database:
+      hosts:
+        123.34.5.678:
+          private_ip: 10.0.0.2
+    workers:
+      hosts:
+        123.34.5.678:
+        678.76.5.432:

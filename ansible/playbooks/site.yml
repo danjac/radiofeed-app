@@ -1,46 +1,53 @@
 - name: Set up user and docker
   hosts: all
-  become: true
+  become: false
   remote_user: root
+  vars:
+      ansible_user: root
   vars_files:
-      - ./vars/settings.yml
+      - ./vars/config.yml
   roles:
       - user
       - docker
 
 - name: Set up Postgresql and Redis
-  hosts: databases
-  remote_user: "{{ user }}"
+  hosts: database
   gather_facts: false
   vars_files:
-      - ./vars/settings.yml
+      - ./vars/config.yml
+      - ./vars/secrets.yml
   roles:
-      - databases
+      - database
 
-- name: Set up swarm managers and cronjobs
-  hosts: managers
-  remote_user: "{{ user }}"
+- name: Set up manager
+  hosts: manager
   gather_facts: false
   vars_files:
-      - ./vars/settings.yml
+      - ./vars/config.yml
+      - ./vars/secrets.yml
   roles:
-      - managers
-      - cron_schedulers
+      - manager
 
-- name: Set up swarm workers
+- name: Set up workers
   hosts: workers
-  remote_user: "{{ user }}"
   gather_facts: false
   vars_files:
-      - ./vars/settings.yml
+      - ./vars/config.yml
   roles:
       - workers
 
 - name: Deploy stack
-  hosts: managers
-  remote_user: "{{ user }}"
+  hosts: manager
   gather_facts: false
   vars_files:
-      - ./vars/settings.yml
+      - ./vars/config.yml
   roles:
       - deploy
+
+- name: Set up cronjobs
+  hosts: manager
+  gather_facts: false
+  vars_files:
+      - ./vars/config.yml
+  roles:
+      - cron_scheduler

@@ -1,8 +1,7 @@
 - name: Generate a remote Django manage script
-  hosts: managers
-  remote_user: "{{ user }}"
+  hosts: manager
   gather_facts: false
   vars_files:
-    - ./vars/settings.yml
+    - ./vars/config.yml
   roles:
     - dj_manage

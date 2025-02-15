@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+docker compose pull
+docker compose run --rm django ./release.sh
+docker stack deploy --compose-file ./docker-compose.yml {{ stack_name }} --detach=false
+docker system prune -f

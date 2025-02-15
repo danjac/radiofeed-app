@@ -19,7 +19,7 @@ services:
         environment:
             - POSTGRES_PASSWORD={{ postgres_password }}
         volumes:
-            - pg_data:/var/lib/postgresql/data
+            - docker_pg_data:/var/lib/postgresql/data
         stop_grace_period: "3s"
         restart: always
         logging: *default-logging
@@ -45,4 +45,5 @@ services:
             - "6379:6379"
 
 volumes:
-    pg_data: {}
+    docker_pg_data:
+        external: true

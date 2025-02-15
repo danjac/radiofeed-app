@@ -1,7 +1,8 @@
 - name: Ubuntu server upgrades
   hosts: all
-  gather_facts: true
-  become: true
+  become: false
   remote_user: root
+  vars:
+      ansible_user: root
   roles:
       - upgrade

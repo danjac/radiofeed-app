@@ -1,2 +1,2 @@
 - name: Generate remote PSQL command
-  local_action: ansible.builtin.template  src=templates/psql.sh.j2 dest=./psql.sh mode=u+x
+  local_action: ansible.builtin.template  src=templates/psql.sh.j2 dest=../psql.sh mode=u+x

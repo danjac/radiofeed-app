@@ -2,4 +2,4 @@
 
 set -o errexit
 
-ssh -t "{{ user }}@{{ inventory_hostname }}" -- ./manage.sh $@
+ssh -t "{{ ansible_user }}@{{ inventory_hostname }}" -- ./manage.sh "$@"

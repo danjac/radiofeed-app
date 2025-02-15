@@ -1,23 +1,19 @@
 - name: Add manage script
   ansible.builtin.template:
       src: templates/manage.sh.j2
-      dest: "/home/{{ user }}/manage.sh"
+      dest: manage.sh
       mode: "u+x"
 
 - name: Create log directory
   ansible.builtin.file:
-      path: "{{ project_dir }}/logs"
+      path: logs
       state: directory
-      owner: "{{ user }}"
-      group: "{{ user }}"
       mode: "u+rw"
 
 - name: Create log files
   ansible.builtin.file:
-      path: "{{ project_dir }}/logs/{{ item }}"
+      path: "logs/{{ item }}"
       state: touch
-      owner: "{{ user }}"
-      group: "{{ user }}"
       mode: "0666"
   loop:
       - feedparser.log
@@ -27,6 +23,8 @@
 
 - name: Set up logrotate for cron logs
   remote_user: root
+  vars:
+      ansible_user: root
   ansible.builtin.template:
       src: templates/logrotate.conf.j2
       dest: /etc/logrotate.d/{{ item }}
@@ -36,36 +34,40 @@
       - recommendations
       - emails
       - clearsessions
+
 - name: Install crontab
   vars:
-      manage_cmd: "./manage.sh"
-      logs_dir: "{{ project_dir }}/logs/"
+      manage_cmd: ./manage.sh
+      logs_dir: logs/
   block:
       - name: Install parse feeds cron
         ansible.builtin.cron:
             name: Parse feeds
-            user: "{{ user }}"
+            user: "{{ ansible_user }}"
             minute: "*/6"
             job: "{{ manage_cmd }} parse_feeds --limit=360 >> {{ logs_dir }}feedparser.log 2>&1"
+
       - name: Install create recommendations cron
         ansible.builtin.cron:
             name: Create recommendations
-            user: "{{ user }}"
+            user: "{{ ansible_user }}"
             minute: "20"
             hour: "6"
             job: "{{ manage_cmd }} create_recommendations >> {{ logs_dir }}recommendations.log 2>&1"
+
       - name: Install send recommendations emails cron
         ansible.builtin.cron:
             name: Send recommendations emails
-            user: "{{ user }}"
+            user: "{{ ansible_user }}"
             minute: "45"
             hour: "12"
             weekday: "1"
             job: "{{ manage_cmd }} send_recommendations >> {{ logs_dir }}emails.log 2>&1"
+
       - name: Install clear Django sessions cron
         ansible.builtin.cron:
             name: Clear Django sessions
-            user: "{{ user }}"
+            user: "{{ ansible_user }}"
             minute: "5"
             hour: "6"
             job: "{{ manage_cmd }} clearsessions >> {{ logs_dir }}clearsessions.log 2>&1"

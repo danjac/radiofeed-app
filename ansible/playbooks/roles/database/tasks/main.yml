@@ -1,18 +1,19 @@
 - name: Copy docker-compose.yml
   ansible.builtin.template:
-      src: templates/docker-compose.j2
-      dest: "{{ project_dir }}/docker-compose.yml"
+      src: docker-compose.j2
+      dest: docker-compose.yml
+
 - name: Add psql script
-  ansible.builtin.template:
-      src: templates/psql.sh.j2
-      dest: "/home/{{ user }}/psql.sh"
+  ansible.builtin.copy:
+      src: psql.sh
+      dest: "psql.sh"
       mode: "u+x"
+
 - name: Start Redis and PostgreSQL
   ansible.builtin.command:
       cmd: "/usr/bin/docker compose up -d --remove-orphans"
-  args:
-      chdir: "{{ project_dir }}"
   changed_when: true
+
 - name: Run Docker cleanup (optional)
   ansible.builtin.command:
       cmd: "/usr/bin/docker system prune -f"

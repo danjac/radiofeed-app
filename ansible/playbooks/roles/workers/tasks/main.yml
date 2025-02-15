@@ -1,5 +1,5 @@
 - name: Join swarm node
   community.docker.docker_swarm:
     state: join
-    join_token: "{{ hostvars[groups['managers'][0]].swarm.swarm_facts.JoinTokens.Worker }}"
-    remote_addrs: [ "{{ hostvars[groups['managers'][0]].private_ip }}" ]
+    join_token: "{{ hostvars[groups['manager'][0]].swarm.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: [ "{{ hostvars[groups['manager'][0]].private_ip }}" ]

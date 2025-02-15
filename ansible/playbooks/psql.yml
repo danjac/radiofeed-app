@@ -1,8 +1,7 @@
 - name: Generate a remote PSQL script
-  hosts: databases
-  remote_user: "{{ user }}"
+  hosts: database
   gather_facts: false
   vars_files:
-    - ./vars/settings.yml
+    - ./vars/config.yml
   roles:
     - psql

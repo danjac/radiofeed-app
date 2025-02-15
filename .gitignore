@@ -52,4 +52,4 @@ ansible/hosts
 ansible/psql.sh
 ansible/manage.sh
 ansible/ssh_keys
-ansible/vars/*.yml
+ansible/**/vars/*.yml

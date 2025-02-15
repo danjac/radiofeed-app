@@ -1,9 +1,9 @@
 - name: Create deploy script
   ansible.builtin.template:
-    src: templates/deploy_stack.sh.j2
-    dest: "/home/{{ user }}/deploy_stack.sh"
+    src: templates/deploy.sh.j2
+    dest: deploy.sh
     mode: "u+x"
 
 - name: Deploy stack
   ansible.builtin.shell:
-    cmd: ./deploy_stack.sh
+    cmd: ./deploy.sh
