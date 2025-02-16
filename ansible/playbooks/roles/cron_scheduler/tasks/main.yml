@@ -12,14 +12,10 @@
 
 - name: Create log files
   ansible.builtin.file:
-      path: "logs/{{ item }}"
+      path: "logs/{{ item }}.log"
       state: touch
       mode: "0666"
-  loop:
-      - feedparser.log
-      - recommendations.log
-      - emails.log
-      - clearsessions.log
+  loop: "{{ logs }}"
 
 - name: Set up logrotate for cron logs
   remote_user: root
@@ -29,11 +25,7 @@
       src: templates/logrotate.conf.j2
       dest: /etc/logrotate.d/{{ item }}
       mode: "0644"
-  loop:
-      - feedparser
-      - recommendations
-      - emails
-      - clearsessions
+  loop: "{{ logs }}"
 
 - name: Install crontab
   vars:
