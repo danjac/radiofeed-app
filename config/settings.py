@@ -191,11 +191,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 CSRF_USE_SESSIONS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    f"{scheme}://{host}"
-    for host in env.list("CSRF_TRUSTED_ORIGINS", default=[]) or []
-    for scheme in ["http", "https"]
-]
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[]) or []
 
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
