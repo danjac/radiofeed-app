@@ -26,7 +26,7 @@ services:
       replicas: {{ groups['workers']|length }}
       placement:
         constraints:
-          - node.role != manager
+          - node.role == worker
     ports:
       - published: 8000
         target: 8000
