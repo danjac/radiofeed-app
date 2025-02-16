@@ -9,6 +9,10 @@
       dest: "psql.sh"
       mode: "u+x"
 
+- name: Create PostgresSQL external volume
+  community.docker.docker_volume:
+      name: "docker_pg_data"
+
 - name: Start Redis and PostgreSQL
   ansible.builtin.command:
       cmd: "/usr/bin/docker compose up -d --remove-orphans"
