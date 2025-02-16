@@ -2,7 +2,7 @@
   vars:
       database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
   ansible.builtin.template:
-    src: templates/docker-compose.yml.j2
+    src: docker-compose.yml.j2
     dest: docker-compose.yml
     mode: "u+r"
 

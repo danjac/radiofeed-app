@@ -1,6 +1,6 @@
 - name: Create deploy script
   ansible.builtin.template:
-    src: templates/deploy.sh.j2
+    src: deploy.sh.j2
     dest: deploy.sh
     mode: "u+x"
 

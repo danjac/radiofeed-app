@@ -3,21 +3,21 @@ services:
     image: {{ docker_image }}
     command: ./entrypoint.sh
     environment:
+       ADMINS: "{{ admins }}"
        ADMIN_SITE_HEADER: "{{ admin_site_header }}"
        ADMIN_URL: "{{ admin_url }}"
-       ADMINS: "{{ admins }}"
        ALLOWED_HOSTS: "{{ allowed_hosts }}"
        CONTACT_EMAIL: "{{ contact_email }}"
        CSP_SCRIPT_WHITELIST: "{{ csp_script_whitelist }}"
        DATABASE_URL: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
-       REDIS_URL: "redis://{{ database_ip }}:6379/0"
        MAILGUN_API_KEY: "{{ mailgun_api_key }}"
        MAILGUN_API_URL: "{{ mailgun_api_url }}"
        MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
        PWA_SHA256_FINGERPRINTS: "{{ pwa_sha256_fingerprints }}"
+       REDIS_URL: "redis://{{ database_ip }}:6379/0"
        SECRET_KEY: "{{ secret_key }}"
-       SENTRY_URL: "{{ sentry_url }}"
        SECRET_KEY_FALLBACKS: "{{ secret_key_fallbacks }}"
+       SENTRY_URL: "{{ sentry_url }}"
     logging:
       options:
         max-file: "3"

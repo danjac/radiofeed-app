@@ -1,6 +1,6 @@
 - name: Add manage script
   ansible.builtin.template:
-      src: templates/manage.sh.j2
+      src: manage.sh.j2
       dest: manage.sh
       mode: "u+x"
 
@@ -22,7 +22,7 @@
   vars:
       ansible_user: root
   ansible.builtin.template:
-      src: templates/logrotate.conf.j2
+      src: logrotate.conf.j2
       dest: /etc/logrotate.d/{{ item }}
       mode: "0644"
   loop: "{{ logs }}"
