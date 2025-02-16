@@ -5,61 +5,59 @@
 {% endblock title %}
 
 {% block content %}
-    {% cache 300 privacy-page %}
-        {% with site_name=request.site.name %}
-            <c-header title="Privacy" />
-            <div class="space-y-6">
-                <p class="prose dark:prose-invert">
-                    This privacy policy ("policy") will help you understand how <strong>{{ site_name }}</strong> ("us", "we",
-                    "our") uses and protects the data you provide to us when you visit and use <strong>{% absolute_uri %}</strong> ("site", "service").
-                </p>
-                <p class="prose dark:prose-invert">
-                    We reserve the right to change this policy at any given time, of which you will be promptly updated. If you want to make sure that you are up to date with the latest changes, we advise you to frequently visit this page.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">What User Data We Collect</h2>
-                <p class="prose dark:prose-invert">When you visit the site, we may collect the following data:</p>
-                <ul class="space-y-3 list-disc list-inside">
-                    <li>Your IP address.</li>
-                    <li>Your email address.</li>
-                    <li>Data profile regarding your online behavior on our site.</li>
-                </ul>
-                <h2 class="text-lg font-semibold lg:text-xl">Why We Collect Your Data</h2>
-                <p class="prose dark:prose-invert">We are collecting your data for several reasons:</p>
-                <ul class="space-y-3 list-disc list-inside">
-                    <li>To better understand your needs.</li>
-                    <li>To improve our services and products.</li>
-                    <li>To send you promotional emails containing the information we think you will find interesting.</li>
-                    <li>To customize our site according to your online behavior and personal preferences.</li>
-                </ul>
-                <h2 class="text-lg font-semibold lg:text-xl">Safeguarding and Securing the Data</h2>
-                <p class="prose dark:prose-invert">
-                    <strong>{{ site_name }}</strong> is committed to securing your data and keeping it confidential. <strong>{{ site_name }}</strong> has done all in its power to prevent data theft, unauthorized access, and disclosure by implementing the latest technologies and software, which help us safeguard all the information we collect online.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Account Deletion</h2>
-                <p class="prose dark:prose-invert">
-                    The user can <a href="{% url "users:delete_account" %}" class="link">delete their account</a> at any time. All collected user-specific data will also be irrevocably deleted.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Our Cookie Policy</h2>
-                <p class="prose dark:prose-invert">
-                    Once you agree to allow our site to use cookies, you also agree to use the data it collects regarding your online behavior (analyze web traffic, web pages you visit and spend the most time on).
-                </p>
-                <p class="prose dark:prose-invert">
-                    The data we collect by using cookies is used to customize our site to your needs. After we use the data for statistical analysis, the data is completely removed from our systems.
-                </p>
-                <p class="prose dark:prose-invert">
-                    Please note that cookies don't allow us to gain control of your computer in any way. They are strictly used to monitor which pages you find useful and which you do not so that we can provide a better experience for you.
-                </p>
-                <p class="prose dark:prose-invert">
-                    If you want to disable cookies, you can do it by accessing the settings of your internet browser. You can visit <a href="https://www.internetcookies.com"
-                                                                                                                                       target="_blank"
-                                                                                                                                       rel="noopener"
-                                                                                                                                       class="link">https://www.internetcookies.com</a>, which contains comprehensive information on how to do this on a wide variety of browsers and devices.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Links to Other Websites</h2>
-                <p class="prose dark:prose-invert">
-                    Our site contains links that lead to other websites. If you click on these links <strong>{{ site_name }}</strong> is not held responsible for your data and privacy protection. Visiting those websites is not governed by this privacy policy agreement. Make sure to read the privacy policy documentation of the website you go to from our website.
-                </p>
-            </div>
-        {% endwith %}
-    {% endcache %}
+    {% with site_name=request.site.name %}
+        <c-header title="Privacy" />
+        <div class="space-y-6">
+            <p class="prose dark:prose-invert">
+                This privacy policy ("policy") will help you understand how <strong>{{ site_name }}</strong> ("us", "we",
+                "our") uses and protects the data you provide to us when you visit and use <strong>{% absolute_uri %}</strong> ("site", "service").
+            </p>
+            <p class="prose dark:prose-invert">
+                We reserve the right to change this policy at any given time, of which you will be promptly updated. If you want to make sure that you are up to date with the latest changes, we advise you to frequently visit this page.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">What User Data We Collect</h2>
+            <p class="prose dark:prose-invert">When you visit the site, we may collect the following data:</p>
+            <ul class="space-y-3 list-disc list-inside">
+                <li>Your IP address.</li>
+                <li>Your email address.</li>
+                <li>Data profile regarding your online behavior on our site.</li>
+            </ul>
+            <h2 class="text-lg font-semibold lg:text-xl">Why We Collect Your Data</h2>
+            <p class="prose dark:prose-invert">We are collecting your data for several reasons:</p>
+            <ul class="space-y-3 list-disc list-inside">
+                <li>To better understand your needs.</li>
+                <li>To improve our services and products.</li>
+                <li>To send you promotional emails containing the information we think you will find interesting.</li>
+                <li>To customize our site according to your online behavior and personal preferences.</li>
+            </ul>
+            <h2 class="text-lg font-semibold lg:text-xl">Safeguarding and Securing the Data</h2>
+            <p class="prose dark:prose-invert">
+                <strong>{{ site_name }}</strong> is committed to securing your data and keeping it confidential. <strong>{{ site_name }}</strong> has done all in its power to prevent data theft, unauthorized access, and disclosure by implementing the latest technologies and software, which help us safeguard all the information we collect online.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Account Deletion</h2>
+            <p class="prose dark:prose-invert">
+                The user can <a href="{% url "users:delete_account" %}" class="link">delete their account</a> at any time. All collected user-specific data will also be irrevocably deleted.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Our Cookie Policy</h2>
+            <p class="prose dark:prose-invert">
+                Once you agree to allow our site to use cookies, you also agree to use the data it collects regarding your online behavior (analyze web traffic, web pages you visit and spend the most time on).
+            </p>
+            <p class="prose dark:prose-invert">
+                The data we collect by using cookies is used to customize our site to your needs. After we use the data for statistical analysis, the data is completely removed from our systems.
+            </p>
+            <p class="prose dark:prose-invert">
+                Please note that cookies don't allow us to gain control of your computer in any way. They are strictly used to monitor which pages you find useful and which you do not so that we can provide a better experience for you.
+            </p>
+            <p class="prose dark:prose-invert">
+                If you want to disable cookies, you can do it by accessing the settings of your internet browser. You can visit <a href="https://www.internetcookies.com"
+                                                                                                                                   target="_blank"
+                                                                                                                                   rel="noopener"
+                                                                                                                                   class="link">https://www.internetcookies.com</a>, which contains comprehensive information on how to do this on a wide variety of browsers and devices.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Links to Other Websites</h2>
+            <p class="prose dark:prose-invert">
+                Our site contains links that lead to other websites. If you click on these links <strong>{{ site_name }}</strong> is not held responsible for your data and privacy protection. Visiting those websites is not governed by this privacy policy agreement. Make sure to read the privacy policy documentation of the website you go to from our website.
+            </p>
+        </div>
+    {% endwith %}
 {% endblock content %}

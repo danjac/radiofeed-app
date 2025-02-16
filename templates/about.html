@@ -5,71 +5,69 @@
 {% endblock title %}
 
 {% block content %}
-    {% cache 300 about-page %}
-        {% with site_name=request.site.name %}
-            <c-header title="About {{ site_name }}" />
-            <div class="space-y-6">
-                <h2 class="text-lg font-semibold lg:text-xl">About Us</h2>
-                <p class="prose dark:prose-invert">
-                    <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Privacy</h2>
-                <p class="prose dark:prose-invert">
-                    Our privacy policy is detailed <a href="{% url "privacy" %}">here</a>.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Technology</h2>
-                <p class="prose dark:prose-invert">
-                    <strong>{{ site_name }}</strong> runs on
+    {% with site_name=request.site.name %}
+        <c-header title="About {{ site_name }}" />
+        <div class="space-y-6">
+            <h2 class="text-lg font-semibold lg:text-xl">About Us</h2>
+            <p class="prose dark:prose-invert">
+                <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Privacy</h2>
+            <p class="prose dark:prose-invert">
+                Our privacy policy is detailed <a href="{% url "privacy" %}" class="link">here</a>.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Technology</h2>
+            <p class="prose dark:prose-invert">
+                <strong>{{ site_name }}</strong> runs on
+                <a rel="noopener noreferer nofollow"
+                   class="underline link"
+                   href="https://github.com/danjac/radiofeed"
+                   target="_blank">open source code</a>
+                under the <a href="https://mit-license.org/"
+                             class="underline link"
+                             rel="noopener noreferer nofollow"
+                             target="_blank">MIT license</a>.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Additional Credits</h2>
+            <ul class="space-y-3 list-disc list-inside">
+                <li>
+                    Icons from <a href="https://heroicons.com"
+                                  class="underline link"
+                                  rel="noopener noreferer nofollow"
+                                  target="_blank">Heroicons</a>
+                </li>
+                <li>
+                    Podcast icon made by <a href="https://www.flaticon.com/authors/freepik"
+                                            rel="noopener noreferer nofollow"
+                                            target="_blank"
+                                            class="underline link"
+                                            title="Freepik">Freepik</a> from
+                    <a href="https://www.flaticon.com/"
+                       class="underline link"
+                       rel="noopener noreferer nofollow"
+                       title="Flaticon"
+                       target="_blank">www.flaticon.com</a>
+                </li>
+            </ul>
+            <h2 class="text-lg font-semibold lg:text-xl">General Disclaimer</h2>
+            <p class="prose dark:prose-invert">
+                All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
+                nor endorsed by {{ site_name }}. All audio files are played directly from the source.
+            </p>
+            <h2 class="text-lg font-semibold lg:text-xl">Contact Us</h2>
+            <ul class="space-y-3 list-disc list-inside">
+                <li>
+                    <a class="underline link"
+                       rel="noopener noreferer nofollow"
+                       href="mailto:{{ contact_email }}">Feedback</a>
+                </li>
+                <li>
                     <a rel="noopener noreferer nofollow"
                        class="underline link"
-                       href="https://github.com/danjac/radiofeed"
-                       target="_blank">open source code</a>
-                    under the <a href="https://mit-license.org/"
-                                 class="underline link"
-                                 rel="noopener noreferer nofollow"
-                                 target="_blank">MIT license</a>.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Additional Credits</h2>
-                <ul class="space-y-3 list-disc list-inside">
-                    <li>
-                        Icons from <a href="https://heroicons.com"
-                                      class="underline link"
-                                      rel="noopener noreferer nofollow"
-                                      target="_blank">Heroicons</a>
-                    </li>
-                    <li>
-                        Podcast icon made by <a href="https://www.flaticon.com/authors/freepik"
-                                                rel="noopener noreferer nofollow"
-                                                target="_blank"
-                                                class="underline link"
-                                                title="Freepik">Freepik</a> from
-                        <a href="https://www.flaticon.com/"
-                           class="underline link"
-                           rel="noopener noreferer nofollow"
-                           title="Flaticon"
-                           target="_blank">www.flaticon.com</a>
-                    </li>
-                </ul>
-                <h2 class="text-lg font-semibold lg:text-xl">General Disclaimer</h2>
-                <p class="prose dark:prose-invert">
-                    All podcast artwork and content are the property of the individual podcast owners. Podcasts are not affiliated with
-                    nor endorsed by {{ site_name }}. All audio files are played directly from the source.
-                </p>
-                <h2 class="text-lg font-semibold lg:text-xl">Contact Us</h2>
-                <ul class="space-y-3 list-disc list-inside">
-                    <li>
-                        <a class="underline link"
-                           rel="noopener noreferer nofollow"
-                           href="mailto:{{ contact_email }}">Feedback</a>
-                    </li>
-                    <li>
-                        <a rel="noopener noreferer nofollow"
-                           class="underline link"
-                           href="https://github.com/danjac/radiofeed/issues"
-                           target="_blank">Issues</a>
-                    </li>
-                </ul>
-            </div>
-        {% endwith %}
-    {% endcache %}
+                       href="https://github.com/danjac/radiofeed/issues"
+                       target="_blank">Issues</a>
+                </li>
+            </ul>
+        </div>
+    {% endwith %}
 {% endblock content %}
