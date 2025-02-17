@@ -1,0 +1,36 @@
+- name: Create a clean Corefile with forwarders 8.8.8.8 and 1.1.1.1
+  copy:
+      src: coredns.yaml
+      dest: "{{ coredns_configfile }}"
+
+- name: Create and apply the new CoreDNS ConfigMap
+  shell: |
+      kubectl create configmap coredns --from-file=Corefile=/tmp/coredns_corefile -n kube-system --dry-run=client -o yaml > /tmp/coredns_configmap.yaml
+      kubectl apply -f {{ coredns_configfile }}
+
+- name: Remove temp CoreDNS file
+  ansible.builtin.file:
+      path: /tmp/coredns_configmap.yaml
+      state: absent
+
+- name: Install deployment files
+  vars:
+      database_ip: 10.0.0.2 # "{{ hostvars[groups['database'][0]].private_ip }}"
+      database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
+  ansible.builtin.template:
+      src: "{{ item }}.j2"
+      dest: /tmp/{{ item }}
+  loop: "{{ spec_files }}"
+
+- name: Apply deployment files
+  ansible.builtin.shell: kubectl apply -f /tmp/{{ item }}
+  loop: "{{ spec_files }}"
+
+- name: Restart CoreDNS pods
+  command: kubectl rollout restart deployment coredns -n kube-system
+
+- name: Remove all temp files
+  ansible.builtin.file:
+      path: /tmp/{{ item }}
+      state: absent
+  loop: "{{ spec_files }}"

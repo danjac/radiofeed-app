@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config
+data:
+   ADMINS: "{{ admins }}"
+   ADMIN_SITE_HEADER: "{{ admin_site_header }}"
+   ADMIN_URL: "{{ admin_url }}"
+   ALLOWED_HOSTS: "{{ allowed_hosts }}"
+   CONTACT_EMAIL: "{{ contact_email }}"
+   CSP_SCRIPT_WHITELIST: "{{ csp_script_whitelist }}"
+   MAILGUN_API_URL: "{{ mailgun_api_url }}"
+   MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
+   PWA_SHA256_FINGERPRINTS: "{{ pwa_sha256_fingerprints }}"
+   REDIS_URL: "redis://{{ database_ip }}:6379/0"
