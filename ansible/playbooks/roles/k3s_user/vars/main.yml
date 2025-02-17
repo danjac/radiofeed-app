@@ -1,0 +1,5 @@
+cronjobs:
+    - parse-feeds
+    - create-recommendations
+    - send-recommendations
+    - clear-sessions

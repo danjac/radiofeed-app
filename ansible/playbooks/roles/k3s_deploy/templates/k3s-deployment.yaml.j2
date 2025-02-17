@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: {{ groups['workers']|length }}
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      hostNetwork: true
+      containers:
+        - name: django
+          image: {{ current_image }}
+          command: ["/bin/sh", "-c"]
+          args: ["./release.sh && ./entrypoint.sh"]
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: django-config
+            - secretRef:
+                name: django-secret

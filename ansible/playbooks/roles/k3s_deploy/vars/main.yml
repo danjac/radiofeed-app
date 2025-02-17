@@ -1,0 +1,15 @@
+coredns_configfile: /tmp/coredns_configmap.yaml
+
+cronjobs:
+    - { name: "parse-feeds", schedule: "*/6 * * * *", command: "./manage.py parse_feeds" }
+    - { name: "create-recommendations", schedule: "20 15 * * *", command: "./manage.py create_recommendations" }
+    - { name: "send-recommendations", schedule: "45 18 * * 1", command: "./manage.py send_recommendations" }
+    - { name: "clear-sessions", schedule: "5 5 * * *", command: "./manage.py clearsessions" }
+
+spec_files:
+      - k3s-deployment.yaml
+      - k3s-cronjobs.yaml
+      - k3s-egress.yaml
+      - k3s-service.yaml
+      - k3s-configmap.yaml
+      - k3s-secrets.yaml
