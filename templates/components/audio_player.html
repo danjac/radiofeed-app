@@ -1,6 +1,6 @@
 {% load heroicons static %}
 {% load get_media_metadata from episodes %}
-<c-vars audio-log=None action="load" />
+<c-vars audio-log action="load" />
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
         {% if audio_log and action != "close" %}

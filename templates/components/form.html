@@ -1,15 +1,15 @@
 {# djlint:off #}
-<c-vars form=None action=request.path method="post" class="space-y-3" />
+<c-vars form :action=request.path method="post" class="space-y-3" />
 {# djlint:on #}
 <form class="{{ class }}"
       action="{{ action }}"
       method="{{ method }}"
       {{ attrs }}>
     {% csrf_token %}
-    {% if form %}
-        {{ form }}
-    {% else %}
+    {% if fields %}
         {{ fields }}
+    {% else %}
+        {{ form }}
     {% endif %}
     {{ buttons }}
 </form>
