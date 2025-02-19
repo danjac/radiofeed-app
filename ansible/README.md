@@ -10,7 +10,7 @@ The architecture can run on cheap VM hosting e.g. Hetzner or Digital Ocean dropl
 
 It is assumed you are deploying the app servers behind a load balancer. It is recommended to use one provided by your host e.g. from [Hetzner](https://www.hetzner.com/cloud/load-balancer/) or use e.g Nginx or Traefik.
 
-The Ansible playbooks will deploy all of the above using Docker images.
+The Ansible playbooks will deploy all of the above using [K3s](https://www.rancher.com/products/k3s).
 
 ## Setup
 
