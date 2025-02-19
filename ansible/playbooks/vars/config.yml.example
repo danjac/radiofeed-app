@@ -7,10 +7,8 @@ contact_email: "danjac2018@gmail.com"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
 deploy_user: ubuntu
 docker_image: ghcr.io/danjac/radiofeed-app:main
-domain_name: radiofeed.app
 mailgun_api_url: "https://api.eu.mailgun.net/v3"
 mailgun_sender_domain: "mg.radiofeed.app"
 project_dir: /home/ubuntu/docker
 pwa_sha256_fingerprints: ""
 ssh_public_key_path: ~/.ssh/id_rsa.pub
-stack_name: radiofeed-app
