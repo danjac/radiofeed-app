@@ -20,12 +20,6 @@ spec:
           args: ["./release.sh && ./entrypoint.sh"]
           ports:
             - containerPort: 8000
-          readinessProbe:
-              httpGet:
-                path: /ht/
-                port: 8000
-              initialDelaySeconds: 5
-              periodSeconds: 10
           envFrom:
             - configMapRef:
                 name: django-config
