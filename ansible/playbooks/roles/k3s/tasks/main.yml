@@ -45,3 +45,23 @@
       curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
       --server https://{{ private_ip }}:6443
   when: "'agents' in group_names"
+
+
+- name: Create .kube dir for user
+  ansible.builtin.file:
+      path: /home/{{ deploy_user }}/.kube
+      state: directory
+      owner: "{{ deploy_user }}"
+      group: "{{ deploy_user }}"
+      mode: 0700
+  when: "'server' in group_names"
+
+- name: Copy kubeconfig to user home dir
+  ansible.builtin.copy:
+      src: /etc/rancher/k3s/k3s.yaml
+      dest: /home/{{ deploy_user }}/.kube/config
+      remote_src: true
+      owner: "{{ deploy_user }}"
+      group: "{{ deploy_user }}"
+      mode: "u+rw"
+  when: "'server' in group_names"

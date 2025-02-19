@@ -2,7 +2,13 @@
 
 set -o errexit
 
-docker compose pull
-docker compose run --rm django ./release.sh
-docker stack deploy --compose-file ./docker-compose.yml {{ stack_name }} --detach=false
-docker system prune -f
+export IMAGE="{{ docker_image.split(":")[0] }}:$TAG"
+export KUBECONFIG="$HOME/.kube/config"
+
+echo "DEPLOYING IMAGE $IMAGE"
+
+kubectl set image deployment/django-app django=$IMAGE -n default
+
+{% for cronjob in cronjobs %}
+kubectl set image cronjob/{{ cronjob }} {{ cronjob }}=${IMAGE} -n default
+{% endfor %}

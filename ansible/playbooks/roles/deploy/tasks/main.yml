@@ -1,9 +1,70 @@
-- name: Create deploy script
-  ansible.builtin.template:
-    src: deploy.sh.j2
-    dest: deploy.sh
-    mode: "u+x"
+- name: Set KUBECONFIG environment variable
+  ansible.builtin.set_fact:
+      kubeconfig: "/home/{{ ansible_user }}/.kube/config"
 
-- name: Deploy stack
-  ansible.builtin.shell:
-    cmd: ./deploy.sh
+- name: Create a clean Corefile with forwarders 8.8.8.8 and 1.1.1.1
+  copy:
+      src: coredns.yaml
+      dest: "{{ coredns_configfile }}"
+
+- name: Create and apply the new CoreDNS ConfigMap
+  shell: |
+      kubectl create configmap coredns --from-file=Corefile={{ coredns_configfile }} -n kube-system --dry-run=client -o yaml | kubectl apply -f -
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+
+- name: Remove temp CoreDNS file
+  ansible.builtin.file:
+      path: "{{ coredns_configfile }}"
+      state: absent
+
+- name: Get the current image from Kubernetes
+  command: kubectl get deployment django-app -n default -o jsonpath="{.spec.template.spec.containers[0].image}"
+  register: current_image_result
+  changed_when: false
+  failed_when: false  # Don't fail if deployment doesn't exist
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+
+- name: Set default image if no current deployment exists
+  set_fact:
+    current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
+
+- name: Debug current image
+  debug:
+    msg: "Current deployment image: {{ current_image }}"
+
+- name: Install deployment files
+  vars:
+      database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
+      database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
+      replicas: "{{ groups['agents']|length }}"
+  ansible.builtin.template:
+      src: "{{ item }}.j2"
+      dest: /tmp/{{ item }}
+  loop: "{{ spec_files }}"
+
+- name: Apply deployment files
+  ansible.builtin.shell: kubectl apply -f /tmp/{{ item }}
+  loop: "{{ spec_files }}"
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Restart CoreDNS pods
+  command: kubectl rollout restart deployment coredns -n kube-system
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Remove all temp files
+  ansible.builtin.file:
+      path: /tmp/{{ item }}
+      state: absent
+  loop: "{{ spec_files }}"
+
+- name: Create deploy.sh script for CI/CD deployments
+  ansible.builtin.template:
+      src: deploy.sh.j2
+      dest: deploy.sh
+      mode: "u+x"
