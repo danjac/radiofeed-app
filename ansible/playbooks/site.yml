@@ -1,5 +1,5 @@
-- name: Set up user and docker
-  hosts: all
+- name: Set up user and docker on database
+  hosts: database
   become: false
   remote_user: root
   vars:
@@ -12,42 +12,45 @@
 
 - name: Set up Postgresql and Redis
   hosts: database
-  gather_facts: false
   vars_files:
       - ./vars/config.yml
       - ./vars/secrets.yml
   roles:
       - database
 
-- name: Set up manager
-  hosts: manager
-  gather_facts: false
+- name: Install K3s
+  hosts:
+      - server
+      - agents
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
   vars_files:
-      - ./vars/config.yml
-      - ./vars/secrets.yml
+      - vars/config.yml
   roles:
-      - manager
+      - k3s_install
 
-- name: Set up workers
-  hosts: workers
-  gather_facts: false
+- name: Deploy application
+  hosts: server
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
   vars_files:
-      - ./vars/config.yml
+      - vars/config.yml
+      - vars/secrets.yml
   roles:
-      - workers
+      - k3s_deploy
 
-- name: Deploy stack
-  hosts: manager
-  gather_facts: false
+- name: Create deployment user
+  hosts: server
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
   vars_files:
-      - ./vars/config.yml
+      - vars/config.yml
   roles:
-      - deploy
-
-- name: Set up cronjobs
-  hosts: manager
-  gather_facts: false
-  vars_files:
-      - ./vars/config.yml
-  roles:
-      - cron_scheduler
+      - user
+      - k3s_user
