@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is deploying to production servers
 on:
     workflow_dispatch:
         branches:
-            - k8s-2
+            - main
 jobs:
     run_checks:
         uses: ./.github/workflows/checks.yml
@@ -63,7 +63,7 @@ jobs:
             - name: Deploy to Kubernetes
               uses: appleboy/ssh-action@master
               with:
-                  host: ${{ secrets.SWARM_MANAGER_IP }}
+                  host: ${{ secrets.DEPLOY_IP }}
                   username: ${{ secrets.DEPLOY_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   script: |
