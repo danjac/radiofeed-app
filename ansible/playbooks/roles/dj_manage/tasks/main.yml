@@ -1,2 +1,8 @@
+- name: Add manage.sh to host
+  copy:
+      src: manage.sh
+      dest: manage.sh
+      mode: u+x
+
 - name: Generate remote Django manage command
   local_action: ansible.builtin.template  src=templates/manage.sh.j2 dest=../manage.sh mode=u+x
