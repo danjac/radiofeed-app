@@ -13,28 +13,32 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-
 - name: Remove temp CoreDNS file
   ansible.builtin.file:
       path: "{{ coredns_configfile }}"
       state: absent
 
+- name: Label the agent nodes
+  shell: kubectl label nodes {{ hostvars[item].node_name }} role=agent
+  loop: "{{ groups['agents'] }}"
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
 - name: Get the current image from Kubernetes
   command: kubectl get deployment django-app -n default -o jsonpath="{.spec.template.spec.containers[0].image}"
   register: current_image_result
   changed_when: false
-  failed_when: false  # Don't fail if deployment doesn't exist
+  failed_when: false # Don't fail if deployment doesn't exist
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-
 - name: Set default image if no current deployment exists
   set_fact:
-    current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
+      current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
 
 - name: Debug current image
   debug:
-    msg: "Current deployment image: {{ current_image }}"
+      msg: "Current deployment image: {{ current_image }}"
 
 - name: Install deployment files
   vars:

@@ -13,6 +13,8 @@ spec:
         app: django-app
     spec:
       hostNetwork: true
+      nodeSelector:
+        role: agent
       containers:
         - name: django
           image: {{ current_image }}

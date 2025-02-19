@@ -46,7 +46,6 @@
       --server https://{{ private_ip }}:6443
   when: "'agents' in group_names"
 
-
 - name: Create .kube dir for user
   ansible.builtin.file:
       path: /home/{{ deploy_user }}/.kube
