@@ -10,5 +10,5 @@ echo "DEPLOYING IMAGE $IMAGE"
 kubectl set image deployment/django-app django=$IMAGE -n default
 
 {% for cronjob in cronjobs %}
-kubectl set image cronjob/{{ cronjob }} {{ cronjob }}=${IMAGE} -n default
+kubectl set image cronjob/{{ cronjob.name }} {{ cronjob.name }}=${IMAGE} -n default
 {% endfor %}
