@@ -1,8 +1,0 @@
- /home/{{ deploy_user }}/logs/{{ item }}.log {
-  su {{ deploy_user }} {{ deploy_user }}
-  rotate 7
-  daily
-  compress
-  missingok
-  notifempty
-}

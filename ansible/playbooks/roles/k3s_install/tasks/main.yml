@@ -18,30 +18,30 @@
       --node-ip={{ private_ip }} \
       --advertise-address={{ private_ip }} \
       --tls-san={{ private_ip }}
-  when: "'control_plane' in group_names"
+  when: "'server' in group_names"
 
 - name: Get the K3s join token from the control plane (for worker nodes)
   shell: k3s token create
   register: k3s_token
   delegate_to: "{{ inventory_hostname }}"
   run_once: true
-  when: "'control_plane' in group_names"
+  when: "'server' in group_names"
 
 - name: Set K3s join token as a fact
   set_fact:
       k3s_token: "{{ k3s_token.stdout }}"
   run_once: true
-  when: "'control-plane' in group_names"
+  when: "'server' in group_names"
 
 - name: Check if the K3s token is set
   debug:
       var: k3s_token
-  when: "'workers' in group_names"
+  when: "'agents' in group_names"
 
 - name: Download and install K3s as a worker node
   vars:
-      private_ip: "{{ hostvars[groups['control_plane'][0]].private_ip }}"
+      private_ip: "{{ hostvars[groups['server'][0]].private_ip }}"
   shell: |
-      curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token.stdout }} sh -s - agent \
+      curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
       --server https://{{ private_ip }}:6443
-  when: "'workers' in group_names"
+  when: "'agents' in group_names"

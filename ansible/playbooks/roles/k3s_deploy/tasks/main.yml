@@ -34,8 +34,9 @@
 
 - name: Install deployment files
   vars:
-      database_ip: 10.0.0.2 # "{{ hostvars[groups['database'][0]].private_ip }}"
+      database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
       database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
+      replicas: "{{ groups['agents']|length }}"
   ansible.builtin.template:
       src: "{{ item }}.j2"
       dest: /tmp/{{ item }}
