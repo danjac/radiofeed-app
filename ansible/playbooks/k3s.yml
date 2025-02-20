@@ -1,0 +1,21 @@
+- name: Install K3s
+  hosts:
+      - server
+      - agents
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
+  vars_files:
+      - vars/config.yml
+  roles:
+      - k3s
+
+- name: Deploy application
+  hosts: server
+  become: false
+  vars_files:
+      - vars/config.yml
+      - vars/secrets.yml
+  roles:
+      - deploy

@@ -9,9 +9,6 @@ echo "Deploying image $IMAGE"
 
 echo "Running migrations..."
 
-# Delete the existing job if it exists
-kubectl delete job django-release-job -n default --ignore-not-found=true
-
 # Create new release job
 cat <<EOF > /tmp/django-release-job.yaml
 apiVersion: batch/v1
@@ -38,6 +35,10 @@ EOF
 kubectl apply -f /tmp/django-release-job.yaml -n default
 
 kubectl wait --for=condition=complete job/django-release-job --timeout=60s
+
+# Delete the job after it has completed
+kubectl delete pod -l job-name=django-release-job
+kubectl delete job django-release-job
 
 echo "Starting deployment..."
 
