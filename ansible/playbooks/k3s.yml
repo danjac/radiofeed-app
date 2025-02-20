@@ -9,6 +9,7 @@
   vars_files:
       - vars/config.yml
   roles:
+      - user
       - k3s
 
 - name: Deploy application

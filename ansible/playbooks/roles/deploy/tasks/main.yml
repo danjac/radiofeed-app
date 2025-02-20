@@ -67,7 +67,7 @@
       state: absent
   loop: "{{ spec_files }}"
 
-- name: Run the Django release job, then remove job/pod when complete.
+- name: Run the Django release job to run migrations etc
   ansible.builtin.shell: |
       kubectl wait --for=condition=complete job/django-release-job --timeout=60s
   environment:
