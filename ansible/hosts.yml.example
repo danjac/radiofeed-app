@@ -13,4 +13,6 @@ all:
     agents:
       hosts:
         123.34.5.678:
+            node_name: k3s-agent-1
         678.76.5.432:
+            node_name: k3s-agent-2
