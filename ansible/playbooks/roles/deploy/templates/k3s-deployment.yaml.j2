@@ -21,15 +21,11 @@ spec:
       terminationGracePeriodSeconds: 30
       nodeSelector:
         role: agent
-      initContainers:
-        - name: django-release
-          image: {{ current_image }}
-          command: ["sh", "-c", "./release.sh"]  # This runs the migrations, system checks, etc.
       containers:
         - name: django
           image: {{ current_image }}
           command: ["/bin/sh", "-c"]
-          args: ["./release.sh && ./entrypoint.sh"]
+          args: ["./entrypoint.sh"]
           ports:
             - containerPort: 8000
           envFrom:

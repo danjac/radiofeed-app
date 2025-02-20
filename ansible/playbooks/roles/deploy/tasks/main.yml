@@ -67,6 +67,11 @@
       state: absent
   loop: "{{ spec_files }}"
 
+- name: Run the Django release job
+  ansible.builtin.shell: kubectl wait --for=condition=complete job/django-release-job --timeout=60s
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
 - name: Create deploy.sh script for CI/CD deployments
   ansible.builtin.template:
       src: deploy.sh.j2
