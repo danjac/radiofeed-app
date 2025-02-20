@@ -1,5 +1,5 @@
 - name: Install dependencies required for K3s
-  apt:
+  ansible.builtin.apt:
       name:
           - apt-transport-https
           - curl
@@ -13,7 +13,7 @@
       dest: /etc/resolve.conf
 
 - name: Download and install K3s on server
-  shell: |
+  ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | sh -s - \
       --node-ip={{ private_ip }} \
       --advertise-address={{ private_ip }} \
@@ -21,27 +21,27 @@
   when: "'server' in group_names"
 
 - name: Get the K3s join token from the control plane (for worker nodes)
-  shell: k3s token create
+  ansible.builtin.shell: k3s token create
   register: k3s_token
   delegate_to: "{{ inventory_hostname }}"
   run_once: true
   when: "'server' in group_names"
 
 - name: Set K3s join token as a fact
-  set_fact:
+  ansible.builtin.set_fact:
       k3s_token: "{{ k3s_token.stdout }}"
   run_once: true
   when: "'server' in group_names"
 
 - name: Check if the K3s token is set
-  debug:
+  ansible.builtin.debug:
       var: k3s_token
   when: "'agents' in group_names"
 
 - name: Download and install K3s as a worker node
   vars:
       private_ip: "{{ hostvars[groups['server'][0]].private_ip }}"
-  shell: |
+  ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
       --server https://{{ private_ip }}:6443
   when: "'agents' in group_names"

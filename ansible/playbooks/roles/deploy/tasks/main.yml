@@ -3,12 +3,12 @@
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
 
 - name: Create a clean Corefile with forwarders 8.8.8.8 and 1.1.1.1
-  copy:
+  ansible.builtin.copy:
       src: coredns.yaml
       dest: "{{ coredns_configfile }}"
 
 - name: Create and apply the new CoreDNS ConfigMap
-  shell: |
+  ansible.builtin.shell: |
       kubectl create configmap coredns --from-file=Corefile={{ coredns_configfile }} -n kube-system --dry-run=client -o yaml | kubectl apply -f -
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
@@ -19,13 +19,14 @@
       state: absent
 
 - name: Label the agent nodes
-  shell: kubectl label nodes {{ hostvars[item].node_name }} role=agent
+  ansible.builtin.shell: |
+      kubectl label nodes {{ hostvars[item].node_name }} role=agent
   loop: "{{ groups['agents'] }}"
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Get the current image from Kubernetes
-  command: kubectl get deployment django-app -n default -o jsonpath="{.spec.template.spec.containers[0].image}"
+  ansible.builtin.command: kubectl get deployment django-app -n default -o jsonpath="{.spec.template.spec.containers[0].image}"
   register: current_image_result
   changed_when: false
   failed_when: false # Don't fail if deployment doesn't exist
@@ -33,7 +34,7 @@
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Set default image if no current deployment exists
-  set_fact:
+  ansible.builtin.set_fact:
       current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
 
 - name: Debug current image
@@ -57,7 +58,7 @@
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Restart CoreDNS pods
-  command: kubectl rollout restart deployment coredns -n kube-system
+  ansible.builtin.command: kubectl rollout restart deployment coredns -n kube-system
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
