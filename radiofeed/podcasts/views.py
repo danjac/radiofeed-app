@@ -343,9 +343,14 @@ def add_private_feed(
 @require_DELETE
 @login_required
 def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
-    """Removes subscription to private feed."""
-    podcast = _get_podcast_or_404(podcast_id, private=True)
-    request.user.subscriptions.filter(podcast=podcast).delete()
+    """Delete private feed."""
+
+    _get_podcast_or_404(
+        podcast_id,
+        private=True,
+        subscriptions__subscriber=request.user,
+    ).delete()
+
     messages.info(request, "Removed from Private Feeds")
     return redirect("podcasts:private_feeds")
 

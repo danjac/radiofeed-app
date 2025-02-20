@@ -560,6 +560,9 @@ class TestPrivateFeeds:
 
 
 class TestRemovePrivateFeed:
+    def url(self, podcast):
+        return reverse("podcasts:remove_private_feed", args=[podcast.pk])
+
     @pytest.mark.django_db
     def test_ok(self, client, auth_user):
         podcast = PodcastFactory(private=True)
@@ -571,9 +574,19 @@ class TestRemovePrivateFeed:
         )
         assert response.url == reverse("podcasts:private_feeds")
 
-        assert not Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
+        assert not Podcast.objects.filter(pk=podcast.pk).exists()
+
+    @pytest.mark.django_db
+    def test_not_owned_by_user(self, client, auth_user):
+        podcast = PodcastFactory(private=True)
+
+        response = client.delete(
+            self.url(podcast),
+            {"rss": podcast.rss},
+        )
+        assert404(response)
+
+        assert Podcast.objects.filter(pk=podcast.pk).exists()
 
     @pytest.mark.django_db
     def test_not_private_feed(self, client, auth_user):
@@ -582,12 +595,11 @@ class TestRemovePrivateFeed:
         response = client.delete(self.url(podcast), {"rss": podcast.rss})
         assert404(response)
 
+        assert Podcast.objects.filter(pk=podcast.pk).exists()
+
         assert Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
         ).exists()
-
-    def url(self, podcast):
-        return reverse("podcasts:remove_private_feed", args=[podcast.pk])
 
 
 class TestAddPrivateFeed:
