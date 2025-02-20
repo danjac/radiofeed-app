@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.sites.models import Site
+from django.template.context import Context, RequestContext
 
 from radiofeed.templatetags import absolute_uri, format_duration
 
@@ -44,16 +45,35 @@ class TestFormatDuration:
 
 class TestAbsoluteUri:
     @pytest.mark.django_db
-    def test_plain_url(self):
-        assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
-
-    @pytest.mark.django_db
-    def test_https(self, settings):
-        settings.SECURE_SSL_REDIRECT = True
-        assert absolute_uri("/podcasts/") == "https://example.com/podcasts/"
-
-    @pytest.mark.django_db
-    def test_object(self, podcast):
+    def test_plain_url_from_request(self, rf):
+        req = rf.get("/")
         assert (
-            absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
+            absolute_uri(RequestContext(req), "/podcasts/")
+            == "http://example.com/podcasts/"
+        )
+
+    @pytest.mark.django_db
+    def test_object_from_request(self, rf):
+        req = rf.get("/")
+        assert (
+            absolute_uri(RequestContext(req), "/podcasts/")
+            == "http://example.com/podcasts/"
+        )
+
+    @pytest.mark.django_db
+    def test_plain_url_from_site(self, settings):
+        settings.USE_HTTPS = False
+        assert absolute_uri(Context(), "/podcasts/") == "http://example.com/podcasts/"
+
+    @pytest.mark.django_db
+    def test_https_from_site(self, settings):
+        settings.USE_HTTPS = True
+        assert absolute_uri(Context(), "/podcasts/") == "https://example.com/podcasts/"
+
+    @pytest.mark.django_db
+    def test_object_from_site(self, podcast, settings):
+        settings.USE_HTTPS = False
+        assert (
+            absolute_uri(Context(), podcast)
+            == f"http://example.com{podcast.get_absolute_url()}"
         )

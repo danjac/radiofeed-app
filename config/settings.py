@@ -344,7 +344,9 @@ if USE_X_FORWARDED_HOST := env.bool("USE_X_FORWARDED_HOST", default=True):
         or []
     )
 
-SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
+USE_HTTPS = env.bool("USE_HTTPS", default=True)
+
+SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=USE_HTTPS)
 
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
     "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=False

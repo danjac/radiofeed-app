@@ -8,7 +8,7 @@ from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.shortcuts import resolve_url
-from django.template.context import RequestContext
+from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
 from django.utils.html import format_html
 
@@ -53,14 +53,19 @@ def get_site() -> Site:
     return Site.objects.get_current()
 
 
-@register.simple_tag
-def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str:
-    """Returns the absolute URL to site domain."""
+@register.simple_tag(takes_context=True)
+def absolute_uri(
+    context: Context, url: Model | str | None = None, *url_args, **url_kwargs
+) -> str:
+    """Returns the absolute URL to site domain.
+    If `request` is available in context, it will be used to build the URL. Otherwise will use the current site domain.
+    """
 
     site = get_site()
     path = resolve_url(url, *url_args, **url_kwargs) if url else ""
-    scheme = "https" if settings.SECURE_SSL_REDIRECT else "http"
-
+    if request := context.get("request"):
+        return request.build_absolute_uri(path)
+    scheme = "https" if settings.USE_HTTPS else "http"
     return f"{scheme}://{site.domain}{path}"
 
 
