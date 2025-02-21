@@ -49,6 +49,7 @@
   vars:
       database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
       database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
+      redis_url: "redis://{{ database_ip }}:6379/0"
       replicas: "{{ groups['agents']|length }}"
   ansible.builtin.template:
       src: "{{ item }}.j2"
