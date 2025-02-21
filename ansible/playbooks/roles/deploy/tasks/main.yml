@@ -1,6 +1,35 @@
-- name: Set KUBECONFIG environment variable
+- name: Set variables for the deployment
   ansible.builtin.set_fact:
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+      coredns_configfile: /tmp/coredns_configmap.yaml
+      cronjobs:
+          - {
+                name: "parse-feeds",
+                schedule: "*/6 * * * *",
+                command: "./manage.py parse_feeds",
+            }
+          - {
+                name: "create-recommendations",
+                schedule: "20 15 * * *",
+                command: "./manage.py create_recommendations",
+            }
+          - {
+                name: "send-recommendations",
+                schedule: "45 18 * * 1",
+                command: "./manage.py send_recommendations",
+            }
+          - {
+                name: "clear-sessions",
+                schedule: "5 5 * * *",
+                command: "./manage.py clearsessions",
+            }
+      spec_files:
+          - deployment.yaml
+          - release.yaml
+          - cronjobs.yaml
+          - service.yaml
+          - configmap.yaml
+          - secrets.yaml
 
 - name: Create a clean Corefile with forwarders 8.8.8.8 and 1.1.1.1
   ansible.builtin.copy:
@@ -36,10 +65,6 @@
 - name: Set default image if no current deployment exists
   ansible.builtin.set_fact:
       current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
-
-- name: Debug current image
-  ansible.builtin.debug:
-      msg: "Current deployment image: {{ current_image }}"
 
 - name: Set release_job_name with random tag
   ansible.builtin.set_fact:
@@ -93,7 +118,7 @@
 
 - name: Render release job template into variable
   ansible.builtin.set_fact:
-      release_job: "{{ lookup('template', 'k3s-release.yaml.j2') }}"
+      release_job: "{{ lookup('template', 'release.yaml.j2') }}"
 
 - name: Create deploy.sh script for CI/CD deployments
   ansible.builtin.template:
