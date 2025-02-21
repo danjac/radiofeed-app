@@ -2,8 +2,10 @@
 
 set -o errexit
 
-export IMAGE="{{ docker_image.split(":")[0] }}:$TAG"
 export KUBECONFIG="$HOME/.kube/config"
+
+export IMAGE="{{ docker_image.split(":")[0] }}:$TAG"
+export RELEASE_JOB_NAME="django-release-job-$TAG"
 
 echo "Deploying image $IMAGE"
 
@@ -17,11 +19,11 @@ EOF
 # Apply the modified YAML to create the new job
 kubectl apply -f /tmp/django-release-job.yaml -n default
 
-kubectl wait --for=condition=complete job/django-release-job --timeout=60s
+kubectl wait --for=condition=complete job/$RELEASE_JOB_NAME --timeout=60s
 
 # Delete the job after it has completed
-kubectl delete pod -l job-name=django-release-job
-kubectl delete job django-release-job
+kubectl delete pod -l job-name=$RELEASE_JOB_NAME
+kubectl delete job $RELEASE_JOB_NAME
 
 echo "Starting deployment..."
 

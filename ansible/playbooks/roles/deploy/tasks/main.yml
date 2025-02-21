@@ -38,8 +38,12 @@
       current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
 
 - name: Debug current image
-  debug:
+  ansible.builtin.debug:
       msg: "Current deployment image: {{ current_image }}"
+
+- name: Set release_job_name with random tag
+  ansible.builtin.set_fact:
+      release_job_name: "{{ 'django-release-job-' + ansible_date_time.iso8601_basic | replace('T', '') }}"
 
 - name: Install deployment files
   vars:
@@ -70,24 +74,24 @@
 
 - name: Run the Django release job to run migrations etc
   ansible.builtin.shell: |
-      kubectl wait --for=condition=complete job/django-release-job --timeout=60s
+      kubectl wait --for=condition=complete job/{{ release_job_name }} --timeout=60s
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Delete release job once it has executed
   ansible.builtin.shell: |
-      kubectl delete pod -l job-name=django-release-job
-      kubectl delete job django-release-job -n default
+      kubectl delete pod -l job-name={{ release_job_name }}
+      kubectl delete job {{ release_job_name }} -n default
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Change current_image to literal $IMAGE
   ansible.builtin.set_fact:
       current_image: "$IMAGE"
+      release_job_name: "$RELEASE_JOB_NAME"
 
 - name: Render release job template into variable
   ansible.builtin.set_fact:
-      # ensure to that newlines are NOT escaped
       release_job: "{{ lookup('template', 'k3s-release.yaml.j2') }}"
 
 - name: Create deploy.sh script for CI/CD deployments
