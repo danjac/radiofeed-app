@@ -81,6 +81,15 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
+- name: Change current_image to literal $IMAGE
+  ansible.builtin.set_fact:
+      current_image: "$IMAGE"
+
+- name: Render release job template into variable
+  ansible.builtin.set_fact:
+      # ensure to that newlines are NOT escaped
+      release_job: "{{ lookup('template', 'k3s-release.yaml.j2') }}"
+
 - name: Create deploy.sh script for CI/CD deployments
   ansible.builtin.template:
       src: deploy.sh.j2

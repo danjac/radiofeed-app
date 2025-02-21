@@ -11,24 +11,7 @@ echo "Running migrations..."
 
 # Create new release job
 cat <<EOF > /tmp/django-release-job.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: django-release-job
-spec:
-  template:
-    spec:
-      containers:
-        - name: django
-          image: $IMAGE
-          command: ["/bin/sh", "-c"]
-          args: ["./release.sh"]
-          envFrom:
-            - configMapRef:
-                name: django-config
-            - secretRef:
-                name: django-secret
-      restartPolicy: OnFailure
+{{ release_job }}
 EOF
 
 # Apply the modified YAML to create the new job
