@@ -22,29 +22,22 @@
                 schedule: "5 5 * * *",
                 command: "./manage.py clearsessions",
             }
-      spec_files:
-          - deployment.yaml
-          - release.yaml
-          - cronjobs.yaml
-          - service.yaml
-          - configmap.yaml
-          - secrets.yaml
 
 - name: Apply CoreDNS ConfigMap
   ansible.builtin.command: >
-    kubectl apply -f -
+      kubectl apply -f -
   args:
-    stdin: |
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: coredns
-        namespace: kube-system
-      data:
-        Corefile: |
-          {{ lookup('file', 'files/coredns.yaml') | indent(10) }}
+      stdin: |
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: coredns
+            namespace: kube-system
+          data:
+            Corefile: |
+              {{ lookup('file', 'files/coredns.yaml') | indent(10) }}
   environment:
-    KUBECONFIG: "{{ kubeconfig }}"
+      KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Label the agent nodes
   ansible.builtin.shell: |
@@ -71,17 +64,25 @@
 
 - name: Apply spec files
   vars:
-    database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
-    database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
-    redis_url: "redis://{{ database_ip }}:6379/0"
-    replicas: "{{ groups['agents']|length }}"
+      database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
+      database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
+      redis_url: "redis://{{ database_ip }}:6379/0"
+      replicas: "{{ groups['agents']|length }}"
+
   ansible.builtin.command: >
-    kubectl apply -f -
+      kubectl apply -f -
   args:
-    stdin: "{{ lookup('template', item + '.j2') }}"
-  loop: "{{ spec_files }}"
+      stdin: "{{ lookup('template', item + '.j2') }}"
+  loop:
+      - deployment.yaml
+      - release.yaml
+      - cronjobs.yaml
+      - service.yaml
+      - configmap.yaml
+      - secrets.yaml
+
   environment:
-    KUBECONFIG: "{{ kubeconfig }}"
+      KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Restart CoreDNS pods
   ansible.builtin.command: kubectl rollout restart deployment coredns -n kube-system
