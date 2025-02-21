@@ -1,7 +1,6 @@
 - name: Set variables for the deployment
   ansible.builtin.set_fact:
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-      coredns_configfile: /tmp/coredns_configmap.yaml
       cronjobs:
           - {
                 name: "parse-feeds",
@@ -31,21 +30,21 @@
           - configmap.yaml
           - secrets.yaml
 
-- name: Create a clean Corefile with forwarders 8.8.8.8 and 1.1.1.1
-  ansible.builtin.copy:
-      src: coredns.yaml
-      dest: "{{ coredns_configfile }}"
-
-- name: Create and apply the new CoreDNS ConfigMap
-  ansible.builtin.shell: |
-      kubectl create configmap coredns --from-file=Corefile={{ coredns_configfile }} -n kube-system --dry-run=client -o yaml | kubectl apply -f -
+- name: Apply CoreDNS ConfigMap
+  ansible.builtin.command: >
+    kubectl apply -f -
+  args:
+    stdin: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: coredns
+        namespace: kube-system
+      data:
+        Corefile: |
+          {{ lookup('file', 'files/coredns.yaml') | indent(10) }}
   environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Remove temp CoreDNS file
-  ansible.builtin.file:
-      path: "{{ coredns_configfile }}"
-      state: absent
+    KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Label the agent nodes
   ansible.builtin.shell: |
@@ -70,33 +69,24 @@
   ansible.builtin.set_fact:
       release_job_name: "{{ 'django-release-job-' + ansible_date_time.iso8601_basic | replace('T', '') }}"
 
-- name: Install deployment files
+- name: Apply spec files
   vars:
-      database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
-      database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
-      redis_url: "redis://{{ database_ip }}:6379/0"
-      replicas: "{{ groups['agents']|length }}"
-  ansible.builtin.template:
-      src: "{{ item }}.j2"
-      dest: /tmp/{{ item }}
-  loop: "{{ spec_files }}"
-
-- name: Apply deployment files
-  ansible.builtin.shell: kubectl apply -f /tmp/{{ item }}
+    database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
+    database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_ip }}:5432/postgres"
+    redis_url: "redis://{{ database_ip }}:6379/0"
+    replicas: "{{ groups['agents']|length }}"
+  ansible.builtin.command: >
+    kubectl apply -f -
+  args:
+    stdin: "{{ lookup('template', item + '.j2') }}"
   loop: "{{ spec_files }}"
   environment:
-      KUBECONFIG: "{{ kubeconfig }}"
+    KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Restart CoreDNS pods
   ansible.builtin.command: kubectl rollout restart deployment coredns -n kube-system
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Remove all temp files
-  ansible.builtin.file:
-      path: /tmp/{{ item }}
-      state: absent
-  loop: "{{ spec_files }}"
 
 - name: Run the Django release job to run migrations etc
   ansible.builtin.shell: |
