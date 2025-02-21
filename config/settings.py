@@ -517,6 +517,7 @@ DEFAULT_PAGE_SIZE = 30
 # https://htmx.org/docs/#config
 
 HTMX_CONFIG = {
+    "globalViewTransitions": True,
     "historyCacheSize": 0,
     "refreshOnHistoryMiss": False,
     "scrollBehavior": "instant",
