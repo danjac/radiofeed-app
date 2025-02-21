@@ -85,7 +85,7 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Change current_image to literal $IMAGE
+- name: Change release job facts to use environment variables
   ansible.builtin.set_fact:
       current_image: "$IMAGE"
       release_job_name: "$RELEASE_JOB_NAME"
