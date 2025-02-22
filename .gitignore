@@ -46,7 +46,7 @@ npm-debug.log*
 static/app.css
 staticfiles
 terraform/.terraform/
-terraform/.terraform.tfstate*
+terraform/terraform.tfstate*
 terraform/.terraform.lock.hcl
 terraform/.terraform.lock.info
 terraform/.tfplan
