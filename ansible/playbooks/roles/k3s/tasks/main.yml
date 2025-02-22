@@ -60,3 +60,22 @@
       group: "{{ deploy_user }}"
       mode: "u+rw"
   when: "'server' in group_names"
+
+- name: Add KUBECONFIG environment variable to .bashrc and .profile
+  lineinfile:
+    path: "/home/{{ deploy_user }}/{{ item }}"
+    regexp: '^export KUBECONFIG='
+    line: 'export KUBECONFIG=/home/{{ deploy_user }}/.kube/config'
+    create: yes
+    state: present
+  loop:
+    - .bashrc
+    - .profile
+  when: "'server' in group_names"
+
+- name: Reload shell configuration for the user
+  shell: "bash -c 'source /home/{{ deploy_user }}/{{ item }}'"
+  loop:
+    - .bashrc
+    - .profile
+  when: "'server' in group_names"
