@@ -95,3 +95,9 @@
       src: deploy.sh.j2
       dest: deploy.sh
       mode: "u+x"
+
+- name: Add manage.sh script for Django shell access
+  copy:
+      src: manage.sh
+      dest: manage.sh
+      mode: "u+x"

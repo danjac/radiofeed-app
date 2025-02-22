@@ -1,3 +1,6 @@
+- name: Reset SSH keys
+  import_playbook: ./ssh.yml
+
 - name: Set up databases
   import_playbook: ./database.yml
 
