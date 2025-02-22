@@ -5,7 +5,7 @@ The file `hetzner.sh` is a script that provisions a cluster of Hetzner Cloud ser
 ## Requirements
 
 - A Hetzner Cloud account
-- An API token for the Hetzner Cloud API
+- An API token for the Hetzner Cloud API with Read and Write permissions
 - Terraform installed on your machine
 
 ## Usage
