@@ -6,7 +6,6 @@ The file `hetzner.sh` is a script that provisions a cluster of Hetzner Cloud ser
 
 - A Hetzner Cloud account
 - An API token for the Hetzner Cloud API
-- Cloudflare origin key certificates (private and public keys)
 - Terraform installed on your machine
 
 ## Usage
@@ -15,8 +14,6 @@ The file `hetzner.sh` is a script that provisions a cluster of Hetzner Cloud ser
 
 ```bash
 export TF_VAR_hcloud_token="your-hcloud-token"
-export TF_VAR_cloudflare_origin_cert_path="/path/to/cert.pem"
-export TF_VAR_cloudflare_origin_key_path="/path/to/key.pem"
 ```
 
 2. Initialize Terraform
