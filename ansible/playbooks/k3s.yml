@@ -1,4 +1,4 @@
-- name: Install K3s
+- name: Provision K3s cluster
   hosts:
       - server
       - agents
@@ -10,7 +10,18 @@
       - vars/config.yml
   roles:
       - user
-      - k3s
+      - k3s/cluster
+
+- name: Set up server user with K3s access
+  hosts: server
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
+  vars_files:
+      - vars/config.yml
+  roles:
+      - k3s/user
 
 - name: Deploy application
   hosts: server
@@ -19,4 +30,4 @@
       - vars/config.yml
       - vars/secrets.yml
   roles:
-      - deploy
+      - k3s/deploy
