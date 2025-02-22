@@ -1,3 +1,11 @@
+- name: Create .kube directory with read/write permissions on user home dir
+  ansible.builtin.file:
+      path: /home/{{ deploy_user }}/.kube
+      owner: "{{ deploy_user }}"
+      group: "{{ deploy_user }}"
+      mode: "u+rw"
+      state: directory
+
 - name: Copy kubeconfig to user home dir
   ansible.builtin.copy:
       src: /etc/rancher/k3s/k3s.yaml
