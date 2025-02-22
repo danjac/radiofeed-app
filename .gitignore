@@ -22,7 +22,6 @@
 .pytest_cache/
 .python-version
 .ruff_cache
-.terraform*
 .tsvars
 .vault_pass
 .venv
@@ -46,6 +45,13 @@ node_modules/
 npm-debug.log*
 static/app.css
 staticfiles
+terraform/.terraform/
+terraform/.terraform.tfstate*
+terraform/.terraform.lock.hcl
+terraform/.terraform.lock.info
+terraform/.tfplan
+terraform/*.tfvars
+terraform/*.tfvars.json
 venv
 ansible/.vault_pass
 ansible/hosts
