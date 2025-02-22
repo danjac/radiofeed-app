@@ -229,11 +229,11 @@ wheels = [
 
 [[package]]
 name = "decorator"
-version = "5.1.1"
+version = "5.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/66/0c/8d907af351aa16b42caae42f9d6aa37b900c67308052d10fdce809f8d952/decorator-5.1.1.tar.gz", hash = "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330", size = 35016 }
+sdist = { url = "https://files.pythonhosted.org/packages/6e/e2/33c72e8409b39389b9a69e807e40d3466a63996ba4c65caaea1d31dfde16/decorator-5.2.0.tar.gz", hash = "sha256:1cf2ab68f8c1c7eae3895d82ab0daab41294cfbe6fbdebf50b44307299980762", size = 16973 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d5/50/83c593b07763e1161326b3b8c6686f0f4b0f24d5526546bee538c89837d6/decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186", size = 9073 },
+    { url = "https://files.pythonhosted.org/packages/f6/0e/fc5d7660912606d43f32470cf952846a47512d3674fe9a3196f1a80a638b/decorator-5.2.0-py3-none-any.whl", hash = "sha256:f30a69c066f698c7c11fa1fa3425f684d3b4b01b494ee41e73c0a14f3de48427", size = 9149 },
 ]
 
 [[package]]
@@ -1093,14 +1093,14 @@ wheels = [
 
 [[package]]
 name = "psycopg-pool"
-version = "3.2.4"
+version = "3.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/49/71/01d4e589dc5fd1f21368b7d2df183ed0e5bbc160ce291d745142b229797b/psycopg_pool-3.2.4.tar.gz", hash = "sha256:61774b5bbf23e8d22bedc7504707135aaf744679f8ef9b3fe29942920746a6ed", size = 29749 }
+sdist = { url = "https://files.pythonhosted.org/packages/17/2c/35fd33fa2019ba26b4e6fb6f468ba6a23bfacd98b9fb278dda851e3a1e2c/psycopg_pool-3.2.5.tar.gz", hash = "sha256:507d845bd13da83df449ded7fb581b35dba613421bdb12962e608b16e70d6be9", size = 29750 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bb/28/2b56ac94c236ee033c7b291bcaa6a83089d0cc0fe7830c35f6521177c199/psycopg_pool-3.2.4-py3-none-any.whl", hash = "sha256:f6a22cff0f21f06d72fb2f5cb48c618946777c49385358e0c88d062c59cbd224", size = 38240 },
+    { url = "https://files.pythonhosted.org/packages/2a/2c/0f7d80486e601feb98958af3bd2ad3fddf8e5f5ab1b57e3c72dfb39d9727/psycopg_pool-3.2.5-py3-none-any.whl", hash = "sha256:522b9befae8631550217fd2ae9904622daaf4b28a0a36ccfcc87ba3d2abc7100", size = 38245 },
 ]
 
 [[package]]
