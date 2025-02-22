@@ -53,7 +53,7 @@
                             </div>
                             <div class="flex flex-col place-content-end pt-3 sm:pt-0 sm:pl-2 sm:w-1/2">
                                 <div class="grid grid-cols-3 place-content-between h-12"
-                                     :class="!isLoaded ? 'animate-pulse': ''">
+                                     :class="!isLoaded || isRetrying ? 'animate-pulse': ''">
                                     <div x-text="counters.current"
                                          aria-label="Current Time"
                                          title="Current Time"
@@ -71,7 +71,8 @@
                                                         class="{{ BUTTON_CSS }}"
                                                         x-cloak
                                                         @click="skipBack"
-                                                        :class="isPlaying ? activeCss : inactiveCss"
+                                                        :disabled="!canSkip"
+                                                        :class="canSkip? activeCss : inactiveCss"
                                                 >
                                                     {% heroicon_outline "backward" size=30 %}
                                                 </button>
@@ -81,7 +82,8 @@
                                                         x-cloak
                                                         @click="togglePlayPause"
                                                         x-show="!isPlaying"
-                                                        :class="isLoaded ? activeCss : inactiveCss"
+                                                        :disabled="!canPlayPause"
+                                                        :class="canPlayPause ? activeCss : inactiveCss"
                                                 >
                                                     {% heroicon_outline "play-circle" size=36 %}
                                                 </button>
@@ -90,8 +92,9 @@
                                                         class="{{ BUTTON_CSS }}"
                                                         x-cloak
                                                         @click="togglePlayPause"
+                                                        :disabled="!canPlayPause"
                                                         x-show="isPlaying"
-                                                        :class="isLoaded ? activeCss : inactiveCss"
+                                                        :class="canPlayPause ? activeCss : inactiveCss"
                                                 >
                                                     {% heroicon_outline "pause-circle" size=36 %}
                                                 </button>
@@ -100,7 +103,8 @@
                                                         class="{{ BUTTON_CSS }}"
                                                         x-cloak
                                                         @click="skipForward"
-                                                        :class="isPlaying ? activeCss : inactiveCss"
+                                                        :disabled="!canSkip"
+                                                        :class="canSkip ? activeCss : inactiveCss"
                                                 >
                                                     {% heroicon_outline "forward" size=30 %}
                                                 </button>
@@ -123,8 +127,9 @@
                                            @mouseover="setPreviewCounter($event.offsetX)"
                                            :title="status"
                                            :max="duration"
-                                           :disabled="!isPlaying"
-                                           :class="{'cursor-pointer': isPlaying, 'cursor-not-allowed': !isPlaying}">
+                                           :disabled="!canSkip"
+                                           :class="canSkip ? 'cursor-pointer' : 'cursor-not-allowed'">
+                                    >
                                 </div>
                             </div>
                         </div>

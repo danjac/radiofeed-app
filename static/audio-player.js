@@ -16,11 +16,14 @@ document.addEventListener("alpine:init", () => {
             duration: 0,
             isLoaded: false,
             isPlaying: false,
+            isRetrying: false,
             isUpdating: false,
             runtime: 0,
             skipSeconds: 10,
             timer: null,
             updateInterval: 6,
+            maxRetries: 3,
+
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -33,14 +36,7 @@ document.addEventListener("alpine:init", () => {
                 }
 
                 this.$watch("runtime", (value) => {
-                    const percent =
-                        value && this.duration
-                        ? (value / this.duration) * 100
-                        : 0;
-                    this.$refs.range.style.setProperty(
-                        "--webkitProgressPercent",
-                        `${percent}%`,
-                    );
+                    this.updateProgressBar();
                     this.counters.current = this.formatCounter(value);
                     this.counters.remaining = this.formatCounter(
                         this.duration - value,
@@ -56,18 +52,17 @@ document.addEventListener("alpine:init", () => {
             destroy() {
                 this.clearTimer();
             },
-            loaded(event) {
+            async loaded(event) {
                 if (this.isLoaded) {
                     return;
                 }
 
                 this.duration = event.target.duration || 0;
-
-                event.target.currentTime = currentTime;
-                this.runtime = Math.floor(event.target.currentTime);
+                this.$refs.audio.currentTime = currentTime; // Set the playback position
+                this.runtime = Math.floor(this.$refs.audio.currentTime); // Update runtime
 
                 if (startPlayer) {
-                    event.target.play().catch(this.handleError.bind(this));
+                    await this.$refs.audio.play();
                 }
 
                 this.isLoaded = true;
@@ -89,7 +84,7 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             error(event) {
-                this.handleError(event.target.error);
+                console.error("Audio playback error", event.target.error);
             },
             togglePlayPause() {
                 if (this.isPlaying) {
@@ -137,6 +132,16 @@ document.addEventListener("alpine:init", () => {
                     case "ArrowLeft":
                         return handleEvent(this.skipBack);
                 }
+            },
+            updateProgressBar() {
+                const percent =
+                    this.runtime && this.duration
+                    ? (this.runtime / this.duration) * 100
+                    : 0;
+                this.$refs.range.style.setProperty(
+                    "--webkitProgressPercent",
+                    `${percent}%`,
+                );
             },
             startTimer() {
                 if (!this.timer) {
@@ -200,10 +205,12 @@ document.addEventListener("alpine:init", () => {
                 }
                 return null;
             },
-            handleError(error) {
-                console.error(error);
+            get canPlayPause() {
+                return this.isLoaded;
             },
-            // properties
+            get canSkip() {
+                return this.isLoaded && this.isPlaying;
+            },
             get status() {
                 if (!this.isLoaded) {
                     return "Loading";
