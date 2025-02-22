@@ -7,11 +7,6 @@
       state: present
       update_cache: true
 
-- name: Copy /etc/resolv.conf
-  ansible.builtin.copy:
-      src: resolv.conf
-      dest: /etc/resolve.conf
-
 - name: Download and install K3s on server
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | sh -s - \
