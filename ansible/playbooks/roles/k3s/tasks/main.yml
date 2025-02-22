@@ -17,7 +17,8 @@
       curl -sfL https://get.k3s.io | sh -s - \
       --node-ip={{ private_ip }} \
       --advertise-address={{ private_ip }} \
-      --tls-san={{ private_ip }}
+      --tls-san={{ private_ip }} \
+      --disable traefik
   when: "'server' in group_names"
 
 - name: Get the K3s join token from the control plane (for worker nodes)
