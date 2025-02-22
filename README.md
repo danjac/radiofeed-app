@@ -82,6 +82,8 @@ Once you have access to the Django Admin, you should configure the default Site 
 
 The `ansible` directory contains full Playbooks for a multi-server deployment to a shared hosting provider such as Hetzner or Digital Ocean, this can be copied and modified for your particular use-case.
 
+The `terraform` directory contains a simple Terraform configuration for deploying to Hetzner Cloud.
+
 ### Scheduling background tasks
 
 In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
