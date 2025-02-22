@@ -23,22 +23,6 @@
                 command: "./manage.py clearsessions",
             }
 
-- name: Apply CoreDNS ConfigMap
-  ansible.builtin.command: >
-      kubectl apply -f -
-  args:
-      stdin: |
-          apiVersion: v1
-          kind: ConfigMap
-          metadata:
-            name: coredns
-            namespace: kube-system
-          data:
-            Corefile: |
-              {{ lookup('file', 'files/coredns.yaml') | indent(10) }}
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
 - name: Label the agent nodes
   ansible.builtin.shell: |
       kubectl label nodes {{ hostvars[item].node_name }} role=agent
@@ -81,11 +65,6 @@
       - configmap.yaml
       - secrets.yaml
 
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Restart CoreDNS pods
-  ansible.builtin.command: kubectl rollout restart deployment coredns -n kube-system
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
