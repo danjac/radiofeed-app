@@ -1,4 +1,4 @@
-- name: Remove old SSH keys and add new ones
+- name: Remove old SSH keys
   hosts: localhost
   gather_facts: no
   tasks:
@@ -6,8 +6,4 @@
         ansible.builtin.known_hosts:
             name: "{{ item }}"
             state: absent
-        loop: "{{ groups['all'] }}"
-
-      - name: Scan and add new host keys
-        ansible.builtin.shell: "ssh-keyscan -H {{ item }} >> ~/.ssh/known_hosts"
         loop: "{{ groups['all'] }}"
