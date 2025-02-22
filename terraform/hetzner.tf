@@ -15,9 +15,6 @@ variable "hcloud_token" {}
 variable "ssh_public_key_path" {
   default = "~/.ssh/id_rsa.pub"
 }
-variable "cloudflare_origin_cert_path" {}
-variable "cloudflare_origin_key_path" {}
-
 resource "hcloud_ssh_key" "default" {
   name       = "my-ssh-key"
   public_key = file(var.ssh_public_key_path)
@@ -50,11 +47,6 @@ resource "hcloud_load_balancer" "lb" {
   name               = "load-balancer"
   load_balancer_type = "lb11"
   location           = "hel1"
-
-  ssl_certificate {
-    certificate = file(var.cloudflare_origin_cert_path)
-    private_key = file(var.cloudflare_origin_key_path)
-  }
 }
 
 resource "hcloud_load_balancer_target" "lb_target_agents" {
@@ -72,7 +64,6 @@ resource "hcloud_load_balancer_service" "lb_http" {
   health_check {
     protocol = "http"
     port     = 8000
-    url_path = "/ht/"
     interval = 15
     timeout  = 10
     retries  = 3
@@ -81,7 +72,6 @@ resource "hcloud_load_balancer_service" "lb_http" {
 
 resource "hcloud_server" "database" {
   name        = "database"
-  hostname    = "database"
   image       = "ubuntu-24.04"
   server_type = "cpx11"
   location    = "hel1"
@@ -97,7 +87,6 @@ resource "hcloud_server" "database" {
 
 resource "hcloud_server" "server" {
   name        = "server"
-  hostname    = "server"
   image       = "ubuntu-24.04"
   server_type = "cpx11"
   location    = "hel1"
@@ -113,7 +102,6 @@ resource "hcloud_server" "server" {
 resource "hcloud_server" "agents" {
   count       = 2
   name        = "agent-${count.index + 1}"
-  hostname    = "agent-${count.index + 1}"
   image       = "ubuntu-24.04"
   server_type = "cpx11"
   location    = "hel1"
