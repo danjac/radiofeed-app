@@ -88,6 +88,14 @@ document.addEventListener("alpine:init", () => {
             error(event) {
                 console.error("Audio playback error", event.target.error);
                 this.isError = true;
+                this.$dispatch("cta", {
+                    content: `
+            An error occurred while playing the audio.
+            <button class="underline cursor-pointer mr-1"
+                @click.prevent="window.location.reload()">
+                Reload to continue
+            </button>`,
+                });
             },
             togglePlayPause() {
                 if (this.isPlaying) {

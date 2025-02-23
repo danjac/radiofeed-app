@@ -23,6 +23,20 @@
             <c-navbar.menu />
         </nav>
     {% else %}
-        <c-navbar.signup-cta />
+        <c-navbar.cta id="signup-cta">
+            {% with LINK_CSS="underline text-white hover:opacity-75" %}
+                <a class="{{ LINK_CSS }}" href="{% url 'account_signup' %}">Sign up</a>
+                or
+                <a class="{{ LINK_CSS }}" href="{% url 'account_login' %}">log in</a>
+                to follow your favorite podcasts and episodes!
+            {% endwith %}
+        </c-navbar.cta>
     {% endif %}
+    <c-navbar.cta x-data="{show: false, content: ''}"
+                  x-cloak
+                  x-transition
+                  x-show="show"
+                  @cta.window="show = true; content = $event.detail.content">
+        <div x-html="content"></div>
+    </c-navbar.cta>
 </header>
