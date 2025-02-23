@@ -14,6 +14,7 @@ document.addEventListener("alpine:init", () => {
             currentTime,
             timeUpdateUrl,
             duration: 0,
+            isError: false,
             isLoaded: false,
             isPlaying: false,
             isRetrying: false,
@@ -66,6 +67,7 @@ document.addEventListener("alpine:init", () => {
                 }
 
                 this.isLoaded = true;
+                this.isError = false;
             },
             timeUpdate(event) {
                 this.runtime = Math.floor(event.target.currentTime);
@@ -85,6 +87,7 @@ document.addEventListener("alpine:init", () => {
             },
             error(event) {
                 console.error("Audio playback error", event.target.error);
+                this.isError = true;
             },
             togglePlayPause() {
                 if (this.isPlaying) {
@@ -206,12 +209,15 @@ document.addEventListener("alpine:init", () => {
                 return null;
             },
             get canPlayPause() {
-                return this.isLoaded;
+                return this.isLoaded && !this.isError;
             },
             get canSkip() {
-                return this.isLoaded && this.isPlaying;
+                return this.isLoaded && this.isPlaying && !this.isError;
             },
             get status() {
+                if (this.isError) {
+                    return "Error";
+                }
                 if (!this.isLoaded) {
                     return "Loading";
                 }
