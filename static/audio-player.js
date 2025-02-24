@@ -14,7 +14,6 @@ document.addEventListener("alpine:init", () => {
             currentTime,
             timeUpdateUrl,
             duration: 0,
-            isError: false,
             isLoaded: false,
             isPlaying: false,
             isRetrying: false,
@@ -93,7 +92,6 @@ document.addEventListener("alpine:init", () => {
                 }
 
                 this.isLoaded = true;
-                this.isError = false;
             },
             timeUpdate(event) {
                 this.runtime = Math.floor(event.target.currentTime);
@@ -105,7 +103,6 @@ document.addEventListener("alpine:init", () => {
             },
             play() {
                 this.isPlaying = true;
-                this.isError = false;
                 this.startUpdateTimer();
             },
             pause() {
@@ -162,15 +159,12 @@ document.addEventListener("alpine:init", () => {
             },
             // PROPERTIES
             get canPlayPause() {
-                return this.isLoaded && !this.isError;
+                return this.isLoaded;
             },
             get canSkip() {
-                return this.isLoaded && this.isPlaying && !this.isError;
+                return this.isLoaded && this.isPlaying;
             },
             get status() {
-                if (this.isError) {
-                    return "Error";
-                }
                 if (!this.isLoaded) {
                     return "Loading";
                 }
@@ -182,7 +176,6 @@ document.addEventListener("alpine:init", () => {
             handleError(error, content) {
                 // Set error state in UI and show CTA
                 console.error("Audio playback error", error);
-                this.isError = true;
                 this.$dispatch("cta", {
                     dismissable: true,
                     content,
@@ -215,11 +208,7 @@ document.addEventListener("alpine:init", () => {
             startUpdateTimer() {
                 if (!this.updateTimer) {
                     this.updateTimer = setInterval(() => {
-                        if (
-                            this.isPlaying &&
-                            !this.isUpdating &&
-                            !this.isError
-                        ) {
+                        if (this.isPlaying && !this.isUpdating) {
                             this.sendTimeUpdate();
                         }
                     }, this.updateInterval * 1000);
