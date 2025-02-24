@@ -93,6 +93,7 @@ document.addEventListener("alpine:init", () => {
                 }
 
                 this.isLoaded = true;
+                this.isError = false;
             },
             timeUpdate(event) {
                 this.runtime = Math.floor(event.target.currentTime);
@@ -104,6 +105,7 @@ document.addEventListener("alpine:init", () => {
             },
             play() {
                 this.isPlaying = true;
+                this.isError = false;
                 this.startUpdateTimer();
             },
             pause() {
