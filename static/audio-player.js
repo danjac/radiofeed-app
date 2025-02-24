@@ -7,13 +7,15 @@ document.addEventListener("alpine:init", () => {
             currentTime = 0,
             metadataTag = null,
             startPlayer = false,
+            sizeInBytes = 0,
+            duration = 0,
             timeUpdateUrl = null,
         ) => ({
             csrfHeader,
             csrfToken,
             currentTime,
+            duration,
             timeUpdateUrl,
-            duration: 0,
             isLoaded: false,
             isPlaying: false,
             isRetrying: false,
@@ -21,8 +23,9 @@ document.addEventListener("alpine:init", () => {
             runtime: 0,
             skipSeconds: 10,
             timer: null,
-            startPlayerInterval: 6,
             updateInterval: 6,
+            minLoadingTime: 6,
+            maxLoadingTime: 30,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -51,22 +54,25 @@ document.addEventListener("alpine:init", () => {
 
                 // As the load() event does not trigger error callback in case of failure
                 // we'll check after a given interval if the audio has started playing
-                const interval = setInterval(() => {
-                    // check the isLoaded flag
-                    if (this.isLoaded) {
-                        clearInterval(interval); // Success, clear the interval
-                    } else {
-                        // Timeout occurred, set error state and show CTA
-                        this.handleError(
-                            new Error(
-                                "Audio failed to load or start within timeout limit",
-                            ),
-                            `Audio is unavailable. Please try again later or click the
+                const interval = setInterval(
+                    () => {
+                        // check the isLoaded flag
+                        if (this.isLoaded) {
+                            clearInterval(interval); // Success, clear the interval
+                        } else {
+                            // Timeout occurred, set error state and show CTA
+                            this.handleError(
+                                new Error(
+                                    "Audio failed to load or start within timeout limit",
+                                ),
+                                `Audio is unavailable. Please try again later or click the
                             Download link to listen to the audio directly.`,
-                        );
-                        clearInterval(interval); // Failure, clear the interval
-                    }
-                }, this.startPlayerInterval * 1000);
+                            );
+                            clearInterval(interval); // Failure, clear the interval
+                        }
+                    },
+                    this.getLoadingInterval(sizeInBytes, duration),
+                );
             },
             destroy() {
                 this.clearUpdateTimer();
@@ -76,6 +82,7 @@ document.addEventListener("alpine:init", () => {
                     return;
                 }
 
+                // reset duration based on the audio metadata
                 this.duration = event.target.duration || 0;
                 this.$refs.audio.currentTime = currentTime; // Set the playback position
                 this.runtime = Math.floor(this.$refs.audio.currentTime); // Update runtime
@@ -271,6 +278,29 @@ document.addEventListener("alpine:init", () => {
                     return new MediaMetadata(metadata);
                 }
                 return null;
+            },
+            getLoadingInterval(sizeInBytes, duration) {
+                // calculate the loading timeout based on the file size
+                //
+
+                // seconds based on file size: 1s/1MB
+                // if size is 0, estimate based on duration: 1s/min
+                let totalSeconds;
+
+                if (sizeInBytes > 0) {
+                    totalSeconds = sizeInBytes / (1024 * 1024);
+                } else if (duration > 0) {
+                    totalSeconds = duration / 60;
+                } else {
+                    totalSeconds = this.maxLoadingTime;
+                }
+
+                return (
+                    Math.min(
+                        this.maxLoadingTime,
+                        Math.max(this.minLoadingTime, totalSeconds),
+                    ) * 1000
+                );
             },
         }),
     );

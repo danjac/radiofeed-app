@@ -16,6 +16,8 @@
                         currentTime={{ audio_log.current_time|default:0 }},
                         metadataTag='{{ metadata_tag }}',
                         startPlayer={% if action == "play" %}true{% else %}false{% endif %},
+                        sizeInBytes={{ episode.length|default:0 }},
+                        duration={{ episode.duration_in_seconds|default:0 }},
                         timeUpdateUrl='{% url "episodes:player_time_update" %}',
                     )"{# fmt:on #}
                      @keydown.window="shortcuts">
