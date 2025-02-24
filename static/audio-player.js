@@ -23,8 +23,6 @@ document.addEventListener("alpine:init", () => {
             skipSeconds: 10,
             timer: null,
             updateInterval: 6,
-            maxRetries: 3,
-
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -89,6 +87,7 @@ document.addEventListener("alpine:init", () => {
                 console.error("Audio playback error", event.target.error);
                 this.isError = true;
                 this.$dispatch("cta", {
+                    dismissable: true,
                     content: `
             An error occurred while playing the audio.
             <button class="underline cursor-pointer mr-1"
