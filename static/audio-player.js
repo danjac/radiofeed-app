@@ -22,12 +22,14 @@ document.addEventListener("alpine:init", () => {
             runtime: 0,
             skipSeconds: 10,
             timer: null,
+            startPlayerInterval: 6,
             updateInterval: 6,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
                 preview: "00:00:00",
             },
+            // EVENTS
             init() {
                 if (metadataTag && "mediaSession" in navigator) {
                     navigator.mediaSession.metadata =
@@ -48,7 +50,8 @@ document.addEventListener("alpine:init", () => {
 
                 this.$refs.audio.load();
 
-                // Start a 6-second timeout check
+                // As the load() event does not trigger error callback in case of failure
+                // we'll check after a given interval if the audio has started playing
                 const interval = setInterval(() => {
                     // check the isLoaded flag
                     if (this.isLoaded) {
@@ -64,10 +67,10 @@ document.addEventListener("alpine:init", () => {
                         );
                         clearInterval(interval); // Failure, clear the interval
                     }
-                }, 6000);
+                }, this.startPlayerInterval * 1000);
             },
             destroy() {
-                this.clearTimer();
+                this.clearUpdateTimer();
             },
             async loaded(event) {
                 if (this.isLoaded) {
@@ -101,11 +104,11 @@ document.addEventListener("alpine:init", () => {
             },
             play() {
                 this.isPlaying = true;
-                this.startTimer();
+                this.startUpdateTimer();
             },
             pause() {
                 this.isPlaying = false;
-                this.clearTimer();
+                this.clearUpdateTimer();
             },
             error(event) {
                 this.handleError(
@@ -114,14 +117,6 @@ document.addEventListener("alpine:init", () => {
                     Reload to continue.`,
                 );
             },
-            handleError(error, content) {
-                console.error("Audio playback error", error);
-                this.isError = true;
-                this.$dispatch("cta", {
-                    dismissable: true,
-                    content,
-                });
-            },
             togglePlayPause() {
                 if (this.isPlaying) {
                     this.$refs.audio.pause();
@@ -129,29 +124,15 @@ document.addEventListener("alpine:init", () => {
                     this.$refs.audio.play();
                 }
             },
-            skip() {
-                if (this.isPlaying) {
-                    this.$refs.audio.currentTime = this.runtime;
-                }
-            },
-            skipTo(seconds) {
-                if (this.isPlaying) {
-                    // ensure seconds within bounds of audio duration
-                    newTime = Math.max(
-                        0,
-                        Math.min(
-                            this.$refs.audio.duration,
-                            this.$refs.audio.currentTime + seconds,
-                        ),
-                    );
-                    this.$refs.audio.currentTime = newTime;
-                }
+            skip(event) {
+                // move current time to current position on range
+                this.skipTo(event.target.value);
             },
             skipBack() {
-                this.skipTo(-this.skipSeconds);
+                this.skipBy(-this.skipSeconds);
             },
             skipForward() {
-                this.skipTo(this.skipSeconds);
+                this.skipBy(this.skipSeconds);
             },
             shortcuts(event) {
                 if (
@@ -177,6 +158,48 @@ document.addEventListener("alpine:init", () => {
                         return handleEvent(this.skipBack);
                 }
             },
+            // PROPERTIES
+            get canPlayPause() {
+                return this.isLoaded && !this.isError;
+            },
+            get canSkip() {
+                return this.isLoaded && this.isPlaying && !this.isError;
+            },
+            get status() {
+                if (this.isError) {
+                    return "Error";
+                }
+                if (!this.isLoaded) {
+                    return "Loading";
+                }
+                if (!this.isPlaying) {
+                    return "Paused";
+                }
+                return this.counters.preview;
+            },
+            handleError(error, content) {
+                // Set error state in UI and show CTA
+                console.error("Audio playback error", error);
+                this.isError = true;
+                this.$dispatch("cta", {
+                    dismissable: true,
+                    content,
+                });
+            },
+            skipBy(seconds) {
+                // move current time +/- seconds
+                this.skipTo(this.$refs.audio.currentTime + seconds);
+            },
+            skipTo(position) {
+                if (this.isPlaying) {
+                    // ensure seconds within bounds of audio duration
+                    newTime = Math.max(
+                        0,
+                        Math.min(this.$refs.audio.duration, position),
+                    );
+                    this.$refs.audio.currentTime = newTime;
+                }
+            },
             updateProgressBar() {
                 const percent =
                     this.runtime && this.duration
@@ -187,11 +210,12 @@ document.addEventListener("alpine:init", () => {
                     `${percent}%`,
                 );
             },
-            startTimer() {
-                if (!this.timer) {
-                    this.timer = setInterval(() => {
+            startUpdateTimer() {
+                if (!this.updateTimer) {
+                    this.updateTimer = setInterval(() => {
                         if (
-                            this.isPlaying & !this.isUpdating &&
+                            this.isPlaying &&
+                            !this.isUpdating &&
                             !this.isError
                         ) {
                             this.sendTimeUpdate();
@@ -199,11 +223,11 @@ document.addEventListener("alpine:init", () => {
                     }, this.updateInterval * 1000);
                 }
             },
-            clearTimer() {
-                if (this.timer) {
-                    clearInterval(this.timer);
+            clearUpdateTimer() {
+                if (this.updateTimer) {
+                    clearInterval(this.updateTimer);
                     this.isUpdating = false;
-                    this.timer = null;
+                    this.updateTimer = null;
                 }
             },
             async sendTimeUpdate() {
@@ -256,24 +280,6 @@ document.addEventListener("alpine:init", () => {
                     return new MediaMetadata(metadata);
                 }
                 return null;
-            },
-            get canPlayPause() {
-                return this.isLoaded && !this.isError;
-            },
-            get canSkip() {
-                return this.isLoaded && this.isPlaying && !this.isError;
-            },
-            get status() {
-                if (this.isError) {
-                    return "Error";
-                }
-                if (!this.isLoaded) {
-                    return "Loading";
-                }
-                if (!this.isPlaying) {
-                    return "Paused";
-                }
-                return this.counters.preview;
             },
         }),
     );
