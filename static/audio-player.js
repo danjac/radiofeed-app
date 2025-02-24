@@ -47,6 +47,24 @@ document.addEventListener("alpine:init", () => {
                 });
 
                 this.$refs.audio.load();
+
+                // Start a 6-second timeout check
+                const interval = setInterval(() => {
+                    // check the isLoaded flag
+                    if (this.isLoaded) {
+                        clearInterval(interval); // Success, clear the interval
+                    } else {
+                        // Timeout occurred, set error state and show CTA
+                        this.handleError(
+                            new Error(
+                                "Audio failed to load or start within timeout limit",
+                            ),
+                            `Audio is unavailable. Please try again later or click the
+                            Download link to listen to the audio directly.`,
+                        );
+                        clearInterval(interval); // Failure, clear the interval
+                    }
+                }, 6000);
             },
             destroy() {
                 this.clearTimer();
@@ -61,11 +79,17 @@ document.addEventListener("alpine:init", () => {
                 this.runtime = Math.floor(this.$refs.audio.currentTime); // Update runtime
 
                 if (startPlayer) {
-                    await this.$refs.audio.play();
+                    try {
+                        await this.$refs.audio.play();
+                    } catch (error) {
+                        this.handleError(
+                            error,
+                            "Failed to start audio playback. Reload to contine.",
+                        );
+                    }
                 }
 
                 this.isLoaded = true;
-                this.isError = false;
             },
             timeUpdate(event) {
                 this.runtime = Math.floor(event.target.currentTime);
@@ -84,16 +108,18 @@ document.addEventListener("alpine:init", () => {
                 this.clearTimer();
             },
             error(event) {
-                console.error("Audio playback error", event.target.error);
+                this.handleError(
+                    event.target.error,
+                    `An error occurred while playing the audio.
+                    Reload to continue.`,
+                );
+            },
+            handleError(error, content) {
+                console.error("Audio playback error", error);
                 this.isError = true;
                 this.$dispatch("cta", {
                     dismissable: true,
-                    content: `
-            An error occurred while playing the audio.
-            <button class="underline cursor-pointer mr-1"
-                @click.prevent="window.location.reload()">
-                Reload to continue
-            </button>`,
+                    content,
                 });
             },
             togglePlayPause() {
@@ -110,7 +136,15 @@ document.addEventListener("alpine:init", () => {
             },
             skipTo(seconds) {
                 if (this.isPlaying) {
-                    this.$refs.audio.currentTime += seconds;
+                    // ensure seconds within bounds of audio duration
+                    newTime = Math.max(
+                        0,
+                        Math.min(
+                            this.$refs.audio.duration,
+                            this.$refs.audio.currentTime + seconds,
+                        ),
+                    );
+                    this.$refs.audio.currentTime = newTime;
                 }
             },
             skipBack() {
@@ -156,7 +190,10 @@ document.addEventListener("alpine:init", () => {
             startTimer() {
                 if (!this.timer) {
                     this.timer = setInterval(() => {
-                        if (this.isPlaying & !this.isUpdating) {
+                        if (
+                            this.isPlaying & !this.isUpdating &&
+                            !this.isError
+                        ) {
                             this.sendTimeUpdate();
                         }
                     }, this.updateInterval * 1000);
@@ -171,16 +208,21 @@ document.addEventListener("alpine:init", () => {
             },
             async sendTimeUpdate() {
                 this.isUpdating = true;
-                await fetch(this.timeUpdateUrl, {
-                    method: "POST",
-                    headers: {
-                        [this.csrfHeader]: this.csrfToken,
-                    },
-                    body: new URLSearchParams({
-                        current_time: this.runtime,
-                    }),
-                });
-                this.isUpdating = false;
+                try {
+                    await fetch(this.timeUpdateUrl, {
+                        method: "POST",
+                        headers: {
+                            [this.csrfHeader]: this.csrfToken,
+                        },
+                        body: new URLSearchParams({
+                            current_time: this.runtime,
+                        }),
+                    });
+                } catch (error) {
+                    console.error("Failed to send time update", error);
+                } finally {
+                    this.isUpdating = false;
+                }
             },
             setPreviewCounter(position) {
                 if (this.isPlaying) {

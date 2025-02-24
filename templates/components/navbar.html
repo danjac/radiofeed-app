@@ -45,11 +45,11 @@
         {# djlint: on #}>
         <div class="relative">
             <button @click="show = false"
-                    class="absolute top-0 right-0 text-white cursor-pointer hover:opacity-75"
+                    class="absolute top-0 right-0 pl-2 text-white cursor-pointer hover:opacity-75"
                     x-show="dismissable">
                 {% heroicon_mini "x-mark" %}
             </button>
-            <div x-html="content"></div>
+            <div class="pr-6" x-text="content"></div>
         </div>
     </c-navbar.cta>
 </header>
