@@ -106,7 +106,7 @@ class TestEpisodeDetail:
             episode_type="full",
             season=1,
             episode=3,
-            length=9000,
+            file_size=9000,
             duration="3:30:30",
         )
 

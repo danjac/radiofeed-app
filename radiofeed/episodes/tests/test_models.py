@@ -115,11 +115,76 @@ class TestEpisodeModel:
         episode = Episode(description="<b>Test &amp; Code")
         assert episode.cleaned_description == "Test & Code"
 
-    def test_get_file_size(self):
-        assert Episode(length=500).get_file_size() == "500\xa0bytes"
-
-    def test_get_file_size_if_none(self):
-        assert Episode(length=None).get_file_size() is None
+    @pytest.mark.parametrize(
+        ("file_size", "duration", "media_type", "expected"),
+        [
+            pytest.param(None, None, "audio/ogg", 0, id="both none"),
+            pytest.param(0, 0, "audio/ogg", 0, id="both zero"),
+            pytest.param(
+                1,  # Erroneous file size (1 byte, but should be treated as 1 MB)
+                None,
+                "audio/mp3",
+                1024,  # File size is capped to 1024 bytes (1 KB)
+                id="erroneous-1-byte-file-size",
+            ),
+            pytest.param(
+                5000000,
+                None,
+                "audio/mp4",
+                5000000,  # File size is provided, no calculation needed
+                id="only file size given",
+            ),
+            pytest.param(
+                1048576,
+                "0:02:00",
+                "audio/ogg",
+                1048576,  # Calculated expected file size (bytes) for 2 minutes of audio at 64 kbps
+                id="file size given",
+            ),
+            pytest.param(
+                0,
+                "0:02:00",
+                "audio/ogg",
+                1440000,  # Calculated expected file size (bytes) for 2 minutes of audio at 96 kbps
+                id="ogg-2min-default",
+            ),
+            pytest.param(
+                0,
+                "0:05:00",
+                "audio/mp4",
+                4800000,  # Calculated expected file size (bytes) for 5 minutes of audio at 128 kbps
+                id="mp4-5min-default",
+            ),
+            pytest.param(
+                0,
+                "0:30:00",
+                "audio/mp3",
+                28800000,  # Calculated expected file size (bytes) for 30 minutes of audio at 128 kbps
+                id="mp3-30min-default",
+            ),
+            pytest.param(
+                0,
+                "1:12:34",
+                "audio/mp3",
+                69664000,  # Calculated expected file size (bytes) for 1 hour 12 minutes 34 seconds at 128 kbps
+                id="mp3-1hr12min34sec",
+            ),
+            pytest.param(
+                0,
+                "0:10:00",
+                "audio/unknown",
+                9600000,  # Calculated expected file size (bytes) for 10 minutes of audio at 128 kbps
+                id="unknown-mime-default",
+            ),
+        ],
+    )
+    def test_estimated_file_size(self, file_size, duration, media_type, expected):
+        episode = Episode(
+            file_size=file_size,
+            duration=duration,
+            media_type=media_type,
+        )
+        assert episode.estimated_file_size == expected
 
     @pytest.mark.django_db
     def test_get_cover_url_if_episode_cover(self, podcast):

@@ -131,7 +131,7 @@ class _RSSParser:
                     "atom:id/text()",
                     "link/text()",
                 ),
-                "length": self._parser.value(
+                "file_size": self._parser.value(
                     item, "enclosure/@length", "media:content/@fileSize"
                 ),
                 "website": self._parser.value(item, "link/text()"),
