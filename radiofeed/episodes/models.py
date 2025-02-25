@@ -170,15 +170,16 @@ class Episode(models.Model):
     def estimated_file_size(self) -> int:
         """Returns an estimated file size in bytes.
 
-        if `file_size` is available, returns that value. Otherwise calculates
-        the file size based on duration and bitrate.
+        If a valid `file_size` is available, returns that value.
+
+        Otherwise calculates the file size based on duration and bitrate.
 
         Returns 0 if neither `file_size` nor `duration` is available.
         """
 
-        if self.file_size:
-            # some providers return 1 as file size as they mean 1MB, not 1 byte
-            return max(self.file_size, 1024)
+        # Return if file_size is greater than 1MB
+        if self.file_size and self.file_size > (1024 * 1024):
+            return self.file_size
 
         return (
             int((get_bitrate(self.media_type) * self.duration_in_seconds * 1000) / 8)

@@ -124,7 +124,7 @@ class TestEpisodeModel:
                 1,  # Erroneous file size (1 byte, but should be treated as 1 MB)
                 None,
                 "audio/mp3",
-                1024,  # File size is capped to 1024 bytes (1 KB)
+                0,  # File size is capped to 1024 bytes (1 KB)
                 id="erroneous-1-byte-file-size",
             ),
             pytest.param(
@@ -135,10 +135,24 @@ class TestEpisodeModel:
                 id="only file size given",
             ),
             pytest.param(
-                1048576,
+                None,
                 "0:02:00",
                 "audio/ogg",
-                1048576,  # Calculated expected file size (bytes) for 2 minutes of audio at 64 kbps
+                1440000,  # Calculated expected file size (bytes) for 2 minutes of audio at 64 kbps
+                id="file size is None",
+            ),
+            pytest.param(
+                1,
+                "0:02:00",
+                "audio/ogg",
+                1440000,  # Calculated expected file size (bytes) for 2 minutes of audio at 64 kbps
+                id="file size is < 1MB",
+            ),
+            pytest.param(
+                2048576,
+                "0:02:00",
+                "audio/ogg",
+                2048576,  # Calculated expected file size (bytes) for 2 minutes of audio at 64 kbps
                 id="file size given",
             ),
             pytest.param(
