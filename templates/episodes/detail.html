@@ -182,12 +182,8 @@
                                     Listened
                                 </span>
                                 <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
-                                {% if episode.duration_in_seconds > audio_log.current_time %}
-                                    {% with current_time=audio_log.current_time|format_duration %}
-                                        {% if current_time %}
-                                            <span>{{ current_time }}</span>
-                                        {% endif %}
-                                    {% endwith %}
+                                {% if audio_log.percent_complete %}
+                                    <span>{{ audio_log.percent_complete }}% complete</span>
                                 {% endif %}
                             </div>
                             <c-button icon="trash"

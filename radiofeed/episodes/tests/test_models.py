@@ -271,6 +271,23 @@ class TestAudioLogModel:
         audio_log = AudioLog(
             episode_id=2,
             user_id=1,
-            listened=datetime.datetime(year=2024, month=9, day=10),
         )
-        assert str(audio_log) == "user 1 | episode 2 | 2024-09-10T00:00:00"
+        assert str(audio_log) == "user 1 | episode 2"
+
+    @pytest.mark.parametrize(
+        ("current_time", "duration", "expected"),
+        [
+            pytest.param(0, None, 0, id="both zero"),
+            pytest.param(0, "1:0:0", 0, id="current time zero"),
+            pytest.param(60 * 60, None, 0, id="duration zero"),
+            pytest.param(60 * 60, "1:0:0", 100, id="both one hour"),
+            pytest.param(60 * 30, "1:0:0", 50, id="current time half"),
+            pytest.param(60 * 60, "0:30:0", 100, id="more than 100 percent"),
+        ],
+    )
+    def test_percent_complete(self, current_time, duration, expected):
+        audio_log = AudioLog(
+            current_time=current_time,
+            episode=Episode(duration=duration),
+        )
+        assert audio_log.percent_complete == expected

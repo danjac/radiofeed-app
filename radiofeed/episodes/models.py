@@ -295,6 +295,21 @@ class AudioLog(models.Model):
             [
                 f"user {self.user_id}",
                 f"episode {self.episode_id}",
-                self.listened.isoformat(),
             ]
+        )
+
+    @cached_property
+    def percent_complete(self) -> int:
+        """Returns percentage of episode listened to."""
+        if 0 in (self.current_time, self.episode.duration_in_seconds):
+            return 0
+
+        return int(
+            max(
+                0,
+                min(
+                    (self.current_time / self.episode.duration_in_seconds) * 100,
+                    100,
+                ),
+            )
         )
