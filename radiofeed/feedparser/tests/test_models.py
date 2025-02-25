@@ -26,17 +26,17 @@ class TestItem:
         with pytest.raises(ValidationError):
             Item(**ItemFactory(media_type="video/mpeg"))
 
-    def test_length_too_long(self):
-        item = Item(**ItemFactory(length="3147483647"))
-        assert item.length is None
+    def test_file_size_too_long(self):
+        item = Item(**ItemFactory(file_size="3147483647"))
+        assert item.file_size is None
 
-    def test_length_invalid(self):
-        item = Item(**ItemFactory(length="invalid"))
-        assert item.length is None
+    def test_file_size_invalid(self):
+        item = Item(**ItemFactory(file_size="invalid"))
+        assert item.file_size is None
 
-    def test_length_valid(self):
-        item = Item(**ItemFactory(length="1000"))
-        assert item.length == 1000
+    def test_file_size_valid(self):
+        item = Item(**ItemFactory(file_size="1000"))
+        assert item.file_size == 1000
 
     def test_trailer(self):
         item = Item(**ItemFactory(episode_type=Episode.EpisodeType.TRAILER))

@@ -17,57 +17,13 @@ from pydantic import (
     model_validator,
 )
 
+from radiofeed.episodes.audio_types import AudioMimetype
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.podcasts.models import Podcast
 
 T = TypeVar("T")
 
-
-_AUDIO_MIMETYPES: Final = frozenset(
-    [
-        "audio/aac",
-        "audio/aacp",
-        "audio/basic",
-        "audio/L24",
-        "audio/m4a",
-        "audio/midi",
-        "audio/mp3",
-        "audio/mp4",
-        "audio/mp4a-latm",
-        "audio/mp4a-latm",
-        "audio/mpef",
-        "audio/mpeg",
-        "audio/mpeg3",
-        "audio/mpeg4",
-        "audio/mpg",
-        "audio/ogg",
-        "audio/video",
-        "audio/vnd.dlna.adts",
-        "audio/vnd.rn-realaudio",
-        "audio/vnd.wave",
-        "audio/vorbis",
-        "audio/wav",
-        "audio/wave",
-        "audio/webm",
-        "audio/x-aac",
-        "audio/x-aiff",
-        "audio/x-aiff",
-        "audio/x-flac",
-        "audio/x-hx-aac-adts",
-        "audio/x-m4a",
-        "audio/x-m4a",
-        "audio/x-m4b",
-        "audio/x-m4v",
-        "audio/x-mov",
-        "audio/x-mp3",
-        "audio/x-mpeg",
-        "audio/x-mpg",
-        "audio/x-ms-wma",
-        "audio/x-pn-realaudio",
-        "audio/x-wav",
-    ]
-)
 
 _PG_INTEGER_RANGE: Final = range(
     -2147483648,
@@ -171,14 +127,14 @@ class Item(BaseModel):
     pub_date: datetime
 
     media_url: str
-    media_type: str
+    media_type: AudioMimetype
 
     cover_url: OptionalUrl = ""
     website: OptionalUrl = ""
 
     explicit: Explicit = False
 
-    length: PgInteger = None
+    file_size: PgInteger = None
 
     duration: str = ""
 
@@ -210,13 +166,6 @@ class Item(BaseModel):
         """Validate media url"""
         if not _url(value):
             raise ValueError("url is required")
-        return value
-
-    @field_validator("media_type", mode="before")
-    @classmethod
-    def validate_media_type(cls, value: Any) -> str:
-        """Validate media type."""
-        assert value in _AUDIO_MIMETYPES
         return value
 
     @field_validator("duration", mode="before")
