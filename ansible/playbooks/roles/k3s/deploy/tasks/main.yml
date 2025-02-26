@@ -64,8 +64,8 @@
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Add manage.sh script for Django shell access
-  copy:
-      src: manage.sh
+  ansible.builtin.template:
+      src: manage.sh.j2
       dest: manage.sh
       mode: "u+x"
 
