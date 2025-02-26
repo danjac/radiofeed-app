@@ -45,10 +45,6 @@ db_volume := "radiofeed-app_pg_data"
 @serve:
    @just dj tailwind runserver
 
-# Run pytest-watcher
-@watch:
-   uv run ptw .
-
 # Run database migrations
 @migrate:
    @just dj migrate

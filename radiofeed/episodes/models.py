@@ -93,7 +93,10 @@ class Episode(models.Model):
             models.Index(fields=["guid"]),
             models.Index(fields=["pub_date"]),
             models.Index(fields=["-pub_date"]),
-            models.Index(fields=["-pub_date", "-id"]),
+            models.Index(fields=["episode", "pub_date"]),
+            models.Index(fields=["-episode", "-pub_date"]),
+            models.Index(fields=["season", "episode", "pub_date"]),
+            models.Index(fields=["-season", "-episode", "-pub_date"]),
             GinIndex(fields=["search_vector"]),
         ]
 
@@ -113,17 +116,43 @@ class Episode(models.Model):
 
     def get_next_episode(self) -> Optional["Episode"]:
         """Returns the next episode in this podcast."""
-        try:
-            return self.get_next_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
+        qs = self.podcast.episodes.exclude(pk=self.pk)
+
+        if self.season is not None:
+            qs = qs.filter(
+                models.Q(season=self.season, episode__gt=self.episode)
+                | models.Q(season__gt=self.season)
+            ).order_by("season", "episode", "pub_date")
+
+        # If only episode is available
+        elif self.episode is not None:
+            qs = qs.filter(episode__gt=self.episode).order_by("episode", "pub_date")
+        # If neither season nor episode is available, fall back to pub_date
+        else:
+            qs = qs.filter(pub_date__gt=self.pub_date).order_by("pub_date")
+
+        return qs.first()
 
     def get_previous_episode(self) -> Optional["Episode"]:
         """Returns the previous episode in this podcast."""
-        try:
-            return self.get_previous_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
+        qs = self.podcast.episodes.exclude(pk=self.pk)
+
+        # If season is available (not NULL)
+        if self.season is not None:
+            qs = qs.filter(
+                models.Q(season=self.season, episode__lt=self.episode)
+                | models.Q(season__lt=self.season)
+            ).order_by("-season", "-episode", "-pub_date")
+
+        # If only episode is available
+        elif self.episode is not None:
+            qs = qs.filter(episode__lt=self.episode).order_by("-episode", "-pub_date")
+
+        # If only pub_date is available
+        else:
+            qs = qs.filter(pub_date__lt=self.pub_date).order_by("-pub_date")
+
+        return qs.first()
 
     def get_cover_url(self) -> str:
         """Returns cover image URL or podcast cover image if former not provided."""
