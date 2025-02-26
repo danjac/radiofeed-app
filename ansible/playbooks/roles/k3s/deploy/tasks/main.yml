@@ -63,17 +63,14 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Add manage.sh script for Django shell access
+- name: Add scripts to the deployment
   ansible.builtin.template:
-      src: manage.sh.j2
-      dest: manage.sh
+      src: "{{ item }}.j2"
+      dest: "{{ item }}"
       mode: "u+x"
-
-- name: Create deploy.sh script for CI/CD deployments
-  ansible.builtin.template:
-      src: deploy.sh.j2
-      dest: deploy.sh
-      mode: "u+x"
+  loop:
+      - deploy.sh
+      - manage.sh
 
 - name: Set tag from the current image
   ansible.builtin.set_fact:
