@@ -52,25 +52,24 @@ document.addEventListener("alpine:init", () => {
                 this.$refs.audio.load();
                 // As the load() event does not trigger error callback in case of failure
                 // we'll check after a given interval if the audio has started playing
-                const interval = setInterval(
-                    () => {
-                        // check the isLoaded flag
-                        if (this.isLoaded) {
-                            clearInterval(interval); // Success, clear the interval
-                        } else {
-                            // Timeout occurred, set error state and show CTA
-                            this.handleError(
-                                new Error(
-                                    "Audio failed to load or start within timeout limit",
-                                ),
-                                `Audio is unavailable. Please try again later or click the
-                                 Download link to listen to the audio directly.`,
-                            );
-                            clearInterval(interval); // Failure, clear the interval
-                        }
-                    },
-                    this.getLoadingInterval(sizeInBytes),
-                );
+                const interval = setInterval(() => {
+                    // check the isLoaded flag
+                    if (this.isLoaded) {
+                        clearInterval(interval); // Success, clear the interval
+                    } else {
+                        // Timeout occurred, set error state and show CTA
+                        const { currentSrc } = this.$refs.audio;
+                        this.handleError(
+                            new Error(
+                                "Audio failed to load or start within timeout limit",
+                            ),
+                            `Audio is unavailable. Please try again later or
+                            <a href="${currentSrc}" rel="noopener noreferrer" download>
+                            download the file</a> to listen to the audio on your device.`,
+                        );
+                        clearInterval(interval); // Failure, clear the interval
+                    }
+                }, this.getLoadingInterval(sizeInBytes));
             },
             destroy() {
                 this.clearUpdateTimer();
@@ -91,7 +90,9 @@ document.addEventListener("alpine:init", () => {
                     } catch (error) {
                         this.handleError(
                             error,
-                            "Failed to start audio playback. Reload to contine.",
+                            `Failed to start audio playback.
+                            <button @click="window.location.reload()">
+                            Reload to continue</button>`,
                         );
                     }
                 }
@@ -118,7 +119,8 @@ document.addEventListener("alpine:init", () => {
                 this.handleError(
                     event.target.error,
                     `An error occurred while playing the audio.
-                    Reload to continue.`,
+                    <button @click="window.location.reload()">
+                    Reload to continue</button>`,
                 );
             },
             togglePlayPause() {
@@ -282,7 +284,10 @@ document.addEventListener("alpine:init", () => {
                 //
 
                 // seconds based on file size: 1s/1MB
-                const totalSeconds = sizeInBytes > 0 ? sizeInBytes / (1024 * 1024) : this.maxLoadingTime;
+                const totalSeconds =
+                    sizeInBytes > 0
+                    ? sizeInBytes / (1024 * 1024)
+                    : this.maxLoadingTime;
 
                 return (
                     Math.min(

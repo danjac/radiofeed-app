@@ -4,8 +4,8 @@
         x-data="{showSidebar: false, showUserDropdown: false, scrolling: false}"
         {# fmt:off #}
         x-init="
-            $watch('showSidebar', value => { if (value) showUserDropdown = false; });
-            $watch('showUserDropdown', value => { if (value) showSidebar = false; });"
+                $watch('showSidebar', value => { if (value) showUserDropdown = false; });
+                $watch('showUserDropdown', value => { if (value) showSidebar = false; });"
         {# fmt:on #}
         @scroll.window="scrolling = window.pageYOffset > 0"
         @htmx:before-request.window="showSidebar=false; showUserDropdown=false">
@@ -25,31 +25,30 @@
         </nav>
     {% else %}
         <c-navbar.cta id="signup-cta">
-            {% with LINK_CSS="underline text-white hover:opacity-75" %}
-                <a class="{{ LINK_CSS }}" href="{% url 'account_signup' %}">Sign up</a>
-                or
-                <a class="{{ LINK_CSS }}" href="{% url 'account_login' %}">log in</a>
-                to follow your favorite podcasts and episodes!
-            {% endwith %}
+            <a href="{% url 'account_signup' %}">Sign up</a>
+            or
+            <a href="{% url 'account_login' %}">log in</a>
+            to follow your favorite podcasts and episodes!
         </c-navbar.cta>
     {% endif %}
     <c-navbar.cta x-data="{show: false, content: '', dismissable: false}"
                   x-cloak
                   x-transition
                   x-show="show"
-        {# djlint: off #}
+        {# fmt:off #}
                   @cta.window="
-                               show = true;
-                               content = $event.detail.content;
-                               dismissable = $event.detail.dismissable"
-        {# djlint: on #}>
+                  show = true;
+                  content = $event.detail.content;
+                  dismissable = $event.detail.dismissable;"
+        {# fmt:on #}
+    >
         <div class="relative">
             <button @click="show = false"
                     class="absolute top-0 right-0 pl-2 text-white cursor-pointer hover:opacity-75"
                     x-show="dismissable">
                 {% heroicon_mini "x-mark" %}
             </button>
-            <div class="pr-6" x-text="content"></div>
+            <div class="pr-6" x-html="content"></div>
         </div>
     </c-navbar.cta>
 </header>
