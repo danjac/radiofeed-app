@@ -42,10 +42,6 @@
   ansible.builtin.set_fact:
       current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
 
-- name: Set release_job_name with random tag
-  ansible.builtin.set_fact:
-      release_job_name: "{{ 'django-release-job-' + ansible_date_time.iso8601_basic | replace('T', '') }}"
-
 - name: Apply spec files
   vars:
       database_ip: "{{ hostvars[groups['database'][0]].private_ip }}"
@@ -59,7 +55,6 @@
       stdin: "{{ lookup('template', item + '.j2') }}"
   loop:
       - deployment.yaml
-      - release.yaml
       - cronjobs.yaml
       - service.yaml
       - configmap.yaml
@@ -68,27 +63,11 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Run the Django release job to run migrations etc
-  ansible.builtin.shell: |
-      kubectl wait --for=condition=complete job/{{ release_job_name }} --timeout=60s
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Delete release job once it has executed
-  ansible.builtin.shell: |
-      kubectl delete pod -l job-name={{ release_job_name }}
-      kubectl delete job {{ release_job_name }} -n default
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Change release job facts to use environment variables
-  ansible.builtin.set_fact:
-      current_image: "$IMAGE"
-      release_job_name: "$RELEASE_JOB_NAME"
-
-- name: Render release job template into variable
-  ansible.builtin.set_fact:
-      release_job: "{{ lookup('template', 'release.yaml.j2') }}"
+- name: Add manage.sh script for Django shell access
+  copy:
+      src: manage.sh
+      dest: manage.sh
+      mode: "u+x"
 
 - name: Create deploy.sh script for CI/CD deployments
   ansible.builtin.template:
@@ -96,8 +75,12 @@
       dest: deploy.sh
       mode: "u+x"
 
-- name: Add manage.sh script for Django shell access
-  copy:
-      src: manage.sh
-      dest: manage.sh
-      mode: "u+x"
+- name: Set tag from the current image
+  ansible.builtin.set_fact:
+      release_tag: "{{ current_image.split(':')[1] }}"
+
+- name: Run the deploy script to do Django migrations etc
+  ansible.builtin.shell: |
+      ./deploy.sh
+  environment:
+      TAG: "{{ release_tag }}"

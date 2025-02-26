@@ -2,7 +2,7 @@
 
 set -o errexit
 
-export KUBECONFIG="$HOME/.kube/config"
+export KUBECONFIG="{{ kubeconfig }}"
 
 export IMAGE="{{ docker_image.split(":")[0] }}:$TAG"
 export RELEASE_JOB_NAME="django-release-job-$TAG"
@@ -13,7 +13,25 @@ echo "Running migrations..."
 
 # Create new release job
 release_job_yaml=$(cat <<EOF
-{{ release_job }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: $RELEASE_JOB_NAME
+spec:
+  template:
+    spec:
+      containers:
+        - name: django
+          image: $IMAGE
+          command: ["/bin/sh", "-c"]
+          args: ["./release.sh"]
+          envFrom:
+            - configMapRef:
+                name: django-config
+            - secretRef:
+                name: django-secret
+      restartPolicy: OnFailure
+
 EOF
 )
 
