@@ -159,12 +159,7 @@ def episodes(
             if season := int(request.GET.get("season", "")):
                 episodes = episodes.filter(season=season)
 
-        order_by = ["season", "episode", "pub_date"]
-
-        if ordering == "desc":
-            order_by = [f"-{field}" for field in order_by]
-
-        episodes = episodes.order_by(*order_by)
+        episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
     return render_pagination(
         request,

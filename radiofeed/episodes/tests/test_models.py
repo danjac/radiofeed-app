@@ -70,68 +70,6 @@ class TestEpisodeModel:
         assert episode.get_next_episode() == next_episode
 
     @pytest.mark.django_db
-    def test_next_episode_next_episode(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-        )
-        next_episode = EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_next_episode() == next_episode
-
-    @pytest.mark.django_db
-    def test_next_episode_next_episode_same_season(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            season=1,
-        )
-        next_episode = EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-            season=1,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_next_episode() == next_episode
-
-    @pytest.mark.django_db
-    def test_next_episode_same_episode_next_season(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            season=1,
-        )
-        next_episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            season=2,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_next_episode() == next_episode
-
-    @pytest.mark.django_db
-    def test_next_episode_next_episode_last_season(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            season=2,
-        )
-        EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-            season=1,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_next_episode() is None
-
-    @pytest.mark.django_db
     def test_previous_episode(self, episode):
         previous_episode = EpisodeFactory(
             podcast=episode.podcast,
@@ -139,66 +77,6 @@ class TestEpisodeModel:
         )
 
         assert episode.get_previous_episode() == previous_episode
-
-    @pytest.mark.django_db
-    def test_previous_episode_previous_episode(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-        )
-        previous_episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_previous_episode() == previous_episode
-
-    @pytest.mark.django_db
-    def test_previous_episode_next_episode(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-        )
-        EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_previous_episode() is None
-
-    @pytest.mark.django_db
-    def test_previous_episode_previous_episode_same_season(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-            season=1,
-        )
-        previous_episode = EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            season=1,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_previous_episode() == previous_episode
-
-    @pytest.mark.django_db
-    def test_previous_episode_previous_episode_next_season(self, podcast):
-        episode = EpisodeFactory(
-            podcast=podcast,
-            episode=2,
-            season=1,
-        )
-        EpisodeFactory(
-            podcast=podcast,
-            episode=1,
-            season=2,
-            pub_date=episode.pub_date,
-        )
-
-        assert episode.get_previous_episode() is None
 
     def test_episode_explicit(self):
         assert Episode(explicit=True).is_explicit() is True
