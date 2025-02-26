@@ -31,17 +31,19 @@
             to follow your favorite podcasts and episodes!
         </c-navbar.cta>
     {% endif %}
-    <c-navbar.cta x-data="{show: false, content: '', dismissable: false}"
+    {# fmt:off #}
+    <c-navbar.cta x-data="{
+                      show: false,
+                      content: '',
+                      dismissable: false,
+                  }"
                   x-cloak
                   x-transition
                   x-show="show"
-        {# fmt:off #}
                   @cta.window="
-                  show = true;
-                  content = $event.detail.content;
-                  dismissable = $event.detail.dismissable;"
-        {# fmt:on #}
-    >
+                      show = true;
+                      content = $event.detail.content;
+                      dismissable = $event.detail.dismissable;">
         <div class="relative">
             <button @click="show = false"
                     class="absolute top-0 right-0 pl-2 text-white cursor-pointer hover:opacity-75"
@@ -51,4 +53,5 @@
             <div class="pr-6" x-html="content"></div>
         </div>
     </c-navbar.cta>
+    {# fmt:on #}
 </header>
