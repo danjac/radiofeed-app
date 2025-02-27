@@ -1,7 +1,5 @@
 - name: Generate a remote Django manage script
   hosts: server
   gather_facts: false
-  vars_files:
-    - ./vars/config.yml
   roles:
     - dj_manage

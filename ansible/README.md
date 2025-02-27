@@ -14,14 +14,9 @@ The Ansible playbooks will deploy all of the above using [K3s](https://www.ranch
 
 ## Setup
 
-1. Copy the following files:
-
-    * `hosts.yml.example` > `hosts.yml`
-    * `vars/secrets.yml.example` > `playbooks/vars/secrets.yml`
-    * `vars/config.yml.example` > `playbooks/vars/config.yml`
-
-2. Edit the above files as required, adding your server-specific settings.
-3. Encrypt the `secrets.yml` file using `ansible-vault` and make backups to a secure place.
+1. Copy the following file `hosts.yml.example` to `hosts.yml`
+2. Edit file as required, adding your server-specific settings.
+3. Encrypt the `hosts.yml` file using `ansible-vault` and make backups to a secure place.
 
 ## Deployment
 

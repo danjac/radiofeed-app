@@ -4,16 +4,11 @@
   remote_user: root
   vars:
       ansible_user: root
-  vars_files:
-      - ./vars/config.yml
   roles:
       - user
       - docker
 
 - name: Set up Postgresql and Redis
   hosts: database
-  vars_files:
-      - ./vars/config.yml
-      - ./vars/secrets.yml
   roles:
       - database
