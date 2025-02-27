@@ -15,7 +15,7 @@ spec:
           hostNetwork: true
           restartPolicy: Never
           containers:
-          - name: {{ cronjob.name }}
+          - name: django
             image: {{ current_image }}
             command: ["/bin/bash", "-c", "{{ cronjob.command }}"]
             envFrom:
