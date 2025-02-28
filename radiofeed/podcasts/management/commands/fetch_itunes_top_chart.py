@@ -13,7 +13,6 @@ _LOCATIONS: Final = (
     "fr",
     "gb",
     "nz",
-    "us",
 )
 
 
