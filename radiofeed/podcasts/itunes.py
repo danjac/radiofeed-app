@@ -2,11 +2,17 @@ import contextlib
 import dataclasses
 import itertools
 from collections.abc import Iterator
+from concurrent import futures
+from typing import Final
 
 import httpx
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
+
+_CHART_URL: Final = (
+    "https://rss.marketingtools.apple.com/api/v2/us/podcasts/top/10/podcasts.json"
+)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -36,6 +42,24 @@ def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Fee
             search_term,
             limit,
         ),
+    )
+
+
+def fetch_top_chart(client: Client) -> list[Podcast]:
+    """Fetch top chart from iTunes podcast API.
+    New or updated podcasts are inserted or updated with `promoted=True`.
+    """
+    return Podcast.objects.bulk_create(
+        [
+            Podcast(
+                rss=feed_url,
+                promoted=True,
+            )
+            for feed_url in _parse_top_chart_feed_urls(client)
+        ],
+        unique_fields=["rss"],
+        update_fields=["promoted"],
+        update_conflicts=True,
     )
 
 
@@ -92,3 +116,39 @@ def _insert_search_results(feeds: Iterator[Feed]) -> Iterator[Feed]:
     )
 
     yield from feeds
+
+
+def _parse_top_chart_feed_urls(client: Client) -> Iterator[str]:
+    with contextlib.suppress(httpx.HTTPError):
+        response = client.get(_CHART_URL)
+        # ensure we don't have duplicates
+        feed_urls = set()
+        with futures.ThreadPoolExecutor() as executor:
+            for process in [
+                executor.submit(
+                    _parse_top_chart_result,
+                    client,
+                    result.get("id", None),
+                )
+                for result in response.json().get("feed", {}).get("results", [])
+            ]:
+                if (feed_url := process.result()) and feed_url not in feed_urls:
+                    yield feed_url
+
+                feed_urls.add(feed_url)
+
+
+def _parse_top_chart_result(client: Client, itunes_id: str | None) -> str | None:
+    with contextlib.suppress(KeyError, IndexError, httpx.HTTPError):
+        if itunes_id:
+            response = client.get(
+                "https://itunes.apple.com/lookup",
+                params={
+                    "id": itunes_id,
+                },
+                headers={
+                    "Accept": "application/json",
+                },
+            )
+            return response.json()["results"][0]["feedUrl"]
+    return None

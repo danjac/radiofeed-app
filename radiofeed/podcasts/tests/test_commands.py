@@ -1,8 +1,21 @@
 import pytest
 from django.core.management import call_command
 
-from radiofeed.podcasts.tests.factories import RecommendationFactory
+from radiofeed.podcasts.tests.factories import PodcastFactory, RecommendationFactory
 from radiofeed.users.tests.factories import EmailAddressFactory
+
+
+class TestFetchItunesTopChart:
+    @pytest.mark.django_db
+    def test_itunes_top_chart(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_top_chart",
+            return_value=[
+                PodcastFactory(),
+            ],
+        )
+        call_command("fetch_itunes_top_chart")
+        patched.assert_called()
 
 
 class TestCreateRecommendations:
