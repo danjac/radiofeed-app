@@ -2,17 +2,11 @@ import contextlib
 import dataclasses
 import itertools
 from collections.abc import Iterator
-from concurrent import futures
-from typing import Final
 
 import httpx
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
-
-_CHART_URL: Final = (
-    "https://rss.marketingtools.apple.com/api/v2/us/podcasts/top/10/podcasts.json"
-)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -33,124 +27,146 @@ class Feed:
     image: str = ""
     podcast: Podcast | None = None
 
+    def __str__(self) -> str:
+        """Returns title or RSS URL."""
+        return self.title or self.rss
+
 
 def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Feed]:
     """Search iTunes podcast API."""
-    return _insert_search_results(
-        _fetch_search_results(
-            client,
-            search_term,
-            limit,
-        ),
-    )
+    return _ItunesClient(client).search(search_term, limit=limit)
 
 
-def fetch_top_chart(client: Client) -> list[Podcast]:
+def fetch_top_chart(
+    client: Client, *, location: str = "us", limit: int = 50
+) -> Iterator[Feed]:
     """Fetch top chart from iTunes podcast API.
     New or updated podcasts are inserted or updated with `promoted=True`.
     """
-    return Podcast.objects.bulk_create(
-        [
-            Podcast(
-                rss=feed_url,
-                promoted=True,
+    return _ItunesClient(client).fetch_top_chart(location=location, limit=limit)
+
+
+@dataclasses.dataclass(frozen=True)
+class _ItunesClient:
+    client: Client
+
+    def search(self, search_term: str, *, limit: int = 50) -> Iterator[Feed]:
+        """Search iTunes podcast API."""
+        feeds_for_podcasts, feeds = itertools.tee(
+            self._fetch_search_feeds(search_term, limit)
+        )
+
+        podcasts = Podcast.objects.filter(
+            rss__in={f.rss for f in feeds_for_podcasts}
+        ).in_bulk(field_name="rss")
+
+        # insert podcasts to feeds where we have a match
+
+        feeds_for_insert, feeds = itertools.tee(
+            [
+                dataclasses.replace(feed, podcast=podcasts.get(feed.rss))
+                for feed in feeds
+            ],
+        )
+
+        # create new podcasts for feeds without a match
+
+        Podcast.objects.bulk_create(
+            [
+                Podcast(title=feed.title, rss=feed.rss)
+                for feed in set(feeds_for_insert)
+                if feed.podcast is None
+            ],
+            ignore_conflicts=True,
+        )
+
+        return feeds
+
+    def fetch_top_chart(
+        self,
+        *,
+        location: str = "us",
+        limit: int = 50,
+    ) -> Iterator[Feed]:
+        feeds_for_podcasts, feeds = itertools.tee(
+            self._fetch_chart_feeds(location, limit)
+        )
+
+        Podcast.objects.bulk_create(
+            [
+                Podcast(
+                    rss=feed.rss,
+                    promoted=True,
+                )
+                for feed in feeds_for_podcasts
+            ],
+            unique_fields=["rss"],
+            update_fields=["promoted"],
+            update_conflicts=True,
+        )
+
+        return feeds
+
+    def _fetch_search_feeds(
+        self,
+        search_term: str,
+        limit: int,
+    ) -> Iterator[Feed]:
+        return self._parse_feeds(
+            self._fetch_json(
+                "https://itunes.apple.com/search",
+                term=search_term,
+                limit=limit,
+                media="podcast",
+            ).get("results", [])
+        )
+
+    def _fetch_chart_feeds(self, location: str, limit: int) -> Iterator[Feed]:
+        if itunes_ids := set(self._fetch_chart_ids(location, limit)):
+            return self._parse_feeds(
+                self._fetch_json(
+                    "https://itunes.apple.com/lookup",
+                    id=",".join(itunes_ids),
+                ).get("results", [])
             )
-            for feed_url in _parse_top_chart_feed_urls(client)
-        ],
-        unique_fields=["rss"],
-        update_fields=["promoted"],
-        update_conflicts=True,
-    )
+        return iter(())
 
+    def _fetch_chart_ids(self, location: str, limit: int) -> Iterator[str]:
+        for result in (
+            self._fetch_json(
+                f"https://rss.marketingtools.apple.com/api/v2/{location}/podcasts/top/{limit}/podcasts.json"
+            )
+            .get("feed", {})
+            .get("results", [])
+        ):
+            if itunes_id := result.get("id", None):
+                yield itunes_id
 
-def _fetch_search_results(
-    client: Client,
-    search_term: str,
-    limit: int,
-) -> Iterator[Feed]:
-    with contextlib.suppress(httpx.HTTPError):
-        response = client.get(
-            "https://itunes.apple.com/search",
-            params={
-                "term": search_term,
-                "limit": limit,
-                "media": "podcast",
-            },
-            headers={
-                "Accept": "application/json",
-            },
-        )
-        for result in response.json().get("results", []):
-            with contextlib.suppress(KeyError):
-                yield Feed(
-                    rss=result["feedUrl"],
-                    url=result["collectionViewUrl"],
-                    title=result["collectionName"],
-                    image=result["artworkUrl100"],
-                )
+    def _fetch_json(self, url: str, **params) -> dict:
+        with contextlib.suppress(httpx.HTTPError):
+            response = self.client.get(
+                url,
+                params=params,
+                headers={"Accept": "application/json"},
+            )
+            return response.json()
+        return {}
 
+    def _parse_feeds(self, source: list[dict]) -> Iterator[Feed]:
+        # ensure unique feeds
+        feed_urls: set[str] = set()
 
-def _insert_search_results(feeds: Iterator[Feed]) -> Iterator[Feed]:
-    # find or insert podcasts from local database into feeds
-    feeds_for_podcasts, feeds = itertools.tee(feeds)
+        for result in source:
+            if (feed := self._parse_feed(result)) and feed.rss not in feed_urls:
+                feed_urls.add(feed.rss)
+                yield feed
 
-    podcasts = Podcast.objects.filter(
-        rss__in={f.rss for f in feeds_for_podcasts}
-    ).in_bulk(field_name="rss")
-
-    # insert podcasts to feeds where we have a match
-
-    feeds_for_insert, feeds = itertools.tee(
-        [dataclasses.replace(feed, podcast=podcasts.get(feed.rss)) for feed in feeds],
-    )
-
-    # create new podcasts for feeds without a match
-
-    Podcast.objects.bulk_create(
-        [
-            Podcast(title=feed.title, rss=feed.rss)
-            for feed in set(feeds_for_insert)
-            if feed.podcast is None
-        ],
-        ignore_conflicts=True,
-    )
-
-    yield from feeds
-
-
-def _parse_top_chart_feed_urls(client: Client) -> set[str]:
-    with contextlib.suppress(httpx.HTTPError):
-        response = client.get(_CHART_URL)
-        itunes_ids = {
-            itunes_id
-            for itunes_id in [
-                result.get("id", None)
-                for result in response.json().get("feed", {}).get("results", [])
-            ]
-            if itunes_id
-        }
-        with futures.ThreadPoolExecutor() as executor:
-            return {
-                feed_url
-                for feed_url in executor.map(
-                    lambda itunes_id: _parse_top_chart_result(client, itunes_id),
-                    itunes_ids,
-                )
-                if feed_url
-            }
-    return set()
-
-
-def _parse_top_chart_result(client: Client, itunes_id: str) -> str | None:
-    with contextlib.suppress(KeyError, IndexError, httpx.HTTPError):
-        response = client.get(
-            "https://itunes.apple.com/lookup",
-            params={
-                "id": itunes_id,
-            },
-            headers={
-                "Accept": "application/json",
-            },
-        )
-        return response.json()["results"][0]["feedUrl"]
-    return None
+    def _parse_feed(self, feed: dict) -> Feed | None:
+        with contextlib.suppress(KeyError):
+            return Feed(
+                rss=feed["feedUrl"],
+                url=feed["collectionViewUrl"],
+                title=feed["collectionName"],
+                image=feed["artworkUrl100"],
+            )
+        return None

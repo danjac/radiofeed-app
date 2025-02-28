@@ -208,6 +208,18 @@ MOCK_CHART_RESULT = {
 }
 
 
+class TestFeed:
+    def test_str(self):
+        feed = itunes.Feed(
+            rss="https://feeds.fireside.fm/testandcode/rss",
+            title="Test & Code : Python Testing",
+            url="https//itunes.com/id123345",
+            image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+        )
+
+        assert str(feed) == "Test & Code : Python Testing"
+
+
 class TestFetchTopChart:
     @pytest.fixture
     def good_client(self):
@@ -246,27 +258,27 @@ class TestFetchTopChart:
 
     @pytest.mark.django_db
     def test_get_top_chart(self, good_client):
-        podcasts = itunes.fetch_top_chart(good_client)
-        assert len(podcasts) == 1
-        assert Podcast.objects.filter(rss=podcasts[0].rss, promoted=True).exists()
+        feeds = list(itunes.fetch_top_chart(good_client))
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
 
     @pytest.mark.django_db
     def test_already_exists(self, good_client):
         PodcastFactory(rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"], promoted=False)
-        podcasts = itunes.fetch_top_chart(good_client)
-        assert len(podcasts) == 1
-        assert Podcast.objects.filter(rss=podcasts[0].rss, promoted=True).exists()
+        feeds = list(itunes.fetch_top_chart(good_client))
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
-        podcasts = itunes.fetch_top_chart(bad_client)
-        assert len(podcasts) == 0
+        feeds = list(itunes.fetch_top_chart(bad_client))
+        assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_result(self, bad_result_client):
-        podcasts = itunes.fetch_top_chart(bad_result_client)
-        assert len(podcasts) == 0
+        feeds = list(itunes.fetch_top_chart(bad_result_client))
+        assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
 
