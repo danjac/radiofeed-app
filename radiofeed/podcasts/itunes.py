@@ -118,30 +118,27 @@ def _insert_search_results(feeds: Iterator[Feed]) -> Iterator[Feed]:
     yield from feeds
 
 
-def _parse_top_chart_feed_urls(client: Client) -> Iterator[str]:
-    # ensure we don't have duplicates
-    feed_urls = set()
-    with futures.ThreadPoolExecutor() as executor:
-        for process in [
-            executor.submit(
-                _parse_top_chart_result,
-                client,
-                itunes_id,
-            )
-            for itunes_id in _fetch_top_chart_ids(client)
-        ]:
-            if (feed_url := process.result()) and feed_url not in feed_urls:
-                yield feed_url
-
-            feed_urls.add(feed_url)
-
-
-def _fetch_top_chart_ids(client: Client) -> Iterator:
+def _parse_top_chart_feed_urls(client: Client) -> set[str]:
     with contextlib.suppress(httpx.HTTPError):
         response = client.get(_CHART_URL)
-        for result in response.json().get("feed", {}).get("results", []):
-            if itunes_id := result.get("id", None):
-                yield itunes_id
+        itunes_ids = {
+            itunes_id
+            for itunes_id in [
+                result.get("id", None)
+                for result in response.json().get("feed", {}).get("results", [])
+            ]
+            if itunes_id
+        }
+        with futures.ThreadPoolExecutor() as executor:
+            return {
+                feed_url
+                for feed_url in executor.map(
+                    lambda itunes_id: _parse_top_chart_result(client, itunes_id),
+                    itunes_ids,
+                )
+                if feed_url
+            }
+    return set()
 
 
 def _parse_top_chart_result(client: Client, itunes_id: str) -> str | None:
