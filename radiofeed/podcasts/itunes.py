@@ -119,36 +119,41 @@ def _insert_search_results(feeds: Iterator[Feed]) -> Iterator[Feed]:
 
 
 def _parse_top_chart_feed_urls(client: Client) -> Iterator[str]:
+    # ensure we don't have duplicates
+    feed_urls = set()
+    with futures.ThreadPoolExecutor() as executor:
+        for process in [
+            executor.submit(
+                _parse_top_chart_result,
+                client,
+                itunes_id,
+            )
+            for itunes_id in _fetch_top_chart_ids(client)
+        ]:
+            if (feed_url := process.result()) and feed_url not in feed_urls:
+                yield feed_url
+
+            feed_urls.add(feed_url)
+
+
+def _fetch_top_chart_ids(client: Client) -> Iterator:
     with contextlib.suppress(httpx.HTTPError):
         response = client.get(_CHART_URL)
-        # ensure we don't have duplicates
-        feed_urls = set()
-        with futures.ThreadPoolExecutor() as executor:
-            for process in [
-                executor.submit(
-                    _parse_top_chart_result,
-                    client,
-                    result.get("id", None),
-                )
-                for result in response.json().get("feed", {}).get("results", [])
-            ]:
-                if (feed_url := process.result()) and feed_url not in feed_urls:
-                    yield feed_url
-
-                feed_urls.add(feed_url)
+        for result in response.json().get("feed", {}).get("results", []):
+            if itunes_id := result.get("id", None):
+                yield itunes_id
 
 
-def _parse_top_chart_result(client: Client, itunes_id: str | None) -> str | None:
+def _parse_top_chart_result(client: Client, itunes_id: str) -> str | None:
     with contextlib.suppress(KeyError, IndexError, httpx.HTTPError):
-        if itunes_id:
-            response = client.get(
-                "https://itunes.apple.com/lookup",
-                params={
-                    "id": itunes_id,
-                },
-                headers={
-                    "Accept": "application/json",
-                },
-            )
-            return response.json()["results"][0]["feedUrl"]
+        response = client.get(
+            "https://itunes.apple.com/lookup",
+            params={
+                "id": itunes_id,
+            },
+            headers={
+                "Accept": "application/json",
+            },
+        )
+        return response.json()["results"][0]["feedUrl"]
     return None
