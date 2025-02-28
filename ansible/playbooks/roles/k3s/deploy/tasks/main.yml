@@ -4,22 +4,28 @@
       cronjobs:
           - {
                 name: "parse-feeds",
-                schedule: "*/6 * * * *",
+                schedule: "*/6 * * * *", # Every 6 minutes
                 command: "./manage.py parse_feeds",
             }
           - {
                 name: "create-recommendations",
-                schedule: "20 15 * * *",
+                schedule: "20 15 * * *", # 3:20 PM
                 command: "./manage.py create_recommendations",
             }
           - {
                 name: "send-recommendations",
-                schedule: "45 18 * * 1",
+                schedule: "45 18 * * 1", # 6:45 PM every Monday
                 command: "./manage.py send_recommendations",
             }
           - {
+                name: "fetch-itunes-top-chart",
+                schedule: "15 7 * * *", # 7:15 AM
+                command: "./manage.py fetch_itunes_top_chart",
+            }
+
+          - {
                 name: "clear-sessions",
-                schedule: "5 5 * * *",
+                schedule: "5 5 * * *", # 5:05 AM
                 command: "./manage.py clearsessions",
             }
 
