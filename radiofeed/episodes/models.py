@@ -166,6 +166,11 @@ class Episode(models.Model):
             return 0
 
     @cached_property
+    def bitrate(self) -> int:
+        """Returns bitrate in kbps."""
+        return get_bitrate(self.media_type)
+
+    @cached_property
     def estimated_file_size(self) -> int:
         """Returns an estimated file size in bytes.
 
@@ -181,7 +186,7 @@ class Episode(models.Model):
             return self.file_size
 
         return (
-            int((get_bitrate(self.media_type) * self.duration_in_seconds * 1000) / 8)
+            int((self.bitrate * self.duration_in_seconds * 1000) / 8)
             if self.duration_in_seconds
             else 0
         )
