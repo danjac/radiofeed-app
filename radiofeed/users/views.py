@@ -94,7 +94,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .filter(
             private=False,
         )
-        .order_by("title")
+        .order_by("-pub_date")
     )
 
     response = render(

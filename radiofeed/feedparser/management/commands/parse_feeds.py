@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandParser
-from django.db.models import Count, F, QuerySet
+from django.db.models import Count, F
 
 from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -29,13 +29,7 @@ class Command(BaseCommand):
         """Parses RSS feeds of all scheduled podcasts."""
         client = get_client()
 
-        execute_thread_pool(
-            lambda podcast: self._parse_feed(podcast, client),
-            self._get_scheduled_podcasts(options["limit"]),
-        )
-
-    def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
-        return (
+        podcasts = (
             Podcast.objects.scheduled()
             .alias(subscribers=Count("subscriptions"))
             .filter(active=True)
@@ -43,7 +37,11 @@ class Command(BaseCommand):
                 F("subscribers").desc(),
                 F("promoted").desc(),
                 F("parsed").asc(nulls_first=True),
-            )[:limit]
+            )[: options["limit"]]
+        )
+        execute_thread_pool(
+            lambda podcast: self._parse_feed(podcast, client),
+            podcasts,
         )
 
     def _parse_feed(self, podcast: Podcast, client: Client) -> None:
