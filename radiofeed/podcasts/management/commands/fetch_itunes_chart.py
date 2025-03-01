@@ -28,11 +28,11 @@ class Command(BaseCommand):
             default=50,
         )
 
-    def handle(self, **options):
+    def handle(self, location: str, limit: int, **options):
         """Crawl iTunes Top Chart."""
         for podcast in itunes.fetch_chart(
             get_client(),
-            location=options["location"],
-            limit=options["limit"],
+            location=location,
+            limit=limit,
         ):
             self.stdout.write(self.style.SUCCESS(f"Podcast {podcast}"))

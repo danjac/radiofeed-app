@@ -22,10 +22,7 @@ class Command(BaseCommand):
             default=360,
         )
 
-    def handle(
-        self,
-        **options,
-    ) -> None:
+    def handle(self, limit: int, **options) -> None:
         """Parses RSS feeds of all scheduled podcasts."""
         client = get_client()
 
@@ -37,7 +34,7 @@ class Command(BaseCommand):
                 F("subscribers").desc(),
                 F("promoted").desc(),
                 F("parsed").asc(nulls_first=True),
-            )[: options["limit"]]
+            )[:limit]
         )
         execute_thread_pool(
             lambda podcast: self._parse_feed(podcast, client),

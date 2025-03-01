@@ -1,4 +1,5 @@
 import argparse
+import typing
 
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand, CommandParser
@@ -27,14 +28,20 @@ class Command(BaseCommand):
             help="Export only promoted podcasts",
         )
 
-    def handle(self, **options) -> None:
+    def handle(
+        self,
+        file: typing.TextIO,
+        *,
+        promoted: bool,
+        **options,
+    ) -> None:
         """Exports all podcasts to an OPML file."""
         podcasts = Podcast.objects.published().filter(private=False).order_by("title")
 
-        if options["promoted"]:
+        if promoted:
             podcasts = podcasts.filter(promoted=True)
 
-        options["file"].write(
+        file.write(
             render_to_string(
                 "feedparser/podcasts.opml",
                 {

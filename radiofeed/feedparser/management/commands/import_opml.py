@@ -1,4 +1,5 @@
 import argparse
+import typing
 
 from django.core.management.base import BaseCommand, CommandParser
 
@@ -26,15 +27,21 @@ class Command(BaseCommand):
             help="Promote all imported podcasts",
         )
 
-    def handle(self, **options) -> None:
+    def handle(
+        self,
+        file: typing.BinaryIO,
+        *,
+        promote: bool,
+        **options,
+    ) -> None:
         """Parses an OPML file and imports podcasts."""
         podcasts = Podcast.objects.bulk_create(
             [
                 Podcast(
                     rss=rss,
-                    promoted=options["promote"],
+                    promoted=promote,
                 )
-                for rss in opml_parser.parse_opml(options["file"].read())
+                for rss in opml_parser.parse_opml(file.read())
             ],
             ignore_conflicts=True,
         )
