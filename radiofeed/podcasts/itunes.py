@@ -112,22 +112,18 @@ class _ItunesClient:
         search_term: str,
         limit: int,
     ) -> Iterator[Feed]:
-        return self._parse_feeds(
-            self._fetch_json(
-                "https://itunes.apple.com/search",
-                term=search_term,
-                limit=limit,
-                media="podcast",
-            ).get("results", [])
+        return self._fetch_feeds(
+            "https://itunes.apple.com/search",
+            term=search_term,
+            limit=limit,
+            media="podcast",
         )
 
     def _fetch_chart_feeds(self, location: str, limit: int) -> Iterator[Feed]:
         if itunes_ids := set(self._fetch_chart_ids(location, limit)):
-            return self._parse_feeds(
-                self._fetch_json(
-                    "https://itunes.apple.com/lookup",
-                    id=",".join(itunes_ids),
-                ).get("results", [])
+            return self._fetch_feeds(
+                "https://itunes.apple.com/lookup",
+                id=",".join(itunes_ids),
             )
         return iter(())
 
@@ -151,6 +147,9 @@ class _ItunesClient:
             )
             return response.json()
         return {}
+
+    def _fetch_feeds(self, url: str, **params) -> Iterator[Feed]:
+        return self._parse_feeds(self._fetch_json(url, **params).get("results", []))
 
     def _parse_feeds(self, source: list[dict]) -> Iterator[Feed]:
         # ensure unique feeds
