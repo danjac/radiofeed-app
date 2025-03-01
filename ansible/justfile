@@ -5,23 +5,6 @@
 @pb playbook *ARGS:
     ansible-playbook -v -i hosts.yml playbooks/{{ playbook }}.yml {{ ARGS }}
 
-
-# Set up the hosts
-site:
-    just pb site
-
-# Set up the databases
-database:
-    just pb database
-
-# Set up k3s on all hosts
-k3s:
-    just pb k3s
-
-# Upgrade packages on all hosts
-upgrade:
-    just pb upgrade
-
 # Run Django manage.py commands
 dj *ARGS:
     #!/usr/bin/bash

@@ -26,7 +26,7 @@ You should have root SSH access to your servers.
 
 1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`.
 
-2. Run `just deploy` to deploy to your servers.
+2. Run `just pb site` to deploy to your servers.
 
 ## Upgrade
 
@@ -40,4 +40,16 @@ Run `just pb dj_manage` to generate a `manage.sh` script in the local `ansible` 
 just djmanage # run once to create the bash script
 
 ./manage.sh migrate --check
+```
+
+## Database commands
+
+Run `just pb psql` to generate a Psql script in the local `ansible` directory. This will allow you to access PostgreSQL on the database server.
+
+## Kubectl commands
+
+Run `just pb kubectl` to generate a Kubectl script in the local `ansible` directory. This will allow you to access the K3s cluster.
+
+```
+just kubectl get pods
 ```
