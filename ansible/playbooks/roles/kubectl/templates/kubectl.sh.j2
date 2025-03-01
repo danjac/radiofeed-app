@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+ssh -t "{{ deploy_user }}@{{ inventory_hostname }}" -- KUBECONFIG="{{ kubeconfig }}" kubectl "$@"

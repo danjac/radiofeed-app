@@ -1,0 +1,4 @@
+- name: Generate remote Kubectl command
+  vars:
+      kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+  local_action: ansible.builtin.template  src=templates/kubectl.sh.j2 dest=../kubectl.sh mode=u+x

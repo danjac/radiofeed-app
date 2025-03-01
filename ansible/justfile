@@ -1,23 +1,26 @@
 @_default:
     @just --list
 
-# Setup the project with default settings
-@setup:
-    cp -R -u -p hosts.yml.example hosts.yml
-
 # Run Ansible playbook
 @pb playbook *ARGS:
     ansible-playbook -v -i hosts.yml playbooks/{{ playbook }}.yml {{ ARGS }}
 
-# Shortcuts for common playbooks
 
-site: just pb site
+# Set up the hosts
+site:
+    just pb site
 
-database: just pb database
+# Set up the databases
+database:
+    just pb database
 
-k3s: just pb k3s
+# Set up k3s on all hosts
+k3s:
+    just pb k3s
 
-upgrade: just pb upgrade
+# Upgrade packages on all hosts
+upgrade:
+    just pb upgrade
 
 # Run Django manage.py commands
 dj *ARGS:
@@ -27,6 +30,16 @@ dj *ARGS:
         just pb dj_manage
     fi
     ./manage.sh {{ ARGS }}
+
+# Run Kubectl commands
+kubectl *ARGS:
+    #!/usr/bin/bash
+    if [ ! -f "./kubectl.sh" ]; then
+        echo "kubectl.sh not found, generating it..."
+        just pb kubectl
+    fi
+    ./kubectl.sh {{ ARGS }}
+
 
 # Run Psql commands
 psql *ARGS:
