@@ -7,7 +7,7 @@ from radiofeed.users.tests.factories import EmailAddressFactory
 
 class TestFetchItunesChart:
     @pytest.mark.django_db
-    def test_itunes_top_chart(self, mocker):
+    def test_itunes_chart(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.fetch_chart",
             return_value=[

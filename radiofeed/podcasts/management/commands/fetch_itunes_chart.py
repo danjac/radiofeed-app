@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """Crawl iTunes Top Chart."""
-        for podcast in itunes.fetch_top_chart(
+        for podcast in itunes.fetch_chart(
             get_client(),
             location=options["location"],
             limit=options["limit"],

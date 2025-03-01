@@ -18,7 +18,7 @@
                 command: "./manage.py send_recommendations",
             }
           - {
-                name: "fetch-itunes-top-chart",
+                name: "fetch-itunes-chart",
                 schedule: "15 7 * * *", # 7:15 AM
                 command: "./manage.py fetch_itunes_chart",
             }

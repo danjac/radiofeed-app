@@ -8,7 +8,7 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
-class TestParseOpml:
+class TestImportOpml:
     patched = "radiofeed.feedparser.opml_parser.parse_opml"
 
     @pytest.fixture
@@ -18,7 +18,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_command(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("parse_opml", filename)
+        call_command("import_opml", filename)
         assert Podcast.objects.count() == 1
         podcast = Podcast.objects.first()
         assert podcast is not None
@@ -28,7 +28,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_promote(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("parse_opml", filename, promote=True)
+        call_command("import_opml", filename, promote=True)
         assert Podcast.objects.count() == 1
         podcast = Podcast.objects.first()
         assert podcast is not None
@@ -38,7 +38,7 @@ class TestParseOpml:
     @pytest.mark.django_db
     def test_empty(self, mocker, filename):
         patched = mocker.patch(self.patched, return_value=iter([]))
-        call_command("parse_opml", filename)
+        call_command("import_opml", filename)
         assert Podcast.objects.count() == 0
         patched.assert_called()
 

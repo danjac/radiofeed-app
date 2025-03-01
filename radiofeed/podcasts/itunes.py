@@ -32,18 +32,26 @@ class Feed:
         return self.title or self.rss
 
 
-def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Feed]:
+def search(
+    client: Client,
+    search_term: str,
+    *,
+    limit: int = 50,
+) -> Iterator[Feed]:
     """Search iTunes podcast API."""
     return _ItunesClient(client).search(search_term, limit=limit)
 
 
-def fetch_top_chart(
-    client: Client, *, location: str, limit: int = 50
+def fetch_chart(
+    client: Client,
+    *,
+    location: str,
+    limit: int = 50,
 ) -> Iterator[Feed]:
     """Fetch top chart from iTunes podcast API.
     New or updated podcasts are inserted or updated with `promoted=True`.
     """
-    return _ItunesClient(client).fetch_top_chart(location=location, limit=limit)
+    return _ItunesClient(client).fetch_chart(location=location, limit=limit)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -82,7 +90,7 @@ class _ItunesClient:
 
         return feeds
 
-    def fetch_top_chart(
+    def fetch_chart(
         self,
         *,
         location: str = "us",
