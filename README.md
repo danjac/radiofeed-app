@@ -83,27 +83,3 @@ Once you have access to the Django Admin, you should configure the default Site 
 The `ansible` directory contains full Playbooks for a multi-server deployment to a shared hosting provider such as Hetzner or Digital Ocean, this can be copied and modified for your particular use-case.
 
 The `terraform` directory contains a simple Terraform configuration for deploying to Hetzner Cloud.
-
-### Scheduling background tasks
-
-In production you should set up the following cron jobs to run these Django commands (with suggested schedules and arguments):
-
-#### Parse podcast RSS feeds:
-
-```bash
-*/6 * * * * python manage.py parse_feeds
-```
-
-#### Generate similar recommendations for each podcast:
-
-```bash
-15 6 * * * python manage.py create_recommendations
-```
-
-#### Send podcast recommendations to users:
-
-```bash
-15 9 * * 1 python manage.py send_recommendations
-```
-
-**Note:** ansible will set up these cron jobs for you if you use the provided Playbooks.
