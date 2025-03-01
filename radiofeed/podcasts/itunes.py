@@ -38,7 +38,7 @@ def search(client: Client, search_term: str, *, limit: int = 50) -> Iterator[Fee
 
 
 def fetch_top_chart(
-    client: Client, *, location: str = "us", limit: int = 50
+    client: Client, *, location: str, limit: int = 50
 ) -> Iterator[Feed]:
     """Fetch top chart from iTunes podcast API.
     New or updated podcasts are inserted or updated with `promoted=True`.

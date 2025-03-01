@@ -1,7 +1,9 @@
+from argparse import ArgumentParser
+
 from django.core.management.base import BaseCommand
 
 from radiofeed.http_client import get_client
-from radiofeed.podcasts.itunes import fetch_top_chart
+from radiofeed.podcasts import itunes
 
 
 class Command(BaseCommand):
@@ -9,8 +11,15 @@ class Command(BaseCommand):
 
     help = "Crawl iTunes Top Chart"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         """Add command arguments."""
+
+        parser.add_argument(
+            "--location",
+            type=str,
+            help="iTunes location",
+            default="gb",
+        )
 
         parser.add_argument(
             "--limit",
@@ -19,15 +28,11 @@ class Command(BaseCommand):
             default=50,
         )
 
-    def handle(self, *args, **options):
+    def handle(self, **options):
         """Crawl iTunes Top Chart."""
-        for location in ("de", "fr", "gb"):
-            self.stdout.write(
-                self.style.NOTICE(f"Fetching iTunes Top Chart for {location}")
-            )
-            for podcast in fetch_top_chart(
-                get_client(),
-                location=location,
-                limit=options["limit"],
-            ):
-                self.stdout.write(self.style.SUCCESS(f"Podcast {podcast}"))
+        for podcast in itunes.fetch_top_chart(
+            get_client(),
+            location=options["location"],
+            limit=options["limit"],
+        ):
+            self.stdout.write(self.style.SUCCESS(f"Podcast {podcast}"))
