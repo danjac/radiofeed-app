@@ -5,16 +5,16 @@ from radiofeed.podcasts.tests.factories import PodcastFactory, RecommendationFac
 from radiofeed.users.tests.factories import EmailAddressFactory
 
 
-class TestFetchItunesTopChart:
+class TestFetchItunesChart:
     @pytest.mark.django_db
     def test_itunes_top_chart(self, mocker):
         patched = mocker.patch(
-            "radiofeed.podcasts.itunes.fetch_top_chart",
+            "radiofeed.podcasts.itunes.fetch_chart",
             return_value=[
                 PodcastFactory(),
             ],
         )
-        call_command("fetch_itunes_top_chart")
+        call_command("fetch_itunes_chart")
         patched.assert_called()
 
 

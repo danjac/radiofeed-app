@@ -20,7 +20,7 @@
           - {
                 name: "fetch-itunes-top-chart",
                 schedule: "15 7 * * *", # 7:15 AM
-                command: "./manage.py fetch_itunes_top_chart",
+                command: "./manage.py fetch_itunes_chart",
             }
 
           - {
