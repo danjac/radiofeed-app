@@ -110,20 +110,6 @@ class Episode(models.Model):
             },
         )
 
-    def get_next_episode(self) -> Optional["Episode"]:
-        """Returns the next episode in this podcast."""
-        try:
-            return self.get_next_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
-
-    def get_previous_episode(self) -> Optional["Episode"]:
-        """Returns the previous episode in this podcast."""
-        try:
-            return self.get_previous_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
-
     def get_cover_url(self) -> str:
         """Returns cover image URL or podcast cover image if former not provided."""
         return self.cover_url or self.podcast.cover_url
@@ -131,6 +117,22 @@ class Episode(models.Model):
     def is_explicit(self) -> bool:
         """Check if either this specific episode or the podcast is explicit."""
         return self.explicit or self.podcast.explicit
+
+    @cached_property
+    def next_episode(self) -> Optional["Episode"]:
+        """Returns the next episode in this podcast."""
+        try:
+            return self.get_next_by_pub_date(podcast=self.podcast)
+        except self.DoesNotExist:
+            return None
+
+    @cached_property
+    def previous_episode(self) -> Optional["Episode"]:
+        """Returns the previous episode in this podcast."""
+        try:
+            return self.get_previous_by_pub_date(podcast=self.podcast)
+        except self.DoesNotExist:
+            return None
 
     @cached_property
     def slug(self) -> str:

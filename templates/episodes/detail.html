@@ -10,7 +10,7 @@
             {{ episode.cleaned_title }}
         </h1>
         {% cache 300 episode-nav-header episode.pk %}
-            {% with next_episode=episode.get_next_episode previous_episode=episode.get_previous_episode %}
+            {% with next_episode=episode.next_episode previous_episode=episode.previous_episode %}
                 {% if next_episode or previous_episode %}
                     <nav>
                         <ul class="flex justify-between" aria-label="Pagination">

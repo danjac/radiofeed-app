@@ -38,11 +38,11 @@ class TestEpisodeModel:
 
     @pytest.mark.django_db
     def test_next_episode_if_none(self, episode):
-        assert episode.get_next_episode() is None
+        assert episode.next_episode is None
 
     @pytest.mark.django_db
     def test_previous_episode_if_none(self, episode):
-        assert episode.get_previous_episode() is None
+        assert episode.previous_episode is None
 
     @pytest.mark.django_db
     def test_next_episode_not_same_podcast(self, episode):
@@ -50,7 +50,7 @@ class TestEpisodeModel:
             pub_date=episode.pub_date + datetime.timedelta(days=2),
         )
 
-        assert episode.get_next_episode() is None
+        assert episode.next_episode is None
 
     @pytest.mark.django_db
     def test_previous_episode_not_same_podcast(self, episode):
@@ -58,7 +58,7 @@ class TestEpisodeModel:
             pub_date=episode.pub_date - datetime.timedelta(days=2),
         )
 
-        assert episode.get_previous_episode() is None
+        assert episode.previous_episode is None
 
     @pytest.mark.django_db
     def test_next_episode(self, episode):
@@ -67,7 +67,7 @@ class TestEpisodeModel:
             pub_date=episode.pub_date + datetime.timedelta(days=2),
         )
 
-        assert episode.get_next_episode() == next_episode
+        assert episode.next_episode == next_episode
 
     @pytest.mark.django_db
     def test_previous_episode(self, episode):
@@ -76,7 +76,7 @@ class TestEpisodeModel:
             pub_date=episode.pub_date - datetime.timedelta(days=2),
         )
 
-        assert episode.get_previous_episode() == previous_episode
+        assert episode.previous_episode == previous_episode
 
     def test_episode_explicit(self):
         assert Episode(explicit=True).is_explicit() is True
