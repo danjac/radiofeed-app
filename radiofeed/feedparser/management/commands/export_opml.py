@@ -1,52 +1,33 @@
-import argparse
 import typing
 
+import djclick as click
 from django.contrib.sites.models import Site
-from django.core.management.base import BaseCommand, CommandParser
 from django.template.loader import render_to_string
 
 from radiofeed.podcasts.models import Podcast
 
 
-class Command(BaseCommand):
-    """Django management command to export all podcasts to an OPML file."""
+@click.command()
+@click.argument("file", type=click.File("w"))
+@click.option(
+    "--promoted",
+    is_flag=True,
+    help="Export only promoted podcasts",
+    default=False,
+)
+def command(file: typing.TextIO, *, promoted: bool) -> None:
+    """Export all podcasts to an OPML file."""
+    podcasts = Podcast.objects.published().filter(private=False).order_by("title")
 
-    help = "Export all podcasts to an OPML file."
+    if promoted:
+        podcasts = podcasts.filter(promoted=True)
 
-    def add_arguments(self, parser: CommandParser) -> None:
-        """Parse command line arguments."""
-
-        parser.add_argument(
-            "file",
-            type=argparse.FileType("w"),
-            help="OPML file to write",
+    file.write(
+        render_to_string(
+            "feedparser/podcasts.opml",
+            {
+                "podcasts": podcasts,
+                "site": Site.objects.get_current(),
+            },
         )
-
-        parser.add_argument(
-            "--promoted",
-            action="store_true",
-            help="Export only promoted podcasts",
-        )
-
-    def handle(
-        self,
-        file: typing.TextIO,
-        *,
-        promoted: bool,
-        **options,
-    ) -> None:
-        """Exports all podcasts to an OPML file."""
-        podcasts = Podcast.objects.published().filter(private=False).order_by("title")
-
-        if promoted:
-            podcasts = podcasts.filter(promoted=True)
-
-        file.write(
-            render_to_string(
-                "feedparser/podcasts.opml",
-                {
-                    "podcasts": podcasts,
-                    "site": Site.objects.get_current(),
-                },
-            )
-        )
+    )
