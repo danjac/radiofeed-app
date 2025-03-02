@@ -6,16 +6,22 @@ all:
       hosts:
         123.34.5.678:
           private_ip: 10.0.0.2
+          node_name: database
+          role: database
     server:
       hosts:
         123.34.5.678:
           private_ip: 10.0.0.3
+          node_name: server
+          role: server
     agents:
       hosts:
         123.34.5.678:
             node_name: agent-1
+            role: agent
         678.76.5.432:
             node_name: agent-2
+            role: agent
   vars:
     admin_site_header: "Radiofeed Admin [Production]"
     admin_url: "my-admin/"
