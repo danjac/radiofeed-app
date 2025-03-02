@@ -29,10 +29,10 @@
                 command: "./manage.py clearsessions",
             }
 
-- name: Label the agent nodes
+- name: Label the nodes
   ansible.builtin.shell: |
-      kubectl label nodes {{ hostvars[item].node_name }} role=agent
-  loop: "{{ groups['agents'] }}"
+      kubectl label nodes {{ hostvars[item].node_name }} role={{ hostvars[item].role }} --overwrite
+  loop: "{{ groups['agents'] + groups['server'] }}"
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
