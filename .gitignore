@@ -56,6 +56,7 @@ venv
 ansible/.vault_pass
 ansible/hosts
 ansible/psql.sh
+ansible/kubectl.sh
 ansible/manage.sh
 ansible/ssh_keys
 ansible/**/vars/*.yml
