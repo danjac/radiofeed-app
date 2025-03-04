@@ -52,22 +52,21 @@ document.addEventListener("alpine:init", () => {
                 this.$refs.audio.load();
                 // As the load() event does not trigger error callback in case of failure
                 // we'll check after a given interval if the audio has started playing
+                const timeout = this.getLoadingTimeout(sizeInBytes);
                 const interval = setInterval(() => {
                     clearInterval(interval);
                     // check the isLoaded flag
                     if (!this.isLoaded) {
                         // Timeout occurred, set error state and show CTA
                         const { currentSrc } = this.$refs.audio;
-                        this.handleError(
-                            new Error(
-                                "Audio failed to load or start within timeout limit",
-                            ),
+                        this.playbackError(
+                            `Audio failed to load or start within timeout limit of ${timeout}s`,
                             `Audio is unavailable. Please try again later or
                             <a href="${currentSrc}" rel="noopener noreferrer" download>
                             download the file</a> to listen to the audio on your device.`,
                         );
                     }
-                }, this.getLoadingInterval(sizeInBytes));
+                }, timeout * 1000);
             },
             destroy() {
                 this.clearUpdateTimer();
@@ -86,7 +85,7 @@ document.addEventListener("alpine:init", () => {
                     try {
                         await this.$refs.audio.play();
                     } catch (error) {
-                        this.handleError(
+                        this.playbackError(
                             error,
                             `Failed to start audio playback.
                             <button @click="window.location.reload()">
@@ -114,7 +113,7 @@ document.addEventListener("alpine:init", () => {
                 this.clearUpdateTimer();
             },
             error(event) {
-                this.handleError(
+                this.playbackError(
                     event.target.error,
                     `An error occurred while playing the audio.
                     <button @click="window.location.reload()">
@@ -178,7 +177,7 @@ document.addEventListener("alpine:init", () => {
                 }
                 return this.counters.preview;
             },
-            handleError(error, content) {
+            playbackError(error, content) {
                 // Set error state in UI and show CTA
                 console.error("Audio playback error", error);
                 this.$dispatch("cta", {
@@ -277,11 +276,9 @@ document.addEventListener("alpine:init", () => {
                 }
                 return null;
             },
-            getLoadingInterval(sizeInBytes) {
+            getLoadingTimeout(sizeInBytes) {
                 // calculate the loading timeout based on the file size
-                //
-
-                // seconds based on file size: 1s/1MB
+                // based on file size: 1s/1MB
                 const totalSeconds =
                     sizeInBytes > 0
                     ? sizeInBytes / (1024 * 1024)
@@ -291,7 +288,7 @@ document.addEventListener("alpine:init", () => {
                     Math.min(
                         this.maxLoadingTime,
                         Math.max(this.minLoadingTime, totalSeconds),
-                    ) * 1000
+                    )
                 );
             },
         }),
