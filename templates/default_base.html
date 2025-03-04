@@ -1,5 +1,4 @@
 {% load django_htmx partials static tailwind_cli %}
-{% load audio_player_script from episodes %}
 {% spaceless %}
     <!DOCTYPE html>
     <html lang="en">
@@ -59,7 +58,9 @@
                 <c-cookie-banner />
             </div>
             {% partialdef scripts inline=True %}
-                {% audio_player_script %}
+                {% if user.is_authenticated %}
+                    <script src="{% static "audio-player.js" %}"></script>
+                {% endif %}
                 {% django_htmx_script %}
                 <script>
                     if (typeof navigator.serviceWorker !== 'undefined') {
