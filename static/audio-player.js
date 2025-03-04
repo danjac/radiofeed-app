@@ -50,14 +50,13 @@ document.addEventListener("alpine:init", () => {
                 });
 
                 this.$refs.audio.load();
+
                 // As the load() event does not trigger error callback in case of failure
                 // we'll check after a given interval if the audio has started playing
                 const timeout = this.getLoadingTimeout(sizeInBytes);
                 const interval = setInterval(() => {
                     clearInterval(interval);
-                    // check the isLoaded flag
                     if (!this.isLoaded) {
-                        // Timeout occurred, set error state and show CTA
                         const { currentSrc } = this.$refs.audio;
                         this.playbackError(
                             `Audio failed to load or start within timeout limit of ${timeout}s`,
