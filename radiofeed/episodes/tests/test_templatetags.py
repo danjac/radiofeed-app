@@ -10,12 +10,11 @@ class TestMediaMetadata:
     def test_get_media_metadata(self, rf):
         episode = EpisodeFactory(
             podcast__cover_url="https://mysite.com/test.jpg",
-            podcast__owner="owner",
         )
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.cleaned_title
         assert data["album"] == episode.podcast.cleaned_title
-        assert data["artist"] == episode.podcast.cleaned_owner
+        assert data["artist"] == episode.podcast.cleaned_title
 
         assert len(data["artwork"]) == 4
 
@@ -27,12 +26,12 @@ class TestMediaMetadata:
 
     @pytest.mark.django_db
     def test_get_media_metadata_no_cover_url(self, rf):
-        episode = EpisodeFactory(podcast__cover_url="", podcast__owner="owner")
+        episode = EpisodeFactory(podcast__cover_url="")
         data = get_media_metadata(RequestContext(rf.get("/")), episode)
 
         assert data["title"] == episode.cleaned_title
         assert data["album"] == episode.podcast.cleaned_title
-        assert data["artist"] == episode.podcast.cleaned_owner
+        assert data["artist"] == episode.podcast.cleaned_title
 
         assert len(data["artwork"]) == 4
 
