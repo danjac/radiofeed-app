@@ -25,25 +25,3 @@ You should have root SSH access to your servers.
 ## Upgrade
 
 To update server dependencies, run `just pb upgrade`.
-
-## Django management commands
-
-Run `just pb dj_manage` to generate a `manage.sh` script in the local `ansible` directory. This will run Django management commands in the cron scheduler server:
-
-```bash
-just djmanage # run once to create the bash script
-
-./manage.sh migrate --check
-```
-
-## Database commands
-
-Run `just pb psql` to generate a Psql script in the local `ansible` directory. This will allow you to access PostgreSQL on the database server.
-
-## Kubectl commands
-
-Run `just pb kubectl` to generate a Kubectl script in the local `ansible` directory. This will allow you to access the K3s cluster.
-
-```
-just kubectl get pods
-```
