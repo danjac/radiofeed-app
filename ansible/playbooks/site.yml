@@ -1,8 +1,5 @@
 - name: Reset SSH keys
   import_playbook: ./ssh.yml
 
-- name: Set up databases
-  import_playbook: ./database.yml
-
 - name: Provision a k3s cluster
   import_playbook: ./k3s.yml

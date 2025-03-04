@@ -48,23 +48,32 @@
   ansible.builtin.set_fact:
       current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
 
+- name: Get Django hosts
+  ansible.builtin.set_fact:
+      django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'agent') | list }}"
+
 - name: Apply spec files
   vars:
-      database_host: "{{ hostvars[groups['database'][0]].private_ip }}"
-      database_url: "postgresql://postgres:{{ postgres_password }}@{{ database_host }}:5432/postgres"
-      redis_url: "redis://{{ database_host }}:6379/0"
-      replicas: "{{ groups['agents']|length }}"
+      database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
+      redis_url: "redis://redis.default.svc.cluster.local:6379/0"
+      replicas: "{{ django_hosts|length }}"
 
   ansible.builtin.command: >
       kubectl apply -f -
   args:
       stdin: "{{ lookup('template', item + '.j2') }}"
   loop:
+      - configmap.yaml
+      - secrets.yaml
       - deployment.yaml
       - cronjobs.yaml
       - service.yaml
-      - configmap.yaml
-      - secrets.yaml
+      - postgres_pv.yaml
+      - postgres_pvc.yaml
+      - postgres_statefulset.yaml
+      - postgres_service.yaml
+      - redis_deployment.yaml
+      - redis_service.yaml
 
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
@@ -77,6 +86,7 @@
   loop:
       - deploy.sh
       - manage.sh
+      - psql.sh
 
 - name: Set tag from the current image
   ansible.builtin.set_fact:

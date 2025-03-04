@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -o errexit
+
+export KUBECONFIG="{{ kubeconfig }}"
+
+kubectl exec -it "$(kubectl get pods -l app=postgres -n default -o jsonpath='{.items[0].metadata.name}')" -n default -- psql -U postgres "$@"
