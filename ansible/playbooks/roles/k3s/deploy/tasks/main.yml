@@ -65,9 +65,9 @@
   loop:
       - configmap.yaml
       - secrets.yaml
-      - deployment.yaml
-      - cronjobs.yaml
-      - service.yaml
+      - django_deployment.yaml
+      - django_cronjobs.yaml
+      - django_service.yaml
       - postgres_pv.yaml
       - postgres_pvc.yaml
       - postgres_statefulset.yaml
