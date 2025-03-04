@@ -17,8 +17,6 @@ spec:
       labels:
         app: django-app
     spec:
-      hostNetwork: true
-      terminationGracePeriodSeconds: 30
       nodeSelector:
         role: agent
       containers:
