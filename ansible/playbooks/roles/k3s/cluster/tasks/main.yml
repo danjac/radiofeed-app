@@ -10,7 +10,9 @@
 - name: Download and install K3s on server
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | sh -s - \
+      --node-name="$(hostname -f)" \
       --node-ip={{ private_ip }} \
+      --flannel-iface=enp7s0 \
       --advertise-address={{ private_ip }} \
       --tls-san={{ private_ip }} \
       --disable traefik
@@ -39,5 +41,7 @@
       private_ip: "{{ hostvars[groups['server'][0]].private_ip }}"
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
+      --node-name="$(hostname -f)" \
+      --flannel-iface=enp7s0 \
       --server https://{{ private_ip }}:6443
   when: "'agents' in group_names"
