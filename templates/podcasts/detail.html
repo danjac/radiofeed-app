@@ -8,7 +8,11 @@
 {% block content %}
     <c-podcasts.header :podcast="podcast" current="detail" />
     <article class="space-y-3">
-        {% if podcast.owner %}<h2 class="text-lg font-semibold">{{ podcast.owner }}</h2>{% endif %}
+        {% with owner=podcast.cleaned_owner %}
+            {% if owner %}
+                <h2 class="text-lg font-semibold">{{ owner }}</h2>
+            {% endif %}
+        {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
             <c-cover-image variant="detail"
                            :cover-url="podcast.cover_url"

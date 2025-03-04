@@ -250,6 +250,10 @@ class TestPodcastModel:
         podcast = Podcast(description="<b>Test &amp; Code")
         assert podcast.cleaned_description == "Test & Code"
 
+    def test_cleaned_owner(self):
+        podcast = Podcast(owner="<b>Test &amp; Code")
+        assert podcast.cleaned_owner == "Test & Code"
+
     @pytest.mark.django_db
     def test_has_similar_none(self, podcast):
         assert podcast.has_similar is False

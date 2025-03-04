@@ -334,6 +334,11 @@ class Podcast(models.Model):
         return strip_html(self.description)
 
     @cached_property
+    def cleaned_owner(self) -> str:
+        """Strips HTML from owner field."""
+        return strip_html(self.owner)
+
+    @cached_property
     def slug(self) -> str:
         """Returns slugified title."""
         return slugify(self.title, allow_unicode=False) or "no-title"
