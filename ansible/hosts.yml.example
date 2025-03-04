@@ -12,10 +12,10 @@ all:
       hosts:
         123.34.5.678:
             node_name: agent-1
-            role: agent
+            role: django
         678.76.5.432:
             node_name: agent-2
-            role: agent
+            role: django
         678.76.5.433:
             node_name: database
             role: database

@@ -50,7 +50,7 @@
 
 - name: Get Django hosts
   ansible.builtin.set_fact:
-      django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'agent') | list }}"
+      django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
 
 - name: Apply spec files
   vars:
