@@ -2,15 +2,9 @@ Ansible playbooks for deploying [Radiofeed](https://github.com/danjac/radiofeed-
 
 ## Architecture
 
-The architecture can run on cheap VM hosting e.g. Hetzner or Digital Ocean droplets. It assumes the following:
-
-1. One server running PostgreSQL and Redis.
-2. One server running cron jobs and managing Docker swarm.
-3. Multiple Docker swarm workers running a Gunicorn/Django instance.
+The architecture can run on cheap VM hosting e.g. Hetzner or Digital Ocean droplets. It runs the Django web application, PostgreSQL database, Redis cache, and cronjobs in a [K3s](https://www.rancher.com/products/k3s) cluster.
 
 It is assumed you are deploying the app servers behind a load balancer. It is recommended to use one provided by your host e.g. from [Hetzner](https://www.hetzner.com/cloud/load-balancer/) or use e.g Nginx or Traefik.
-
-The Ansible playbooks will deploy all of the above using [K3s](https://www.rancher.com/products/k3s).
 
 ## Setup
 
