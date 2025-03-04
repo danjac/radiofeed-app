@@ -11,7 +11,7 @@
         @htmx:before-request.window="showSidebar=false; showUserDropdown=false">
     <c-navbar.nav />
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 py-6 px-2 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
+        <nav class="absolute left-0 z-50 py-6 px-2 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
              x-cloak
              x-show.transition="showSidebar"
              x-transition:enter-start="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
