@@ -2,4 +2,4 @@
   hosts: server
   gather_facts: false
   roles:
-    - dj_manage
+    - scripts/dj_manage

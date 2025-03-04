@@ -2,4 +2,4 @@
   hosts: server
   gather_facts: false
   roles:
-    - psql
+    - scripts/psql
