@@ -34,6 +34,7 @@ all:
     mailgun_api_url: "https://api.eu.mailgun.net/v3"
     mailgun_sender_domain: "mg.radiofeed.app"
     postgres_password: *****
+    postgres_volume: "/home/ubuntu/pg_data"
     pwa_sha256_fingerprints: "*******"
     secret_key: "*******"
     secret_key_fallbacks: "******,*****"
