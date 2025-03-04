@@ -53,10 +53,9 @@ document.addEventListener("alpine:init", () => {
                 // As the load() event does not trigger error callback in case of failure
                 // we'll check after a given interval if the audio has started playing
                 const interval = setInterval(() => {
+                    clearInterval(interval);
                     // check the isLoaded flag
-                    if (this.isLoaded) {
-                        clearInterval(interval); // Success, clear the interval
-                    } else {
+                    if (!this.isLoaded) {
                         // Timeout occurred, set error state and show CTA
                         const { currentSrc } = this.$refs.audio;
                         this.handleError(
@@ -67,7 +66,6 @@ document.addEventListener("alpine:init", () => {
                             <a href="${currentSrc}" rel="noopener noreferrer" download>
                             download the file</a> to listen to the audio on your device.`,
                         );
-                        clearInterval(interval); // Failure, clear the interval
                     }
                 }, this.getLoadingInterval(sizeInBytes));
             },
