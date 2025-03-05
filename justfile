@@ -1,5 +1,7 @@
 
-ansible_dir := "./ansible"
+ansible_dir := invocation_directory() / "ansible"
+playbooks_dir := ansible_dir / "playbooks"
+script_dir := ansible_dir / "scripts"
 
 @_default:
     @just --list
@@ -24,8 +26,8 @@ ansible_dir := "./ansible"
 
 ## Run the Django management command
 [group('development')]
-@dj *ARGS:
-   uv run python ./manage.py {{ ARGS }}
+@dj *args:
+   uv run python ./manage.py {{ args }}
 
 # Run the Django development server
 [group('development')]
@@ -34,8 +36,8 @@ ansible_dir := "./ansible"
 
 # Run unit tests
 [group('development')]
-@test *ARGS:
-   uv run pytest {{ ARGS }}
+@test *args:
+   uv run pytest {{ args }}
 
 # Download NLTK data
 [group('development')]
@@ -44,28 +46,28 @@ ansible_dir := "./ansible"
 
 # Run docker compose
 [group('development')]
-@dc *ARGS:
-   docker compose {{ ARGS }}
+@dc *args:
+   docker compose {{ args }}
 
 # Start all Docker services
 [group('development')]
-@dcup *ARGS:
-   @just dc up -d {{ ARGS }}
+@dcup *args:
+   @just dc up -d {{ args }}
 
 # Stop all Docker services
 [group('development')]
-@dcdn *ARGS:
-   @just dc down {{ ARGS }}
+@dcdn *args:
+   @just dc down {{ args }}
 
 # Run Psql
 [group('development')]
-@psql *ARGS:
-   @just dc exec postgres psql -U postgres {{ ARGS }}
+@psql *args:
+   @just dc exec postgres psql -U postgres {{ args }}
 
 # Run pre-commit manually
 [group('development')]
-@precommit *ARGS:
-   uv run --with pre-commit-uv pre-commit {{ ARGS }}
+@precommit *args:
+   uv run --with pre-commit-uv pre-commit {{ args }}
 
 # Install pre-commit hooks
 [group('development')]
@@ -85,8 +87,8 @@ ansible_dir := "./ansible"
 
 # Run Ansible playbook
 [group('deployment')]
-@pb playbook *ARGS:
-    ansible-playbook -v -i {{ ansible_dir }}/hosts.yml {{ ansible_dir }}/playbooks/{{ playbook }}.yml {{ ARGS }}
+@pb playbook *args:
+    ansible-playbook -v -i {{ ansible_dir / "hosts.yml" }} {{ playbooks_dir / playbook + ".yml" }} {{ args }}
 
 # Deploy the application to production
 [group('deployment')]
@@ -99,32 +101,26 @@ ansible_dir := "./ansible"
 @watch:
     gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
 
+[private]
+remote_script script playbook *args:
+    #!/usr/bin/bash
+    if [ ! -f "{{ script_dir / script }}" ]; then
+        echo "{{ script }} not found, generating it..."
+        just pb {{ playbook }}
+    fi
+    {{ script_dir / script }} {{ args }}
+
 # Run Django manage.py commands on production server
 [group('production')]
-rdj *ARGS:
-    #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/scripts/manage.sh" ]; then
-        echo "manage.sh not found, generating it..."
-        just pb dj_manage
-    fi
-    {{ ansible_dir }}/scripts/manage.sh {{ ARGS }}
+rdj *args:
+    @just remote_script manage.sh dj_manage {{ args }}
 
 # Run Psql commands remotely on production database
 [group('production')]
-rpsql *ARGS:
-    #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/scripts/psql.sh" ]; then
-        echo "pql.sh not found, generating it..."
-        just pb psql
-    fi
-    {{ ansible_dir }}/scripts/psql.sh {{ ARGS }}
+rpsql *args:
+    @just remote_script psql.sh psql {{ args }}
 
 # Run Kubectl commands remotely on production cluster
 [group('production')]
-kubectl *ARGS:
-    #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/scripts/kubectl.sh" ]; then
-        echo "kubectl.sh not found, generating it..."
-        just pb kubectl
-    fi
-    {{ ansible_dir }}/scripts/kubectl.sh {{ ARGS }}
+kubectl *args:
+    @just remote_script kubectl.sh kubectl {{ args }}
