@@ -46,6 +46,11 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
+            - name: Tag image as latest
+              run: |
+                  docker pull ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+                  docker tag ghcr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} ghcr.io/${{ env.IMAGE_NAME }}:latest
+                  docker push ghcr.io/${{ env.IMAGE_NAME }}:latest
             - name: Generate artifact attestation
               uses: actions/attest-build-provenance@v1
               with:
