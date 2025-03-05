@@ -1,34 +1,33 @@
-@_default:
-    @just --list
+ansible_dir := "./ansible"
 
 # Run Ansible playbook
 @pb playbook *ARGS:
-    ansible-playbook -v -i hosts.yml playbooks/{{ playbook }}.yml {{ ARGS }}
+    ansible-playbook -v -i {{ ansible_dir }}/hosts.yml {{ ansible_dir }}/playbooks/{{ playbook }}.yml {{ ARGS }}
 
-# Run Django manage.py commands
-dj *ARGS:
+# Run Django manage.py commands remotely
+rdj *ARGS:
     #!/usr/bin/bash
-    if [ ! -f "./manage.sh" ]; then
+    if [ ! -f "{{ ansible_dir }}/manage.sh" ]; then
         echo "manage.sh not found, generating it..."
         just pb dj_manage
     fi
-    ./manage.sh {{ ARGS }}
+    {{ ansible_dir }}/manage.sh {{ ARGS }}
 
-# Run Kubectl commands
-kubectl *ARGS:
+# Run Kubectl commands remotely
+rkubectl *ARGS:
     #!/usr/bin/bash
-    if [ ! -f "./kubectl.sh" ]; then
+    if [ ! -f "{{ ansible_dir }}/kubectl.sh" ]; then
         echo "kubectl.sh not found, generating it..."
         just pb kubectl
     fi
-    ./kubectl.sh {{ ARGS }}
+    {{ ansible_dir }}/kubectl.sh {{ ARGS }}
 
 
-# Run Psql commands
-psql *ARGS:
+# Run Psql commands remotely
+rpsql *ARGS:
     #!/usr/bin/bash
-    if [ ! -f "./psql.sh" ]; then
+    if [ ! -f "{{ ansible_dir }}/psql.sh" ]; then
         echo "pql.sh not found, generating it..."
         just pb psql
     fi
-    ./psql.sh {{ ARGS }}
+    {{ ansible_dir }}/psql.sh {{ ARGS }}

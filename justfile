@@ -1,27 +1,13 @@
-site_domain := "localhost:8000"
-site_name := "Radiofeed\\ Local"
-
-admin_username := "admin"
-admin_email := "admin@localhost"
-
-db_volume := "radiofeed-app_pg_data"
+import 'ansible/justfile'
 
 @_default:
     @just --list
 
 # Install all dependencies
-@install: envfile pyinstall precommmitinstall nltkdownload
+@install: envfile pyinstall precommitinstall nltkdownload
 
 # Update all dependencies
 @update: pyupdate pyinstall precommitupdate
-
-# Run all checks and tests
-@check: precommitall typecheck templatecheck test
-
-# Run Github Actions workflow
-@deploy:
-    gh workflow run deploy.yml
-    gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
 
 # Install all Python dependencies
 @pyinstall:
@@ -35,44 +21,13 @@ db_volume := "radiofeed-app_pg_data"
 @dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
 
-# Create a superuser
-@superuser username=admin_username email=admin_email:
-   @just dj createsuperuser \
-        --noinput \
-        --username="{{ username }}" \
-        --email="{{ email }}"
-
 # Run the Django development server
 @serve:
    @just dj tailwind runserver
 
-# Run database migrations
-@migrate:
-   @just dj migrate
-
-# Open the Django shell
-@shell:
-   @just dj shell_plus
-
-# Clear the cache
-@clearcache:
-   @just dj clear_cache
-
-# Validate all templates
-@templatecheck:
-   @just dj validate_templates
-
-# Set the default site name and domain
-@defaultsite name=site_name domain=site_domain:
-    @just dj set_default_site --domain="{{ domain }}" --name="{{ name }}"
-
 # Run unit tests
 @test *ARGS:
    uv run pytest {{ ARGS }}
-
-# Type check the code
-@typecheck *ARGS:
-   uv run pyright {{ ARGS }}
 
 # Start all Docker services
 @dcup *ARGS:
@@ -87,7 +42,7 @@ db_volume := "radiofeed-app_pg_data"
    uv run --with pre-commit-uv pre-commit {{ ARGS }}
 
 # Install pre-commit hooks
-@precommmitinstall:
+@precommitinstall:
    @just precommit install
    @just precommit install --hook-type commit-msg
 
@@ -103,23 +58,15 @@ db_volume := "radiofeed-app_pg_data"
 @nltkdownload:
    uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
 
-# Build local database and add default data
-@dbinit:
-   @just migrate
-   @just defaultsite
-   @just superuser
-
-# Delete local database volume
-[confirm]
-@dbremove:
-    docker volume rm {{ db_volume }}
-
 # Create a new .env file from .env.example if it doesn't exist
 @envfile:
    cp -R -u -p .env.example .env
 
-# Remove all untracked files and directories
+# Deploy the application to production
 [confirm]
-@clean:
-   git clean -Xdf
-   pre-commit uninstall
+@deploy:
+    gh workflow run deploy.yml
+
+# Watch the latest Github Actions workflow
+@watch:
+    gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
