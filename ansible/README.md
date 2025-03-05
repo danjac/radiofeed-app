@@ -12,6 +12,8 @@ It is assumed you are deploying the app servers behind a load balancer. It is re
 2. Edit file as required, adding your server-specific settings.
 3. Encrypt the `hosts.yml` file using `ansible-vault` and make backups to a secure place.
 
+To handle reverse proxy from your load balancer, ensure the LB points to the app servers on the correct port. This is set in inventory file setting `django_port`, for example `30081`.
+
 ## Deployment
 
 For ease of use, a [justfile](https://github.com/casey/just) has been provided for running the Ansible playbooks.

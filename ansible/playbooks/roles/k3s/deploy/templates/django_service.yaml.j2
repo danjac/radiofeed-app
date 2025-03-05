@@ -9,5 +9,5 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
-      nodePort: 30081
+      nodePort: {{ django_port }}
   type: NodePort
