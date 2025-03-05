@@ -21,6 +21,10 @@ import 'ansible/justfile'
 @dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
 
+# Run Psql
+@psql *ARGS:
+   docker compose exec postgres psql -U postgres {{ ARGS }}
+
 # Run the Django development server
 @serve:
    @just dj tailwind runserver
