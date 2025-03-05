@@ -33,7 +33,7 @@ def search_cached(
     search_term: str,
     *,
     limit: int = 50,
-    cache_timeout: int = 3600,
+    cache_timeout: int = 300,
 ) -> list[Feed]:
     """Search iTunes podcast API with caching."""
     search_term = search_term.strip().casefold()
