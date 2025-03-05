@@ -21,9 +21,21 @@ import 'ansible/justfile'
 @dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
 
+# Run docker compose
+@dc *ARGS:
+   docker compose {{ ARGS }}
+
+# Start all Docker services
+@dcup *ARGS:
+   @just dc up -d {{ ARGS }}
+
+# Stop all Docker services
+@dcdn *ARGS:
+   @just dc down {{ ARGS }}
+
 # Run Psql
 @psql *ARGS:
-   docker compose exec postgres psql -U postgres {{ ARGS }}
+   @just dc exec postgres psql -U postgres {{ ARGS }}
 
 # Run the Django development server
 @serve:
@@ -32,14 +44,6 @@ import 'ansible/justfile'
 # Run unit tests
 @test *ARGS:
    uv run pytest {{ ARGS }}
-
-# Start all Docker services
-@dcup *ARGS:
-   docker compose up -d {{ ARGS }}
-
-# Stop all Docker services
-@dcdn *ARGS:
-   docker compose down {{ ARGS }}
 
 # Run pre-commit manually
 @precommit *ARGS:
