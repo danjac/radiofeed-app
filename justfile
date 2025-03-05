@@ -100,31 +100,31 @@ ansible_dir := "./ansible"
     ansible-playbook -v -i {{ ansible_dir }}/hosts.yml {{ ansible_dir }}/playbooks/{{ playbook }}.yml {{ ARGS }}
 
 # Run Django manage.py commands remotely
-[group('ansible')]
+[group('kubernetes')]
 rdj *ARGS:
     #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/manage.sh" ]; then
+    if [ ! -f "{{ ansible_dir }}/scripts/manage.sh" ]; then
         echo "manage.sh not found, generating it..."
         just pb dj_manage
     fi
-    {{ ansible_dir }}/manage.sh {{ ARGS }}
+    {{ ansible_dir }}/scripts/manage.sh {{ ARGS }}
 
 # Run Psql commands remotely
-[group('ansible')]
+[group('kubernetes')]
 rpsql *ARGS:
     #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/psql.sh" ]; then
+    if [ ! -f "{{ ansible_dir }}/scripts/psql.sh" ]; then
         echo "pql.sh not found, generating it..."
         just pb psql
     fi
-    {{ ansible_dir }}/psql.sh {{ ARGS }}
+    {{ ansible_dir }}/scripts/psql.sh {{ ARGS }}
 
 # Run Kubectl commands remotely
-[group('ansible')]
+[group('kubernetes')]
 kubectl *ARGS:
     #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/kubectl.sh" ]; then
+    if [ ! -f "{{ ansible_dir }}/scripts/kubectl.sh" ]; then
         echo "kubectl.sh not found, generating it..."
         just pb kubectl
     fi
-    {{ ansible_dir }}/kubectl.sh {{ ARGS }}
+    {{ ansible_dir }}/scripts/kubectl.sh {{ ARGS }}
