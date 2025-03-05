@@ -19,8 +19,9 @@ db_volume := "radiofeed-app_pg_data"
 @check: precommitall typecheck templatecheck test
 
 # Run Github Actions workflow
-@gh workflow *ARGS:
-    gh workflow run {{ workflow }}.yml {{ ARGS }}
+@deploy:
+    gh workflow run deploy.yml
+    gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
 
 # Install all Python dependencies
 @pyinstall:
