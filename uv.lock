@@ -603,14 +603,14 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "36.1.1"
+version = "36.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "tzdata" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/55/8f/40d002bed58bd6b79bf970505582b769fc975afcacc62c2fe1518d5729c2/faker-36.1.1.tar.gz", hash = "sha256:7cb2bbd4c8f040e4a340ae4019e9a48b6cf1db6a71bda4e5a61d8d13b7bef28d", size = 1874935 }
+sdist = { url = "https://files.pythonhosted.org/packages/ee/6c/412b064e33d11b351ef8945e4cc0ab56aa156e107c71610c4af96bd5d72c/faker-36.2.2.tar.gz", hash = "sha256:758bc63a26dc878fa0d76aa7639b8b65327927980ed0c3683b23bd8a5182f33f", size = 1874990 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/79/e13ae542f63ce40d02b0fe63809563b102f19ffa3b94e6062ee9286a7801/Faker-36.1.1-py3-none-any.whl", hash = "sha256:ad1f1be7fd692ec0256517404a9d7f007ab36ac5d4674082fa72404049725eaa", size = 1917865 },
+    { url = "https://files.pythonhosted.org/packages/28/30/3e81fdb631115c37ef81ad8bd342bf3fa52e66366bbed65a367a9137f8b9/faker-36.2.2-py3-none-any.whl", hash = "sha256:14adc340dc8abed5264142ffafe6f1a0f99cf7a7525bc6863755efd5fbbd0692", size = 1918206 },
 ]
 
 [[package]]
