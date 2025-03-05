@@ -36,17 +36,9 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Get the current image from Kubernetes
-  ansible.builtin.command: kubectl get deployment django-app -n default -o jsonpath="{.spec.template.spec.containers[0].image}"
-  register: current_image_result
-  changed_when: false
-  failed_when: false # Don't fail if deployment doesn't exist
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Set default image if no current deployment exists
+- name: Add "latest" tag to the image
   ansible.builtin.set_fact:
-      current_image: "{{ current_image_result.stdout if current_image_result.stdout else docker_image + ':main' }}"
+      current_image: "{{ docker_image + ':latest' }}"
 
 - name: Get Django hosts
   ansible.builtin.set_fact:
