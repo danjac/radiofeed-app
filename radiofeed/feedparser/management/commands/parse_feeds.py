@@ -1,5 +1,5 @@
 import djclick as click
-from django.db.models import Count, F
+from django.db.models import Count, F, QuerySet
 
 from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
@@ -19,7 +19,14 @@ def command(*, limit: int) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
     client = get_client()
 
-    podcasts = (
+    execute_thread_pool(
+        lambda podcast: _parse_feed(podcast, client),
+        _get_scheduled_podcasts(limit),
+    )
+
+
+def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
+    return (
         Podcast.objects.scheduled()
         .alias(subscribers=Count("subscriptions"))
         .filter(active=True)
@@ -28,10 +35,6 @@ def command(*, limit: int) -> None:
             F("promoted").desc(),
             F("parsed").asc(nulls_first=True),
         )[:limit]
-    )
-    execute_thread_pool(
-        lambda podcast: _parse_feed(podcast, client),
-        podcasts,
     )
 
 
