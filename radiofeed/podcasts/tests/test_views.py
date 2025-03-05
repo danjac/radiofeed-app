@@ -139,25 +139,24 @@ class TestSearchItunes:
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, podcast, mocker):
-        feeds = iter(
-            [
-                itunes.Feed(
-                    url="https://example.com/id123456",
-                    rss="https://feeds.fireside.fm/testandcode/rss",
-                    title="Test & Code : Python Testing",
-                    image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                ),
-                itunes.Feed(
-                    url=podcast.website,
-                    rss=podcast.rss,
-                    title=podcast.title,
-                    image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                    podcast=podcast,
-                ),
-            ]
-        )
+        feeds = [
+            itunes.Feed(
+                url="https://example.com/id123456",
+                rss="https://feeds.fireside.fm/testandcode/rss",
+                title="Test & Code : Python Testing",
+                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+            ),
+            itunes.Feed(
+                url=podcast.website,
+                rss=podcast.rss,
+                title=podcast.title,
+                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                podcast=podcast,
+            ),
+        ]
         mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search", return_value=feeds
+            "radiofeed.podcasts.itunes.search_cached",
+            return_value=feeds,
         )
 
         response = client.get(self.url, {"search": "test"})

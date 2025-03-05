@@ -2,6 +2,7 @@ import http
 
 import httpx
 import pytest
+from django.core.cache import cache
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts import itunes
@@ -258,26 +259,26 @@ class TestFetchTopChart:
 
     @pytest.mark.django_db
     def test_get_top_chart(self, good_client):
-        feeds = list(itunes.fetch_chart(good_client, location="us"))
+        feeds = itunes.fetch_chart(good_client, location="us")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
 
     @pytest.mark.django_db
     def test_already_exists(self, good_client):
         PodcastFactory(rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"], promoted=False)
-        feeds = list(itunes.fetch_chart(good_client, location="us"))
+        feeds = itunes.fetch_chart(good_client, location="us")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
-        feeds = list(itunes.fetch_chart(bad_client, location="us"))
+        feeds = itunes.fetch_chart(bad_client, location="us")
         assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_result(self, bad_result_client):
-        feeds = list(itunes.fetch_chart(bad_result_client, location="us"))
+        feeds = itunes.fetch_chart(bad_result_client, location="us")
         assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
@@ -321,19 +322,19 @@ class TestSearch:
 
     @pytest.mark.django_db
     def test_ok(self, good_client):
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = itunes.search(good_client, "test")
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db
     def test_not_ok(self, bad_client):
-        feeds = list(itunes.search(bad_client, "test"))
+        feeds = itunes.search(bad_client, "test")
         assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_data(self, invalid_client):
-        feeds = list(itunes.search(invalid_client, "test"))
+        feeds = itunes.search(invalid_client, "test")
         assert len(feeds) == 0
         assert feeds == []
 
@@ -352,3 +353,43 @@ class TestSearch:
         feeds = list(itunes.search(good_client, "test"))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
+
+
+class TestSearchCached:
+    @pytest.fixture
+    def feeds(self):
+        return [
+            itunes.Feed(
+                rss="http://example.com/rss",
+                title="Example",
+                url="http://example.com",
+            )
+        ]
+
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_search_cached_miss(self, mocker, client, feeds):
+        """Ensures search_cached calls search() when cache is empty."""
+        mock_search = mocker.patch(
+            "radiofeed.podcasts.itunes.search",
+            return_value=feeds,
+        )
+
+        result = itunes.search_cached(client, "test query", limit=10)
+
+        assert result == mock_search.return_value
+        mock_search.assert_called_once_with(client, "test query", limit=10)
+        assert cache.get("search-itunes:test query:10") == result  # Ensure it's cached
+
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_search_cached_hit(self, mocker, client, feeds):
+        """Ensures search_cached returns cached results without calling search()."""
+        cache.set("search-itunes:test query:10", feeds)
+
+        mock_search = mocker.patch(
+            "radiofeed.podcasts.itunes.search"
+        )  # Should not be called
+
+        result = itunes.search_cached(client, "test query", limit=10)
+
+        assert result == feeds
+        mock_search.assert_not_called()  # Ensure search() was skipped due to cache hit
