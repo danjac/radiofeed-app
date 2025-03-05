@@ -1,106 +1,106 @@
 
+ansible_dir := "./ansible"
+
 @_default:
     @just --list
 
 # Install all dependencies
+[group('development')]
 @install: pyinstall precommitinstall nltkdownload
 
 # Update all dependencies
+[group('development')]
 @update: pyupdate pyinstall precommitupdate
 
 # Install all Python dependencies
-[group('python')]
+[group('development')]
 @pyinstall:
    uv sync --frozen --all-extras --no-install-project
 
 # Update all Python dependencies
-[group('python')]
+[group('development')]
 @pyupdate:
    uv lock --upgrade
 
 ## Run the Django management command
-[group('python')]
+[group('development')]
 @dj *ARGS:
    uv run python ./manage.py {{ ARGS }}
 
 # Run the Django development server
-[group('python')]
+[group('development')]
 @serve:
    @just dj tailwind runserver
 
 # Run unit tests
-[group('python')]
+[group('development')]
 @test *ARGS:
    uv run pytest {{ ARGS }}
 
 # Download NLTK data
-[group('python')]
+[group('development')]
 @nltkdownload:
    uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
 
 # Run docker compose
-[group('docker')]
+[group('development')]
 @dc *ARGS:
    docker compose {{ ARGS }}
 
 # Start all Docker services
-[group('docker')]
+[group('development')]
 @dcup *ARGS:
    @just dc up -d {{ ARGS }}
 
 # Stop all Docker services
-[group('docker')]
+[group('development')]
 @dcdn *ARGS:
    @just dc down {{ ARGS }}
 
 # Run Psql
-[group('docker')]
+[group('development')]
 @psql *ARGS:
    @just dc exec postgres psql -U postgres {{ ARGS }}
 
 # Run pre-commit manually
-[group('precommit')]
+[group('development')]
 @precommit *ARGS:
    uv run --with pre-commit-uv pre-commit {{ ARGS }}
 
 # Install pre-commit hooks
-[group('precommit')]
+[group('development')]
 @precommitinstall:
    @just precommit install
    @just precommit install --hook-type commit-msg
 
 # Update pre-commit hooks
-[group('precommit')]
+[group('development')]
 @precommitupdate:
    @just precommit autoupdate
 
 # Re-run pre-commit on all files
-[group('precommit')]
+[group('development')]
 @precommitall:
    @just precommit run --all-files
 
+# Run Ansible playbook
+[group('deployment')]
+@pb playbook *ARGS:
+    ansible-playbook -v -i {{ ansible_dir }}/hosts.yml {{ ansible_dir }}/playbooks/{{ playbook }}.yml {{ ARGS }}
+
 # Deploy the application to production
-[group('github')]
+[group('deployment')]
 [confirm]
 @deploy:
     gh workflow run deploy.yml
 
 # Watch the latest Github Actions workflow
-[group('github')]
+[group('deployment')]
 @watch:
     gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
 
-# ANSIBLE COMMANDS
-
-ansible_dir := "./ansible"
-
-# Run Ansible playbook
-[group('ansible')]
-@pb playbook *ARGS:
-    ansible-playbook -v -i {{ ansible_dir }}/hosts.yml {{ ansible_dir }}/playbooks/{{ playbook }}.yml {{ ARGS }}
-
-# Run Django manage.py commands remotely
-[group('kubernetes')]
+# Run Django manage.py commands on production server
+[group('production')]
 rdj *ARGS:
     #!/usr/bin/bash
     if [ ! -f "{{ ansible_dir }}/scripts/manage.sh" ]; then
@@ -109,8 +109,8 @@ rdj *ARGS:
     fi
     {{ ansible_dir }}/scripts/manage.sh {{ ARGS }}
 
-# Run Psql commands remotely
-[group('kubernetes')]
+# Run Psql commands remotely on production database
+[group('production')]
 rpsql *ARGS:
     #!/usr/bin/bash
     if [ ! -f "{{ ansible_dir }}/scripts/psql.sh" ]; then
@@ -119,8 +119,8 @@ rpsql *ARGS:
     fi
     {{ ansible_dir }}/scripts/psql.sh {{ ARGS }}
 
-# Run Kubectl commands remotely
-[group('kubernetes')]
+# Run Kubectl commands remotely on production cluster
+[group('production')]
 kubectl *ARGS:
     #!/usr/bin/bash
     if [ ! -f "{{ ansible_dir }}/scripts/kubectl.sh" ]; then
