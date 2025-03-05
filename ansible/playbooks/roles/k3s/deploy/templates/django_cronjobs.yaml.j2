@@ -19,9 +19,9 @@ spec:
             command: ["/bin/bash", "-c", "{{ cronjob.command }}"]
             envFrom:
               - configMapRef:
-                  name: django-config
+                  name: configmap
               - secretRef:
-                  name: django-secret
+                  name: secrets
 {% if not loop.last %}
 ---
 {% endif %}

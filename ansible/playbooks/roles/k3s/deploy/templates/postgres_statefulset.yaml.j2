@@ -38,7 +38,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: django-secret
+                  name: secrets
                   key: POSTGRES_PASSWORD
           ports:
             - containerPort: 5432

@@ -27,9 +27,9 @@ spec:
           args: ["./release.sh"]
           envFrom:
             - configMapRef:
-                name: django-config
+                name: configmap
             - secretRef:
-                name: django-secret
+                name: secrets
       restartPolicy: OnFailure
 
 EOF
