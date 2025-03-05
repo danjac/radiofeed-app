@@ -1,9 +1,0 @@
-- name: Remove old SSH keys
-  hosts: localhost
-  gather_facts: no
-  tasks:
-      - name: Remove old SSH keys from known_hosts
-        ansible.builtin.known_hosts:
-            name: "{{ item }}"
-            state: absent
-        loop: "{{ groups['all'] }}"

@@ -1,5 +1,32 @@
-- name: Reset SSH keys
-  import_playbook: ./ssh.yml
+- name: Create deployment user
+  hosts: all
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
+  roles:
+      - user
 
-- name: Provision a k3s cluster
-  import_playbook: ./k3s.yml
+- name: Provision K3s cluster
+  hosts: all
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
+  roles:
+      - k3s/cluster
+
+- name: Set up server user with K3s access
+  hosts: server
+  remote_user: root
+  become: false
+  vars:
+      ansible_user: root
+  roles:
+      - k3s/user
+
+- name: Deploy application
+  hosts: server
+  become: false
+  roles:
+      - k3s/deploy
