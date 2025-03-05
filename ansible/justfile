@@ -13,16 +13,6 @@ rdj *ARGS:
     fi
     {{ ansible_dir }}/manage.sh {{ ARGS }}
 
-# Run Kubectl commands remotely
-rkubectl *ARGS:
-    #!/usr/bin/bash
-    if [ ! -f "{{ ansible_dir }}/kubectl.sh" ]; then
-        echo "kubectl.sh not found, generating it..."
-        just pb kubectl
-    fi
-    {{ ansible_dir }}/kubectl.sh {{ ARGS }}
-
-
 # Run Psql commands remotely
 rpsql *ARGS:
     #!/usr/bin/bash
@@ -31,3 +21,12 @@ rpsql *ARGS:
         just pb psql
     fi
     {{ ansible_dir }}/psql.sh {{ ARGS }}
+
+# Run Kubectl commands remotely
+kubectl *ARGS:
+    #!/usr/bin/bash
+    if [ ! -f "{{ ansible_dir }}/kubectl.sh" ]; then
+        echo "kubectl.sh not found, generating it..."
+        just pb kubectl
+    fi
+    {{ ansible_dir }}/kubectl.sh {{ ARGS }}
