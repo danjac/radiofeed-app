@@ -2,6 +2,11 @@
 
 set -o errexit
 
+if [ -z "$TAG" ]; then
+  echo "ERROR: TAG must be set to the image tag to deploy"
+  exit 1
+fi
+
 export KUBECONFIG="{{ kubeconfig }}"
 
 export IMAGE="{{ docker_image.split(":")[0] }}:$TAG"
