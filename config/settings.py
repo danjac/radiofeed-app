@@ -372,7 +372,7 @@ PERMISSIONS_POLICY: dict[str, list] = {
 # https://django-csp.readthedocs.io/en/3.8/configuration.html
 
 SELF = "'self'"
-DATA = f"data: {'https' if SECURE_SSL_REDIRECT else 'http'}:;"
+DATA = f"data: {'https' if USE_HTTPS else 'http'}:;"
 UNSAFE_EVAL = "'unsafe-eval'"
 UNSAFE_INLINE = "'unsafe-inline'"
 
