@@ -39,6 +39,11 @@ script_dir := ansible_dir / "scripts"
 @test *args:
    uv run pytest {{ args }}
 
+# Run type checks
+[group('development')]
+@typecheck *args:
+   uv run pyright {{ args }}
+
 # Download NLTK data
 [group('development')]
 @nltkdownload:
@@ -101,26 +106,26 @@ script_dir := ansible_dir / "scripts"
 @watch:
     gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
 
+# Run Django manage.py commands on production server
+[group('production')]
+@rdj *args:
+    @just remote_script manage.sh dj_manage {{ args }}
+
+# Run Psql commands remotely on production database
+[group('production')]
+@rpsql *args:
+    @just remote_script psql.sh psql {{ args }}
+
+# Run Kubectl commands remotely on production cluster
+[group('production')]
+@kubectl *args:
+    @just remote_script kubectl.sh kubectl {{ args }}
+
 [private]
-remote_script script playbook *args:
+@remote_script script playbook *args:
     #!/usr/bin/bash
     if [ ! -f "{{ script_dir / script }}" ]; then
         echo "{{ script }} not found, generating it..."
         just pb {{ playbook }}
     fi
     {{ script_dir / script }} {{ args }}
-
-# Run Django manage.py commands on production server
-[group('production')]
-rdj *args:
-    @just remote_script manage.sh dj_manage {{ args }}
-
-# Run Psql commands remotely on production database
-[group('production')]
-rpsql *args:
-    @just remote_script psql.sh psql {{ args }}
-
-# Run Kubectl commands remotely on production cluster
-[group('production')]
-kubectl *args:
-    @just remote_script kubectl.sh kubectl {{ args }}
