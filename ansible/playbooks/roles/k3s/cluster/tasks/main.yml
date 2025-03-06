@@ -14,8 +14,7 @@
       --node-ip={{ private_ip }} \
       --flannel-iface=enp7s0 \
       --advertise-address={{ private_ip }} \
-      --tls-san={{ private_ip }} \
-      --disable traefik
+      --tls-san={{ private_ip }}
   when: "'server' in group_names"
 
 - name: Get the K3s join token from the control plane (for worker nodes)
