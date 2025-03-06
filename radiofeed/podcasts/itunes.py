@@ -84,8 +84,6 @@ def fetch_chart(client: Client, *, location: str, limit: int = 50) -> list[Feed]
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
     """
-    feeds: list[Feed] = []
-
     if itunes_ids := _fetch_chart_ids(client, location, limit):
         feeds = _fetch_feeds(
             client,
@@ -93,27 +91,28 @@ def fetch_chart(client: Client, *, location: str, limit: int = 50) -> list[Feed]
             id=",".join(itunes_ids),
         )
 
-    if feeds:
         Podcast.objects.bulk_create(
             [Podcast(rss=feed.rss, promoted=True) for feed in feeds],
             unique_fields=["rss"],
             update_fields=["promoted"],
             update_conflicts=True,
         )
-    return feeds
+
+        return feeds
+    return []
 
 
-def _fetch_chart_ids(client: Client, location: str, limit: int) -> list[str]:
+def _fetch_chart_ids(client: Client, location: str, limit: int) -> set[str]:
     """Fetches podcast IDs from the iTunes charts."""
     response = _fetch_json(
         client,
         f"https://rss.marketingtools.apple.com/api/v2/{location}/podcasts/top/{limit}/podcasts.json",
     )
-    return [
+    return {
         result["id"]
         for result in response.get("feed", {}).get("results", [])
         if "id" in result
-    ]
+    }
 
 
 def _fetch_json(client: Client, url: str, **params) -> dict:
