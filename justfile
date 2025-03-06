@@ -32,7 +32,7 @@ dj *args:
 # Run the Django development server
 [group('development')]
 serve:
-   @just dj tailwind runserver
+   just dj tailwind runserver
 
 # Run unit tests
 [group('development')]
