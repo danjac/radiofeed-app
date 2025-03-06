@@ -12,9 +12,35 @@ provider "hcloud" {
 }
 
 variable "hcloud_token" {}
+
 variable "ssh_public_key_path" {
   default = "~/.ssh/id_rsa.pub"
 }
+
+variable "image" {
+    default = "ubuntu-24.04"
+}
+
+variable "server_type" {
+    default = "cpx11"
+}
+
+variable "load_balancer_type" {
+    default = "lb11"
+}
+
+variable "location" {
+    default = "hel1"
+}
+
+variable "agent_count" {
+    default = 2
+}
+
+variable "listen_port" {
+    default = 300081
+}
+
 resource "hcloud_ssh_key" "default" {
   name       = "my-ssh-key"
   public_key = file(var.ssh_public_key_path)
@@ -45,8 +71,8 @@ resource "hcloud_firewall" "firewall" {
 
 resource "hcloud_load_balancer" "lb" {
   name               = "load-balancer"
-  load_balancer_type = "lb11"
-  location           = "hel1"
+  load_balancer_type = var.load_balancer_type
+  location           = var.location
 }
 
 resource "hcloud_load_balancer_target" "lb_target_agents" {
@@ -58,12 +84,12 @@ resource "hcloud_load_balancer_target" "lb_target_agents" {
 resource "hcloud_load_balancer_service" "lb_http" {
   load_balancer_id = hcloud_load_balancer.lb.id
   protocol         = "http"
-  listen_port      = 300081
+  listen_port      = var.listen_port
   destination_port = 8000
 
   health_check {
     protocol = "http"
-    port     = 300081
+    port     = var.listen_port
     interval = 15
     timeout  = 10
     retries  = 3
@@ -72,9 +98,9 @@ resource "hcloud_load_balancer_service" "lb_http" {
 
 resource "hcloud_server" "database" {
   name        = "database"
-  image       = "ubuntu-24.04"
-  server_type = "cpx11"
-  location    = "hel1"
+  image       = var.image
+  server_type = var.server_type
+  location    = var.location
   ssh_keys    = [hcloud_ssh_key.default.id]
   labels      = { role = "database" }
   firewall_ids = [hcloud_firewall.firewall.id]
@@ -87,9 +113,9 @@ resource "hcloud_server" "database" {
 
 resource "hcloud_server" "server" {
   name        = "server"
-  image       = "ubuntu-24.04"
-  server_type = "cpx11"
-  location    = "hel1"
+  image       = var.image
+  server_type = var.server_type
+  location    = var.location
   ssh_keys    = [hcloud_ssh_key.default.id]
   labels      = { role = "server" }
   firewall_ids = [hcloud_firewall.firewall.id]
@@ -100,11 +126,11 @@ resource "hcloud_server" "server" {
 }
 
 resource "hcloud_server" "agents" {
-  count       = 2
+  count       = var.agent_count
   name        = "agent-${count.index + 1}"
-  image       = "ubuntu-24.04"
-  server_type = "cpx11"
-  location    = "hel1"
+  image       = var.image
+  server_type = var.server_type
+  location    = var.location
   ssh_keys    = [hcloud_ssh_key.default.id]
   labels      = { role = "agent" }
   firewall_ids = [hcloud_firewall.firewall.id]
