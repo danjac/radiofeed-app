@@ -58,7 +58,7 @@ resource "hcloud_network_subnet" "private_subnet" {
   ip_range     = "10.0.1.0/24"
 }
 
-resource "hcloud_firewall" "firewall" {
+resource "hcloud_firewall" "firewall-ssh" {
   name = "vm-firewall"
 
   rule {
@@ -69,30 +69,14 @@ resource "hcloud_firewall" "firewall" {
   }
 }
 
-resource "hcloud_load_balancer" "lb" {
-  name               = "load-balancer"
-  load_balancer_type = var.load_balancer_type
-  location           = var.location
-}
+resource "hcloud_firewall" "firewall-https" {
+  name = "vm-firewall"
 
-resource "hcloud_load_balancer_target" "lb_target_agents" {
-  load_balancer_id = hcloud_load_balancer.lb.id
-  type             = "label_selector"
-  label_selector   = "role=agent"
-}
-
-resource "hcloud_load_balancer_service" "lb_http" {
-  load_balancer_id = hcloud_load_balancer.lb.id
-  protocol         = "http"
-  listen_port      = var.listen_port
-  destination_port = 8000
-
-  health_check {
-    protocol = "http"
-    port     = var.listen_port
-    interval = 15
-    timeout  = 10
-    retries  = 3
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "443"
+    source_ips = ["0.0.0.0/0", "::/0"]
   }
 }
 
