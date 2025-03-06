@@ -10,6 +10,7 @@ The architecture can run on cheap VM hosting e.g. Hetzner or Digital Ocean dropl
 2. Edit file as required, adding your server-specific settings.
 3. Encrypt the `hosts.yml` file using `ansible-vault` and make backups to a secure place.
 4. Copy the origin certificates from your Cloudflare account to the `certs` directory. They should be called `cloudflare.pem` and `cloudflare.key`.
+5. Ensure your Cloudflare `A` record etc. points to the **server** node public IP address.
 
 ## Deployment
 
