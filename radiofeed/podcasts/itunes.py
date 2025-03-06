@@ -37,9 +37,9 @@ def search(client: Client, search_term: str, *, limit: int = 50) -> list[Feed]:
         return []
 
     # Attach existing podcasts to feeds
-    podcasts = Podcast.objects.filter(rss__in={f.rss for f in feeds}).in_bulk(
-        field_name="rss"
-    )
+    podcasts = Podcast.objects.filter(
+        rss__in={f.rss for f in feeds},
+    ).in_bulk(field_name="rss")
 
     feeds = [
         dataclasses.replace(
@@ -89,7 +89,11 @@ def fetch_chart(
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
     """
-    if itunes_ids := _fetch_chart_ids(client, location, limit):
+    if itunes_ids := _fetch_itunes_ids(
+        client,
+        f"https://rss.marketingtools.apple.com/api/v2/"
+        f"{location}/podcasts/top/{limit}/podcasts.json",
+    ):
         feeds = _fetch_feeds(
             client,
             "https://itunes.apple.com/lookup",
@@ -97,7 +101,13 @@ def fetch_chart(
         )
 
         Podcast.objects.bulk_create(
-            [Podcast(rss=feed.rss, promoted=True) for feed in feeds],
+            [
+                Podcast(
+                    rss=feed.rss,
+                    promoted=True,
+                )
+                for feed in feeds
+            ],
             unique_fields=["rss"],
             update_fields=["promoted"],
             update_conflicts=True,
@@ -107,16 +117,32 @@ def fetch_chart(
     return []
 
 
-def _fetch_chart_ids(client: Client, location: str, limit: int) -> set[str]:
-    """Fetches podcast IDs from the iTunes charts."""
-    response = _fetch_json(
-        client,
-        f"https://rss.marketingtools.apple.com/api/v2/{location}/podcasts/top/{limit}/podcasts.json",
+def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
+    """Fetches and parses feeds from iTunes API."""
+
+    return list(
+        {
+            feed.rss: feed
+            for feed in [
+                _parse_feed(result)
+                for result in _fetch_json(client, url, **params).get("results", [])
+            ]
+            if feed
+        }.values()
     )
+
+
+def _fetch_itunes_ids(client: Client, url: str, **params) -> set[str]:
+    """Fetches podcast IDs from results."""
     return {
-        result["id"]
-        for result in response.get("feed", {}).get("results", [])
-        if "id" in result
+        itunes_id
+        for itunes_id in [
+            result.get("id")
+            for result in _fetch_json(client, url, **params)
+            .get("feed", {})
+            .get("results", [])
+        ]
+        if itunes_id
     }
 
 
@@ -132,17 +158,6 @@ def _fetch_json(client: Client, url: str, **params) -> dict:
         return response.json()
     except httpx.HTTPError:
         return {}
-
-
-def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
-    """Fetches and parses feeds from iTunes API."""
-    if results := _fetch_json(client, url, **params).get("results", []):
-        feeds_dct: dict[str, Feed] = {}
-        for result in results:
-            if feed := _parse_feed(result):
-                feeds_dct[feed.rss] = feed
-        return list(feeds_dct.values())
-    return []
 
 
 def _parse_feed(feed: dict) -> Feed | None:
