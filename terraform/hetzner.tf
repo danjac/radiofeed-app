@@ -58,12 +58,12 @@ resource "hcloud_load_balancer_target" "lb_target_agents" {
 resource "hcloud_load_balancer_service" "lb_http" {
   load_balancer_id = hcloud_load_balancer.lb.id
   protocol         = "http"
-  listen_port      = 8000
+  listen_port      = 300081
   destination_port = 8000
 
   health_check {
     protocol = "http"
-    port     = 8000
+    port     = 300081
     interval = 15
     timeout  = 10
     retries  = 3
