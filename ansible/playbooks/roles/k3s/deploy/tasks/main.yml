@@ -38,11 +38,11 @@
       - cloudflare.key
 
 - name: Create Kubernetes TLS Secret
-  command: >
-      kubectl create secret tls cloudflare-origin-cert
-      --cert=/tmp/cloudflare.pem
-      --key=/tmp/cloudflare.key
-      -n default
+  ansible.builtin.shell: |
+        kubectl create secret tls cloudflare-origin-cert \
+            --cert=/tmp/cloudflare.pem \
+            --key=/tmp/cloudflare.key \
+            -n default --dry-run=client -o yaml | kubectl apply -f -
   args:
       creates: "/tmp/cloudflare-origin-cert.created"
   environment:
