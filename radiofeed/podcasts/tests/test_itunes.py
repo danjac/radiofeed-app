@@ -271,20 +271,6 @@ class TestFetchTopChart:
         assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
 
     @pytest.mark.django_db
-    def test_clear_promoted(self, good_client):
-        podcast = PodcastFactory(promoted=True)
-        itunes.fetch_chart(good_client, location="us", clear=True)
-        podcast.refresh_from_db()
-        assert podcast.promoted is False
-
-    @pytest.mark.django_db
-    def test_not_clear_promoted(self, good_client):
-        podcast = PodcastFactory(promoted=True)
-        itunes.fetch_chart(good_client, location="us", clear=False)
-        podcast.refresh_from_db()
-        assert podcast.promoted is True
-
-    @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         feeds = itunes.fetch_chart(bad_client, location="us")
         assert len(feeds) == 0

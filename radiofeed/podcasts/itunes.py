@@ -85,17 +85,11 @@ def fetch_chart(
     *,
     location: str,
     limit: int = 50,
-    clear: bool = False,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
-
-    If `clear` is `True`, all existing promoted podcasts will be cleared.
     """
     if itunes_ids := _fetch_chart_ids(client, location, limit):
-        if clear:
-            Podcast.objects.filter(promoted=True).update(promoted=False)
-
         feeds = _fetch_feeds(
             client,
             "https://itunes.apple.com/lookup",

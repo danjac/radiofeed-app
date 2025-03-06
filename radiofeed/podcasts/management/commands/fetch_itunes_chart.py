@@ -17,13 +17,6 @@ from radiofeed.podcasts import itunes
     help="Limit the number of podcasts to fetch",
     default=50,
 )
-@click.option(
-    "--clear",
-    type=bool,
-    help="Clear the database before fetching",
-    is_flag=True,
-    default=False,
-)
 def command(**options):
     """Crawl iTunes Top Chart."""
     for podcast in itunes.fetch_chart(get_client(), **options):
