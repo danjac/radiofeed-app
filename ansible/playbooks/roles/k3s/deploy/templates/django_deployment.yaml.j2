@@ -31,3 +31,15 @@ spec:
                 name: configmap
             - secretRef:
                 name: secrets
+          livenessProbe:
+            httpGet:
+              path: /ht/
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ht/
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10

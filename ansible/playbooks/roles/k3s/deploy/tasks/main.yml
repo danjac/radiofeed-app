@@ -29,6 +29,33 @@
                 command: "./manage.py clearsessions",
             }
 
+- name: Copy Cloudflare certs to target node
+  ansible.builtin.copy:
+      src: "{{ playbook_dir }}/../certs/{{ item }}"
+      dest: "/tmp/{{ item | basename }}"
+  loop:
+      - cloudflare.pem
+      - cloudflare.key
+
+- name: Create Kubernetes TLS Secret
+  command: >
+      kubectl create secret tls cloudflare-origin-cert
+      --cert=/tmp/cloudflare.pem
+      --key=/tmp/cloudflare.key
+      -n default
+  args:
+      creates: "/tmp/cloudflare-origin-cert.created"
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Remove certs from /tmp after secret is created
+  file:
+      path: "/tmp/{{ item }}"
+      state: absent
+  loop:
+      - cloudflare.pem
+      - cloudflare.key
+
 - name: Label the nodes
   ansible.builtin.shell: |
       kubectl label nodes {{ hostvars[item].hostname }} role={{ hostvars[item].role }} --overwrite
@@ -57,6 +84,7 @@
   loop:
       - configmap.yaml
       - secrets.yaml
+      - ingress.yaml
       - django_deployment.yaml
       - django_cronjobs.yaml
       - django_service.yaml
