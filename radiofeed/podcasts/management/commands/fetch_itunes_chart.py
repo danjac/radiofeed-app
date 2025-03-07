@@ -13,7 +13,7 @@ from radiofeed.podcasts import itunes
     default="gb",
 )
 @click.option(
-    "--l",
+    "--limit",
     "-l",
     type=int,
     help="Limit the number of podcasts to fetch",
