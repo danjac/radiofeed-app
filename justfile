@@ -118,7 +118,7 @@ rpsql *args:
 
 # Run Kubectl commands remotely on production cluster
 [group('production')]
-kubectl *args:
+kube *args:
     just remote_script kubectl.sh kubectl {{ args }}
 
 [private]
