@@ -7,6 +7,10 @@
       state: present
       update_cache: true
 
+- name: Set the hostname of the server
+  ansible.builtin.hostname:
+      name: "{{ hostvars[inventory_hostname]['hostname'] }}"
+
 - name: Download and install K3s on server
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | sh -s - \
