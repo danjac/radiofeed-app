@@ -6,13 +6,15 @@ from radiofeed.podcasts import itunes
 
 @click.command()
 @click.option(
-    "--location",
+    "--country",
+    "-c",
     type=str,
-    help="iTunes location",
+    help="iTunes country",
     default="gb",
 )
 @click.option(
-    "--limit",
+    "--l",
+    "-l",
     type=int,
     help="Limit the number of podcasts to fetch",
     default=50,

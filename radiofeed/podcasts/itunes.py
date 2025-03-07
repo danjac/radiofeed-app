@@ -83,7 +83,7 @@ def search_cached(
 def fetch_chart(
     client: Client,
     *,
-    location: str,
+    country: str = "gb",
     limit: int = 50,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
@@ -92,7 +92,7 @@ def fetch_chart(
     if itunes_ids := _fetch_itunes_ids(
         client,
         f"https://rss.marketingtools.apple.com/api/v2/"
-        f"{location}/podcasts/top/{limit}/podcasts.json",
+        f"{country}/podcasts/top/{limit}/podcasts.json",
     ):
         feeds = _fetch_feeds(
             client,

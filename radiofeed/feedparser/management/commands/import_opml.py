@@ -10,6 +10,7 @@ from radiofeed.podcasts.models import Podcast
 @click.argument("file", type=click.File("rb"))
 @click.option(
     "--promote",
+    "-p",
     is_flag=True,
     help="Promote all imported podcasts",
     default=False,

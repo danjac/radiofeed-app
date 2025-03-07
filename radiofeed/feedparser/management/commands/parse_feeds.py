@@ -11,6 +11,7 @@ from radiofeed.thread_pool import execute_thread_pool
 @click.command()
 @click.option(
     "--limit",
+    "-l",
     type=int,
     help="Number of feeds to process",
     default=360,

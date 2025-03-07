@@ -11,6 +11,7 @@ from radiofeed.podcasts.models import Podcast
 @click.argument("file", type=click.File("w"))
 @click.option(
     "--promoted",
+    "-p",
     is_flag=True,
     help="Export only promoted podcasts",
     default=False,
