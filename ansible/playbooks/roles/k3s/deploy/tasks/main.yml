@@ -34,6 +34,7 @@
 - name: Create cloudflare_certs list
   ansible.builtin.set_fact:
       cloudflare_certs: ["{{ cloudflare_cert }}", "{{ cloudflare_key }}"]
+  changed_when: false
 
 - name: Copy Cloudflare certs to target node
   ansible.builtin.copy:
@@ -68,6 +69,7 @@
 - name: Get Django hosts
   ansible.builtin.set_fact:
       django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
+  changed_when: false
 
 - name: Get the current image of the django-app pod
   ansible.builtin.command: kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
@@ -80,6 +82,7 @@
 - name: Set default image if current image is empty
   ansible.builtin.set_fact:
       image: "{{ current_image.stdout | default(docker_image) }}"
+  changed_when: false
 
 - name: Apply spec files
   vars:
