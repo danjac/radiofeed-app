@@ -85,15 +85,15 @@
       - configmap.yaml
       - secrets.yaml
       - ingress.yaml
-      - django_deployment.yaml
-      - django_cronjobs.yaml
-      - django_service.yaml
       - postgres_pv.yaml
       - postgres_pvc.yaml
       - postgres_statefulset.yaml
       - postgres_service.yaml
       - redis_deployment.yaml
       - redis_service.yaml
+      - django_deployment.yaml
+      - django_service.yaml
+      - django_cronjobs.yaml
 
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
