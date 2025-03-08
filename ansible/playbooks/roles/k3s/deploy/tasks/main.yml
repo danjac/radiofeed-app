@@ -1,6 +1,8 @@
 - name: Set variables for the deployment
   ansible.builtin.set_fact:
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+      cloudflare_cert: "cloudflare.pem"
+      cloudflare_key: "cloudflare.key"
       cronjobs:
           - {
                 name: "parse-feeds",
@@ -29,20 +31,22 @@
                 command: "./manage.py clearsessions",
             }
 
+- name: Create cloudflare_certs list
+  ansible.builtin.set_fact:
+      cloudflare_certs: ["{{ cloudflare_cert }}", "{{ cloudflare_key }}"]
+
 - name: Copy Cloudflare certs to target node
   ansible.builtin.copy:
       src: "{{ playbook_dir }}/../certs/{{ item }}"
       dest: "/tmp/{{ item | basename }}"
-  loop:
-      - cloudflare.pem
-      - cloudflare.key
+  loop: "{{ cloudflare_certs }}"
 
 - name: Create Kubernetes TLS Secret
   ansible.builtin.shell: |
-        kubectl create secret tls cloudflare-origin-cert \
-            --cert=/tmp/cloudflare.pem \
-            --key=/tmp/cloudflare.key \
-            -n default --dry-run=client -o yaml | kubectl apply -f -
+      kubectl create secret tls cloudflare-origin-cert \
+          --cert=/tmp/{{ cloudflare_cert }} \
+          --key=/tmp/{{ cloudflare_key }} \
+          -n default --dry-run=client -o yaml | kubectl apply -f -
   args:
       creates: "/tmp/cloudflare-origin-cert.created"
   environment:
@@ -52,9 +56,7 @@
   file:
       path: "/tmp/{{ item }}"
       state: absent
-  loop:
-      - cloudflare.pem
-      - cloudflare.key
+  loop: "{{ cloudflare_certs }}"
 
 - name: Label the nodes
   ansible.builtin.shell: |
