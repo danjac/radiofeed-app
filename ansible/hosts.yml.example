@@ -30,7 +30,7 @@ all:
     csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
     deploy_user: ubuntu
     domain: radiofeed.app
-    docker_image: ghcr.io/danjac/radiofeed-app
+    docker_image: ghcr.io/danjac/radiofeed-app:main
     mailgun_api_key: "*******"
     mailgun_api_url: "https://api.eu.mailgun.net/v3"
     mailgun_sender_domain: "mg.radiofeed.app"

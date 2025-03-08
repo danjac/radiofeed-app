@@ -95,16 +95,15 @@ precommitall:
 pb playbook *args:
     ansible-playbook -v -i {{ ansible_dir / "hosts.yml" }} {{ playbooks_dir / playbook + ".yml" }} {{ args }}
 
-# Deploy the application to production
+# Run a Github Actions workflow
 [group('deployment')]
-[confirm]
-deploy:
-    gh workflow run deploy.yml
+gh workflow *args:
+    gh workflow run {{ workflow }}.yml
 
 # Watch the latest Github Actions workflow
 [group('deployment')]
-watch:
-    gh run watch $(gh run list --workflow=deploy.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+ghw workflow:
+    gh run watch $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId')
 
 # Run Django manage.py commands on production server
 [group('production')]

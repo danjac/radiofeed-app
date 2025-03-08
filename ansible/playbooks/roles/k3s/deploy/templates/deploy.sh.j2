@@ -2,14 +2,12 @@
 
 set -o errexit
 
-if [ -z "$TAG" ]; then
-  echo "ERROR: TAG must be set to the image tag to deploy"
+if [ -z "$IMAGE" ]; then
+  echo "ERROR: IMAGE must be set to deploy"
   exit 1
 fi
 
 export KUBECONFIG="{{ kubeconfig }}"
-
-export IMAGE="{{ docker_image }}:$TAG"
 
 export RELEASE_JOB_ID=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 12)
 export RELEASE_JOB_NAME="django-release-job-$RELEASE_JOB_ID"

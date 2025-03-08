@@ -69,19 +69,9 @@
   ansible.builtin.set_fact:
       django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
 
-- name: Get pod name for django-app
-  ansible.builtin.command: kubectl get pods -l app=django-app -o jsonpath='{.items[0].metadata.name}' -n default
-  register: pod_name
-  changed_when: false
-  ignore_errors: true # Ignore if no running deployment
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-# Step 2: Get the current image from the running pod
-- name: Get the current image of the running pod
-  ansible.builtin.command: kubectl get pod {{ pod_name.stdout }} -o jsonpath='{.spec.containers[0].image}' -n default
+- name: Get the current image of the django-app pod
+  ansible.builtin.command: kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
   register: current_image
-  when: pod_name.stdout != "" # Only run if there is a running pod
   changed_when: false
   ignore_errors: true
   environment:
@@ -89,7 +79,7 @@
 
 - name: Set default image if current image is empty
   ansible.builtin.set_fact:
-      image: "{{ current_image.stdout | default(docker_image + ':main') }}"
+      image: "{{ current_image.stdout | default(docker_image) }}"
 
 - name: Apply spec files
   vars:
@@ -118,7 +108,7 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Add scripts to the deployment
+- name: Add scripts to access the deployment
   ansible.builtin.template:
       src: "{{ item }}.j2"
       dest: "{{ item }}"
@@ -129,9 +119,7 @@
       - psql.sh
 
 - name: Run the deploy script to do Django migrations etc
-  vars:
-      image_tag: "{{ image.split(':')[-1] }}"
   ansible.builtin.shell: |
       ./deploy.sh
   environment:
-      TAG: "{{ image_tag }}"
+      IMAGE: "{{ image }}"

@@ -1,0 +1,13 @@
+name: radiofeed:build
+run-name: ${{ github.actor }} is building Docker image
+on:
+    workflow_dispatch:
+        branches:
+            - main
+jobs:
+    checks:
+        uses: ./.github/workflows/checks.yml
+    build:
+        uses: ./.github/workflows/docker.yml
+        needs: checks
+        secrets: inherit

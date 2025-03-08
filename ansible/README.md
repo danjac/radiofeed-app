@@ -18,7 +18,7 @@ For ease of use, a [justfile](https://github.com/casey/just) has been provided f
 
 You should have root SSH access to your servers.
 
-1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`.
+1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`. If this image is not available, you will need to build and push it yourself to a container registry.
 
 2. Run `just pb site` to deploy to your servers.
 
