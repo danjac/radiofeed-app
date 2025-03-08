@@ -24,12 +24,12 @@ pyinstall:
 pyupdate:
    uv lock --upgrade
 
-## Run the Django management command
+# Run Django management command
 [group('development')]
 dj *args:
    uv run python ./manage.py {{ args }}
 
-# Run the Django development server
+# Run Django development server + Tailwind
 [group('development')]
 serve:
    just dj tailwind runserver
@@ -100,10 +100,15 @@ pb playbook *args:
 gh workflow:
     gh workflow run {{ workflow }}.yml
 
-# Watch progress of Github Actions workflow
+# Watch progress of Github Actions workflow run
 [group('deployment')]
 ghw workflow:
     gh run watch $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+
+# Open Github Actions workflow run in your browser
+[group('deployment')]
+ghv workflow:
+    gh run view $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId') --web
 
 # Run Django manage.py commands on production server
 [group('production')]
