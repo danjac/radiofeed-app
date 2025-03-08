@@ -24,7 +24,6 @@
                 schedule: "15 7 * * *", # 7:15 AM
                 command: "./manage.py fetch_itunes_chart",
             }
-
           - {
                 name: "clear-sessions",
                 schedule: "5 5 * * *", # 5:05 AM
@@ -89,7 +88,6 @@
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
       redis_url: "redis://redis.default.svc.cluster.local:6379/0"
       replicas: "{{ django_hosts|length }}"
-
   ansible.builtin.command: >
       kubectl apply -f -
   args:
@@ -107,7 +105,6 @@
       - django_deployment.yaml
       - django_service.yaml
       - django_cronjobs.yaml
-
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
