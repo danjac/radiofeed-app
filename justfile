@@ -97,10 +97,10 @@ pb playbook *args:
 
 # Run a Github Actions workflow
 [group('deployment')]
-gh workflow *args:
+gh workflow:
     gh workflow run {{ workflow }}.yml
 
-# Watch the latest Github Actions workflow
+# Watch progress of Github Actions workflow
 [group('deployment')]
 ghw workflow:
     gh run watch $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId')
