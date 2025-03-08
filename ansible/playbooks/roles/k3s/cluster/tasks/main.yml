@@ -32,12 +32,8 @@
   ansible.builtin.set_fact:
       k3s_token: "{{ k3s_token.stdout }}"
   run_once: true
+  changed_when: false
   when: "'server' in group_names"
-
-- name: Check if the K3s token is set
-  ansible.builtin.debug:
-      var: k3s_token
-  when: "'agents' in group_names"
 
 - name: Download and install K3s as a worker node
   vars:

@@ -95,7 +95,6 @@
   loop:
       - configmap.yaml
       - secrets.yaml
-      - ingress.yaml
       - postgres_pv.yaml
       - postgres_pvc.yaml
       - postgres_statefulset.yaml
@@ -105,6 +104,7 @@
       - django_deployment.yaml
       - django_service.yaml
       - django_cronjobs.yaml
+      - ingress.yaml
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
