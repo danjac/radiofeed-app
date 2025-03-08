@@ -100,11 +100,6 @@ pb playbook *args:
 gh workflow:
     gh workflow run {{ workflow }}.yml
 
-# Watch progress of Github Actions workflow run
-[group('deployment')]
-ghw workflow:
-    gh run watch $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId')
-
 # Open Github Actions workflow run in your browser
 [group('deployment')]
 ghv workflow:
