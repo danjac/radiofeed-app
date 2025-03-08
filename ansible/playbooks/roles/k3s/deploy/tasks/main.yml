@@ -2,7 +2,6 @@
   ansible.builtin.set_fact:
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
-      image_tag: "latest"
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
       cronjobs:
           - {
@@ -70,9 +69,24 @@
   ansible.builtin.set_fact:
       django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
 
+- name: Get pod name for django-app
+  command: kubectl get pods -l app=django-app -o jsonpath='{.items[0].metadata.name}' -n default
+  register: pod_name
+  changed_when: false
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+# Step 2: Get the current image from the running pod
+- name: Get the current image of the running pod
+  command: kubectl get pod {{ pod_name.stdout }} -o jsonpath='{.spec.containers[0].image}' -n default
+  register: current_image
+  changed_when: false
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
 - name: Apply spec files
   vars:
-      current_image: "{{ docker_image + ':' + image_tag }}"
+      image: "{{ current_image.stdout }}"
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
       redis_url: "redis://redis.default.svc.cluster.local:6379/0"
       replicas: "{{ django_hosts|length }}"
@@ -109,6 +123,8 @@
       - psql.sh
 
 - name: Run the deploy script to do Django migrations etc
+  vars:
+      image_tag: "{{ current_image.stdout.split(':')[-1] }}"
   ansible.builtin.shell: |
       ./deploy.sh
   environment:

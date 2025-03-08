@@ -21,7 +21,7 @@ spec:
         role: django
       containers:
         - name: django
-          image: {{ current_image }}
+          image: {{ image }}
           command: ["/bin/sh", "-c"]
           args: ["./entrypoint.sh"]
           ports:

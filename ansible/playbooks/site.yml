@@ -11,6 +11,7 @@
   hosts: all
   remote_user: root
   become: false
+  gather_facts: false
   vars:
       ansible_user: root
   roles:
@@ -20,6 +21,7 @@
   hosts: server
   remote_user: root
   become: false
+  gather_facts: false
   vars:
       ansible_user: root
   roles:
@@ -28,5 +30,6 @@
 - name: Deploy application
   hosts: server
   become: false
+  gather_facts: false
   roles:
       - k3s/deploy

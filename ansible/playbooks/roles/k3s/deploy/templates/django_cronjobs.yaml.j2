@@ -15,7 +15,7 @@ spec:
           restartPolicy: Never
           containers:
           - name: django
-            image: {{ current_image }}
+            image: {{ image }}
             command: ["/bin/bash", "-c", "{{ cronjob.command }}"]
             envFrom:
               - configMapRef:
