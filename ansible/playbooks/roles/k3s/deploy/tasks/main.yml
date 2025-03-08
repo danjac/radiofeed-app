@@ -1,8 +1,9 @@
 - name: Set variables for the deployment
   ansible.builtin.set_fact:
-      kubeconfig: "/home/{{ ansible_user }}/.kube/config"
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
+      image_tag: "latest"
+      kubeconfig: "/home/{{ ansible_user }}/.kube/config"
       cronjobs:
           - {
                 name: "parse-feeds",
@@ -65,16 +66,13 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Add "latest" tag to the image
-  ansible.builtin.set_fact:
-      current_image: "{{ docker_image + ':latest' }}"
-
 - name: Get Django hosts
   ansible.builtin.set_fact:
       django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
 
 - name: Apply spec files
   vars:
+      current_image: "{{ docker_image + ':' + image_tag }}"
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
       redis_url: "redis://redis.default.svc.cluster.local:6379/0"
       replicas: "{{ django_hosts|length }}"
@@ -110,12 +108,8 @@
       - manage.sh
       - psql.sh
 
-- name: Set tag from the current image
-  ansible.builtin.set_fact:
-      release_tag: "{{ current_image.split(':')[1] }}"
-
 - name: Run the deploy script to do Django migrations etc
   ansible.builtin.shell: |
       ./deploy.sh
   environment:
-      TAG: "{{ release_tag }}"
+      TAG: "{{ image_tag }}"
