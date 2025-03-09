@@ -5,6 +5,11 @@
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
       cronjobs:
           - {
+                name: "clear-sessions",
+                schedule: "5 5 * * *", # 5:05 AM
+                command: "./manage.py clearsessions",
+            }
+          - {
                 name: "parse-feeds",
                 schedule: "*/6 * * * *", # Every 6 minutes
                 command: "./manage.py parse_feeds",
@@ -22,12 +27,7 @@
           - {
                 name: "fetch-itunes-chart",
                 schedule: "15 7 * * *", # 7:15 AM
-                command: "./manage.py fetch_itunes_chart",
-            }
-          - {
-                name: "clear-sessions",
-                schedule: "5 5 * * *", # 5:05 AM
-                command: "./manage.py clearsessions",
+                command: "./manage.py fetch_itunes_chart --demote --limit 30",
             }
 
 - name: Create cloudflare_certs list
