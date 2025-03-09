@@ -85,9 +85,12 @@ def fetch_chart(
     *,
     country: str = "gb",
     limit: int = 50,
+    demote: bool = False,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
+
+    If `demote` is True, all currently promoted podcasts will be demoted if they are not in the chart.
     """
     if itunes_ids := _fetch_itunes_ids(
         client,
@@ -112,6 +115,11 @@ def fetch_chart(
             update_fields=["promoted"],
             update_conflicts=True,
         )
+
+        if demote:
+            Podcast.objects.filter(promoted=True).exclude(
+                rss__in={feed.rss for feed in feeds},
+            ).update(promoted=False)
 
         return feeds
     return []
