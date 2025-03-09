@@ -142,7 +142,7 @@ class PromotedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        return queryset.promoted() if self.value() == "yes" else queryset
+        return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
 class PrivateFilter(admin.SimpleListFilter):

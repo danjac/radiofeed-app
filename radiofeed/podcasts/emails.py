@@ -1,7 +1,6 @@
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import F
 from django.template import loader
 
 from radiofeed.html import strip_html
@@ -24,9 +23,9 @@ def send_recommendations_email(
         Podcast.objects.published()
         .recommended(address.user)
         .order_by(
-            F("relevance").desc(),
-            F("rating").asc(nulls_first=True),
-            F("pub_date").desc(),
+            "-relevance",
+            "-promoted",
+            "-pub_date",
         )
     )[:num_podcasts]
 

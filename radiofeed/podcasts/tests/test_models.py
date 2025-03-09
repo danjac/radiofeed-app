@@ -215,15 +215,10 @@ class TestPodcastManager:
         assert Podcast.objects.scheduled().exists() is exists
 
     @pytest.mark.django_db
-    def test_promoted(self):
-        PodcastFactory(rating=1)
-        assert Podcast.objects.promoted().exists() is True
-
-    @pytest.mark.django_db
     def test_recommended(self, user):
         podcast = SubscriptionFactory(subscriber=user).podcast
         RecommendationFactory.create_batch(3, podcast=podcast)
-        PodcastFactory(rating=1)
+        PodcastFactory(promoted=True)
         assert Podcast.objects.recommended(user).count() == 4
 
     @pytest.mark.django_db

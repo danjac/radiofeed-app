@@ -1,1 +1,1 @@
-0016_remove_podcast_podcasts_po_promote_fdc955_idx_and_more
+0018_set_default_promoted

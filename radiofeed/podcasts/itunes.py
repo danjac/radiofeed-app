@@ -101,23 +101,17 @@ def fetch_chart(
         )
 
         Podcast.objects.bulk_create(
-            [
-                Podcast(
-                    rss=feed.rss,
-                    rating=rating,
-                )
-                for rating, feed in enumerate(feeds, start=1)
-            ],
+            [Podcast(rss=feed.rss, promoted=True) for feed in feeds],
             unique_fields=["rss"],
-            update_fields=["rating"],
+            update_fields=["promoted"],
             update_conflicts=True,
         )
 
         # Unpromote any other promoted podcasts
 
-        Podcast.objects.promoted().exclude(
+        Podcast.objects.filter(promoted=True).exclude(
             rss__in={feed.rss for feed in feeds},
-        ).update(rating=None)
+        ).update(promoted=False)
 
         return feeds
     return []

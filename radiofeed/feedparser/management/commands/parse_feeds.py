@@ -33,7 +33,7 @@ def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
         .filter(active=True)
         .order_by(
             F("subscribers").desc(),
-            F("rating").asc(nulls_last=True),
+            F("promoted").desc(),
             F("parsed").asc(nulls_first=True),
         )[:limit]
     )
