@@ -295,14 +295,14 @@ class TestFetchTopChart:
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
-        feeds = itunes.fetch_chart(bad_client, country="us")
-        assert len(feeds) == 0
+        with pytest.raises(itunes.ItunesError):
+            itunes.fetch_chart(bad_client, country="us")
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_result(self, bad_result_client):
-        feeds = itunes.fetch_chart(bad_result_client, country="us")
-        assert len(feeds) == 0
+        with pytest.raises(itunes.ItunesError):
+            itunes.fetch_chart(bad_result_client, country="us")
         assert not Podcast.objects.exists()
 
 
@@ -351,8 +351,8 @@ class TestSearch:
 
     @pytest.mark.django_db
     def test_not_ok(self, bad_client):
-        feeds = itunes.search(bad_client, "test")
-        assert len(feeds) == 0
+        with pytest.raises(itunes.ItunesError):
+            itunes.search(bad_client, "test")
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db

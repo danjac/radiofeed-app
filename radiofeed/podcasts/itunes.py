@@ -7,6 +7,10 @@ from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
 
+class ItunesError(Exception):
+    """Base class for iTunes API errors."""
+
+
 @dataclasses.dataclass(frozen=True)
 class Feed:
     """Encapsulates iTunes API result."""
@@ -89,6 +93,9 @@ def fetch_chart(
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
     """
+
+    feeds: list[Feed] = []
+
     if itunes_ids := _fetch_itunes_ids(
         client,
         f"https://rss.marketingtools.apple.com/api/v2/"
@@ -113,8 +120,7 @@ def fetch_chart(
             rss__in={feed.rss for feed in feeds},
         ).update(promoted=False)
 
-        return feeds
-    return []
+    return feeds
 
 
 def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
@@ -156,8 +162,8 @@ def _fetch_json(client: Client, url: str, **params) -> dict:
         )
         response.raise_for_status()
         return response.json()
-    except httpx.HTTPError:
-        return {}
+    except httpx.HTTPError as e:
+        raise ItunesError(f"Failed to fetch {url}: {e}") from e
 
 
 def _parse_feed(feed: dict) -> Feed | None:

@@ -164,6 +164,15 @@ class TestSearchItunes:
 
         mock_search.assert_called()
 
+    @pytest.mark.django_db
+    def test_search_error(self, client, auth_user, mocker):
+        mocker.patch(
+            "radiofeed.podcasts.itunes.search_cached",
+            side_effect=itunes.ItunesError("Error"),
+        )
+        response = client.get(self.url, {"search": "test"})
+        assert200(response)
+
 
 class TestPodcastSimilar:
     @pytest.mark.django_db
