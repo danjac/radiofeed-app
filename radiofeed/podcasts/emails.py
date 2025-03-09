@@ -1,7 +1,7 @@
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import Exists, F, OuterRef
+from django.db.models import F
 from django.template import loader
 
 from radiofeed.html import strip_html
@@ -23,14 +23,6 @@ def send_recommendations_email(
     podcasts = (
         Podcast.objects.published()
         .recommended(address.user)
-        .annotate(
-            is_recommended=Exists(
-                address.user.recommended_podcasts.filter(
-                    pk=OuterRef("pk"),
-                )
-            ),
-        )
-        .filter(is_recommended=False)
         .order_by(
             F("relevance").desc(),
             F("rating").asc(nulls_first=True),

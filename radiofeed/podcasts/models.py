@@ -148,12 +148,16 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         # we want the sum of the relevance of the recommendations, grouped by recommended
 
         subscribed = set(user.subscriptions.values_list("podcast", flat=True))
+        recommended = set(user.recommended_podcasts.values_list("pk", flat=True))
+
+        exclude = subscribed | recommended
 
         scores = (
             Recommendation.objects.filter(
                 podcast__in=subscribed,
                 recommended=models.OuterRef("pk"),
             )
+            .exclude(recommended__in=exclude)
             .values("score")
             .order_by("-score")
         )
@@ -171,7 +175,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
             .filter(
                 models.Q(relevance__gt=0) | models.Q(rating__isnull=False),
             )
-            .exclude(pk__in=subscribed)
+            .exclude(pk__in=exclude)
         )
 
 

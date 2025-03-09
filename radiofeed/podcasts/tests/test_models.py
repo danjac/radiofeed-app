@@ -232,6 +232,21 @@ class TestPodcastManager:
         RecommendationFactory(recommended=podcast)
         assert Podcast.objects.recommended(user).count() == 0
 
+    @pytest.mark.django_db
+    def test_already_recommended(self, user):
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        recommended = RecommendationFactory(podcast=podcast).recommended
+        user.recommended_podcasts.add(recommended)
+        assert Podcast.objects.recommended(user).count() == 0
+
+    @pytest.mark.django_db
+    def test_recommended_is_subscribed_or_recommended(self, user):
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        RecommendationFactory(recommended=podcast)
+        recommended = RecommendationFactory(podcast=podcast).recommended
+        user.recommended_podcasts.add(recommended)
+        assert Podcast.objects.recommended(user).count() == 0
+
 
 class TestPodcastModel:
     def test_str(self):
