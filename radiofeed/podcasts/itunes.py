@@ -22,7 +22,7 @@ class Feed:
         return self.title or self.rss
 
 
-def search(client: Client, search_term: str, *, limit: int = 50) -> list[Feed]:
+def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
     """Search iTunes podcast API. New podcasts will be added.
     If the feed already exists, it will be attached to the Feed."""
     feeds = _fetch_feeds(
@@ -66,7 +66,7 @@ def search_cached(
     client: Client,
     search_term: str,
     *,
-    limit: int = 50,
+    limit: int = 30,
     cache_timeout: int = 300,
 ) -> list[Feed]:
     """Search iTunes podcast API with caching."""
@@ -84,13 +84,10 @@ def fetch_chart(
     client: Client,
     *,
     country: str = "gb",
-    limit: int = 50,
-    demote: bool = False,
+    limit: int = 30,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
-
-    If `demote` is True, all currently promoted podcasts will be demoted if they are not in the chart.
     """
     if itunes_ids := _fetch_itunes_ids(
         client,
@@ -107,19 +104,20 @@ def fetch_chart(
             [
                 Podcast(
                     rss=feed.rss,
-                    promoted=True,
+                    rating=rating,
                 )
-                for feed in feeds
+                for rating, feed in enumerate(feeds, start=1)
             ],
             unique_fields=["rss"],
-            update_fields=["promoted"],
+            update_fields=["rating"],
             update_conflicts=True,
         )
 
-        if demote:
-            Podcast.objects.filter(promoted=True).exclude(
-                rss__in={feed.rss for feed in feeds},
-            ).update(promoted=False)
+        # Unpromote any other promoted podcasts
+
+        Podcast.objects.promoted().exclude(
+            rss__in={feed.rss for feed in feeds},
+        ).update(rating=None)
 
         return feeds
     return []

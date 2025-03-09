@@ -20,7 +20,6 @@ _discover_url = reverse_lazy("podcasts:discover")
 class TestSubscriptions:
     @pytest.mark.django_db
     def test_authenticated_no_subscriptions(self, client, auth_user):
-        PodcastFactory.create_batch(3, promoted=True)
         response = client.get(_subscriptions_url)
         assert200(response)
 
@@ -30,7 +29,6 @@ class TestSubscriptions:
     def test_user_is_subscribed(self, client, auth_user):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
 
-        PodcastFactory.create_batch(3, promoted=True)
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(_subscriptions_url)
 
@@ -43,7 +41,6 @@ class TestSubscriptions:
 
     @pytest.mark.django_db
     def test_htmx_request(self, client, auth_user):
-        PodcastFactory.create_batch(3, promoted=True)
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(
             _subscriptions_url,
@@ -64,7 +61,6 @@ class TestSubscriptions:
     def test_user_is_subscribed_search(self, client, auth_user):
         """If user subscribed any podcasts, show only own feed with these podcasts"""
 
-        PodcastFactory.create_batch(3, promoted=True)
         sub = SubscriptionFactory(subscriber=auth_user)
         response = client.get(_subscriptions_url, {"search": sub.podcast.title})
 
@@ -79,7 +75,6 @@ class TestSubscriptions:
 class TestDiscover:
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
-        PodcastFactory.create_batch(3, promoted=True)
         response = client.get(_discover_url)
         assert200(response)
         assertTemplateUsed(response, "podcasts/discover.html")

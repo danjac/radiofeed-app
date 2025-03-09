@@ -17,14 +17,7 @@ from radiofeed.podcasts import itunes
     "-l",
     type=int,
     help="Limit the number of podcasts to fetch",
-    default=50,
-)
-@click.option(
-    "--demote",
-    "-d",
-    is_flag=True,
-    help="Demote podcasts not in the chart",
-    default=False,
+    default=30,
 )
 def command(**options):
     """Crawl iTunes Top Chart."""

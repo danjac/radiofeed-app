@@ -43,9 +43,7 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
 def discover(request: HttpRequest) -> HttpResponse:
     """Shows all promoted podcasts."""
     podcasts = (
-        _get_podcasts()
-        .filter(promoted=True)
-        .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+        _get_podcasts().promoted().order_by("rating")[: settings.DEFAULT_PAGE_SIZE]
     )
 
     return render(

@@ -142,7 +142,7 @@ class PromotedFilter(admin.SimpleListFilter):
         self, request: HttpRequest, queryset: QuerySet[Podcast]
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
-        return queryset.filter(promoted=True) if self.value() == "yes" else queryset
+        return queryset.promoted() if self.value() == "yes" else queryset
 
 
 class PrivateFilter(admin.SimpleListFilter):
@@ -230,12 +230,11 @@ class PodcastAdmin(admin.ModelAdmin):
     list_display = (
         "__str__",
         "active",
-        "promoted",
         "pub_date",
         "parsed",
     )
 
-    list_editable = ("active", "promoted")
+    list_editable = ("active",)
 
     search_fields = ("title", "rss")
 

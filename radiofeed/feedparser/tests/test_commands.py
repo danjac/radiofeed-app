@@ -22,17 +22,6 @@ class TestImportOpml:
         assert Podcast.objects.count() == 1
         podcast = Podcast.objects.first()
         assert podcast is not None
-        assert podcast.promoted is False
-        patched.assert_called()
-
-    @pytest.mark.django_db
-    def test_promote(self, mocker, filename):
-        patched = mocker.patch(self.patched, return_value=iter(["https://example.com"]))
-        call_command("import_opml", filename, promote=True)
-        assert Podcast.objects.count() == 1
-        podcast = Podcast.objects.first()
-        assert podcast is not None
-        assert podcast.promoted is True
         patched.assert_called()
 
     @pytest.mark.django_db

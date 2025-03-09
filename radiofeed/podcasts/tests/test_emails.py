@@ -24,7 +24,8 @@ class TestRecommendations:
 
     @pytest.mark.django_db
     def test_send_promoted(self, address, mailoutbox):
-        PodcastFactory.create_batch(3, promoted=True)
+        for rating in range(3):
+            PodcastFactory(rating=rating)
 
         emails.send_recommendations_email(address)
         assert len(mailoutbox) == 1
@@ -43,7 +44,7 @@ class TestRecommendations:
         RecommendationFactory(podcast=third)
 
         # promoted
-        PodcastFactory(promoted=True)
+        PodcastFactory(rating=1)
 
         emails.send_recommendations_email(address)
 

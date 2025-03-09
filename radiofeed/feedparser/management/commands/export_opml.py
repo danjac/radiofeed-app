@@ -21,7 +21,7 @@ def command(file: typing.TextIO, *, promoted: bool) -> None:
     podcasts = Podcast.objects.published().filter(private=False).order_by("title")
 
     if promoted:
-        podcasts = podcasts.filter(promoted=True)
+        podcasts = podcasts.promoted()
 
     file.write(
         render_to_string(

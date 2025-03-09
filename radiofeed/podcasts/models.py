@@ -107,6 +107,10 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         """Returns only published podcasts (pub_date NOT NULL)."""
         return self.filter(pub_date__isnull=not published)
 
+    def promoted(self) -> models.QuerySet["Podcast"]:
+        """Returns promoted podcasts ie. have a chart rating."""
+        return self.filter(rating__isnull=False)
+
     def scheduled(self) -> models.QuerySet["Podcast"]:
         """Returns all podcasts scheduled for feed parser update.
 
@@ -165,7 +169,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                 ),
             )
             .filter(
-                models.Q(relevance__gt=0) | models.Q(promoted=True),
+                models.Q(relevance__gt=0) | models.Q(rating__isnull=False),
             )
             .exclude(pk__in=subscribed)
         )
@@ -254,7 +258,8 @@ class Podcast(models.Model):
     )
 
     explicit = models.BooleanField(default=False)
-    promoted = models.BooleanField(default=False)
+
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
 
     categories = models.ManyToManyField(
         "podcasts.Category",
@@ -276,7 +281,7 @@ class Podcast(models.Model):
         indexes: ClassVar[list] = [
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
-            models.Index(fields=["promoted"]),
+            models.Index(fields=["rating"]),
             models.Index(fields=["content_hash"]),
             models.Index(
                 Lower("title"),

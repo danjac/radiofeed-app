@@ -8,27 +8,10 @@ from radiofeed.podcasts.models import Podcast
 
 @click.command()
 @click.argument("file", type=click.File("rb"))
-@click.option(
-    "--promote",
-    "-p",
-    is_flag=True,
-    help="Promote all imported podcasts",
-    default=False,
-)
-def command(
-    file: typing.BinaryIO,
-    *,
-    promote: bool,
-) -> None:
+def command(file: typing.BinaryIO) -> None:
     """Parses an OPML file and imports podcasts."""
     podcasts = Podcast.objects.bulk_create(
-        [
-            Podcast(
-                rss=rss,
-                promoted=promote,
-            )
-            for rss in opml_parser.parse_opml(file.read())
-        ],
+        [Podcast(rss=rss) for rss in opml_parser.parse_opml(file.read())],
         ignore_conflicts=True,
     )
 

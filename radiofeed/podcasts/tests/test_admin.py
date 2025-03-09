@@ -34,9 +34,7 @@ def podcast_admin():
 
 @pytest.fixture
 def podcasts():
-    return PodcastFactory.create_batch(
-        3, active=True, promoted=False, parsed=timezone.now()
-    )
+    return PodcastFactory.create_batch(3, active=True, parsed=timezone.now())
 
 
 @pytest.fixture
@@ -140,14 +138,14 @@ class TestPubDateFilter:
 class TestPromotedFilter:
     @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(promoted=False)
+        PodcastFactory(rating=None)
         f = PromotedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
     def test_promoted(self, podcasts, podcast_admin, req):
-        promoted = PodcastFactory(promoted=True)
+        promoted = PodcastFactory(rating=1)
         f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
