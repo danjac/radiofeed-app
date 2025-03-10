@@ -1,1 +1,1 @@
-0018_set_default_promoted
+0019_remove_podcast_podcasts_po_rating_f96c31_idx_and_more
