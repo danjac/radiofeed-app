@@ -77,11 +77,14 @@ class _FeedParser:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
         response: httpx.Response | None = None
+        canonical: Podcast | None = None
+
         try:
             response = self._get_response(client)
-
             content_hash = self._make_content_hash(response)
-            self._check_duplicates(response, content_hash)
+
+            if canonical := self._get_canonical(response.url, content_hash):
+                raise DuplicateError
 
             self._parse_ok(
                 response=response,
@@ -89,7 +92,11 @@ class _FeedParser:
                 feed=rss_parser.parse_rss(response.content),
             )
         except FeedParserError as exc:
-            self._parse_error(exc, response or exc.response)
+            self._parse_error(
+                exc,
+                response or exc.response,
+                canonical=canonical,
+            )
 
     def _parse_ok(
         self,
@@ -135,6 +142,7 @@ class _FeedParser:
         self,
         exc: FeedParserError,
         response: httpx.Response | None = None,
+        **fields,
     ) -> None:
         active: bool = True
         num_retries: int = self._podcast.num_retries
@@ -174,6 +182,7 @@ class _FeedParser:
             etag=etag,
             modified=modified,
             parser_error=exc.parser_error,
+            **fields,
         )
 
         # re-raise original exception
@@ -201,18 +210,16 @@ class _FeedParser:
 
         return content_hash
 
-    def _check_duplicates(self, response: httpx.Response, content_hash: str) -> None:
+    def _get_canonical(self, url: httpx.URL, content_hash: str) -> Podcast | None:
         # check no other podcast with this RSS URL or identical content
-        if duplicate := (
+        return (
             Podcast.objects.exclude(pk=self._podcast.pk)
             .filter(
-                Q(rss=response.url) | Q(content_hash=content_hash),
+                Q(rss=url) | Q(content_hash=content_hash),
                 canonical__isnull=True,
             )
             .first()
-        ):
-            duplicate.duplicates.add(self._podcast)
-            raise DuplicateError
+        )
 
     def _parse_etag(self, response: httpx.Response) -> str:
         return response.headers.get("ETag", "")
