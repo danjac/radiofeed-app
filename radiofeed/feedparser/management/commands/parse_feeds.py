@@ -39,7 +39,10 @@ def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
     )
 
 
-def _parse_feed(podcast: Podcast, client: Client) -> None:
+def _parse_feed(
+    podcast: Podcast,
+    client: Client,
+) -> None:
     try:
         feed_parser.parse_feed(podcast, client)
         click.secho(f"{podcast}: Success", fg="green")

@@ -121,3 +121,13 @@ class TestFeed:
         assert feed.description == ""
         assert feed.categories == set()
         assert feed.pub_date == item.pub_date
+
+    def test_tokenize(self):
+        feed = Feed(
+            **FeedFactory(
+                title="The Title",
+                description="description",
+                items=[ItemFactory(title="item")],
+            )
+        )
+        assert feed.tokenize() == "title description item"

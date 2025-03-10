@@ -4,6 +4,7 @@ from typing import ClassVar, Final
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
+from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models.functions import Coalesce, Lower
@@ -20,6 +21,17 @@ from radiofeed.users.models import User
 
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
+
+    def from_cache(
+        self,
+        cache_key: str = "categories",
+        cache_timeout: int = 3600,
+    ) -> list["Category"]:
+        """Returns categories from cache."""
+        if (categories := cache.get(cache_key)) is None:
+            categories = list(self.all())
+            cache.set(cache_key, categories, timeout=cache_timeout)
+        return categories
 
     def search(self, search_term) -> models.QuerySet["Category"]:
         """Does a simple search for categories."""

@@ -1,6 +1,5 @@
 import collections
 import contextlib
-import functools
 import itertools
 import operator
 import statistics
@@ -75,7 +74,7 @@ class _Recommender:
     ) -> collections.defaultdict[tuple[int, int], list[float]]:
         matches = collections.defaultdict(list)
 
-        for category in get_categories():
+        for category in Category.objects.from_cache():
             for batch in itertools.batched(
                 self._get_podcasts(category)
                 .values_list("id", "extracted_text")
@@ -127,9 +126,3 @@ class _Recommender:
                             and (recommended_id := podcast_ids[index]) != current_id
                         ):
                             yield current_id, recommended_id, similarity
-
-
-@functools.cache
-def get_categories() -> list[Category]:
-    """Returns cached list of categories."""
-    return list(Category.objects.order_by("name"))

@@ -1,47 +1,23 @@
-import functools
-import hashlib
 import itertools
 from collections.abc import Iterator
-from datetime import datetime, timedelta
 from typing import Final
 
-import httpx
 from django.db import transaction
 from django.db.models import Q
-from django.db.models.functions import Lower
 from django.db.utils import DataError
 from django.utils import timezone
-from django.utils.http import http_date, quote_etag
 
-from radiofeed import tokenizer
 from radiofeed.episodes.models import Episode
-from radiofeed.feedparser import rss_parser, scheduler
-from radiofeed.feedparser.date_parser import parse_date
+from radiofeed.feedparser import fetcher, rss_parser, scheduler
 from radiofeed.feedparser.exceptions import (
     DuplicateError,
     FeedParserError,
-    InaccessibleError,
     InvalidDataError,
     NotModifiedError,
-    UnavailableError,
 )
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
-
-
-@functools.cache
-def get_categories() -> dict[str, Category]:
-    """Returns a cached dict of categories with lowercase names as key."""
-    return {
-        category.lowercase_name: category
-        for category in Category.objects.annotate(lowercase_name=Lower("name"))
-    }
-
-
-def make_content_hash(content: bytes) -> str:
-    """Hashes RSS content."""
-    return hashlib.sha256(content).hexdigest()
 
 
 def parse_feed(podcast: Podcast, client: Client) -> None:
@@ -53,16 +29,6 @@ class _FeedParser:
     """Updates a Podcast instance with its RSS or Atom feed source."""
 
     _max_retries: Final = 3
-
-    _accept_header: Final = (
-        "application/atom+xml,"
-        "application/rdf+xml,"
-        "application/rss+xml,"
-        "application/x-netcdf,"
-        "application/xml;q=0.9,"
-        "text/xml;q=0.2,"
-        "*/*;q=0.1"
-    )
 
     def __init__(self, podcast: Podcast) -> None:
         self._podcast = podcast
@@ -76,42 +42,59 @@ class _FeedParser:
         Raises:
             FeedParserError: if any errors found in fetching or parsing the feed.
         """
-        response: httpx.Response | None = None
+
+        canonical = None
+
+        etag = self._podcast.etag
+        modified = self._podcast.modified
+        content_hash = self._podcast.content_hash
+
         try:
-            response = self._get_response(client)
+            response = fetcher.fetch(
+                client,
+                self._podcast.rss,
+                etag=etag,
+                modified=modified,
+            )
 
-            content_hash = self._make_content_hash(response)
-            self._check_duplicates(response, content_hash)
+            etag = response.etag
+            modified = response.modified
+            content_hash = response.content_hash
 
-            self._parse_ok(
-                response=response,
-                content_hash=content_hash,
+            # check if feed has been modified: usually the feed should return a 304 status,
+            # but some feeds may not support this so we check the content hash
+            if content_hash == self._podcast.content_hash:
+                raise NotModifiedError
+
+            if canonical := self._find_canonical(response.url, content_hash):
+                raise DuplicateError
+
+            self._update_ok(
                 feed=rss_parser.parse_rss(response.content),
+                rss=response.url,
+                content_hash=content_hash,
+                etag=etag,
+                modified=modified,
             )
         except FeedParserError as exc:
-            self._parse_error(exc, response or exc.response)
+            self._update_error(
+                exc,
+                canonical=canonical,
+                content_hash=content_hash,
+                etag=etag,
+                modified=modified,
+            )
 
-    def _parse_ok(
-        self,
-        *,
-        response: httpx.Response,
-        content_hash: str,
-        feed: Feed,
-    ) -> None:
-        categories_dct = get_categories()
-
+    def _update_ok(self, feed: Feed, **fields) -> None:
+        category_dct = self._get_categories_dict()
         try:
             with transaction.atomic():
-                self._podcast_update(
+                self._update(
                     num_retries=0,
                     parser_error="",
-                    content_hash=content_hash,
-                    rss=response.url,
                     active=not (feed.complete),
-                    etag=self._parse_etag(response),
-                    modified=self._parse_modified(response),
-                    keywords=self._parse_keywords(feed, categories_dct),
-                    extracted_text=self._tokenize_content(feed),
+                    extracted_text=feed.tokenize(),
+                    keywords=self._parse_keywords(feed, category_dct),
                     frequency=scheduler.schedule(feed),
                     **feed.model_dump(
                         exclude={
@@ -120,115 +103,34 @@ class _FeedParser:
                             "items",
                         }
                     ),
+                    **fields,
                 )
-
-                self._podcast.categories.set(
-                    self._parse_categories(feed, categories_dct)
-                )
-
+                self._podcast.categories.set(self._parse_categories(feed, category_dct))
                 self._episode_updates(feed)
 
         except DataError as exc:
             raise InvalidDataError from exc
 
-    def _parse_error(
-        self,
-        exc: FeedParserError,
-        response: httpx.Response | None = None,
-    ) -> None:
-        active: bool = True
-        num_retries: int = self._podcast.num_retries
-        frequency: timedelta | None = self._podcast.frequency
+    def _update_error(self, exc: FeedParserError, **fields) -> None:
+        frequency = self._podcast.frequency
+        num_retries = self._get_retries(exc)
 
-        etag: str = self._podcast.etag
-        modified: datetime | None = self._podcast.modified
-
-        match exc:
-            case DuplicateError():
-                active = False
-
-            case NotModifiedError():
-                num_retries = 0
-
-            case _:
-                num_retries += 1
-
-        # if number of errors exceeds threshold then deactivate the podcast
-        active = active and self._max_retries > num_retries
-
-        if active:
-            # if still active, reschedule podcast and set etag and modified headers for next time
-
+        if active := self._keep_active(exc, num_retries):
             frequency = scheduler.reschedule(
                 self._podcast.pub_date, self._podcast.frequency
             )
 
-            if response:
-                etag = self._parse_etag(response)
-                modified = self._parse_modified(response)
-
-        self._podcast_update(
+        self._update(
             active=active,
             num_retries=num_retries,
             frequency=frequency,
-            etag=etag,
-            modified=modified,
             parser_error=exc.parser_error,
+            **fields,
         )
-
         # re-raise original exception
         raise exc
 
-    def _get_response(self, client: Client) -> httpx.Response:
-        try:
-            try:
-                return client.get(self._podcast.rss, headers=self._get_headers())
-            except httpx.HTTPStatusError as exc:
-                if exc.response.is_redirect:
-                    raise NotModifiedError(response=exc.response) from exc
-                if exc.response.is_client_error:
-                    raise InaccessibleError(response=exc.response) from exc
-                raise
-        except httpx.HTTPError as exc:
-            raise UnavailableError from exc
-
-    def _make_content_hash(self, response: httpx.Response) -> str:
-        content_hash = make_content_hash(response.content)
-
-        # check content hash has changed
-        if content_hash == self._podcast.content_hash:
-            raise NotModifiedError
-
-        return content_hash
-
-    def _check_duplicates(self, response: httpx.Response, content_hash: str) -> None:
-        # check no other podcast with this RSS URL or identical content
-        if duplicate := (
-            Podcast.objects.exclude(pk=self._podcast.pk)
-            .filter(
-                Q(rss=response.url) | Q(content_hash=content_hash),
-                canonical__isnull=True,
-            )
-            .first()
-        ):
-            duplicate.duplicates.add(self._podcast)
-            raise DuplicateError
-
-    def _parse_etag(self, response: httpx.Response) -> str:
-        return response.headers.get("ETag", "")
-
-    def _parse_modified(self, response: httpx.Response) -> datetime | None:
-        return parse_date(response.headers.get("Last-Modified"))
-
-    def _get_headers(self) -> dict[str, str]:
-        headers = {"Accept": self._accept_header}
-        if self._podcast.etag:
-            headers["If-None-Match"] = quote_etag(self._podcast.etag)
-        if self._podcast.modified:
-            headers["If-Modified-Since"] = http_date(self._podcast.modified.timestamp())
-        return headers
-
-    def _podcast_update(self, **fields) -> None:
+    def _update(self, **fields) -> None:
         now = timezone.now()
 
         Podcast.objects.filter(pk=self._podcast.pk).update(
@@ -237,33 +139,22 @@ class _FeedParser:
             **fields,
         )
 
-    def _parse_keywords(self, feed: Feed, categories_dct: dict[str, Category]) -> str:
-        return " ".join(
-            [value for value in feed.categories if value not in categories_dct]
+    def _find_canonical(self, url: str, content_hash: str) -> Podcast | None:
+        # check no other podcast with this RSS URL or identical content
+        return (
+            Podcast.objects.exclude(pk=self._podcast.pk)
+            .filter(
+                Q(rss=url) | Q(content_hash=content_hash),
+                canonical__isnull=True,
+            )
+            .first()
         )
 
-    def _parse_categories(
-        self, feed: Feed, categories_dct: dict[str, Category]
-    ) -> list[Category]:
-        return [
-            categories_dct[value]
-            for value in feed.categories
-            if value in categories_dct
-        ]
-
-    def _tokenize_content(self, feed: Feed) -> str:
-        text = " ".join(
-            value
-            for value in [
-                feed.title,
-                feed.description,
-                feed.owner,
-            ]
-            + list(feed.categories)
-            + [item.title for item in feed.items][:6]
-            if value
-        )
-        return " ".join(tokenizer.tokenize(self._podcast.language, text))
+    def _get_categories_dict(self) -> dict[str, Category]:
+        return {
+            category.name.casefold(): category
+            for category in Category.objects.from_cache()
+        }
 
     def _episode_updates(self, feed: Feed) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
@@ -325,3 +216,34 @@ class _FeedParser:
             podcast=self._podcast,
             **item.model_dump(exclude={"categories"}),
         )
+
+    def _get_retries(self, exc: FeedParserError) -> int:
+        match exc:
+            case NotModifiedError():
+                return 0
+
+            case _:
+                return self._podcast.num_retries + 1
+
+    def _keep_active(self, exc: FeedParserError, num_retries: int) -> bool:
+        match exc:
+            case DuplicateError():
+                return False
+
+            case NotModifiedError():
+                return True
+
+            case _:
+                return self._max_retries > num_retries
+
+    def _parse_categories(
+        self, feed: Feed, category_dict: dict[str, Category]
+    ) -> set[Category]:
+        return {
+            category_dict[category]
+            for category in feed.categories
+            if category in category_dict
+        }
+
+    def _parse_keywords(self, feed: Feed, category_dict: dict[str, Category]) -> str:
+        return " ".join(feed.categories - set(category_dict.keys()))

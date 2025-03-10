@@ -17,6 +17,7 @@ from pydantic import (
     model_validator,
 )
 
+from radiofeed import tokenizer
 from radiofeed.episodes.audio_types import AudioMimetype
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
@@ -260,3 +261,18 @@ class Feed(BaseModel):
         """Set default pub date based on max items pub date."""
         self.pub_date = max([item.pub_date for item in self.items])
         return self
+
+    def tokenize(self) -> str:
+        """Tokenize feed for search."""
+        text = " ".join(
+            value
+            for value in [
+                self.title,
+                self.description,
+                self.owner,
+            ]
+            + list(self.categories)
+            + [item.title for item in self.items][:6]
+            if value
+        )
+        return " ".join(tokenizer.tokenize(self.language, text))
