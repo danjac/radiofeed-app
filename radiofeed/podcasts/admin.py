@@ -210,27 +210,11 @@ class ScheduledFilter(admin.SimpleListFilter):
         return queryset.scheduled() if self.value() == "yes" else queryset
 
 
-class DuplicateInlineAdmin(admin.TabularInline):
-    """Inline admin for duplicate podcasts."""
-
-    model = Podcast
-    extra = 0
-
-    fk_name = "canonical"
-    fields = ("rss",)
-    readonly_fields = fields
-
-    verbose_name = "Duplicate"
-    verbose_name_plural = "Duplicates"
-
-
 @admin.register(Podcast)
 class PodcastAdmin(admin.ModelAdmin):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"
-
-    inlines = (DuplicateInlineAdmin,)
 
     list_filter = (
         ActiveFilter,
