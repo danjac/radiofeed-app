@@ -1,4 +1,6 @@
 import dataclasses
+from collections.abc import Iterable
+from typing import Any
 
 import httpx
 from django.core.cache import cache
@@ -24,6 +26,10 @@ class Feed:
     def __str__(self) -> str:
         """Return title or RSS"""
         return self.title or self.rss
+
+    def __eq__(self, other: Any) -> bool:
+        """Compare by RSS"""
+        return isinstance(other, Feed) and self.rss == other.rss
 
 
 def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
@@ -125,31 +131,32 @@ def fetch_chart(
 
 def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
     """Fetches and parses feeds from iTunes API."""
-
-    return list(
-        {
-            feed.rss: feed
+    return _orderedset(
+        [
+            feed
             for feed in [
                 _parse_feed(result)
                 for result in _fetch_json(client, url, **params).get("results", [])
             ]
             if feed
-        }.values()
+        ]
     )
 
 
-def _fetch_itunes_ids(client: Client, url: str, **params) -> set[str]:
+def _fetch_itunes_ids(client: Client, url: str, **params) -> list[str]:
     """Fetches podcast IDs from results."""
-    return {
-        itunes_id
-        for itunes_id in [
-            result.get("id")
-            for result in _fetch_json(client, url, **params)
-            .get("feed", {})
-            .get("results", [])
+    return _orderedset(
+        [
+            itunes_id
+            for itunes_id in [
+                result.get("id")
+                for result in _fetch_json(client, url, **params)
+                .get("feed", {})
+                .get("results", [])
+            ]
+            if itunes_id
         ]
-        if itunes_id
-    }
+    )
 
 
 def _fetch_json(client: Client, url: str, **params) -> dict:
@@ -177,3 +184,7 @@ def _parse_feed(feed: dict) -> Feed | None:
         )
     except KeyError:
         return None
+
+
+def _orderedset(items: Iterable) -> list:
+    return list(dict.fromkeys(items))
