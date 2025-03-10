@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
+from django.utils.http import http_date, quote_etag
 from django.utils.text import slugify
 
 from radiofeed.html import strip_html
@@ -407,6 +408,15 @@ class Podcast(models.Model):
     def is_serial(self) -> bool:
         """Returns true if podcast is serial."""
         return self.podcast_type == self.PodcastType.SERIAL
+
+    def build_http_headers(self) -> dict[str, str]:
+        """Builds HTTP headers for podcast feed requests."""
+        headers = {}
+        if self.etag:
+            headers["If-None-Match"] = quote_etag(self.etag)
+        if self.modified:
+            headers["If-Modified-Since"] = http_date(self.modified.timestamp())
+        return headers
 
 
 class Subscription(models.Model):

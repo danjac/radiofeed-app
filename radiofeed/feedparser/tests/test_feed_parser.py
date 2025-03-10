@@ -4,7 +4,6 @@ from datetime import datetime
 
 import httpx
 import pytest
-from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
@@ -18,7 +17,6 @@ from radiofeed.feedparser.exceptions import (
     UnavailableError,
 )
 from radiofeed.feedparser.feed_parser import (
-    _FeedParser,
     get_categories,
     make_content_hash,
     parse_feed,
@@ -82,16 +80,6 @@ class TestFeedParser:
 
     def get_rss_content(self, filename=""):
         return _get_mock_file_path(filename or self.mock_file).read_bytes()
-
-    def test_has_etag(self):
-        podcast = Podcast(etag="abc123")
-        headers = _FeedParser(podcast)._get_headers()
-        assert headers["If-None-Match"] == f'"{podcast.etag}"'
-
-    def test_is_modified(self):
-        podcast = Podcast(modified=timezone.now())
-        headers = _FeedParser(podcast)._get_headers()
-        assert headers["If-Modified-Since"]
 
     @pytest.mark.django_db
     def test_parse_unhandled_exception(self, podcast, mocker):
@@ -389,8 +377,8 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.DUPLICATE
 
         assert podcast.active is False
-        assert not podcast.etag
-        assert podcast.modified is None
+        assert podcast.etag == "abc123"
+        assert podcast.modified is not None
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()

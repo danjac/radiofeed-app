@@ -375,6 +375,16 @@ class TestPodcastModel:
         assert podcast.is_episodic() is False
         assert podcast.is_serial() is True
 
+    def test_has_etag(self):
+        podcast = Podcast(etag="abc123")
+        headers = podcast.build_http_headers()
+        assert headers["If-None-Match"] == f'"{podcast.etag}"'
+
+    def test_is_modified(self):
+        podcast = Podcast(modified=timezone.now())
+        headers = podcast.build_http_headers()
+        assert headers["If-Modified-Since"]
+
     def assert_hours_diff(self, delta, hours):
         assert delta.total_seconds() / 3600 == pytest.approx(hours)
 
