@@ -201,6 +201,14 @@ class Podcast(models.Model):
         help_text="Inactive podcasts will no longer be updated from their RSS feeds.",
     )
 
+    canonical = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="duplicates",
+    )
+
     private = models.BooleanField(
         default=False,
         help_text="Only available to subscribers",

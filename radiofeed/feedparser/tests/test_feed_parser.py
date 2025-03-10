@@ -501,6 +501,8 @@ class TestFeedParser:
         assert not podcast.active
         assert podcast.parsed
 
+        assert podcast.canonical == other
+
     @pytest.mark.django_db
     def test_parse_invalid_data(self, podcast, categories):
         client = _mock_client(

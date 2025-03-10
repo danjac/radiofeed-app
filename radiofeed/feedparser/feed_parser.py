@@ -203,11 +203,15 @@ class _FeedParser:
 
     def _check_duplicates(self, response: httpx.Response, content_hash: str) -> None:
         # check no other podcast with this RSS URL or identical content
-        if (
+        if duplicate := (
             Podcast.objects.exclude(pk=self._podcast.pk)
-            .filter(Q(rss=response.url) | Q(content_hash=content_hash))
-            .exists()
+            .filter(
+                Q(rss=response.url) | Q(content_hash=content_hash),
+                canonical__isnull=True,
+            )
+            .first()
         ):
+            duplicate.duplicates.add(self._podcast)
             raise DuplicateError
 
     def _parse_etag(self, response: httpx.Response) -> str:

@@ -276,6 +276,19 @@ class TestFetchTopChart:
         assert podcast.promoted is True
 
     @pytest.mark.django_db
+    def test_canonical_already_exists(self, good_client):
+        podcast = PodcastFactory(promoted=False)
+        PodcastFactory(
+            canonical=podcast,
+            rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
+        )
+        feeds = itunes.fetch_chart(good_client, country="us")
+        assert len(feeds) == 1
+
+        podcast.refresh_from_db()
+        assert podcast.promoted is True
+
+    @pytest.mark.django_db
     def test_demote(self, good_client):
         podcast = PodcastFactory(
             rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],

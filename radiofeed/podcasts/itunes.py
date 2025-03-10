@@ -4,6 +4,7 @@ from typing import Any
 
 import httpx
 from django.core.cache import cache
+from django.db.models import Q
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
@@ -46,10 +47,12 @@ def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
     if not feeds:
         return []
 
-    # Attach existing podcasts to feeds
-    podcasts = Podcast.objects.filter(
-        rss__in={f.rss for f in feeds},
-    ).in_bulk(field_name="rss")
+    podcasts = {
+        podcast.rss: podcast.canonical or podcast
+        for podcast in Podcast.objects.filter(
+            rss__in={feed.rss for feed in feeds}
+        ).select_related("canonical")
+    }
 
     feeds = [
         dataclasses.replace(
@@ -113,19 +116,21 @@ def fetch_chart(
             id=",".join(itunes_ids),
         )
 
+        rss_feeds = {feed.rss for feed in feeds}
+
+        q = Q(rss__in=rss_feeds) | Q(duplicates__rss__in=rss_feeds)
+
+        # check duplicates
+        rss_feeds |= set(Podcast.objects.filter(q).values_list("rss", flat=True))
+
         Podcast.objects.bulk_create(
-            [Podcast(rss=feed.rss, promoted=True) for feed in feeds],
+            [Podcast(rss=rss, promoted=True) for rss in rss_feeds],
             unique_fields=["rss"],
             update_fields=["promoted"],
             update_conflicts=True,
         )
 
-        # Unpromote any other promoted podcasts
-
-        Podcast.objects.filter(promoted=True).exclude(
-            rss__in={feed.rss for feed in feeds},
-        ).update(promoted=False)
-
+        Podcast.objects.filter(promoted=True).exclude(q).update(promoted=False)
     return feeds
 
 
