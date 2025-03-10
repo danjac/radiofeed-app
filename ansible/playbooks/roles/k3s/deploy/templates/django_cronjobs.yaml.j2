@@ -5,7 +5,7 @@ metadata:
   name: {{ cronjob.name }}
 spec:
   schedule: "{{ cronjob.schedule }}"
-  concurrencyPolicy: Forbid
+  concurrencyPolicy: Replace
   jobTemplate:
     spec:
       backoffLimit: 1

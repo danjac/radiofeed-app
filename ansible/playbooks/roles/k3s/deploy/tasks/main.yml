@@ -66,7 +66,7 @@
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Force CoreDNS to run on the server node
-  ansible.builtin.shell: >
+  ansible.builtin.shell: |
       kubectl patch deployment coredns -n kube-system \
         --type='json' \
         -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
@@ -78,11 +78,6 @@
       kubectl rollout restart deployment/coredns -n kube-system
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Get Django hosts
-  ansible.builtin.set_fact:
-      django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
-  changed_when: false
 
 - name: Get the current image of the django-app pod
   ansible.builtin.shell: |
@@ -98,6 +93,11 @@
       image: "{{ current_image.stdout | default(docker_image) }}"
   changed_when: false
 
+- name: Get Django hosts
+  ansible.builtin.set_fact:
+      django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
+  changed_when: false
+
 - name: Apply spec files
   vars:
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
@@ -106,20 +106,20 @@
   ansible.builtin.command: >
       kubectl apply -f -
   args:
-      stdin: "{{ lookup('template', item + '.j2') }}"
+      stdin: "{{ lookup('template', item + '.yaml.j2') }}"
   loop:
-      - configmap.yaml
-      - secrets.yaml
-      - postgres_pv.yaml
-      - postgres_pvc.yaml
-      - postgres_statefulset.yaml
-      - postgres_service.yaml
-      - redis_deployment.yaml
-      - redis_service.yaml
-      - django_deployment.yaml
-      - django_service.yaml
-      - django_cronjobs.yaml
-      - ingress.yaml
+      - configmap
+      - secrets
+      - postgres_pv
+      - postgres_pvc
+      - postgres_statefulset
+      - postgres_service
+      - redis_deployment
+      - redis_service
+      - django_deployment
+      - django_service
+      - django_cronjobs
+      - ingress
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
