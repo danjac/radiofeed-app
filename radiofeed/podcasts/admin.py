@@ -213,8 +213,13 @@ class ScheduledFilter(admin.SimpleListFilter):
 class DuplicateInlineAdmin(admin.TabularInline):
     """Inline admin for duplicate podcasts."""
 
-    model = Podcast.duplicates.through
+    model = Podcast
     extra = 0
+
+    fk_name = "canonical"
+    fields = ("rss",)
+    readonly_fields = fields
+
     verbose_name = "Duplicate"
     verbose_name_plural = "Duplicates"
 
