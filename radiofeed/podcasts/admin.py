@@ -238,7 +238,10 @@ class PodcastAdmin(admin.ModelAdmin):
 
     search_fields = ("title", "rss")
 
-    raw_id_fields = ("recipients",)
+    raw_id_fields = (
+        "canonical",
+        "recipients",
+    )
 
     readonly_fields = (
         "pub_date",
