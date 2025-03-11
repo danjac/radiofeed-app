@@ -63,7 +63,7 @@ def fetch_rss(
     etag: str = "",
     modified: timezone.datetime | None = None,
 ) -> Response:
-    """Fetches the podcast's RSS or Atom feed."""
+    """Fetches RSS or Atom feed."""
     try:
         try:
             return Response(
