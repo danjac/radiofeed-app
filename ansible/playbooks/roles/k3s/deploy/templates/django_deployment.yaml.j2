@@ -11,7 +11,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
         maxSurge: 1  # Only one extra pod can be created at a time
-        maxUnavailable: 0  # Only one pod can be replaced at a time
+        maxUnavailable: 1  # Only one pod can be replaced at a time
   template:
     metadata:
       labels:
@@ -42,11 +42,11 @@ spec:
             httpGet:
               path: /ht/
               port: 8000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /ht/
               port: 8000
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 10
