@@ -8,7 +8,7 @@ from django.db.utils import DataError
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
-from radiofeed.feedparser import fetcher, rss_parser, scheduler
+from radiofeed.feedparser import rss_fetcher, rss_parser, scheduler
 from radiofeed.feedparser.exceptions import (
     DuplicateError,
     FeedParserError,
@@ -50,7 +50,7 @@ class _FeedParser:
         content_hash = self._podcast.content_hash
 
         try:
-            response = fetcher.fetch(
+            response = rss_fetcher.fetch_rss(
                 client,
                 self._podcast.rss,
                 etag=etag,

@@ -17,7 +17,7 @@ from radiofeed.feedparser.exceptions import (
     UnavailableError,
 )
 from radiofeed.feedparser.feed_parser import parse_feed
-from radiofeed.feedparser.fetcher import make_content_hash
+from radiofeed.feedparser.rss_fetcher import make_content_hash
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory

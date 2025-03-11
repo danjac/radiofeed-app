@@ -41,8 +41,8 @@ class TestBuildHttpHeaders:
         assert headers["If-Modified-Since"] == "Wed, 01 Jan 2025 00:00:00 GMT"
 
 
-class TestFetch:
-    def test_fetch_ok(self):
+class TestFetchRss:
+    def test_ok(self):
         def _handle(request):
             return httpx.Response(
                 http.HTTPStatus.OK,
@@ -65,7 +65,7 @@ class TestFetch:
         assert response.content == b"test"
         assert response.content_hash == make_content_hash(b"test")
 
-    def test_fetch_not_modified(self):
+    def test_not_modified(self):
         def _handle(request):
             return httpx.Response(
                 http.HTTPStatus.NOT_MODIFIED,
