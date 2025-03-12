@@ -14,7 +14,7 @@ spec:
         spec:
           restartPolicy: Never
           nodeSelector:
-             role: crons
+             role: jobrunner
           containers:
           - name: django
             image: {{ image }}

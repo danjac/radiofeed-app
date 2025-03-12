@@ -101,20 +101,16 @@
     image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
   changed_when: false
 
-- name: Debug image
-  ansible.builtin.debug:
-    var: image
-
-- name: Get Django hosts
+- name: Get agent hosts
   ansible.builtin.set_fact:
-      django_hosts: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'django') | list }}"
+      webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list }}"
   changed_when: false
 
 - name: Apply spec files
   vars:
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
       redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-      replicas: "{{ django_hosts|length }}"
+      replicas: "{{ webapps|length }}"
   ansible.builtin.command: >
       kubectl apply -f -
   args:

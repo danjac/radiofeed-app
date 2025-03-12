@@ -36,6 +36,8 @@ spec:
             - secretRef:
                 name: secrets
       restartPolicy: OnFailure
+      nodeSelector:
+        role: jobrunner
 
 EOF
 )

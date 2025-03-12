@@ -12,16 +12,16 @@ all:
       hosts:
         123.34.5.678:
             hostname: agent-1
-            role: django
+            role: webapp
         678.76.5.432:
             hostname: agent-2
-            role: django
+            role: webapp
         678.76.5.433:
             hostname: database
             role: database
         37.38.38.160:
-            hostname: crons
-            role: crons
+            hostname: jobrunner
+            role: jobrunner
   vars:
     admin_site_header: "Radiofeed Admin [Production]"
     admin_url: "my-admin/"
