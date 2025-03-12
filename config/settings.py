@@ -472,7 +472,7 @@ VERSION_CHECKS = {
 
 HEALTH_CHECK = {
     "DISK_USAGE_MAX": 90,  # percent
-    "MEMORY_MIN": 100,  # in MB
+    "MEMORY_MIN": 50,  # in MB
 }
 
 # Dev tools
