@@ -98,8 +98,12 @@
 
 - name: Set default image if current image is empty
   ansible.builtin.set_fact:
-      image: "{{ current_image.stdout | default(docker_image) }}"
+    image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
   changed_when: false
+
+- name: Debug image
+  ansible.builtin.debug:
+    var: image
 
 - name: Get Django hosts
   ansible.builtin.set_fact:
