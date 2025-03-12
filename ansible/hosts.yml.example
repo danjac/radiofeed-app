@@ -19,6 +19,9 @@ all:
         678.76.5.433:
             hostname: database
             role: database
+        37.38.38.160:
+            hostname: crons
+            role: crons
   vars:
     admin_site_header: "Radiofeed Admin [Production]"
     admin_url: "my-admin/"

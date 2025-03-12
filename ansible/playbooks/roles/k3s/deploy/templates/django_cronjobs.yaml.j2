@@ -13,6 +13,8 @@ spec:
       template:
         spec:
           restartPolicy: Never
+          nodeSelector:
+             role: crons
           containers:
           - name: django
             image: {{ image }}

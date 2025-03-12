@@ -10,14 +10,14 @@ accesslog = "-"
 
 worker_class = "gthread"
 
-# Calculate the number of workers (CPU * 2 + 1)
-workers = (multiprocessing.cpu_count() * 2) + 1
+# Calculate the number of workers (CPU + 1)
+workers = multiprocessing.cpu_count() + 1
 
 # Get total available memory in MiB
 memory = psutil.virtual_memory().total // (2**20)
 
 # Estimate max threads per worker (based on memory)
-memory_per_worker = min(memory // workers, 128)
+memory_per_worker = min(memory // workers, 192)
 
 # Threads should be at least 2
 threads = max(2, memory_per_worker // 128)
