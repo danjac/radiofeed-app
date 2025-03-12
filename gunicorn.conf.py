@@ -17,13 +17,13 @@ workers = (multiprocessing.cpu_count() * 2) + 1
 memory = psutil.virtual_memory().total // (2**20)
 
 # Estimate max threads per worker (based on memory)
-memory_per_worker = memory // workers
+memory_per_worker = min(memory // workers, 128)
 
 # Threads should be at least 2
 threads = max(2, memory_per_worker // 128)
 
 # Calculate max_requests (prevent memory leaks)
-max_requests = max(300, memory * 50 // 1024)
+max_requests = max(200, memory * 50 // 1024)
 
 # Set max_requests_jitter to 5% of max_requests
 max_requests_jitter = max_requests // 20
