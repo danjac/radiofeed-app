@@ -24,10 +24,10 @@ spec:
           image: {{ image }}
           resources:
             requests:
-                memory: "512Mi"  # Minimum memory the container will get
+                memory: "128Mi"  # Minimum memory the container will get
                 cpu: "250m"
             limits:
-                memory: "1Gi"  # Maximum memory the container can use before it gets OOM killed
+                memory: "512Gi"  # Maximum memory the container can use before it gets OOM killed
                 cpu: "500m"
           command: ["/bin/sh", "-c"]
           args: ["./entrypoint.sh"]
