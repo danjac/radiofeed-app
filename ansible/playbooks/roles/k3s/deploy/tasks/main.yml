@@ -98,13 +98,18 @@
 
 - name: Set default image if current image is empty
   ansible.builtin.set_fact:
-    image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
+      image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
   changed_when: false
 
 - name: Get agent hosts
   ansible.builtin.set_fact:
       webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list }}"
   changed_when: false
+
+- name: Delete existing CronJobs
+  command: kubectl delete cronjob --all -n default
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Apply spec files
   vars:
@@ -129,6 +134,22 @@
       - django_service
       - django_cronjobs
       - ingress
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Restart statefulsets
+  ansible.builtin.shell: |
+      for statefulset in $(kubectl get statefulsets -n default -o jsonpath='{.items[*].metadata.name}'); do
+        kubectl rollout restart statefulset/$statefulset -n default
+      done
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Restart deployments
+  ansible.builtin.shell: |
+      for deployment in $(kubectl get deployments -n default -o jsonpath='{.items[*].metadata.name}'); do
+        kubectl rollout restart deployment/$deployment -n default
+      done
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
