@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-manage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-manage
+  template:
+    metadata:
+      labels:
+        app: django-manage
+    spec:
+      containers:
+        - name: django
+          image: {{ image }}
+          command: []  # No command, just keep the container running
+          envFrom:
+            - configMapRef:
+                name: configmap
+            - secretRef:
+                name: secrets
+          stdin: true
+      restartPolicy: Always
+      nodeSelector:
+        role: jobrunner

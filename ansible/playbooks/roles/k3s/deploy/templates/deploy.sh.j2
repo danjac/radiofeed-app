@@ -54,7 +54,9 @@ kubectl delete job $RELEASE_JOB_NAME
 echo "Starting deployment..."
 
 kubectl set image deployment/django-app django=$IMAGE -n default
+
 kubectl rollout status deployment/django-app -n default
+kubectl rollout status deployment/django-manage -n default
 
 echo "Updating cron jobs..."
 
