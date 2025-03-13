@@ -107,11 +107,13 @@ ghv workflow:
 
 # Run Django manage.py commands on production server
 [group('production')]
+[confirm("WARNING!!! Are you sure you want to run this command on production? (y/N)")]
 rdj *args:
     just remote_script manage.sh dj_manage {{ args }}
 
 # Run Psql commands remotely on production database
 [group('production')]
+[confirm("WARNING!!! Are you sure you want to run this command on production? (y/N)")]
 rpsql *args:
     just remote_script psql.sh psql {{ args }}
 
