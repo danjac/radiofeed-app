@@ -59,6 +59,16 @@ class TestSendRecommendationsEmails:
         mock_send.assert_called()
 
     @pytest.mark.django_db
+    def test_send_specific_emails(self, user, mock_send):
+        EmailAddressFactory(
+            user=user,
+            verified=True,
+            primary=True,
+        )
+        self._call_command(addresses=[user.email])
+        mock_send.assert_called()
+
+    @pytest.mark.django_db
     def test_email_not_verified(self, user, mock_send):
         EmailAddressFactory(
             user=user,
@@ -98,5 +108,5 @@ class TestSendRecommendationsEmails:
         self._call_command()
         mock_send.assert_not_called()
 
-    def _call_command(self):
-        call_command("send_recommendations")
+    def _call_command(self, **kwargs):
+        call_command("send_recommendations", **kwargs)

@@ -1,40 +1,110 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en-us">
-    {% get_site as site %}
-    <title>Podcast recommendations for {{ site.name }}</title>
-    {% with font_family="font-family: Helvetica, Arial, sans-serif;" %}
-        <h1 style="{{ font_family }}">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
-        <h2 style="{{ font_family }}">Here are some podcasts you might find interesting:</h2>
-        {% for podcast in podcasts %}
-            <table style="{{ font_family }}">
-                <tbody>
-                    <tr>
-                        <td>
-                            <h3>
-                                <a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a>
-                            </h3>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_image_attrs %}
-                            <img src="{% absolute_uri cover_image_attrs.src %}"
-                                 width="{{ cover_image_attrs.width }}"
-                                 height="{{ cover_image_attrs.height }}"
-                                 alt="{{ cover_image_attrs.alt }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>{{ podcast.cleaned_description|urlize|truncatewords:60 }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <hr />
-        {% endfor %}
-        <p style="{{ font_family }}">
-            If you do not want to receive any more notifications, just uncheck the "Send email notifications"
-            option on your <a href="{% absolute_uri 'users:preferences' %}">Settings</a> page.
-        </p>
-    {% endwith %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Podcast Recommendations for {{ site.name }}</title>
+        <style>
+            .container {
+                font-family: Helvetica, Arial, sans-serif !important;
+                background-color: #311B92 !important;
+                color: white !important;
+                max-width: 600px;
+                margin: 20px auto;
+                padding: 20px;
+                border-radius: 8px;
+            }
+            .container h1, .container h2 {
+                text-align: center;
+            }
+            .podcast {
+                background-color: #512DA8;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+            .podcast h3 {
+                margin: 0 0 20px;
+                text-align: center;
+            }
+            .podcast img {
+                display: block;
+                margin: 0 auto;
+                border-radius: 8px;
+                flex-shrink: 0;
+            }
+            .podcast-content {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .description {
+                margin-top: 5px;
+                word-wrap: break-word; /* Break long words */
+                overflow-wrap: break-word; /* Ensures long URLs wrap */
+                max-width: 100%; /* Prevents overflow */
+            }
+            .footer {
+                text-align: center;
+                margin-top: 20px;
+                font-size: 14px;
+            }
+            .container a, .footer a {
+                color: #FFD54F !important;
+            }
+            @media only screen and (max-width:479px) {
+                .podcast-content {
+                    display: block;
+                    text-align: center;
+                }
+                .description {
+                    margin-top: 10px;
+                }
+                .podcast img {
+                    width: 160px;
+                    height: 160px;
+                    display: block;
+                    margin: 0 auto;
+                }
+            }
+
+            @media only screen and (min-width:480px) {
+                .podcast img {
+                    margin-right: 15px !important;
+                }
+            }
+        </style>
+    </head>
+    <body style="margin:0; padding: 0;">
+
+        <div class="container">
+            <h1 style="color: white;">Hi {{ recipient.username }}, greetings from Radiofeed!</h1>
+            <h2 style="color: white;">Here are some podcasts you might find interesting:</h2>
+
+            {% for podcast in podcasts %}
+                <div class="podcast">
+                    <h3><a href="{% absolute_uri podcast %}">{{ podcast.cleaned_title }}</a></h3>
+                    <div class="podcast-content">
+                        {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_image_attrs %}
+                        <img src="{% absolute_uri cover_image_attrs.src %}"
+                             width="{{ cover_image_attrs.width }}"
+                             height="{{ cover_image_attrs.height }}"
+                             alt="{{ cover_image_attrs.alt }}"
+                        >
+                        <p class="description">
+                            {{ podcast.cleaned_description|urlize|truncatewords:60 }}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="footer">
+                <p style="color: white;">
+                    If you don’t want to receive recommendations, you can update your
+                    <a href="{% absolute_uri 'users:preferences' %}">notification settings</a>.
+                </p>
+            </div>
+        </div>
+    </body>
 </html>

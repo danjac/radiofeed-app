@@ -21,7 +21,7 @@
             }
           - {
                 name: "send-recommendations",
-                schedule: "45 18 * * 1", # 6:45 PM every Monday
+                schedule: "45 18 * * 5", # 6:45 PM every Friday
                 command: "./manage.py send_recommendations",
             }
           - {
