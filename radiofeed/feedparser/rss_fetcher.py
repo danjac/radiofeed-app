@@ -29,11 +29,8 @@ class Response:
 
     def __init__(self, response: httpx.Response) -> None:
         self._response = response
-
-    @cached_property
-    def url(self) -> str:
-        """Returns the URL of the response."""
-        return str(self._response.url)
+        self.url = str(response.url)
+        self.content = response.content
 
     @cached_property
     def etag(self) -> str:
@@ -44,11 +41,6 @@ class Response:
     def modified(self) -> timezone.datetime | None:
         """Returns the Last-Modified header as a parsed datetime, or None if unavailable."""
         return parse_date(self._response.headers.get("Last-Modified"))
-
-    @cached_property
-    def content(self) -> bytes:
-        """Returns the response content as bytes."""
-        return self._response.content
 
     @cached_property
     def content_hash(self) -> str:
