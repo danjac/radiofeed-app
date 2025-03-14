@@ -1,7 +1,7 @@
 import pytest
 from django.core.paginator import EmptyPage, PageNotAnInteger
 
-from radiofeed.paginator import Paginator
+from radiofeed.paginator import Paginator, validate_page_number
 
 
 class TestPage:
@@ -47,26 +47,23 @@ class TestPage:
             page.next_page_number()
 
 
-class TestPaginator:
-    def test_validate_number_int(self):
-        paginator = Paginator([], 10)
-        assert paginator.validate_number(1) == 1
+class TestValidatePageNumber:
+    def test_int(self):
+        assert validate_page_number(1) == 1
 
-    def test_validate_number_less_than_1(self):
-        paginator = Paginator([], 10)
+    def test_less_than_1(self):
         with pytest.raises(EmptyPage):
-            paginator.validate_number(-1)
+            validate_page_number(-1)
 
-    def test_validate_number_str(self):
-        paginator = Paginator([], 10)
-        assert paginator.validate_number("1") == 1
+    def test_str(self):
+        assert validate_page_number("1") == 1
 
-    def test_validate_number_invalid(self):
-        paginator = Paginator([], 10)
-
+    def test_invalid(self):
         with pytest.raises(PageNotAnInteger):
-            paginator.validate_number("oops")
+            validate_page_number("oops")
 
+
+class TestPaginator:
     def test_get_page_ok(self):
         paginator = Paginator([1, 2, 3], 2)
         page = paginator.get_page(2)

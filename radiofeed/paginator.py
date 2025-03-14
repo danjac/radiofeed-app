@@ -112,20 +112,10 @@ class Paginator:
         self.object_list = object_list
         self.per_page = per_page
 
-    def validate_number(self, number: int | str) -> int:
-        """Validates the page number."""
-        try:
-            number = int(number)
-        except (TypeError, ValueError) as exc:
-            raise PageNotAnInteger("Page number is not an integer") from exc
-        if number < 1:
-            raise EmptyPage("Page number is less than 1")
-        return number
-
     def get_page(self, number: int | str) -> Page:
         """Returns a page object."""
         try:
-            number = self.validate_number(number)
+            number = validate_page_number(number)
         except (PageNotAnInteger, EmptyPage):
             number = 1
 
@@ -177,3 +167,14 @@ def render_pagination(  # noqa: PLR0913
         target=target,
         partial=partial,
     )
+
+
+def validate_page_number(number: int | str) -> int:
+    """Validates the page number: it should be an integer greater than 1."""
+    try:
+        number = int(number)
+    except (TypeError, ValueError) as exc:
+        raise PageNotAnInteger("Page number is not an integer") from exc
+    if number < 1:
+        raise EmptyPage("Page number is less than 1")
+    return number
