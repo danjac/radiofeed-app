@@ -12,7 +12,7 @@ cronjobs:
       command: "./manage.py create_recommendations"
 
     - name: "send-recommendations"
-      schedule: "45 16 * * 5" # 6:45 PM every Friday
+      schedule: "0 16 * * 5" # 4:00 PM on Fridays
       command: "./manage.py send_recommendations"
 
     - name: "fetch-itunes-chart"
