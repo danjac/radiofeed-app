@@ -130,7 +130,7 @@
       - redis_deployment
       - redis_service
       - django_deployment
-      - django_manage_deployment
+      - django_manager_deployment
       - django_service
       - django_cronjobs
       - ingress

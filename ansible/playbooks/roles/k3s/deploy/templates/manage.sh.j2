@@ -4,4 +4,4 @@ set -o errexit
 
 export KUBECONFIG="{{ kubeconfig }}"
 
-kubectl exec -it "$(kubectl get pods -l app=django-manage -n default -o jsonpath='{.items[0].metadata.name}')" -n default -- python manage.py "$@"
+kubectl exec -it "$(kubectl get pods -l app=django-manager -n default -o jsonpath='{.items[0].metadata.name}')" -n default -- python manage.py "$@"

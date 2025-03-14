@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: django-manage
+  name: django-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: django-manage
+      app: django-manager
   template:
     metadata:
       labels:
-        app: django-manage
+        app: django-manager
     spec:
       containers:
         - name: django
           image: {{ image }}
-          command: []  # No command, just keep the container running
+          command: ["sleep", "infinity"]
           envFrom:
             - configMapRef:
                 name: configmap

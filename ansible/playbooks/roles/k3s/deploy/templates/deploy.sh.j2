@@ -6,12 +6,12 @@ echo "Deploying image $IMAGE to Kubernetes..."
 
 export KUBECONFIG="{{ kubeconfig }}"
 
-echo "Running migrations..."
+echo "Running pre-deployment tasks..."
 
-kubectl set image deployment/django-manage django=${IMAGE} -n default
-kubectl rollout status deployment/django-manage -n default
+kubectl set image deployment/django-manager django=${IMAGE} -n default
+kubectl rollout status deployment/django-manager -n default
 
-POD_NAME=$(kubectl get pods -n default -l app=django-manage -o jsonpath='{.items[0].metadata.name}')
+POD_NAME=$(kubectl get pods -n default -l app=django-manager -o jsonpath='{.items[0].metadata.name}')
 kubectl exec -n default $POD_NAME -- ./release.sh
 
 echo "Starting deployment..."
