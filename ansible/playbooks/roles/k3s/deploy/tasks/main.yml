@@ -3,32 +3,12 @@
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-      cronjobs:
-          - {
-                name: "clear-sessions",
-                schedule: "5 5 * * *", # 5:05 AM
-                command: "./manage.py clearsessions",
-            }
-          - {
-                name: "parse-feeds",
-                schedule: "*/6 * * * *", # Every 6 minutes
-                command: "./manage.py parse_feeds",
-            }
-          - {
-                name: "create-recommendations",
-                schedule: "20 15 * * *", # 3:20 PM
-                command: "./manage.py create_recommendations",
-            }
-          - {
-                name: "send-recommendations",
-                schedule: "45 18 * * 5", # 6:45 PM every Friday
-                command: "./manage.py send_recommendations",
-            }
-          - {
-                name: "fetch-itunes-chart",
-                schedule: "15 7 * * *", # 7:15 AM
-                command: "./manage.py fetch_itunes_chart",
-            }
+  changed_when: false
+
+- name: Include cron jobs vars
+  include_vars:
+    file: cronjobs.yml
+  changed_when: false
 
 - name: Create cloudflare_certs list
   ansible.builtin.set_fact:
