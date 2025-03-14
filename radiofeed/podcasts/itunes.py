@@ -1,6 +1,5 @@
 import dataclasses
 from collections.abc import Iterable
-from typing import Any
 
 import httpx
 from django.core.cache import cache
@@ -10,7 +9,7 @@ from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
 
-class ItunesError(Exception):
+class ItunesError(ValueError):
     """Base class for iTunes API errors."""
 
 
@@ -28,9 +27,9 @@ class Feed:
         """Return title or RSS"""
         return self.title or self.rss
 
-    def __eq__(self, other: Any) -> bool:
-        """Compare by RSS"""
-        return isinstance(other, Feed) and self.rss == other.rss
+    def __hash__(self) -> int:
+        """Hash based on RSS."""
+        return hash(self.rss)
 
 
 def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:

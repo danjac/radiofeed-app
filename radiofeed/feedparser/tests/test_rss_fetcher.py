@@ -5,7 +5,7 @@ import httpx
 import pytest
 
 from radiofeed.feedparser.exceptions import (
-    InaccessibleError,
+    DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
@@ -81,12 +81,20 @@ class TestFetchRss:
         with pytest.raises(NotModifiedError):
             fetch_rss(client, "http://example.com", etag="123")
 
+    def test_gone(self):
+        def _handle(request):
+            return httpx.Response(http.HTTPStatus.GONE, request=request)
+
+        client = Client(transport=httpx.MockTransport(_handle))
+        with pytest.raises(DiscontinuedError):
+            fetch_rss(client, "http://example.com")
+
     def test_not_found(self):
         def _handle(request):
             return httpx.Response(http.HTTPStatus.NOT_FOUND, request=request)
 
         client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(InaccessibleError):
+        with pytest.raises(UnavailableError):
             fetch_rss(client, "http://example.com")
 
     def test_server_error(self):

@@ -9,8 +9,8 @@ from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
+    DiscontinuedError,
     DuplicateError,
-    InaccessibleError,
     InvalidDataError,
     InvalidRSSError,
     NotModifiedError,
@@ -620,15 +620,15 @@ class TestFeedParser:
         client = _mock_client(
             status_code=http.HTTPStatus.GONE,
         )
-        with pytest.raises(InaccessibleError):
+        with pytest.raises(DiscontinuedError):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_error == Podcast.ParserError.INACCESSIBLE
+        assert podcast.parser_error == Podcast.ParserError.DISCONTINUED
 
-        assert podcast.active
-        assert podcast.num_retries == 1
+        assert not podcast.active
+        assert podcast.num_retries == 0
         assert podcast.parsed
 
     @pytest.mark.django_db

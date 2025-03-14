@@ -1,4 +1,5 @@
 import hashlib
+import http
 from typing import Final
 
 import httpx
@@ -8,7 +9,7 @@ from django.utils.http import http_date, quote_etag
 
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
-    InaccessibleError,
+    DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
@@ -65,10 +66,10 @@ def fetch_rss(
                 )
             )
         except httpx.HTTPStatusError as exc:
-            if exc.response.is_redirect:
+            if exc.response.status_code == http.HTTPStatus.GONE:
+                raise DiscontinuedError(response=exc.response) from exc
+            if exc.response.status_code == http.HTTPStatus.NOT_MODIFIED:
                 raise NotModifiedError(response=exc.response) from exc
-            if exc.response.is_client_error:
-                raise InaccessibleError(response=exc.response) from exc
             raise
     except httpx.HTTPError as exc:
         raise UnavailableError from exc

@@ -13,16 +13,16 @@ class FeedParserError(Exception):
         super().__init__(*args, **kwargs)
 
 
+class DiscontinuedError(FeedParserError):
+    """Podcast has been discontinued and no longer available."""
+
+    parser_error = Podcast.ParserError.DISCONTINUED
+
+
 class DuplicateError(FeedParserError):
     """Another identical podcast exists in the database."""
 
     parser_error = Podcast.ParserError.DUPLICATE
-
-
-class InaccessibleError(FeedParserError):
-    """Content is forbidden, no longer exists or other server issue."""
-
-    parser_error = Podcast.ParserError.INACCESSIBLE
 
 
 class InvalidRSSError(FeedParserError):
