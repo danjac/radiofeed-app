@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: django-app
 spec:
-  replicas: {{ replicas }}
+  replicas: {{ num_webapps }}
   selector:
     matchLabels:
       app: django-app

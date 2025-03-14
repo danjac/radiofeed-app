@@ -101,7 +101,7 @@
       image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
   changed_when: false
 
-- name: Get agent hosts
+- name: Get webapp nodes
   ansible.builtin.set_fact:
       webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list }}"
   changed_when: false
@@ -115,7 +115,7 @@
   vars:
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
       redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-      replicas: "{{ webapps|length }}"
+      num_webapps: "{{ webapps|length }}"
   ansible.builtin.command: >
       kubectl apply -f -
   args:

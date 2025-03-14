@@ -11,10 +11,10 @@ all:
     agents:
       hosts:
         123.34.5.678:
-            hostname: agent-1
+            hostname: webapp-1
             role: webapp
         678.76.5.432:
-            hostname: agent-2
+            hostname: webapp-2
             role: webapp
         678.76.5.433:
             hostname: database
