@@ -86,7 +86,7 @@ class _FeedParser:
             )
 
     def _update_ok(self, feed: Feed, **fields) -> None:
-        category_dct = _get_categories_dict()
+        categories_dct = _get_categories_dict()
         try:
             with transaction.atomic():
                 self._update(
@@ -94,7 +94,7 @@ class _FeedParser:
                     parser_error="",
                     active=not (feed.complete),
                     extracted_text=feed.tokenize(),
-                    keywords=_parse_keywords(feed, category_dct),
+                    keywords=_parse_keywords(feed, categories_dct),
                     frequency=scheduler.schedule(feed),
                     **feed.model_dump(
                         exclude={
@@ -105,7 +105,7 @@ class _FeedParser:
                     ),
                     **fields,
                 )
-                self._podcast.categories.set(_parse_categories(feed, category_dct))
+                self._podcast.categories.set(_parse_categories(feed, categories_dct))
                 self._episode_updates(feed)
 
         except DataError as exc:
