@@ -57,7 +57,7 @@ class _Recommender:
         for batch in itertools.batched(
             self._build_matches_dict().items(),
             1000,
-            strict=True,
+            strict=False,
         ):
             Recommendation.objects.bulk_create(
                 (
@@ -84,7 +84,7 @@ class _Recommender:
                 .values_list("id", "extracted_text")
                 .iterator(),
                 1000,
-                strict=True,
+                strict=False,
             ):
                 for (
                     podcast_id,

@@ -165,7 +165,7 @@ class _FeedParser:
         for batch in itertools.batched(
             self._episodes_for_update(feed, guids),
             1000,
-            strict=True,
+            strict=False,
         ):
             Episode.objects.fast_update(
                 batch,
@@ -191,7 +191,7 @@ class _FeedParser:
         for batch in itertools.batched(
             self._episodes_for_insert(feed, guids),
             100,
-            strict=True,
+            strict=False,
         ):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 

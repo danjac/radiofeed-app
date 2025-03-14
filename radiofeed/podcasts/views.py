@@ -19,7 +19,7 @@ from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
 
 if TYPE_CHECKING:
-    from radiofeed.users.models import User
+    from radiofeed.users.models import User  # pragma: no cover
 
 
 @require_safe

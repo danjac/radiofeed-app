@@ -16,7 +16,7 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 if TYPE_CHECKING:
-    from radiofeed.users.models import User
+    from radiofeed.users.models import User  # pragma: no cover
 
 
 class UserStat(TypedDict):
