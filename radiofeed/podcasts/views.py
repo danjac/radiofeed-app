@@ -1,5 +1,5 @@
 import contextlib
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from django.conf import settings
 from django.contrib import messages
@@ -17,7 +17,9 @@ from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.users.models import User
+
+if TYPE_CHECKING:
+    from radiofeed.users.models import User
 
 
 @require_safe
@@ -314,7 +316,7 @@ def add_private_feed(
 ) -> HttpResponse:
     """Add new private feed to collection."""
 
-    user = cast(User, request.user)
+    user = cast("User", request.user)
 
     if request.method == "POST":
         form = PrivateFeedForm(request.POST, user=user)

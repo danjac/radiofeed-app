@@ -86,7 +86,7 @@ class _FeedParser:
             )
 
     def _update_ok(self, feed: Feed, **fields) -> None:
-        category_dct = self._get_categories_dict()
+        category_dct = _get_categories_dict()
         try:
             with transaction.atomic():
                 self._update(
@@ -94,7 +94,7 @@ class _FeedParser:
                     parser_error="",
                     active=not (feed.complete),
                     extracted_text=feed.tokenize(),
-                    keywords=self._parse_keywords(feed, category_dct),
+                    keywords=_parse_keywords(feed, category_dct),
                     frequency=scheduler.schedule(feed),
                     **feed.model_dump(
                         exclude={
@@ -105,7 +105,7 @@ class _FeedParser:
                     ),
                     **fields,
                 )
-                self._podcast.categories.set(self._parse_categories(feed, category_dct))
+                self._podcast.categories.set(_parse_categories(feed, category_dct))
                 self._episode_updates(feed)
 
         except DataError as exc:
@@ -150,12 +150,6 @@ class _FeedParser:
             .first()
         )
 
-    def _get_categories_dict(self) -> dict[str, Category]:
-        return {
-            category.name.casefold(): category
-            for category in Category.objects.from_cache()
-        }
-
     def _episode_updates(self, feed: Feed) -> None:
         qs = Episode.objects.filter(podcast=self._podcast)
 
@@ -168,7 +162,11 @@ class _FeedParser:
 
         # update existing content
 
-        for batch in itertools.batched(self._episodes_for_update(feed, guids), 1000):
+        for batch in itertools.batched(
+            self._episodes_for_update(feed, guids),
+            1000,
+            strict=True,
+        ):
             Episode.objects.fast_update(
                 batch,
                 fields=[
@@ -190,7 +188,11 @@ class _FeedParser:
 
         # add new episodes
 
-        for batch in itertools.batched(self._episodes_for_insert(feed, guids), 100):
+        for batch in itertools.batched(
+            self._episodes_for_insert(feed, guids),
+            100,
+            strict=True,
+        ):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _episodes_for_insert(
@@ -236,14 +238,20 @@ class _FeedParser:
             case _:
                 return self._max_retries > num_retries
 
-    def _parse_categories(
-        self, feed: Feed, category_dict: dict[str, Category]
-    ) -> set[Category]:
-        return {
-            category_dict[category]
-            for category in feed.categories
-            if category in category_dict
-        }
 
-    def _parse_keywords(self, feed: Feed, category_dict: dict[str, Category]) -> str:
-        return " ".join(feed.categories - set(category_dict.keys()))
+def _parse_categories(feed: Feed, category_dict: dict[str, Category]) -> set[Category]:
+    return {
+        category_dict[category]
+        for category in feed.categories
+        if category in category_dict
+    }
+
+
+def _parse_keywords(feed: Feed, category_dict: dict[str, Category]) -> str:
+    return " ".join(feed.categories - set(category_dict.keys()))
+
+
+def _get_categories_dict() -> dict[str, Category]:
+    return {
+        category.name.casefold(): category for category in Category.objects.from_cache()
+    }

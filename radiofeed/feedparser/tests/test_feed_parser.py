@@ -136,9 +136,40 @@ class TestFeedParser:
 
         tokens = set(podcast.extracted_text.split())
 
-        assert tokens == set(
-            "mysterious universe blog specializing offbeat th kind science spirituality science medicine society culture philosophy social science religion spirituality mu tibetan zombie mu saber tooth tiger king mu kgb cop mu joshua cutchin timothy renner mu squid router mu jim bruton".split()
-        )
+        assert tokens == {
+            "mysterious",
+            "universe",
+            "blog",
+            "specializing",
+            "offbeat",
+            "th",
+            "kind",
+            "science",
+            "spirituality",
+            "medicine",
+            "society",
+            "culture",
+            "philosophy",
+            "social",
+            "religion",
+            "mu",
+            "tibetan",
+            "zombie",
+            "saber",
+            "tooth",
+            "tiger",
+            "king",
+            "kgb",
+            "cop",
+            "joshua",
+            "cutchin",
+            "timothy",
+            "renner",
+            "squid",
+            "router",
+            "jim",
+            "bruton",
+        }
 
         assert podcast.modified
         assert podcast.modified.day == 1

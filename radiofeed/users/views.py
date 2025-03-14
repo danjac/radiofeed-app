@@ -1,4 +1,4 @@
-from typing import TypedDict, cast
+from typing import TYPE_CHECKING, TypedDict, cast
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -14,7 +14,9 @@ from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
-from radiofeed.users.models import User
+
+if TYPE_CHECKING:
+    from radiofeed.users.models import User
 
 
 class UserStat(TypedDict):
@@ -61,7 +63,9 @@ def import_podcast_feeds(
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            if num_new_feeds := len(form.subscribe_to_feeds(cast(User, request.user))):
+            if num_new_feeds := len(
+                form.subscribe_to_feeds(cast("User", request.user))
+            ):
                 messages.success(
                     request,
                     f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",

@@ -54,7 +54,11 @@ class _Recommender:
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
-        for batch in itertools.batched(self._build_matches_dict().items(), 1000):
+        for batch in itertools.batched(
+            self._build_matches_dict().items(),
+            1000,
+            strict=True,
+        ):
             Recommendation.objects.bulk_create(
                 (
                     Recommendation(
@@ -80,13 +84,14 @@ class _Recommender:
                 .values_list("id", "extracted_text")
                 .iterator(),
                 1000,
+                strict=True,
             ):
                 for (
                     podcast_id,
                     recommended_id,
                     similarity,
                 ) in self._find_similarities(dict(batch)):
-                    matches[(podcast_id, recommended_id)].append(similarity)
+                    matches[podcast_id, recommended_id].append(similarity)
 
         return matches
 
