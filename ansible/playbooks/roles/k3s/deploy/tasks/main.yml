@@ -62,9 +62,9 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Get the current image of the django-manager pod
+- name: Get the current image of running django-app pod
   ansible.builtin.shell: |
-      kubectl get pods -l app=django-manager -o jsonpath='{.items[0].spec.containers[0].image}' -n default
+      kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
   register: current_image
   changed_when: false
   ignore_errors: true
@@ -91,7 +91,7 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Apply spec files
+- name: Apply manifests
   vars:
       database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
       redis_url: "redis://redis.default.svc.cluster.local:6379/0"
@@ -110,7 +110,6 @@
       - redis_deployment
       - redis_service
       - django_deployment
-      - django_manager_deployment
       - django_service
       - django_cronjobs
       - ingress
@@ -133,7 +132,7 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Add scripts to access the deployment
+- name: Add scripts to access the cluster
   ansible.builtin.template:
       src: "{{ item }}.j2"
       dest: "{{ item }}"

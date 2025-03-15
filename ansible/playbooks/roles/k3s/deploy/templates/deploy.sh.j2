@@ -8,7 +8,6 @@ export KUBECONFIG="{{ kubeconfig }}"
 
 echo "Running pre-deployment tasks..."
 
-
 # Create new release job
 
 export RELEASE_JOB_ID=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 12)
@@ -48,10 +47,7 @@ kubectl wait --for=condition=complete job/$RELEASE_JOB_NAME --timeout=60s
 kubectl delete pod -l job-name=$RELEASE_JOB_NAME
 kubectl delete job $RELEASE_JOB_NAME
 
-echo "Update deployments..."
-
-kubectl set image deployment/django-manager django=${IMAGE} -n default
-kubectl rollout status deployment/django-manager -n default
+echo "Deploying application..."
 
 kubectl set image deployment/django-app django=${IMAGE} -n default
 kubectl rollout status deployment/django-app -n default
