@@ -151,6 +151,25 @@ def _get_canonical(podcast: Podcast, url: str, content_hash: str) -> Podcast | N
     )
 
 
+def _parse_categories(feed: Feed) -> tuple[str, set[Category]]:
+    # Parse categories from the feed: return keywords and Category instances
+    categories_dct = {
+        category.name.casefold(): category for category in Category.objects.from_cache()
+    }
+
+    # Get the categories that are in the database
+    categories = {
+        categories_dct[category]
+        for category in feed.categories
+        if category in categories_dct
+    }
+
+    # Get the keywords that are not in the database
+    keywords = " ".join(feed.categories - set(categories_dct.keys()))
+
+    return keywords, categories
+
+
 def _sync_episodes(podcast: Podcast, feed: Feed) -> None:
     # Update and insert episodes in the database
 
@@ -193,29 +212,8 @@ def _sync_episodes(podcast: Podcast, feed: Feed) -> None:
         Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
 
-def _parse_categories(feed: Feed) -> tuple[str, set[Category]]:
-    # Parse categories from the feed: return keywords and Category instances
-    categories_dct = {
-        category.name.casefold(): category for category in Category.objects.from_cache()
-    }
-
-    # Get the categories that are in the database
-    categories = {
-        categories_dct[category]
-        for category in feed.categories
-        if category in categories_dct
-    }
-
-    # Get the keywords that are not in the database
-    keywords = " ".join(feed.categories - set(categories_dct.keys()))
-
-    return keywords, categories
-
-
 def _episodes_for_update(
-    podcast: Podcast,
-    feed: Feed,
-    guids: dict[str, int],
+    podcast: Podcast, feed: Feed, guids: dict[str, int]
 ) -> Iterator[Episode]:
     # Return all episodes that are already in the database
     # fast_update() requires that we have no episodes with the same PK
@@ -228,9 +226,7 @@ def _episodes_for_update(
 
 
 def _episodes_for_insert(
-    podcast: Podcast,
-    feed: Feed,
-    guids: dict[str, int],
+    podcast: Podcast, feed: Feed, guids: dict[str, int]
 ) -> Iterator[Episode]:
     # Return all episodes that are not in the database
     for item in feed.items:
@@ -238,11 +234,7 @@ def _episodes_for_insert(
             yield _make_episode(podcast, item)
 
 
-def _make_episode(
-    podcast: Podcast,
-    item: Item,
-    **fields,
-) -> Episode:
+def _make_episode(podcast: Podcast, item: Item, **fields) -> Episode:
     # Build Episode instance from a feed item
     return Episode(
         podcast=podcast,
