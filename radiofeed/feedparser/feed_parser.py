@@ -80,7 +80,6 @@ def _handle_success(podcast: Podcast, feed: Feed, **fields) -> None:
                 num_retries=0,
                 parser_error="",
                 active=not feed.complete,
-                complete=feed.complete,
                 extracted_text=feed.tokenize(),
                 frequency=scheduler.schedule(feed),
                 keywords=keywords,

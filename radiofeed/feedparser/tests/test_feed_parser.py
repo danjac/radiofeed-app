@@ -127,7 +127,6 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.parser_error == ""
         assert podcast.active is True
-        assert podcast.complete is False
         assert podcast.num_retries == 0
         assert podcast.content_hash
         assert podcast.title == "Mysterious Universe"
@@ -438,7 +437,6 @@ class TestFeedParser:
 
         assert podcast.rss
         assert podcast.active is False
-        assert podcast.complete is True
         assert podcast.parser_error == ""
         assert podcast.title == "Mysterious Universe"
 
