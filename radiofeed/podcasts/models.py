@@ -304,6 +304,7 @@ class Podcast(models.Model):
 
     class Meta:
         indexes: ClassVar[list] = [
+            models.Index(fields=["active"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
             models.Index(fields=["promoted"]),
