@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
 set -o errexit
+# Check if $IMAGE is not set or is empty
+
+if [ -z "$IMAGE" ]; then
+  echo "ERROR: IMAGE environment variable is not set."
+  exit 1
+fi
 
 echo "Deploying image $IMAGE to Kubernetes..."
 
@@ -10,14 +16,14 @@ echo "Running pre-deployment tasks..."
 
 # Create new release job
 
-export RELEASE_JOB_ID=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 12)
-export RELEASE_JOB_NAME="django-release-job-$RELEASE_JOB_ID"
+release_job_id=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 12)
+release_job_name="django-release-job-$release_job_id"
 
 release_job_yaml=$(cat <<EOF
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: $RELEASE_JOB_NAME
+  name: $release_job_name
 spec:
   template:
     spec:
@@ -41,11 +47,24 @@ EOF
 # Pass the resulting YAML content to kubectl apply
 echo "$release_job_yaml" | kubectl apply -f - -n default
 
-kubectl wait --for=condition=complete job/$RELEASE_JOB_NAME --timeout=60s
+kubectl wait --for=condition=complete job/$release_job_name --timeout=60s
+
+release_pod_name=$(kubectl get pods -l job-name=$release_job_name -o jsonpath='{.items[0].metadata.name}')
+release_pod_status=$(kubectl get pod $release_pod_name -o jsonpath='{.status.phase}')
+
+# Log the output of the job for debugging purposes
+kubectl logs $release_pod_name
 
 # Delete the job after it has completed
-kubectl delete pod -l job-name=$RELEASE_JOB_NAME
-kubectl delete job $RELEASE_JOB_NAME
+
+kubectl delete pod $release_pod_name
+kubectl delete job $release_job_name
+
+# Job failed, so exit
+if [[ $release_pod_status != "Succeeded" ]]; then
+    echo "Job failed with status $release_pod_status, exiting..."
+    exit 1
+fi
 
 echo "Deploying application..."
 
