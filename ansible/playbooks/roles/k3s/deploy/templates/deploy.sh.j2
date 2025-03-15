@@ -37,34 +37,55 @@ spec:
                 name: configmap
             - secretRef:
                 name: secrets
-      restartPolicy: OnFailure
+      restartPolicy: Never
       nodeSelector:
         role: jobrunner
 
 EOF
 )
 
-# Pass the resulting YAML content to kubectl apply
 echo "$release_job_yaml" | kubectl apply -f - -n default
-
-kubectl wait --for=condition=complete job/$release_job_name --timeout=60s
 
 release_pod_name=$(kubectl get pods -l job-name=$release_job_name -o jsonpath='{.items[0].metadata.name}')
 release_pod_status=$(kubectl get pod $release_pod_name -o jsonpath='{.status.phase}')
 
-# Log the output of the job for debugging purposes
-kubectl logs $release_pod_name
+delete_release_job() {
+    kubectl logs $release_pod_name
+    kubectl delete pod $release_pod_name
+    kubectl delete job $release_job_name
+}
 
-# Delete the job after it has completed
+max_retries=30
+count=0
 
-kubectl delete pod $release_pod_name
-kubectl delete job $release_job_name
+# NOTE: "kubectl wait" does not work because we can't set a "success OR failure" condition
 
-# Job failed, so exit
-if [[ $release_pod_status != "Succeeded" ]]; then
-    echo "Job failed with status $release_pod_status, exiting..."
-    exit 1
-fi
+while true; do
+    # Get the job status (complete or failed)
+    success_status=$(kubectl get job $release_job_name -o jsonpath='{.status.succeeded}')
+    failed_status=$(kubectl get job $release_job_name -o jsonpath='{.status.failed}')
+
+    if [[ "$success_status" == "1" ]]; then
+        echo "Job completed successfully."
+        delete_release_job
+        break
+    fi
+
+    if [[ "$failed_status" == "1" ]]; then
+        echo "Job failed exiting ..."
+        delete_release_job
+        exit 1
+    fi
+
+    if [[ $count -ge $max_retries ]]; then
+        echo "Timed out waiting for job to complete"
+        delete_release_job
+        exit 1
+    fi
+
+    sleep 5
+    count=$((count + 1))
+done
 
 echo "Deploying application..."
 
