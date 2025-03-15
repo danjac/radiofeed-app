@@ -213,6 +213,11 @@ class Podcast(models.Model):
         help_text="Inactive podcasts will no longer be updated from their RSS feeds.",
     )
 
+    complete = models.BooleanField(
+        default=False,
+        help_text="Podcast marked complete, no new episodes will be added.",
+    )
+
     canonical = models.ForeignKey(
         "self",
         null=True,
