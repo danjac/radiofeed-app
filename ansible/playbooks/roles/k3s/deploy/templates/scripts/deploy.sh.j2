@@ -12,8 +12,6 @@ echo "Deploying image $IMAGE to Kubernetes..."
 
 export KUBECONFIG="{{ kubeconfig }}"
 
-echo "Running pre-deployment tasks..."
-
 # Create new release job
 
 release_job_id=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 12)
@@ -25,6 +23,7 @@ kind: Job
 metadata:
   name: $release_job_name
 spec:
+  backoffLimit: 0
   template:
     spec:
       containers:
@@ -46,7 +45,7 @@ EOF
 
 echo "$release_job_yaml" | kubectl apply -f - -n default
 
-# Wait for the release job to complete: 60 seconds timeout
+# Wait for the release job to complete
 kubectl wait --for=condition=complete job/"$release_job_name" --timeout=60s || true
 
 release_pod_name=$(kubectl get pods -l job-name="$release_job_name" -o jsonpath='{.items[0].metadata.name}')
@@ -60,18 +59,18 @@ fi
 # Delete the job
 kubectl delete job "$release_job_name"
 
-if [ "$release_pod_status" != 'Succeeded' ]; then
+if [ "$release_pod_status" != "Succeeded" ]; then
   echo "ERROR: Release job failed with status $release_pod_status"
   exit 1
 fi
 
-echo "Deploying application..."
-
-kubectl set image deployment/django-app django="${IMAGE}" -n default
-kubectl rollout status deployment/django-app -n default
-
-echo "Updating cron jobs..."
+# Update crons with new image
 
 {% for cronjob in cronjobs %}
 kubectl set image cronjob/{{ cronjob.name }} django="${IMAGE}" -n default
 {% endfor %}
+
+# Roll out the new image to the deployment
+
+kubectl set image deployment/django-app django="${IMAGE}" -n default
+kubectl rollout status deployment/django-app -n default
