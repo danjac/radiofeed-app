@@ -46,23 +46,7 @@ EOF
 echo "$release_job_yaml" | kubectl apply -f - -n default
 
 # Wait for the release job to complete
-kubectl wait --for=condition=complete job/"$release_job_name" --timeout=60s || true
-
-release_pod_name=$(kubectl get pods -l job-name="$release_job_name" -o jsonpath='{.items[0].metadata.name}')
-release_pod_status=$(kubectl get pod "$release_pod_name" -o jsonpath='{.status.phase}')
-
-# Display logs of the release job if available
-if kubectl get pod "$release_pod_name" &>/dev/null; then
-  kubectl logs "$release_pod_name"
-fi
-
-# Delete the job
-kubectl delete job "$release_job_name"
-
-if [ "$release_pod_status" != "Succeeded" ]; then
-  echo "ERROR: Release job failed with status $release_pod_status"
-  exit 1
-fi
+kubectl wait --for=condition=complete job/"$release_job_name" --timeout=60s
 
 # Update crons with new image
 
