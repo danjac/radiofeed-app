@@ -48,6 +48,9 @@ echo "$release_job_yaml" | kubectl apply -f - -n default
 # Wait for the release job to complete
 kubectl wait --for=condition=complete job/"$release_job_name" --timeout=60s
 
+# Delete the job
+kubectl delete job "$release_job_name" -n default
+
 # Update crons with new image
 
 kubectl get cronjob -l app=django-cronjob -o name | xargs -I {} kubectl set image {} django="${IMAGE}" -n default
