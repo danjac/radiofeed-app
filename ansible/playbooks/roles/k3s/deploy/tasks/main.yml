@@ -87,7 +87,7 @@
   changed_when: false
 
 - name: Delete existing CronJobs
-  command: kubectl delete cronjob --all -n default
+  command: kubectl delete cronjob -l app=django-cronjob -n default
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 

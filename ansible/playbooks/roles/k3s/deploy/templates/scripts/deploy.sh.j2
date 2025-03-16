@@ -66,9 +66,7 @@ fi
 
 # Update crons with new image
 
-{% for cronjob in cronjobs %}
-kubectl set image cronjob/{{ cronjob.name }} django="${IMAGE}" -n default
-{% endfor %}
+kubectl get cronjob -l app=django-cronjob -o name | xargs -I {} kubectl set image {} django="${IMAGE}" -n default
 
 # Roll out the new image to the deployment
 

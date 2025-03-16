@@ -3,6 +3,8 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ cronjob.name }}
+  labels:
+    app: django-cronjob
 spec:
   schedule: "{{ cronjob.schedule }}"
   concurrencyPolicy: Replace
