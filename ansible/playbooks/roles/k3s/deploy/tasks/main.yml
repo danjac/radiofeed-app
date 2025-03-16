@@ -3,6 +3,9 @@
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+      database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
+      redis_url: "redis://redis.default.svc.cluster.local:6379/0"
+      num_webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list | length }}"
   changed_when: false
 
 - name: Create cloudflare_certs list
@@ -81,21 +84,12 @@
       file: cronjobs.yml
   changed_when: false
 
-- name: Get webapp nodes
-  ansible.builtin.set_fact:
-      webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list }}"
-  changed_when: false
-
 - name: Delete existing CronJobs
   command: kubectl delete cronjob -l app=django-cronjob -n default
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Apply manifests
-  vars:
-      database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
-      redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-      num_webapps: "{{ webapps|length }}"
   ansible.builtin.command: >
       kubectl apply -f -
   args:
