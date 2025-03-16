@@ -99,7 +99,7 @@
   ansible.builtin.command: >
       kubectl apply -f -
   args:
-      stdin: "{{ lookup('template', item + '.yaml.j2') }}"
+      stdin: "{{ lookup('template', 'manifests/' + item + '.yaml.j2') }}"
   loop:
       - configmap
       - secrets
@@ -134,7 +134,7 @@
 
 - name: Add scripts to access the cluster
   ansible.builtin.template:
-      src: "{{ item }}.j2"
+      src: "scripts/{{ item }}.j2"
       dest: "{{ item }}"
       mode: "u+x"
   loop:
