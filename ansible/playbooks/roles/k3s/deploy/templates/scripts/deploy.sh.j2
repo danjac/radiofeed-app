@@ -45,11 +45,14 @@ EOF
 
 echo "$release_job_yaml" | kubectl apply -f - -n default
 
-# Wait for the release job to complete
-kubectl wait --for=condition=complete job/"$release_job_name" --timeout=60s
+# Wait for pod to be ready
+kubectl wait --for=condition=Ready pod -l job-name="$release_job_name" -n default --timeout=30s
 
-# Get the logs from the release job
-kubectl logs job/"$release_job_name" -n default
+# Stream logs until the release job completes
+kubectl logs --follow job/"$release_job_name" -n default
+
+# Wait for the release job to complete
+kubectl wait --for=condition=complete job/"$release_job_name" -n default --timeout=30s
 
 # Delete the job
 kubectl delete job "$release_job_name" -n default
