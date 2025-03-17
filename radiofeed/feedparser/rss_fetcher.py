@@ -66,11 +66,13 @@ def fetch_rss(
                 )
             )
         except httpx.HTTPStatusError as exc:
-            if exc.response.status_code == http.HTTPStatus.GONE:
-                raise DiscontinuedError(response=exc.response) from exc
-            if exc.response.status_code == http.HTTPStatus.NOT_MODIFIED:
-                raise NotModifiedError(response=exc.response) from exc
-            raise
+            match exc.response.status_code:
+                case http.HTTPStatus.GONE:
+                    raise DiscontinuedError(response=exc.response) from exc
+                case http.HTTPStatus.NOT_MODIFIED:
+                    raise NotModifiedError(response=exc.response) from exc
+                case _:
+                    raise
     except httpx.HTTPError as exc:
         raise UnavailableError from exc
 
