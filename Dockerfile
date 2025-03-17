@@ -1,5 +1,5 @@
 # Install Python dependencies
-FROM python:3.13.1-slim-bookworm AS python-base
+FROM python:3.13.2-slim-bookworm AS python-base
 
 ENV LC_CTYPE=C.utf8 \
     PYTHONUNBUFFERED=1 \
@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Install uv
 
-COPY --from=ghcr.io/astral-sh/uv:0.4 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.6.6 /uv /usr/local/bin/uv
 
 # Install Python dependencies
 
