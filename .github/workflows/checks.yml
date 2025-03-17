@@ -7,7 +7,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
-                  python-version: "3.13.1"
+                  python-version: "3.13.2"
                   cache: "pip"
             - uses: pre-commit/action@v3.0.1
     unittests:
@@ -24,12 +24,12 @@ jobs:
             - uses: actions/checkout@v4
             - uses: astral-sh/setup-uv@v3
               with:
-                version: "0.4"
+                version: "0.6.6"
                 enable-cache: true
                 cache-dependency-glob: |
                     **/uv.lock
                     **/pyproject.toml
-            - run: uv python install 3.13.0 # TBD: bump to 3.13.1 when available
+            - run: uv python install 3.13.2
             - run: uv sync --frozen --all-extras --no-install-project
             - run: uv run pyright
             - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
