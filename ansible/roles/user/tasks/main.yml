@@ -4,6 +4,8 @@
     createhome: yes
     shell: /bin/bash
     state: present
+    groups: sudo
+    append: yes
 
 - name: Deploy SSH Key
   ansible.posix.authorized_key:
@@ -11,3 +13,12 @@
       key: "{{ lookup('file', ssh_public_key_path) }}"
       exclusive: true
       state: present
+
+- name: Allow user to run sudo without password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/{{ deploy_user }}
+    line: "{{ deploy_user }} ALL=(ALL) NOPASSWD: ALL"
+    create: true
+    mode: "0440"
+    validate: "visudo -cf %s"
+  become: true

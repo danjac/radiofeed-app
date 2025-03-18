@@ -9,21 +9,15 @@
 
 - name: Provision K3s cluster
   hosts: all
-  remote_user: root
-  become: false
+  become: true
   gather_facts: false
-  vars:
-      ansible_user: root
   roles:
       - k3s/cluster
 
-- name: Set up server user with K3s access
+- name: Set up user with K3s access
   hosts: server
-  remote_user: root
   become: false
   gather_facts: false
-  vars:
-      ansible_user: root
   roles:
       - k3s/user
 

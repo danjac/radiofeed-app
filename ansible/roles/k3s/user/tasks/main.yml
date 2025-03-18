@@ -7,6 +7,7 @@
       state: directory
 
 - name: Copy kubeconfig to user home dir
+  become: true
   ansible.builtin.copy:
       src: /etc/rancher/k3s/k3s.yaml
       dest: "{{ kubeconfig }}"
