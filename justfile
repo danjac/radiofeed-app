@@ -31,7 +31,7 @@ dj *args:
 # Run Django development server + Tailwind
 [group('development')]
 serve:
-   just dj tailwind runserver
+   @just dj tailwind runserver
 
 # Run unit tests
 [group('development')]
@@ -56,17 +56,17 @@ dc *args:
 # Start all Docker services
 [group('development')]
 dcup *args:
-   just dc up -d {{ args }}
+   @just dc up -d {{ args }}
 
 # Stop all Docker services
 [group('development')]
 dcdn *args:
-   just dc down {{ args }}
+   @just dc down {{ args }}
 
 # Run Psql
 [group('development')]
 psql *args:
-   just dc exec postgres psql -U postgres {{ args }}
+   @just dc exec postgres psql -U postgres {{ args }}
 
 # Run pre-commit manually
 [group('development')]
@@ -76,18 +76,18 @@ precommit *args:
 # Install pre-commit hooks
 [group('development')]
 precommitinstall:
-   just precommit install
-   just precommit install --hook-type commit-msg
+   @just precommit install
+   @just precommit install --hook-type commit-msg
 
 # Update pre-commit hooks
 [group('development')]
 precommitupdate:
-   just precommit autoupdate
+   @just precommit autoupdate
 
 # Re-run pre-commit on all files
 [group('development')]
 precommitall:
-   just precommit run --all-files
+   @just precommit run --all-files
 
 # Run Ansible playbook
 [group('deployment')]
@@ -108,18 +108,18 @@ ghv workflow:
 [group('production')]
 [confirm("WARNING!!! Are you sure you want to run this command on production? (y/N)")]
 rdj *args:
-    just remote_script manage.sh dj_manage {{ args }}
+    @just remote_script manage.sh dj_manage {{ args }}
 
 # Run Psql commands remotely on production database
 [group('production')]
 [confirm("WARNING!!! Are you sure you want to run this command on production? (y/N)")]
 rpsql *args:
-    just remote_script psql.sh psql {{ args }}
+    @just remote_script psql.sh psql {{ args }}
 
 # Run Kubectl commands remotely on production cluster
 [group('production')]
 kube *args:
-    just remote_script kubectl.sh kubectl {{ args }}
+    @just remote_script kubectl.sh kubectl {{ args }}
 
 [private]
 remote_script script playbook *args:
