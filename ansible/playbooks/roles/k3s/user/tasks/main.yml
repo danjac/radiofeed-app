@@ -9,7 +9,7 @@
 - name: Copy kubeconfig to user home dir
   ansible.builtin.copy:
       src: /etc/rancher/k3s/k3s.yaml
-      dest: /home/{{ deploy_user }}/.kube/config
+      dest: "{{ kubeconfig }}"
       remote_src: true
       owner: "{{ deploy_user }}"
       group: "{{ deploy_user }}"
@@ -19,7 +19,7 @@
   lineinfile:
     path: "/home/{{ deploy_user }}/{{ item }}"
     regexp: '^export KUBECONFIG='
-    line: 'export KUBECONFIG=/home/{{ deploy_user }}/.kube/config'
+    line: 'export KUBECONFIG={{ kubeconfig }}'
     create: yes
     state: present
   loop:

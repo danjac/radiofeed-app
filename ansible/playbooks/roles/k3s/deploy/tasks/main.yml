@@ -1,23 +1,10 @@
-- name: Set common facts
-  ansible.builtin.set_fact:
-      kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-  changed_when: false
-
-- name: Include cron jobs configuration
-  ansible.builtin.include_vars:
-      file: cronjobs.yml
-  changed_when: false
-
 - name: Deploy Kubernetes
   environment:
-      KUBECONFIG: "/home/{{ ansible_user }}/.kube/config"
+      KUBECONFIG: "{{ kubeconfig }}"
+  vars:
+      cloudflare_cert: "cloudflare.pem"
+      cloudflare_key: "cloudflare.key"
   block:
-      - name: Add cert names
-        ansible.builtin.set_fact:
-            cloudflare_cert: "cloudflare.pem"
-            cloudflare_key: "cloudflare.key"
-        changed_when: false
-
       - name: Create cloudflare_certs list
         ansible.builtin.set_fact:
             cloudflare_certs: ["{{ cloudflare_cert }}", "{{ cloudflare_key }}"]
@@ -83,6 +70,11 @@
 
       - name: Delete existing CronJobs
         command: kubectl delete cronjob -l app=django-cronjob -n default
+
+      - name: Include cron jobs configuration
+        ansible.builtin.include_vars:
+            file: cronjobs.yml
+        changed_when: false
 
       - name: Apply manifests
         vars:
