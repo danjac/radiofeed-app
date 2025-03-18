@@ -12,7 +12,7 @@
 
       - name: Copy Cloudflare certs to target node
         ansible.builtin.copy:
-            src: "{{ playbook_dir }}/../certs/{{ item }}"
+            src: "{{ playbook_dir }}/certs/{{ item }}"
             dest: "/tmp/{{ item | basename }}"
         loop: "{{ cloudflare_certs }}"
 
@@ -84,7 +84,7 @@
         ansible.builtin.command: >
             kubectl apply -f -
         args:
-            stdin: "{{ lookup('template', 'manifests/' + item + '.yaml.j2') }}"
+            stdin: "{{ lookup('template', item + '.yaml.j2') }}"
         loop:
             - configmap
             - secrets
@@ -110,21 +110,3 @@
             for deployment in $(kubectl get deployments -n default -o jsonpath='{.items[*].metadata.name}'); do
               kubectl rollout restart deployment/$deployment -n default
             done
-
-- name: Build and run scripts
-  block:
-      - name: Add scripts to access the cluster
-        ansible.builtin.template:
-            src: "scripts/{{ item }}.j2"
-            dest: "{{ item }}"
-            mode: "u+x"
-        loop:
-            - deploy.sh
-            - manage.sh
-            - psql.sh
-
-      - name: Run the deploy script to do Django migrations etc
-        ansible.builtin.shell: |
-            ./deploy.sh
-        environment:
-            IMAGE: "{{ image }}"

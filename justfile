@@ -1,6 +1,5 @@
 
 ansible_dir := invocation_directory() / "ansible"
-playbooks_dir := ansible_dir / "playbooks"
 script_dir := ansible_dir / "scripts"
 
 @_default:
@@ -93,7 +92,7 @@ precommitall:
 # Run Ansible playbook
 [group('deployment')]
 pb playbook *args:
-    ansible-playbook -v -i {{ ansible_dir / "hosts.yml" }} {{ playbooks_dir / playbook + ".yml" }} {{ args }}
+    ansible-playbook -v -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} {{ args }}
 
 # Run a Github Actions workflow
 [group('deployment')]

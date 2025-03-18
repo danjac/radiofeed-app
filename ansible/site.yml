@@ -33,3 +33,10 @@
   gather_facts: false
   roles:
       - k3s/deploy
+
+- name: Build and run scripts
+  hosts: server
+  become: false
+  gather_facts: false
+  roles:
+      - k3s/scripts

@@ -1,0 +1,15 @@
+- name: Add scripts to access the cluster
+  ansible.builtin.template:
+      src: "{{ item }}.j2"
+      dest: "{{ item }}"
+      mode: "u+x"
+  loop:
+      - deploy.sh
+      - manage.sh
+      - psql.sh
+
+- name: Run the deploy script to do Django migrations etc
+  ansible.builtin.shell: |
+      ./deploy.sh
+  environment:
+      IMAGE: "{{ image }}"
