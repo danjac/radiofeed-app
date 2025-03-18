@@ -1,149 +1,138 @@
-- name: Set variables for the deployment
+- name: Set common facts
   ansible.builtin.set_fact:
-      cloudflare_cert: "cloudflare.pem"
-      cloudflare_key: "cloudflare.key"
       kubeconfig: "/home/{{ ansible_user }}/.kube/config"
-      database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
-      redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-      num_webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list | length }}"
   changed_when: false
 
-- name: Create cloudflare_certs list
-  ansible.builtin.set_fact:
-      cloudflare_certs: ["{{ cloudflare_cert }}", "{{ cloudflare_key }}"]
-  changed_when: false
-
-- name: Copy Cloudflare certs to target node
-  ansible.builtin.copy:
-      src: "{{ playbook_dir }}/../certs/{{ item }}"
-      dest: "/tmp/{{ item | basename }}"
-  loop: "{{ cloudflare_certs }}"
-
-- name: Create Kubernetes TLS Secret
-  ansible.builtin.shell: |
-      kubectl create secret tls cloudflare-origin-cert \
-          --cert=/tmp/{{ cloudflare_cert }} \
-          --key=/tmp/{{ cloudflare_key }} \
-          -n default --dry-run=client -o yaml | kubectl apply -f -
-  args:
-      creates: "/tmp/cloudflare-origin-cert.created"
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Remove certs from /tmp after secret is created
-  file:
-      path: "/tmp/{{ item }}"
-      state: absent
-  loop: "{{ cloudflare_certs }}"
-
-- name: Label the nodes
-  ansible.builtin.shell: |
-      kubectl label nodes {{ hostvars[item].hostname }} role={{ hostvars[item].role }} --overwrite
-  loop: "{{ groups['agents'] + groups['server'] }}"
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Force CoreDNS to run on the server node
-  ansible.builtin.shell: |
-      kubectl patch deployment coredns -n kube-system \
-        --type='json' \
-        -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Restart CoreDNS to apply changes
-  ansible.builtin.shell: |
-      kubectl rollout restart deployment/coredns -n kube-system
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Force Traefik to run on the server node
-  ansible.builtin.shell: |
-      kubectl patch deployment traefik -n kube-system \
-        --type='json' \
-        -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Restart Traefik to apply changes
-  ansible.builtin.shell: |
-      kubectl rollout restart deployment/traefik -n kube-system
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Get the current image of running django-app pod
-  ansible.builtin.shell: |
-      kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
-  register: current_image
-  changed_when: false
-  ignore_errors: true
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
-
-- name: Set default image if current image is empty
-  ansible.builtin.set_fact:
-      image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
-  changed_when: false
-
-- name: Include cron jobs vars
-  include_vars:
+- name: Include cron jobs configuration
+  ansible.builtin.include_vars:
       file: cronjobs.yml
   changed_when: false
 
-- name: Delete existing CronJobs
-  command: kubectl delete cronjob -l app=django-cronjob -n default
+- name: Deploy Kubernetes
   environment:
-      KUBECONFIG: "{{ kubeconfig }}"
+      KUBECONFIG: "/home/{{ ansible_user }}/.kube/config"
+  block:
+      - name: Add cert names
+        ansible.builtin.set_fact:
+            cloudflare_cert: "cloudflare.pem"
+            cloudflare_key: "cloudflare.key"
+        changed_when: false
 
-- name: Apply manifests
-  ansible.builtin.command: >
-      kubectl apply -f -
-  args:
-      stdin: "{{ lookup('template', 'manifests/' + item + '.yaml.j2') }}"
-  loop:
-      - configmap
-      - secrets
-      - postgres_pv
-      - postgres_pvc
-      - postgres_statefulset
-      - postgres_service
-      - redis_deployment
-      - redis_service
-      - django_deployment
-      - django_service
-      - django_cronjobs
-      - ingress
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
+      - name: Create cloudflare_certs list
+        ansible.builtin.set_fact:
+            cloudflare_certs: ["{{ cloudflare_cert }}", "{{ cloudflare_key }}"]
+        changed_when: false
 
-- name: Restart statefulsets
-  ansible.builtin.shell: |
-      for statefulset in $(kubectl get statefulsets -n default -o jsonpath='{.items[*].metadata.name}'); do
-        kubectl rollout restart statefulset/$statefulset -n default
-      done
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
+      - name: Copy Cloudflare certs to target node
+        ansible.builtin.copy:
+            src: "{{ playbook_dir }}/../certs/{{ item }}"
+            dest: "/tmp/{{ item | basename }}"
+        loop: "{{ cloudflare_certs }}"
 
-- name: Restart deployments
-  ansible.builtin.shell: |
-      for deployment in $(kubectl get deployments -n default -o jsonpath='{.items[*].metadata.name}'); do
-        kubectl rollout restart deployment/$deployment -n default
-      done
-  environment:
-      KUBECONFIG: "{{ kubeconfig }}"
+      - name: Create Kubernetes TLS Secret
+        ansible.builtin.shell: |
+            kubectl create secret tls cloudflare-origin-cert \
+                --cert=/tmp/{{ cloudflare_cert }} \
+                --key=/tmp/{{ cloudflare_key }} \
+                -n default --dry-run=client -o yaml | kubectl apply -f -
+        args:
+            creates: "/tmp/cloudflare-origin-cert.created"
 
-- name: Add scripts to access the cluster
-  ansible.builtin.template:
-      src: "scripts/{{ item }}.j2"
-      dest: "{{ item }}"
-      mode: "u+x"
-  loop:
-      - deploy.sh
-      - manage.sh
-      - psql.sh
+      - name: Remove certs from /tmp after secret is created
+        file:
+            path: "/tmp/{{ item }}"
+            state: absent
+        loop: "{{ cloudflare_certs }}"
 
-- name: Run the deploy script to do Django migrations etc
-  ansible.builtin.shell: |
-      ./deploy.sh
-  environment:
-      IMAGE: "{{ image }}"
+      - name: Label the nodes
+        ansible.builtin.shell: |
+            kubectl label nodes {{ hostvars[item].hostname }} role={{ hostvars[item].role }} --overwrite
+        loop: "{{ groups['agents'] + groups['server'] }}"
+
+      - name: Force CoreDNS to run on the server node
+        ansible.builtin.shell: |
+            kubectl patch deployment coredns -n kube-system \
+              --type='json' \
+              -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
+
+      - name: Restart CoreDNS to apply changes
+        ansible.builtin.shell: |
+            kubectl rollout restart deployment/coredns -n kube-system
+
+      - name: Force Traefik to run on the server node
+        ansible.builtin.shell: |
+            kubectl patch deployment traefik -n kube-system \
+              --type='json' \
+              -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
+
+      - name: Restart Traefik to apply changes
+        ansible.builtin.shell: |
+            kubectl rollout restart deployment/traefik -n kube-system
+
+      - name: Get the current image of running django-app pod
+        ansible.builtin.shell: |
+            kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
+        register: current_image
+        changed_when: false
+        ignore_errors: true
+
+      - name: Set default image if current image is empty
+        ansible.builtin.set_fact:
+            image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
+        changed_when: false
+
+      - name: Delete existing CronJobs
+        command: kubectl delete cronjob -l app=django-cronjob -n default
+
+      - name: Apply manifests
+        vars:
+            database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
+            redis_url: "redis://redis.default.svc.cluster.local:6379/0"
+            num_webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list | length }}"
+        ansible.builtin.command: >
+            kubectl apply -f -
+        args:
+            stdin: "{{ lookup('template', 'manifests/' + item + '.yaml.j2') }}"
+        loop:
+            - configmap
+            - secrets
+            - postgres_pv
+            - postgres_pvc
+            - postgres_statefulset
+            - postgres_service
+            - redis_deployment
+            - redis_service
+            - django_deployment
+            - django_service
+            - django_cronjobs
+            - ingress
+
+      - name: Restart statefulsets
+        ansible.builtin.shell: |
+            for statefulset in $(kubectl get statefulsets -n default -o jsonpath='{.items[*].metadata.name}'); do
+              kubectl rollout restart statefulset/$statefulset -n default
+            done
+
+      - name: Restart deployments
+        ansible.builtin.shell: |
+            for deployment in $(kubectl get deployments -n default -o jsonpath='{.items[*].metadata.name}'); do
+              kubectl rollout restart deployment/$deployment -n default
+            done
+
+- name: Build and run scripts
+  block:
+      - name: Add scripts to access the cluster
+        ansible.builtin.template:
+            src: "scripts/{{ item }}.j2"
+            dest: "{{ item }}"
+            mode: "u+x"
+        loop:
+            - deploy.sh
+            - manage.sh
+            - psql.sh
+
+      - name: Run the deploy script to do Django migrations etc
+        ansible.builtin.shell: |
+            ./deploy.sh
+        environment:
+            IMAGE: "{{ image }}"
