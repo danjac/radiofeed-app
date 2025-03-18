@@ -65,6 +65,12 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
 
+- name: Restart Traefik to apply changes
+  ansible.builtin.shell: |
+      kubectl rollout restart deployment/traefik -n kube-system
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+
 - name: Get the current image of running django-app pod
   ansible.builtin.shell: |
       kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
