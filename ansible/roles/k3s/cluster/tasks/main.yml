@@ -7,7 +7,7 @@
       state: present
       update_cache: true
 
-- name: Set the hostname of the server
+- name: Set the hostname of each node to match inventory
   ansible.builtin.hostname:
       name: "{{ hostvars[inventory_hostname]['hostname'] }}"
 
