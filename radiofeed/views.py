@@ -77,14 +77,6 @@ def accept_gdpr_cookies(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def favicon(_) -> FileResponse:
-    """Generates favicon file."""
-    return FileResponse((settings.STATIC_SRC / "img" / "wave-ico.png").open("rb"))
-
-
-@require_safe
-@_cache_control
-@_cache_page
 def assetlinks(_) -> JsonResponse:
     """PWA assetlinks"""
     return JsonResponse(pwa.get_assetlinks(), safe=False)
