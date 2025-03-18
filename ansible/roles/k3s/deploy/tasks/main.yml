@@ -34,7 +34,7 @@
       - name: Label the nodes
         ansible.builtin.shell: |
             kubectl label nodes {{ hostvars[item].hostname }} role={{ hostvars[item].role }} --overwrite
-        loop: "{{ groups['agents'] + groups['server'] }}"
+        loop: "{{ groups['all'] }}"
 
       - name: Force CoreDNS to run on the server node
         ansible.builtin.shell: |
@@ -80,7 +80,7 @@
         vars:
             database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
             redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-            num_webapps: "{{ groups['agents'] | map('extract', hostvars) | selectattr('role', 'equalto', 'webapp') | list | length }}"
+            num_webapps: "{{ groups['webapps'] | length }}"
         ansible.builtin.command: >
             kubectl apply -f -
         args:

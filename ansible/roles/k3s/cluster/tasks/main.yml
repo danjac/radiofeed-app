@@ -43,4 +43,4 @@
       --node-name="$(hostname -f)" \
       --flannel-iface=enp7s0 \
       --server https://{{ private_ip }}:6443
-  when: "'agents' in group_names"
+  when: "'server' not in group_names"

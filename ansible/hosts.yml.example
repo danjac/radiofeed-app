@@ -8,7 +8,17 @@ all:
           private_ip: 10.0.0.3
           hostname: server
           role: server
-    agents:
+    database:
+       hosts:
+          678.76.5.433:
+            hostname: database
+            role: database
+    jobrunner:
+       hosts:
+          37.38.38.160:
+            hostname: jobrunner
+            role: jobrunner
+    webapps:
       hosts:
         123.34.5.678:
             hostname: webapp-1
@@ -16,12 +26,6 @@ all:
         678.76.5.432:
             hostname: webapp-2
             role: webapp
-        678.76.5.433:
-            hostname: database
-            role: database
-        37.38.38.160:
-            hostname: jobrunner
-            role: jobrunner
   vars:
     admin_site_header: "Radiofeed Admin [Production]"
     admin_url: "my-admin/"
