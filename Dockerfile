@@ -34,15 +34,26 @@ COPY ./nltk.txt /app/
 RUN xargs -I{} uv run python -c "import nltk; nltk.download('{}')" < /app/nltk.txt && \
     rm /app/nltk.txt
 
+# Download Tailwind CLI
+
+FROM python-base AS tailwind-cli
+
+COPY . /app
+
+RUN python manage.py tailwind download_cli
+
 # Build static assets
 
 FROM python-base AS staticfiles
 
+# Copy the Tailwind CLI binary from the cached layer
+COPY --from=tailwind-cli /root/.local/bin/ /root/.local/bin/
+
 COPY . /app
 
-RUN uv run python manage.py tailwind build && \
-    uv run python manage.py tailwind remove_cli && \
-    uv run python manage.py collectstatic --no-input
+RUN python manage.py tailwind build && \
+    python manage.py tailwind remove_cli && \
+    python manage.py collectstatic --no-input
 
 FROM python-base AS webapp
 
