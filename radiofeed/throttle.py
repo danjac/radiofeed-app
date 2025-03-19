@@ -16,7 +16,7 @@ def throttle(*, limit: int, duration: int) -> Callable:
 
     For example, to limit requests to 10 per minute:
 
-        @throttle(10, 60)
+        @throttle(limit=10, duration=60)
 
     If user is authenticated, use user's primary key as part of the cache key, otherwise uses IP address.
     """
