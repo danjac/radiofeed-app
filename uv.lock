@@ -340,14 +340,14 @@ wheels = [
 
 [[package]]
 name = "django-cotton"
-version = "2.0.0"
+version = "2.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/69/5c/f12bd59dbfa4ae5f096cdebbf8b87a4c15e3616403427a30841ba901d65d/django_cotton-2.0.0.tar.gz", hash = "sha256:c6e109f5b3cf115cbfafb3824195bb1916613910a919d62e34c276064c58bb8a", size = 21560 }
+sdist = { url = "https://files.pythonhosted.org/packages/73/e2/080a68f48734c6772b903ebae5a0d53b43b83d13f66e3089c04a0da60d7b/django_cotton-2.0.1.tar.gz", hash = "sha256:aac88b5158d192b65b2d687154ea8ad19589460ef925f581ad9bb8061e977c2c", size = 21557 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/55/4a/74aa5cf75d547e1580a183da4b17cd9ae1d387aa8b9e7695b8240762cc74/django_cotton-2.0.0-py3-none-any.whl", hash = "sha256:3d971321fb5d25733d4a4a96b557e32dd7402783e65bd7ee3c9e8b373e42e96b", size = 21204 },
+    { url = "https://files.pythonhosted.org/packages/e7/be/470ecb257c7e7c3056bce93cdefc0547a4723b868d3ee5eabedd6eaaaf2e/django_cotton-2.0.1-py3-none-any.whl", hash = "sha256:ad121bd5d567935140f0eca467563f107f5640097d34a1792990af9505936536", size = 21206 },
 ]
 
 [[package]]
@@ -604,14 +604,14 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "37.0.0"
+version = "37.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "tzdata" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/82/c6/6820408cdd87c11f1fbbd2349b05bbda28174d746e6d708ad0f0a934f9d7/faker-37.0.0.tar.gz", hash = "sha256:d2e4e2a30d459a8ec0ae52a552aa51c48973cb32cf51107dee90f58a8322a880", size = 1875487 }
+sdist = { url = "https://files.pythonhosted.org/packages/ad/ab/031aa33d72420f074aceaa77e262476d30992db8b9b1bb2bf5dc9fcd8418/faker-37.0.1.tar.gz", hash = "sha256:3a71763f28d796c1d770b90e6b7519d75120a84b5dc4cdd27237870cc0451ff7", size = 1875530 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/03/0ffcbc5ab352c266a648d029f79de54ca205c04661203d46a42e3f03492b/faker-37.0.0-py3-none-any.whl", hash = "sha256:2598f78b76710a4ed05e197dda5235be409b4c291ba5c9c7514989cfbc7a5144", size = 1918764 },
+    { url = "https://files.pythonhosted.org/packages/f3/ee/a01924560811622e742d4b9b2e796f481f5852a265515f3e5eab9b97af1e/faker-37.0.1-py3-none-any.whl", hash = "sha256:92bb009dcc708244b446be2f0c11a843fca90ea6e412a2addfef0cf2849c94f9", size = 1918376 },
 ]
 
 [[package]]
