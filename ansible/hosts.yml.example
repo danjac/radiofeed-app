@@ -27,23 +27,11 @@ all:
             hostname: webapp-2
             role: webapp
   vars:
-    admin_site_header: "Radiofeed Admin [Production]"
-    admin_url: "my-admin/"
     admins: "danjac2018@gmail.com"
-    allowed_hosts: "*"
-    ansible_user: ubuntu
-    conn_max_age: 60
     contact_email: "danjac2018@gmail.com"
-    csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
-    domain: radiofeed.app
-    docker_image: ghcr.io/danjac/radiofeed-app:main
+    domain: "radiofeed.app"
     mailgun_api_key: "*******"
     mailgun_api_url: "https://api.eu.mailgun.net/v3"
-    mailgun_sender_domain: "mg.radiofeed.app"
     postgres_password: *****
-    postgres_volume: "/home/ubuntu/pg_data"
-    pwa_sha256_fingerprints: "*******"
     secret_key: "*******"
-    secret_key_fallbacks: "******,*****"
     sentry_url: "https://*****@****.ingest.us.sentry.io/****"
-    ssh_public_key_path: ~/.ssh/id_rsa.pub
