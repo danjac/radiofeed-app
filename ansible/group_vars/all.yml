@@ -1,1 +1,2 @@
+deploy_user:  "{{ hostvars[inventory_hostname]['ansible_user'] }}"
 kubeconfig: "/home/{{ deploy_user }}/.kube/config"

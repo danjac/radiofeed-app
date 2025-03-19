@@ -35,7 +35,6 @@ all:
     conn_max_age: 60
     contact_email: "danjac2018@gmail.com"
     csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
-    deploy_user: ubuntu
     domain: radiofeed.app
     docker_image: ghcr.io/danjac/radiofeed-app:main
     mailgun_api_key: "*******"
