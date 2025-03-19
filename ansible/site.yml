@@ -25,7 +25,7 @@
 - name: Deploy k3s application
   hosts: server
   become: false
-  gather_facts: true
+  gather_facts: false
   roles:
       - k3s/user
       - k3s/deploy

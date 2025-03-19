@@ -1,6 +1,6 @@
 - name: Create .kube directory with read/write permissions on user home dir
   ansible.builtin.file:
-      path: "{{ ansible_env.HOME }}/.kube"
+      path: "{{ home_dir }}/.kube"
       mode: "u+rw"
       state: directory
 
@@ -14,7 +14,7 @@
 
 - name: Add KUBECONFIG environment variable to .bashrc and .profile
   lineinfile:
-    path: "{{ ansible_env.HOME }}/{{ item }}"
+    path: "{{ home_dir }}/{{ item }}"
     regexp: '^export KUBECONFIG='
     line: 'export KUBECONFIG={{ kubeconfig }}'
     create: yes
@@ -24,7 +24,7 @@
     - .profile
 
 - name: Reload shell configuration for the user
-  shell: "bash -c 'source {{ ansible_env.HOME }}/{{ item }}'"
+  shell: "bash -c 'source {{ home_dir }}/{{ item }}'"
   loop:
     - .bashrc
     - .profile

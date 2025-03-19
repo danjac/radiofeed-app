@@ -1,3 +1,4 @@
 ansible_user: "ubuntu"
-kubeconfig: "{{ ansible_env.HOME }}/.kube/config"
+home_dir: "/home/{{ ansible_user }}"
+kubeconfig: "{{ home_dir }}/.kube/config"
 ssh_public_key_path: "~/.ssh/id_rsa.pub"
