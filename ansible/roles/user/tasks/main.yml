@@ -1,3 +1,7 @@
+- name: Set deploy user
+  ansible.builtin.set_fact:
+    deploy_user:  "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+
 - name: Create deploy user
   ansible.builtin.user:
     name: "{{ deploy_user }}"

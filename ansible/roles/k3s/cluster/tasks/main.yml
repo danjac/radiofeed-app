@@ -1,16 +1,3 @@
-- name: Install dependencies required for K3s
-  ansible.builtin.apt:
-      name:
-          - apt-transport-https
-          - curl
-          - ca-certificates
-      state: present
-      update_cache: true
-
-- name: Set the hostname of each node to match inventory
-  ansible.builtin.hostname:
-      name: "{{ hostvars[inventory_hostname]['hostname'] }}"
-
 - name: Download and install K3s on server
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | sh -s - \
@@ -19,28 +6,23 @@
       --flannel-iface=enp7s0 \
       --advertise-address={{ private_ip }} \
       --tls-san={{ private_ip }}
-  when: "'server' in group_names"
 
 - name: Get the K3s join token from the control plane (for worker nodes)
   ansible.builtin.shell: k3s token create
   register: k3s_token
-  delegate_to: "{{ inventory_hostname }}"
-  run_once: true
-  when: "'server' in group_names"
 
 - name: Set K3s join token as a fact
   ansible.builtin.set_fact:
       k3s_token: "{{ k3s_token.stdout }}"
-  run_once: true
   changed_when: false
-  when: "'server' in group_names"
 
 - name: Download and install K3s as a worker node
   vars:
-      private_ip: "{{ hostvars[groups['server'][0]].private_ip }}"
+      non_server_groups: "{{ groups['webapps'] + groups['database'] + groups['jobrunner'] }}"
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
       --node-name="$(hostname -f)" \
       --flannel-iface=enp7s0 \
       --server https://{{ private_ip }}:6443
-  when: "'server' not in group_names"
+  delegate_to: "{{ item }}"
+  with_items: "{{ non_server_groups }}"

@@ -1,5 +1,5 @@
 - name: Generate a remote kubectl script
   hosts: server
-  gather_facts: false
+  gather_facts: true
   roles:
     - scripts/kubectl

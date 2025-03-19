@@ -71,11 +71,6 @@
       - name: Delete existing CronJobs
         command: kubectl delete cronjob -l app=django-cronjob -n default
 
-      - name: Include cron jobs configuration
-        ansible.builtin.include_vars:
-            file: cronjobs.yml
-        changed_when: false
-
       - name: Apply manifests
         vars:
             database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"

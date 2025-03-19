@@ -1,8 +1,6 @@
 - name: Create .kube directory with read/write permissions on user home dir
   ansible.builtin.file:
-      path: /home/{{ deploy_user }}/.kube
-      owner: "{{ deploy_user }}"
-      group: "{{ deploy_user }}"
+      path: "{{ ansible_env.HOME }}/.kube"
       mode: "u+rw"
       state: directory
 
@@ -12,13 +10,11 @@
       src: /etc/rancher/k3s/k3s.yaml
       dest: "{{ kubeconfig }}"
       remote_src: true
-      owner: "{{ deploy_user }}"
-      group: "{{ deploy_user }}"
       mode: "u+rw"
 
 - name: Add KUBECONFIG environment variable to .bashrc and .profile
   lineinfile:
-    path: "/home/{{ deploy_user }}/{{ item }}"
+    path: "{{ ansible_env.HOME }}/{{ item }}"
     regexp: '^export KUBECONFIG='
     line: 'export KUBECONFIG={{ kubeconfig }}'
     create: yes
@@ -28,7 +24,7 @@
     - .profile
 
 - name: Reload shell configuration for the user
-  shell: "bash -c 'source /home/{{ deploy_user }}/{{ item }}'"
+  shell: "bash -c 'source {{ ansible_env.HOME }}/{{ item }}'"
   loop:
     - .bashrc
     - .profile
