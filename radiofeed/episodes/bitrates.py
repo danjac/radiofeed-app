@@ -41,40 +41,17 @@ AudioMimetype = Literal[
 ]
 
 _AUDIO_BITRATES: Final = {
-    "audio/aac": 128,
-    "audio/aacp": 128,
     "audio/basic": 64,
     "audio/L24": 1411,  # Assuming PCM 24-bit WAV-like format
-    "audio/m4a": 128,
     "audio/midi": 32,
-    "audio/mp3": 128,
-    "audio/mp4": 128,
-    "audio/mp4a-latm": 128,
-    "audio/mpef": 128,
-    "audio/mpeg": 128,
-    "audio/mpeg3": 128,
-    "audio/mpeg4": 128,
-    "audio/mpg": 128,
     "audio/ogg": 96,
-    "audio/video": 128,  # Not a common audio type, assuming default
-    "audio/vnd.dlna.adts": 128,
     "audio/vnd.rn-realaudio": 96,  # RealAudio varies, assuming standard quality
     "audio/vnd.wave": 1411,
     "audio/vorbis": 96,
     "audio/wav": 1411,
     "audio/wave": 1411,
-    "audio/webm": 128,
-    "audio/x-aac": 128,
     "audio/x-aiff": 1411,
     "audio/x-flac": 700,
-    "audio/x-hx-aac-adts": 128,
-    "audio/x-m4a": 128,
-    "audio/x-m4b": 128,
-    "audio/x-m4v": 128,  # Assuming similar to M4A
-    "audio/x-mov": 128,  # Assuming similar to M4A
-    "audio/x-mp3": 128,
-    "audio/x-mpeg": 128,
-    "audio/x-mpg": 128,
     "audio/x-ms-wma": 96,
     "audio/x-pn-realaudio": 96,
     "audio/x-wav": 1411,
