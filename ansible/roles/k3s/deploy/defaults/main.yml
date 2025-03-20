@@ -1,9 +1,9 @@
 admin_site_header: "Radiofeed Admin [Production]"
 admin_url: "admin/"
-admins: "admin@example.com"
+admins: "admin@{{ domain }}"
 allowed_hosts: "*"
 conn_max_age: 60
-contact_email: "contact@example.com"
+contact_email: "contact@{{ domain }}"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
 docker_image: ghcr.io/danjac/radiofeed-app:main
 mailgun_api_key: ""
