@@ -18,7 +18,7 @@ from pydantic import (
 )
 
 from radiofeed import tokenizer
-from radiofeed.episodes.audio_types import AudioMimetype
+from radiofeed.episodes.bitrates import AudioMimetype
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.podcasts.models import Podcast

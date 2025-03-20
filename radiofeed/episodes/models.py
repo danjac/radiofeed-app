@@ -9,7 +9,7 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from fast_update.query import FastUpdateQuerySet
 
-from radiofeed.episodes.audio_types import get_bitrate
+from radiofeed.episodes.bitrates import get_bitrate
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
