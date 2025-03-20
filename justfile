@@ -96,12 +96,12 @@ pb playbook="site" *args:
 
 # Run a Github Actions workflow
 [group('deployment')]
-gh workflow:
+gh workflow="deploy":
     gh workflow run {{ workflow }}.yml
 
 # Open Github Actions workflow run in your browser
 [group('deployment')]
-ghv workflow:
+ghv workflow="deploy":
     gh run view $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId') --web
 
 # Run Django manage.py commands on production server
