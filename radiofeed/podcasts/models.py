@@ -508,8 +508,6 @@ class Recommendation(models.Model):
 
     class Meta:
         indexes: ClassVar[list] = [
-            models.Index(fields=["podcast"]),
-            models.Index(fields=["recommended"]),
             models.Index(fields=["-score"]),
         ]
         constraints: ClassVar[list] = [
