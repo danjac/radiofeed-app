@@ -17,12 +17,10 @@
   changed_when: false
 
 - name: Download and install K3s as a worker node
-  vars:
-      agents: "{{ groups.keys() | difference(['server', 'all', 'ungrouped']) | map('extract', groups) | flatten }}"
   ansible.builtin.shell: |
       curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
       --node-name="$(hostname -f)" \
       --flannel-iface=enp7s0 \
       --server https://{{ private_ip }}:6443
   delegate_to: "{{ item }}"
-  loop: "{{ agents }}"
+  loop: "{{ groups['agents'] }}"

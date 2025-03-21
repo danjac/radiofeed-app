@@ -4,12 +4,10 @@
   vars:
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
+      cloudflare_certs:
+          - "{{ cloudflare_cert }}"
+          - "{{ cloudflare_key }}"
   block:
-      - name: Create cloudflare_certs list
-        ansible.builtin.set_fact:
-            cloudflare_certs: ["{{ cloudflare_cert }}", "{{ cloudflare_key }}"]
-        changed_when: false
-
       - name: Copy Cloudflare certs to target node
         ansible.builtin.copy:
             src: "{{ playbook_dir }}/certs/{{ item }}"
@@ -75,7 +73,7 @@
         vars:
             database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
             redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-            num_webapps: "{{ groups['webapps'] | length }}"
+            num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
         ansible.builtin.command: >
             kubectl apply -f -
         args:
