@@ -13,7 +13,7 @@
   become: true
   gather_facts: false
   roles:
-      - k3s/preinstall
+      - k3s/prereqs
 
 - name: Set up K3s cluster
   hosts: server
