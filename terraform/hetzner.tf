@@ -25,15 +25,11 @@ variable "server_type" {
     default = "cpx11"
 }
 
-variable "load_balancer_type" {
-    default = "lb11"
-}
-
 variable "location" {
     default = "hel1"
 }
 
-variable "agent_count" {
+variable "webapp_count" {
     default = 2
 }
 
@@ -109,14 +105,28 @@ resource "hcloud_server" "server" {
   }
 }
 
-resource "hcloud_server" "agents" {
-  count       = var.agent_count
-  name        = "agent-${count.index + 1}"
+resource "hcloud_server" "jobrunner" {
+  name        = "jobrunner"
   image       = var.image
   server_type = var.server_type
   location    = var.location
   ssh_keys    = [hcloud_ssh_key.default.id]
-  labels      = { role = "agent" }
+  labels      = { role = "jobrunner" }
+  firewall_ids = [hcloud_firewall.firewall.id]
+
+  network {
+    network_id = hcloud_network.private_net.id
+  }
+}
+
+resource "hcloud_server" "webapp" {
+  count       = var.webapp_count
+  name        = "webapp-${count.index + 1}"
+  image       = var.image
+  server_type = var.server_type
+  location    = var.location
+  ssh_keys    = [hcloud_ssh_key.default.id]
+  labels      = { role = "webapp" }
   firewall_ids = [hcloud_firewall.firewall.id]
 
   network {
