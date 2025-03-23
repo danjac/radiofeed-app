@@ -2,16 +2,13 @@
 
 set -o errexit
 
+# Runs Django management commands to prepare the application for release:
+# - checks the deployment settings
+# - applies database migrations
+# - clears the cache
+
 MANAGE="python ./manage.py"
 
-# Run system checks
-echo "Running system checks..."
 $MANAGE check --deploy --traceback
-
-# Run database migrations
-echo "Running database migrations..."
 $MANAGE migrate --no-input --traceback
-
-# Clear cache
-echo "Clearing cache..."
 $MANAGE clear_cache --traceback
