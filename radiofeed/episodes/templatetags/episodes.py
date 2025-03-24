@@ -1,14 +1,16 @@
 from django import template
 from django.template.context import RequestContext
 
-from radiofeed.cover_image import get_metadata_info
+from radiofeed.cover_image import ImageInfo, get_metadata_info
 from radiofeed.episodes.models import Episode
 
 register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
+def get_media_metadata(
+    context: RequestContext, episode: Episode
+) -> dict[str, str | list[ImageInfo]]:
     """Returns media session metadata for integration with client device.
 
     For more details:
