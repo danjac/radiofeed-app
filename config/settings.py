@@ -38,7 +38,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "csp",
-    "django_extensions",
     "django_htmx",
     "django_linear_migrations",
     "django_tailwind_cli",
