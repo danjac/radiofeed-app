@@ -11,4 +11,4 @@ MANAGE="python ./manage.py"
 
 $MANAGE check --deploy --traceback
 $MANAGE migrate --no-input --traceback
-$MANAGE clear_cache --no-input --traceback
+$MANAGE clear_cache --traceback
