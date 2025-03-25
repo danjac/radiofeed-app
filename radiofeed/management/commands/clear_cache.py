@@ -9,7 +9,7 @@ from django.core.management.base import CommandError
     "--cache-names",
     "-c",
     multiple=True,
-    help="Cache names to clear, if none then clears all caches",
+    help="Cache names to clear, if empty then clears all caches",
     default=[],
 )
 @click.option(
@@ -20,7 +20,7 @@ from django.core.management.base import CommandError
 )
 @click.command()
 def command(*, cache_names: list[str], no_input: bool) -> None:
-    """Deletes caches. If no cache(s) provided, deletes 'default'."""
+    """Deletes caches."""
 
     if not no_input:
         click.confirm("Are you sure you want to clear the cache?", abort=True)
