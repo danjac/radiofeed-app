@@ -414,12 +414,14 @@ class TestSearchCached:
 
         assert result == mock_search.return_value
         mock_search.assert_called_once_with(client, "test query", limit=10)
-        assert cache.get("search-itunes:test query:10") == result  # Ensure it's cached
+        assert (
+            cache.get(itunes.search_cache_key("test query", 10)) == result
+        )  # Ensure it's cached
 
     @pytest.mark.usefixtures("_locmem_cache")
     def test_search_cached_hit(self, mocker, client, feeds):
         """Ensures search_cached returns cached results without calling search()."""
-        cache.set("search-itunes:test query:10", feeds)
+        cache.set(itunes.search_cache_key("test query", 10), feeds)
 
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search"

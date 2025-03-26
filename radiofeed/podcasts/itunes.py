@@ -4,6 +4,8 @@ from collections.abc import Iterable
 import httpx
 from django.core.cache import cache
 from django.db.models import Q
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
@@ -21,7 +23,6 @@ class Feed:
     url: str
     title: str = ""
     image: str = ""
-    podcast: Podcast | None = None
 
     def __str__(self) -> str:
         """Return title or RSS"""
@@ -46,28 +47,8 @@ def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
     if not feeds:
         return []
 
-    podcasts = {
-        podcast.rss: podcast.canonical or podcast
-        for podcast in Podcast.objects.filter(
-            rss__in={feed.rss for feed in feeds}
-        ).select_related("canonical")
-    }
-
-    feeds = [
-        dataclasses.replace(
-            feed,
-            podcast=podcasts.get(feed.rss),
-        )
-        for feed in feeds
-    ]
-
-    # Create missing podcasts in bulk
     Podcast.objects.bulk_create(
-        [
-            Podcast(title=feed.title, rss=feed.rss)
-            for feed in feeds
-            if feed.podcast is None
-        ],
+        [Podcast(title=feed.title, rss=feed.rss) for feed in feeds],
         ignore_conflicts=True,
     )
 
@@ -83,13 +64,18 @@ def search_cached(
 ) -> list[Feed]:
     """Search iTunes podcast API with caching."""
     search_term = search_term.strip().casefold()
-    cache_key = f"search-itunes:{search_term}:{limit}"
+    cache_key = search_cache_key(search_term, limit)
 
     if (feeds := cache.get(cache_key)) is None:
         feeds = search(client, search_term, limit=limit)
         cache.set(cache_key, feeds, cache_timeout)
 
     return feeds
+
+
+def search_cache_key(search_term: str, limit: int) -> str:
+    """Properly encoded search cache key"""
+    return f"search-itunes:{urlsafe_base64_encode(force_bytes(search_term))}:{limit}"
 
 
 def fetch_chart(
@@ -122,6 +108,7 @@ def fetch_chart(
         # check duplicates
         rss_feeds |= set(Podcast.objects.filter(q).values_list("rss", flat=True))
 
+        # add new podcasts
         Podcast.objects.bulk_create(
             [Podcast(rss=rss, promoted=True) for rss in rss_feeds],
             unique_fields=["rss"],
@@ -129,6 +116,7 @@ def fetch_chart(
             update_conflicts=True,
         )
 
+        # demote podcasts not in the chart
         Podcast.objects.filter(promoted=True).exclude(q).update(promoted=False)
     return feeds
 

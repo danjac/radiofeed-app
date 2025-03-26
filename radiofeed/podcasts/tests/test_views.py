@@ -146,7 +146,6 @@ class TestSearchItunes:
                 rss=podcast.rss,
                 title=podcast.title,
                 image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-                podcast=podcast,
             ),
         ]
         mock_search = mocker.patch(
