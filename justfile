@@ -91,17 +91,17 @@ precommitall:
 
 # Run Ansible playbook
 [group('deployment')]
-pb playbook="site" *args:
+pb playbook *args:
     ansible-playbook -v -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} {{ args }}
 
 # Run a Github Actions workflow
 [group('deployment')]
-gh workflow="deploy":
+gh workflow:
     gh workflow run {{ workflow }}.yml
 
 # Open Github Actions workflow run in your browser
 [group('deployment')]
-ghv workflow="deploy":
+ghv workflow:
     gh run view $(gh run list --workflow={{ workflow }}.yml --limit 1 --json databaseId --jq '.[0].databaseId') --web
 
 # Run Django manage.py commands on production server
