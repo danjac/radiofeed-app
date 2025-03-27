@@ -478,13 +478,6 @@ HEALTH_CHECK = {
     "DISK_USAGE_MAX": 90,  # percent
     "MEMORY_MIN": 50,  # in MB
     "SUBSETS": {
-        "startup-probe": [
-            "DatabaseBackend",
-            "DiskUsage",
-            "MemoryUsage",
-            "MigrationsHealthCheck",
-            "RedisHealthCheck",
-        ],
         "liveness-probe": [
             "SimplePingHealthCheck",
         ],
