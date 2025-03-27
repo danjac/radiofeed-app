@@ -21,6 +21,7 @@ urlpatterns = [
     path("manifest.json", views.manifest, name="manifest"),
     path(".well-known/assetlinks.json", views.assetlinks, name="assetlinks"),
     path(".well-known/security.txt", views.security, name="security"),
+    path("ping/", views.ping, name="ping"),
     path("ht/", include("health_check.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]

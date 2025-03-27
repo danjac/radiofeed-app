@@ -52,6 +52,13 @@ class TestManifest:
         assert200(response)
 
 
+class TestPing:
+    @pytest.mark.django_db
+    def test_get(self, client):
+        response = client.get(reverse("ping"))
+        assert200(response)
+
+
 class TestAssetlinks:
     @pytest.mark.django_db
     def test_get(self, client):
