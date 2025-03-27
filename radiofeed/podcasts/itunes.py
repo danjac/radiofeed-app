@@ -123,7 +123,7 @@ def fetch_chart(
 
 def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
     """Fetches and parses feeds from iTunes API."""
-    return _orderedset(
+    return _dedupe(
         [
             feed
             for feed in [
@@ -137,7 +137,7 @@ def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
 
 def _fetch_itunes_ids(client: Client, url: str, **params) -> list[str]:
     """Fetches podcast IDs from results."""
-    return _orderedset(
+    return _dedupe(
         [
             itunes_id
             for itunes_id in [
@@ -159,7 +159,6 @@ def _fetch_json(client: Client, url: str, **params) -> dict:
             params=params,
             headers={"Accept": "application/json"},
         )
-        response.raise_for_status()
         return response.json()
     except httpx.HTTPError as e:
         raise ItunesError(f"Failed to fetch {url}: {e}") from e
@@ -178,5 +177,5 @@ def _parse_feed(feed: dict) -> Feed | None:
         return None
 
 
-def _orderedset(items: Iterable) -> list:
+def _dedupe(items: Iterable) -> list:
     return list(dict.fromkeys(items))
