@@ -490,6 +490,7 @@ HEALTH_CHECK = {
             "SimplePingHealthCheck",
         ],
         "readiness-probe": [
+            "CacheBackend",
             "DatabaseHeartBeatHealthCheck",
         ],
     },
