@@ -479,7 +479,6 @@ HEALTH_CHECK = {
     "MEMORY_MIN": 50,  # in MB
     "SUBSETS": {
         "startup-probe": [
-            "CacheBackend",
             "DatabaseBackend",
             "DiskUsage",
             "MemoryUsage",
@@ -490,8 +489,8 @@ HEALTH_CHECK = {
             "SimplePingHealthCheck",
         ],
         "readiness-probe": [
-            "CacheBackend",
             "DatabaseHeartBeatHealthCheck",
+            "RedisHealthCheck",
         ],
     },
 }
