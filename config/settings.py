@@ -486,11 +486,11 @@ HEALTH_CHECK = {
             "MigrationsHealthCheck",
             "RedisHealthCheck",
         ],
+        "liveness-probe": [
+            "SimplePingHealthCheck",
+        ],
         "readiness-probe": [
-            # Replace with DatabaseHeartBeatCheck on next release
-            "CacheBackend",
-            "DatabaseBackend",
-            "RedisHealthCheck",
+            "DatabaseHeartBeatHealthCheck",
         ],
     },
 }

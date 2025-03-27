@@ -58,12 +58,6 @@ def privacy(request: HttpRequest) -> HttpResponse:
     return render(request, "privacy.html")
 
 
-@require_safe
-def ping(_) -> HttpResponse:
-    """Pings the server to check it's alive."""
-    return HttpResponse("ok")
-
-
 @require_POST
 def accept_gdpr_cookies(_) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
