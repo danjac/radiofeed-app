@@ -477,6 +477,23 @@ VERSION_CHECKS = {
 HEALTH_CHECK = {
     "DISK_USAGE_MAX": 90,  # percent
     "MEMORY_MIN": 50,  # in MB
+    "SUBSETS": {
+        "startup-probe": [
+            "CacheBackend",
+            "DatabaseBackend",
+            "DiskUsage",
+            "MemoryUsage",
+            "MigrationsHealthCheck",
+            "RedisHealthCheck",
+        ],
+        "liveness-probe": [
+            "CacheBackend",
+            "DatabaseBackend",
+            "DiskUsage",
+            "MemoryUsage",
+            "RedisHealthCheck",
+        ],
+    },
 }
 
 # Dev tools
