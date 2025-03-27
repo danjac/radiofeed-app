@@ -1,5 +1,4 @@
 import djclick as click
-from django.core.management.base import CommandError
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
@@ -22,8 +21,5 @@ from radiofeed.podcasts import itunes
 )
 def command(**options):
     """Crawl iTunes Top Chart."""
-    try:
-        for podcast in itunes.fetch_chart(get_client(), **options):
-            click.secho(str(podcast), fg="green")
-    except itunes.ItunesError as e:
-        raise CommandError from e
+    for podcast in itunes.fetch_chart(get_client(), **options):
+        click.secho(str(podcast), fg="green")

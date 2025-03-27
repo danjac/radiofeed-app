@@ -1,5 +1,4 @@
 import pytest
-from click.exceptions import Exit
 from django.core.management import call_command
 
 from radiofeed.podcasts import itunes
@@ -25,7 +24,7 @@ class TestFetchItunesChart:
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=itunes.ItunesError("Error"),
         )
-        with pytest.raises(Exit):
+        with pytest.raises(itunes.ItunesError):
             call_command("fetch_itunes_chart")
         patched.assert_called()
 
