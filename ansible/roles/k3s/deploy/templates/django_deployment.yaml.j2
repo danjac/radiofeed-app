@@ -46,6 +46,12 @@ spec:
             periodSeconds: 10
           readinessProbe:
             httpGet:
+              path: /ht/readiness-probe/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
               path: /ht/startup-probe/
               port: 8000
             initialDelaySeconds: 30

@@ -489,8 +489,10 @@ HEALTH_CHECK = {
         "liveness-probe": [
             "CacheBackend",
             "DatabaseBackend",
-            "DiskUsage",
-            "MemoryUsage",
+        ],
+        "readiness-probe": [
+            "CacheBackend",
+            "DatabaseBackend",
             "RedisHealthCheck",
         ],
     },
