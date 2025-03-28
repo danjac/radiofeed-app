@@ -7,7 +7,7 @@
                     {{ request.site.name }} | Error
                 {% endblock title %}
             </title>
-            {% include "partials.html#head" %}
+            {% include "default_base.html#head" %}
         </head>
         <body class="mx-auto font-sans antialiased container-xl scroll-smooth">
             <div class="flex flex-col h-screen">
@@ -31,6 +31,7 @@
                     </div>
                 </div>
             </div>
+            {% include "default_base.html#scripts" %}
         </body>
     </html>
 {% endspaceless %}

@@ -1,4 +1,5 @@
 {% spaceless %}
+    {% load django_htmx partials static tailwind_cli %}
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -7,7 +8,27 @@
                     {{ request.site.name }}
                 {% endblock title %}
             </title>
-            {% include "partials.html#head" %}
+            {% partialdef head inline=True %}
+                {% tailwind_css %}
+                <link rel="icon" type="image/x-icon" href="{% static "img/favicon.ico" %}">
+                <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
+                <link rel="manifest" href="{% url "manifest" %}">
+                <link rel="canonical" href="{{ request.build_absolute_uri }}">
+                <meta charset="UTF-8" />
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="theme-color" content="{% theme_color %}">
+                <meta name="htmx-config" content="{% htmx_config %}">
+                <meta name="viewport"
+                      content="width=device-width, initial-scale=1, viewport-fit=no">
+                <meta name="mobile-wep-app-capable" content="yes">
+                <meta name="apple-mobile-wep-app-capable" content="yes">
+                <meta name="copyright" content="Dan Jacob {% now "Y" %}">
+                <meta name="cache-control" content="no-cache">
+                <meta name="description" content="Podcast aggregator site">
+                <meta name="keywords" content="podcasts, rss, feeds">
+                <script defer src="{% static "vendor/alpine-3.14.8.min.js" %}"></script>
+                <script defer src="{% static "vendor/htmx-2.0.4.min.js" %}"></script>
+            {% endpartialdef %}
         </head>
         <body class="mx-auto font-sans antialiased container-xl scroll-smooth"
               hx-boost="true"
@@ -36,7 +57,17 @@
                 <c-audio-player :audio-log="request.player.audio_log" />
                 <c-cookie-banner />
             </div>
-            {% include "partials.html#scripts" %}
+            {% if user.is_authenticated %}
+                <script src="{% static "audio-player.js" %}"></script>
+            {% endif %}
+            {% partialdef scripts inline=True %}
+                {% django_htmx_script %}
+                <script>
+                    if (typeof navigator.serviceWorker !== 'undefined') {
+                        navigator.serviceWorker.register('{% static "service-worker.js" %}')
+                    }
+                </script>
+            {% endpartialdef %}
         </body>
     </html>
 {% endspaceless %}

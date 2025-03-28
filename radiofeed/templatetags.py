@@ -10,7 +10,6 @@ from django.db.models import Model
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
-from django.utils.html import format_html
 
 from radiofeed import pwa
 from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
@@ -30,19 +29,13 @@ get_cover_image_class = register.simple_tag(get_cover_image_class)
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
-    return format_html(
-        '<meta name="htmx-config" content="{config}">',
-        config=json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder),
-    )
+    return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
 
 
 @register.simple_tag
 def theme_color() -> str:
-    """Returns the PWA configuration theme color meta tag."""
-    return format_html(
-        '<meta name="theme-color" content="{color}">',
-        color=pwa.get_theme_color(),
-    )
+    """Returns theme color in meta tag."""
+    return pwa.get_theme_color()
 
 
 @register.simple_tag
