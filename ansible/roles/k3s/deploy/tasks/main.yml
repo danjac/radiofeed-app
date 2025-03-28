@@ -90,7 +90,7 @@
             - django_deployment
             - django_service
             - django_cronjobs
-            - ingress
+            - ingress_route
 
       - name: Restart statefulsets
         ansible.builtin.shell: |
