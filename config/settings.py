@@ -76,7 +76,7 @@ MIDDLEWARE: list[str] = [
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "csp.middleware.CSPMiddleware",
-    "radiofeed.middleware.HtmxRestoreMiddleware",
+    "radiofeed.middleware.HtmxCacheMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
     "radiofeed.middleware.SearchMiddleware",
@@ -530,8 +530,6 @@ DEFAULT_PAGE_SIZE = 30
 
 HTMX_CONFIG = {
     "globalViewTransitions": True,
-    "historyCacheSize": 0,
-    "refreshOnHistoryMiss": False,
     "scrollBehavior": "instant",
     "scrollIntoViewOnBoost": False,
     "useTemplateFragments": True,

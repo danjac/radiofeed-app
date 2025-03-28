@@ -11,17 +11,17 @@ from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
 
+@dataclasses.dataclass(frozen=True, kw_only=False)
 class BaseMiddleware:
     """Base middleware class."""
 
-    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
-        self.get_response = get_response
+    get_response: Callable[[HttpRequest], HttpResponse]
 
 
-class HtmxRestoreMiddleware(BaseMiddleware):
-    """Workarounds for https://github.com/bigskysoftware/htmx/issues/497.
+class HtmxCacheMiddleware(BaseMiddleware):
+    """See https://htmx.org/docs/#caching
 
-    Sets Cache-Control and Vary headers to ensure full page is rendered.
+    Sets the Vary header to include "HX-Request" for all HTMX requests.
 
     Place after HtmxMiddleware.
     """
@@ -31,7 +31,6 @@ class HtmxRestoreMiddleware(BaseMiddleware):
         response = self.get_response(request)
         if request.htmx:
             patch_vary_headers(response, ("HX-Request",))
-            response.setdefault("Cache-Control", "no-store, max-age=0")
         return response
 
 

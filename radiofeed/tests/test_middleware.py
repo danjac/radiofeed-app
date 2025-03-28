@@ -5,9 +5,9 @@ from django.http import HttpResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
 from radiofeed.middleware import (
+    HtmxCacheMiddleware,
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
-    HtmxRestoreMiddleware,
     SearchDetails,
     SearchMiddleware,
 )
@@ -85,35 +85,19 @@ class TestHtmxRedirectMiddleware:
         assert response["Location"] == "/"
 
 
-class TestHtmxRestoreMiddleware:
+class TestHtmxCacheMiddleware:
     @pytest.fixture
     def cache_mw(self, get_response):
-        return HtmxRestoreMiddleware(get_response)
-
-    def test_is_htmx_request_cache_control_already_set(self, rf):
-        def _get_response(request):
-            request.htmx = True
-            resp = HttpResponse()
-            resp["Cache-Control"] = "max-age=3600"
-            return resp
-
-        req = rf.get("/")
-        req.htmx = True
-
-        resp = HtmxRestoreMiddleware(_get_response)(req)
-        assert resp.headers["Cache-Control"] == "max-age=3600"
-        assert resp.headers["Vary"] == "HX-Request"
+        return HtmxCacheMiddleware(get_response)
 
     def test_is_htmx_request(self, htmx_req, htmx_mw, cache_mw):
         htmx_mw(htmx_req)
         resp = cache_mw(htmx_req)
-        assert resp.headers["Cache-Control"] == "no-store, max-age=0"
         assert resp.headers["Vary"] == "HX-Request"
 
     def test_is_not_htmx_request(self, req, htmx_mw, cache_mw):
         htmx_mw(req)
         resp = cache_mw(req)
-        assert "Cache-Control" not in resp.headers
         assert "Vary" not in resp.headers
 
 
