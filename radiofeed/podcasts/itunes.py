@@ -1,6 +1,7 @@
 import dataclasses
+import enum
+import functools
 from collections.abc import Iterable
-from typing import Final
 
 import httpx
 from django.core.cache import cache
@@ -11,186 +12,70 @@ from django.utils.http import urlsafe_base64_encode
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
-COUNTRIES: Final = (
-    "ae",
-    "ag",
-    "ai",
-    "al",
-    "am",
-    "ao",
-    "ar",
-    "at",
-    "au",
-    "az",
-    "ba",
-    "bb",
-    "be",
-    "bf",
-    "bg",
-    "bh",
-    "bj",
-    "bm",
-    "bn",
-    "bo",
-    "br",
-    "bs",
-    "bt",
-    "bw",
-    "by",
-    "bz",
-    "ca",
-    "cd",
-    "cg",
-    "ch",
-    "ci",
-    "cl",
-    "cm",
-    "cn",
-    "co",
-    "cr",
-    "cv",
-    "cy",
-    "cz",
-    "de",
-    "dk",
-    "dm",
-    "do",
-    "dz",
-    "ec",
-    "ee",
-    "eg",
-    "es",
-    "fi",
-    "fj",
-    "fm",
-    "fr",
-    "ga",
-    "gb",
-    "gd",
-    "ge",
-    "gh",
-    "gm",
-    "gr",
-    "gt",
-    "gw",
-    "gy",
-    "hk",
-    "hn",
-    "hr",
-    "hu",
-    "id",
-    "ie",
-    "il",
-    "in",
-    "iq",
-    "is",
-    "it",
-    "jm",
-    "jo",
-    "jp",
-    "ke",
-    "kg",
-    "kh",
-    "kn",
-    "kr",
-    "kw",
-    "ky",
-    "kz",
-    "la",
-    "lb",
-    "lc",
-    "lk",
-    "lr",
-    "lt",
-    "lu",
-    "lv",
-    "ly",
-    "ma",
-    "md",
-    "me",
-    "mg",
-    "mk",
-    "ml",
-    "mm",
-    "mn",
-    "mo",
-    "mr",
-    "ms",
-    "mt",
-    "mu",
-    "mv",
-    "mw",
-    "mx",
-    "my",
-    "mz",
-    "na",
-    "ne",
-    "ng",
-    "ni",
-    "nl",
-    "no",
-    "np",
-    "nr",
-    "nz",
-    "om",
-    "pa",
-    "pe",
-    "pg",
-    "ph",
-    "pk",
-    "pl",
-    "pt",
-    "pw",
-    "py",
-    "qa",
-    "ro",
-    "rs",
-    "ru",
-    "rw",
-    "sa",
-    "sb",
-    "sc",
-    "se",
-    "sg",
-    "si",
-    "sk",
-    "sl",
-    "sn",
-    "sr",
-    "st",
-    "sv",
-    "sz",
-    "tc",
-    "td",
-    "th",
-    "tj",
-    "tm",
-    "tn",
-    "to",
-    "tr",
-    "tt",
-    "tw",
-    "tz",
-    "ua",
-    "ug",
-    "us",
-    "uy",
-    "uz",
-    "vc",
-    "ve",
-    "vg",
-    "vn",
-    "vu",
-    "xk",
-    "ye",
-    "za",
-    "zm",
-    "zw",
-)
+
+class Country(enum.StrEnum):
+    """Country codes for iTunes API."""
+
+    ARGENTINA = "ar"
+    AUSTRALIA = "au"
+    BELGIUM = "be"
+    BRAZIL = "br"
+    BULGARIA = "bg"
+    CANADA = "ca"
+    CHINA = "cn"
+    CROATIA = "hr"
+    CZECHIA = "cz"
+    DENMARK = "dk"
+    EGYPT = "eg"
+    ESTONIA = "ee"
+    FINLAND = "fi"
+    FRANCE = "fr"
+    GERMANY = "de"
+    GREECE = "gr"
+    HONG_KONG = "hk"
+    HUNGARY = "hu"
+    ICELAND = "is"
+    INDIA = "in"
+    INDONESIA = "id"
+    IRELAND = "ie"
+    ISRAEL = "il"
+    ITALY = "it"
+    JAPAN = "jp"
+    LATVIA = "lv"
+    LITHUANIA = "lt"
+    MEXICO = "mx"
+    NETHERLANDS = "nl"
+    NEW_ZEALAND = "nz"
+    NIGERIA = "ng"
+    NORWAY = "no"
+    POLAND = "pl"
+    PORTUGAL = "pt"
+    ROMANIA = "ro"
+    RUSSIA = "ru"
+    SERBIA = "rs"
+    SINGAPORE = "sg"
+    SLOVAKIA = "sk"
+    SLOVENIA = "si"
+    SOUTH_AFRICA = "za"
+    SOUTH_KOREA = "kr"
+    SPAIN = "es"
+    SWEDEN = "se"
+    TAIWAN = "tw"
+    THAILAND = "th"
+    TURKIYE = "tr"
+    UKRAINE = "ua"
+    UNITED_KINGDOM = "gb"
+    UNITED_STATES = "us"
 
 
 class ItunesError(ValueError):
     """Base class for iTunes API errors."""
+
+
+@functools.cache
+def get_countries() -> list[str]:
+    """Return list of country codes."""
+    return [country.value for country in Country]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -254,17 +139,14 @@ def search_cache_key(search_term: str, limit: int) -> str:
 
 def fetch_chart(
     client: Client,
+    country: Country,
     *,
-    country: str = "gb",
     limit: int = 30,
     promote: bool = True,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
     """
-
-    if country not in COUNTRIES:
-        raise ItunesError(f"Invalid country code: {country}")
 
     feeds: list[Feed] = []
 

@@ -325,12 +325,6 @@ class TestFetchTopChart:
         assert other_promoted.promoted is True
 
     @pytest.mark.django_db
-    def test_invalid_country(self, good_client):
-        with pytest.raises(itunes.ItunesError):
-            itunes.fetch_chart(good_client, country="zz")
-        assert not Podcast.objects.exists()
-
-    @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         with pytest.raises(itunes.ItunesError):
             itunes.fetch_chart(bad_client, country="us")

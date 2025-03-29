@@ -11,8 +11,8 @@ from radiofeed.thread_pool import execute_thread_pool
     "-p",
     help="Countries to promote",
     multiple=True,
-    type=click.Choice(itunes.COUNTRIES),
-    default=["gb", "us"],
+    type=click.Choice(itunes.get_countries()),
+    default=[itunes.Country.UNITED_KINGDOM],
 )
 @click.option(
     "--limit",
@@ -21,7 +21,7 @@ from radiofeed.thread_pool import execute_thread_pool
     help="Limit the number of podcasts to fetch",
     default=100,
 )
-def command(promote: list[str], limit: int):
+def command(promote: list[itunes.Country], limit: int):
     """Crawl iTunes Top Chart."""
 
     client = get_client()
@@ -33,15 +33,15 @@ def command(promote: list[str], limit: int):
             limit=limit,
             promote=promote,
         ),
-        itunes.COUNTRIES,
+        itunes.get_countries(),
     )
 
 
 def _fetch_itunes_chart(
     client: Client,
-    country: str,
+    country: itunes.Country,
     limit: int,
-    promote: list[str],
+    promote: list[itunes.Country],
 ):
     click.secho(f"Fetching iTunes chart for {country}...", fg="blue")
     try:
