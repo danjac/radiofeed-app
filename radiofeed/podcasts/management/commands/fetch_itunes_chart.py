@@ -9,9 +9,10 @@ from radiofeed.thread_pool import execute_thread_pool
 @click.option(
     "--promote",
     "-p",
-    help="iTunes country to promote",
+    help="Countries to promote",
+    multiple=True,
     type=click.Choice(itunes.COUNTRIES),
-    default="gb",
+    default=["gb", "us"],
 )
 @click.option(
     "--limit",
@@ -20,7 +21,7 @@ from radiofeed.thread_pool import execute_thread_pool
     help="Limit the number of podcasts to fetch",
     default=100,
 )
-def command(promote: str, limit: int):
+def command(promote: list[str], limit: int):
     """Crawl iTunes Top Chart."""
 
     client = get_client()
@@ -36,14 +37,19 @@ def command(promote: str, limit: int):
     )
 
 
-def _fetch_itunes_chart(client: Client, country: str, limit: int, promote: str):
+def _fetch_itunes_chart(
+    client: Client,
+    country: str,
+    limit: int,
+    promote: list[str],
+):
     click.secho(f"Fetching iTunes chart for {country}...", fg="blue")
     try:
         for podcast in itunes.fetch_chart(
             client,
             country=country,
             limit=limit,
-            promote=(country == promote),
+            promote=(country in promote),
         ):
             click.secho(str(podcast), fg="green")
     except itunes.ItunesError as e:
