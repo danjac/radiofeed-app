@@ -69,15 +69,19 @@
       - name: Delete existing CronJobs
         command: kubectl delete cronjob -l app=django-cronjob -n default
 
-      - name: Apply manifests
+      - name: Ensure manifest directory exists
+        ansible.builtin.file:
+            path: /tmp/manifests
+            state: directory
+
+      - name: Render Kubernetes manifests
         vars:
             database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
             redis_url: "redis://redis.default.svc.cluster.local:6379/0"
             num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
-        ansible.builtin.command: >
-            kubectl apply -f -
-        args:
-            stdin: "{{ lookup('template', item + '.yaml.j2') }}"
+        ansible.builtin.template:
+            src: "{{ item }}.yaml.j2"
+            dest: "/tmp/manifests/{{ item }}.yaml"
         loop:
             - configmap
             - secrets
@@ -91,6 +95,17 @@
             - django_service
             - django_cronjobs
             - ingress_route
+
+      - name: Apply Kubernetes manifests using ApplySet
+        ansible.builtin.shell: |
+            kubectl apply -f /tmp/manifests/ --prune --applyset=app-deployment --namespace=default
+        environment:
+            KUBECTL_APPLYSET: "true"
+
+      - name: Delete manifests dir
+        ansible.builtin.file:
+            path: /tmp/manifests
+            state: absent
 
       - name: Restart statefulsets
         ansible.builtin.shell: |
