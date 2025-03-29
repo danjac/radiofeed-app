@@ -66,9 +66,6 @@
             image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
         changed_when: false
 
-      - name: Delete existing CronJobs
-        command: kubectl delete cronjob -l app=django-cronjob -n default
-
       - name: Ensure manifest directory exists
         ansible.builtin.file:
             path: /tmp/manifests
@@ -95,6 +92,9 @@
             - django_service
             - django_cronjobs
             - ingress_route
+
+      - name: Delete existing CronJobs
+        command: kubectl delete cronjob -l app=django-cronjob -n default
 
       - name: Apply Kubernetes manifests using ApplySet
         ansible.builtin.shell: |
