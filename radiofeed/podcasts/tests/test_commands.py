@@ -15,7 +15,7 @@ class TestFetchItunesChart:
                 PodcastFactory(),
             ],
         )
-        call_command("fetch_itunes_chart")
+        call_command("fetch_itunes_chart", "gb")
         patched.assert_called()
 
     @pytest.mark.django_db
@@ -25,7 +25,7 @@ class TestFetchItunesChart:
             side_effect=itunes.ItunesError("Error"),
         )
         with pytest.raises(itunes.ItunesError):
-            call_command("fetch_itunes_chart")
+            call_command("fetch_itunes_chart", "gb")
         patched.assert_called()
 
 

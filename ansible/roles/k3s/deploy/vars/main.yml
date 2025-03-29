@@ -17,4 +17,4 @@ cronjobs:
 
     - name: "fetch-itunes-chart"
       schedule: "15 7 * * 1" # 7:15 AM on Mondays
-      command: "./manage.py fetch_itunes_chart"
+      command: "./manage.py fetch_itunes_chart {{ itunes_chart_country }}"

@@ -40,6 +40,7 @@ NLTK_LANGUAGES: Final = {
     "sv": "swedish",
     "tg": "tajik",
     "tr": "turkish",
+    "uk": "ukrainian",
 }
 
 _CORPORATE_STOPWORDS: Final = [

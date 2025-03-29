@@ -5,13 +5,7 @@ from radiofeed.podcasts import itunes
 
 
 @click.command()
-@click.option(
-    "--country",
-    "-c",
-    type=str,
-    help="iTunes country",
-    default="gb",
-)
+@click.argument("country")
 @click.option(
     "--limit",
     "-l",

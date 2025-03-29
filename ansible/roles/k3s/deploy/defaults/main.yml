@@ -5,7 +5,8 @@ allowed_hosts: "*"
 conn_max_age: 60
 contact_email: "contact@{{ domain }}"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
-docker_image: ghcr.io/danjac/radiofeed-app:main
+docker_image: "ghcr.io/danjac/radiofeed-app:main"
+itunes_chart_country: "gb"
 mailgun_api_key: ""
 mailgun_api_url: "https://api.eu.mailgun.net/v3"
 mailgun_sender_domain: "mg.{{ domain }}"
