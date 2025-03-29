@@ -24,7 +24,8 @@ class TestFetchItunesChart:
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=itunes.ItunesError("Error"),
         )
-        call_command("fetch_itunes_chart")
+        with pytest.raises(itunes.ItunesError):
+            call_command("fetch_itunes_chart")
         patched.assert_called()
 
 
