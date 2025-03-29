@@ -23,12 +23,7 @@ class Page:
     The pagination should be done lazily, so we don't execute any database queries until the object list is accessed.
     """
 
-    def __init__(
-        self,
-        *,
-        paginator: "Paginator",
-        number: int,
-    ) -> None:
+    def __init__(self, *, paginator: "Paginator", number: int) -> None:
         self.paginator = paginator
         self.page_size = paginator.per_page
         self.number = number
@@ -45,64 +40,47 @@ class Page:
         """Returns indexed item."""
         return self.object_list[index]
 
+    @cached_property
     def next_page_number(self) -> int:
         """Returns the next page number."""
-        return self._next_page_number
-
-    def previous_page_number(self) -> int:
-        """Returns the previous page number."""
-        return self._previous_page_number
-
-    def has_next(self) -> bool:
-        """Checks if there is a next page."""
-        return self._has_next
-
-    def has_previous(self) -> bool:
-        """Checks if there is a previous page."""
-        return self._has_previous
-
-    def has_other_pages(self) -> bool:
-        """Checks if there are other pages."""
-        return self._has_other_pages
-
-    @cached_property
-    def object_list(self) -> list:
-        """Returns the object list."""
-        # Returns the object list for the current page. This should be bounded by the page size.
-        return self._object_list[: self.page_size]
-
-    @cached_property
-    def _object_list(self) -> list:
-        # Returns the object list for the current page. This should be slightly more than the page size.
-        start = (self.number - 1) * self.page_size
-        end = start + self.page_size + 1
-        # Database query executed here with LIMIT and OFFSET
-        return list(self.paginator.object_list[start:end])
-
-    @cached_property
-    def _has_next(self) -> bool:
-        # If the object list is greater than the page size, then there is a next page.
-        return len(self._object_list) > self.page_size
-
-    @cached_property
-    def _has_previous(self) -> bool:
-        return self.number > 1
-
-    @cached_property
-    def _next_page_number(self) -> int:
-        if self.has_next():
+        if self.has_next:
             return self.number + 1
         raise EmptyPage("Next page does not exist")
 
     @cached_property
-    def _previous_page_number(self) -> int:
-        if self.has_previous():
+    def previous_page_number(self) -> int:
+        """Returns the previous page number."""
+        if self.has_previous:
             return self.number - 1
         raise EmptyPage("Previous page does not exist")
 
     @cached_property
-    def _has_other_pages(self) -> bool:
-        return self.has_previous() or self.has_next()
+    def has_next(self) -> bool:
+        """Checks if there is a next page."""
+        return len(self.object_list_with_next_item) > self.page_size
+
+    @cached_property
+    def has_previous(self) -> bool:
+        """Checks if there is a previous page."""
+        return self.number > 1
+
+    @cached_property
+    def has_other_pages(self) -> bool:
+        """Checks if there are other pages."""
+        return self.has_previous or self.has_next
+
+    @cached_property
+    def object_list(self) -> list:
+        """Returns the object list."""
+        return self.object_list_with_next_item[: self.page_size]
+
+    @cached_property
+    def object_list_with_next_item(self) -> list:
+        """Returns object list including next item."""
+        start = (self.number - 1) * self.page_size
+        end = start + self.page_size + 1
+        # Database query executed here with LIMIT and OFFSET
+        return list(self.paginator.object_list[start:end])
 
 
 class Paginator:

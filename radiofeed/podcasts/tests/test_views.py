@@ -532,7 +532,7 @@ class TestPrivateFeeds:
         response = client.get(self.url)
         assert200(response)
         assert len(response.context["page"]) == 30
-        assert response.context["page"].has_other_pages() is True
+        assert response.context["page"].has_other_pages is True
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
@@ -540,7 +540,7 @@ class TestPrivateFeeds:
         response = client.get(self.url)
         assert200(response)
         assert len(response.context["page"]) == 0
-        assert response.context["page"].has_other_pages() is False
+        assert response.context["page"].has_other_pages is False
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, faker):
