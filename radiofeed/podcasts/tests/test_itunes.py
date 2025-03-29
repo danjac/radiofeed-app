@@ -307,6 +307,24 @@ class TestFetchTopChart:
         assert other_promoted.promoted is False
 
     @pytest.mark.django_db
+    def test_no_promote(self, good_client):
+        podcast = PodcastFactory(
+            rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
+            promoted=False,
+        )
+
+        other_promoted = PodcastFactory(promoted=True)
+        feeds = itunes.fetch_chart(good_client, country="us", promote=False)
+
+        assert len(feeds) == 1
+
+        podcast.refresh_from_db()
+        assert podcast.promoted is False
+
+        other_promoted.refresh_from_db()
+        assert other_promoted.promoted is True
+
+    @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         with pytest.raises(itunes.ItunesError):
             itunes.fetch_chart(bad_client, country="us")

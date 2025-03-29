@@ -47,11 +47,7 @@ def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
     if not feeds:
         return []
 
-    Podcast.objects.bulk_create(
-        [Podcast(title=feed.title, rss=feed.rss) for feed in feeds],
-        ignore_conflicts=True,
-    )
-
+    _insert_podcasts(feeds)
     return feeds
 
 
@@ -83,6 +79,7 @@ def fetch_chart(
     *,
     country: str = "gb",
     limit: int = 30,
+    promote: bool = True,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.
@@ -92,8 +89,7 @@ def fetch_chart(
 
     if itunes_ids := _fetch_itunes_ids(
         client,
-        f"https://rss.marketingtools.apple.com/api/v2/"
-        f"{country}/podcasts/top-subscriber/{limit}/podcasts.json",
+        f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json",
     ):
         feeds = _fetch_feeds(
             client,
@@ -101,23 +97,10 @@ def fetch_chart(
             id=",".join(itunes_ids),
         )
 
-        rss_feeds = {feed.rss for feed in feeds}
-
-        q = Q(rss__in=rss_feeds) | Q(duplicates__rss__in=rss_feeds)
-
-        # check duplicates
-        rss_feeds |= set(Podcast.objects.filter(q).values_list("rss", flat=True))
-
-        # add new podcasts
-        Podcast.objects.bulk_create(
-            [Podcast(rss=rss, promoted=True) for rss in rss_feeds],
-            unique_fields=["rss"],
-            update_fields=["promoted"],
-            update_conflicts=True,
-        )
-
-        # demote podcasts not in the chart
-        Podcast.objects.filter(promoted=True).exclude(q).update(promoted=False)
+        if promote:
+            _promote_podcasts(feeds)
+        else:
+            _insert_podcasts(feeds)
     return feeds
 
 
@@ -175,6 +158,34 @@ def _parse_feed(feed: dict) -> Feed | None:
         )
     except KeyError:
         return None
+
+
+def _insert_podcasts(feeds: list[Feed]) -> None:
+    # add new podcasts
+    Podcast.objects.bulk_create(
+        [Podcast(rss=feed.rss, title=feed.title) for feed in feeds],
+        ignore_conflicts=True,
+    )
+
+
+def _promote_podcasts(feeds: list[Feed]) -> None:
+    rss_feeds = {feed.rss for feed in feeds}
+
+    q = Q(rss__in=rss_feeds) | Q(duplicates__rss__in=rss_feeds)
+
+    # check duplicates
+    rss_feeds |= set(Podcast.objects.filter(q).values_list("rss", flat=True))
+
+    # add new podcasts
+    Podcast.objects.bulk_create(
+        [Podcast(rss=rss, promoted=True) for rss in rss_feeds],
+        unique_fields=["rss"],
+        update_fields=["promoted"],
+        update_conflicts=True,
+    )
+
+    # demote podcasts not in the chart
+    Podcast.objects.filter(promoted=True).exclude(q).update(promoted=False)
 
 
 def _dedupe(items: Iterable) -> list:
