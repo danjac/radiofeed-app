@@ -93,38 +93,37 @@ def fetch_chart(
     if not itunes_ids:
         return []
 
-    feeds = _fetch_feeds(
+    if feeds := _fetch_feeds(
         client,
         "https://itunes.apple.com/lookup",
         id=",".join(itunes_ids),
-    )
+    ):
+        with transaction.atomic():
+            # demote all promoted podcasts
+            Podcast.objects.filter(promoted=True).update(promoted=False)
 
-    with transaction.atomic():
-        # demote all promoted podcasts
-        Podcast.objects.filter(promoted=True).update(promoted=False)
+            rss_feeds = {feed.rss for feed in feeds}
 
-        rss_feeds = {feed.rss for feed in feeds}
-
-        # check duplicates
-        rss_feeds |= set(
-            Podcast.objects.filter(duplicates__rss__in=rss_feeds).values_list(
-                "rss", flat=True
-            )
-        )
-
-        # add or update podcasts
-        Podcast.objects.bulk_create(
-            [
-                Podcast(
-                    rss=rss,
-                    promoted=True,
+            # check duplicates
+            rss_feeds |= set(
+                Podcast.objects.filter(duplicates__rss__in=rss_feeds).values_list(
+                    "rss", flat=True
                 )
-                for rss in rss_feeds
-            ],
-            unique_fields=["rss"],
-            update_fields=["promoted"],
-            update_conflicts=True,
-        )
+            )
+
+            # add or update podcasts
+            Podcast.objects.bulk_create(
+                [
+                    Podcast(
+                        rss=rss,
+                        promoted=True,
+                    )
+                    for rss in rss_feeds
+                ],
+                unique_fields=["rss"],
+                update_fields=["promoted"],
+                update_conflicts=True,
+            )
     return feeds
 
 
