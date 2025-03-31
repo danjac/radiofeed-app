@@ -66,10 +66,10 @@
             image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
         changed_when: false
 
-      - name: Ensure manifest directory exists
-        ansible.builtin.file:
-            path: /tmp/manifests
+      - name: Create a temporary directory
+        ansible.builtin.tempfile:
             state: directory
+        register: manifests_dir
 
       - name: Render Kubernetes manifests
         vars:
@@ -78,7 +78,7 @@
             num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
         ansible.builtin.template:
             src: "{{ item }}.yaml.j2"
-            dest: "/tmp/manifests/{{ item }}.yaml"
+            dest: "{{ manifests_dir.path + '/' + item + '.yaml' }}"
         loop:
             - configmap
             - secrets
@@ -98,13 +98,13 @@
 
       - name: Apply Kubernetes manifests using ApplySet
         ansible.builtin.shell: |
-            kubectl apply -f /tmp/manifests/ --prune --applyset=app-deployment --namespace=default
+            kubectl apply -f {{ manifests_dir.path }} --prune --applyset=app-deployment --namespace=default
         environment:
             KUBECTL_APPLYSET: "true"
 
       - name: Delete manifests dir
         ansible.builtin.file:
-            path: /tmp/manifests
+            path: "{{ manifests_dir.path }}"
             state: absent
 
       - name: Restart statefulsets
