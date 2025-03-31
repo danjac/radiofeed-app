@@ -87,7 +87,7 @@ def fetch_chart(
 
     itunes_ids = _fetch_itunes_ids(
         client,
-        f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json",
+        f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top-subscriber/{limit}/podcasts.json",
     )
 
     if not itunes_ids:
