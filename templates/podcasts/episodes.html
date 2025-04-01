@@ -52,7 +52,7 @@
         </c-slot>
     </c-podcasts.header>
     {% partialdef pagination inline=True %}
-        {% cache 300 podcast-episodes request.get_full_path %}
+        {% cache cache_timeout podcast-episodes request.get_full_path %}
             <c-paginate :page="page">
                 {% for episode in page %}
                     <c-browse.item>

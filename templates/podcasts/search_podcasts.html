@@ -18,7 +18,7 @@
         </c-header.nav>
     </c-header>
     {% partialdef pagination inline=True %}
-        {% cache 300 search-podcasts request.get_full_path %}
+        {% cache cache_timeout search-podcasts request.get_full_path %}
             <c-paginate :page="page">
                 {% for podcast in page %}
                     <c-browse.item>

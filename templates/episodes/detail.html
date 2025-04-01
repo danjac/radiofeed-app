@@ -9,7 +9,7 @@
         <h1 class="text-xl font-bold md:text-2xl xl:text-3xl">
             {{ episode.cleaned_title }}
         </h1>
-        {% cache 300 episode-nav-header episode.pk %}
+        {% cache cache_timeout episode-nav-header episode.pk %}
             {% with next_episode=episode.next_episode previous_episode=episode.previous_episode %}
                 {% if next_episode or previous_episode %}
                     <nav>
@@ -204,7 +204,7 @@
                     {% endif %}
                 </div>
             {% endpartialdef audio_log %}
-            {% cache 300 episode-description episode.pk %}
+            {% cache cache_timeout episode-description episode.pk %}
                 <c-markdown :content="episode.description" />
             {% endcache %}
         </article>

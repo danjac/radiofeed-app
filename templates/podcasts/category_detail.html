@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% cache 300 category-detail request.get_full_path %}
+    {% cache cache_timeout category-detail request.get_full_path %}
         <c-header title="{{ category.name }} Podcasts">
             <c-header.nav>
                 {% if page.has_other_pages or request.search %}
@@ -23,7 +23,7 @@
             </c-header.nav>
         </c-header>
         {% partialdef pagination inline=True %}
-            {% cache 300 category-podcasts request.get_full_path %}
+            {% cache cache_timeout category-podcasts request.get_full_path %}
                 <c-paginate :page="page">
                     {% for podcast in page %}
                         <c-browse.item>

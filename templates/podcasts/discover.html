@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% cache 300 discover-podcasts %}
+    {% cache cache_timeout discover-podcasts %}
         <c-header title="Discover">
             <c-header.nav>
                 <c-header.nav.item>

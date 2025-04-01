@@ -1,4 +1,5 @@
 import djclick as click
+from django.conf import settings
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
@@ -11,7 +12,7 @@ from radiofeed.podcasts import itunes
     "-l",
     type=int,
     help="Limit the number of podcasts to fetch",
-    default=30,
+    default=settings.DEFAULT_PAGE_SIZE,
 )
 def command(**options):
     """Crawl iTunes Top Chart."""

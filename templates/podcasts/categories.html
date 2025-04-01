@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% cache 300 categories request.get_full_path %}
+    {% cache cache_timeout categories request.get_full_path %}
         <c-header title="Categories">
             <c-header.nav>
                 <c-header.nav.item>

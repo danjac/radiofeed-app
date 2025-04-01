@@ -1,6 +1,7 @@
 import dataclasses
 
 import httpx
+from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.utils.encoding import force_bytes
@@ -28,7 +29,12 @@ class Feed:
         return self.title or self.rss
 
 
-def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
+def search(
+    client: Client,
+    search_term: str,
+    *,
+    limit: int = settings.DEFAULT_PAGE_SIZE,
+) -> list[Feed]:
     """Search iTunes podcast API. New podcasts will be added.
     If the feed already exists, it will be attached to the Feed."""
     if feeds := _fetch_feeds(
@@ -55,9 +61,8 @@ def search(client: Client, search_term: str, *, limit: int = 30) -> list[Feed]:
 def search_cached(
     client: Client,
     search_term: str,
-    *,
-    limit: int = 30,
-    cache_timeout: int = 300,
+    limit: int = settings.DEFAULT_PAGE_SIZE,
+    cache_timeout: int = settings.DEFAULT_CACHE_TIMEOUT,
 ) -> list[Feed]:
     """Search iTunes podcast API with caching."""
     search_term = search_term.strip().casefold()
@@ -79,7 +84,7 @@ def fetch_chart(
     client: Client,
     country: str,
     *,
-    limit: int = 30,
+    limit: int = settings.DEFAULT_PAGE_SIZE,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
     All podcasts in the chart will be promoted.

@@ -6,7 +6,7 @@
 
 {% block content %}
     <c-podcasts.header :podcast="podcast" current="similar" />
-    {% cache 300 similar-podcasts podcast.pk %}
+    {% cache cache_timeout similar-podcasts podcast.pk %}
         <c-browse>
             {% for recommendation in recommendations %}
                 <c-browse.item>
