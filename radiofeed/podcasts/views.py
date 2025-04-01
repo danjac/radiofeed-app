@@ -89,15 +89,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
-        try:
-            feeds = itunes.search_cached(
-                get_client(),
-                request.search.value,
-                limit=settings.DEFAULT_PAGE_SIZE,
-            )
-        except itunes.ItunesError:
-            messages.error(request, "Error fetching iTunes data")
-            feeds = []
+        feeds = itunes.search_lazy(get_client(), request.search.value)
 
         return render(
             request,

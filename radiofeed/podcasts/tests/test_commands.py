@@ -1,7 +1,6 @@
 import pytest
 from django.core.management import call_command
 
-from radiofeed.podcasts import itunes
 from radiofeed.podcasts.tests.factories import PodcastFactory, RecommendationFactory
 from radiofeed.users.tests.factories import EmailAddressFactory
 
@@ -19,13 +18,12 @@ class TestFetchItunesChart:
         patched.assert_called()
 
     @pytest.mark.django_db
-    def test_error(self, mocker):
+    def test_empty(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.fetch_chart",
-            side_effect=itunes.ItunesError("Error"),
+            return_value=[],
         )
-        with pytest.raises(itunes.ItunesError):
-            call_command("fetch_itunes_chart", "gb")
+        call_command("fetch_itunes_chart", "gb")
         patched.assert_called()
 
 

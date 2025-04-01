@@ -1,18 +1,15 @@
 import dataclasses
+import logging
+from collections.abc import Iterator
 
 import httpx
 from django.conf import settings
-from django.core.cache import cache
 from django.db import transaction
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
-
-class ItunesError(ValueError):
-    """Base class for iTunes API errors."""
+_logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -58,26 +55,9 @@ def search(
     return feeds
 
 
-def search_cached(
-    client: Client,
-    search_term: str,
-    limit: int = settings.DEFAULT_PAGE_SIZE,
-    cache_timeout: int = settings.DEFAULT_CACHE_TIMEOUT,
-) -> list[Feed]:
-    """Search iTunes podcast API with caching."""
-    search_term = search_term.strip().casefold()
-    cache_key = search_cache_key(search_term, limit)
-
-    if (feeds := cache.get(cache_key)) is None:
-        feeds = search(client, search_term, limit=limit)
-        cache.set(cache_key, feeds, cache_timeout)
-
-    return feeds
-
-
-def search_cache_key(search_term: str, limit: int) -> str:
-    """Properly encoded search cache key"""
-    return f"search-itunes:{urlsafe_base64_encode(force_bytes(search_term))}:{limit}"
+def search_lazy(*args, **kwargs) -> Iterator[Feed]:
+    """Search iTunes podcast API."""
+    yield from search(*args, **kwargs)
 
 
 def fetch_chart(
@@ -161,14 +141,15 @@ def _fetch_itunes_ids(client: Client, url: str, **params) -> set[str]:
 def _fetch_json(client: Client, url: str, **params) -> dict:
     """Fetches JSON response from the given URL."""
     try:
-        response = client.get(
+        _logger.debug("Fetching %s with %s", url, params)
+        return client.get(
             url,
             params=params,
             headers={"Accept": "application/json"},
-        )
-        return response.json()
+        ).json()
     except httpx.HTTPError as e:
-        raise ItunesError(f"Failed to fetch {url}: {e}") from e
+        _logger.exception(e)
+        return {}
 
 
 def _parse_feed(feed: dict) -> Feed | None:

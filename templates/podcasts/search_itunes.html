@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block title %}
     {{ block.super }}| Search | iTunes
@@ -17,14 +18,16 @@
         </c-header.nav>
     </c-header>
     <c-browse>
-        {% for feed in feeds %}
-            <c-browse.item>
-                <c-podcasts.itunes-feed :feed="feed" />
-            </c-browse.item>
-        {% empty %}
-            <c-browse.empty>
-                No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-            </c-browse.empty>
-        {% endfor %}
+        {% cache cache_timeout itunes_search request.search.value %}
+            {% for feed in feeds %}
+                <c-browse.item>
+                    <c-podcasts.itunes-feed :feed="feed" />
+                </c-browse.item>
+            {% empty %}
+                <c-browse.empty>
+                    No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                </c-browse.empty>
+            {% endfor %}
+        {% endcache %}
     </c-browse>
 {% endblock content %}
