@@ -1,5 +1,4 @@
 import dataclasses
-import logging
 from collections.abc import Iterator
 
 import httpx
@@ -9,7 +8,9 @@ from django.db import transaction
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
-_logger = logging.getLogger(__name__)
+
+class ItunesError(Exception):
+    """iTunes API error."""
 
 
 @dataclasses.dataclass(frozen=True)
@@ -141,15 +142,13 @@ def _fetch_itunes_ids(client: Client, url: str, **params) -> set[str]:
 def _fetch_json(client: Client, url: str, **params) -> dict:
     """Fetches JSON response from the given URL."""
     try:
-        _logger.debug("Fetching %s with %s", url, params)
         return client.get(
             url,
             params=params,
             headers={"Accept": "application/json"},
         ).json()
     except httpx.HTTPError as e:
-        _logger.exception(e)
-        return {}
+        raise ItunesError(str(e)) from e
 
 
 def _parse_feed(feed: dict) -> Feed | None:

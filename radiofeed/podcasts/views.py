@@ -89,15 +89,17 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
-        feeds = itunes.search_lazy(get_client(), request.search.value)
-
-        return render(
-            request,
-            "podcasts/search_itunes.html",
-            {
-                "feeds": feeds,
-            },
-        )
+        try:
+            feeds = itunes.search_lazy(get_client(), request.search.value)
+            return render(
+                request,
+                "podcasts/search_itunes.html",
+                {
+                    "feeds": feeds,
+                },
+            )
+        except itunes.ItunesError as e:
+            messages.error(request, f"Failed to search iTunes: {e}")
 
     return redirect("podcasts:discover")
 

@@ -164,13 +164,13 @@ class TestSearchItunes:
         mock_search.assert_called()
 
     @pytest.mark.django_db
-    def test_search_empty(self, client, auth_user, mocker):
+    def test_search_error(self, client, auth_user, mocker):
         mocker.patch(
             "radiofeed.podcasts.itunes.search_lazy",
-            return_value=iter([]),
+            side_effect=itunes.ItunesError("Error"),
         )
         response = client.get(self.url, {"search": "test"})
-        assert200(response)
+        assert response.url == _discover_url
 
 
 class TestPodcastSimilar:
