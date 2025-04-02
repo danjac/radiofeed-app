@@ -1,11 +1,9 @@
 import dataclasses
+from collections.abc import Iterator
 
 import httpx
 from django.conf import settings
-from django.core.cache import cache
 from django.db import transaction
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
@@ -53,27 +51,13 @@ def search(
     return feeds
 
 
-def search_from_cache(
+def search_lazy(
     client: Client,
     search_term: str,
-    *,
-    limit: int = settings.DEFAULT_PAGE_SIZE,
-    cache_timeout: int = settings.DEFAULT_CACHE_TIMEOUT,
-) -> list[Feed]:
-    """Search iTunes podcast API. Results are fetched from the database."""
-    cache_key = search_cache_key(search_term, limit)
-    if (feeds := cache.get(cache_key)) is None:
-        feeds = search(client, search_term, limit=limit)
-        cache.set(cache_key, feeds, timeout=cache_timeout)
-    return feeds
-
-
-def search_cache_key(search_term: str, limit: int) -> str:
-    """Generates cache key for search results."""
-    encoded_search_term = urlsafe_base64_encode(
-        force_bytes(search_term.strip().casefold())
-    )
-    return f"itunes:search:{encoded_search_term}:{limit}"
+    **kwargs,
+) -> Iterator[Feed]:
+    """Search iTunes podcast API. Results are evaluated lazily."""
+    yield from search(client, search_term, **kwargs)
 
 
 def fetch_chart(

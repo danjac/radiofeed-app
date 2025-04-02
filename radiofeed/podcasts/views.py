@@ -90,7 +90,7 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
 
     if request.search:
         try:
-            feeds = itunes.search_from_cache(get_client(), request.search.value)
+            feeds = itunes.search_lazy(get_client(), request.search.value)
             return render(
                 request,
                 "podcasts/search_itunes.html",

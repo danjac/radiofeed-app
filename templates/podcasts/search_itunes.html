@@ -1,30 +1,33 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block title %}
     {{ block.super }}| Search | iTunes
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Search iTunes">
-        <c-header.nav>
-            <c-header.nav.item>
-                <c-search.button url="{% url 'podcasts:search_podcasts' %}"
-                                 label="Search Podcasts" />
-            </c-header.nav.item>
-            <c-header.nav.item>
-                <c-search.form placeholder="Search: iTunes" />
-            </c-header.nav.item>
-        </c-header.nav>
-    </c-header>
-    <c-browse>
-        {% for feed in feeds %}
-            <c-browse.item>
-                <c-podcasts.itunes-feed :feed="feed" />
-            </c-browse.item>
-        {% empty %}
-            <c-browse.empty>
-                No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-            </c-browse.empty>
-        {% endfor %}
-    </c-browse>
+    {% cache cache_timeout search-itunes request.search.value %}
+        <c-header title="Search iTunes">
+            <c-header.nav>
+                <c-header.nav.item>
+                    <c-search.button url="{% url 'podcasts:search_podcasts' %}"
+                                     label="Search Podcasts" />
+                </c-header.nav.item>
+                <c-header.nav.item>
+                    <c-search.form placeholder="Search: iTunes" />
+                </c-header.nav.item>
+            </c-header.nav>
+        </c-header>
+        <c-browse>
+            {% for feed in feeds %}
+                <c-browse.item>
+                    <c-podcasts.itunes-feed :feed="feed" />
+                </c-browse.item>
+            {% empty %}
+                <c-browse.empty>
+                    No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                </c-browse.empty>
+            {% endfor %}
+        </c-browse>
+    {% endcache %}
 {% endblock content %}

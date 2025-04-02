@@ -2,7 +2,6 @@ import http
 
 import httpx
 import pytest
-from django.core.cache import cache
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts import itunes
@@ -382,39 +381,8 @@ class TestSearch:
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
-
-class TestSearchFromCache:
-    @pytest.fixture
-    def feeds(self):
-        return [
-            itunes.Feed(
-                rss="https://feeds.fireside.fm/testandcode/rss",
-                title="Test & Code : Python Testing",
-                url="https//itunes.com/id123345",
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
-            )
-        ]
-
     @pytest.mark.django_db
-    @pytest.mark.usefixtures("_locmem_cache")
-    def test_not_cached(self, mocker, feeds):
-        mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search", return_value=feeds
-        )
-        client = Client()
-        result = itunes.search_from_cache(client, "test")
-        assert result == feeds
-        mock_search.assert_called_once_with(client, "test", limit=30)
-
-    @pytest.mark.usefixtures("_locmem_cache")
-    def test_cached(self, mocker, feeds):
-        cache.set(itunes.search_cache_key("test", 30), feeds)
-        mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search", return_value=feeds
-        )
-
-        client = Client()
-        result = itunes.search_from_cache(client, "test")
-        assert result == feeds
-
-        mock_search.assert_not_called()
+    def test_lazy(self, good_client):
+        feeds = list(itunes.search_lazy(good_client, "test"))
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
