@@ -379,27 +379,32 @@ PERMISSIONS_POLICY: dict[str, list] = {
 # Content-Security-Policy
 # https://django-csp.readthedocs.io/en/3.8/configuration.html
 
-SELF = "'self'"
-DATA = f"data: {'https' if USE_HTTPS else 'http'}:;"
-UNSAFE_EVAL = "'unsafe-eval'"
-UNSAFE_INLINE = "'unsafe-inline'"
-
-CSP_DEFAULT_SRC = [SELF]
-
-CSP_SCRIPT_SRC = [
-    SELF,
-    UNSAFE_EVAL,
-    UNSAFE_INLINE,
-    *(env.list("CSP_SCRIPT_WHITELIST", default=[]) or []),
-]
-
-CSP_STYLE_SRC = [SELF, UNSAFE_INLINE]
-
-CSP_IMG_SRC = [f" * {SELF} {DATA}"]
-
 # Allow all audio files
-CSP_MEDIA_SRC = ["*"]
 
+CSP_SELF = "'self'"
+CSP_DATA = f"data: {'https' if USE_HTTPS else 'http'}:;"
+CSP_UNSAFE_EVAL = "'unsafe-eval'"
+CSP_UNSAFE_INLINE = "'unsafe-inline'"
+
+CSP_SCRIPT_WHITELIST = env.list("CSP_SCRIPT_WHITELIST", default=[])
+
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": [CSP_SELF],
+        "img-src": [f" * {CSP_SELF} {CSP_DATA}"],
+        "media-src": ["*"],
+        "style-src": [
+            CSP_SELF,
+            CSP_UNSAFE_INLINE,
+        ],
+        "script-src": [
+            CSP_SELF,
+            CSP_UNSAFE_EVAL,
+            CSP_UNSAFE_INLINE,
+            *CSP_SCRIPT_WHITELIST,
+        ],
+    }
+}
 # Logging
 # https://docs.djangoproject.com/en/5.0/howto/logging/
 
