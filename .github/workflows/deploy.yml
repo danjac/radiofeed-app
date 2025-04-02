@@ -1,5 +1,5 @@
 name: radiofeed:deploy
-run-name: ${{ github.actor }} is deploying to production servers
+run-name: ${{ github.actor }} is deploying to production
 on:
     workflow_dispatch:
         branches:
