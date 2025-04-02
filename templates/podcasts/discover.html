@@ -6,16 +6,16 @@
 {% endblock title %}
 
 {% block content %}
+    <c-header title="Discover">
+        <c-header.nav>
+            <c-header.nav.item>
+                <c-search.form action="{% url 'podcasts:search_podcasts' %}"
+                               placeholder="Search: Podcasts"
+                />
+            </c-header.nav.item>
+        </c-header.nav>
+    </c-header>
     {% cache cache_timeout discover-podcasts %}
-        <c-header title="Discover">
-            <c-header.nav>
-                <c-header.nav.item>
-                    <c-search.form action="{% url 'podcasts:search_podcasts' %}"
-                                   placeholder="Search: Podcasts"
-                    />
-                </c-header.nav.item>
-            </c-header.nav>
-        </c-header>
         <c-browse>
             {% for podcast in podcasts %}
                 <c-browse.item>

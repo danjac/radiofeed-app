@@ -25,7 +25,7 @@ class CategoryQuerySet(models.QuerySet):
     def from_cache(
         self,
         cache_key: str = "categories",
-        cache_timeout: int = 3600,
+        cache_timeout: int = settings.DEFAULT_CACHE_TIMEOUT,
     ) -> list["Category"]:
         """Returns categories from cache."""
         if (categories := cache.get(cache_key)) is None:
