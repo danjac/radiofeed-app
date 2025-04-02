@@ -19,12 +19,8 @@ class Feed:
 
     rss: str
     url: str
-    title: str = ""
-    image: str = ""
-
-    def __str__(self) -> str:
-        """Return title or RSS"""
-        return self.title or self.rss
+    title: str
+    image: str
 
 
 def search(
@@ -33,8 +29,7 @@ def search(
     *,
     limit: int = settings.DEFAULT_PAGE_SIZE,
 ) -> list[Feed]:
-    """Search iTunes podcast API. New podcasts will be added.
-    If the feed already exists, it will be attached to the Feed."""
+    """Search iTunes podcast API. New podcasts will be added to the database."""
     if feeds := _fetch_feeds(
         client,
         "https://itunes.apple.com/search",
@@ -57,7 +52,7 @@ def search(
 
 
 def search_lazy(*args, **kwargs) -> Iterator[Feed]:
-    """Search iTunes podcast API."""
+    """Search iTunes podcast API. Lazily evaluates results."""
     yield from search(*args, **kwargs)
 
 
