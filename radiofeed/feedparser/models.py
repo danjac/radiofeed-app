@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import Annotated, Any, ClassVar, Final, TypeVar
 
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.db.models import TextChoices
 from django.utils import timezone
 from pydantic import (
@@ -22,6 +21,7 @@ from radiofeed.episodes.bitrates import AudioMimetype
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.podcasts.models import Podcast
+from radiofeed.validators import url_validator
 
 T = TypeVar("T")
 
@@ -30,9 +30,6 @@ _PG_INTEGER_RANGE: Final = range(
     -2147483648,
     2147483647,
 )
-
-
-_url_validator = URLValidator(["http", "https"])
 
 
 def _pg_integer(value: Any) -> int | None:
@@ -71,7 +68,7 @@ def _url(value: str | None) -> str:
             value = f"http://{value}"
 
         with contextlib.suppress(ValidationError):
-            _url_validator(value)
+            url_validator(value)
             return value
     return ""
 
