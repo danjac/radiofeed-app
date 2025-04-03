@@ -1,13 +1,17 @@
-{% load widget_tweaks %}
 <c-vars field class />
-{% with widget_type=field|widget_type %}
-    <div class="space-y-3 form-control {{ class }}" {{ attrs }}>
-        {% if slot %}
-            {{ slot }}
-        {% else %}
-            <c-component is="form.{{ widget_type }}" :field="field" />
-        {% endif %}
-        <c-form.errors :errors="field.errors" />
-        <c-form.hint :hint="field.help_text" />
-    </div>
-{% endwith %}
+<div class="space-y-3 form-control {{ class }}" {{ attrs }}>
+    {% if slot %}
+        {{ slot }}
+    {% else %}
+        {% with widget_type=field.field.widget.input_type %}
+            {% if widget_type == "checkbox" %}
+                <c-form.checkbox :field=field />
+            {% else %}
+                <c-form.label :field=field />
+                {{ field }}
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+    <c-form.errors :errors="field.errors" />
+    <c-form.hint :hint="field.help_text" />
+</div>
