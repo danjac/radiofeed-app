@@ -192,18 +192,6 @@ class Episode(models.Model):
             else 0
         )
 
-    def is_full_episode(self) -> bool:
-        """Check if episode type is 'full'."""
-        return self.episode_type == self.EpisodeType.FULL
-
-    def is_bonus_episode(self) -> bool:
-        """Check if episode type is 'bonus'."""
-        return self.episode_type == self.EpisodeType.BONUS
-
-    def is_trailer(self) -> bool:
-        """Check if episode type is 'trailer'."""
-        return self.episode_type == self.EpisodeType.TRAILER
-
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Bookmark model."""

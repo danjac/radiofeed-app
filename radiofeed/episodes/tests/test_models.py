@@ -217,20 +217,6 @@ class TestEpisodeModel:
         assert episode.get_cover_url() == ""
 
     @pytest.mark.parametrize(
-        ("episode_type", "is_bonus", "is_trailer", "is_full"),
-        [
-            pytest.param(Episode.EpisodeType.BONUS, True, False, False, id="bonus"),
-            pytest.param(Episode.EpisodeType.TRAILER, False, True, False, id="trailer"),
-            pytest.param(Episode.EpisodeType.FULL, False, False, True, id="full"),
-        ],
-    )
-    def test_episode_types(self, episode_type, is_bonus, is_trailer, is_full):
-        episode = Episode(episode_type=episode_type)
-        assert episode.is_full_episode() is is_full
-        assert episode.is_bonus_episode() is is_bonus
-        assert episode.is_trailer() is is_trailer
-
-    @pytest.mark.parametrize(
         ("duration", "expected"),
         [
             pytest.param("2:30:40", 9040, id="hours"),

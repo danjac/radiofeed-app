@@ -7,7 +7,6 @@ document.addEventListener("alpine:init", () => {
             currentTime = 0,
             metadataTag = null,
             startPlayer = false,
-            sizeInBytes = 0,
             timeUpdateUrl = null,
         ) => ({
             csrfHeader,
@@ -22,9 +21,8 @@ document.addEventListener("alpine:init", () => {
             runtime: 0,
             skipSeconds: 10,
             timer: null,
+            loadingTime: 36,
             updateInterval: 6,
-            minLoadingTime: 6,
-            maxLoadingTime: 30,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -53,19 +51,18 @@ document.addEventListener("alpine:init", () => {
 
                 // As the load() event does not trigger error callback in case of failure
                 // we'll check after a given interval if the audio has started playing
-                const timeout = this.getLoadingTimeout(sizeInBytes);
                 const interval = setInterval(() => {
                     clearInterval(interval);
                     if (!this.isLoaded) {
                         const { currentSrc } = this.$refs.audio;
                         this.playbackError(
-                            `Audio failed to load or start within timeout limit of ${timeout}s`,
+                            `Audio failed to load or start within timeout limit of ${loadingTime}s`,
                             `Audio is unavailable. Please try again later or
                             <a href="${currentSrc}" rel="noopener noreferrer" download>
                             download the file</a> to listen to the audio on your device.`,
                         );
                     }
-                }, timeout * 1000);
+                }, loadingTime * 1000);
             },
             destroy() {
                 this.clearUpdateTimer();
@@ -274,21 +271,6 @@ document.addEventListener("alpine:init", () => {
                     return new MediaMetadata(metadata);
                 }
                 return null;
-            },
-            getLoadingTimeout(sizeInBytes) {
-                // calculate the loading timeout based on the file size
-                // based on file size: 1s/1MB
-                const totalSeconds =
-                    sizeInBytes > 0
-                    ? sizeInBytes / (1024 * 1024)
-                    : this.maxLoadingTime;
-
-                return (
-                    Math.min(
-                        this.maxLoadingTime,
-                        Math.max(this.minLoadingTime, totalSeconds),
-                    )
-                );
             },
         }),
     );
