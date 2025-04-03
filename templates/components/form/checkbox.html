@@ -1,5 +1,6 @@
 <c-vars field class />
+{% load widget_tweaks %}
 <div class="flex items-center space-x-3 w-full {{ class }}">
-    {{ field }}
+    {% render_field field class="form-checkbox" %}
     <c-form.label :field=field />
 </div>

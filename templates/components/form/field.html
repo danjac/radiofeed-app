@@ -1,14 +1,15 @@
 <c-vars field class />
+{% load widget_tweaks %}
 <div class="space-y-3 form-control {{ class }}" {{ attrs }}>
     {% if slot %}
         {{ slot }}
     {% else %}
-        {% with widget_type=field.field.widget.input_type %}
-            {% if widget_type == "checkbox" %}
+        {% with widget_type=field|widget_type %}
+            {% if widget_type == "checkboxinput" %}
                 <c-form.checkbox :field=field />
             {% else %}
                 <c-form.label :field=field />
-                {{ field }}
+                {% render_field field class="form-input" %}
             {% endif %}
         {% endwith %}
     {% endif %}
