@@ -9,19 +9,9 @@ from radiofeed.podcasts.models import Podcast
 
 @click.command()
 @click.argument("file", type=click.File("w"))
-@click.option(
-    "--promoted",
-    "-p",
-    is_flag=True,
-    help="Export only promoted podcasts",
-    default=False,
-)
-def command(file: typing.TextIO, *, promoted: bool) -> None:
+def command(file: typing.TextIO) -> None:
     """Export all podcasts to an OPML file."""
     podcasts = Podcast.objects.published().filter(private=False).order_by("title")
-
-    if promoted:
-        podcasts = podcasts.filter(promoted=True)
 
     file.write(
         render_to_string(

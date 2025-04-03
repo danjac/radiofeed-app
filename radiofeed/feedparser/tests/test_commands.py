@@ -37,10 +37,6 @@ class TestExportFeeds:
     def test_ok(self, podcast):
         call_command("export_opml", "-")
 
-    @pytest.mark.django_db
-    def test_promoted(self, podcast):
-        call_command("export_opml", "-", promoted=True)
-
 
 class TestParseFeeds:
     @pytest.fixture
