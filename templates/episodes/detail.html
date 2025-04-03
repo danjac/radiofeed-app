@@ -140,12 +140,14 @@
                         </div>
                     {% endpartialdef bookmark_button %}
                     <div class="flex flex-wrap items-center space-x-2 font-semibold sm:space-x-3">
-                        <a download
-                           aria-label="Download audio file to your device"
-                           title="Download audio file to your device"
-                           href="{{ episode.media_url }}"
-                           target="_blank"
-                           class="link">Download</a>
+                        {% if episode.safe_media_url %}
+                            <a download
+                               aria-label="Download audio file to your device"
+                               title="Download audio file to your device"
+                               href="{{ episode.safe_media_url }}"
+                               target="_blank"
+                               class="link">Download</a>
+                        {% endif %}
                         {% with website=episode.website|default:podcast.website %}
                             {% if website %}
                                 <a href="{{ website }}"

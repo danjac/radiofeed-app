@@ -21,7 +21,7 @@ document.addEventListener("alpine:init", () => {
             runtime: 0,
             skipSeconds: 10,
             timer: null,
-            loadingTime: 36,
+            loadingTime: 30,
             updateInterval: 6,
             counters: {
                 current: "00:00:00",
@@ -56,13 +56,13 @@ document.addEventListener("alpine:init", () => {
                     if (!this.isLoaded) {
                         const { currentSrc } = this.$refs.audio;
                         this.playbackError(
-                            `Audio failed to load or start within timeout limit of ${loadingTime}s`,
+                            `Audio failed to load or start within timeout limit of ${this.loadingTime}s`,
                             `Audio is unavailable. Please try again later or
                             <a href="${currentSrc}" rel="noopener noreferrer" download>
                             download the file</a> to listen to the audio on your device.`,
                         );
                     }
-                }, loadingTime * 1000);
+                }, this.loadingTime * 1000);
             },
             destroy() {
                 this.clearUpdateTimer();

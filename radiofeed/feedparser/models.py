@@ -259,7 +259,7 @@ class Feed(BaseModel):
     @model_validator(mode="after")
     def validate_pub_date(self) -> "Feed":
         """Set default pub date based on max items pub date."""
-        self.pub_date = max([item.pub_date for item in self.items])
+        self.pub_date = max(item.pub_date for item in self.items)
         return self
 
     def tokenize(self) -> str:

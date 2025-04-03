@@ -116,6 +116,20 @@ class TestEpisodeModel:
         assert episode.cleaned_description == "Test & Code"
 
     @pytest.mark.parametrize(
+        ("url", "expected"),
+        [
+            pytest.param(
+                "https://example.com", "https://example.com", id="valid https"
+            ),
+            pytest.param("http://example.com", "http://example.com", id="valid http"),
+            pytest.param("javascript:void(0)", "", id="javascript"),
+        ],
+    )
+    def test_safe_media_url(self, url, expected):
+        episode = Episode(media_url=url)
+        assert episode.safe_media_url == expected
+
+    @pytest.mark.parametrize(
         ("file_size", "duration", "media_type", "expected"),
         [
             pytest.param(None, None, "audio/ogg", 0, id="both none"),

@@ -3,6 +3,7 @@ from typing import ClassVar, Optional
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
+from django.core.validators import URLValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
@@ -13,6 +14,8 @@ from radiofeed.episodes.bitrates import get_bitrate
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
+
+_url_validator = URLValidator(["http", "https"])
 
 
 class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
@@ -51,7 +54,11 @@ class Episode(models.Model):
     description = models.TextField(blank=True)
     keywords = models.TextField(blank=True)
 
-    website = models.URLField(max_length=2083, blank=True)
+    website = models.URLField(
+        max_length=2083,
+        blank=True,
+        validators=[_url_validator],
+    )
 
     episode_type = models.CharField(
         max_length=12,
@@ -62,9 +69,16 @@ class Episode(models.Model):
     episode = models.IntegerField(null=True, blank=True)
     season = models.IntegerField(null=True, blank=True)
 
-    cover_url = models.URLField(max_length=2083, blank=True)
+    cover_url = models.URLField(
+        max_length=2083,
+        blank=True,
+        validators=[_url_validator],
+    )
 
-    media_url = models.URLField(max_length=2083)
+    media_url = models.URLField(
+        max_length=2083,
+        validators=[_url_validator],
+    )
     media_type = models.CharField(max_length=60)
 
     file_size = models.BigIntegerField(
@@ -165,6 +179,15 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
+
+    @cached_property
+    def safe_media_url(self) -> str:
+        """Returns media URL.
+        If not starting with http(s)://, returns empty string.
+        Note: we should normally only have valid URLs in the database,
+        but this is an extra safety check.
+        """
+        return self.media_url if self.media_url.startswith("http") else ""
 
     @cached_property
     def bitrate(self) -> int:
