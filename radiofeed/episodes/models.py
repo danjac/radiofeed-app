@@ -169,15 +169,6 @@ class Episode(models.Model):
             return 0
 
     @cached_property
-    def safe_media_url(self) -> str:
-        """Returns media URL.
-        If not starting with http(s)://, returns empty string.
-        Note: we should normally only have valid URLs in the database,
-        but this is an extra safety check.
-        """
-        return self.media_url if self.media_url.startswith("http") else ""
-
-    @cached_property
     def bitrate(self) -> int:
         """Returns bitrate in kbps."""
         return get_bitrate(self.media_type)

@@ -27,7 +27,7 @@
                            @play="play"
                            @pause="pause"
                            @error.prevent="error">
-                        <source src="{{ episode.safe_media_url }}"
+                        <source src="{{ episode.media_url }}"
                                 type="{{ episode.media_type }}" />
                     </audio>
                     <div class="fixed bottom-0 p-2 w-full font-semibold text-white from-purple-900 to-black opacity-100 duration-1000 ease-in-out transform translate-y-0 bg-linear-to-b htmx-added:opacity-0 htmx-added:translate-y-24">
