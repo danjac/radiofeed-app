@@ -2,7 +2,7 @@ import contextlib
 import functools
 from collections.abc import Iterable
 from datetime import datetime
-from typing import Annotated, Any, ClassVar, Final, TypeVar
+from typing import Annotated, Any, ClassVar, Final, Literal, TypeVar
 
 from django.core.exceptions import ValidationError
 from django.db.models import TextChoices
@@ -17,11 +17,50 @@ from pydantic import (
 )
 
 from radiofeed import tokenizer
-from radiofeed.episodes.bitrates import AudioMimetype
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.podcasts.models import Podcast
 from radiofeed.validators import url_validator
+
+AudioMimetype = Literal[
+    "audio/aac",
+    "audio/aacp",
+    "audio/basic",
+    "audio/L24",  # Assuming PCM 24-bit WAV-like format
+    "audio/m4a",
+    "audio/midi",
+    "audio/mp3",
+    "audio/mp4",
+    "audio/mp4a-latm",
+    "audio/mpef",
+    "audio/mpeg",
+    "audio/mpeg3",
+    "audio/mpeg4",
+    "audio/mpg",
+    "audio/ogg",
+    "audio/video",  # Not a common audio type, assuming default
+    "audio/vnd.dlna.adts",
+    "audio/vnd.rn-realaudio",  # RealAudio varies, assuming standard quality
+    "audio/vnd.wave",
+    "audio/vorbis",
+    "audio/wav",
+    "audio/wave",
+    "audio/webm",
+    "audio/x-aac",
+    "audio/x-aiff",
+    "audio/x-flac",
+    "audio/x-hx-aac-adts",
+    "audio/x-m4a",
+    "audio/x-m4b",
+    "audio/x-m4v",  # Assuming similar to M4A
+    "audio/x-mov",  # Assuming similar to M4A
+    "audio/x-mp3",
+    "audio/x-mpeg",
+    "audio/x-mpg",
+    "audio/x-ms-wma",
+    "audio/x-pn-realaudio",
+    "audio/x-wav",
+]
 
 T = TypeVar("T")
 

@@ -9,7 +9,6 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from fast_update.query import FastUpdateQuerySet
 
-from radiofeed.episodes.bitrates import get_bitrate
 from radiofeed.fields import URLField
 from radiofeed.html import strip_html
 from radiofeed.search import SearchQuerySetMixin
@@ -167,32 +166,6 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
-
-    @cached_property
-    def bitrate(self) -> int:
-        """Returns bitrate in kbps."""
-        return get_bitrate(self.media_type)
-
-    @cached_property
-    def estimated_file_size(self) -> int:
-        """Returns an estimated file size in bytes.
-
-        If a valid `file_size` is available, returns that value.
-
-        Otherwise calculates the file size based on duration and bitrate.
-
-        Returns 0 if neither `file_size` nor `duration` is available.
-        """
-
-        # Return if file_size is greater than 1MB
-        if self.file_size and self.file_size > (1024 * 1024):
-            return self.file_size
-
-        return (
-            int((self.bitrate * self.duration_in_seconds * 1000) / 8)
-            if self.duration_in_seconds
-            else 0
-        )
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
