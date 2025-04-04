@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
+from django.middleware.csrf import get_token
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
@@ -68,6 +69,20 @@ def get_accept_cookies(context: RequestContext) -> bool:
     return settings.GDPR_COOKIE_NAME in context.request.COOKIES
 
 
+@register.simple_tag(takes_context=True)
+def csrf_header(context: RequestContext, **kwargs) -> str:
+    """Returns CSRF token header in JSON format.
+    Additional arbitrary arguments also can be passed to the JSON object.
+    """
+    return json.dumps(
+        {
+            _csrf_header_name(): get_token(context.request),
+        }
+        | kwargs,
+        cls=DjangoJSONEncoder,
+    )
+
+
 @register.filter
 def markdown(content: str | None) -> str:
     """Render content as Markdown."""
@@ -84,3 +99,8 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
+
+
+@functools.cache
+def _csrf_header_name() -> str:
+    return settings.CSRF_HEADER_NAME.replace("HTTP_", "", 1).replace("_", "-")

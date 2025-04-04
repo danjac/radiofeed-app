@@ -1,8 +1,10 @@
+import json
+
 import pytest
 from django.contrib.sites.models import Site
 from django.template.context import Context, RequestContext
 
-from radiofeed.templatetags import absolute_uri, format_duration
+from radiofeed.templatetags import absolute_uri, csrf_header, format_duration
 
 
 @pytest.fixture
@@ -18,6 +20,15 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
+
+
+class TestCsrfHeader:
+    def test_header(self, rf, mocker, settings):
+        settings.CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
+        mocker.patch("radiofeed.templatetags.get_token", return_value="abc123")
+        req = rf.get("/")
+        value = csrf_header(RequestContext(req), value=1)
+        assert json.loads(value) == {"X-CSRFTOKEN": "abc123", "value": 1}
 
 
 class TestFormatDuration:
