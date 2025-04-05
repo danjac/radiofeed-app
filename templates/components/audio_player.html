@@ -1,19 +1,17 @@
 {% load heroicons static %}
-{% load get_media_metadata from episodes %}
+{% load player_metadata from episodes %}
 <c-vars audio-log action="load" />
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
         {% if audio_log and action != "close" %}
-            {% with episode=audio_log.episode podcast=audio_log.episode.podcast metadata_tag="audioplayer-metadata" %}
-                {% get_media_metadata episode as metadata %}
-                {{ metadata|json_script:metadata_tag }}
+            {% with episode=audio_log.episode podcast=audio_log.episode.podcast %}
                 <div class="h-40 sm:h-28"
                     {# fmt:off #}
                     x-data="
                     audioPlayer(
                         csrfHeader={% csrf_header %},
+                        metadata={% player_metadata episode %},
                         currentTime={{ audio_log.current_time|default:0 }},
-                        metadataTag='{{ metadata_tag }}',
                         startPlayer={% if action == "play" %}true{% else %}false{% endif %},
                         timeUpdateUrl='{% url "episodes:player_time_update" %}',
                     )"{# fmt:on #}
