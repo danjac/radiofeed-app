@@ -3,14 +3,12 @@ document.addEventListener("alpine:init", () => {
         "audioPlayer",
         (
             csrfHeader = null,
-            csrfToken = null,
             currentTime = 0,
             metadataTag = null,
             startPlayer = false,
             timeUpdateUrl = null,
         ) => ({
             csrfHeader,
-            csrfToken,
             currentTime,
             timeUpdateUrl,
             isLoaded: false,
@@ -226,9 +224,7 @@ document.addEventListener("alpine:init", () => {
                 try {
                     await fetch(this.timeUpdateUrl, {
                         method: "POST",
-                        headers: {
-                            [this.csrfHeader]: this.csrfToken,
-                        },
+                        headers: this.csrfHeader,
                         body: new URLSearchParams({
                             current_time: this.runtime,
                         }),

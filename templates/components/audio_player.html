@@ -11,8 +11,7 @@
                     {# fmt:off #}
                     x-data="
                     audioPlayer(
-                        csrfHeader='{{ csrf_header }}',
-                        csrfToken='{{ csrf_token }}',
+                        csrfHeader={% csrf_header %},
                         currentTime={{ audio_log.current_time|default:0 }},
                         metadataTag='{{ metadata_tag }}',
                         startPlayer={% if action == "play" %}true{% else %}false{% endif %},
