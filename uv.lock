@@ -461,17 +461,18 @@ wheels = [
 
 [[package]]
 name = "django-tailwind-cli"
-version = "4.1.0"
+version = "4.2.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "django-typer" },
+    { name = "platformdirs" },
     { name = "requests" },
     { name = "semver" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1e/43/8acfc03ed841cd074ca899193e1a0cbe6609e6c6f660e88095a5c935bee3/django_tailwind_cli-4.1.0.tar.gz", hash = "sha256:3e25bdc5e5fba17a6f6f38c1054897f350575e16022066eb274a64dbe80cc039", size = 64676 }
+sdist = { url = "https://files.pythonhosted.org/packages/78/ab/c760f1d7b5762d53f5b8d16f348a4d9ee7e2141beeabdfbf3242dc45ea04/django_tailwind_cli-4.2.2.tar.gz", hash = "sha256:1b6c651529cef961b4961b999d361c406f52b11100e1eb2e593cee00fdb17c48", size = 65885 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/24/09e49509b7575441adf9d1a3744e0685cfad0be4761a91037e5014df6258/django_tailwind_cli-4.1.0-py3-none-any.whl", hash = "sha256:4eb4c6bcc02661ee40b2a83dfa434aaa71867711cae5d2b6033d331f559a9408", size = 12191 },
+    { url = "https://files.pythonhosted.org/packages/b8/70/e11bdf571172033ce8cc4d8d44fd61a3b74a12ac8e863b3c0ba1846104b3/django_tailwind_cli-4.2.2-py3-none-any.whl", hash = "sha256:773c721879fa30429b270ac6b93923892e9413c0c42cd0368e3bf5d2ce7af35f", size = 12260 },
 ]
 
 [[package]]
@@ -888,6 +889,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e5/fb/a7960e838bc5df57a2ce23183bfd2290d97c33028b96bde332a9057834d3/pillow-11.1.0-cp313-cp313t-win32.whl", hash = "sha256:dda60aa465b861324e65a78c9f5cf0f4bc713e4309f83bc387be158b077963d9", size = 2295494 },
     { url = "https://files.pythonhosted.org/packages/d7/6c/6ec83ee2f6f0fda8d4cf89045c6be4b0373ebfc363ba8538f8c999f63fcd/pillow-11.1.0-cp313-cp313t-win_amd64.whl", hash = "sha256:ad5db5781c774ab9a9b2c4302bbf0c1014960a0a7be63278d13ae6fdf88126fe", size = 2631595 },
     { url = "https://files.pythonhosted.org/packages/cf/6c/41c21c6c8af92b9fea313aa47c75de49e2f9a467964ee33eb0135d47eb64/pillow-11.1.0-cp313-cp313t-win_arm64.whl", hash = "sha256:67cd427c68926108778a9005f2a04adbd5e67c442ed21d95389fe1d595458756", size = 2377651 },
+]
+
+[[package]]
+name = "platformdirs"
+version = "4.3.7"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/2d/7d512a3913d60623e7eb945c6d1b4f0bddf1d0b7ada5225274c87e5b53d1/platformdirs-4.3.7.tar.gz", hash = "sha256:eb437d586b6a0986388f0d6f74aa0cde27b48d0e3d66843640bfb6bdcdb6e351", size = 21291 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6d/45/59578566b3275b8fd9157885918fcd0c4d74162928a5310926887b856a51/platformdirs-4.3.7-py3-none-any.whl", hash = "sha256:a03875334331946f13c549dbd8f4bac7a13a50a895a0eb1e8c6a8ace80d40a94", size = 18499 },
 ]
 
 [[package]]
