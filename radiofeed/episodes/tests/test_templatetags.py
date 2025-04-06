@@ -1,9 +1,7 @@
-import json
-
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.templatetags.audio_player import player_metadata
+from radiofeed.episodes.templatetags.audio_player import get_media_metadata
 from radiofeed.episodes.tests.factories import EpisodeFactory
 
 
@@ -13,7 +11,7 @@ class TestPlayerMetadata:
         episode = EpisodeFactory(
             podcast__cover_url="https://mysite.com/test.jpg",
         )
-        data = json.loads(player_metadata(RequestContext(rf.get("/")), episode))
+        data = get_media_metadata(RequestContext(rf.get("/")), episode)
         assert data["title"] == episode.cleaned_title
         assert data["album"] == episode.podcast.cleaned_title
         assert data["artist"] == episode.podcast.cleaned_title
@@ -29,7 +27,7 @@ class TestPlayerMetadata:
     @pytest.mark.django_db
     def test_no_cover_url(self, rf):
         episode = EpisodeFactory(podcast__cover_url="")
-        data = json.loads(player_metadata(RequestContext(rf.get("/")), episode))
+        data = get_media_metadata(RequestContext(rf.get("/")), episode)
 
         assert data["title"] == episode.cleaned_title
         assert data["album"] == episode.podcast.cleaned_title

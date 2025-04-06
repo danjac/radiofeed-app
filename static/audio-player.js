@@ -3,7 +3,7 @@ document.addEventListener("alpine:init", () => {
         "audioPlayer",
         (
             csrfHeader = null,
-            metadata = null,
+            metadataTag = null,
             currentTime = 0,
             startPlayer = false,
             timeUpdateUrl = null,
@@ -28,10 +28,11 @@ document.addEventListener("alpine:init", () => {
             },
             // EVENTS
             init() {
-                if (metadata && "mediaSession" in navigator) {
-                    navigator.mediaSession.metadata = new MediaMetadata(
-                        metadata,
-                    );
+                if (metadataTag && "mediaSession" in navigator) {
+                    const metadata = this.getMediaMetadata(metadataTag);
+                    if (metadata) {
+                        navigator.mediaSession.metadata = metadata;
+                    }
                 }
 
                 this.$watch("runtime", (value) => {
@@ -257,6 +258,12 @@ document.addEventListener("alpine:init", () => {
                 ]
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
+            },
+            getMediaMetadata(tag) {
+                const metadata = JSON.parse(
+                    document.getElementById(tag)?.textContent || "{}",
+                );
+                return Object.keys(metadata).length > 0 ? new MediaMetadata(metadata) : null;
             },
         }),
     );
