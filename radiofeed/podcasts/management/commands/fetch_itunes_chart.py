@@ -16,5 +16,5 @@ from radiofeed.podcasts import itunes
 )
 def command(**options):
     """Crawl iTunes Top Chart."""
-    for podcast in itunes.fetch_chart(get_client(), **options):
-        click.secho(str(podcast), fg="green")
+    for feed in itunes.fetch_chart(get_client(), **options):
+        click.secho(feed.title, fg="green")
