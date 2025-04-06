@@ -3,7 +3,7 @@ import json
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.templatetags.episodes import player_metadata
+from radiofeed.episodes.templatetags.audio_player import player_metadata
 from radiofeed.episodes.tests.factories import EpisodeFactory
 
 

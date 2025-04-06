@@ -1,5 +1,4 @@
-{% load heroicons static %}
-{% load player_metadata from episodes %}
+{% load audio_player heroicons static %}
 <c-vars audio-log action="load" />
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
