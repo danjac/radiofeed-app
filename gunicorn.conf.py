@@ -34,4 +34,4 @@ max_requests_jitter = max_requests // 20
 timeout = max(30, 35 + (threads * 2))
 
 # Graceful timeout: allow extra time for clean shutdown
-graceful_timeout = timeout + 10  # Give workers 10 extra seconds to finish tasks
+graceful_timeout = timeout + 10

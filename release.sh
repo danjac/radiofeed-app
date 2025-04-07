@@ -4,9 +4,9 @@ set -o errexit
 
 # Runs Django management commands to prepare the application for release:
 # - checks the deployment settings
-# - runs health checks
 # - applies database migrations
-# - clear cache
+# - clears cache
+# - runs health checks
 
 MANAGE="python ./manage.py"
 
