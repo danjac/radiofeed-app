@@ -21,6 +21,7 @@ document.addEventListener("alpine:init", () => {
             timer: null,
             loadingTime: 30,
             updateInterval: 6,
+            playbackRate: 1.0,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
@@ -28,11 +29,34 @@ document.addEventListener("alpine:init", () => {
             },
             // EVENTS
             init() {
-                if (metadataTag && "mediaSession" in navigator) {
-                    const metadata = this.getMediaMetadata(metadataTag);
-                    if (metadata) {
-                        navigator.mediaSession.metadata = metadata;
+                if ("mediaSession" in navigator) {
+                    if (metadataTag) {
+                        const metadata = JSON.parse(
+                            document.getElementById(metadataTag)?.textContent ||
+                            "{}",
+                        );
+                        if (Object.keys(metadata).length > 0) {
+                            navigator.mediaSession.metadata = new MediaMetadata(
+                                metadata,
+                            );
+                        }
                     }
+                    navigator.mediaSession.setActionHandler(
+                        "seekforward",
+                        this.skipForward.bind(this),
+                    );
+                    navigator.mediaSession.setActionHandler(
+                        "seekbackward",
+                        this.skipBack.bind(this),
+                    );
+                    navigator.mediaSession.setActionHandler(
+                        "seekto",
+                        (details) => {
+                            if (details.seekTime) {
+                                this.skipTo(details.seekTime);
+                            }
+                        },
+                    );
                 }
 
                 this.$watch("runtime", (value) => {
@@ -41,10 +65,12 @@ document.addEventListener("alpine:init", () => {
                     this.counters.remaining = this.formatCounter(
                         this.duration - value,
                     );
+                    this.setMediaSessionPositionState({ position: value });
                 });
 
                 this.$watch("duration", (value) => {
                     this.counters.remaining = this.formatCounter(value);
+                    this.setMediaSessionPositionState({ duration: value });
                 });
 
                 this.$refs.audio.load();
@@ -99,14 +125,17 @@ document.addEventListener("alpine:init", () => {
                 this.pause();
                 this.runtime = 0;
                 this.sendTimeUpdate();
+                this.setMediaSessionPlaybackState("none");
             },
             play() {
                 this.isPlaying = true;
                 this.startUpdateTimer();
+                this.setMediaSessionPlaybackState("playing");
             },
             pause() {
                 this.isPlaying = false;
                 this.clearUpdateTimer();
+                this.setMediaSessionPlaybackState("paused");
             },
             error(event) {
                 this.playbackError(
@@ -245,6 +274,21 @@ document.addEventListener("alpine:init", () => {
                     this.counters.preview = this.formatCounter(value);
                 }
             },
+            setMediaSessionPlaybackState(state) {
+                if ("mediaSession" in navigator) {
+                    navigator.mediaSession.playbackState = state;
+                }
+            },
+            setMediaSessionPositionState(state) {
+                if ("mediaSession" in navigator) {
+                    navigator.mediaSession.setPositionState({
+                        duration: this.duration,
+                        playbackRate: this.playbackRate,
+                        position: this.runtime,
+                        ...state,
+                    });
+                }
+            },
             formatCounter(value) {
                 if (isNaN(value) || value < 0) {
                     return "00:00:00";
@@ -258,12 +302,6 @@ document.addEventListener("alpine:init", () => {
                 ]
                     .map((t) => t.toString().padStart(2, "0"))
                     .join(":");
-            },
-            getMediaMetadata(tag) {
-                const metadata = JSON.parse(
-                    document.getElementById(tag)?.textContent || "{}",
-                );
-                return Object.keys(metadata).length > 0 ? new MediaMetadata(metadata) : null;
             },
         }),
     );
