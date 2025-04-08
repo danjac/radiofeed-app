@@ -65,12 +65,10 @@ document.addEventListener("alpine:init", () => {
                     this.counters.remaining = this.formatCounter(
                         this.duration - value,
                     );
-                    this.setMediaSessionPositionState({ position: value });
                 });
 
                 this.$watch("duration", (value) => {
                     this.counters.remaining = this.formatCounter(value);
-                    this.setMediaSessionPositionState({ duration: value });
                 });
 
                 this.$refs.audio.load();
@@ -119,7 +117,9 @@ document.addEventListener("alpine:init", () => {
                 this.isLoaded = true;
             },
             timeUpdate(event) {
-                this.runtime = Math.floor(event.target.currentTime);
+                const { currentTime } = event.target;
+                this.runtime = Math.floor(currentTime);
+                this.setMediaSessionPositionState({ position: currentTime });
             },
             ended() {
                 this.pause();
@@ -130,11 +130,13 @@ document.addEventListener("alpine:init", () => {
             play() {
                 this.isPlaying = true;
                 this.startUpdateTimer();
+                this.setMediaSessionPositionState();
                 this.setMediaSessionPlaybackState("playing");
             },
             pause() {
                 this.isPlaying = false;
                 this.clearUpdateTimer();
+                this.setMediaSessionPositionState();
                 this.setMediaSessionPlaybackState("paused");
             },
             error(event) {
