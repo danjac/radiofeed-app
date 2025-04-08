@@ -13,6 +13,7 @@
 .coverage*
 .data
 .disk_cache
+.django_tailwind_cli
 .env
 .envrc
 .idea/
