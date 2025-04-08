@@ -41,22 +41,6 @@ document.addEventListener("alpine:init", () => {
                             );
                         }
                     }
-                    navigator.mediaSession.setActionHandler(
-                        "seekforward",
-                        this.skipForward.bind(this),
-                    );
-                    navigator.mediaSession.setActionHandler(
-                        "seekbackward",
-                        this.skipBack.bind(this),
-                    );
-                    navigator.mediaSession.setActionHandler(
-                        "seekto",
-                        (details) => {
-                            if (details.seekTime) {
-                                this.skipTo(details.seekTime);
-                            }
-                        },
-                    );
                 }
 
                 this.$watch("runtime", (value) => {
@@ -119,25 +103,19 @@ document.addEventListener("alpine:init", () => {
             timeUpdate(event) {
                 const { currentTime } = event.target;
                 this.runtime = Math.floor(currentTime);
-                this.setMediaSessionPositionState({ position: currentTime });
             },
             ended() {
                 this.pause();
                 this.runtime = 0;
                 this.sendTimeUpdate();
-                this.setMediaSessionPlaybackState("none");
             },
             play() {
                 this.isPlaying = true;
                 this.startUpdateTimer();
-                this.setMediaSessionPositionState();
-                this.setMediaSessionPlaybackState("playing");
             },
             pause() {
                 this.isPlaying = false;
                 this.clearUpdateTimer();
-                this.setMediaSessionPositionState();
-                this.setMediaSessionPlaybackState("paused");
             },
             error(event) {
                 this.playbackError(
@@ -274,21 +252,6 @@ document.addEventListener("alpine:init", () => {
                     const percent = position / clientWidth;
                     const value = Math.floor(percent * this.duration);
                     this.counters.preview = this.formatCounter(value);
-                }
-            },
-            setMediaSessionPlaybackState(state) {
-                if ("mediaSession" in navigator) {
-                    navigator.mediaSession.playbackState = state;
-                }
-            },
-            setMediaSessionPositionState(state) {
-                if ("mediaSession" in navigator) {
-                    navigator.mediaSession.setPositionState({
-                        duration: this.duration,
-                        playbackRate: this.playbackRate,
-                        position: this.runtime,
-                        ...state,
-                    });
                 }
             },
             formatCounter(value) {
