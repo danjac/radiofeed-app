@@ -29,29 +29,24 @@ document.addEventListener("alpine:init", () => {
             // EVENTS
             init() {
                 if ("mediaSession" in navigator) {
-                    if (metadataTag) {
-                        const metadata = JSON.parse(
-                            document.getElementById(metadataTag)?.textContent ||
-                            "{}",
+                    const metadata = parseJsonTag(metadataTag);
+                    if (Object.keys(metadata).length > 0) {
+                        navigator.mediaSession.metadata = new MediaMetadata(
+                            metadata,
                         );
-                        if (Object.keys(metadata).length > 0) {
-                            navigator.mediaSession.metadata = new MediaMetadata(
-                                metadata,
-                            );
-                        }
                     }
                 }
 
                 this.$watch("runtime", (value) => {
                     this.updateProgressBar();
-                    this.counters.current = this.formatCounter(value);
-                    this.counters.remaining = this.formatCounter(
+                    this.counters.current = formatCounter(value);
+                    this.counters.remaining = formatCounter(
                         this.duration - value,
                     );
                 });
 
                 this.$watch("duration", (value) => {
-                    this.counters.remaining = this.formatCounter(value);
+                    this.counters.remaining = formatCounter(value);
                 });
 
                 this.$refs.audio.load();
@@ -250,23 +245,29 @@ document.addEventListener("alpine:init", () => {
                     const { clientWidth } = this.$refs.range;
                     const percent = position / clientWidth;
                     const value = Math.floor(percent * this.duration);
-                    this.counters.preview = this.formatCounter(value);
+                    this.counters.preview = formatCounter(value);
                 }
-            },
-            formatCounter(value) {
-                if (isNaN(value) || value < 0) {
-                    return "00:00:00";
-                }
-
-                const duration = Math.floor(value);
-                return [
-                    Math.floor(duration / 3600),
-                    Math.floor((duration % 3600) / 60),
-                    Math.floor(duration % 60),
-                ]
-                    .map((t) => t.toString().padStart(2, "0"))
-                    .join(":");
             },
         }),
     );
 });
+
+const formatCounter = (value) => {
+    if (isNaN(value) || value < 0) {
+        return "00:00:00";
+    }
+
+    const duration = Math.floor(value);
+    return [
+        Math.floor(duration / 3600),
+        Math.floor((duration % 3600) / 60),
+        Math.floor(duration % 60),
+    ]
+        .map((t) => t.toString().padStart(2, "0"))
+        .join(":");
+};
+
+const parseJsonTag = (tagname) => {
+    const tagElement = document.getElementById(tagname);
+    return JSON.parse(tagElement?.textContent || "{}");
+};
