@@ -21,7 +21,6 @@ document.addEventListener("alpine:init", () => {
             timer: null,
             loadingTime: 30,
             updateInterval: 6,
-            playbackRate: 1.0,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
