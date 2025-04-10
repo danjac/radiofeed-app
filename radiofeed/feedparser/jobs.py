@@ -17,10 +17,14 @@ def parse_feeds(*, limit: int = 360) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
     client = get_client()
 
+    logger.debug("Parsing feeds for %d podcasts", limit)
+
     execute_thread_pool(
         lambda podcast: _parse_feed(podcast, client),
         _get_scheduled_podcasts(limit),
     )
+
+    logger.debug("Finished parsing feeds for %d podcasts", limit)
 
 
 def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
