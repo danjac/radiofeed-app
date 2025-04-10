@@ -470,6 +470,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
+        "radiofeed.podcasts.jobs": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
     },
 }
 
