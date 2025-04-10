@@ -89,12 +89,9 @@
             - redis_deployment
             - redis_service
             - django_deployment
+            - django_scheduler
             - django_service
-            - django_cronjobs
             - ingress_route
-
-      - name: Delete existing CronJobs
-        command: kubectl delete cronjob -l app=django-cronjob -n default
 
       - name: Apply Kubernetes manifests using ApplySet
         ansible.builtin.shell: |

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxSurge: 1  # Only one extra pod can be created at a time
+        maxUnavailable: 1  # Only one pod can be replaced at a time
+  template:
+    metadata:
+      labels:
+        app: django-scheduler
+    spec:
+      nodeSelector:
+        role: jobrunner
+      containers:
+        - name: django
+          image: {{ image }}
+          resources:
+            requests:
+                memory: "128Mi"  # Minimum memory the container will get
+                cpu: "250m"
+            limits:
+                memory: "512Gi"  # Maximum memory the container can use before it gets OOM killed
+                cpu: "500m"
+          command: ["/bin/sh", "-c"]
+          args: ["python ./manage.py rqworker"]
+          envFrom:
+            - configMapRef:
+                name: configmap
+            - secretRef:
+                name: secrets
