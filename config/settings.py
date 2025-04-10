@@ -54,7 +54,6 @@ INSTALLED_APPS: list[str] = [
     # https://django-cotton.com/docs/django-template-partials
     "django_cotton.apps.SimpleAppConfig",
     "template_partials.apps.SimpleAppConfig",
-    "radiofeed.caches",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
