@@ -41,7 +41,7 @@ def create_recommendations():
         recommend.delay(language)  # type: ignore[union-attr]
 
 
-@job("low")
+@job("default")
 def recommend(language: str):
     """Generate recommendations for a specific language."""
     logger.debug("Creating recommendations for %s", language)
