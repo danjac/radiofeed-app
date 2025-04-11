@@ -134,7 +134,10 @@ REDIS_URL = CACHES["default"]["LOCATION"]
 SCHEDULER_QUEUES = {
     "default": {
         "URL": REDIS_URL,
-        "DEFAULT_TIMEOUT": 360,
+        "DEFAULT_TIMEOUT": env.int(
+            "SCHEDULER_DEFAULT_TIMEOUT",
+            default=360,
+        ),
     }
 }
 
@@ -149,7 +152,7 @@ TEMPLATES = [
                 "django_cotton.templatetags.cotton",
                 "radiofeed.templatetags",
             ],
-            "debug": env.bool("TEMPLATE_DEBUG", default=False),
+            "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
