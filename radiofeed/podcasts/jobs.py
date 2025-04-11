@@ -11,7 +11,7 @@ from radiofeed.podcasts import emails, itunes, recommender
 logger = logging.getLogger(__name__)
 
 
-@job
+@job("default")
 def send_recommendations(addresses: list[str] | None = None) -> None:
     """Send recommendation emails to users."""
     recipients = _get_recipients()
@@ -25,7 +25,7 @@ def send_recommendations(addresses: list[str] | None = None) -> None:
         send_recommendations_email.delay(recipient_id)  # type: ignore[union-attr]
 
 
-@job
+@job("high")
 def send_recommendations_email(recipient_id: int) -> None:
     """Send a single recommendation email to a user."""
     recipient = _get_recipients().get(pk=recipient_id)
@@ -33,7 +33,7 @@ def send_recommendations_email(recipient_id: int) -> None:
     emails.send_recommendations_email(recipient)
 
 
-@job
+@job("default")
 def create_recommendations():
     """Generate recommendations based on podcast similarity."""
     logger.debug("Creating recommendations for all languages")
@@ -41,14 +41,14 @@ def create_recommendations():
         recommend.delay(language)  # type: ignore[union-attr]
 
 
-@job
+@job("low")
 def recommend(language: str):
     """Generate recommendations for a specific language."""
     logger.debug("Creating recommendations for %s", language)
     recommender.recommend(language)
 
 
-@job
+@job("default")
 def fetch_itunes_chart(**options):
     """Crawl iTunes Top Chart."""
     for feed in itunes.fetch_chart(get_client(), **options):

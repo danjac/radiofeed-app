@@ -11,7 +11,7 @@ from radiofeed.podcasts.models import Podcast
 logger = logging.getLogger(__name__)
 
 
-@job
+@job("default")
 def parse_feeds(*, limit: int = 360) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
 
@@ -22,7 +22,7 @@ def parse_feeds(*, limit: int = 360) -> None:
         parse_feed.delay(podcast_id)  # type: ignore[union-attr]
 
 
-@job
+@job("low")
 def parse_feed(podcast_id: int) -> str:
     """Parses the RSS feed of a specific podcast."""
 

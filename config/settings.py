@@ -131,14 +131,14 @@ REDIS_URL = CACHES["default"]["LOCATION"]
 # Scheduler
 # https://django-tasks-scheduler.readthedocs.io/en/stable/installation/
 
+SCHEDULER_DEFAULT_TIMEOUT = env.int("SCHEDULER_DEFAULT_TIMEOUT", default=360)
+
 SCHEDULER_QUEUES = {
-    "default": {
+    queue: {
         "URL": REDIS_URL,
-        "DEFAULT_TIMEOUT": env.int(
-            "SCHEDULER_DEFAULT_TIMEOUT",
-            default=360,
-        ),
+        "DEFAULT_TIMEOUT": SCHEDULER_DEFAULT_TIMEOUT,
     }
+    for queue in ("default", "high", "low")
 }
 
 # Templates
