@@ -3,7 +3,9 @@ import pytest
 from radiofeed.podcasts.jobs import (
     create_recommendations,
     fetch_itunes_chart,
+    recommend,
     send_recommendations,
+    send_recommendations_email,
 )
 from radiofeed.podcasts.tests.factories import PodcastFactory, RecommendationFactory
 from radiofeed.users.tests.factories import EmailAddressFactory
@@ -33,21 +35,29 @@ class TestFetchItunesChart:
 
 class TestCreateRecommendations:
     @pytest.mark.django_db
-    def test_create_recommendations(self, mocker):
+    def test_create_recommendation(self, mocker):
+        mock_create = mocker.patch("radiofeed.podcasts.jobs.recommend.delay")
+        create_recommendations()
+        mock_create.assert_called()
+
+
+class TestRecommend:
+    @pytest.mark.django_db
+    def test_create_recommendation(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",
             return_value=[
                 ("en", RecommendationFactory.create_batch(3)),
             ],
         )
-        create_recommendations()
+        recommend("en")
         patched.assert_called()
 
 
-class TestSendRecommendationsEmails:
+class TestSendRecommendations:
     @pytest.fixture
     def mock_send(self, mocker):
-        return mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
+        return mocker.patch("radiofeed.podcasts.jobs.send_recommendations_email.delay")
 
     @pytest.mark.django_db
     def test_send_emails(self, user, mock_send):
@@ -108,3 +118,19 @@ class TestSendRecommendationsEmails:
         )
         send_recommendations()
         mock_send.assert_not_called()
+
+
+class TestSendRecommendationsEmail:
+    @pytest.fixture
+    def mock_send(self, mocker):
+        return mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
+
+    @pytest.mark.django_db
+    def test_send_email(self, user, mock_send):
+        recipient = EmailAddressFactory(
+            user=user,
+            verified=True,
+            primary=True,
+        )
+        send_recommendations_email(recipient.pk)
+        mock_send.assert_called()

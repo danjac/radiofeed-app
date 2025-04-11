@@ -1,13 +1,12 @@
 import logging
 
-from django.db.models import Count, F, QuerySet
+from django.db.models import Count, F
 from scheduler import job
 
 from radiofeed.feedparser import feed_parser
 from radiofeed.feedparser.exceptions import FeedParserError
-from radiofeed.http_client import Client, get_client
+from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import execute_thread_pool
 
 logger = logging.getLogger(__name__)
 
@@ -15,19 +14,30 @@ logger = logging.getLogger(__name__)
 @job
 def parse_feeds(*, limit: int = 360) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
-    client = get_client()
 
-    logger.debug("Parsing feeds for %d podcasts", limit)
+    podcast_ids = _get_scheduled_podcasts(limit)
+    logger.debug("Parsing feeds for %d podcasts", len(podcast_ids))
 
-    execute_thread_pool(
-        lambda podcast: _parse_feed(podcast, client),
-        _get_scheduled_podcasts(limit),
-    )
-
-    logger.debug("Finished parsing feeds for %d podcasts", limit)
+    for podcast_id in podcast_ids:
+        parse_feed.delay(podcast_id)  # type: ignore[union-attr]
 
 
-def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
+@job
+def parse_feed(podcast_id: int) -> str:
+    """Parses the RSS feed of a specific podcast."""
+
+    podcast = Podcast.objects.get(id=podcast_id, active=True)
+    logger.debug("Parsing feed for podcast %s", podcast)
+    try:
+        feed_parser.parse_feed(podcast, get_client())
+        logger.debug("Parsed feed %s", podcast)
+        return "success"
+    except FeedParserError as e:
+        logger.debug("Failed to parse feed %s: %s", podcast, e.parser_error)
+        return str(e.parser_error)
+
+
+def _get_scheduled_podcasts(limit: int) -> list[int]:
     return (
         Podcast.objects.scheduled()
         .alias(subscribers=Count("subscriptions"))
@@ -36,16 +46,6 @@ def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
             F("subscribers").desc(),
             F("promoted").desc(),
             F("parsed").asc(nulls_first=True),
-        )[:limit]
+        )
+        .values_list("pk", flat=True)[:limit]
     )
-
-
-def _parse_feed(
-    podcast: Podcast,
-    client: Client,
-) -> None:
-    try:
-        feed_parser.parse_feed(podcast, client)
-        logger.debug("Parsed feed %s", podcast)
-    except FeedParserError as e:
-        logger.debug("Failed to parse feed %s: %s", podcast, e.parser_error)
