@@ -146,7 +146,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                     pub_date__lt=now - models.F("frequency"),  # type: ignore[operator]
                 ),
                 parsed__lt=now - self.model.MIN_PARSER_FREQUENCY,
-            )
+            ),
         )
 
     def recommended(self, user: User) -> models.QuerySet["Podcast"]:
@@ -234,6 +234,8 @@ class Podcast(models.Model):
     pub_date = models.DateTimeField(null=True, blank=True)
 
     parsed = models.DateTimeField(null=True, blank=True)
+
+    queued = models.DateTimeField(null=True, blank=True)
 
     parser_error = models.CharField(
         max_length=30, choices=ParserError.choices, blank=True

@@ -247,6 +247,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "parsed",
         "parser_error",
+        "queued",
         "frequency",
         "next_scheduled_update",
         "modified",

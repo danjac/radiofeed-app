@@ -1,6 +1,7 @@
 import logging
 
 from django.db.models import Count, F
+from django.utils import timezone
 from scheduler import job
 
 from radiofeed.feedparser import feed_parser
@@ -15,7 +16,23 @@ logger = logging.getLogger(__name__)
 def parse_feeds(*, limit: int = 360) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
 
-    podcast_ids = _get_scheduled_podcasts(limit)
+    podcast_ids = list(
+        Podcast.objects.scheduled()
+        .alias(subscribers=Count("subscriptions"))
+        .filter(
+            active=True,
+            queued__isnull=True,
+        )
+        .order_by(
+            F("subscribers").desc(),
+            F("promoted").desc(),
+            F("parsed").asc(nulls_first=True),
+        )
+        .values_list("pk", flat=True)[:limit]
+    )
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+
     logger.debug("Parsing feeds for %d podcasts", len(podcast_ids))
 
     for podcast_id in podcast_ids:
@@ -35,17 +52,3 @@ def parse_feed(podcast_id: int) -> str:
     except FeedParserError as e:
         logger.debug("Failed to parse feed %s: %s", podcast, e.parser_error)
         return str(e.parser_error)
-
-
-def _get_scheduled_podcasts(limit: int) -> list[int]:
-    return (
-        Podcast.objects.scheduled()
-        .alias(subscribers=Count("subscriptions"))
-        .filter(active=True)
-        .order_by(
-            F("subscribers").desc(),
-            F("promoted").desc(),
-            F("parsed").asc(nulls_first=True),
-        )
-        .values_list("pk", flat=True)[:limit]
-    )

@@ -4,6 +4,7 @@ from datetime import datetime
 
 import httpx
 import pytest
+from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
@@ -87,6 +88,7 @@ class TestFeedParser:
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
+            queued=timezone.now(),
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -177,6 +179,7 @@ class TestFeedParser:
         assert podcast.modified.year == 2020
 
         assert podcast.parsed
+        assert podcast.queued is None
 
         assert podcast.etag
         assert podcast.explicit
@@ -659,7 +662,9 @@ class TestFeedParser:
         assert podcast.parser_error == Podcast.ParserError.UNAVAILABLE
 
         assert podcast.active
+        assert podcast.queued is None
         assert podcast.parsed
+
         assert podcast.num_retries == 1
 
     @pytest.mark.django_db
@@ -677,4 +682,5 @@ class TestFeedParser:
 
         assert podcast.active is False
         assert podcast.parsed
+        assert podcast.queued is None
         assert podcast.num_retries == 4

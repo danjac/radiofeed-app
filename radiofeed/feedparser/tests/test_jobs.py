@@ -1,4 +1,5 @@
 import pytest
+from django.utils import timezone
 
 from radiofeed.feedparser.exceptions import DuplicateError
 from radiofeed.feedparser.jobs import parse_feed, parse_feeds
@@ -39,11 +40,28 @@ class TestParseFeed:
 
 
 class TestParseFeeds:
-    @pytest.mark.django_db
-    def test_ok(self, mocker):
-        mock_parse_feed = mocker.patch(
+    @pytest.fixture
+    def mock_parse_feed(self, mocker):
+        return mocker.patch(
             "radiofeed.feedparser.jobs.parse_feed.delay",
         )
-        PodcastFactory(pub_date=None)
+
+    @pytest.mark.django_db
+    def test_ok(self, mock_parse_feed):
+        podcast = PodcastFactory(pub_date=None)
         parse_feeds()
         mock_parse_feed.assert_called()
+        podcast.refresh_from_db()
+        assert podcast.queued is not None
+
+    @pytest.mark.django_db
+    def test_queued(self, mock_parse_feed):
+        PodcastFactory(pub_date=None, queued=timezone.now())
+        parse_feeds()
+        mock_parse_feed.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_inactive(self, mock_parse_feed):
+        PodcastFactory(pub_date=None, active=False)
+        parse_feeds()
+        mock_parse_feed.assert_not_called()
