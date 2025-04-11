@@ -58,7 +58,6 @@ def parse_feed(podcast: Podcast, client: Client) -> None:
             modified=modified,
             parsed=parsed,
             updated=updated,
-            queued=None,
         )
     except FeedParserError as exc:
         _handle_error(
@@ -70,7 +69,6 @@ def parse_feed(podcast: Podcast, client: Client) -> None:
             modified=modified,
             parsed=parsed,
             updated=updated,
-            queued=None,
         )
 
 

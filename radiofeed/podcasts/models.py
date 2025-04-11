@@ -235,8 +235,6 @@ class Podcast(models.Model):
 
     parsed = models.DateTimeField(null=True, blank=True)
 
-    queued = models.DateTimeField(null=True, blank=True)
-
     parser_error = models.CharField(
         max_length=30, choices=ParserError.choices, blank=True
     )
