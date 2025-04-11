@@ -185,19 +185,6 @@ wheels = [
 ]
 
 [[package]]
-name = "croniter"
-version = "6.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "python-dateutil" },
-    { name = "pytz" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ad/2f/44d1ae153a0e27be56be43465e5cb39b9650c781e001e7864389deb25090/croniter-6.0.0.tar.gz", hash = "sha256:37c504b313956114a983ece2c2b07790b1f1094fe9d81cc94739214748255577", size = 64481 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/07/4b/290b4c3efd6417a8b0c284896de19b1d5855e6dbdb97d2a35e68fa42de85/croniter-6.0.0-py2.py3-none-any.whl", hash = "sha256:2f878c3856f17896979b2a4379ba1f09c83e374931ea15cc835c5dd2eee9b368", size = 25468 },
-]
-
-[[package]]
 name = "cryptography"
 version = "44.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -485,21 +472,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c4/45/9687d619fd75ba0a35c6bdf4f07780aeac8b87d82c0bfac01bafbd1065e4/django_tailwind_cli-4.2.3.tar.gz", hash = "sha256:80f86acca3002c4c6274fe864c1c0dc2946dcdd39854f3810593538a04d25a9a", size = 65652 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/28/0f/aba9f69e79cca9c3e8a16b238fcc0528ce288b214851fb29b9cc2a119528/django_tailwind_cli-4.2.3-py3-none-any.whl", hash = "sha256:51bf2ebeb0123291cbfdf78efd2043c12352962d46baaf42cea637523691b822", size = 12208 },
-]
-
-[[package]]
-name = "django-tasks-scheduler"
-version = "3.0.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-    { name = "croniter" },
-    { name = "django" },
-    { name = "rq" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6c/4b/e8dcdd7f4b4ee7bf2d5f2381bedf8fffe1aecd34654959a31d6d69bcf5f2/django_tasks_scheduler-3.0.2.tar.gz", hash = "sha256:51c96e5f3cc6c486c9b6c4d725b7c45635cb602ff8e00d7464cd41731e287568", size = 47948 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f9/b2/0dd773e7de771fb832f1ad923f4bf66142255a50a929af471da9296392d7/django_tasks_scheduler-3.0.2-py3-none-any.whl", hash = "sha256:4ca329979a110c97fad3ce8fb4da9cf56d115e437c292023efe645716178af11", size = 81520 },
 ]
 
 [[package]]
@@ -1240,15 +1212,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytz"
-version = "2025.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f8/bf/abbd3cdfb8fbc7fb3d4d38d320f2441b1e7cbe29be4f23797b4a2b5d8aac/pytz-2025.2.tar.gz", hash = "sha256:360b9e3dbb49a209c21ad61809c7fb453643e048b38924c765813546746e81c3", size = 320884 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/c4/34e93fe5f5429d7570ec1fa436f1986fb1f00c3e0f43a589fe2bbcd22c3f/pytz-2025.2-py2.py3-none-any.whl", hash = "sha256:5ddf76296dd8c44c26eb8f4b6f35488f3ccbf6fbbd7adee0b7262d43f0ec2f00", size = 509225 },
-]
-
-[[package]]
 name = "pyyaml"
 version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1284,7 +1247,6 @@ dependencies = [
     { name = "django-permissions-policy" },
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
-    { name = "django-tasks-scheduler" },
     { name = "django-template-partials" },
     { name = "django-version-checks" },
     { name = "django-widget-tweaks" },
@@ -1349,7 +1311,6 @@ requires-dist = [
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
-    { name = "django-tasks-scheduler", specifier = ">=3.0.2" },
     { name = "django-template-partials", specifier = ">=24.4" },
     { name = "django-version-checks", specifier = ">=1.12.0" },
     { name = "django-widget-tweaks", specifier = ">=1.5.0" },
@@ -1469,19 +1430,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a1/53/830aa4c3066a8ab0ae9a9955976fb770fe9c6102117c8ec4ab3ea62d89e8/rich-14.0.0.tar.gz", hash = "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725", size = 224078 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0d/9b/63f4c7ebc259242c89b3acafdb37b41d1185c07ff0011164674e9076b491/rich-14.0.0-py3-none-any.whl", hash = "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0", size = 243229 },
-]
-
-[[package]]
-name = "rq"
-version = "1.16.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-    { name = "redis" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c5/1d/a020e8f3559293635dd6283d037bfc15f866136498da3db1e5416c65773d/rq-1.16.2.tar.gz", hash = "sha256:5c5b9ad5fbaf792b8fada25cc7627f4d206a9a4455aced371d4f501cc3f13b34", size = 629881 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/35/db396caf7cfe71a9e661cea520b276f1472df25015e7cb9143c65a1dca6d/rq-1.16.2-py3-none-any.whl", hash = "sha256:52e619f6cb469b00e04da74305045d244b75fecb2ecaa4f26422add57d3c5f09", size = 90911 },
 ]
 
 [[package]]

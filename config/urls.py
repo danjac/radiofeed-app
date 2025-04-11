@@ -22,7 +22,6 @@ urlpatterns = [
     path(".well-known/assetlinks.json", views.assetlinks, name="assetlinks"),
     path(".well-known/security.txt", views.security, name="security"),
     path("ht/", include("health_check.urls")),
-    path("rq/", include("scheduler.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 

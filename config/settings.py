@@ -49,7 +49,6 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "scheduler",
     "widget_tweaks",
     # https://django-cotton.com/docs/django-template-partials
     "django_cotton.apps.SimpleAppConfig",
@@ -125,21 +124,8 @@ CACHES = {
 }
 
 
-# Required for health check and scheduler
+# Required for health check
 REDIS_URL = CACHES["default"]["LOCATION"]
-
-# Scheduler
-# https://django-tasks-scheduler.readthedocs.io/en/stable/installation/
-
-SCHEDULER_DEFAULT_TIMEOUT = env.int("SCHEDULER_DEFAULT_TIMEOUT", default=360)
-
-SCHEDULER_QUEUES = {
-    queue: {
-        "URL": REDIS_URL,
-        "DEFAULT_TIMEOUT": SCHEDULER_DEFAULT_TIMEOUT,
-    }
-    for queue in ("default", "high", "low")
-}
 
 # Templates
 
@@ -476,16 +462,6 @@ LOGGING = {
         "httpcore": {
             "handlers": ["console"],
             "level": "CRITICAL",
-            "propagate": False,
-        },
-        "radiofeed.feedparser.jobs": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "radiofeed.podcasts.jobs": {
-            "handlers": ["console"],
-            "level": "DEBUG",
             "propagate": False,
         },
     },
