@@ -31,9 +31,11 @@ def parse_feeds(*, limit: int = 360) -> None:
         .values_list("pk", flat=True)[:limit]
     )
 
-    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
+    Podcast.objects.filter(
+        pk__in=podcast_ids,
+    ).update(queued=timezone.now())
 
-    logger.debug("Parsing feeds for %d podcasts", len(podcast_ids))
+    logger.debug("Queueing %d feeds for update", len(podcast_ids))
 
     for podcast_id in podcast_ids:
         parse_feed.delay(podcast_id)  # type: ignore[union-attr]
@@ -44,7 +46,6 @@ def parse_feed(podcast_id: int) -> str:
     """Parses the RSS feed of a specific podcast."""
 
     podcast = Podcast.objects.get(id=podcast_id, active=True)
-    logger.debug("Parsing feed for podcast %s", podcast)
     try:
         feed_parser.parse_feed(podcast, get_client())
         logger.debug("Parsed feed %s", podcast)
