@@ -1,3 +1,4 @@
+import collections
 import pathlib
 
 import pytest
@@ -40,6 +41,7 @@ class Test3rdPartyAuthTemplates:
     def test_template(self, rf, mocker, user, template):
         req = rf.get("/")
         req.user = user
+        req.deferred_html = collections.defaultdict(set)
 
         mocker.patch(
             "radiofeed.users.templatetags.users.get_adapter",

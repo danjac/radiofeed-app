@@ -55,7 +55,7 @@ document.addEventListener("alpine:init", () => {
                 // we'll check after a given interval if the audio has started playing
                 const interval = setInterval(() => {
                     clearInterval(interval);
-                    if (!this.isLoaded) {
+                    if (!this.isLoaded && this.$refs.audio) {
                         const { currentSrc } = this.$refs.audio;
                         this.playbackError(
                             `Audio failed to load or start within timeout limit of ${this.loadingTime}s`,

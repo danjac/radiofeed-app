@@ -57,9 +57,7 @@
                 <c-audio-player :audio-log="request.player.audio_log" />
                 <c-cookie-banner />
             </div>
-            {% if user.is_authenticated %}
-                <script src="{% static "audio-player.js" %}"></script>
-            {% endif %}
+            {% render_deferred "js" %}
             {% partialdef scripts inline=True %}
                 {% django_htmx_script %}
                 <script>

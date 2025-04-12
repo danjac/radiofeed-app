@@ -3,8 +3,16 @@ import json
 import pytest
 from django.contrib.sites.models import Site
 from django.template.context import Context, RequestContext
+from django.utils.html import format_html
 
-from radiofeed.templatetags import absolute_uri, csrf_header, format_duration
+from radiofeed.middleware import DeferredHTMLMiddleware
+from radiofeed.templatetags import (
+    absolute_uri,
+    csrf_header,
+    defer,
+    format_duration,
+    render_deferred,
+)
 
 
 @pytest.fixture
@@ -88,3 +96,23 @@ class TestAbsoluteUri:
             absolute_uri(Context(), podcast)
             == f"http://example.com{podcast.get_absolute_url()}"
         )
+
+
+class TestRenderDeferred:
+    def test_render_deferred_no_content(self, rf, get_response):
+        req = rf.get("/")
+        context = RequestContext(req)
+        DeferredHTMLMiddleware(get_response)(req)
+
+        assert render_deferred(context, "js") == ""
+
+    def test_render_deferred_with_content(self, rf, get_response):
+        req = rf.get("/")
+        context = RequestContext(req)
+        DeferredHTMLMiddleware(get_response)(req)
+        content = format_html("<script>console.log('Hello')</script>")
+
+        defer(context, content, "js")
+
+        assert render_deferred(context, "js") == content
+        assert render_deferred(context, "js") == "", "deferred content not cleared"
