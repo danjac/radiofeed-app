@@ -1,11 +1,11 @@
 import pytest
 from django.template.context import RequestContext
 
-from radiofeed.episodes.templatetags.audio_player import get_media_metadata
+from radiofeed.episodes.templatetags.episodes import get_media_metadata
 from radiofeed.episodes.tests.factories import EpisodeFactory
 
 
-class TestPlayerMetadata:
+class TestGetMediaMetadata:
     @pytest.mark.django_db
     def test_cover_url(self, rf):
         episode = EpisodeFactory(
