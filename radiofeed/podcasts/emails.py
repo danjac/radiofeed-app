@@ -39,7 +39,7 @@ def send_recommendations_email(address: EmailAddress, num_podcasts: int = 6) -> 
             + "?"
             + urllib.parse.urlencode(
                 {
-                    "email": Signer().sign(address.email),
+                    "email": Signer(salt="unsubscribe").sign(address.email),
                 }
             )
         )

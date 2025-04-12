@@ -106,7 +106,7 @@ class TestCoverImage:
         )
 
     def encode_url(self, url):
-        return Signer().sign(url)
+        return Signer(salt="cover_url").sign(url)
 
     @pytest.mark.django_db
     def test_ok(self, client, db, mocker):

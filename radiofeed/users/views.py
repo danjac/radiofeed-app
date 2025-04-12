@@ -162,8 +162,13 @@ def unsubscribe(request: HttpRequest) -> HttpResponse:
     """
 
     try:
-        email = Signer().unsign(request.GET["email"])
-        user = EmailAddress.objects.select_related("user").get(email=email).user
+        email = Signer(salt="unsubscribe").unsign(request.GET["email"])
+        user = (
+            EmailAddress.objects.filter(user__is_active=True)
+            .select_related("user")
+            .get(email=email)
+            .user
+        )
     except (KeyError, BadSignature, EmailAddress.DoesNotExist):
         messages.error(request, "Email address not found")
         return redirect("index")

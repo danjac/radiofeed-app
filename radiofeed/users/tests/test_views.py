@@ -275,7 +275,9 @@ class TestUnsubscribe:
     def test_email_does_not_exist(self, client):
         response = client.get(
             reverse("users:unsubscribe"),
-            {"email": Signer().sign("rando@gmail.com")},
+            {
+                "email": Signer(salt="unsubscribe").sign("rando@gmail.com"),
+            },
         )
         assert response.url == reverse("index")
 
@@ -293,7 +295,9 @@ class TestUnsubscribe:
     def test_ok_not_logged_in(self, client, email_address):
         response = client.get(
             reverse("users:unsubscribe"),
-            {"email": Signer().sign(email_address.email)},
+            {
+                "email": Signer(salt="unsubscribe").sign(email_address.email),
+            },
         )
         assert response.url == reverse("index")
         email_address.refresh_from_db()
@@ -304,7 +308,9 @@ class TestUnsubscribe:
         email_address = EmailAddressFactory(user=auth_user)
         response = client.get(
             reverse("users:unsubscribe"),
-            {"email": Signer().sign(email_address.email)},
+            {
+                "email": Signer(salt="unsubscribe").sign(email_address.email),
+            },
         )
         assert response.url == reverse("index")
         email_address.refresh_from_db()
