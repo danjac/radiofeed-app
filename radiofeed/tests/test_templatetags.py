@@ -9,7 +9,7 @@ from radiofeed.middleware import DeferredHTMLMiddleware
 from radiofeed.templatetags import (
     absolute_uri,
     csrf_header,
-    defer,
+    deferred,
     format_duration,
     render_deferred,
 )
@@ -112,7 +112,7 @@ class TestRenderDeferred:
         DeferredHTMLMiddleware(get_response)(req)
         content = format_html("<script>console.log('Hello')</script>")
 
-        defer(context, content, "js")
+        deferred(context, content, "js")
 
         assert render_deferred(context, "js") == content
         assert render_deferred(context, "js") == "", "deferred content not cleared"

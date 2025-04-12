@@ -103,16 +103,16 @@ def format_duration(total_seconds: int) -> str:
 
 
 @register.simple_block_tag(takes_context=True)
-def defer(context: RequestContext, content: str, tag: str) -> str:
+def deferred(context: RequestContext, content: str, tag: str) -> str:
     """Instead of rendering the content immediately, render using the `render_deferred` tag.
     This is useful for rendering content we don't want to include immediately e.g. JS or CSS tags.
 
     Use with DeferredHTMLMiddleware.
 
     Example:
-        {% defer "js" %}
+        {% deferred "js" %}
         <script src="https://example.com/script.js"></script>
-        {% enddefer %}
+        {% enddeferred %}
     at end of page:
         {% render_deferred "js" %}
     """

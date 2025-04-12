@@ -1,4 +1,3 @@
-import collections
 import pathlib
 
 import pytest
@@ -8,6 +7,7 @@ from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
 from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
+from radiofeed.middleware import DeferredHTMLMiddleware
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.asserts import assert200
@@ -38,10 +38,10 @@ class Test3rdPartyAuthTemplates:
         ],
     )
     @pytest.mark.django_db
-    def test_template(self, rf, mocker, user, template):
+    def test_template(self, rf, mocker, user, get_response, template):
         req = rf.get("/")
         req.user = user
-        req.deferred_html = collections.defaultdict(set)
+        DeferredHTMLMiddleware(get_response)(req)
 
         mocker.patch(
             "radiofeed.users.templatetags.users.get_adapter",
