@@ -9,7 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.middleware.csrf import get_token
 from django.shortcuts import resolve_url
-from django.template.context import Context, RequestContext
+from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
 from django.utils.html import format_html_join
 
@@ -48,20 +48,12 @@ def get_site() -> Site:
     return Site.objects.get_current()
 
 
-@register.simple_tag(takes_context=True)
-def absolute_uri(
-    context: Context, url: Model | str | None = None, *url_args, **url_kwargs
-) -> str:
-    """Returns the absolute URL to site domain.
-    If `request` is available in context, it will be used to build the URL. Otherwise will use the current site domain.
-    """
-
-    site = get_site()
+@register.simple_tag
+def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str:
+    """Returns the absolute URL to site domain. Use this if request is unavailable."""
     path = resolve_url(url, *url_args, **url_kwargs) if url else ""
-    if request := context.get("request"):
-        return request.build_absolute_uri(path)
     scheme = "https" if settings.USE_HTTPS else "http"
-    return f"{scheme}://{site.domain}{path}"
+    return f"{scheme}://{get_site().domain}{path}"
 
 
 @register.simple_tag(takes_context=True)

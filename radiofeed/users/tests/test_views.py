@@ -2,6 +2,7 @@ import pathlib
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.signing import Signer
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
@@ -12,6 +13,7 @@ from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.asserts import assert200
 from radiofeed.users.models import User
+from radiofeed.users.tests.factories import EmailAddressFactory
 
 
 class MockGoogleAdapter:
@@ -257,3 +259,53 @@ class TestDeleteAccount:
         response = client.post(self.url, {"confirm-delete": True})
         assert response.url == reverse("index")
         assert not User.objects.exists()
+
+
+class TestUnsubscribe:
+    @pytest.fixture
+    def email_address(self):
+        return EmailAddressFactory()
+
+    @pytest.mark.django_db
+    def test_no_email(self, client):
+        response = client.get(reverse("users:unsubscribe"))
+        assert response.url == reverse("index")
+
+    @pytest.mark.django_db
+    def test_email_does_not_exist(self, client):
+        response = client.get(
+            reverse("users:unsubscribe"),
+            {"email": Signer().sign("rando@gmail.com")},
+        )
+        assert response.url == reverse("index")
+
+    @pytest.mark.django_db
+    def test_bad_signature(self, client, email_address):
+        response = client.get(
+            reverse("users:unsubscribe"),
+            {"email": email_address.email},
+        )
+        assert response.url == reverse("index")
+        email_address.refresh_from_db()
+        assert email_address.user.send_email_notifications is True
+
+    @pytest.mark.django_db
+    def test_ok_not_logged_in(self, client, email_address):
+        response = client.get(
+            reverse("users:unsubscribe"),
+            {"email": Signer().sign(email_address.email)},
+        )
+        assert response.url == reverse("index")
+        email_address.refresh_from_db()
+        assert email_address.user.send_email_notifications is False
+
+    @pytest.mark.django_db
+    def test_ok_is_logged_in(self, client, auth_user):
+        email_address = EmailAddressFactory(user=auth_user)
+        response = client.get(
+            reverse("users:unsubscribe"),
+            {"email": Signer().sign(email_address.email)},
+        )
+        assert response.url == reverse("index")
+        email_address.refresh_from_db()
+        assert email_address.user.send_email_notifications is False

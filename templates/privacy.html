@@ -5,12 +5,12 @@
 {% endblock title %}
 
 {% block content %}
-    {% with site_name=request.site.name %}
+    {% with site=request.site %}
         <c-header title="Privacy" />
         <div class="space-y-6">
             <p class="prose dark:prose-invert">
-                This privacy policy ("policy") will help you understand how <strong>{{ site_name }}</strong> ("us", "we",
-                "our") uses and protects the data you provide to us when you visit and use <strong>{% absolute_uri "index" %}</strong> ("site", "service").
+                This privacy policy ("policy") will help you understand how <strong>{{ site.name }}</strong> ("us", "we",
+                "our") uses and protects the data you provide to us when you visit and use <strong>http://{{ site.domain }}</strong> ("site", "service").
             </p>
             <p class="prose dark:prose-invert">
                 We reserve the right to change this policy at any given time, of which you will be promptly updated. If you want to make sure that you are up to date with the latest changes, we advise you to frequently visit this page.
@@ -32,7 +32,7 @@
             </ul>
             <h2 class="text-lg font-semibold lg:text-xl">Safeguarding and Securing the Data</h2>
             <p class="prose dark:prose-invert">
-                <strong>{{ site_name }}</strong> is committed to securing your data and keeping it confidential. <strong>{{ site_name }}</strong> has done all in its power to prevent data theft, unauthorized access, and disclosure by implementing the latest technologies and software, which help us safeguard all the information we collect online.
+                <strong>{{ site.name }}</strong> is committed to securing your data and keeping it confidential. <strong>{{ site.name }}</strong> has done all in its power to prevent data theft, unauthorized access, and disclosure by implementing the latest technologies and software, which help us safeguard all the information we collect online.
             </p>
             <h2 class="text-lg font-semibold lg:text-xl">Account Deletion</h2>
             <p class="prose dark:prose-invert">
@@ -56,7 +56,7 @@
             </p>
             <h2 class="text-lg font-semibold lg:text-xl">Links to Other Websites</h2>
             <p class="prose dark:prose-invert">
-                Our site contains links that lead to other websites. If you click on these links <strong>{{ site_name }}</strong> is not held responsible for your data and privacy protection. Visiting those websites is not governed by this privacy policy agreement. Make sure to read the privacy policy documentation of the website you go to from our website.
+                Our site contains links that lead to other websites. If you click on these links <strong>{{ site.name }}</strong> is not held responsible for your data and privacy protection. Visiting those websites is not governed by this privacy policy agreement. Make sure to read the privacy policy documentation of the website you go to from our website.
             </p>
         </div>
     {% endwith %}

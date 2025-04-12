@@ -1,8 +1,10 @@
 from typing import TYPE_CHECKING, TypedDict, cast
 
+from allauth.account.models import EmailAddress
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.core.signing import BadSignature, Signer
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
@@ -147,6 +149,30 @@ def user_stats(request: HttpRequest) -> HttpResponse:
         ),
     ]
     return render(request, "account/stats.html", {"stats": stats})
+
+
+@require_safe
+def unsubscribe(request: HttpRequest) -> HttpResponse:
+    """Unsubscribe user from email notifications.
+
+    The email address should be an encrypted token. Look up the EmailAddress instance and the user,
+    and uncheck their `send_email_notifications` flag.
+
+    Redirect to the index page with a success message.
+    """
+
+    try:
+        email = Signer().unsign(request.GET["email"])
+        user = EmailAddress.objects.select_related("user").get(email=email).user
+    except (KeyError, BadSignature, EmailAddress.DoesNotExist):
+        messages.error(request, "Email address not found")
+        return redirect("index")
+
+    user.send_email_notifications = False
+    user.save()
+
+    messages.success(request, "You have been unsubscribed from email notifications")
+    return redirect("index")
 
 
 @require_form_methods

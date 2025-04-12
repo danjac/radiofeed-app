@@ -18,4 +18,5 @@ urlpatterns = [
         name="export_podcast_feeds",
     ),
     path("account/delete/", views.delete_account, name="delete_account"),
+    path("unsubscribe", views.unsubscribe, name="unsubscribe"),
 ]

@@ -100,9 +100,8 @@
             {% endfor %}
 
             <div class="footer">
-                <p style="color: white;">
-                    If you don’t want to receive recommendations, you can update your
-                    <a href="{% absolute_uri 'users:preferences' %}">notification settings</a>.
+                <p style="color: white; text-align: center;">
+                    <a href="{{ unsubscribe_url }}">Unsubscribe</a>
                 </p>
             </div>
         </div>
