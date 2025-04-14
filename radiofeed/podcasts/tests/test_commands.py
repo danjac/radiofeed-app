@@ -67,45 +67,5 @@ class TestSendRecommendationsEmails:
         self._call_command(addresses=[user.email])
         mock_send.assert_called()
 
-    @pytest.mark.django_db
-    def test_email_not_verified(self, user, mock_send):
-        EmailAddressFactory(
-            user=user,
-            verified=False,
-            primary=True,
-        )
-        self._call_command()
-        mock_send.assert_not_called()
-
-    @pytest.mark.django_db
-    def test_email_not_primary(self, user, mock_send):
-        EmailAddressFactory(
-            user=user,
-            verified=True,
-            primary=False,
-        )
-        self._call_command()
-        mock_send.assert_not_called()
-
-    @pytest.mark.django_db
-    def test_user_inactive(self, mock_send):
-        EmailAddressFactory(
-            user__is_active=False,
-            verified=True,
-            primary=True,
-        )
-        self._call_command()
-        mock_send.assert_not_called()
-
-    @pytest.mark.django_db
-    def test_user_disabled_emails(self, mock_send):
-        EmailAddressFactory(
-            user__send_email_notifications=False,
-            verified=True,
-            primary=True,
-        )
-        self._call_command()
-        mock_send.assert_not_called()
-
-    def _call_command(self, **kwargs):
-        call_command("send_recommendations", **kwargs)
+    def _call_command(self, addresses=None):
+        call_command("send_recommendations", addresses=addresses)

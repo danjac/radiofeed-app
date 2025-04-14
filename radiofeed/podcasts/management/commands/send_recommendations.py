@@ -1,9 +1,8 @@
 import djclick as click
-from allauth.account.models import EmailAddress
-from django.db.models import QuerySet
 
 from radiofeed.podcasts import emails
 from radiofeed.thread_pool import execute_thread_pool
+from radiofeed.users.emails import get_recipients
 
 
 @click.command()
@@ -16,19 +15,7 @@ from radiofeed.thread_pool import execute_thread_pool
 )
 def command(addresses: list[str]) -> None:
     """Send recommendation emails to users."""
-
-    execute_thread_pool(
-        emails.send_recommendations_email,
-        _get_recipients(addresses),
-    )
-
-
-def _get_recipients(addresses: list[str]) -> QuerySet[EmailAddress]:
-    qs = EmailAddress.objects.filter(
-        user__is_active=True,
-        user__send_email_notifications=True,
-    ).select_related("user")
-
+    recipients = get_recipients()
     if addresses:
-        return qs.filter(email__in=addresses)
-    return qs.filter(primary=True, verified=True)
+        recipients = recipients.filter(email__in=addresses)
+    execute_thread_pool(emails.send_recommendations_email, recipients)

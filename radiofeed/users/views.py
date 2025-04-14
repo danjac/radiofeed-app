@@ -4,7 +4,7 @@ from allauth.account.models import EmailAddress
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.core.signing import BadSignature, Signer
+from django.core.signing import BadSignature
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import pluralize
@@ -15,6 +15,7 @@ from django.views.decorators.http import require_safe
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_for_target
 from radiofeed.podcasts.models import Podcast
+from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
 
 if TYPE_CHECKING:
@@ -162,14 +163,21 @@ def unsubscribe(request: HttpRequest) -> HttpResponse:
     """
 
     try:
-        email = Signer(salt="unsubscribe").unsign(request.GET["email"])
+        email = get_unsubscribe_signer().unsign(
+            request.GET["email"], max_age=48 * 60 * 60
+        )
         user = (
             EmailAddress.objects.filter(user__is_active=True)
             .select_related("user")
             .get(email=email)
             .user
         )
-    except (KeyError, BadSignature, EmailAddress.DoesNotExist):
+    except (
+        KeyError,
+        ValueError,
+        BadSignature,
+        EmailAddress.DoesNotExist,
+    ):
         messages.error(request, "Email address not found")
         return redirect("index")
 

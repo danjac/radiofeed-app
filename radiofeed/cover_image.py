@@ -85,13 +85,19 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
             + "?"
             + urllib.parse.urlencode(
                 {
-                    "url": Signer(salt="cover_url").sign(cover_url),
+                    "url": get_cover_url_signer().sign(cover_url),
                 }
             )
         )
         if cover_url
         else get_placeholder_url(size)
     )
+
+
+@functools.cache
+def get_cover_url_signer() -> Signer:
+    """Return URL signer"""
+    return Signer(salt="cover_url")
 
 
 @functools.cache

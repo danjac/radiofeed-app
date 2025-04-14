@@ -2,7 +2,6 @@ import pathlib
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.signing import Signer
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
@@ -12,6 +11,7 @@ from radiofeed.middleware import DeferredHTMLMiddleware
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.asserts import assert200
+from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.models import User
 from radiofeed.users.tests.factories import EmailAddressFactory
 
@@ -276,7 +276,7 @@ class TestUnsubscribe:
         response = client.get(
             reverse("users:unsubscribe"),
             {
-                "email": Signer(salt="unsubscribe").sign("rando@gmail.com"),
+                "email": get_unsubscribe_signer().sign("rando@gmail.com"),
             },
         )
         assert response.url == reverse("index")
@@ -296,7 +296,7 @@ class TestUnsubscribe:
         response = client.get(
             reverse("users:unsubscribe"),
             {
-                "email": Signer(salt="unsubscribe").sign(email_address.email),
+                "email": get_unsubscribe_signer().sign(email_address.email),
             },
         )
         assert response.url == reverse("index")
@@ -309,7 +309,7 @@ class TestUnsubscribe:
         response = client.get(
             reverse("users:unsubscribe"),
             {
-                "email": Signer(salt="unsubscribe").sign(email_address.email),
+                "email": get_unsubscribe_signer().sign(email_address.email),
             },
         )
         assert response.url == reverse("index")

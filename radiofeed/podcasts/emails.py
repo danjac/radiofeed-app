@@ -1,14 +1,11 @@
-import urllib.parse
-
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-from django.core.signing import Signer
 from django.template import loader
 
 from radiofeed.html import strip_html
 from radiofeed.podcasts.models import Podcast
-from radiofeed.templatetags import absolute_uri
+from radiofeed.users.emails import get_unsubscribe_url
 
 
 def send_recommendations_email(address: EmailAddress, num_podcasts: int = 6) -> None:
@@ -34,15 +31,7 @@ def send_recommendations_email(address: EmailAddress, num_podcasts: int = 6) -> 
     if podcasts:
         address.user.recommended_podcasts.add(*podcasts)
 
-        unsubscribe_url = (
-            absolute_uri("users:unsubscribe")
-            + "?"
-            + urllib.parse.urlencode(
-                {
-                    "email": Signer(salt="unsubscribe").sign(address.email),
-                }
-            )
-        )
+        unsubscribe_url = get_unsubscribe_url(address.email)
 
         html_message = loader.render_to_string(
             "podcasts/emails/recommendations.html",

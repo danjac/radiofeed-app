@@ -4,7 +4,7 @@ from typing import Final
 
 import httpx
 from django.conf import settings
-from django.core.signing import BadSignature, Signer
+from django.core.signing import BadSignature
 from django.http import (
     FileResponse,
     Http404,
@@ -20,7 +20,11 @@ from django.views.decorators.http import require_POST, require_safe
 from PIL import Image
 
 from radiofeed import pwa
-from radiofeed.cover_image import get_placeholder_path, is_cover_image_size
+from radiofeed.cover_image import (
+    get_cover_url_signer,
+    get_placeholder_path,
+    is_cover_image_size,
+)
 from radiofeed.http_client import get_client
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
@@ -144,7 +148,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     # check cover url is legit
     try:
-        cover_url = Signer(salt="cover_url").unsign(request.GET["url"])
+        cover_url = get_cover_url_signer().unsign(request.GET["url"])
     except (KeyError, BadSignature) as exc:
         raise Http404 from exc
 
