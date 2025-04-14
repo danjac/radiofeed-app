@@ -58,6 +58,11 @@ class TestSendRecommendationsEmails:
         mock_send.assert_called()
 
     @pytest.mark.django_db
+    def test_no_recipients(self, mock_send):
+        self._call_command()
+        mock_send.assert_not_called()
+
+    @pytest.mark.django_db
     def test_send_specific_emails(self, user, mock_send):
         EmailAddressFactory(
             user=user,

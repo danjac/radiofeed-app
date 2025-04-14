@@ -15,7 +15,14 @@ from radiofeed.users.emails import get_recipients
 )
 def command(addresses: list[str]) -> None:
     """Send recommendation emails to users."""
+
     recipients = get_recipients()
+
     if addresses:
         recipients = recipients.filter(email__in=addresses)
-    execute_thread_pool(emails.send_recommendations_email, recipients)
+
+    if num_recipients := recipients.count():
+        click.secho(f"Sending emails to {num_recipients} recipient(s)", fg="green")
+        execute_thread_pool(emails.send_recommendations_email, recipients)
+    else:
+        click.secho("No recipients found", fg="yellow")
