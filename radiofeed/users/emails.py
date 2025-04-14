@@ -9,7 +9,7 @@ from radiofeed.templatetags import absolute_uri
 
 
 @functools.cache
-def get_unsubscribe_signer():
+def get_unsubscribe_signer() -> TimestampSigner:
     """Get the signer for unsubscribe links."""
     return TimestampSigner(salt="unsubscribe")
 
