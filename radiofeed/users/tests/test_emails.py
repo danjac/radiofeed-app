@@ -14,6 +14,22 @@ class TestGetRecipients:
         assert get_recipients().exists() is True
 
     @pytest.mark.django_db
+    def test_filter_by_address(self):
+        address = EmailAddressFactory(
+            verified=True,
+            primary=True,
+        )
+        assert get_recipients([address.email]).exists() is True
+
+    @pytest.mark.django_db
+    def test_filter_by_address_not_found(self):
+        EmailAddressFactory(
+            verified=True,
+            primary=True,
+        )
+        assert get_recipients(["rando@gmail.com"]).exists() is False
+
+    @pytest.mark.django_db
     def test_email_not_verified(self):
         EmailAddressFactory(
             verified=False,
@@ -30,6 +46,14 @@ class TestGetRecipients:
         )
 
         assert get_recipients().exists() is False
+
+    @pytest.mark.django_db
+    def test_filter_by_address_not_verified(self):
+        address = EmailAddressFactory(
+            verified=True,
+            primary=False,
+        )
+        assert get_recipients([address.email]).exists() is False
 
     @pytest.mark.django_db
     def test_user_inactive(self):

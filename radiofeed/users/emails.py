@@ -45,14 +45,22 @@ def send_notification_email(
     msg.send()
 
 
-def get_recipients() -> QuerySet[EmailAddress]:
-    """Get recipients for email notifications."""
-    return EmailAddress.objects.filter(
+def get_recipients(addresses: list[str] | None = None) -> QuerySet[EmailAddress]:
+    """Get recipients for email notifications.
+
+    If `addresses` is provided, filter by list of email addresses.
+    """
+    recipients = EmailAddress.objects.filter(
         user__is_active=True,
         user__send_email_notifications=True,
         primary=True,
         verified=True,
     ).select_related("user")
+
+    if addresses:
+        recipients = recipients.filter(email__in=addresses)
+
+    return recipients
 
 
 @functools.cache

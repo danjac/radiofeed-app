@@ -23,14 +23,11 @@ from radiofeed.users.emails import get_recipients
 def command(addresses: list[str], num_podcasts: int) -> None:
     """Send recommendation emails to users."""
 
-    recipients = get_recipients()
-
-    if addresses:
-        recipients = recipients.filter(email__in=addresses)
+    recipients = get_recipients(addresses)
 
     if num_recipients := recipients.count():
-        connection = get_connection()
         click.secho(f"Sending emails to {num_recipients} recipient(s)", fg="green")
+        connection = get_connection()
         execute_thread_pool(
             lambda recipient: emails.send_recommendations_email(
                 recipient,
