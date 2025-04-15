@@ -14,7 +14,13 @@ from radiofeed.users.emails import get_recipients
     multiple=True,
     help="Emails to send recommendations to.",
 )
-def command(addresses: list[str]) -> None:
+@click.option(
+    "--num_podcasts",
+    "-n",
+    default=6,
+    help="Max number of podcasts to recommend.",
+)
+def command(addresses: list[str], num_podcasts: int) -> None:
     """Send recommendation emails to users."""
 
     recipients = get_recipients()
@@ -28,6 +34,7 @@ def command(addresses: list[str]) -> None:
         execute_thread_pool(
             lambda recipient: emails.send_recommendations_email(
                 recipient,
+                num_podcasts,
                 connection=connection,
             ),
             recipients,
