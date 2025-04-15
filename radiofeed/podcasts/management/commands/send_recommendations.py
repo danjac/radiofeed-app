@@ -1,4 +1,5 @@
 import djclick as click
+from django.core.mail import get_connection
 
 from radiofeed.podcasts import emails
 from radiofeed.thread_pool import execute_thread_pool
@@ -22,7 +23,14 @@ def command(addresses: list[str]) -> None:
         recipients = recipients.filter(email__in=addresses)
 
     if num_recipients := recipients.count():
+        connection = get_connection()
         click.secho(f"Sending emails to {num_recipients} recipient(s)", fg="green")
-        execute_thread_pool(emails.send_recommendations_email, recipients)
+        execute_thread_pool(
+            lambda recipient: emails.send_recommendations_email(
+                recipient,
+                connection=connection,
+            ),
+            recipients,
+        )
     else:
         click.secho("No recipients found", fg="yellow")

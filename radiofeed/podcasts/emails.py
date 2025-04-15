@@ -4,7 +4,9 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.users.emails import send_notification_email
 
 
-def send_recommendations_email(recipient: EmailAddress, num_podcasts: int = 6) -> None:
+def send_recommendations_email(
+    recipient: EmailAddress, num_podcasts: int = 6, **kwargs
+) -> None:
     """Sends email to user with a list of recommended podcasts.
 
     Recommendations based on their subscriptions or promoted podcasts.
@@ -32,4 +34,5 @@ def send_recommendations_email(recipient: EmailAddress, num_podcasts: int = 6) -
             {
                 "podcasts": podcasts,
             },
+            **kwargs,
         )
