@@ -2,7 +2,11 @@ import pytest
 from django.core.management import call_command
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.tests.factories import PodcastFactory, RecommendationFactory
+from radiofeed.podcasts.tests.factories import (
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
 from radiofeed.users.tests.factories import EmailAddressFactory
 
 
@@ -44,33 +48,32 @@ class TestCreateRecommendations:
 
 class TestSendRecommendationsEmails:
     @pytest.fixture
-    def mock_send(self, mocker):
-        return mocker.patch("radiofeed.podcasts.emails.send_recommendations_email")
-
-    @pytest.mark.django_db
-    def test_send_emails(self, user, mock_send):
-        EmailAddressFactory(
-            user=user,
+    def recipient(self):
+        return EmailAddressFactory(
             verified=True,
             primary=True,
         )
-        self._call_command()
-        mock_send.assert_called()
 
-    @pytest.mark.django_db
-    def test_no_recipients(self, mock_send):
-        self._call_command()
-        mock_send.assert_not_called()
+    @pytest.mark.django_db(transaction=True)
+    def test_has_recommendations(self, mailoutbox, recipient):
+        subscription = SubscriptionFactory(subscriber=recipient.user)
+        RecommendationFactory.create_batch(3, podcast=subscription.podcast)
+        call_command("send_recommendations")
+        assert len(mailoutbox) == 1
+        assert mailoutbox[0].to == [recipient.email]
+        assert recipient.user.recommended_podcasts.count() == 3
 
-    @pytest.mark.django_db
-    def test_send_specific_emails(self, user, mock_send):
-        EmailAddressFactory(
-            user=user,
-            verified=True,
-            primary=True,
-        )
-        self._call_command(addresses=[user.email])
-        mock_send.assert_called()
+    @pytest.mark.django_db(transaction=True)
+    def test_send_specific_emails(self, mailoutbox, recipient):
+        subscription = SubscriptionFactory(subscriber=recipient.user)
+        RecommendationFactory.create_batch(3, podcast=subscription.podcast)
+        call_command("send_recommendations", addresses=[recipient.email])
+        assert len(mailoutbox) == 1
+        assert mailoutbox[0].to == [recipient.email]
+        assert recipient.user.recommended_podcasts.count() == 3
 
-    def _call_command(self, addresses=None):
-        call_command("send_recommendations", addresses=addresses)
+    @pytest.mark.django_db(transaction=True)
+    def test_has_no_recommendations(self, mailoutbox, recipient):
+        call_command("send_recommendations")
+        assert len(mailoutbox) == 0
+        assert recipient.user.recommended_podcasts.count() == 0

@@ -1,9 +1,10 @@
 import djclick as click
+from allauth.account.models import EmailAddress
 from django.core.mail import get_connection
 
-from radiofeed.podcasts import emails
+from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
-from radiofeed.users.emails import get_recipients
+from radiofeed.users.emails import get_recipients, send_notification_email
 
 
 @click.command()
@@ -22,19 +23,44 @@ from radiofeed.users.emails import get_recipients
 )
 def command(addresses: list[str], num_podcasts: int) -> None:
     """Send recommendation emails to users."""
+    connection = get_connection()
+    execute_thread_pool(
+        lambda recipient: _send_recommendations_email(
+            recipient,
+            num_podcasts,
+            connection=connection,
+        ),
+        get_recipients(addresses),
+    )
 
-    recipients = get_recipients(addresses)
 
-    if num_recipients := recipients.count():
-        click.secho(f"Sending emails to {num_recipients} recipient(s)", fg="green")
-        connection = get_connection()
-        execute_thread_pool(
-            lambda recipient: emails.send_recommendations_email(
-                recipient,
-                num_podcasts,
-                connection=connection,
-            ),
-            recipients,
+def _send_recommendations_email(
+    recipient: EmailAddress,
+    num_podcasts: int,
+    **kwargs,
+) -> None:
+    if podcasts := (
+        Podcast.objects.published()
+        .recommended(recipient.user)
+        .order_by(
+            "-relevance",
+            "-promoted",
+            "-pub_date",
         )
-    else:
-        click.secho("No recipients found", fg="yellow")
+    )[:num_podcasts]:
+        click.secho(
+            f"Sending {len(podcasts)} recommendations to {recipient.email}",
+            fg="green",
+        )
+
+        send_notification_email(
+            recipient,
+            f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+            "podcasts/emails/recommendations.html",
+            {
+                "podcasts": podcasts,
+            },
+            **kwargs,
+        )
+
+        recipient.user.recommended_podcasts.add(*podcasts)
