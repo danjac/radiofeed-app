@@ -44,6 +44,15 @@
         ansible.builtin.shell: |
             kubectl rollout restart deployment/coredns -n kube-system
 
+      - name: Force metrics-server to run on the server node
+        ansible.builtin.shell: |
+            kubectl patch deployment metrics-server -n kube-system \
+              --type='json' \
+              -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
+
+      - name: Restart metrics-server to apply changes
+        ansible.builtin.shell: |
+            kubectl rollout restart deployment/metrics-server -n kube-system
       - name: Force Traefik to run on the server node
         ansible.builtin.shell: |
             kubectl patch deployment traefik -n kube-system \
@@ -92,6 +101,10 @@
             - django_cronjobs
             - django_service
             - ingress_route
+
+      - name: Delete all cronjobs
+        ansible.builtin.shell: |
+            kubectl delete cronjob -l app=django-cronjob -n default
 
       - name: Apply Kubernetes manifests using ApplySet
         ansible.builtin.shell: |
