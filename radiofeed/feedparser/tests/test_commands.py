@@ -13,10 +13,17 @@ class TestParseFeeds:
         )
 
     @pytest.fixture
-    def mock_parse_fail(self, mocker):
+    def mock_parser_error(self, mocker):
         return mocker.patch(
             "radiofeed.feedparser.feed_parser.parse_feed",
             side_effect=DuplicateError(),
+        )
+
+    @pytest.fixture
+    def mock_parse_exception(self, mocker):
+        return mocker.patch(
+            "radiofeed.feedparser.feed_parser.parse_feed",
+            side_effect=RuntimeError(),
         )
 
     @pytest.mark.django_db()(transaction=True)
@@ -32,7 +39,13 @@ class TestParseFeeds:
         mock_parse_ok.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
-    def test_feed_parser_error(self, mock_parse_fail):
+    def test_feed_parser_error(self, mock_parser_error):
         PodcastFactory(pub_date=None)
         call_command("parse_feeds")
-        mock_parse_fail.assert_called()
+        mock_parser_error.assert_called()
+
+    @pytest.mark.django_db()(transaction=True)
+    def test_feed_other_exception(self, mock_parse_exception):
+        PodcastFactory(pub_date=None)
+        call_command("parse_feeds")
+        mock_parse_exception.assert_called()

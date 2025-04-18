@@ -20,10 +20,14 @@ def command(*, limit: int) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
     client = get_client()
 
-    execute_thread_pool(
+    for future in execute_thread_pool(
         lambda podcast: _parse_feed(podcast, client),
         _get_scheduled_podcasts(limit),
-    )
+    ):
+        try:
+            future.result()
+        except Exception as e:
+            click.secho(f"Error: {e}", fg="red")
 
 
 def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
