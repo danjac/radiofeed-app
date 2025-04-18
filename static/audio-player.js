@@ -252,6 +252,11 @@ document.addEventListener("alpine:init", () => {
     );
 });
 
+const parseJsonTag = (tagname) => {
+    const tagElement = document.getElementById(tagname);
+    return JSON.parse(tagElement?.textContent || "{}");
+};
+
 const formatCounter = (value) => {
     if (isNaN(value) || value < 0) {
         return "00:00:00";
@@ -265,9 +270,4 @@ const formatCounter = (value) => {
     ]
         .map((t) => t.toString().padStart(2, "0"))
         .join(":");
-};
-
-const parseJsonTag = (tagname) => {
-    const tagElement = document.getElementById(tagname);
-    return JSON.parse(tagElement?.textContent || "{}");
 };
