@@ -91,6 +91,8 @@
         loop:
             - configmap
             - secrets
+            - fluentbit_server
+            - fluentbit_forwarder
             - postgres_pv
             - postgres_pvc
             - postgres_statefulset
@@ -121,6 +123,12 @@
         ansible.builtin.shell: |
             for statefulset in $(kubectl get statefulsets -n default -o jsonpath='{.items[*].metadata.name}'); do
               kubectl rollout restart statefulset/$statefulset -n default
+            done
+
+      - name: Restart daemonsets
+        ansible.builtin.shell: |
+            for daemonset in $(kubectl get daemonsets -n default -o jsonpath='{.items[*].metadata.name}'); do
+              kubectl rollout restart daemonset/$daemonset -n default
             done
 
       - name: Restart deployments

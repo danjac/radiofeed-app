@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluent-bit-jobrunner
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+    spec:
+      nodeSelector:
+        role: jobrunner
+      containers:
+        - name: fluent-bit
+          image: fluent/fluent-bit:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: config-volume
+              mountPath: /fluent-bit/etc
+              readOnly: true
+            - name: var-log
+              mountPath: /var/log
+            - name: containers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fluent-bit-config  # Will create this ConfigMap next
+        - name: var-log
+          hostPath:
+            path: /var/log
+            type: Directory
+        - name: containers
+          hostPath:
+            path: /var/log/containers
+            type: Directory
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluent-bit-webapp
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+    spec:
+      nodeSelector:
+        role: webapp
+      containers:
+        - name: fluent-bit
+          image: fluent/fluent-bit:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: config-volume
+              mountPath: /fluent-bit/etc
+              readOnly: true
+            - name: var-log
+              mountPath: /var/log
+            - name: containers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fluent-bit-config  # Will create this ConfigMap next
+        - name: var-log
+          hostPath:
+            path: /var/log
+            type: Directory
+        - name: containers
+          hostPath:
+            path: /var/log/containers
+            type: Directory
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: default
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush         1
+        Log_Level     info
+        Daemon        Off
+        Parsers_File  /fluent-bit/etc/parsers.conf
+        HTTP_Server   On
+        HTTP_Listen   0.0.0.0
+        HTTP_Port     2020
+
+    [INPUT]
+        Name   tail
+        Path   /var/log/containers/*.log
+        Parser docker
+        Tag    kube.*
+
+    [OUTPUT]
+        Name   forward
+        Match  *
+        Host   {{ private_ip }}
+        Port   24224
+        Retry_Limit False
+  parsers.conf: |
+    [PARSER]
+        Name        docker
+        Format      json
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S
+        Types       container_name:string,namespace:string,pod_name:string,pod_id:string,container_id:string
