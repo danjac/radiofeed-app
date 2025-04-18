@@ -10,19 +10,12 @@ from radiofeed.users.emails import get_recipients, send_notification_email
 
 @click.command()
 @click.option(
-    "--addresses",
-    "-a",
-    default=[],
-    multiple=True,
-    help="Emails to send recommendations to.",
-)
-@click.option(
     "--num_podcasts",
     "-n",
     default=6,
     help="Max number of podcasts to recommend.",
 )
-def command(addresses: list[str], num_podcasts: int) -> None:
+def command(num_podcasts: int) -> None:
     """Send recommendation emails to users."""
     connection = get_connection()
     for future in execute_thread_pool(
@@ -31,7 +24,7 @@ def command(addresses: list[str], num_podcasts: int) -> None:
             num_podcasts,
             connection=connection,
         ),
-        get_recipients(addresses),
+        get_recipients(),
     ):
         try:
             future.result()

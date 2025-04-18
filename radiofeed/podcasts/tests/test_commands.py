@@ -64,15 +64,6 @@ class TestSendRecommendationsEmails:
         assert recipient.user.recommended_podcasts.count() == 3
 
     @pytest.mark.django_db(transaction=True)
-    def test_send_specific_emails(self, mailoutbox, recipient):
-        subscription = SubscriptionFactory(subscriber=recipient.user)
-        RecommendationFactory.create_batch(3, podcast=subscription.podcast)
-        call_command("send_recommendations", addresses=[recipient.email])
-        assert len(mailoutbox) == 1
-        assert mailoutbox[0].to == [recipient.email]
-        assert recipient.user.recommended_podcasts.count() == 3
-
-    @pytest.mark.django_db(transaction=True)
     def test_has_no_recommendations(self, mailoutbox, recipient):
         call_command("send_recommendations")
         assert len(mailoutbox) == 0
