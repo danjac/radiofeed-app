@@ -50,7 +50,7 @@ def create_recommendations():
     id="podcasts.send_recommendations",
     hour=9,
     minute=15,
-    day_of_week="sat",
+    day_of_week="fri",
 )
 def send_recommendations(num_podcasts: int = 6):
     """Send recommendations to users."""
