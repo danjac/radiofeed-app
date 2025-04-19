@@ -4,7 +4,7 @@ import os
 def main() -> None:
     """Runs scheduler.
 
-    Should search all `INSTALLED_APPS` for a `tasks` module which should have scheduled jobs.
+    Should search all `INSTALLED_APPS` for a `jobs` module which should have scheduled jobs.
     """
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
