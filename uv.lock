@@ -321,18 +321,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-click"
-version = "2.4.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/2e/bb/f47eb64d008805195a5d44a2fb306638a84e673dd5fd4ee738b05fa3a55b/django_click-2.4.1.tar.gz", hash = "sha256:5b989ca791689391e6744f8a4dda9bc0aac06670f408c45794d6b83fbe7577ce", size = 8742 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/94/f1/3bffa13296a9ee51a266e49db00a7defb64f613d68a80cdb2d50721f4b65/django_click-2.4.1-py2.py3-none-any.whl", hash = "sha256:80cfa57af0fae29a3d47f20a74d71aecd1f0bf299549cddb97d98a949e130f01", size = 7334 },
-]
-
-[[package]]
 name = "django-cotton"
 version = "2.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1250,7 +1238,6 @@ dependencies = [
     { name = "django" },
     { name = "django-allauth", extra = ["socialaccount"] },
     { name = "django-anymail" },
-    { name = "django-click" },
     { name = "django-cotton" },
     { name = "django-csp" },
     { name = "django-fast-update" },
@@ -1315,7 +1302,6 @@ requires-dist = [
     { name = "django", specifier = ">=5.1" },
     { name = "django-allauth", extras = ["socialaccount"], specifier = ">=64.2.0" },
     { name = "django-anymail", specifier = ">=11.1" },
-    { name = "django-click", specifier = ">=2.4.1" },
     { name = "django-cotton", specifier = ">=1.1.1" },
     { name = "django-csp", specifier = ">=3.8" },
     { name = "django-fast-update", specifier = ">=0.2.3" },
