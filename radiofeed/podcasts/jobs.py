@@ -1,6 +1,7 @@
 import logging
 
 from allauth.account.models import EmailAddress
+from django.conf import settings
 from django.core.mail import get_connection
 from django.db import transaction
 
@@ -20,10 +21,16 @@ logger = logging.getLogger(__name__)
     id="podcasts.fetch_itunes_chart",
     days=3,
 )
-def fetch_itunes_chart(limit: int = 30, country: str = "gb"):
+def fetch_itunes_chart(
+    limit: int = 30,
+    country: str = settings.ITUNES_CHART_COUNTRY,
+):
     """Crawl iTunes Top Chart."""
-    for feed in itunes.fetch_chart(get_client(), country, limit=limit):
-        logger.ingo("Fetched itunes feed: %s", feed)
+    try:
+        for feed in itunes.fetch_chart(get_client(), country, limit=limit):
+            logger.info("Fetched itunes feed: %s", feed)
+    except itunes.ItunesError as e:
+        logger.exception(e)
 
 
 @scheduler.scheduled_job(
@@ -41,7 +48,7 @@ def create_recommendations():
 @scheduler.scheduled_job(
     "cron",
     id="podcasts.send_recommendations",
-    hour=10,
+    hour=9,
     minute=15,
     day_of_week="sat",
 )

@@ -545,6 +545,10 @@ USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 
 DEFAULT_PAGE_SIZE = 30
 
+# Itunes chart country
+
+ITUNES_CHART_COUNTRY = env("ITUNES_CHART_COUNTRY", default="gb")
+
 # HTMX configuration
 # https://htmx.org/docs/#config
 
