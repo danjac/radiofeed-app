@@ -17,4 +17,7 @@ class Command(BaseCommand):
 
         autodiscover_modules("jobs")
 
-        scheduler.start()
+        try:
+            scheduler.start()
+        except KeyboardInterrupt:
+            scheduler.shutdown()
