@@ -4,8 +4,8 @@ set -o errexit
 # Check if $IMAGE is not set or is empty
 
 if [ -z "$IMAGE" ]; then
-  echo "ERROR: IMAGE environment variable is not set."
-  exit 1
+    echo "ERROR: IMAGE environment variable is not set."
+    exit 1
 fi
 
 echo "Deploying image $IMAGE to Kubernetes..."
@@ -17,7 +17,8 @@ export KUBECONFIG="{{ kubeconfig }}"
 release_job_id=$(head -c 12 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 12)
 release_job_name="django-release-job-$release_job_id"
 
-release_job_yaml=$(cat <<EOF
+release_job_yaml=$(
+    cat <<EOF
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -57,8 +58,8 @@ kubectl wait --for=condition=complete job/"$release_job_name" -n default --timeo
 # Delete the job
 kubectl delete job "$release_job_name" -n default
 
-# Update crons with new image
-kubectl get cronjob -l app=django-cronjob -o name | xargs -I {} kubectl set image {} django="${IMAGE}" -n default
+kubectl set image deployment/django-scheduler django="${IMAGE}" -n default
+kubectl rollout status deployment/django-scheduler -n default
 
 kubectl set image deployment/django-app django="${IMAGE}" -n default
 kubectl rollout status deployment/django-app -n default
