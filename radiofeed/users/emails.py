@@ -47,8 +47,10 @@ def send_notification_email(
 
 def get_recipients() -> QuerySet[EmailAddress]:
     """Get recipients for email notifications.
-
-    If `addresses` is provided, filter by list of email addresses.
+    This includes:
+    1. Active users with verified email addresses
+    2. Users who have opted in to receive email notifications
+    3. Primary addresses only
     """
     return EmailAddress.objects.filter(
         user__is_active=True,
