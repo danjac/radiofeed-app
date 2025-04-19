@@ -28,11 +28,6 @@ pyupdate:
 dj *args:
    uv run python ./manage.py {{ args }}
 
-# Run the scheduler
-[group('development')]
-scheduler:
-    uv run python ./scheduler.py
-
 # Run Django development server + Tailwind
 [group('development')]
 serve:

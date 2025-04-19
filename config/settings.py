@@ -56,6 +56,7 @@ INSTALLED_APPS: list[str] = [
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
+    "radiofeed.scheduler",
     "radiofeed.users",
 ]
 
