@@ -30,7 +30,7 @@ spec:
                 memory: "512Gi"  # Maximum memory the container can use before it gets OOM killed
                 cpu: "500m"
           command: ["/bin/sh", "-c"]
-          args: ["python ./scheduler.py"]
+          args: ["python ./manage.py scheduler"]
           envFrom:
             - configMapRef:
                 name: configmap
