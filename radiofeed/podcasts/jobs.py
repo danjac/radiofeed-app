@@ -16,11 +16,7 @@ from radiofeed.users.emails import get_recipients, send_notification_email
 logger = logging.getLogger(__name__)
 
 
-@scheduler.scheduled_job(
-    "interval",
-    id="podcasts.fetch_itunes_chart",
-    days=3,
-)
+@scheduler.scheduled_job("cron", id="podcasts.fetch_itunes_chart", hour=9)
 def fetch_itunes_chart(
     limit: int = 30,
     country: str = settings.ITUNES_CHART_COUNTRY,
@@ -33,11 +29,7 @@ def fetch_itunes_chart(
         logger.exception(e)
 
 
-@scheduler.scheduled_job(
-    "interval",
-    id="podcasts.create_recommendations",
-    days=1,
-)
+@scheduler.scheduled_job("cron", id="podcasts.create_recommendations", hour=6)
 def create_recommendations():
     """Generate recommendations based on podcast similarity."""
     for language in tokenizer.NLTK_LANGUAGES:
