@@ -47,5 +47,5 @@ class Command(BaseCommand):
 
         try:
             scheduler.start()
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, SystemExit):
             scheduler.shutdown()
