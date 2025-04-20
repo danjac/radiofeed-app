@@ -31,6 +31,9 @@ class Command(BaseCommand):
         Should search all `INSTALLED_APPS` for a `jobs` module in each job.
         """
 
+        # load all jobs across installed apps
+        autodiscover_modules("jobs")
+
         # configure scheduler
         scheduler.configure(
             executors={
@@ -41,9 +44,6 @@ class Command(BaseCommand):
             },
             timezone=settings.TIME_ZONE,
         )
-
-        # load all jobs across installed apps
-        autodiscover_modules("jobs")
 
         try:
             scheduler.start()
