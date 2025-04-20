@@ -40,7 +40,7 @@ def create_recommendations():
 @scheduler.scheduled_job(
     "cron",
     id="podcasts.send_recommendations",
-    hour=18,
+    hour=15,
     minute=15,
     day_of_week="fri",
 )
