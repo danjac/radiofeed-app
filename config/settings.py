@@ -550,6 +550,10 @@ DEFAULT_PAGE_SIZE = 30
 
 ITUNES_CHART_COUNTRY = env("ITUNES_CHART_COUNTRY", default="gb")
 
+# Number of threads in scheduler
+#
+SCHEDULER_NUM_THREADS = env.int("SCHEDULER_NUM_THREADS", default=10)
+
 # HTMX configuration
 # https://htmx.org/docs/#config
 

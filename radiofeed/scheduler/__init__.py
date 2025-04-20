@@ -4,7 +4,7 @@ from django.conf import settings
 
 scheduler = BlockingScheduler(
     executors={
-        "default": ThreadPoolExecutor(),
+        "default": ThreadPoolExecutor(settings.SCHEDULER_NUM_THREADS),
     },
     timezone=settings.TIME_ZONE,
 )

@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     help = "Runs scheduler for all jobs."
 
-    def handle(self, *args, **kwargs) -> None:
+    def handle(self, **options) -> None:
         """Runs scheduler.
 
         Should search all `INSTALLED_APPS` for a `jobs` module in each job.
