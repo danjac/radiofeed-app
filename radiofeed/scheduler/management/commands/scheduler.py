@@ -1,3 +1,5 @@
+import contextlib
+
 from django.core.management.base import BaseCommand
 from django.utils.module_loading import autodiscover_modules
 from django_apscheduler.jobstores import DjangoJobStore
@@ -17,6 +19,10 @@ class Command(BaseCommand):
         """
 
         autodiscover_modules("jobs")
+
+        # remove default jobstore if it exists
+        with contextlib.suppress(KeyError):
+            scheduler.remove_jobstore("default")
 
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
