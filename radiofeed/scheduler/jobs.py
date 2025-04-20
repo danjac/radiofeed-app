@@ -1,7 +1,6 @@
 import logging
 
 from django.core.management import call_command
-from django.utils import timezone
 from django_apscheduler.models import DjangoJobExecution
 
 from radiofeed.scheduler import scheduler
@@ -31,9 +30,4 @@ def clear_sessions():
 )
 def delete_old_job_executions():
     """Delete old job connections older than 24 hours"""
-    executions = DjangoJobExecution.objects.filter(
-        run_time__lt=timezone.now() - timezone.timedelta(days=1)
-    )
-    num_executions = executions.count()
-    executions.delete()
-    logger.info("Deleted %d old job executions", num_executions)
+    DjangoJobExecution.objects.delete_old_job_executions(max_age=60 * 60 * 24)
