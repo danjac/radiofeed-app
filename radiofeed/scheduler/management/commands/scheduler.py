@@ -39,7 +39,7 @@ class Command(BaseCommand):
             executors={
                 "default": ThreadPoolExecutor(options["num_threads"]),
             },
-            job_stores={
+            jobstores={
                 "default": DjangoJobStore(),
             },
             timezone=settings.TIME_ZONE,
