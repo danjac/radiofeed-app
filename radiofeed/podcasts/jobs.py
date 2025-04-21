@@ -47,18 +47,14 @@ def create_recommendations():
 def send_recommendations(num_podcasts: int = 6):
     """Send recommendations to users."""
     connection = get_connection()
-    for future in execute_thread_pool(
+    execute_thread_pool(
         lambda recipient: _send_recommendations_email(
             recipient,
             num_podcasts,
             connection=connection,
         ),
         get_recipients(),
-    ):
-        try:
-            future.result()
-        except Exception as e:
-            logger.exception(e)
+    )
 
 
 def _send_recommendations_email(

@@ -1,4 +1,3 @@
-import gc
 import logging
 
 from django.db.models import Count, F, QuerySet
@@ -18,17 +17,10 @@ def parse_feeds(*, limit: int = 360) -> None:
     """Parses RSS feeds of all scheduled podcasts."""
     client = get_client()
 
-    for future in execute_thread_pool(
+    execute_thread_pool(
         lambda podcast: _parse_feed(podcast, client),
         _get_scheduled_podcasts(limit),
-    ):
-        try:
-            future.result()
-        except Exception as e:
-            logger.exception(e)
-
-    # clean up memory
-    gc.collect()
+    )
 
 
 def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:

@@ -1,8 +1,12 @@
+import gc
 import itertools
+import logging
 from collections.abc import Callable, Iterable
 from concurrent import futures
 
 from django.db import connections
+
+logger = logging.getLogger(__name__)
 
 
 def execute_thread_pool(
@@ -26,10 +30,20 @@ class DatabaseSafeThreadPoolExecutor(futures.ThreadPoolExecutor):
         self, fn: Callable, *iterables: Iterable, **kwargs
     ) -> list[futures.Future]:
         """Runs db_safe_submit() on each item of iterators, returning list of futures."""
-        return [
+        futures = [
             self.db_safe_submit(fn, item, **kwargs)
             for item in itertools.chain.from_iterable(iterables)
         ]
+
+        for future in futures:
+            try:
+                future.result()
+            except Exception as e:
+                logger.exception(e)
+
+        gc.collect()
+
+        return futures
 
     def _close_db_connections(self, future: futures.Future) -> None:
         connections.close_all()
