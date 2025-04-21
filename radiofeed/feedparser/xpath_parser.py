@@ -33,6 +33,9 @@ class XPathParser:
                     yield from self.iterfind(element, *paths)
             finally:
                 element.clear()
+                with contextlib.suppress(AttributeError, TypeError):
+                    while element.getprevious() is not None:
+                        del element.getparent()[0]
 
     def find(self, *args, **kwargs) -> OptionalXmlElement:
         """Returns first matching element, or None if not found."""
