@@ -2,6 +2,10 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
   vars:
+      memory_request_percent: 0.2
+      memory_limit_percent: 0.5
+      cpu_request_percent: 0.2
+      cpu_limit_percent: 0.5
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
       cloudflare_certs:
@@ -79,6 +83,17 @@
         ansible.builtin.tempfile:
             state: directory
         register: manifests_dir
+      - name: Calculate total memory and CPU in usable units
+        ansible.builtin.set_fact:
+            total_memory_mb: "{{ ansible_memtotal_mb }}"
+            total_cpu_millicores: "{{ ansible_processor_vcpus * 1000 }}"
+
+      - name: Calculate resource requests/limits
+        ansible.builtin.set_fact:
+            mem_request: "{{ (total_memory_mb | int * memory_request_percent) | int }}Mi"
+            mem_limit: "{{ (total_memory_mb | int  * memory_limit_percent) | int }}Mi"
+            cpu_request: "{{ (total_cpu_millicores | int  * cpu_request_percent) | int }}m"
+            cpu_limit: "{{ (total_cpu_millicores | int  * cpu_limit_percent) | int }}m"
 
       - name: Render Kubernetes manifests
         vars:
