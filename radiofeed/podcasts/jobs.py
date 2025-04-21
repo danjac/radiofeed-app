@@ -17,13 +17,14 @@ logger = logging.getLogger(__name__)
 
 
 @scheduler.scheduled_job("cron", id="podcasts.fetch_itunes_chart", hour=9)
-def fetch_itunes_chart(
-    limit: int = 30,
-    country: str = settings.ITUNES_CHART_COUNTRY,
-):
+def fetch_itunes_chart(limit: int = 30):
     """Crawl iTunes Top Chart."""
     try:
-        for feed in itunes.fetch_chart(get_client(), country, limit=limit):
+        for feed in itunes.fetch_chart(
+            get_client(),
+            country=settings.ITUNES_CHART_COUNTRY,
+            limit=limit,
+        ):
             logger.info("Fetched itunes feed: %s", feed)
     except itunes.ItunesError as e:
         logger.exception(e)
