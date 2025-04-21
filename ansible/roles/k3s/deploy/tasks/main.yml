@@ -2,10 +2,10 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
   vars:
-      memory_request_percent: 0.2
-      memory_limit_percent: 0.5
-      cpu_request_percent: 0.2
-      cpu_limit_percent: 0.5
+      memory_request_percent: 0.15
+      memory_limit_percent: 0.6
+      cpu_request_percent: 0.01
+      cpu_limit_percent: 0.2
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
       cloudflare_certs:
