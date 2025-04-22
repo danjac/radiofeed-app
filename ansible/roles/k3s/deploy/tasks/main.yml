@@ -2,10 +2,10 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
   vars:
-      memory_request_percent: 0.15
-      memory_limit_percent: 0.6
-      cpu_request_percent: 0.01
-      cpu_limit_percent: 0.2
+      memory_request_percent: 0.2
+      memory_limit_percent: 0.5
+      cpu_request_percent: 0.2
+      cpu_limit_percent: 0.3
       cloudflare_cert: "cloudflare.pem"
       cloudflare_key: "cloudflare.key"
       cloudflare_certs:
@@ -132,12 +132,6 @@
         ansible.builtin.shell: |
             for statefulset in $(kubectl get statefulsets -n default -o jsonpath='{.items[*].metadata.name}'); do
               kubectl rollout restart statefulset/$statefulset -n default
-            done
-
-      - name: Restart daemonsets
-        ansible.builtin.shell: |
-            for daemonset in $(kubectl get daemonsets -n default -o jsonpath='{.items[*].metadata.name}'); do
-              kubectl rollout restart daemonset/$daemonset -n default
             done
 
       - name: Restart deployments
