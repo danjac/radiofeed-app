@@ -95,7 +95,10 @@ class TestRenderDeferred:
         DeferredHTMLMiddleware(get_response)(req)
         content = format_html("<script>console.log('Hello')</script>")
 
-        deferred(context, content, "js")
+        deferred(context, content, "js", "example1")
+
+        # defer again: same ID should be rendered once
+        deferred(context, content, "js", "example1")
 
         assert render_deferred(context, "js") == content
         assert render_deferred(context, "js") == "", "deferred content not cleared"

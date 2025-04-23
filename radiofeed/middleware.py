@@ -132,5 +132,5 @@ class DeferredHTMLMiddleware(BaseMiddleware):
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
-        request.deferred_html = collections.defaultdict(set)
+        request.deferred_html = collections.defaultdict(dict)
         return self.get_response(request)

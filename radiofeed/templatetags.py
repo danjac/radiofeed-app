@@ -95,28 +95,48 @@ def format_duration(total_seconds: int) -> str:
 
 
 @register.simple_block_tag(takes_context=True)
-def deferred(context: RequestContext, content: str, tag: str) -> str:
+def deferred(
+    context: RequestContext,
+    content: str,
+    group: str,
+    content_id: str,
+) -> str:
     """Instead of rendering the content immediately, render using the `render_deferred` tag.
     This is useful for rendering content we don't want to include immediately e.g. JS or CSS tags.
 
     Use with DeferredHTMLMiddleware.
 
     Example:
-        {% deferred "js" %}
-        <script src="https://example.com/script.js"></script>
+        {% deferred "js" "example1" %}
+        <script src="https://example.com/script1.js"></script>
+        {% enddeferred %}
+
+        {% deferred "js" "example2" %}
+        <script src="https://example.com/script2.js"></script>
+        {% enddeferred %}
+
+        {% deferred "js" "example1" %}
+        <script src="https://example.com/script1.js"></script>
         {% enddeferred %}
     at end of page:
         {% render_deferred "js" %}
+
+    This will render all content in group "js". "example1" and "example2" will just be rendered once:
+
+        <script src="https://example.com/script1.js"></script>
+        <script src="https://example.com/script2.js"></script>
     """
-    context.request.deferred_html[tag].add(content)
+    context.request.deferred_html[group][content_id] = content
     return ""
 
 
 @register.simple_tag(takes_context=True)
-def render_deferred(context: RequestContext, tag: str) -> str:
-    """Renders all deferred content, cleares the list and returns the result."""
-    if deferred_html := context.request.deferred_html.pop(tag, None):
-        return format_html_join("\n", "{}", ((block,) for block in deferred_html))
+def render_deferred(context: RequestContext, group: str) -> str:
+    """Renders all deferred content for a group, cleares the list and returns the result."""
+    if deferred_html := context.request.deferred_html.pop(group, None):
+        return format_html_join(
+            "\n", "{}", ((block,) for block in deferred_html.values())
+        )
     return ""
 
 

@@ -2,7 +2,7 @@
 {% load get_media_metadata from episodes %}
 <c-vars audio-log action="load" />
 {% if request.user.is_authenticated %}
-    {% deferred "js" %}
+    {% deferred "js" "audio-player" %}
         <script src="{% static 'audio-player.js' %}"></script>
     {% enddeferred %}
     <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
