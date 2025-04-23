@@ -11,7 +11,6 @@ from django.middleware.csrf import get_token
 from django.shortcuts import resolve_url
 from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
-from django.utils.html import format_html_join
 
 from radiofeed import pwa
 from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
@@ -92,54 +91,6 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
-
-
-@register.simple_block_tag(takes_context=True)
-def deferred(
-    context: RequestContext,
-    content: str,
-    group: str,
-    content_id: str,
-) -> str:
-    """Instead of rendering the content immediately, render using the `render_deferred` tag.
-    This is useful for rendering content we don't want to include immediately e.g. JS or CSS tags.
-
-    Use with DeferredHTMLMiddleware.
-
-    Example:
-        {% deferred "js" "example1" %}
-        <script src="https://example.com/script1.js"></script>
-        {% enddeferred %}
-
-        {% deferred "js" "example2" %}
-        <script src="https://example.com/script2.js"></script>
-        {% enddeferred %}
-
-        {% deferred "js" "example1" %}
-        <script src="https://example.com/script1.js"></script>
-        {% enddeferred %}
-    at end of page:
-        {% render_deferred "js" %}
-
-    This will render all content in group "js". "example1" and "example2" will just be rendered once:
-
-        <script src="https://example.com/script1.js"></script>
-        <script src="https://example.com/script2.js"></script>
-    """
-    context.request.deferred_html[group][content_id] = content
-    return ""
-
-
-@register.simple_tag(takes_context=True)
-def render_deferred(context: RequestContext, group: str, joiner: str = "") -> str:
-    """Renders all deferred content for a group, cleares the list and returns the result."""
-    if deferred_html := context.request.deferred_html.pop(group, None):
-        return format_html_join(
-            joiner,
-            "{}",
-            ((block,) for block in deferred_html.values()),
-        )
-    return ""
 
 
 @functools.cache
