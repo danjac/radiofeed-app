@@ -84,10 +84,13 @@
             state: directory
         register: manifests_dir
 
-      - name: Calculate resource requests/limits
+      - name: Calculate total resources
         ansible.builtin.set_fact:
             total_memory_mb: "{{ ansible_memtotal_mb }}"
             total_cpu_millicores: "{{ ansible_processor_vcpus * 1000 }}"
+
+      - name: Calculate resource requests/limits
+        ansible.builtin.set_fact:
             mem_request: "{{ (total_memory_mb | int * memory_request_percent) | int }}Mi"
             mem_limit: "{{ (total_memory_mb | int  * memory_limit_percent) | int }}Mi"
             cpu_request: "{{ (total_cpu_millicores | int  * cpu_request_percent) | int }}m"

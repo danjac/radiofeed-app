@@ -38,7 +38,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
     "csp",
-    "django_apscheduler",
     "django_htmx",
     "django_linear_migrations",
     "django_tailwind_cli",
@@ -57,7 +56,6 @@ INSTALLED_APPS: list[str] = [
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
-    "radiofeed.scheduler",
     "radiofeed.users",
 ]
 
@@ -546,10 +544,6 @@ USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 # Default page size for paginated views
 
 DEFAULT_PAGE_SIZE = 30
-
-# Itunes chart country
-
-ITUNES_CHART_COUNTRY = env("ITUNES_CHART_COUNTRY", default="gb")
 
 # HTMX configuration
 # https://htmx.org/docs/#config

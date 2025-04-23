@@ -42,8 +42,6 @@ dependencies = [
     "sentry-sdk>=2.13.0",
     "whitenoise[brotli]>=6.7.0",
     "django-widget-tweaks>=1.5.0",
-    "apscheduler>=3.11.0",
-    "django-apscheduler>=0.7.0",
 ]
 
 [tool.uv]
