@@ -33,7 +33,7 @@ def fetch_itunes_chart(limit: int = 30):
 @scheduler.scheduled_job("cron", id="podcasts.create_recommendations", hour=6)
 def create_recommendations():
     """Generate recommendations based on podcast similarity."""
-    for language in tokenizer.NLTK_LANGUAGES:
+    for language in tokenizer.LANGUAGES:
         logger.info("Generating recommendations for %s", language)
         recommender.recommend(language)
 

@@ -15,7 +15,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 from radiofeed.html import strip_html
 
-NLTK_LANGUAGES: Final = {
+LANGUAGES: Final = {
     "ar": "arabic",
     "az": "azerbaijani",
     "da": "danish",
@@ -65,7 +65,7 @@ def get_stopwords(language: str) -> frozenset[str]:
     """
     try:
         return frozenset(
-            stopwords.words(NLTK_LANGUAGES[language])
+            stopwords.words(LANGUAGES[language])
             + _CORPORATE_STOPWORDS
             + _get_extra_stopwords(language)
             + list(_get_date_stopwords(language))

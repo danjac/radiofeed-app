@@ -1,4 +1,3 @@
-import gc
 import itertools
 import logging
 from collections.abc import Callable, Iterable
@@ -35,15 +34,14 @@ class DatabaseSafeThreadPoolExecutor(futures.ThreadPoolExecutor):
             for item in itertools.chain.from_iterable(iterables)
         ]
 
+        # Execute all futures to ensure they are completed
         for future in futures:
             try:
                 future.result()
             except Exception as e:
                 logger.exception(e)
 
-        gc.collect()
-
         return futures
 
-    def _close_db_connections(self, future: futures.Future) -> None:
+    def _close_db_connections(self, _) -> None:
         connections.close_all()
