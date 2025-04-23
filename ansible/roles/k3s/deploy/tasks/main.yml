@@ -83,13 +83,11 @@
         ansible.builtin.tempfile:
             state: directory
         register: manifests_dir
-      - name: Calculate total memory and CPU in usable units
-        ansible.builtin.set_fact:
-            total_memory_mb: "{{ ansible_memtotal_mb }}"
-            total_cpu_millicores: "{{ ansible_processor_vcpus * 1000 }}"
 
       - name: Calculate resource requests/limits
         ansible.builtin.set_fact:
+            total_memory_mb: "{{ ansible_memtotal_mb }}"
+            total_cpu_millicores: "{{ ansible_processor_vcpus * 1000 }}"
             mem_request: "{{ (total_memory_mb | int * memory_request_percent) | int }}Mi"
             mem_limit: "{{ (total_memory_mb | int  * memory_limit_percent) | int }}Mi"
             cpu_request: "{{ (total_cpu_millicores | int  * cpu_request_percent) | int }}m"
@@ -112,10 +110,14 @@
             - postgres_service
             - redis_deployment
             - redis_service
+            - django_cronjobs
             - django_deployment
-            - django_scheduler
             - django_service
             - ingress_route
+
+      - name: Delete all cronjobs
+        ansible.builtin.shell: |
+            kubectl delete cronjob -l app=django-cronjob -n default
 
       - name: Apply Kubernetes manifests using ApplySet
         ansible.builtin.shell: |
