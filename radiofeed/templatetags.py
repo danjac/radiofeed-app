@@ -131,11 +131,13 @@ def deferred(
 
 
 @register.simple_tag(takes_context=True)
-def render_deferred(context: RequestContext, group: str) -> str:
+def render_deferred(context: RequestContext, group: str, joiner: str = "") -> str:
     """Renders all deferred content for a group, cleares the list and returns the result."""
     if deferred_html := context.request.deferred_html.pop(group, None):
         return format_html_join(
-            "\n", "{}", ((block,) for block in deferred_html.values())
+            joiner,
+            "{}",
+            ((block,) for block in deferred_html.values()),
         )
     return ""
 
