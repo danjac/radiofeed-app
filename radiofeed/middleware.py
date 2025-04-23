@@ -1,4 +1,3 @@
-import collections
 import dataclasses
 from collections.abc import Callable
 from typing import Final
@@ -122,15 +121,3 @@ class SearchDetails:
             if self
             else ""
         )
-
-
-class DeferredHTMLMiddleware(BaseMiddleware):
-    """Adds `deferred_html` to request.
-
-    Use with the defer and render_deferred template tags.
-    """
-
-    def __call__(self, request: HttpRequest) -> HttpResponse:
-        """Middleware implementation."""
-        request.deferred_html = collections.defaultdict(dict)
-        return self.get_response(request)

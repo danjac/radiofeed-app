@@ -183,6 +183,9 @@ lint.ignore = [
 [tool.ruff.lint.isort]
 known-first-party = ["radiofeed"]
 
+[tool.isort]
+profile = "black"
+
 [tool.pyright]
 include=["radiofeed"]
 exclude=[
