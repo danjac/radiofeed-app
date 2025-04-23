@@ -1,6 +1,6 @@
 cronjobs:
     - name: "clear-sessions"
-      schedule: "5 5 * * *" # 5:05 AM
+      schedule: "5 5 * * *" # 5:05 AM every day
       command: "{{ manage_cmd }} clearsessions"
 
     - name: "parse-feeds"
@@ -8,7 +8,7 @@ cronjobs:
       command: "{{ manage_cmd }} parse_feeds"
 
     - name: "create-recommendations"
-      schedule: "20 15 * * *" # 3:20 PM
+      schedule: "20 15 * * *" # 3:20 PM every day
       command: "{{ manage_cmd }} create_recommendations"
 
     - name: "send-recommendations"
@@ -16,5 +16,5 @@ cronjobs:
       command: "{{ manage_cmd }} send_recommendations"
 
     - name: "fetch-itunes-chart"
-      schedule: "15 7 * * 1" # 7:15 AM on Mondays
+      schedule: "15 3 * * *" # 3:15 AM every day
       command: "{{ manage_cmd }} fetch_itunes_chart {{ itunes_chart_country }}"
