@@ -100,6 +100,7 @@
         vars:
             database_url: "postgresql://postgres:{{ postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
             redis_url: "redis://redis.default.svc.cluster.local:6379/0"
+            manage_cmd: "python ./manage.py"
             num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
         ansible.builtin.template:
             src: "{{ item }}.yaml.j2"
