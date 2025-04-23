@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     help = "Send podcast recommendations to users"
 
-    def add_arguments(self, parser: CommandParser):
+    def add_arguments(self, parser: CommandParser) -> None:
         """Add arguments to the command"""
         parser.add_argument(
             "--num_podcasts",
@@ -22,7 +22,7 @@ class Command(BaseCommand):
             help="Number of podcasts to recommend",
         )
 
-    def handle(self, **options):
+    def handle(self, **options) -> None:
         """Implemetation of command"""
         connection = get_connection()
         execute_thread_pool(
@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
     def _send_recommendations_email(
         self, recipient: EmailAddress, num_podcasts: int, **kwargs
-    ):
+    ) -> None:
         if podcasts := (
             Podcast.objects.published()
             .recommended(recipient.user)
