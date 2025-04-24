@@ -225,19 +225,21 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             async sendTimeUpdate() {
-                this.isUpdating = true;
-                try {
-                    await fetch(this.timeUpdateUrl, {
-                        method: "POST",
-                        headers: this.csrfHeader,
-                        body: new URLSearchParams({
-                            current_time: this.runtime,
-                        }),
-                    });
-                } catch (error) {
-                    console.error("Failed to send time update", error);
-                } finally {
-                    this.isUpdating = false;
+                if (!this.isUpdating) {
+                    this.isUpdating = true;
+                    try {
+                        await fetch(this.timeUpdateUrl, {
+                            method: "POST",
+                            headers: this.csrfHeader,
+                            body: new URLSearchParams({
+                                current_time: this.runtime,
+                            }),
+                        });
+                    } catch (error) {
+                        console.error("Failed to send time update", error);
+                    } finally {
+                        this.isUpdating = false;
+                    }
                 }
             },
             setPreviewCounter(position) {
