@@ -27,7 +27,6 @@ _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
 }
 
 
-@functools.cache
 def get_cover_image_attrs(
     variant: CoverImageVariant,
     cover_url: str | None,
@@ -71,7 +70,6 @@ def get_cover_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
-@functools.cache
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
@@ -118,6 +116,18 @@ def get_cover_image_sizes() -> set[int]:
     return set(itertools.chain.from_iterable(_COVER_IMAGE_SIZES.values()))
 
 
+def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
+    """Returns media artwork details."""
+    return [
+        ImageInfo(
+            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
+            sizes=f"{size}x{size}",
+            type="image/webp",
+        )
+        for size in get_cover_image_sizes()
+    ]
+
+
 @functools.cache
 def get_placeholder(size: int) -> str:
     """Return placeholder image name"""
@@ -134,15 +144,3 @@ def get_placeholder_url(size: int) -> str:
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
     return settings.STATIC_SRC / "img" / get_placeholder(size)
-
-
-def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
-    """Returns media artwork details."""
-    return [
-        ImageInfo(
-            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
-            sizes=f"{size}x{size}",
-            type="image/webp",
-        )
-        for size in get_cover_image_sizes()
-    ]
