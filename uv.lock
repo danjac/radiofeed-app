@@ -578,11 +578,11 @@ wheels = [
 
 [[package]]
 name = "h11"
-version = "0.14.0"
+version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f5/38/3af3d3633a34a3316095b39c8e8fb4853a28a536e55d347bd8d8e9a14b03/h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d", size = 100418 }
+sdist = { url = "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1", size = 101250 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/95/04/ff642e65ad6b90db43e668d70ffb6736436c7ce41fcc549f4e9472234127/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761", size = 58259 },
+    { url = "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86", size = 37515 },
 ]
 
 [[package]]
@@ -601,15 +601,15 @@ django = [
 
 [[package]]
 name = "httpcore"
-version = "1.0.8"
+version = "1.0.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "h11" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9f/45/ad3e1b4d448f22c0cff4f5692f5ed0666658578e358b8d58a19846048059/httpcore-1.0.8.tar.gz", hash = "sha256:86e94505ed24ea06514883fd44d2bc02d90e77e7979c8eb71b90f41d364a1bad", size = 85385 }
+sdist = { url = "https://files.pythonhosted.org/packages/06/94/82699a10bca87a5556c9c59b5963f2d039dbd239f25bc2a63907a05a14cb/httpcore-1.0.9.tar.gz", hash = "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8", size = 85484 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/18/8d/f052b1e336bb2c1fc7ed1aaed898aa570c0b61a09707b108979d9fc6e308/httpcore-1.0.8-py3-none-any.whl", hash = "sha256:5254cf149bcb5f75e9d1b2b9f729ea4a4b883d1ad7379fc632b727cec23674be", size = 78732 },
+    { url = "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55", size = 78784 },
 ]
 
 [[package]]
@@ -1038,15 +1038,15 @@ crypto = [
 
 [[package]]
 name = "pyright"
-version = "1.1.399"
+version = "1.1.400"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "nodeenv" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/9d/d91d5f6d26b2db95476fefc772e2b9a16d54c6bd0ea6bb5c1b6d635ab8b4/pyright-1.1.399.tar.gz", hash = "sha256:439035d707a36c3d1b443aec980bc37053fbda88158eded24b8eedcf1c7b7a1b", size = 3856954 }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/cb/c306618a02d0ee8aed5fb8d0fe0ecfed0dbf075f71468f03a30b5f4e1fe0/pyright-1.1.400.tar.gz", hash = "sha256:b8a3ba40481aa47ba08ffb3228e821d22f7d391f83609211335858bf05686bdb", size = 3846546 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/b5/380380c9e7a534cb1783c70c3e8ac6d1193c599650a55838d0557586796e/pyright-1.1.399-py3-none-any.whl", hash = "sha256:55f9a875ddf23c9698f24208c764465ffdfd38be6265f7faf9a176e1dc549f3b", size = 5592584 },
+    { url = "https://files.pythonhosted.org/packages/c8/a5/5d285e4932cf149c90e3c425610c5efaea005475d5f96f1bfdb452956c62/pyright-1.1.400-py3-none-any.whl", hash = "sha256:c80d04f98b5a4358ad3a35e241dbf2a408eee33a40779df365644f8054d2517e", size = 5563460 },
 ]
 
 [[package]]
@@ -1481,15 +1481,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.26.1"
+version = "2.27.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/85/26/099631caa51abffb1fd9e08c2138bc6681d3f288a5936c2fc4e054729611/sentry_sdk-2.26.1.tar.gz", hash = "sha256:759e019c41551a21519a95e6cef6d91fb4af1054761923dadaee2e6eca9c02c7", size = 323099 }
+sdist = { url = "https://files.pythonhosted.org/packages/cf/b6/a92ae6fa6d7e6e536bc586776b1669b84fb724dfe21b8ff08297f2d7c969/sentry_sdk-2.27.0.tar.gz", hash = "sha256:90f4f883f9eff294aff59af3d58c2d1b64e3927b28d5ada2b9b41f5aeda47daf", size = 323556 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/32/0a30b4fafdb3d26d133f99bb566aaa6000004ee7f2c4b72aafea9237ab7e/sentry_sdk-2.26.1-py2.py3-none-any.whl", hash = "sha256:e99390e3f217d13ddcbaeaed08789f1ca614d663b345b9da42e35ad6b60d696a", size = 340558 },
+    { url = "https://files.pythonhosted.org/packages/dd/8b/fb496a45854e37930b57564a20fb8e90dd0f8b6add0491527c00f2163b00/sentry_sdk-2.27.0-py2.py3-none-any.whl", hash = "sha256:c58935bfff8af6a0856d37e8adebdbc7b3281c2b632ec823ef03cd108d216ff0", size = 340786 },
 ]
 
 [[package]]
