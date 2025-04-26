@@ -1,5 +1,5 @@
+import contextlib
 import datetime
-import functools
 import pathlib
 import re
 from collections.abc import Iterator
@@ -15,7 +15,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 from radiofeed.html import strip_html
 
-LANGUAGES: Final = {
+_STOPWORDS_LANGUAGES: Final = {
     "ar": "arabic",
     "az": "azerbaijani",
     "da": "danish",
@@ -56,23 +56,18 @@ _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
 
 
-@functools.cache
 def get_stopwords(language: str) -> frozenset[str]:
     """Return all stopwords for a language, if available.
 
     Args:
         language: 2-char language code e.g. "en"
     """
-    try:
-        return frozenset(
-            stopwords.words(LANGUAGES[language])
-            + _CORPORATE_STOPWORDS
-            + _get_extra_stopwords(language)
-            + list(_get_date_stopwords(language))
-        )
-
-    except (AttributeError, KeyError, OSError):
-        return frozenset()
+    return frozenset(
+        _CORPORATE_STOPWORDS
+        + _get_corpus_stopwords(language)
+        + _get_extra_stopwords(language)
+        + list(_get_date_stopwords(language))
+    )
 
 
 def clean_text(text: str) -> str:
@@ -130,21 +125,22 @@ def _get_extra_stopwords(language: str) -> list[str]:
     )
 
 
+def _get_corpus_stopwords(language: str) -> list[str]:
+    if name := _STOPWORDS_LANGUAGES.get(language, None):
+        with contextlib.suppress(AttributeError, KeyError, OSError):
+            return stopwords.words(name)
+    return []
+
+
 def _lemmatized_tokens(text: str) -> Iterator[str]:
     for token in _tokenizer.tokenize(text):
-        try:
+        with contextlib.suppress(AttributeError):
             yield _lemmatizer.lemmatize(token)
-
-        except AttributeError:
-            # threading issue:
-            # 'WordNetCorpusReader' object has no attribute '_LazyCorpusLoader__args'
-            continue
 
 
 def _format_date(value: date, fmt: str) -> str:
     return date_format(value, fmt).casefold()
 
 
-@functools.cache
 def _stopwords_path(language: str) -> pathlib.Path:
     return settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"

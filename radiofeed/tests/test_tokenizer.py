@@ -2,11 +2,11 @@ from radiofeed.tokenizer import clean_text, get_stopwords, tokenize
 
 
 class TestStopwords:
-    def test_get_stopwords_if_any(self):
+    def test_get_stopwords_if_nltk(self):
         assert get_stopwords("en")
 
-    def test_get_stopwords_if_none(self):
-        assert get_stopwords("ka") == set()
+    def test_get_stopwords_if_not_nltk(self):
+        assert get_stopwords("ka")
 
 
 class TestTokenize:
