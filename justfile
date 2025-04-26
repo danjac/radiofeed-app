@@ -91,7 +91,7 @@ precommitall:
 
 # Run Ansible playbook
 [group('deployment')]
-pb playbook *args:
+apb playbook *args:
     ansible-playbook -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} {{ args }}
 
 # Run a Github Actions workflow
