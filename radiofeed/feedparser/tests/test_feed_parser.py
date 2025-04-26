@@ -558,26 +558,6 @@ class TestFeedParser:
         assert podcast.modified
 
     @pytest.mark.django_db
-    def test_parse_no_podcasts_max_retries(self, podcast):
-        podcast.num_retries = 3
-
-        client = _mock_client(
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_no_podcasts_mock.xml"),
-        )
-
-        with pytest.raises(InvalidRSSError):
-            parse_feed(podcast, client)
-
-        podcast.refresh_from_db()
-
-        assert podcast.parser_error == Podcast.ParserError.INVALID_RSS
-
-        assert podcast.active is False
-        assert podcast.parsed
-        assert podcast.num_retries == 4
-
-    @pytest.mark.django_db
     def test_parse_empty_feed(self, podcast):
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -662,20 +642,3 @@ class TestFeedParser:
         assert podcast.parsed
 
         assert podcast.num_retries == 1
-
-    @pytest.mark.django_db
-    def test_parse_connect_max_retries(self, podcast):
-        podcast.num_retries = 3
-
-        client = _mock_error_client(httpx.HTTPError("fail"))
-
-        with pytest.raises(UnavailableError):
-            parse_feed(podcast, client)
-
-        podcast.refresh_from_db()
-
-        assert podcast.parser_error == Podcast.ParserError.UNAVAILABLE
-
-        assert podcast.active is False
-        assert podcast.parsed
-        assert podcast.num_retries == 4

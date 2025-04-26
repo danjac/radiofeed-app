@@ -98,13 +98,7 @@ def _handle_success(podcast: Podcast, feed: Feed, **fields) -> None:
         raise InvalidDataError from exc
 
 
-def _handle_error(
-    podcast: Podcast,
-    exc: FeedParserError,
-    *,
-    max_retries: int = 3,
-    **fields,
-) -> None:
+def _handle_error(podcast: Podcast, exc: FeedParserError, **fields) -> None:
     # Handle errors when parsing a feed
     active = True
     num_retries = podcast.num_retries
@@ -118,9 +112,6 @@ def _handle_error(
             active = False
         case _:
             num_retries += 1
-
-    # if the number of retries exceeds the maximum, deactivate the podcast
-    active = active and max_retries > num_retries
 
     frequency = (
         scheduler.reschedule(podcast.pub_date, podcast.frequency)
