@@ -251,6 +251,8 @@ class PodcastAdmin(admin.ModelAdmin):
     )
 
     readonly_fields = (
+        "created",
+        "updated",
         "pub_date",
         "parsed",
         "parser_error",
