@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
 from django.http import HttpRequest
@@ -5,6 +7,11 @@ from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
 from radiofeed.podcasts.models import Category, Podcast, Subscription
+
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise  # pragma: no cover
+else:
+    StrOrPromise = str
 
 
 @admin.register(Category)
@@ -62,7 +69,7 @@ class ParserErrorFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> list[tuple[str, str]]:
+    ) -> list[tuple[str, StrOrPromise]]:
         """Returns lookup values/labels."""
         return Podcast.ParserError.choices
 
@@ -84,7 +91,7 @@ class PodcastTypeFilter(admin.SimpleListFilter):
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> list[tuple[str, str]]:
+    ) -> list[tuple[str, StrOrPromise]]:
         """Returns lookup values/labels."""
         return Podcast.PodcastType.choices
 
