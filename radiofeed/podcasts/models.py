@@ -138,12 +138,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
             | models.Q(
                 models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY)
                 | models.Q(
-                    pub_date__isnull=True,
                     parsed__lt=now - models.F("frequency"),  # type: ignore[operator]
-                )
-                | models.Q(
-                    pub_date__isnull=False,
-                    pub_date__lt=now - models.F("frequency"),  # type: ignore[operator]
                 ),
                 parsed__lt=now - self.model.MIN_PARSER_FREQUENCY,
             ),
