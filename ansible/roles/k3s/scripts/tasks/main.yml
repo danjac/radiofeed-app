@@ -7,9 +7,3 @@
       - deploy.sh
       - manage.sh
       - psql.sh
-
-- name: Run the deploy script to do Django migrations etc
-  ansible.builtin.shell: |
-      ./deploy.sh
-  environment:
-      IMAGE: "{{ image }}"
