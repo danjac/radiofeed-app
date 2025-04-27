@@ -270,9 +270,7 @@ class Podcast(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
 
-    updated = models.DateTimeField(
-        auto_now=True, verbose_name="Podcast Updated in Database"
-    )
+    updated = models.DateTimeField(auto_now=True)
 
     explicit = models.BooleanField(default=False)
 
