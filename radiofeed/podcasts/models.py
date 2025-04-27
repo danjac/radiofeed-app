@@ -136,12 +136,12 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
 
         return self.filter(
             models.Q(parsed__isnull=True)
-            | models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY)
             | models.Q(
                 models.Q(pub_date__isnull=True, parsed__lt=since)
-                | models.Q(pub_date__isnull=False, pub_date__lt=since),
+                | models.Q(pub_date__isnull=False, pub_date__lt=since)
+                | models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY),
                 parsed__lt=now - self.model.MIN_PARSER_FREQUENCY,
-            ),
+            )
         )
 
     def recommended(self, user: User) -> models.QuerySet["Podcast"]:
