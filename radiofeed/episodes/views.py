@@ -1,4 +1,3 @@
-from datetime import timedelta
 from typing import Literal
 
 from django.contrib import messages
@@ -33,7 +32,7 @@ def index(request: HttpRequest) -> HttpResponse:
     episodes = (
         Episode.objects.subscribed(request.user)
         .filter(
-            pub_date__gt=timezone.now() - timedelta(days=14),
+            pub_date__gt=timezone.now() - timezone.timedelta(days=14),
         )
         .select_related("podcast")
         .order_by("-pub_date", "-id")

@@ -4,7 +4,6 @@ import itertools
 import operator
 import statistics
 from collections.abc import Iterator
-from datetime import timedelta
 
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -35,12 +34,12 @@ class _Recommender:
         self,
         language: str,
         *,
-        since: timedelta = timedelta(days=90),
+        since: timezone.timedelta | None = None,
         num_matches: int = 12,
         max_features: int = 5000,
     ) -> None:
         self._language = language
-        self._since = since
+        self._since = since or timezone.timedelta(days=90)
         self._num_matches = num_matches
 
         self._vectorizer = TfidfVectorizer(

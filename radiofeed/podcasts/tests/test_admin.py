@@ -1,4 +1,3 @@
-from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -95,7 +94,7 @@ class TestPodcastAdmin:
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
         mocker.patch(
             "radiofeed.podcasts.admin.Podcast.get_next_scheduled_update",
-            return_value=timezone.now() + timedelta(hours=3),
+            return_value=timezone.now() + timezone.timedelta(hours=3),
         )
         assert (
             podcast_admin.next_scheduled_update(podcast) == "2\xa0hours, 59\xa0minutes"
@@ -105,7 +104,7 @@ class TestPodcastAdmin:
     def test_next_scheduled_update_in_past(self, mocker, podcast, podcast_admin):
         mocker.patch(
             "radiofeed.podcasts.admin.Podcast.get_next_scheduled_update",
-            return_value=timezone.now() + timedelta(hours=-3),
+            return_value=timezone.now() + timezone.timedelta(hours=-3),
         )
         assert podcast_admin.next_scheduled_update(podcast) == "3\xa0hours ago"
 
@@ -267,7 +266,11 @@ class TestScheduledFilter:
     @pytest.fixture
     def unscheduled(self):
         now = timezone.now()
-        return PodcastFactory(pub_date=now, parsed=now, frequency=timedelta(hours=3))
+        return PodcastFactory(
+            pub_date=now,
+            parsed=now,
+            frequency=timezone.timedelta(hours=3),
+        )
 
     @pytest.mark.django_db
     def test_none(self, podcast_admin, req, scheduled, unscheduled):

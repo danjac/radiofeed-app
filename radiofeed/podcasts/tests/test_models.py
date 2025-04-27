@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 import pytest
 from django.utils import timezone
 
@@ -154,50 +152,50 @@ class TestPodcastManager:
                 id="parsed is None",
             ),
             pytest.param(
-                {"frequency": timedelta(hours=3)},
+                {"frequency": timezone.timedelta(hours=3)},
                 True,
                 id="parsed is None",
             ),
             pytest.param(
                 {
-                    "parsed": timedelta(hours=3),
-                    "frequency": timedelta(hours=1),
+                    "parsed": timezone.timedelta(hours=3),
+                    "frequency": timezone.timedelta(hours=1),
                 },
                 True,
                 id="pub date is None",
             ),
             pytest.param(
                 {
-                    "parsed": timedelta(seconds=1200),
-                    "pub_date": timedelta(days=3),
-                    "frequency": timedelta(hours=3),
+                    "parsed": timezone.timedelta(seconds=1200),
+                    "pub_date": timezone.timedelta(days=3),
+                    "frequency": timezone.timedelta(hours=3),
                 },
                 False,
                 id="just parsed",
             ),
             pytest.param(
                 {
-                    "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=1),
-                    "frequency": timedelta(hours=3),
+                    "parsed": timezone.timedelta(hours=3),
+                    "pub_date": timezone.timedelta(days=1),
+                    "frequency": timezone.timedelta(hours=3),
                 },
                 True,
                 id="parsed before pub date+frequency",
             ),
             pytest.param(
                 {
-                    "parsed": timedelta(days=8),
-                    "pub_date": timedelta(days=8),
-                    "frequency": timedelta(days=15),
+                    "parsed": timezone.timedelta(days=8),
+                    "pub_date": timezone.timedelta(days=8, minutes=1),
+                    "frequency": timezone.timedelta(days=12),
                 },
                 True,
                 id="parsed just before max frequency",
             ),
             pytest.param(
                 {
-                    "parsed": timedelta(days=30),
-                    "pub_date": timedelta(days=90),
-                    "frequency": timedelta(days=30),
+                    "parsed": timezone.timedelta(days=30),
+                    "pub_date": timezone.timedelta(days=90),
+                    "frequency": timezone.timedelta(days=30),
                 },
                 True,
                 id="parsed before max frequency",
@@ -308,21 +306,25 @@ class TestPodcastModel:
     def test_get_next_scheduled_update_pub_date_none(self):
         now = timezone.now()
         podcast = Podcast(
-            parsed=now - timedelta(hours=1), pub_date=None, frequency=timedelta(hours=3)
+            parsed=now - timezone.timedelta(hours=1),
+            pub_date=None,
+            frequency=timezone.timedelta(hours=3),
         )
         self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 2)
 
     def test_get_next_scheduled_update_frequency_none(self):
         now = timezone.now()
         podcast = Podcast(
-            parsed=now - timedelta(hours=1), pub_date=None, frequency=None
+            parsed=now - timezone.timedelta(hours=1), pub_date=None, frequency=None
         )
         assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
 
     def test_get_next_scheduled_update_parsed_none(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(hours=3), parsed=None, frequency=timedelta(hours=3)
+            pub_date=now - timezone.timedelta(hours=3),
+            parsed=None,
+            frequency=timezone.timedelta(hours=3),
         )
         assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
 
@@ -331,43 +333,43 @@ class TestPodcastModel:
         podcast = Podcast(
             pub_date=now,
             parsed=now,
-            frequency=timedelta(days=30),
+            frequency=timezone.timedelta(days=30),
         )
         self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 72)
 
     def test_get_next_scheduled_update_parsed_lt_now(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(days=5),
-            parsed=now - timedelta(days=16),
-            frequency=timedelta(days=30),
+            pub_date=now - timezone.timedelta(days=5),
+            parsed=now - timezone.timedelta(days=16),
+            frequency=timezone.timedelta(days=30),
         )
         assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
 
     def test_get_next_scheduled_update_pub_date_lt_now(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(days=33),
-            parsed=now - timedelta(days=3),
-            frequency=timedelta(days=30),
+            pub_date=now - timezone.timedelta(days=33),
+            parsed=now - timezone.timedelta(days=3),
+            frequency=timezone.timedelta(days=30),
         )
         assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
 
     def test_get_next_scheduled_update_pub_date_in_future(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(days=1),
-            parsed=now - timedelta(hours=1),
-            frequency=timedelta(days=7),
+            pub_date=now - timezone.timedelta(days=1),
+            parsed=now - timezone.timedelta(hours=1),
+            frequency=timezone.timedelta(days=7),
         )
         self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 71)
 
     def test_get_next_scheduled_update_pub_date_lt_min(self):
         now = timezone.now()
         podcast = Podcast(
-            pub_date=now - timedelta(hours=3),
-            parsed=now - timedelta(minutes=30),
-            frequency=timedelta(hours=3),
+            pub_date=now - timezone.timedelta(hours=3),
+            parsed=now - timezone.timedelta(minutes=30),
+            frequency=timezone.timedelta(hours=3),
         )
 
         self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 0.5)
