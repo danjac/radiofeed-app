@@ -125,21 +125,21 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         """Returns all podcasts scheduled for feed parser update.
 
         1. If parsed is NULL, should be ASAP.
-        2. If pub date is NULL, add frequency to last parsed
-        3. If pub date is not NULL, add frequency to pub date
+        2. If pub date is NULL, if NOW + frequency > parsed
+        3. If pub date is not NULL, if NOW + frequency > pub date
         4. Scheduled time should always be in range of 1 hour-3 days.
 
         Podcasts should not be parsed more than once per hour.
         """
         now = timezone.now()
+        since = now - models.F("frequency")  # type: ignore[operator]
 
         return self.filter(
             models.Q(parsed__isnull=True)
+            | models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY)
             | models.Q(
-                models.Q(parsed__lt=now - self.model.MAX_PARSER_FREQUENCY)
-                | models.Q(
-                    parsed__lt=now - models.F("frequency"),  # type: ignore[operator]
-                ),
+                models.Q(pub_date__isnull=True, parsed__lt=since)
+                | models.Q(pub_date__isnull=False, pub_date__lt=since),
                 parsed__lt=now - self.model.MIN_PARSER_FREQUENCY,
             ),
         )

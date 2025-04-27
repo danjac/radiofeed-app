@@ -178,7 +178,7 @@ class TestPodcastManager:
             pytest.param(
                 {
                     "parsed": timedelta(hours=3),
-                    "pub_date": timedelta(days=3),
+                    "pub_date": timedelta(days=1),
                     "frequency": timedelta(hours=3),
                 },
                 True,
@@ -205,7 +205,7 @@ class TestPodcastManager:
         ],
     )
     @pytest.mark.django_db
-    def test_get_scheduled_podcasts(self, kwargs, exists):
+    def test_scheduled(self, kwargs, exists):
         now = timezone.now()
 
         parsed = kwargs.get("parsed", None)
