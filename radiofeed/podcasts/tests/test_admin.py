@@ -14,12 +14,17 @@ from radiofeed.podcasts.admin import (
     PrivateFilter,
     PromotedFilter,
     PubDateFilter,
+    RecommendationAdmin,
     ScheduledFilter,
     SubscribedFilter,
     SubscriptionAdmin,
 )
-from radiofeed.podcasts.models import Category, Podcast, Subscription
-from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
+from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
+from radiofeed.podcasts.tests.factories import (
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
 
 
 @pytest.fixture(scope="module")
@@ -295,6 +300,15 @@ class TestSubscribedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == subscribed
+
+
+class TestRecommendationAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, rf):
+        RecommendationFactory()
+        admin = RecommendationAdmin(Recommendation, AdminSite())
+        qs = admin.get_queryset(rf.get("/"))
+        assert qs.count() == 1
 
 
 class TestSubscriptionAdmin:

@@ -6,7 +6,7 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
-from radiofeed.podcasts.models import Category, Podcast, Subscription
+from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover
@@ -278,6 +278,30 @@ class PodcastAdmin(admin.ModelAdmin):
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
+
+
+@admin.register(Recommendation)
+class RecommendationAdmin(admin.ModelAdmin):
+    """Admin for podcast recommendations."""
+
+    list_display = (
+        "podcast",
+        "recommended",
+        "score",
+    )
+
+    readonly_fields = (
+        "podcast",
+        "recommended",
+        "frequency",
+        "similarity",
+        "score",
+    )
+    ordering = ("-score",)
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Subscription]:
+        """Returns queryset with related fields."""
+        return super().get_queryset(request).select_related("podcast", "recommended")
 
 
 @admin.register(Subscription)
