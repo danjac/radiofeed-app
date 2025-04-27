@@ -87,10 +87,10 @@ class TestPrivacy:
         assert200(response)
 
 
-class TestAcceptGdprCookies:
+class TestAcceptCookies:
     @pytest.mark.django_db
     def test_post(self, client):
-        response = client.post(reverse("accept_gdpr_cookies"))
+        response = client.post(reverse("accept_cookies"))
         assert200(response)
         assert "accept-cookies" in response.cookies
 

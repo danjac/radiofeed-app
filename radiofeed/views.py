@@ -63,7 +63,7 @@ def privacy(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-def accept_gdpr_cookies(_) -> HttpResponse:
+def accept_cookies(_) -> HttpResponse:
     """Handles "accept" action on GDPR cookie banner."""
     response = HttpResponse()
     response.set_cookie(

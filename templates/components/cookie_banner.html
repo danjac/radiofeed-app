@@ -17,7 +17,7 @@
                             aria-label="OK, I accept cookies"
                             title="OK, I accept cookies"
                             hx-disabled-elt="this"
-                            hx-post="{% url 'accept_gdpr_cookies' %}"
+                            hx-post="{% url 'accept_cookies' %}"
                             hx-headers="{% csrf_header %}"
                             hx-target="#{{ target }}"
                             hx-push-url="false"

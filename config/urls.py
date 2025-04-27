@@ -15,7 +15,7 @@ urlpatterns = [
     path("account/", include("allauth.urls")),
     path("about/", views.about, name="about"),
     path("privacy/", views.privacy, name="privacy"),
-    path("accept-gdpr-cookies/", views.accept_gdpr_cookies, name="accept_gdpr_cookies"),
+    path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path("covers/<int:size>/cover.webp", views.cover_image, name="cover_image"),
     path("robots.txt", views.robots, name="robots"),
     path("manifest.json", views.manifest, name="manifest"),
