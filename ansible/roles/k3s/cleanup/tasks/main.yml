@@ -1,0 +1,19 @@
+- name: Create cleanup script
+  copy:
+    dest: /usr/local/bin/k3s-daily-cleanup.sh
+    mode: '0755'
+    content: |
+        #!/bin/bash
+        # Prune unused containerd images
+        ctr images prune --all || true
+
+        # Delete old logs
+        journalctl --vacuum-time=1d || true
+
+- name: Create daily cronjob for cleanup
+  cron:
+    name: "Daily k3s cleanup"
+    user: root
+    job: "/usr/local/bin/k3s-daily-cleanup.sh"
+    minute: "0"
+    hour: "2"
