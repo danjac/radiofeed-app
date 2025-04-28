@@ -125,8 +125,8 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         """Returns all podcasts scheduled for feed parser update.
 
         1. If parsed is NULL, should be ASAP.
-        2. If pub date is NULL, if NOW + frequency > parsed
-        3. If pub date is not NULL, if NOW + frequency > pub date
+        2. If pub date is NULL, if NOW - frequency > parsed
+        3. If pub date is not NULL, if NOW - frequency > pub date
         4. Scheduled time should always be in range of 1 hour-3 days.
 
         Podcasts should not be parsed more than once per hour.
