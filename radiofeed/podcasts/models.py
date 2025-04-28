@@ -127,9 +127,9 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         1. If parsed is NULL, should be ASAP.
         2. If pub date is NULL, if NOW - frequency > parsed
         3. If pub date is not NULL, if NOW - frequency > pub date
-        4. Scheduled time should always be in range of 1 hour-3 days.
+        4. If parsed more than 3 days ago
 
-        Podcasts should not be parsed more than once per hour.
+        Last parsed time must be at least one hour.
         """
         now = timezone.now()
         since = now - models.F("frequency")  # type: ignore[operator]
