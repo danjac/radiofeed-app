@@ -152,17 +152,20 @@ class TestPodcastManager:
                 id="parsed is None",
             ),
             pytest.param(
-                {"frequency": timezone.timedelta(hours=3)},
-                True,
-                id="parsed is None",
-            ),
-            pytest.param(
                 {
                     "parsed": timezone.timedelta(hours=3),
                     "frequency": timezone.timedelta(hours=1),
                 },
                 True,
-                id="pub date is None",
+                id="pub date is None, parsed more than now-frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": timezone.timedelta(minutes=30),
+                    "frequency": timezone.timedelta(hours=1),
+                },
+                False,
+                id="pub date is None, parsed less than now-frequency",
             ),
             pytest.param(
                 {
@@ -171,7 +174,7 @@ class TestPodcastManager:
                     "frequency": timezone.timedelta(hours=3),
                 },
                 False,
-                id="just parsed",
+                id="pub date is not None, just parsed",
             ),
             pytest.param(
                 {
