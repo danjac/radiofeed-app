@@ -1,2 +1,6 @@
-<c-vars hint="" class />
-{% if hint %}<div class="text-gray-600 dark:text-gray-300 {{ class }}" {{ attrs }}>{{ hint }}</div>{% endif %}
+<c-vars hint class />
+{% if hint %}
+    <div class="text-gray-600 dark:text-gray-300 {{ class }}" {{ attrs }}>
+        {{ hint }}
+    </div>
+{% endif %}
