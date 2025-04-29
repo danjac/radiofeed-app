@@ -8,7 +8,7 @@ cronjobs:
       command: "{{ manage_cmd }} parse_feeds"
 
     - name: "create-recommendations"
-      schedule: "20 15 * * *" # 3:20 PM every day
+      schedule: "20 4 * * *" # 4:20 AM every day
       command: "{{ manage_cmd }} create_recommendations"
 
     - name: "send-recommendations"
