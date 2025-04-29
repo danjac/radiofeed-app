@@ -8,18 +8,13 @@
 {% block content %}
     <c-account.header current="preferences" />
     {% partialdef form inline=True %}
-        <c-form
-            :hx-post="request.path"
-            hx-target="this"
-            hx-swap="outerHTML"
-            id="preferences-form"
-        >
+        <c-form.hx-form id="preferences-form">
             {{ form }}
             <c-form.buttons>
                 <c-button icon="check"
                           variant="primary"
                           label="Save Changes" />
             </c-form.buttons>
-        </c-form>
+        </c-form.hx-form>
     {% endpartialdef form %}
 {% endblock content %}

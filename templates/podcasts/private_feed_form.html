@@ -7,12 +7,7 @@
 {% block content %}
     <c-header title="Private Feeds" />
     {% partialdef form inline=True %}
-        <c-form
-            :hx-post="request.path"
-            hx-target="this"
-            hx-swap="outerHTML"
-            id="private-feed-form"
-        >
+        <c-form.hx-form id="private-feed-form">
             {{ form }}
             <c-form.buttons>
                 <c-button icon="plus"
@@ -27,7 +22,7 @@
                           hx-target="#content"
                 />
             </c-form.buttons>
-        </c-form>
+        </c-form.hx-form>
     {% endpartialdef form %}
     <div class="mt-3 space-y-3 text-center prose sm:text-start dark:prose-invert">
         <p>

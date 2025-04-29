@@ -1,0 +1,9 @@
+{# djlint: off #}
+<c-vars :action=request.path hx_target="this" hx_swap="outerHTML" />
+<c-form hx-post="{{ action }}"
+        hx-target="{{ hx_target }}"
+        hx-swap="{{ hx_swap }}"
+        action="{{ action }}"
+        :attrs="attrs">
+  {{ slot }}
+</c-form>
