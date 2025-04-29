@@ -7,7 +7,11 @@
 {% block content %}
     <c-header title="Sign Up" />
     <div class="space-y-3">
-        {% include "socialaccount/buttons.html" %}
+        <c-socialaccount.buttons>
+            <c-slot name="hint">
+                Login or sign up with
+            </c-slot>
+        </c-socialaccount.buttons>
         <p class="mb-3">
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
