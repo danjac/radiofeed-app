@@ -9,7 +9,7 @@
     <c-podcasts.header :podcast="podcast" current="episodes">
         {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
             {% if request.search or season or num_episodes > page_size %}
-                <c-header.nav class="justify-center items-center space-y-3 sm:flex sm:justify-start sm:space-y-0 sm:space-x-3 md:justify-end">
+                <c-header.nav>
                     {% if request.search %}
                         <c-header.nav.item>
                             <c-search.button url="{% url 'episodes:search_episodes' %}"
