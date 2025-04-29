@@ -38,13 +38,13 @@
                               label="Remove" />
                 </c-form.buttons>
             </c-form>
-            <hr />
+            <hr class="border" />
         {% else %}
             <p>You currently have no social network accounts connected to this account.</p>
         {% endif %}
         <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
-            <socialaccount.buttons />
+            <c-socialaccount.buttons />
         </ul>
     </div>
     {% providers_media_js %}
