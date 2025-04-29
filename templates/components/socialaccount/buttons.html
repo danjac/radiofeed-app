@@ -1,5 +1,6 @@
 {% load socialaccount %}
 {% get_providers as providers %}
+<c-vars process />
 {% if providers %}
     <div class="flex items-center space-x-3">
         {% if hint %}
@@ -7,7 +8,7 @@
         {% endif %}
         {% for provider in providers %}
             <form method="post"
-                  action="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
+                  action="{% provider_login_url provider.id process=process %}"
                   hx-disable="true">
                 {% csrf_token %}
                 <button class="flex items-center btn btn-default btn-outline">
