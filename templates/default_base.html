@@ -35,8 +35,8 @@
               hx-target="#content"
               hx-swap="innerHTML show:window:top"
               hx-indicator="#hx-indicator">
-            <c-hx-indicator />
-            <c-messages />
+            {% include "hx_indicator.html" %}
+            {% include "messages.html" %}
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     <c-navbar />
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 <c-audio-player :audio-log="request.player.audio_log" />
-                <c-cookie-banner />
+                {% cookie_banner %}
             </div>
             {% partialdef scripts inline=True %}
                 {% if user.is_authenticated %}
