@@ -13,24 +13,20 @@
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
         <c-form hx-disable="true">
-            <c-slot name="fields">
-                {% if redirect_field_value %}
-                    <input type="hidden"
-                           name="{{ redirect_field_name }}"
-                           value="{{ redirect_field_value }}" />
-                {% endif %}
-                <div class="grid-cols-2 gap-3 space-y-3 sm:grid sm:space-y-0">
-                    {{ form.username.as_field_group }}
-                    {{ form.email.as_field_group }}
-                    {{ form.password1.as_field_group }}
-                    {{ form.password2.as_field_group }}
-                </div>
-            </c-slot>
-            <c-slot name="buttons">
-                <c-form.buttons>
-                    <c-button icon="plus" variant="primary" label="Sign Up"/>
-                </c-form.buttons>
-            </c-slot>
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}" />
+            {% endif %}
+            <div class="grid-cols-2 gap-3 space-y-3 sm:grid sm:space-y-0">
+                {{ form.username.as_field_group }}
+                {{ form.email.as_field_group }}
+                {{ form.password1.as_field_group }}
+                {{ form.password2.as_field_group }}
+            </div>
+            <c-form.buttons>
+                <c-button icon="plus" variant="primary" label="Sign Up"/>
+            </c-form.buttons>
         </c-form>
     </div>
 {% endblock content %}

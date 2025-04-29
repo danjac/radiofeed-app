@@ -28,18 +28,17 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline=True %}
-                <c-form :form="upload_form"
-                        :hx-post="request.path"
-                        hx-target="this"
-                        hx-swap="outerHTML"
-                        hx-encoding="multipart/form-data"
-                        enctype="multipart/form-data"
-                        id="import-feeds-form">
-                    <c-slot name="buttons">
-                        <c-form.buttons>
-                            <c-button icon="arrow-up-tray" label="Upload OPML" />
-                        </c-form.buttons>
-                    </c-slot>
+                <c-form
+                    :hx-post="request.path"
+                    hx-target="this"
+                    hx-swap="outerHTML"
+                    hx-encoding="multipart/form-data"
+                    enctype="multipart/form-data"
+                    id="import-feeds-form">
+                    {{ upload_form }}
+                    <c-form.buttons>
+                        <c-button icon="arrow-up-tray" label="Upload OPML" />
+                    </c-form.buttons>
                 </c-form>
             {% endpartialdef form %}
         </div>

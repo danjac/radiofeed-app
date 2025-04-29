@@ -13,13 +13,11 @@
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
             <c-form action="{% url 'account_confirm_email' key=confirmation.key %}" class="flex justify-center sm:justify-start flex-column">
-                <c-slot name="buttons">
-                    <c-form.buttons>
-                        <c-button icon="check" variant="primary">
-                            Confirm E-Mail
-                        </c-button>
-                    </c-form.buttons>
-                </c-slot>
+                <c-form.buttons>
+                    <c-button icon="check" variant="primary">
+                        Confirm E-Mail
+                    </c-button>
+                </c-form.buttons>
             </c-form>
     {% else %}
         <p>

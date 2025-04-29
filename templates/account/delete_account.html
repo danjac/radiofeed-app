@@ -9,15 +9,13 @@
             <c-form hx-disable="true"
                     onsubmit="return confirm('Are you sure?')">
 
-                <c-slot name="buttons">
-                    <c-form.buttons>
-                        <c-button icon="trash" variant="danger"
-                                  name="confirm-delete"
-                                  value="true">
-                            Yes, delete my account
-                        </c-button>
-                    </c-form.buttons>
-                </c-slot>
+                <c-form.buttons>
+                    <c-button icon="trash" variant="danger"
+                              name="confirm-delete"
+                              value="true">
+                        Yes, delete my account
+                    </c-button>
+                </c-form.buttons>
             </c-form>
         </div>
     {% else %}

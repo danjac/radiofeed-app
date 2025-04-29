@@ -23,26 +23,22 @@
             {% endif %}
         </p>
         <c-form hx-disable="true">
-            <c-slot name="fields">
-                {% if redirect_field_value %}
-                    <input type="hidden"
-                           name="{{ redirect_field_name }}"
-                           value="{{ redirect_field_value }}" />
-                {% endif %}
-            </c-slot>
-            <c-slot name="buttons">
-                <c-form.buttons>
-                    <c-button icon="arrow-right-on-rectangle"
-                              type="submit"
-                              variant="primary">
-                        {% if process == "connect" %}
-                            Connect
-                        {% else %}
-                            Sign In
-                        {% endif %}
-                    </c-button>
-                </c-form.buttons>
-            </c-slot>
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}" />
+            {% endif %}
+            <c-form.buttons>
+                <c-button icon="arrow-right-on-rectangle"
+                          type="submit"
+                          variant="primary">
+                    {% if process == "connect" %}
+                        Connect
+                    {% else %}
+                        Sign In
+                    {% endif %}
+                </c-button>
+            </c-form.buttons>
         </c-form>
     {% endwith %}
 {% endblock content %}

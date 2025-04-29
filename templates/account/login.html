@@ -13,21 +13,17 @@
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.
         </p>
         <c-form hx-disable="true">
-            <c-slot name="fields">
-                {% if redirect_field_value %}
-                    <input type="hidden"
-                           name="{{ redirect_field_name }}"
-                           value="{{ redirect_field_value }}" />
-                {% endif %}
-                {{ form }}
-            </c-slot>
-            <c-slot name="buttons">
-                <c-form.buttons>
-                    <c-button icon="arrow-right-on-rectangle" variant="primary">
-                        Sign In
-                    </c-button>
-                </c-form.buttons>
-            </c-slot>
+            {% if redirect_field_value %}
+                <input type="hidden"
+                       name="{{ redirect_field_name }}"
+                       value="{{ redirect_field_value }}" />
+            {% endif %}
+            {{ form }}
+            <c-form.buttons>
+                <c-button icon="arrow-right-on-rectangle" variant="primary">
+                    Sign In
+                </c-button>
+            </c-form.buttons>
         </c-form>
     </div>
 {% endblock content %}

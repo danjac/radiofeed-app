@@ -12,22 +12,18 @@
                 You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form:
             </p>
             <c-form hx-disable="true">
-                <c-slot name="fields">
-                    {% if redirect_field_value %}
-                        <input type="hidden"
-                               name="{{ redirect_field_name }}"
-                               value="{{ redirect_field_value }}" />
-                    {% endif %}
-                    {{ form }}
-                </c-slot>
-                <c-slot name="buttons">
-                    <c-form.buttons>
-                        <c-button icon="plus"
-                                  type="submit"
-                                  variant="primary"
-                                  label="Sign Up" />
-                    </c-form.buttons>
-                </c-slot>
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                           name="{{ redirect_field_name }}"
+                           value="{{ redirect_field_value }}" />
+                {% endif %}
+                {{ form }}
+                <c-form.buttons>
+                    <c-button icon="plus"
+                              type="submit"
+                              variant="primary"
+                              label="Sign Up" />
+                </c-form.buttons>
             </c-form>
         </div>
     {% endwith %}
