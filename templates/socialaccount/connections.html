@@ -44,8 +44,7 @@
         {% endif %}
         <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
-            {% get_providers as socialaccount_providers %}
-            <c-socialaccount.providers :providers="socialaccount_providers" process="connect" />
+            {% include "socialaccount/buttons.html" %}
         </ul>
     </div>
     {% providers_media_js %}

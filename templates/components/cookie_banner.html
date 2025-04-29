@@ -1,3 +1,4 @@
+{% accept_cookies as cookies_accepted %}
 {% if not cookies_accepted %}
     {% with target="cookie-banner" %}
         <div class="flex fixed bottom-0 z-50 justify-center py-3 w-full text-white bg-black opacity-90"
