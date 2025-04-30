@@ -16,6 +16,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser) -> None:
         """Add arguments to the command"""
         parser.add_argument(
+            "-n",
             "--num_podcasts",
             type=int,
             default=6,
