@@ -23,7 +23,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options) -> None:
-        """Implemetation of command"""
+        """Implementation of command"""
         connection = get_connection()
         execute_thread_pool(
             lambda recipient: self._send_recommendations_email(
