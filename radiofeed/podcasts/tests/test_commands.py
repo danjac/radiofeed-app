@@ -1,5 +1,5 @@
 import pytest
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.tests.factories import (
@@ -28,7 +28,8 @@ class TestFetchItunesChart:
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=itunes.ItunesError("Error"),
         )
-        assert call_command("fetch_itunes_chart", "gb") == 1
+        with pytest.raises(CommandError):
+            assert call_command("fetch_itunes_chart", "gb")
         patched.assert_called()
 
 
