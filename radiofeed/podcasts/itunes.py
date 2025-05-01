@@ -22,6 +22,10 @@ class Feed:
     title: str
     image: str
 
+    def __str__(self) -> str:
+        """Returns title of feed"""
+        return self.title
+
 
 def search(
     client: Client,

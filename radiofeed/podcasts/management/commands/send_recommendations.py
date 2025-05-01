@@ -1,35 +1,36 @@
+from typing import Annotated
+
 from allauth.account.models import EmailAddress
 from django.core.mail import get_connection
-from django.core.management.base import BaseCommand, CommandParser
 from django.db import transaction
+from django_typer.management import TyperCommand
+from typer import Option
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
 
 
-class Command(BaseCommand):
-    """Implemtation of command to send podcast recommendations"""
+class Command(TyperCommand):
+    """Management command to send podcast recommendations to users."""
 
-    help = "Send podcast recommendations to users"
-
-    def add_arguments(self, parser: CommandParser) -> None:
-        """Add arguments to the command"""
-        parser.add_argument(
-            "-n",
-            "--num_podcasts",
-            type=int,
-            default=6,
-            help="Number of podcasts to recommend",
-        )
-
-    def handle(self, **options) -> None:
-        """Implementation of command"""
+    def handle(
+        self,
+        num_podcasts: Annotated[
+            int,
+            Option(
+                "-n",
+                "--num-podcasts",
+                help="Number of podcasts to recommend",
+            ),
+        ] = 6,
+    ) -> None:
+        """Send podcast recommendations to users"""
         connection = get_connection()
         execute_thread_pool(
             lambda recipient: self._send_recommendations_email(
                 recipient,
-                options["num_podcasts"],
+                num_podcasts,
                 connection=connection,
             ),
             get_recipients(),
@@ -48,9 +49,6 @@ class Command(BaseCommand):
             )
         )[:num_podcasts]:
             with transaction.atomic():
-                self.stdout.write(
-                    f"Sending {len(podcasts)} recommendations to {recipient.email}"
-                )
                 send_notification_email(
                     recipient,
                     f"Hi, {recipient.user.name}, here are some podcasts you might like!",
@@ -62,3 +60,9 @@ class Command(BaseCommand):
                 )
 
                 recipient.user.recommended_podcasts.add(*podcasts)
+
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"{len(podcasts)} recommendations sent to {recipient.email}"
+                    ),
+                )

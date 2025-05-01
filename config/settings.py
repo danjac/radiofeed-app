@@ -41,6 +41,7 @@ INSTALLED_APPS: list[str] = [
     "django_htmx",
     "django_linear_migrations",
     "django_tailwind_cli",
+    "django_typer",
     "django_version_checks",
     "health_check",
     "health_check.db",

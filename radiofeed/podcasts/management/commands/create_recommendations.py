@@ -1,19 +1,17 @@
-from django.core.management.base import BaseCommand
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
+from django_typer.management import TyperCommand
 
 from radiofeed.podcasts import recommender
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
 
-class Command(BaseCommand):
-    """Command implementation"""
+class Command(TyperCommand):
+    """Generates podcast recommendations based on similarity."""
 
-    help = "Generate podcast recommendations"
-
-    def handle(self, **options) -> None:
-        """Command implementation"""
+    def handle(self) -> None:
+        """Generate podcast recommendations"""
         execute_thread_pool(self._create_recommendations, self._get_languages())
 
     def _create_recommendations(self, language: str) -> None:

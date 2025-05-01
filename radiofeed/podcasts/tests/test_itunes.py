@@ -208,6 +208,21 @@ MOCK_CHART_RESULT = {
 }
 
 
+class TestItunesFeed:
+    def test_str(self):
+        assert (
+            str(
+                itunes.Feed(
+                    image="http://example.com/image.jpg",
+                    rss="https://feeds.fireside.fm/testandcode/rss",
+                    title="Test & Code",
+                    url="https://example.com",
+                ),
+            )
+            == "Test & Code"
+        )
+
+
 class TestFetchTopChart:
     @pytest.fixture
     def good_client(self):
