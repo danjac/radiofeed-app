@@ -37,9 +37,11 @@ def search(
     if feeds := _fetch_feeds(
         client,
         "https://itunes.apple.com/search",
-        term=search_term,
-        limit=limit,
-        media="podcast",
+        {
+            "term": search_term,
+            "limit": limit,
+            "media": "podcast",
+        },
     ):
         Podcast.objects.bulk_create(
             [
@@ -85,7 +87,9 @@ def fetch_chart(
     if feeds := _fetch_feeds(
         client,
         "https://itunes.apple.com/lookup",
-        id=",".join(itunes_ids),
+        {
+            "id": ",".join(itunes_ids),
+        },
     ):
         with transaction.atomic():
             # demote all promoted podcasts
@@ -116,38 +120,36 @@ def fetch_chart(
     return feeds
 
 
-def _fetch_feeds(client: Client, url: str, **params) -> list[Feed]:
+def _fetch_feeds(client: Client, url: str, params: dict) -> list[Feed]:
     """Fetches and parses feeds from iTunes API."""
     return [
         feed
         for feed in [
             _parse_feed(result)
-            for result in _fetch_json(client, url, **params).get("results", [])
+            for result in _fetch_json(client, url, params).get("results", [])
         ]
         if feed
     ]
 
 
-def _fetch_itunes_ids(client: Client, url: str, **params) -> set[str]:
+def _fetch_itunes_ids(client: Client, url: str) -> set[str]:
     """Fetches podcast IDs from results."""
     return {
         itunes_id
         for itunes_id in [
             result.get("id")
-            for result in _fetch_json(client, url, **params)
-            .get("feed", {})
-            .get("results", [])
+            for result in _fetch_json(client, url).get("feed", {}).get("results", [])
         ]
         if itunes_id
     }
 
 
-def _fetch_json(client: Client, url: str, **params) -> dict:
+def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
     """Fetches JSON response from the given URL."""
     try:
         return client.get(
             url,
-            params=params,
+            params=params or {},
             headers={"Accept": "application/json"},
         ).json()
     except httpx.HTTPError as e:
