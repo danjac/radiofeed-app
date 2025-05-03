@@ -2,6 +2,7 @@
 
 <c-card :url="podcast.get_absolute_url"
         :title="podcast.cleaned_title"
-        :cover-url="podcast.cover_url">
+        :cover-url="podcast.cover_url"
+        :attrs="attrs">
     {{ podcast.pub_date|date:"DATE_FORMAT" }}
 </c-card>
