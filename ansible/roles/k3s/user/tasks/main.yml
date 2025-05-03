@@ -10,6 +10,8 @@
       src: /etc/rancher/k3s/k3s.yaml
       dest: "{{ kubeconfig }}"
       remote_src: true
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
       mode: "u+rw"
 
 - name: Add KUBECONFIG environment variable to .bashrc and .profile

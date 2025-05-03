@@ -78,6 +78,7 @@
         ansible.builtin.set_fact:
             image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
         changed_when: false
+        when: current_image is defined and current_image.stdout is defined
 
       - name: Create a temporary directory
         ansible.builtin.tempfile:
