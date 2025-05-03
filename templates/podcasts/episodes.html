@@ -7,47 +7,49 @@
 
 {% block content %}
     <c-podcasts.header :podcast="podcast" current="episodes">
-        {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
-            {% if request.search or season or num_episodes > page_size %}
-                <c-header.nav>
-                    {% if request.search %}
-                        <c-header.nav.item>
-                            <c-search.button url="{% url 'episodes:search_episodes' %}"
-                                             label="Search Episodes"
-                            />
-                        </c-header.nav.item>
-                    {% elif season and season in podcast.seasons %}
-                        <c-header.nav.item>
-                            <c-header.nav.dropdown id="seasons-dropdown"
-                                                   label="Season {{ season }}">
-                                <c-header.nav.dropdown.item url="{{ request.path }}"
-                                                            label="All Seasons" />
-                                {% for season in podcast.seasons %}
-                                    <c-header.nav.dropdown.item url="{{ request.path }}{% querystring season=season %}"
-                                                                label="Season {{ season }}"
-                                    />
-                                {% endfor %}
-                            </c-header.nav.dropdown>
-                        </c-header.nav.item>
-                    {% else %}
-                        <c-header.nav.item>
-                            {% if ordering == "asc" %}
-                                <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
-                                    Newest First</a>
-                            {% else %}
-                                <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
-                                    Oldest First</a>
-                            {% endif %}
-                        </c-header.nav.item>
-                    {% endif %}
-                    {% if request.search or num_episodes > page_size %}
-                        <c-header.nav.item>
-                            <c-search.form placeholder="Search: Podcast" clearable />
-                        </c-header.nav.item>
-                    {% endif %}
-                </c-header.nav>
-            {% endif %}
-        {% endwith %}
+        {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
+            {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
+                {% if request.search or season or num_episodes > page_size %}
+                    <c-header.nav>
+                        {% if request.search %}
+                            <c-header.nav.item>
+                                <c-search.button url="{% url 'episodes:search_episodes' %}"
+                                                 label="Search Episodes"
+                                />
+                            </c-header.nav.item>
+                        {% elif season and season in podcast.seasons %}
+                            <c-header.nav.item>
+                                <c-header.nav.dropdown id="seasons-dropdown"
+                                                       label="Season {{ season }}">
+                                    <c-header.nav.dropdown.item url="{{ request.path }}"
+                                                                label="All Seasons" />
+                                    {% for season in podcast.seasons %}
+                                        <c-header.nav.dropdown.item url="{{ request.path }}{% querystring season=season %}"
+                                                                    label="Season {{ season }}"
+                                        />
+                                    {% endfor %}
+                                </c-header.nav.dropdown>
+                            </c-header.nav.item>
+                        {% else %}
+                            <c-header.nav.item>
+                                {% if ordering == "asc" %}
+                                    <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
+                                        Newest First</a>
+                                {% else %}
+                                    <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
+                                        Oldest First</a>
+                                {% endif %}
+                            </c-header.nav.item>
+                        {% endif %}
+                        {% if request.search or num_episodes > page_size %}
+                            <c-header.nav.item>
+                                <c-search.form placeholder="Search: Podcast" clearable />
+                            </c-header.nav.item>
+                        {% endif %}
+                    </c-header.nav>
+                {% endif %}
+            {% endwith %}
+        {% endcache %}
     </c-podcasts.header>
     {% partialdef pagination inline=True %}
         {% cache cache_timeout podcast-episodes request.get_full_path %}
