@@ -6,7 +6,10 @@
     {% else %}
         {% with widget_type=field|widget_type %}
             {% if widget_type == "checkboxinput" %}
-                <c-form.checkbox :field=field />
+                <div class="flex items-center space-x-3 w-full {{ class }}">
+                    {% render_field field class="form-checkbox" %}
+                    <c-form.label :field=field />
+                </div>
             {% else %}
                 <c-form.label :field=field />
                 {% render_field field class="form-input" %}
