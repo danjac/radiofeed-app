@@ -1,0 +1,14 @@
+<c-vars
+    class="form-input"
+    value
+    checked
+    readonly
+    required
+/>
+<input class="{{ class }}"
+       {% if value %}value="{{ value|stringformat:'s' }}"{% endif %}
+       {% if required %}required{% endif %}
+       {% if readonly %}readonly{% endif %}
+       {% if checked %}checked{% endif %}
+       {{ attrs }}
+/>

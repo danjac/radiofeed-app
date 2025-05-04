@@ -1,18 +1,33 @@
-{% load widget_tweaks %}
 <c-vars field class />
 <div class="space-y-3 form-control {{ class }}" {{ attrs }}>
     {% if slot %}
         {{ slot }}
     {% else %}
-        {% with widget_type=field|widget_type %}
-            {% if widget_type == "checkboxinput" %}
-                <div class="flex items-center space-x-3 w-full {{ class }}">
-                    {% render_field field class="form-checkbox" %}
+        {% with widget=field|widget required=field|required %}
+            {% if widget.input_type == "checkbox" %}
+                <div class="flex items-center space-x-3 w-full">
+                    <c-form.input
+                        class="form-checkbox"
+                        type="checkbox"
+                        :name="field.name"
+                        :id="field.id_for_label"
+                        :required="required"
+                        :checked="field.value"
+                        :value="1"
+                        :attrs="widget.attrs"
+                    />
                     <c-form.label :field=field />
                 </div>
             {% else %}
                 <c-form.label :field=field />
-                {% render_field field class="form-input" %}
+                <c-form.input
+                    :name="field.name"
+                    :id="field.id_for_label"
+                    :type="widget.input_type"
+                    :value="field.value"
+                    :required="required"
+                    :attrs="widget.attrs"
+                />
             {% endif %}
         {% endwith %}
     {% endif %}

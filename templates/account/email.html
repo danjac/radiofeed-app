@@ -7,56 +7,58 @@
 {% block content %}
     <c-account.header current="email" />
     <div class="space-y-3">
-        {% with emailaddresses=user.emailaddress_set.all num_addresses=user.emailaddress_set.count %}
-            {% if num_addresses %}
-                <p>The following e-mail addresses are associated with your account:</p>
-                <c-form id="email-addresses"
-                        action="{% url 'account_email' %}">
-                    {% for emailaddress in emailaddresses %}
-                        <div class="flex items-center space-x-3{% if emailaddress.primary or num_addresses == 1 %} font-bold{% endif %}">
-                            <input id="email_radio_{{ forloop.counter }}"
-                                   type="radio"
-                                   name="email"
-                                   class="form-radio"
-                                   {% if emailaddress.primary or num_addresses == 1 %}checked="checked"{% endif %}
-                                   value="{{ emailaddress.email }}" />
-                            <label for="email_radio_{{ forloop.counter }}"
-                                   class="flex items-center space-x-3">
-                                <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
-                                {% if emailaddress.verified %}
-                                    {% heroicon_mini "check" class="text-green-600" title="Verified" %}
-                                {% endif %}
-                            </label>
-                        </div>
-                    {% endfor %}
-                    <c-form.buttons>
-                        {% if num_addresses > 1 %}
-                            <c-button icon="hand-thumb-up"
-                                      variant="primary"
-                                      name="action_primary"
+        {% with emailaddresses=user.emailaddress_set.all %}
+            {% with num_addresses=emailaddresses|length %}
+                {% if num_addresses %}
+                    <p>The following e-mail addresses are associated with your account:</p>
+                    <c-form id="email-addresses"
+                            action="{% url 'account_email' %}">
+                        {% for emailaddress in emailaddresses %}
+                            <div class="flex items-center space-x-3">
+                                <c-form.input type="radio"
+                                              name="email"
+                                              id="email_radio_{{ forloop.counter }}"
+                                              class="form-radio"
+                                              :checked="emailaddress.primary"
+                                              :value="emailaddress.email" />
+                                <label for="email_radio_{{ forloop.counter }}"
+                                       class="flex items-center space-x-3">
+                                    <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
+                                    {% if emailaddress.verified %}
+                                        {% heroicon_mini "check" class="text-green-600" title="Verified" %}
+                                    {% endif %}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        <c-form.buttons>
+                            {% if num_addresses > 1 %}
+                                <c-button icon="hand-thumb-up"
+                                          variant="primary"
+                                          name="action_primary"
+                                          value="1">
+                                    Primary
+                                </c-button>
+                                <c-button icon="trash"
+                                          variant="danger"
+                                          name="action_remove"
+                                          value="1">
+                                    Remove
+                                </c-button>
+                            {% endif %}
+                            <c-button icon="envelope"
+                                      name="action_send"
                                       value="1">
-                                Primary
+                                Re-Verify
                             </c-button>
-                            <c-button icon="trash"
-                                      variant="danger"
-                                      name="action_remove"
-                                      value="1">
-                                Remove
-                            </c-button>
-                        {% endif %}
-                        <c-button icon="envelope"
-                                  name="action_send"
-                                  value="1">
-                            Re-Verify
-                        </c-button>
-                    </c-form.buttons>
-                </c-form>
-            {% else %}
-                <p>
-                    <strong>Warning:</strong>
-                    You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
-                </p>
-            {% endif %}
+                        </c-form.buttons>
+                    </c-form>
+                {% else %}
+                    <p>
+                        <strong>Warning:</strong>
+                        You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc.
+                    </p>
+                {% endif %}
+            {% endwith %}
         {% endwith %}
         {% if can_add_email %}
             <hr class="border"/>
