@@ -38,8 +38,8 @@ class DatabaseSafeThreadPoolExecutor(futures.ThreadPoolExecutor):
         for future in futures:
             try:
                 future.result()
-            except Exception as e:
-                logger.exception(e)
+            except Exception as exc:
+                logger.exception(exc)
 
         return futures
 

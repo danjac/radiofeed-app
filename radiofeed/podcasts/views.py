@@ -98,8 +98,8 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
                     "feeds": feeds,
                 },
             )
-        except itunes.ItunesError as e:
-            messages.error(request, f"Failed to search iTunes: {e}")
+        except itunes.ItunesError as exc:
+            messages.error(request, f"Failed to search iTunes: {exc}")
 
     return redirect("podcasts:discover")
 

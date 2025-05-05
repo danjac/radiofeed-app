@@ -30,5 +30,5 @@ class DatabaseHeartBeatHealthCheck(BaseHealthCheckBackend):
                 raise ServiceUnavailable(
                     "Health Check query did not return the expected result."
                 )
-        except Exception as e:
-            raise ServiceUnavailable(f"Database health check failed: {e}") from e
+        except Exception as exc:
+            raise ServiceUnavailable(f"Database health check failed: {exc}") from exc

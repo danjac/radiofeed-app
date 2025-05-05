@@ -152,8 +152,8 @@ def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
             params=params or {},
             headers={"Accept": "application/json"},
         ).json()
-    except httpx.HTTPError as e:
-        raise ItunesError(str(e)) from e
+    except httpx.HTTPError as exc:
+        raise ItunesError(str(exc)) from exc
 
 
 def _parse_feed(feed: dict) -> Feed | None:

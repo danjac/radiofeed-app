@@ -32,5 +32,5 @@ def handle(
     try:
         for feed in itunes.fetch_chart(get_client(), country, limit=limit):
             typer.secho(f"Fetched iTunes feed: {feed}", fg=typer.colors.GREEN)
-    except itunes.ItunesError as e:
-        raise CommandError(f"Unable to fetch itunes chart: {e}") from e
+    except itunes.ItunesError as exc:
+        raise CommandError(f"Unable to fetch itunes chart: {exc}") from exc

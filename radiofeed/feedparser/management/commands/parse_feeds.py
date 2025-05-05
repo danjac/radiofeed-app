@@ -38,8 +38,8 @@ def _parse_feed(podcast: Podcast, client: Client) -> None:
     try:
         parse_feed(podcast, client)
         typer.secho(f"{podcast}: Success", fg=typer.colors.GREEN)
-    except FeedParserError as error:
-        typer.secho(f"{podcast}: {error.parser_error.label}", fg=typer.colors.RED)
+    except FeedParserError as exc:
+        typer.secho(f"{podcast}: {exc.parser_error.label}", fg=typer.colors.RED)
 
 
 def _get_scheduled_podcasts(limit: int) -> QuerySet[Podcast]:
