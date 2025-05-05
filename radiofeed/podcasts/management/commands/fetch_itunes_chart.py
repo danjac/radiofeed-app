@@ -1,36 +1,36 @@
-from typing import Annotated
-
-import typer
-from django.core.management import CommandError
-from django_typer.management import Typer
+from django.core.management import BaseCommand, CommandError, CommandParser
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 
-app = Typer()
 
+class Command(BaseCommand):
+    """Command implementation."""
 
-@app.command()
-def handle(
-    country: Annotated[
-        str,
-        typer.Argument(
+    def add_arguments(self, parser: CommandParser) -> None:
+        """Add command line arguments."""
+        parser.add_argument(
+            "country",
+            type=str,
             help="Country code of iTunes chart",
-        ),
-    ],
-    limit: Annotated[
-        int,
-        typer.Option(
+        )
+        parser.add_argument(
             "-l",
             "--limit",
+            type=int,
+            default=30,
             help="Number of feeds to fetch",
-        ),
-    ] = 30,
-) -> None:
-    """Fetch latest iTunes chart feeds"""
+        )
 
-    try:
-        for feed in itunes.fetch_chart(get_client(), country, limit=limit):
-            typer.secho(f"Fetched iTunes feed: {feed}", fg=typer.colors.GREEN)
-    except itunes.ItunesError as exc:
-        raise CommandError(f"Unable to fetch itunes chart: {exc}") from exc
+    def handle(self, country: str, **options) -> None:
+        """Handle implementation."""
+
+        try:
+            for feed in itunes.fetch_chart(
+                get_client(),
+                country,
+                limit=options["limit"],
+            ):
+                self.stdout.write(self.style.SUCCESS(f"Fetched iTunes feed: {feed}"))
+        except itunes.ItunesError as exc:
+            raise CommandError(f"Unable to fetch itunes chart: {exc}") from exc
