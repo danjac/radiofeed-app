@@ -1,36 +1,12 @@
 <c-vars field class />
-<div class="space-y-3 form-control {{ class }}" {{ attrs }}>
+<fieldset class="space-y-3 form-control {{ class }}" {{ attrs }}>
     {% if slot %}
         {{ slot }}
     {% else %}
-        {% with widget=field|widget required=field|required %}
-            {% if widget.input_type == "checkbox" %}
-                <div class="flex items-center space-x-3 w-full">
-                    <c-form.input
-                        class="form-checkbox"
-                        type="checkbox"
-                        :name="field.name"
-                        :id="field.id_for_label"
-                        :required="required"
-                        :checked="field.value"
-                        :value="1"
-                        :attrs="widget.attrs"
-                    />
-                    <c-form.label :field=field />
-                </div>
-            {% else %}
-                <c-form.label :field=field />
-                <c-form.input
-                    :name="field.name"
-                    :id="field.id_for_label"
-                    :type="widget.input_type"
-                    :value="field.value"
-                    :required="required"
-                    :attrs="widget.attrs"
-                />
-            {% endif %}
+        {% with widget=field|widget %}
+            <c-component is="form.widgets.{{ widget.input_type }}" :field="field" />
         {% endwith %}
     {% endif %}
     <c-form.errors :errors="field.errors" />
     <c-form.hint :hint="field.help_text" />
-</div>
+</fieldset>
