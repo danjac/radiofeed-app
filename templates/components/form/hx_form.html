@@ -1,12 +1,12 @@
 <c-vars
-    :action="request.path"
-    hx-target="this"
-    hx-swap="outerHTML"
+    :hx_post="request.path"
+    hx_target="this"
+    hx_swap="outerHTML"
 />
-<c-form :hx-post="action"
+<c-form :hx-post="hx_post"
         :hx-target="hx_target"
         :hx-swap="hx_swap"
-        :action="action"
+        :action="hx_post"
         :attrs="attrs">
     {{ slot }}
 </c-form>
