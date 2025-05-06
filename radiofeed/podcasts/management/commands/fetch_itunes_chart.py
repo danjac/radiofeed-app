@@ -33,4 +33,4 @@ class Command(BaseCommand):
             ):
                 self.stdout.write(self.style.SUCCESS(f"Fetched iTunes feed: {feed}"))
         except itunes.ItunesError as exc:
-            raise CommandError(f"Unable to fetch itunes chart: {exc}") from exc
+            raise CommandError(str(exc)) from exc
