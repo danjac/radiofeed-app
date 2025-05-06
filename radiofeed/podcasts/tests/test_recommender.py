@@ -1,7 +1,7 @@
 import pytest
 
 from radiofeed.podcasts.models import Category, Recommendation
-from radiofeed.podcasts.recommender import recommend
+from radiofeed.podcasts.recommender import get_categories, recommend
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
@@ -22,6 +22,12 @@ class TestRecommender:
 
 
 class TestRecommend:
+    @pytest.fixture(autouse=True)
+    def clear_categories(self):
+        yield
+
+        get_categories.cache_clear()
+
     @pytest.mark.django_db
     def test_handle_empty_data_frame(self):
         PodcastFactory(

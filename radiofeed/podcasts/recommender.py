@@ -1,5 +1,6 @@
 import collections
 import contextlib
+import functools
 import itertools
 import operator
 import statistics
@@ -12,6 +13,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from radiofeed import tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
+
+
+@functools.cache
+def get_categories() -> list["Category"]:
+    """Returns all categories from cache."""
+    return list(Category.objects.all())
 
 
 def recommend(language: str, **kwargs) -> None:
@@ -77,7 +84,7 @@ class _Recommender:
     ) -> collections.defaultdict[tuple[int, int], list[float]]:
         matches = collections.defaultdict(list)
 
-        for category in Category.objects.from_cache():
+        for category in get_categories():
             for batch in itertools.batched(
                 self._get_podcasts(category)
                 .values_list("id", "extracted_text")

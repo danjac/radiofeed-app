@@ -16,7 +16,7 @@ from radiofeed.feedparser.exceptions import (
     NotModifiedError,
     UnavailableError,
 )
-from radiofeed.feedparser.feed_parser import parse_feed
+from radiofeed.feedparser.feed_parser import get_categories_dict, parse_feed
 from radiofeed.feedparser.rss_fetcher import make_content_hash
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
@@ -25,6 +25,7 @@ from radiofeed.podcasts.tests.factories import PodcastFactory
 
 @pytest.fixture
 def categories():
+    get_categories_dict.cache_clear()
     return Category.objects.bulk_create(
         [
             Category(name=name)
@@ -70,8 +71,8 @@ class TestFeedParser:
         return _get_mock_file_path(filename or self.mock_file).read_bytes()
 
     @pytest.mark.django_db
-    def test_parse_unhandled_exception(self, podcast, mocker):
-        def _handle(request):
+    def test_parse_unhandled_exception(self, podcast):
+        def _handle(_):
             raise ValueError("oops")
 
         client = Client(transport=httpx.MockTransport(_handle))
@@ -254,7 +255,7 @@ class TestFeedParser:
         assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
 
     @pytest.mark.django_db
-    def test_parse_high_num_episodes(self):
+    def test_parse_high_num_episodes(self, categories):
         podcast = PodcastFactory()
         client = _mock_client(
             url=podcast.rss,
@@ -465,7 +466,7 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
     @pytest.mark.django_db
-    def test_parse_permanent_redirect(self, podcast):
+    def test_parse_permanent_redirect(self, podcast, categories):
         client = _mock_client(
             url=self.redirect_rss,
             status_code=http.HTTPStatus.OK,

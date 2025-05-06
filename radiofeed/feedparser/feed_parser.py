@@ -1,3 +1,4 @@
+import functools
 import itertools
 from collections.abc import Iterator
 
@@ -23,6 +24,12 @@ from radiofeed.podcasts.models import Category, Podcast
 def parse_feed(podcast: Podcast, client: Client) -> None:
     """Updates a Podcast instance with its RSS or Atom feed source."""
     _FeedParser(podcast).parse(client)
+
+
+@functools.cache
+def get_categories_dict() -> dict[str, Category]:
+    """Return dict of categories with name as key."""
+    return {category.name.casefold(): category for category in Category.objects.all()}
 
 
 class _FeedParser:
@@ -154,10 +161,7 @@ class _FeedParser:
 
     def _parse_categories(self, feed: Feed) -> tuple[str, set[Category]]:
         # Parse categories from the feed: return keywords and Category instances
-        categories_dct = {
-            category.name.casefold(): category
-            for category in Category.objects.from_cache()
-        }
+        categories_dct = get_categories_dict()
 
         # Get the categories that are in the database
         categories = {

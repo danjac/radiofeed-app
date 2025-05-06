@@ -45,13 +45,6 @@ class TestCategoryManager:
     def test_search(self, category):
         assert Category.objects.search("testing").count() == 1
 
-    @pytest.mark.django_db
-    @pytest.mark.usefixtures("_locmem_cache")
-    def test_from_cache(self, django_assert_num_queries):
-        with django_assert_num_queries(1):
-            categories = Category.objects.from_cache()
-            assert Category.objects.from_cache() == categories
-
 
 class TestCategoryModel:
     def test_slug(self):
