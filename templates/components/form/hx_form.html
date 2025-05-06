@@ -1,13 +1,12 @@
-{# djlint: off #}
 <c-vars
-    :action=request.path
+    :action="request.path"
     hx-target="this"
     hx-swap="outerHTML"
 />
-<c-form :hx-post=action
-        :hx-target=hx_target
-        :hx-swap=hx_swap
-        :action=action
+<c-form :hx-post="action"
+        :hx-target="hx_target"
+        :hx-swap="hx_swap"
+        :action="action"
         :attrs="attrs">
     {{ slot }}
 </c-form>
