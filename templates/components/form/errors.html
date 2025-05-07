@@ -1,6 +1,6 @@
-<c-vars errors class />
+<c-vars errors />
 {% if errors %}
-    <ul class="space-y-3 font-semibold text-red-800 dark:text-red-600 {{ class }}" {{ attrs }}>
+    <ul class="space-y-3 font-semibold text-red-800 dark:text-red-600" {{ attrs }}>
         {{ errors|unordered_list }}
     </ul>
 {% endif %}
