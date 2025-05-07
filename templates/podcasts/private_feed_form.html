@@ -6,32 +6,34 @@
 
 {% block content %}
     <c-header title="Private Feeds" />
-    {% partialdef form inline=True %}
-        <c-form.hx-form id="private-feed-form">
-            {{ form }}
-            <c-form.buttons>
-                <c-button icon="plus"
-                          variant="primary"
-                          label="Add Feed" />
-                <c-button icon="arrow-uturn-left"
-                          role="link"
-                          type="button"
-                          label="Cancel"
-                          hx-get="{% url 'podcasts:private_feeds' %}"
-                          hx-swap="innerHTML show:window:top"
-                          hx-target="#content"
-                />
-            </c-form.buttons>
-        </c-form.hx-form>
-    {% endpartialdef form %}
-    <div class="mt-3 space-y-3 text-center prose sm:text-start dark:prose-invert">
-        <p>
-            If you have a private podcast feed that requires a username and password, you can add it here with this format:
-        </p>
-        <code>https://username:password@feed-url</code>
-        <p>Use a <a class="link"
-                    href="https://www.urlencoder.org/"
-                    rel="noopener"
-                    target="_blank">URL encoding service</a> to encode the username and password if required.</p>
+    <div class="space-y-3">
+        {% partialdef form inline=True %}
+            <c-form.hx-form id="private-feed-form">
+                {{ form }}
+                <c-form.buttons>
+                    <c-button icon="plus"
+                              variant="primary"
+                              label="Add Feed" />
+                    <c-button icon="arrow-uturn-left"
+                              role="link"
+                              type="button"
+                              label="Cancel"
+                              hx-get="{% url 'podcasts:private_feeds' %}"
+                              hx-swap="innerHTML show:window:top"
+                              hx-target="#content"
+                    />
+                </c-form.buttons>
+            </c-form.hx-form>
+        {% endpartialdef form %}
+        <div class="space-y-3 prose dark:prose-invert">
+            <p>
+                If you have a private podcast feed that requires a username and password, you can add it here with this format:
+            </p>
+            <code>https://username:password@feed-url</code>
+            <p>Use a <a class="link"
+                        href="https://www.urlencoder.org/"
+                        rel="noopener"
+                        target="_blank">URL encoding service</a> to encode the username and password if required.</p>
+        </div>
     </div>
 {% endblock content %}
