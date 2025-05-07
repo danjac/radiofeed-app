@@ -3,8 +3,8 @@
     {% if slot %}
         {{ slot }}
     {% else %}
-        {% with widget=field|widget %}
-            <c-component is="form.widgets.{{ widget.input_type }}" :field="field" />
+        {% with widget_name=field|widget_name %}
+            <c-component is="form.widgets.{{ widget_name }}" :field="field" />
         {% endwith %}
     {% endif %}
     <c-form.errors :errors="field.errors" />

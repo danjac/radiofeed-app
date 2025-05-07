@@ -95,13 +95,19 @@ def format_duration(total_seconds: int) -> str:
 
 @register.filter
 def widget(field: forms.BoundField) -> forms.Widget:
-    """returns the widget of a form field."""
+    """Returns the widget of a form field."""
     return field.field.widget
 
 
 @register.filter
+def widget_name(field: forms.BoundField) -> str:
+    """Returns the name of the widget."""
+    return widget(field).__class__.__name__.lower()
+
+
+@register.filter
 def required(field: forms.BoundField) -> bool:
-    """returns the widget of a form field."""
+    """Returns the widget of a form field."""
     return field.field.required
 
 
