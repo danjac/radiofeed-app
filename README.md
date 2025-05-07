@@ -29,6 +29,7 @@ The [justfile](https://github.com/casey/just) has some convenient shortcuts for 
 * `just serve`: run the development server and Tailwind JIT compiler
 * `just dj [command]`: run Django management commands
 * `just test`: run unit tests
+* `just up` and `just down`: start/stop Docker containers
 
 Run `just` to see all available commands.
 
