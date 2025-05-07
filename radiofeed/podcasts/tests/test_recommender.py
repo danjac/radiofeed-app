@@ -24,8 +24,6 @@ class TestRecommender:
 class TestRecommend:
     @pytest.fixture(autouse=True)
     def clear_categories(self):
-        yield
-
         get_categories.cache_clear()
 
     @pytest.mark.django_db
