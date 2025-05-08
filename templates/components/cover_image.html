@@ -1,14 +1,14 @@
 <c-vars variant cover-url title class />
-{% get_cover_image_attrs variant cover_url title class as cover_image_attrs %}
-<img class="object-cover text-transparent bg-transparent border {{ cover_image_attrs.class }}"
+{% get_img_attrs variant cover_url title class as img_attrs %}
+<img class="object-cover text-transparent bg-transparent border {{ img_attrs.class }}"
      aria_hidden="true"
      loading="lazy"
      decoding="async"
-     src="{{ cover_image_attrs.src }}"
-     width="{{ cover_image_attrs.width }}"
-     height="{{ cover_image_attrs.height }}"
-     alt="{{ cover_image_attrs.title }}"
-     title="{{ cover_image_attrs.title }}"
-     {% if cover_image_attrs.srcset %} srcset="{{ cover_image_attrs.srcset }}"{% endif %}
-     {% if cover_image_attrs.sizes %} sizes="{{ cover_image_attrs.sizes }}"{% endif %}
+     src="{{ img_attrs.src }}"
+     width="{{ img_attrs.width }}"
+     height="{{ img_attrs.height }}"
+     alt="{{ img_attrs.title }}"
+     title="{{ img_attrs.title }}"
+     {% if img_attrs.srcset %} srcset="{{ img_attrs.srcset }}"{% endif %}
+     {% if img_attrs.sizes %} sizes="{{ img_attrs.sizes }}"{% endif %}
      {{ attrs }}>
