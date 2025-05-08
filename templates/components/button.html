@@ -1,6 +1,6 @@
 {% load heroicons %}
 <c-vars icon variant="default" size=20 label class />
-<button class="inline-flex items-center btn btn-{{ variant }} {{ class }}" {{ attrs }}>
+<button class="btn btn-{{ variant }} {{ class }}" {{ attrs }}>
     {% heroicon_mini icon class="mr-2" size=size %}
     {% if label %}{{ label }}{% else %}{{ slot }}{% endif %}
 </button>

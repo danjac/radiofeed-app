@@ -1,5 +1,7 @@
 @layer buttons {
     .btn {
+        display: inline-flex;
+        align-items: center;
         padding: theme("padding.1") theme("padding.2");
         border-radius: var(--radius-md);
         font-weight: var(--font-weight-semibold);
