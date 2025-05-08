@@ -11,8 +11,7 @@
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
-                    <c-form id="email-addresses"
-                            action="{% url 'account_email' %}">
+                    <c-form id="email-addresses">
                         {% for emailaddress in emailaddresses %}
                             <div class="flex items-center space-x-3">
                                 <c-form.input type="radio"
