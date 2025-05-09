@@ -1,0 +1,11 @@
+<img class="object-cover text-transparent bg-transparent border {{ attrs.class }}"
+     aria_hidden="true"
+     loading="lazy"
+     decoding="async"
+     src="{{ attrs.src }}"
+     width="{{ attrs.width }}"
+     height="{{ attrs.height }}"
+     alt="{{ attrs.title }}"
+     title="{{ attrs.title }}"
+     {% if attrs.srcset %} srcset="{{ attrs.srcset }}"{% endif %}
+     {% if attrs.sizes %} sizes="{{ attrs.sizes }}"{% endif %}>
