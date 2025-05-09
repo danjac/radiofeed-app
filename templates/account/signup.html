@@ -1,22 +1,22 @@
 {% extends "account/base.html" %}
+{% load heroicons %}
 
 {% block title %}
     {{ block.super }} | Sign Up
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Sign Up" />
+    {% fragment "header" %}
+        {% fragment "header.title" %}Sign Up{% endfragment %}
+    {% endfragment %}
+
     <div class="space-y-3">
-        <c-socialaccount.buttons process="login">
-            <c-slot name="hint">
-                Sign up with
-            </c-slot>
-        </c-socialaccount.buttons>
+        {% include "socialaccount/buttons.html" with hint="Login with" process="login" %}
         <p class="mb-3">
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
-        <c-form hx-disable="true">
+        {% fragment "form" hx_disable=True %}
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
@@ -28,9 +28,13 @@
                 {{ form.password1.as_field_group }}
                 {{ form.password2.as_field_group }}
             </div>
-            <c-form.buttons>
-                <c-button icon="plus" variant="primary" label="Sign Up"/>
-            </c-form.buttons>
-        </c-form>
+            {% fragment "form.buttons" %}
+                <button class="btn btn-primary">
+                    {% heroicon_mini "plus" class="mr-2" %}
+                    Sign Up
+                </button>
+            {% endfragment %}
+        {% endfragment %}
     </div>
+
 {% endblock content %}

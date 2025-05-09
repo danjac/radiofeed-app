@@ -5,21 +5,22 @@
 {% endblock title %}
 
 {% block content %}
-    <c-account.header current="email" />
+    {% include "account/header.html" with current="email" %}
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all %}
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
-                    <c-form id="email-addresses">
+                    {% fragment "form" %}
                         {% for emailaddress in emailaddresses %}
                             <div class="flex items-center space-x-3">
-                                <c-form.input type="radio"
-                                              name="email"
-                                              id="email_radio_{{ forloop.counter }}"
-                                              class="form-radio"
-                                              :checked="emailaddress.primary"
-                                              :value="emailaddress.email" />
+                                <input type="radio"
+                                       name="email"
+                                       id="email_radio_{{ forloop.counter }}"
+                                       class="form-radio"
+                                       {% if emai}
+                                       :checked="emailaddress.primary"
+                                       :value="emailaddress.email" />
                                 <label for="email_radio_{{ forloop.counter }}"
                                        class="flex items-center space-x-3">
                                     <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
@@ -50,7 +51,7 @@
                                 Re-Verify
                             </c-button>
                         </c-form.buttons>
-                    </c-form>
+                    {% endfragment %}
                 {% else %}
                     <p>
                         <strong>Warning:</strong>
