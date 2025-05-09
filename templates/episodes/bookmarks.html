@@ -13,9 +13,9 @@
                 {% fragment "header.nav.item" %}
                     {% if request.search %}
 
+                        {% url "episodes:search_episodes" as search_episodes_url %}
                         {% fragment "search.button" search_url=search_episodes_url %}
                             Search Episodes
-                            {% url "episodes:search_episodes" as search_episodes_url %}
                         {% endfragment %}
                     {% else %}
 
@@ -44,7 +44,6 @@
                     {% include "episodes/episode.html" with episode=bookmark.episode %}
                 {% endfragment %}
             {% empty %}
-
                 {% fragment "pagination.empty" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
