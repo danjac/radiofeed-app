@@ -9,7 +9,6 @@
         {% fragment "header.title" %}Bookmarks{% endfragment %}
         {% if request.search or page.has_other_pages %}
             {% fragment "header.nav" %}
-
                 {% fragment "header.nav.item" %}
                     {% if request.search %}
                         {% url "episodes:search_episodes" as search_episodes_url %}
@@ -24,13 +23,11 @@
                         {% endif %}
                     {% endif %}
                 {% endfragment %}
-
                 {% fragment "header.nav.item" %}
                     {% include "search/form.html" with placeholder="Search: Bookmarks" clearable=True %}
                 {% endfragment %}
             {% endfragment %}
         {% endif %}
-
     {% endfragment %}
 
     {% partialdef pagination inline=True %}
