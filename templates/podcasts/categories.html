@@ -6,13 +6,14 @@
 
 {% block content %}
     {% cache cache_timeout categories request.get_full_path %}
-        <c-header title="Categories">
-            <c-header.nav>
-                <c-header.nav.item>
-                    <c-search.form placeholder="Search: Categories" clearable />
-                </c-header.nav.item>
-            </c-header.nav>
-        </c-header>
+        {% fragment "header" %}
+            {% fragment "header.title" %}Categories{% endfragment %}
+            {% fragment "header.nav" %}
+                {% fragment "header.nav.item" %}
+                    {% include "search/form.html" with placeholder="Search: Categories" clearable=True %}
+                {% endfragment %}
+            {% endfragment %}
+        {% endfragment %}
         {% if categories %}
             <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
                 {% for category in categories %}

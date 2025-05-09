@@ -1,0 +1,8 @@
+{% load heroicons %}
+<li>
+    <a href="{{ url }}"
+       class="inline-flex items-center w-full sm:w-auto link">
+        {% heroicon_outline icon class="mr-3" %}
+        {{ content }}
+    </a>
+</li>
