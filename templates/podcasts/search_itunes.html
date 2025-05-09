@@ -6,28 +6,34 @@
 {% endblock title %}
 
 {% block content %}
+    {% fragment "header" %}
+        {% fragment "header.title" %}Search iTunes{% endfragment %}
+        {% fragment "header.nav" %}
+            {% fragment "header.nav.item" %}
+                {% url "podcasts:search_podcasts" as search_podcasts_url %}
+                {% fragment "search.button" search_url=search_podcasts_url %}
+                    Search Podcasts
+                {% endfragment %}
+            {% endfragment %}
+
+            {% fragment "header.nav.item" %}
+                {% include "search/form.html" with placeholder="Search: iTunes" %}
+            {% endfragment %}
+
+        {% endfragment %}
+    {% endfragment %}
+
     {% cache cache_timeout search-itunes request.search.value %}
-        <c-header title="Search iTunes">
-            <c-header.nav>
-                <c-header.nav.item>
-                    <c-search.button url="{% url 'podcasts:search_podcasts' %}"
-                                     label="Search Podcasts" />
-                </c-header.nav.item>
-                <c-header.nav.item>
-                    <c-search.form placeholder="Search: iTunes" />
-                </c-header.nav.item>
-            </c-header.nav>
-        </c-header>
-        <c-browse>
+        {% fragment "pagination" page=page %}
             {% for feed in feeds %}
-                <c-browse.item>
-                    <c-podcasts.itunes-feed :feed="feed" />
-                </c-browse.item>
+                {% fragment "pagination.item" %}
+                    {% include "podcasts/itunes_feed.html" %}
+                {% endfragment %}
             {% empty %}
-                <c-browse.empty>
+                {% fragment "pagination.empty" %}
                     No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                </c-browse.empty>
+                {% endfragment %}
             {% endfor %}
-        </c-browse>
+        {% endfragment %}
     {% endcache %}
 {% endblock content %}
