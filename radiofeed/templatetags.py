@@ -13,7 +13,11 @@ from django.template.context import RequestContext
 from django.template.defaultfilters import pluralize
 
 from radiofeed import pwa
-from radiofeed.cover_image import get_cover_image_attrs, get_cover_image_class
+from radiofeed.cover_image import (
+    CoverImageVariant,
+    get_cover_image_attrs,
+    get_cover_image_class,
+)
 from radiofeed.html import render_markdown
 
 _TIME_PARTS: Final = [
@@ -75,6 +79,24 @@ def csrf_header(context: RequestContext, **kwargs) -> str:
     )
 
 
+@register.inclusion_tag("cover_image.html")
+def cover_image(
+    variant: CoverImageVariant,
+    cover_url: str | None,
+    title: str,
+    **kwargs,
+) -> dict:
+    """Renders a cover image."""
+    return {
+        "attrs": get_cover_image_attrs(
+            variant,
+            cover_url,
+            title,
+            kwargs.pop("class", ""),
+        ),
+    }
+
+
 @register.simple_block_tag(takes_context=True)
 def fragment(
     context: RequestContext,
@@ -98,14 +120,6 @@ def fragment(
 
     with context.push(content=content, **extra_context):
         return template.render(context)
-
-
-@register.simple_tag(takes_context=True)
-def simplefragment(context: RequestContext, fragment_name: str, **extra_context) -> str:
-    """Works like blockfrag but on a single line e.g.
-    {% simplefragment "pagination.links" id="pagination" %}
-    """
-    return fragment(context, "", fragment_name, **extra_context)
 
 
 @register.filter

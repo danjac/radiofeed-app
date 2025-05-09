@@ -1,0 +1,15 @@
+{% with has_other_pages=page.has_other_pages target=target|default:"pagination" %}
+    <ul class="divide-y divide-solid" id="{{ target }}">
+        {% if has_other_pages %}
+            <li class="pb-3">
+                {% include "pagination/links.html" %}
+            </li>
+        {% endif %}
+        {{ content }}
+        {% if has_other_pages %}
+            <li class="pb-3">
+                {% include "pagination/links.html" %}
+            </li>
+        {% endif %}
+    </ul>
+{% endwith %}
