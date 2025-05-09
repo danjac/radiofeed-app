@@ -30,7 +30,7 @@
                                 </label>
                             </div>
                         {% endfor %}
-                        <c-form.buttons>
+                        {% fragment "form.buttons" %}
                             {% if num_addresses > 1 %}
                                 <c-button icon="hand-thumb-up"
                                           variant="primary"
@@ -50,7 +50,7 @@
                                       value="1">
                                 Re-Verify
                             </c-button>
-                        </c-form.buttons>
+                        {% endfragment %}
                     {% endfragment %}
                 {% else %}
                     <p>
@@ -63,16 +63,16 @@
         {% if can_add_email %}
             <hr class="border"/>
             <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
-            <c-form>
+            {% fragment "form" %}
                 {{ form }}
-                <c-form.buttons>
+                {% fragment "form.buttons" %}
                     <c-button icon="plus"
                               label="Add E-Mail"
                               variant="primary"
                               name="action_add"
                               value="true" />
-                </c-form.buttons>
-            </c-form>
+                {% endfragment %}
+            {% endfragment %}
         {% endif %}
     </div>
 {% endblock content %}
