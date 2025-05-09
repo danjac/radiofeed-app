@@ -1,8 +1,0 @@
-<c-vars episode />
-
-<c-card :url="episode.get_absolute_url"
-        :title="episode.cleaned_title"
-        :cover-url="episode.get_cover_url"
-        :attrs="attrs">
-    {{ episode.pub_date|date:"DATE_FORMAT" }}
-</c-card>
