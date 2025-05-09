@@ -5,20 +5,26 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Confirm E-mail Address" />
+    {% fragment "header" %}
+        {% fragment "header.title" %}Confirm E-mail Address{% endfragment %}
+    {% endfragment %}
     {% if confirmation %}
         <div class="space-y-6">
             {% user_display confirmation.email_address.user as user_display %}
             <p>
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
-            <c-form action="{% url 'account_confirm_email' key=confirmation.key %}" class="flex justify-center sm:justify-start flex-column">
-                <c-form.buttons>
-                    <c-button icon="check" variant="primary">
+            <form action="{% url 'account_confirm_email' key=confirmation.key %}"
+                  method="post"
+                  class="flex justify-center sm:justify-start flex-column">
+                {% csrf_token %}
+                {% fragment "form.buttons" %}
+                    <button class="btn btn-primary">
+                        {% heroicon_mini "check" class="mr-2" %}
                         Confirm E-Mail
-                    </c-button>
-                </c-form.buttons>
-            </c-form>
+                    </button>
+                {% endfragment %}
+            </form>
     {% else %}
         <p>
             This e-mail confirmation link expired or is invalid. Please <a href="{% url 'account_email' %}">issue a new e-mail confirmation request</a>.
