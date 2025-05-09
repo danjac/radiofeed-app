@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 {% audio_player %}
-                <c-cookie-banner />
+                {% cookie_banner %}
             </div>
             {% partialdef scripts inline=True %}
                 {% if user.is_authenticated %}
