@@ -6,25 +6,27 @@
 
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}
-        <c-header title="Sign Up" />
+        {% fragment "header" %}
+            {% fragment "header.title" %}Sign Up{% endfragment %}
+        {% endfragment %}
         <div class="space-y-3">
             <p>
                 You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form:
             </p>
-            <c-form hx-disable="true">
+            {% fragment "form" hx_disable="true" %}
                 {% if redirect_field_value %}
                     <input type="hidden"
                            name="{{ redirect_field_name }}"
                            value="{{ redirect_field_value }}" />
                 {% endif %}
                 {{ form }}
-                <c-form.buttons>
-                    <c-button icon="plus"
-                              type="submit"
-                              variant="primary"
-                              label="Sign Up" />
-                </c-form.buttons>
-            </c-form>
+                {% fragment "form.buttons" %}
+                    <button class="btn btn-primary">
+                        {% heroicon_mini "plus" class="mr-2" %}
+                        Sign Up
+                    </button>
+                {% endfragment %}
+            {% endfragment %}
         </div>
     {% endwith %}
 {% endblock content %}
