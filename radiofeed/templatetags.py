@@ -139,11 +139,6 @@ def format_duration(total_seconds: int) -> str:
     return " ".join(parts)
 
 
-@functools.cache
-def _csrf_header_name() -> str:
-    return settings.CSRF_HEADER_NAME.replace("HTTP_", "", 1).replace("_", "-")
-
-
 def _get_fragment_template(context: Context, fragment_name: str) -> Template:
     cache: dict[str, Template] = context.render_context.dicts[0].setdefault(
         "_fragment_context",
@@ -153,7 +148,18 @@ def _get_fragment_template(context: Context, fragment_name: str) -> Template:
     if template := cache.get(fragment_name):
         return template
 
-    template_name = f"{fragment_name.replace('.', '/')}.html"
-    template = context.template.engine.get_template(template_name)  # type: ignore[union-attr]
+    template = context.template.engine.get_template(  # type: ignore[union-attr]
+        _get_fragment_template_name(fragment_name),
+    )
     cache[fragment_name] = template
     return template
+
+
+@functools.cache
+def _get_fragment_template_name(fragment_name: str) -> str:
+    return f"{fragment_name.replace('.', '/')}.html"
+
+
+@functools.cache
+def _csrf_header_name() -> str:
+    return settings.CSRF_HEADER_NAME.replace("HTTP_", "", 1).replace("_", "-")
