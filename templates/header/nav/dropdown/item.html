@@ -1,13 +1,10 @@
 {% load heroicons %}
-<c-vars url label icon="" />
 <li>
     <a href="{{ url }}"
-       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700"
-       {{ attrs }}
-    >
+       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
         {% if icon %}
             {% heroicon_mini icon class="mr-2" %}
         {% endif %}
-        {{ label }}
+        {{ content }}
     </a>
 </li>
