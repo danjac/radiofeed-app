@@ -1,0 +1,5 @@
+<li>
+    <a class="link {% if current == name %}active{% endif %}"
+       href="{{ url }}"
+       {% if current == name %}aria-current="page"{% endif %}>{{ content }}</a>
+</li>
