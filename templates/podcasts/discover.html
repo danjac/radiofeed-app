@@ -6,22 +6,22 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Discover">
-        <c-header.nav>
-            <c-header.nav.item>
-                <c-search.form action="{% url 'podcasts:search_podcasts' %}"
-                               placeholder="Search: Podcasts"
-                />
-            </c-header.nav.item>
-        </c-header.nav>
-    </c-header>
+    {% fragment "header" %}
+        {% fragment "header.title" %}Discover{% endfragment %}
+        {% fragment "header.nav" %}
+            {% fragment "header.nav.item" %}
+                {% url "episodes:search_podcasts" as search_url %}
+                {% include "search/form.html" with placeholder="Search: Podcasts" %}
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
     {% cache cache_timeout discover-podcasts %}
-        <c-browse>
+        {% fragment "pagination" %}
             {% for podcast in podcasts %}
-                <c-browse.item>
-                    <c-podcasts.podcast :podcast="podcast" />
-                </c-browse.item>
+                {% fragment "pagination.item" %}
+                    {% include "podcasts/podcast.html" %}
+                {% endfragment %}
             {% endfor %}
-        </c-browse>
+        {% endfragment %}
     {% endcache %}
 {% endblock content %}
