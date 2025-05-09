@@ -19,25 +19,25 @@
                 {% if podcast.private %}
                     <div>
                         {% if is_subscribed %}
-                            <c-button icon="trash"
-                                      size=24
-                                      class="text-lg"
-                                      variant="danger"
-                                      label="Remove"
-                                      aria-label="Remove podcast from your Private Feeds"
-                                      title="Remove podcast from your Private Feeds"
-                                      hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
-                                      hx-headers="{% csrf_header %}"
-                                      hx-push-url="true"
-                                      hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!" />
+                            <button class="text-lg btn btn-danger"
+                                    aria-label="Remove podcast from your Private Feeds"
+                                    title="Remove podcast from your Private Feeds"
+                                    hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
+                                    hx-headers="{% csrf_header %}"
+                                    hx-push-url="true"
+                                    hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
+                            >
+                                {% heroicon_mini "trash" size=24 class="mr-2" %}
+                                Remove
+                            </button>
                         {% else %}
-                            <c-button icon="eye-slash"
-                                      size=24
-                                      class="text-lg"
-                                      label="Subscribe"
-                                      aria-label="This is a private feed, you cannot subscribe to it."
-                                      label="This is a private feed, you cannot subscribe to it."
-                                      disabled />
+                            <button class="text-lg btn btn-default"
+                                    disabled
+                                    aria-label="This is a private feed, you cannot subscribe to it."
+                            >
+                                {% heroicon_mini "eye-slash" size=24 class="mr-2" %}
+                                Subscribe
+                            </button>
                         {% endif %}
                     </div>
                 {% else %}
