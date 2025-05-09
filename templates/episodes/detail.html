@@ -113,22 +113,28 @@
                              hx-indicator="this"
                              hx-headers="{% csrf_header %}">
                             {% if is_bookmarked %}
-                                <c-button icon="bookmark-slash"
-                                          label="Bookmark"
-                                          class="btn-outline"
-                                          aria-label="Remove Episode from your Bookmarks"
-                                          title="Remove Episode from your Bookmarks"
-                                          hx-disabled-elt="this"
-                                          hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
-                                          hx-trigger="click once" />
+                                <button class="btn btn-default btn-outline"
+                                        aria-label="Remove Episode from your Bookmarks"
+                                        title="Remove Episode from your Bookmarks"
+                                        hx-disabled-elt="this"
+                                        hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
+                                        hx-trigger="click once"
+                                >
+                                    {% heroicon_mini "bookmark-slash" class="mr-2" %}
+                                    Bookmark
+                                </button>
                             {% else %}
-                                <c-button icon="bookmark"
-                                          label="Bookmark"
-                                          aria-label="Add Episode to your Bookmarks"
-                                          title="Add Episode to your Bookmarks"
-                                          hx-disabled-elt="this"
-                                          hx-post="{% url "episodes:add_bookmark" episode.pk %}"
-                                          hx-trigger="click once" />
+                                <button class="btn btn-default"
+                                        aria-label="Add Episode to your Bookmarks"
+                                        title="Add Episode to your Bookmarks"
+                                        hx-disabled-elt="this"
+                                        hx-post="{% url "episodes:add_bookmark" episode.pk %}"
+                                        hx-trigger="click once"
+                                >
+                                    {% heroicon_mini "bookmark" class="mr-2" %}
+                                    Bookmark
+                                </button>
+
                             {% endif %}
                         </div>
                     {% endpartialdef bookmark_button %}
