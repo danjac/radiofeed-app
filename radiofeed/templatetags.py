@@ -75,6 +75,39 @@ def csrf_header(context: RequestContext, **kwargs) -> str:
     )
 
 
+@register.simple_block_tag(takes_context=True)
+def fragment(
+    context: RequestContext,
+    content: str,
+    fragment_name: str,
+    **extra_context,
+) -> str:
+    """Renders a block fragment.
+
+    Fragment name is resolved to a template name for example:
+
+        {% fragment "pagination.links" id="pagination" %}
+        ...
+        {% endfragment %}
+
+    resolves to the template name "pagination/links.html".
+    """
+
+    template_name = f"{fragment_name.replace('.', '/')}.html"
+    template = context.template.engine.get_template(template_name)  # type: ignore [union-attrs]
+
+    with context.push(content=content, **extra_context):
+        return template.render(context)
+
+
+@register.simple_tag(takes_context=True)
+def simplefragment(context: RequestContext, fragment_name: str, **extra_context) -> str:
+    """Works like blockfrag but on a single line e.g.
+    {% simplefragment "pagination.links" id="pagination" %}
+    """
+    return fragment(context, "", fragment_name, **extra_context)
+
+
 @register.filter
 def markdown(content: str | None) -> str:
     """Render content as Markdown."""
