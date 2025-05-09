@@ -9,7 +9,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.middleware.csrf import get_token
 from django.shortcuts import resolve_url
-from django.template import Template
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
 
@@ -115,7 +114,9 @@ def fragment(
 
     resolves to the template name "pagination/links.html".
     """
-    template = _get_fragment_template(context, fragment_name)
+    template = context.template.engine.get_template(  # type: ignore[reportOptionalMemberAccess]
+        _get_fragment_template_name(fragment_name),
+    )
 
     with context.push(content=content, **extra_context):
         return template.render(context)
@@ -137,22 +138,6 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
-
-
-def _get_fragment_template(context: Context, fragment_name: str) -> Template:
-    cache: dict[str, Template] = context.render_context.dicts[0].setdefault(
-        "_fragment_context",
-        {},  # type: ignore[ReportArgumentType]
-    )
-
-    if template := cache.get(fragment_name):
-        return template
-
-    template = context.template.engine.get_template(  # type: ignore[reportOptionalMemberAccess]
-        _get_fragment_template_name(fragment_name),
-    )
-    cache[fragment_name] = template
-    return template
 
 
 @functools.cache
