@@ -6,9 +6,9 @@
 
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b">
-        {% fragment "header.title" %}
+        <h1 class="text-xl font-bold md:text-2xl xl:text-3xl">
             {{ episode.cleaned_title }}
-        {% endfragment %}
+        </h1>
         {% cache cache_timeout episode-nav-header episode.pk %}
             {% with next_episode=episode.next_episode previous_episode=episode.previous_episode %}
                 {% if next_episode or previous_episode %}
