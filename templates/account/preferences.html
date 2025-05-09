@@ -1,20 +1,21 @@
 {% extends "base.html" %}
-{% load partials %}
+{% load heroicons partials %}
 
 {% block title %}
     {{ block.super }} | Preferences
 {% endblock title %}
 
 {% block content %}
-    <c-account.header current="preferences" />
+    {% include "account/header.html" with current="preferences" %}
     {% partialdef form inline=True %}
-        <c-form.hx-form id="preferences-form">
+        {% fragment "hx_form" target="preferences-form" %}
             {{ form }}
             <c-form.buttons>
-                <c-button icon="check"
-                          variant="primary"
-                          label="Save Changes" />
+                <button class="btn btn-primary">
+                    {% heroicon_mini "check" class="mr-2" %}
+                    Save Changes
+                </button>
             </c-form.buttons>
-        </c-form.hx-form>
+        {% endfragment %}
     {% endpartialdef form %}
 {% endblock content %}

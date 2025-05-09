@@ -2,7 +2,7 @@ import functools
 import json
 from typing import Final
 
-from django import forms, template
+from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
@@ -138,24 +138,6 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
-
-
-@register.filter
-def widget(field: forms.BoundField) -> forms.Widget:
-    """Returns the widget of a form field."""
-    return field.field.widget
-
-
-@register.filter
-def widget_name(field: forms.BoundField) -> str:
-    """Returns the name of the widget."""
-    return widget(field).__class__.__name__.lower()
-
-
-@register.filter
-def required(field: forms.BoundField) -> bool:
-    """Returns the widget of a form field."""
-    return field.field.required
 
 
 @functools.cache

@@ -1,0 +1,19 @@
+{% load heroicons %}
+{% load get_account_settings from users %}
+{% get_account_settings current as settings %}
+{% fragment "header" %}
+    {% fragment "header.title" %}Settings for {{ user.username }}{% endfragment %}
+    {% fragment "header.nav" %}
+        {% fragment "header.nav.item" %}
+            {% fragment "header.nav.dropdown" id="settings-dropdown" icon=settings.current.icon label=settings.current.label %}
+
+                {% for item in settings.items %}
+                    {% fragment "header.nav.dropdown.item" url=item.url icon=item.icon %}
+                        {{ item.label }}
+                    {% endfragment %}
+                {% endfor %}
+
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
+{% endfragment %}
