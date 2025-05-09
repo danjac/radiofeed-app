@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-podcasts.header :podcast="podcast" current="detail" />
+    {% include "podcasts/header.html" with current="detail" %}
     <article class="space-y-3">
         {% with owner=podcast.cleaned_owner %}
             {% if owner %}
@@ -14,9 +14,7 @@
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            <c-cover-image variant="detail"
-                           :cover-url="podcast.cover_url"
-                           :title="podcast.cleaned_title" />
+            {% cover_image "detail" podcast.cover_url podcast.cleaned_title %}
             <div class="flex flex-col place-content-between h-32">
                 {% if podcast.private %}
                     <div>
@@ -51,27 +49,26 @@
                              hx-swap="outerHTML"
                              hx-headers="{% csrf_header %}">
                             {% if is_subscribed %}
-                                <c-button icon="eye-slash"
-                                          variant="primary"
-                                          size=24
-                                          class="text-lg btn-outline"
-                                          label="Unsubscribe"
-                                          aria-label="Unsubscribe from this Podcast"
-                                          title="Unsubscribe from this Podcast"
-                                          hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
-                                          hx-disabled-elt="this"
-                                          hx-trigger="click once" />
+                                <button class="text-lg btn btn-primary btn-outline"
+                                        aria-label="Unsubscribe from this Podcast"
+                                        title="Unsubscribe from this Podcast"
+                                        hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
+                                        hx-disabled-elt="this"
+                                        hx-trigger="click once">
+                                    {% heroicon_mini "eye-slash" size=24 class="mr-2" %}
+                                    Unsubscribe
+                                </button>
                             {% else %}
-                                <c-button icon="eye"
-                                          variant="primary"
-                                          size=24
-                                          class="text-lg"
-                                          label="Subscribe"
-                                          aria-label="Subscribe to this Podcast"
-                                          title="Subscribe to this Podcast"
-                                          hx-post="{% url "podcasts:subscribe" podcast.pk %}"
-                                          hx-disabled-elt="this"
-                                          hx-trigger="click once" />
+                                <button class="text-lg btn btn-primary"
+                                        label="Subscribe"
+                                        aria-label="Subscribe to this Podcast"
+                                        title="Subscribe to this Podcast"
+                                        hx-post="{% url "podcasts:subscribe" podcast.pk %}"
+                                        hx-disabled-elt="this"
+                                        hx-trigger="click once">
+                                    {% heroicon_mini "eye" size=24 class="mr-2" %}
+                                    Subscribe
+                                </button>
                             {% endif %}
                         </div>
                     {% endpartialdef subscribe_button %}
