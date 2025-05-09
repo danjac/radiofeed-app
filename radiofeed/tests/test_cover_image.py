@@ -3,20 +3,35 @@ import pytest
 from radiofeed.cover_image import (
     get_cover_image_attrs,
     get_cover_image_sizes,
+    get_metadata_info,
     get_placeholder_path,
+    get_placeholder_url,
 )
+
+
+class TestGetMetadataInfo:
+    def test_build_info(self, rf):
+        req = rf.get("/")
+        metadata = get_metadata_info(req, "test.jpg")
+        assert len(metadata) == 4
+
+
+class TestGetPlaceholderPath:
+    @pytest.mark.parametrize(
+        "size",
+        [pytest.param(size, id=f"{size}px") for size in get_cover_image_sizes()],
+    )
+    def test_check_paths(self, size):
+        assert get_placeholder_path(size).exists()
 
 
 class TestGetPlaceholderUrl:
     @pytest.mark.parametrize(
-        ("size", "expected"),
-        [
-            pytest.param(size, f"/static/img/placeholder-{size}.webp", id=f"{size}px")
-            for size in get_cover_image_sizes()
-        ],
+        "size",
+        [pytest.param(size, id=f"{size}px") for size in get_cover_image_sizes()],
     )
-    def test_check_paths(self, size, expected):
-        assert get_placeholder_path(size).exists()
+    def test_check_url(self, size):
+        assert get_placeholder_url(size).endswith(f"{size}.webp")
 
 
 class TestGetCoverImageAttrs:
