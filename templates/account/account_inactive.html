@@ -5,6 +5,8 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Account Inactive" />
+    {% fragment "header" %}
+        {% fragment "header.title" %}Account Inactive{% endfragment %}
+    {% endfragment %}
     <p>This account is inactive.</p>
 {% endblock content %}

@@ -5,7 +5,9 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Verify Your E-mail Address" />
+    {% fragment "header" %}
+        {% fragment "header.title" %}Verify Your E-mail Address{% endfragment %}
+    {% endfragment %}
     <p class="mb-3">
         This part of the site requires us to verify that
         you are who you claim to be. For this purpose, we require that you
