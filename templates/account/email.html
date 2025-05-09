@@ -18,9 +18,8 @@
                                        name="email"
                                        id="email_radio_{{ forloop.counter }}"
                                        class="form-radio"
-                                       {% if emai}
-                                       :checked="emailaddress.primary"
-                                       :value="emailaddress.email" />
+                                       value="{{ emailaddress.email }}"
+                                       {% if emailaddress.primary or num_addresses == 1 %}checked{% endif %}>
                                 <label for="email_radio_{{ forloop.counter }}"
                                        class="flex items-center space-x-3">
                                     <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
@@ -31,25 +30,37 @@
                             </div>
                         {% endfor %}
                         {% fragment "form.buttons" %}
-                            {% if num_addresses > 1 %}
-                                <c-button icon="hand-thumb-up"
-                                          variant="primary"
-                                          name="action_primary"
-                                          value="1">
-                                    Primary
-                                </c-button>
-                                <c-button icon="trash"
-                                          variant="danger"
-                                          name="action_remove"
-                                          value="1">
-                                    Remove
-                                </c-button>
-                            {% endif %}
-                            <c-button icon="envelope"
-                                      name="action_send"
-                                      value="1">
+                            <button class="btn btn-primary"
+                                    name="action_primary"
+                                    {% if num_addresses == 1 %}
+                                        disabled
+                                        title="You cannot set the only e-mail address associated with your account as primary."
+                                    {% else %}
+                                    {% endif %}
+                                    value="1">
+                                {% heroicon_mini "hand-thumb-up" class="mr-2" %}
+                                Primary
+                            </button>
+
+                            <button class="btn btn-danger"
+                                    name="action_remove"
+                                    {% if num_addresses == 1 %}
+                                        disabled
+                                        title="You cannot remove the only e-mail address associated with your account."
+                                    {% else %}
+                                    {% endif %}
+                                    value="1">
+                                {% heroicon_mini "trash" class="mr-2" %}
+                                Remove
+                            </button>
+
+                            <button class="btn btn-default"
+                                    name="action_send"
+                                    value="1">
+                                {% heroicon_mini "envelope" class="mr-2" %}
                                 Re-Verify
-                            </c-button>
+                            </button>
+
                         {% endfragment %}
                     {% endfragment %}
                 {% else %}
@@ -66,11 +77,13 @@
             {% fragment "form" %}
                 {{ form }}
                 {% fragment "form.buttons" %}
-                    <c-button icon="plus"
-                              label="Add E-Mail"
-                              variant="primary"
-                              name="action_add"
-                              value="true" />
+                    <button class="btn btn-primary"
+                            type="submit"
+                            name="action_add"
+                            value="1">
+                        {% heroicon_mini "plus" class="mr-2" %}
+                        Add E-Mail
+                    </button>
                 {% endfragment %}
             {% endfragment %}
         {% endif %}
