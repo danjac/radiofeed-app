@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" current="social_logins" %}
+    {% include "account/header.html" with current="social_logins" %}
     <div class="space-y-3">
         {% if form.accounts %}
             <p>You can sign in to your account using any of the following third party accounts:</p>
@@ -46,7 +46,7 @@
         {% endif %}
         <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
-            {% include "socialaccount/buttons.html" process="connect" %}
+            {% include "socialaccount/buttons.html" with process="connect" %}
         </ul>
     </div>
     {% providers_media_js %}

@@ -6,6 +6,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
+from radiofeed.episodes.middleware import PlayerDetails
 from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
@@ -39,9 +40,11 @@ class Test3rdPartyAuthTemplates:
         ],
     )
     @pytest.mark.django_db
-    def test_template(self, rf, mocker, user, get_response, template):
+    def test_template(self, rf, mocker, user, template):
         req = rf.get("/")
         req.user = user
+        req.session = {}
+        req.player = PlayerDetails(request=req)
 
         mocker.patch(
             "radiofeed.users.templatetags.users.get_adapter",
