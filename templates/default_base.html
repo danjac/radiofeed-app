@@ -1,5 +1,5 @@
 {% spaceless %}
-    {% load django_htmx partials static tailwind_cli %}
+    {% load audio_player django_htmx partials static tailwind_cli %}
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -67,7 +67,7 @@
                         </main>
                     </div>
                 </div>
-                <c-audio-player :audio-log="request.player.audio_log" />
+                {% audio_player %}
                 <c-cookie-banner />
             </div>
             {% partialdef scripts inline=True %}

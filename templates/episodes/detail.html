@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load cache heroicons partials %}
+{% load audio_player cache heroicons partials %}
 {% block title %}
     {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
 {% endblock title %}
@@ -103,7 +103,7 @@
                                               hx-trigger="click once" />
                                 {% endif %}
                                 {% if request.htmx.target == target %}
-                                    <c-audio-player :audio-log="audio_log" :action="action" />
+                                    {% audio_player audio_log action=action %}
                                     {% with hx_oob=True %}
                                         {% partial audio_log %}
                                     {% endwith %}
