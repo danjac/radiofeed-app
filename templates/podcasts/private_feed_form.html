@@ -5,25 +5,28 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="Private Feeds" />
+    {% fragment "header" %}
+        {% fragment "header.title" %}Private Feeds{% endfragment %}
+    {% endfragment %}
+
     <div class="space-y-3">
         {% partialdef form inline=True %}
-            <c-form.hx-form id="private-feed-form">
+            {% fragment "form" htmx=True target="private-feed-form" %}
                 {{ form }}
-                <c-form.buttons>
-                    <c-button icon="plus"
-                              variant="primary"
-                              label="Add Feed" />
-                    <c-button icon="arrow-uturn-left"
-                              role="link"
-                              type="button"
-                              label="Cancel"
-                              hx-get="{% url 'podcasts:private_feeds' %}"
-                              hx-swap="innerHTML show:window:top"
-                              hx-target="#content"
-                    />
-                </c-form.buttons>
-            </c-form.hx-form>
+                {% fragment "form.buttons" %}
+                    <button class="btn btn-primary">
+                        {% heroicon_mini "plus" class="mr-2" %}
+                        Add Feed
+                    </button>
+                    <a class="btn btn-default" href="{% url 'podcasts:private_feeds' %}"
+                       hx-swap="innerHTML"
+                       hx-target="#content"
+                    >
+                        {% heroicon_mini "arrow-uturn-left" class="mr-2" %}
+                        Cancel
+                    </a>
+                {% endfragment %}
+            {% endfragment %}
         {% endpartialdef form %}
         <div class="space-y-3 prose dark:prose-invert">
             <p>

@@ -8,7 +8,7 @@
             </div>
         {% else %}
             {% include "form/label.html" %}
-            {% render_field field class="form-input" %}
+            {% render_field field class="form-input" placeholder=field.label %}
         {% endif %}
     {% endwith %}
     {% include "form/errors.html" with errors=field.errors %}
