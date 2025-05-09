@@ -1,5 +1,5 @@
-{% with target="cookie_banner" %}
-    {% if not cookies_accepted %}
+{% if not cookies_accepted %}
+    {% with target="cookie_banner" %}
         <div class="flex fixed bottom-0 z-50 justify-center py-3 w-full text-white bg-black opacity-90"
              id="{{ target }}">
             <div class="px-2">
@@ -25,5 +25,5 @@
                 </div>
             </div>
         </div>
-    {% endif %}
-{% endwith %}
+    {% endwith %}
+{% endif %}
