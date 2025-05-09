@@ -12,8 +12,8 @@
             {% fragment "header.nav" %}
                 {% if request.search %}
                     {% fragment "header.nav.item" %}
-                        {% url "podcasts:search_podcasts" as search_button_url %}
-                        {% fragment "search.button" search_url=search_button_url %}
+                        {% url "podcasts:search_podcasts" as search_podcasts_url %}
+                        {% fragment "search.button" search_url=search_podcasts_url %}
                             Search Podcasts
                         {% endfragment %}
                     {% endfragment %}
