@@ -126,7 +126,7 @@
             {% endwith %}
         {% endcache %}
         {% cache cache_timeout podcast-description podcast.pk %}
-            <c-markdown :content="podcast.description" />
+            {% include "markdown.html" with content=podcast.description %}
         {% endcache %}
     </article>
 {% endblock content %}

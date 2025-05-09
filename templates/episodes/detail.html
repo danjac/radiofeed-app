@@ -6,9 +6,9 @@
 
 {% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b">
-        <h1 class="text-xl font-bold md:text-2xl xl:text-3xl">
+        {% fragment "header.title" %}
             {{ episode.cleaned_title }}
-        </h1>
+        {% endfragment %}
         {% cache cache_timeout episode-nav-header episode.pk %}
             {% with next_episode=episode.next_episode previous_episode=episode.previous_episode %}
                 {% if next_episode or previous_episode %}
@@ -65,9 +65,7 @@
                 </div>
             {% endwith %}
             <div class="flex items-center space-x-3 sm:space-x-6">
-                <c-cover-image variant="detail"
-                               :cover-url="episode.get_cover_url"
-                               :title="episode.cleaned_title" />
+                {% cover_image "detail" cover_url=episode.get_cover_url title=episode.cleaned_title %}
                 <div class="flex flex-col place-content-between h-32">
                     {% partialdef audio_player_button inline=True %}
                         {% with target="audio-player-button" %}
@@ -78,29 +76,25 @@
                                  hx-swap="outerHTML"
                                  hx-headers="{% csrf_header %}">
                                 {% if is_playing %}
-                                    <c-button icon="stop-circle"
-                                              variant="primary"
-                                              size=24
-                                              class="text-lg btn-outline"
-                                              label="Close"
-                                              aria-label="Close Player"
-                                              title="Close Player"
-                                              class="inline-flex items-center btn btn-primary btn-outline btn-lg"
-                                              hx-disabled-elt="this"
-                                              hx-post="{% url "episodes:close_player" %}"
-                                              hx-trigger="click once" />
+                                    <button class="text-lg btn btn-primary btn-outline"
+                                            aria-label="Close Player"
+                                            title="Close Player"
+                                            hx-post="{% url "episodes:close_player" %}"
+                                            hx-disabled-elt="this"
+                                            hx-trigger="click once">
+                                        {% heroicon_mini "stop-circle" size=24 class="mr-2" %}
+                                        Close
+                                    </button>
                                 {% else %}
-                                    <c-button icon="play-circle"
-                                              variant="primary"
-                                              variant="primary"
-                                              size=24
-                                              class="text-lg"
-                                              label="Play"
-                                              aria-label="Open Episode in Player"
-                                              title="Open Episode in Player"
-                                              hx-disabled-elt="this"
-                                              hx-post="{% url "episodes:start_player" episode.pk %}"
-                                              hx-trigger="click once" />
+                                    <button class="text-lg btn btn-primary"
+                                            aria-label="Open Episode in Player"
+                                            title="Open Episode in Player"
+                                            hx-disabled-elt="this"
+                                            hx-post="{% url "episodes:start_player" episode.pk %}"
+                                            hx-trigger="click once">
+                                        {% heroicon_mini "play-circle" size=24 class="mr-2" %}
+                                        Play
+                                    </button>
                                 {% endif %}
                                 {% if request.htmx.target == target %}
                                     {% audio_player audio_log action=action %}
@@ -187,26 +181,25 @@
                                     <span>{{ audio_log.percent_complete }}% complete</span>
                                 {% endif %}
                             </div>
-                            <c-button icon="trash"
-                                      variant="danger"
-                                      size=16
-                                      class="text-sm"
-                                      label="Remove"
-                                      title="Remove episode from your History"
-                                      hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
-                                      hx-confirm="Are you sure you want to remove this episode from your History?"
-                                      hx-disabled-elt="this"
-                                      hx-target="#audio-log"
-                                      hx-indicator="this"
-                                      hx-push-url="false"
-                                      hx-swap="outerHTML"
-                                      hx-headers="{% csrf_header %}"/>
+                            <button class="text-sm btn btn-danger"
+                                    title="Remove episode from your History"
+                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                                    hx-confirm="Are you sure you want to remove this episode from your History?"
+                                    hx-disabled-elt="this"
+                                    hx-target="#audio-log"
+                                    hx-indicator="this"
+                                    hx-push-url="false"
+                                    hx-swap="outerHTML"
+                                    hx-headers="{% csrf_header %}">
+                                {% heroicon_mini "trash" size=16 class="mr-2" %}
+                                Remove
+                            </button>
                         </div>
                     {% endif %}
                 </div>
             {% endpartialdef audio_log %}
             {% cache cache_timeout episode-description episode.pk %}
-                <c-markdown :content="episode.description" />
+                {% include "markdown.html" with content=episode.description %}
             {% endcache %}
         </article>
     {% endwith %}
