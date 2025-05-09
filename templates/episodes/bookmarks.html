@@ -12,26 +12,22 @@
 
                 {% fragment "header.nav.item" %}
                     {% if request.search %}
-
                         {% url "episodes:search_episodes" as search_episodes_url %}
                         {% fragment "search.button" search_url=search_episodes_url %}
                             Search Episodes
                         {% endfragment %}
                     {% else %}
-
                         {% if ordering == "asc" %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
                         {% else %}
                             <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">Oldest First</a>
                         {% endif %}
-
                     {% endif %}
                 {% endfragment %}
 
-            {% endfragment %}
-
-            {% fragment "header.nav.item" %}
-                {% include "search/form.html" with placeholder="Search: Bookmarks" clearable=True %}
+                {% fragment "header.nav.item" %}
+                    {% include "search/form.html" with placeholder="Search: Bookmarks" clearable=True %}
+                {% endfragment %}
             {% endfragment %}
         {% endif %}
 
