@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-account.header current="stats" />
+    {% include "account/header.html" with current="stats" %}
     <table class="w-full">
         <tbody class="divide-y divide-solid">
             <tr class="flex justify-between pt-0 pb-3">
