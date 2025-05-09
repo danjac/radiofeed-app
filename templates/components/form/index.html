@@ -1,8 +1,0 @@
-<c-vars :action="request.path" method="post" class="space-y-3" />
-<form class="{{ class }}"
-      method="{{ method }}"
-      action="{{ action }}"
-      {{ attrs }}>
-  {% csrf_token %}
-  {{ slot }}
-</form>
