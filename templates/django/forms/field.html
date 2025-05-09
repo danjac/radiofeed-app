@@ -4,13 +4,13 @@
         {% if widget_type == "checkboxinput" %}
             <div class="flex items-center space-x-3 w-full">
                 {% render_field field class="form-checkbox" %}
-                {% include "forms/label.html" %}
+                {% include "form/label.html" %}
             </div>
         {% else %}
-            {% include "forms/label.html" %}
+            {% include "form/label.html" %}
             {% render_field field class="form-input" %}
         {% endif %}
     {% endwith %}
-    {% include "forms/errors.html" with errors=field.errors %}
-    {% include "forms/help_text.html" with help_text=field.help_text %}
+    {% include "form/errors.html" with errors=field.errors %}
+    {% include "form/help_text.html" with help_text=field.help_text %}
 </fieldset>

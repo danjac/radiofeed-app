@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <c-account.header current="feeds" />
+    {% include "account/header.html" with current="feeds" %}
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
@@ -28,14 +28,15 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline=True %}
-                <c-form.hx-form hx-encoding="multipart/form-data"
-                                enctype="multipart/form-data"
-                                id="import-feeds-form">
+                {% fragment "form" htmx=True multipart=True target="import-feeds-form" %}
                     {{ upload_form }}
-                    <c-form.buttons>
-                        <c-button icon="arrow-up-tray" label="Upload OPML" />
-                    </c-form.buttons>
-                </c-form.hx-form>
+                    {% fragment "form.buttons" %}
+                        <button class="btn btn-default">
+                            {% heroicon_mini "arrow-up-tray" class="mr-2" %}
+                            Upload OPML
+                        </button>
+                    {% endfragment %}
+                {% endfragment %}
             {% endpartialdef form %}
         </div>
     </div>

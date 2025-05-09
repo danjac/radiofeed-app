@@ -1,0 +1,19 @@
+{% with action=action|default:request.path %}
+  <form class="space-y-3"
+        action="{{ action }}"
+        {% if htmx %}
+          id="{{ target }}"
+          hx-post="{{ action }}"
+          hx-target="this"
+          hx-swap="{{ hx_swap|default:'outerHTML' }}"
+        {% endif %}
+        {% if multipart %}
+          enctype="multipart/form-data"
+          {% if htmx %}
+            hx-encoding="multipart/form-data"
+          {% endif %}
+        {% endif %}>
+    {% csrf_token %}
+    {{ content }}
+  </form>
+{% endwith %}
