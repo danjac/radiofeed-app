@@ -5,37 +5,39 @@
 {% endblock title %}
 
 {% block content %}
-    <c-header title="History">
+    {% fragment "header" %}
+        {% fragment "header.title" %}History{% endfragment %}
         {% if request.search or page.has_other_pages %}
-            <c-header.nav>
-                <c-header.nav.item>
+            {% fragment "header.nav" %}
+                {% fragment "header.nav.item" %}
                     {% if request.search %}
-                        <c-search.button url="{% url 'episodes:search_episodes' %}"
-                                         label="Search Episodes"
-                        />
+                        {% url "episodes:search_episodes" as search_episodes_url %}
+                        {% fragment "search.button" search_url=search_episodes_url %}
+                            Search Episodes
+                        {% endfragment %}
                     {% else %}
                         {% if ordering == "asc" %}
-                            <a class="link" href="{{ request.path }}{% querystring order="desc" page=None %}">Newest First</a>
+                            <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
                         {% else %}
-                            <a class="link" href="{{ request.path }}{% querystring order="asc" page=None %}">Oldest First</a>
+                            <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">Oldest First</a>
                         {% endif %}
                     {% endif %}
-                </c-header.nav.item>
-                <c-header.nav.item>
-                    <c-search.form placeholder="Search: History" clearable />
-                </c-header.nav.item>
-            </c-header.nav>
+                {% endfragment %}
+                {% fragment "header.nav.item" %}
+                    {% include "search/form.html" with placeholder="Search: History" clearable=True %}
+                {% endfragment %}
+            {% endfragment %}
         {% endif %}
-    </c-header>
+    {% endfragment %}
 
     {% partialdef pagination inline=True %}
-        <c-paginate :page="page">
+        {% fragment "pagination" page=page %}
             {% for audio_log in page %}
-                <c-browse.item>
-                    <c-episodes.episode :episode="audio_log.episode" />
-                </c-browse.item>
+                {% fragment "pagination.item" %}
+                    {% include "episodes/episode.html" with episode=audio_log.episode %}
+                {% endfragment %}
             {% empty %}
-                <c-browse.empty>
+                {% fragment "pagination.empty" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your history.
                     {% else %}
@@ -44,8 +46,8 @@
                             To start enjoying some podcasts, just click the <strong>Play</strong> button on any episode page. Once you begin listening, episodes will show up here.
                         </p>
                     {% endif %}
-                </c-browse.empty>
+                {% endfragment %}
             {% endfor %}
-        </c-paginate>
+        {% endfragment %}
     {% endpartialdef pagination %}
 {% endblock content %}
