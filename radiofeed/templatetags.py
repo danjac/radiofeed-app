@@ -148,7 +148,7 @@ def _get_fragment_template(context: Context, fragment_name: str) -> Template:
     if template := cache.get(fragment_name):
         return template
 
-    template = context.template.engine.get_template(  # type: ignore[union-attr]
+    template = context.template.engine.get_template(  # type: ignore[reportOptionalMemberAccess]
         _get_fragment_template_name(fragment_name),
     )
     cache[fragment_name] = template
