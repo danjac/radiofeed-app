@@ -9,7 +9,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.middleware.csrf import get_token
 from django.shortcuts import resolve_url
-from django.template.context import RequestContext
+from django.template import Template
+from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
 
 from radiofeed import pwa
@@ -99,7 +100,7 @@ def cover_image(
 
 @register.simple_block_tag(takes_context=True)
 def fragment(
-    context: RequestContext,
+    context: Context,
     content: str,
     fragment_name: str,
     **extra_context,
@@ -114,11 +115,7 @@ def fragment(
 
     resolves to the template name "pagination/links.html".
     """
-
-    template_name = f"{fragment_name.replace('.', '/')}.html"
-
-    # Optimization: load template from engine directly rather than call loader.get_template()
-    template = context.template.engine.get_template(template_name)  # type: ignore [union-attrs]
+    template = _get_fragment_template(context, fragment_name)
 
     with context.push(content=content, **extra_context):
         return template.render(context)
@@ -145,3 +142,18 @@ def format_duration(total_seconds: int) -> str:
 @functools.cache
 def _csrf_header_name() -> str:
     return settings.CSRF_HEADER_NAME.replace("HTTP_", "", 1).replace("_", "-")
+
+
+def _get_fragment_template(context: Context, fragment_name: str) -> Template:
+    cache: dict[str, Template] = context.render_context.dicts[0].setdefault(
+        "_fragment_context",
+        {},  # type: ignore[ReportArgumentType]
+    )
+
+    if template := cache.get(fragment_name):
+        return template
+
+    template_name = f"{fragment_name.replace('.', '/')}.html"
+    template = context.template.engine.get_template(template_name)  # type: ignore[union-attr]
+    cache[fragment_name] = template
+    return template
