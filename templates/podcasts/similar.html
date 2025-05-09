@@ -5,14 +5,14 @@
 {% endblock title %}
 
 {% block content %}
-    <c-podcasts.header :podcast="podcast" current="similar" />
+    {% include "podcasts/header.html" with current="similar" %}
     {% cache cache_timeout similar-podcasts podcast.pk %}
-        <c-browse>
+        {% fragment "pagination" %}
             {% for recommendation in recommendations %}
-                <c-browse.item>
-                    <c-podcasts.podcast :podcast="recommendation.recommended" />
-                </c-browse.item>
+                {% fragment "pagination.item" %}
+                    {% include "podcasts/podcast.html" with podcast=recommendation.recommended %}
+                {% endfragment %}
             {% endfor %}
-        </c-browse>
+        {% endfragment %}
     {% endcache %}
 {% endblock content %}
