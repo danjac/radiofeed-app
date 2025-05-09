@@ -14,7 +14,7 @@
                         {% if request.search %}
                             {% fragment "header.nav.item" %}
                                 {% url "episodes:search_episodes" as search_button_url %}
-                                {% fragment "search.button" %}
+                                {% fragment "search.button" search_url=search_button_url %}
                                     Search Episodes
                                 {% endfragment %}
                             {% endfragment %}

@@ -1,25 +1,27 @@
 {% extends "base.html" %}
+{% load heroicons %}
 
 {% block content %}
     {% if user.is_authenticated %}
-        <c-account.header current="delete_account" />
+        {% include "account/header.html" with current="delete_account" %}
         <div class="space-y-3">
             <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
-            <p>This will delete ALL your data including your subscriptions, bookmarks and listening history.</p>
-            <c-form hx-disable="true"
-                    onsubmit="return confirm('Are you sure?')">
-
-                <c-form.buttons>
-                    <c-button icon="trash" variant="danger"
-                              name="confirm-delete"
-                              value="true">
+            <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>
+            {% fragment "form" hx_disable=True %}
+                {% fragment "form.buttons" %}
+                    <button class="btn btn-danger"
+                            name="confirm-delete"
+                            value="true"
+                            @click="if(!confirm('Are you sure ?')) $event.preventDefault()"
+                    >
+                        {% heroicon_mini "trash" class="mr-2" %}
                         Yes, delete my account
-                    </c-button>
-                </c-form.buttons>
-            </c-form>
+                    </button>
+                {% endfragment %}
+            {% endfragment %}
         </div>
     {% else %}
-        <c-header.title>Delete Account</c-header.title>
+        {% fragment "header.title" %}Delete Account{% endfragment %}
         <div class="space-y-3">
             <p>
                 You must be logged in to delete your data. All user data, including subscriptions, bookmarks and listening history, will be irrevocably deleted.
