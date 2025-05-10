@@ -5,9 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Confirm E-mail Address{% endfragment %}
-    {% endfragment %}
+    {% include "header.html" with title="Confirm E-mail Address" %}
     {% if confirmation %}
         <div class="space-y-6">
             {% user_display confirmation.email_address.user as user_display %}

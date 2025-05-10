@@ -6,10 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Sign Up{% endfragment %}
-    {% endfragment %}
-
+    u   {% include "header.html" with title="Sign Up" %}
     <div class="space-y-3">
         {% fragment "socialaccount.buttons" process="login" %}Sign up with{% endfragment %}
         <p class="mb-3">

@@ -5,8 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Search Episodes{% endfragment %}
+    {% fragment "header" title="Search Episodes" %}
         {% fragment "header.nav" %}
             {% fragment "header.nav.item" %}
                 {% url "podcasts:search_podcasts" as search_podcasts_url %}

@@ -5,8 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Private Feeds{% endfragment %}
+    {% fragment "header" title="Private Feeds" %}
         {% fragment "header.nav" %}
             {% if not request.search %}
                 {% fragment "header.nav.item" %}

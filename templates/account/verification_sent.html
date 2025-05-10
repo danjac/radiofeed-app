@@ -5,9 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Verify Your E-mail Address{% endfragment %}
-    {% endfragment %}
+    {% include "header.html" with title="Verify Your E-Mail Address" %}
     <p>
         We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.
     </p>

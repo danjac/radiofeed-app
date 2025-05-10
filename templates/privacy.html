@@ -6,10 +6,7 @@
 
 {% block content %}
     {% with site=request.site %}
-        {% fragment "header" %}
-            {% fragment "header.title" %}Privacy{% endfragment %}
-        {% endfragment %}
-
+        {% include "header.html" with title="Privacy" %}
         <div class="space-y-6">
             <p class="prose dark:prose-invert">
                 This privacy policy ("policy") will help you understand how <strong>{{ site.name }}</strong> ("us", "we",

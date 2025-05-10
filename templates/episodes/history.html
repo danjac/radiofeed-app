@@ -5,8 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}History{% endfragment %}
+    {% fragment "header" title="History" %}
         {% if request.search or page.has_other_pages %}
             {% fragment "header.nav" %}
                 {% fragment "header.nav.item" %}

@@ -21,7 +21,7 @@
             {% endfragment %}
         </div>
     {% else %}
-        {% fragment "header.title" %}Delete Account{% endfragment %}
+        {% include "header.html" with title="Delete Account" %}
         <div class="space-y-3">
             <p>
                 You must be logged in to delete your data. All user data, including subscriptions, bookmarks and listening history, will be irrevocably deleted.

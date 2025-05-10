@@ -5,10 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Private Feeds{% endfragment %}
-    {% endfragment %}
-
+    {% include "header.html" with title="Private Feeds" %}
     <div class="space-y-3">
         {% partialdef form inline=True %}
             {% fragment "form" htmx=True target="private-feed-form" %}

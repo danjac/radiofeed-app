@@ -5,8 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Bookmarks{% endfragment %}
+    {% fragment "header" title="Bookmarks" %}
         {% if request.search or page.has_other_pages %}
             {% fragment "header.nav" %}
                 {% fragment "header.nav.item" %}

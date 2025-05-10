@@ -6,8 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}Subscriptions{% endfragment %}
+    {% fragment "header" title="Subscriptions" %}
         {% if request.search or page.has_other_pages %}
             {% fragment "header.nav" %}
                 {% if request.search %}

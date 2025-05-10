@@ -6,8 +6,7 @@
 
 {% block content %}
     {% cache cache_timeout categories request.get_full_path %}
-        {% fragment "header" %}
-            {% fragment "header.title" %}Categories{% endfragment %}
+        {% fragment "header" title="Categories" %}
             {% fragment "header.nav" %}
                 {% fragment "header.nav.item" %}
                     {% include "search/form.html" with placeholder="Search: Categories" clearable=True %}

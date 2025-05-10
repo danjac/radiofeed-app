@@ -5,9 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" %}
-        {% fragment "header.title" %}New Releases{% endfragment %}
-
+    {% fragment "header" title="New Releases" %}
         {% fragment "header.nav" %}
             {% fragment "header.nav.item" %}
                 {% url "episodes:search_episodes" as search_url %}

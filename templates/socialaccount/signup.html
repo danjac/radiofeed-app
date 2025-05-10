@@ -6,9 +6,7 @@
 
 {% block content %}
     {% with provider_name=account.get_provider.name site_name=site.name %}
-        {% fragment "header" %}
-            {% fragment "header.title" %}Sign Up{% endfragment %}
-        {% endfragment %}
+        {% include "header.html" with title="Sign Up" %}
         <div class="space-y-3">
             <p>
                 You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form:
