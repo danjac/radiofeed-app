@@ -3,7 +3,7 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        {% include "account/header.html" with current="delete_account" %}
+        {% include "account/header.html" with active="delete_account" %}
         <div class="space-y-3">
             <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
             <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>

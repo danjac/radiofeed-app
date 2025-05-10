@@ -115,7 +115,7 @@ def fragment(
     resolves to the template name "pagination/links.html".
     """
     template = context.template.engine.get_template(  # type: ignore[reportOptionalMemberAccess]
-        _get_fragment_template_name(fragment_name),
+        _resolve_fragment_template(fragment_name),
     )
 
     with context.push(content=content, **extra_context):
@@ -141,7 +141,7 @@ def format_duration(total_seconds: int) -> str:
 
 
 @functools.cache
-def _get_fragment_template_name(fragment_name: str) -> str:
+def _resolve_fragment_template(fragment_name: str) -> str:
     return f"{fragment_name.replace('.', '/')}.html"
 
 

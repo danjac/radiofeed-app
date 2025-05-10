@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "podcasts/header.html" with current="similar" %}
+    {% include "podcasts/header.html" with active="similar" %}
     {% cache cache_timeout similar-podcasts podcast.pk %}
         {% fragment "pagination" %}
             {% for recommendation in recommendations %}

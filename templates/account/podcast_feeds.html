@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with current="feeds" %}
+    {% include "account/header.html" with active="feeds" %}
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">

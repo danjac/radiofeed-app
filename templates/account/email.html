@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with current="email" %}
+    {% include "account/header.html" with active="email" %}
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all %}
             {% with num_addresses=emailaddresses|length %}

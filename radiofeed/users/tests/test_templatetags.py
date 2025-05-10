@@ -5,12 +5,12 @@ from radiofeed.users.templatetags.users import get_account_settings
 
 
 class MockGoogleAdapter:
-    def list_providers(self, request):
+    def list_providers(self, _):
         return ["Google"]
 
 
 class MockEmptyAdapter:
-    def list_providers(self, request):
+    def list_providers(self, _):
         return []
 
 
@@ -25,7 +25,7 @@ class TestGetAccountSettings:
         req = rf.get("/")
         req.user = user
         settings = get_account_settings(RequestContext(req), "preferences")
-        assert settings["current"]["label"] == "Preferences"
+        assert settings["active"]["label"] == "Preferences"
         assert len(settings["items"]) == 6
 
     @pytest.mark.django_db
@@ -37,7 +37,7 @@ class TestGetAccountSettings:
         req = rf.get("/")
         req.user = user
         settings = get_account_settings(RequestContext(req), "social_logins")
-        assert settings["current"]["label"] == "Social Logins"
+        assert settings["active"]["label"] == "Social Logins"
         assert len(settings["items"]) == 7
 
     @pytest.mark.django_db
@@ -45,4 +45,4 @@ class TestGetAccountSettings:
         req = rf.get("/")
         req.user = user
         settings = get_account_settings(RequestContext(req), "not_found")
-        assert settings["current"]["label"] == "Preferences"
+        assert settings["active"]["label"] == "Preferences"

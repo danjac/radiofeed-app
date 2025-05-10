@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with current="preferences" %}
+    {% include "account/header.html" with active="preferences" %}
     {% partialdef form inline=True %}
         {% fragment "form" htmx=True target="preferences-form" %}
             {{ form }}

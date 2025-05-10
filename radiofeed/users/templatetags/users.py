@@ -19,12 +19,12 @@ class SettingsItem(TypedDict):
 class Settings(TypedDict):
     """A dictionary of settings items."""
 
-    current: SettingsItem
+    active: SettingsItem
     items: list[SettingsItem]
 
 
 @register.simple_tag(takes_context=True)
-def get_account_settings(context: RequestContext, current: str) -> Settings:
+def get_account_settings(context: RequestContext, active: str) -> Settings:
     """ "Returns a dictionary of settings items."""
 
     items = {
@@ -70,6 +70,6 @@ def get_account_settings(context: RequestContext, current: str) -> Settings:
     )
 
     return Settings(
-        current=items.get(current, items["preferences"]),
+        active=items.get(active, items["preferences"]),
         items=list(items.values()),
     )

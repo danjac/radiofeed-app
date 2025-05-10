@@ -6,15 +6,15 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "podcasts.header" podcast=podcast current="episodes" %}
+    {% fragment "podcasts.header" podcast=podcast active="episodes" %}
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
                 {% if request.search or season or num_episodes > page_size %}
                     {% fragment "header.nav" %}
                         {% if request.search %}
                             {% fragment "header.nav.item" %}
-                                {% url "episodes:search_episodes" as search_button_url %}
-                                {% fragment "search.button" search_url=search_button_url %}
+                                {% url "episodes:search_episodes" as search_episodes_url %}
+                                {% fragment "search.button" search_url=search_episodes_url %}
                                     Search Episodes
                                 {% endfragment %}
                             {% endfragment %}
@@ -26,8 +26,8 @@
                                             All Seasons
                                         {% endfragment %}
                                         {% for season in podcast.seasons %}
-                                            {% querystring season=season as qs %}
-                                            {% fragment "header.nav.dropdown.item" url=request.path|add:qs %}
+                                            {% querystring season=season as season_qs %}
+                                            {% fragment "header.nav.dropdown.item" url=request.path|add:season_qs %}
                                                 Season {{ season }}
                                             {% endfragment %}
                                         {% endfor %}
