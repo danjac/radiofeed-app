@@ -82,7 +82,7 @@
                                             hx-post="{% url "episodes:close_player" %}"
                                             hx-disabled-elt="this"
                                             hx-trigger="click once">
-                                        {% heroicon_mini "stop-circle" size=24 class="mr-2" %}
+                                        {% heroicon_mini "stop-circle" size=24 %}
                                         Close
                                     </button>
                                 {% else %}
@@ -92,7 +92,7 @@
                                             hx-disabled-elt="this"
                                             hx-post="{% url "episodes:start_player" episode.pk %}"
                                             hx-trigger="click once">
-                                        {% heroicon_mini "play-circle" size=24 class="mr-2" %}
+                                        {% heroicon_mini "play-circle" size=24 %}
                                         Play
                                     </button>
                                 {% endif %}
@@ -120,7 +120,7 @@
                                         hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
                                         hx-trigger="click once"
                                 >
-                                    {% heroicon_mini "bookmark-slash" class="mr-2" %}
+                                    {% heroicon_mini "bookmark-slash" %}
                                     Bookmark
                                 </button>
                             {% else %}
@@ -131,7 +131,7 @@
                                         hx-post="{% url "episodes:add_bookmark" episode.pk %}"
                                         hx-trigger="click once"
                                 >
-                                    {% heroicon_mini "bookmark" class="mr-2" %}
+                                    {% heroicon_mini "bookmark" %}
                                     Bookmark
                                 </button>
 
@@ -197,7 +197,7 @@
                                     hx-push-url="false"
                                     hx-swap="outerHTML"
                                     hx-headers="{% csrf_header %}">
-                                {% heroicon_mini "trash" size=16 class="mr-2" %}
+                                {% heroicon_mini "trash" size=16 %}
                                 Remove
                             </button>
                         </div>

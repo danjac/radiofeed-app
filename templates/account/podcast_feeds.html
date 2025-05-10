@@ -15,7 +15,7 @@
                     <a class="btn btn-default"
                        href="{% url 'users:export_podcast_feeds' %}"
                        hx-disable="true">
-                        {% heroicon_mini "arrow-down-tray" class="mr-2" %}
+                        {% heroicon_mini "arrow-down-tray" %}
                         Download OPML
                     </a>
                 </div>
@@ -32,7 +32,7 @@
                     {{ upload_form }}
                     {% fragment "form.buttons" %}
                         <button class="btn btn-default">
-                            {% heroicon_mini "arrow-up-tray" class="mr-2" %}
+                            {% heroicon_mini "arrow-up-tray" %}
                             Upload OPML
                         </button>
                     {% endfragment %}

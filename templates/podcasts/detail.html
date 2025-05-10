@@ -27,7 +27,7 @@
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
                             >
-                                {% heroicon_mini "trash" size=24 class="mr-2" %}
+                                {% heroicon_mini "trash" size=24 %}
                                 Remove
                             </button>
                         {% else %}
@@ -35,7 +35,7 @@
                                     disabled
                                     aria-label="This is a private feed, you cannot subscribe to it."
                             >
-                                {% heroicon_mini "eye-slash" size=24 class="mr-2" %}
+                                {% heroicon_mini "eye-slash" size=24 %}
                                 Subscribe
                             </button>
                         {% endif %}
@@ -55,7 +55,7 @@
                                         hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once">
-                                    {% heroicon_mini "eye-slash" size=24 class="mr-2" %}
+                                    {% heroicon_mini "eye-slash" size=24 %}
                                     Unsubscribe
                                 </button>
                             {% else %}
@@ -66,7 +66,7 @@
                                         hx-post="{% url "podcasts:subscribe" podcast.pk %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once">
-                                    {% heroicon_mini "eye" size=24 class="mr-2" %}
+                                    {% heroicon_mini "eye" size=24 %}
                                     Subscribe
                                 </button>
                             {% endif %}
@@ -117,7 +117,7 @@
                                aria-label="{{ category.name }} Podcasts"
                                title="{{ category.name }} Podcasts"
                                href="{{ category.get_absolute_url }}">
-                                {% heroicon_mini "tag" class="mr-2" %}
+                                {% heroicon_mini "tag" %}
                                 {{ category.name }}
                             </a>
                         {% endfor %}

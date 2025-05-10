@@ -23,6 +23,6 @@
         :hx-get="searchUrl"
         :disabled="!search"
         @search.window="search=$event.detail; $nextTick(process);">
-    {% heroicon_mini "magnifying-glass" class="mr-2" %}
+    {% heroicon_mini "magnifying-glass" %}
     {{ content }}
 </button>

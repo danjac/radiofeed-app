@@ -22,6 +22,11 @@
             border-color: var(--color-gray-600) !important;
             cursor: not-allowed !important;
         }
+
+        & > svg {
+            margin-right: theme("spacing.2") !important;
+            display: inline-block !important;
+        }
     }
 
     .btn-primary {
