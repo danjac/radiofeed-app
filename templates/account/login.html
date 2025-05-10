@@ -9,7 +9,7 @@
         {% fragment "header.title" %}Sign In{% endfragment %}
     {% endfragment %}
     <div class="space-y-3">
-        {% include "socialaccount/buttons.html" with hint="Login with" process="login" %}
+        {% fragment "socialaccount.buttons" process="login" %}Login with{% endfragment %}
         <p>
             If you have not created an account yet, then please
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.

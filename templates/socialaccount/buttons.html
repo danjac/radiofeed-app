@@ -2,8 +2,8 @@
 {% get_providers as providers %}
 {% if providers %}
     <div class="flex items-center space-x-3">
-        {% if hint %}
-            <div class="font-semibold">{{ hint }}</div>
+        {% if content %}
+            <div class="font-semibold">{{ content }}</div>
         {% endif %}
         {% for provider in providers %}
             <form method="post"
