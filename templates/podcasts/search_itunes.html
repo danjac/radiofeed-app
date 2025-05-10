@@ -24,7 +24,7 @@
     {% endfragment %}
 
     {% cache cache_timeout search-itunes request.search.value %}
-        {% fragment "pagination" page=page %}
+        {% fragment "pagination" %}
             {% for feed in feeds %}
                 {% fragment "pagination.item" %}
                     {% include "podcasts/itunes_feed.html" %}

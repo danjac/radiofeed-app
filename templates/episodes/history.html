@@ -31,7 +31,7 @@
     {% endfragment %}
 
     {% partialdef pagination inline=True %}
-        {% fragment "pagination" page=page %}
+        {% fragment "pagination" %}
             {% for audio_log in page %}
                 {% fragment "pagination.item" %}
                     {% include "episodes/episode.html" with episode=audio_log.episode %}

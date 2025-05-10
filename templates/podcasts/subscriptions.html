@@ -25,7 +25,7 @@
         {% endif %}
     {% endfragment %}
     {% partialdef pagination inline=True %}
-        {% fragment "pagination" page=page %}
+        {% fragment "pagination" %}
             {% for podcast in page %}
                 {% fragment "pagination.item" %}
                     {% include "podcasts/podcast.html" %}

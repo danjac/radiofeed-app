@@ -23,7 +23,7 @@
     {% endfragment %}
     {% partialdef pagination inline=True %}
         {% cache cache_timeout search-podcasts request.get_full_path %}
-            {% fragment "pagination" page=page %}
+            {% fragment "pagination" %}
                 {% for podcast in page %}
                     {% fragment "pagination.item" %}
                         {% include "podcasts/podcast.html" %}
