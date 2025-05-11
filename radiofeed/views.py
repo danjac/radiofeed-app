@@ -20,7 +20,7 @@ from PIL import Image
 
 from radiofeed import pwa
 from radiofeed.cover_image import (
-    InvalidCoverUrlError,
+    URLDecryptionError,
     decrypt_cover_url,
     get_placeholder_path,
     is_cover_image_size,
@@ -146,16 +146,10 @@ def cover_image(_, encrypted: str, size: int) -> FileResponse:
     if not is_cover_image_size(size):
         raise Http404
 
-    # check cover url is legit
-    try:
-        cover_url = decrypt_cover_url(encrypted)
-    except InvalidCoverUrlError as exc:
-        raise Http404 from exc
-
     output: io.BufferedIOBase
 
     try:
-        response = get_client().get(cover_url)
+        response = get_client().get(decrypt_cover_url(encrypted))
 
         image = Image.open(io.BytesIO(response.content)).resize(
             (size, size),
@@ -166,7 +160,12 @@ def cover_image(_, encrypted: str, size: int) -> FileResponse:
         image.save(output, format="webp", optimize=True, quality=90)
         output.seek(0)
 
-    except (OSError, httpx.HTTPError, httpx.StreamError):
+    except (
+        OSError,
+        httpx.HTTPError,
+        httpx.StreamError,
+        URLDecryptionError,
+    ):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
 

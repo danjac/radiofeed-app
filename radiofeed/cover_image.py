@@ -1,4 +1,5 @@
 import base64
+import binascii
 import functools
 import itertools
 import pathlib
@@ -16,7 +17,7 @@ from radiofeed.pwa import ImageInfo
 CoverImageVariant = Literal["card", "detail", "tile"]
 
 
-class InvalidCoverUrlError(Exception):
+class URLDecryptionError(Exception):
     """Exception raised when the cover URL is invalid."""
 
 
@@ -78,6 +79,19 @@ def get_cover_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
+def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
+    """Returns media artwork details."""
+    return [
+        ImageInfo(
+            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
+            sizes=f"{size}x{size}",
+            type="image/webp",
+        )
+        for size in get_cover_image_sizes()
+    ]
+
+
+@functools.cache
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
@@ -95,26 +109,18 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
     )
 
 
-def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
-    """Returns media artwork details."""
-    return [
-        ImageInfo(
-            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
-            sizes=f"{size}x{size}",
-            type="image/webp",
-        )
-        for size in get_cover_image_sizes()
-    ]
-
-
 @functools.cache
 def encrypt_cover_url(cover_url: str) -> str:
     """Encrypt the cover URL."""
-    return force_str(
-        base64.urlsafe_b64encode(
-            force_bytes(_get_cover_url_signer().sign(cover_url)),
+    return (
+        force_str(
+            base64.urlsafe_b64encode(
+                force_bytes(_get_cover_url_signer().sign(cover_url)),
+            )
         )
-    ).rstrip("=")
+        .rstrip("=")
+        .removeprefix("aHR0")  # We assume all URLs start with "http"
+    )
 
 
 @functools.cache
@@ -124,12 +130,16 @@ def decrypt_cover_url(encrypted_url: str) -> str:
         return _get_cover_url_signer().unsign(
             force_str(
                 base64.urlsafe_b64decode(
-                    f"{encrypted_url}==",
+                    f"aHR0{encrypted_url}==",
                 )
             )
         )
-    except (BadSignature, DjangoUnicodeDecodeError) as exc:
-        raise InvalidCoverUrlError from exc
+    except (
+        BadSignature,
+        DjangoUnicodeDecodeError,
+        binascii.Error,
+    ) as exc:
+        raise URLDecryptionError from exc
 
 
 @functools.cache
@@ -142,7 +152,7 @@ def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
                     classnames.split()
                     for classnames in [
                         _COVER_IMAGE_CLASSES[variant],
-                        *list(classes),
+                        *classes,
                     ]
                     if classnames
                 ]
@@ -184,4 +194,4 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 @functools.cache
 def _get_cover_url_signer() -> Signer:
     """Return URL signer"""
-    return Signer(salt="cover_url", algorithm="sha1")
+    return Signer(salt="cover_url")

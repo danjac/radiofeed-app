@@ -114,9 +114,11 @@ class TestCoverImage:
         assert404(response)
 
     @pytest.mark.django_db
-    def test_unsigned_url(self, client, db):
+    def test_unsigned_url(self, client, db, mocker):
         response = client.get(f"{reverse('cover_image', args=['test.jpg', 96])}")
-        assert404(response)
+        mock_client = mocker.patch("radiofeed.views.get_client")
+        assert200(response)
+        mock_client.assert_not_called()
 
     @pytest.mark.django_db
     def test_failed_download(self, client, db, mocker):

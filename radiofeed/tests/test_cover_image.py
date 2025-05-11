@@ -1,7 +1,7 @@
 import pytest
 
 from radiofeed.cover_image import (
-    InvalidCoverUrlError,
+    URLDecryptionError,
     decrypt_cover_url,
     encrypt_cover_url,
     get_cover_image_attrs,
@@ -21,8 +21,14 @@ class TestEncryptDecryptCoverUrl:
         assert decrypted_url == cover_url
 
     def test_invalid_encrypted_url(self):
-        with pytest.raises(InvalidCoverUrlError):
+        with pytest.raises(URLDecryptionError):
             decrypt_cover_url("test.jpg")
+
+    def test_bad_encryption(self):
+        with pytest.raises(URLDecryptionError):
+            decrypt_cover_url(
+                "cHM6Ly9zdGF0aWMuYXVkaW9tZWFucy5mci9pbWcvZXBpc29kZS9lOTU2ZjIyMC00Zjc1LTQ2M2QtYTQyMS00NmU5NzQxODVhODMuanBnOnpqNGVtVjd0Wmt4UnpFYjBBSi1SE45b3N1Zw"
+            )
 
 
 class TestGetMetadataInfo:
