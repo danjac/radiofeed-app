@@ -1,14 +1,13 @@
 import http
-import urllib.parse
 
 import httpx
 import pytest
 from django.conf import settings
-from django.core.signing import Signer
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
+from radiofeed.cover_image import get_cover_image_url
 from radiofeed.http_client import Client
 from radiofeed.tests.asserts import assert200, assert404
 
@@ -98,16 +97,6 @@ class TestAcceptCookies:
 class TestCoverImage:
     cover_url = "http://example.com/test.png"
 
-    def get_url(self, size, url):
-        return (
-            reverse("cover_image", kwargs={"size": size})
-            + "?"
-            + urllib.parse.urlencode({"url": url})
-        )
-
-    def encode_url(self, url):
-        return Signer(salt="cover_url").sign(url)
-
     @pytest.mark.django_db
     def test_ok(self, client, db, mocker):
         def _handler(request):
@@ -116,22 +105,17 @@ class TestCoverImage:
         mock_client = Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
-        response = client.get(self.get_url(96, self.encode_url(self.cover_url)))
+        response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)
 
     @pytest.mark.django_db
-    def test_not_accepted_size(self, client, db, mocker):
-        response = client.get(self.get_url(500, self.encode_url(self.cover_url)))
-        assert404(response)
-
-    @pytest.mark.django_db
-    def test_missing_url_param(self, client, db, mocker):
-        response = client.get(reverse("cover_image", kwargs={"size": 100}))
+    def test_not_accepted_size(self, client, db):
+        response = client.get(get_cover_image_url(self.cover_url, 500))
         assert404(response)
 
     @pytest.mark.django_db
     def test_unsigned_url(self, client, db):
-        response = client.get(self.get_url(96, self.cover_url))
+        response = client.get(f"{reverse('cover_image', args=[96])}?{self.cover_url}")
         assert404(response)
 
     @pytest.mark.django_db
@@ -142,7 +126,7 @@ class TestCoverImage:
         mock_client = Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
 
-        response = client.get(self.get_url(96, self.encode_url(self.cover_url)))
+        response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)
 
     @pytest.mark.django_db
@@ -153,5 +137,5 @@ class TestCoverImage:
         mock_client = Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", side_effect=IOError())
-        response = client.get(self.get_url(96, self.encode_url(self.cover_url)))
+        response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)

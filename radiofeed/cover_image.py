@@ -1,18 +1,24 @@
+import base64
 import functools
 import itertools
 import pathlib
-import urllib.parse
 from typing import Final, Literal
 
 from django.conf import settings
-from django.core.signing import Signer
+from django.core.signing import BadSignature, Signer
 from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.encoding import DjangoUnicodeDecodeError, force_bytes, force_str
 
 from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
+
+
+class InvalidCoverUrlError(Exception):
+    """Exception raised when the cover URL is invalid."""
+
 
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "card": (96, 96),
@@ -82,22 +88,46 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
                     "size": size,
                 },
             )
-            + "?"
-            + urllib.parse.urlencode(
-                {
-                    "url": get_cover_url_signer().sign(cover_url),
-                }
-            )
+            + f"?{encrypt_cover_url(cover_url)}"
         )
         if cover_url
         else get_placeholder_url(size)
     )
 
 
-@functools.cache
-def get_cover_url_signer() -> Signer:
-    """Return URL signer"""
-    return Signer(salt="cover_url")
+def encrypt_cover_url(cover_url: str) -> str:
+    """Encrypt the cover URL."""
+    return force_str(
+        base64.urlsafe_b64encode(
+            force_bytes(_get_cover_url_signer().sign(cover_url)),
+        )
+    ).rstrip("=")
+
+
+def decrypt_cover_url(encrypted_url: str) -> str:
+    """Decrypt the cover URL."""
+    try:
+        return _get_cover_url_signer().unsign(
+            force_str(
+                base64.urlsafe_b64decode(
+                    f"{encrypted_url}==",
+                )
+            )
+        )
+    except (BadSignature, DjangoUnicodeDecodeError) as exc:
+        raise InvalidCoverUrlError from exc
+
+
+def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
+    """Returns media artwork details."""
+    return [
+        ImageInfo(
+            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
+            sizes=f"{size}x{size}",
+            type="image/webp",
+        )
+        for size in get_cover_image_sizes()
+    ]
 
 
 @functools.cache
@@ -131,18 +161,6 @@ def get_cover_image_sizes() -> set[int]:
     return set(itertools.chain.from_iterable(_COVER_IMAGE_SIZES.values()))
 
 
-def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
-    """Returns media artwork details."""
-    return [
-        ImageInfo(
-            src=request.build_absolute_uri(get_cover_image_url(cover_url, size)),
-            sizes=f"{size}x{size}",
-            type="image/webp",
-        )
-        for size in get_cover_image_sizes()
-    ]
-
-
 @functools.cache
 def get_placeholder(size: int) -> str:
     """Return placeholder image name"""
@@ -159,3 +177,9 @@ def get_placeholder_url(size: int) -> str:
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
     return settings.STATIC_SRC / "img" / get_placeholder(size)
+
+
+@functools.cache
+def _get_cover_url_signer() -> Signer:
+    """Return URL signer"""
+    return Signer(salt="cover_url")
