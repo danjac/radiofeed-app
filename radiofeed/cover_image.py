@@ -31,7 +31,6 @@ def get_cover_image_attrs(
     variant: CoverImageVariant,
     cover_url: str | None,
     title: str,
-    *classes,
     **attrs: str,
 ) -> dict:
     """Returns the HTML attributes for an image."""
@@ -44,7 +43,10 @@ def get_cover_image_attrs(
         "src": full_src,
         "width": full_size,
         "height": full_size,
-        "class": get_cover_image_class(variant, *classes),
+        "class": get_cover_image_class(
+            variant,
+            attrs.pop("class", ""),
+        ),
     } | attrs
 
     # no size variations
@@ -101,7 +103,20 @@ def get_cover_url_signer() -> Signer:
 @functools.cache
 def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
     """Returns default CSS class for the cover image."""
-    return " ".join([*[_COVER_IMAGE_CLASSES[variant]], *list(classes)])
+    return " ".join(
+        dict.fromkeys(
+            itertools.chain(
+                *[
+                    classnames.split()
+                    for classnames in [
+                        _COVER_IMAGE_CLASSES[variant],
+                        *list(classes),
+                    ]
+                    if classnames
+                ]
+            )
+        ).keys()
+    )
 
 
 @functools.cache

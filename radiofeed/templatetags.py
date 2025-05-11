@@ -84,7 +84,7 @@ def cover_image(
     variant: CoverImageVariant,
     cover_url: str | None,
     title: str,
-    **kwargs,
+    **attrs,
 ) -> dict:
     """Renders a cover image."""
     return {
@@ -92,7 +92,7 @@ def cover_image(
             variant,
             cover_url,
             title,
-            kwargs.pop("class", ""),
+            **attrs,
         ),
     }
 
