@@ -85,37 +85,14 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
             reverse(
                 "cover_image",
                 kwargs={
+                    "encrypted": encrypt_cover_url(cover_url),
                     "size": size,
                 },
             )
-            + f"?{encrypt_cover_url(cover_url)}"
         )
         if cover_url
         else get_placeholder_url(size)
     )
-
-
-def encrypt_cover_url(cover_url: str) -> str:
-    """Encrypt the cover URL."""
-    return force_str(
-        base64.urlsafe_b64encode(
-            force_bytes(_get_cover_url_signer().sign(cover_url)),
-        )
-    ).rstrip("=")
-
-
-def decrypt_cover_url(encrypted_url: str) -> str:
-    """Decrypt the cover URL."""
-    try:
-        return _get_cover_url_signer().unsign(
-            force_str(
-                base64.urlsafe_b64decode(
-                    f"{encrypted_url}==",
-                )
-            )
-        )
-    except (BadSignature, DjangoUnicodeDecodeError) as exc:
-        raise InvalidCoverUrlError from exc
 
 
 def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
@@ -128,6 +105,31 @@ def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
         )
         for size in get_cover_image_sizes()
     ]
+
+
+@functools.cache
+def encrypt_cover_url(cover_url: str) -> str:
+    """Encrypt the cover URL."""
+    return force_str(
+        base64.urlsafe_b64encode(
+            force_bytes(_get_cover_url_signer().sign(cover_url)),
+        )
+    ).rstrip("=")
+
+
+@functools.cache
+def decrypt_cover_url(encrypted_url: str) -> str:
+    """Decrypt the cover URL."""
+    try:
+        return _get_cover_url_signer().unsign(
+            force_str(
+                base64.urlsafe_b64decode(
+                    f"{encrypted_url}==",
+                )
+            )
+        )
+    except (BadSignature, DjangoUnicodeDecodeError) as exc:
+        raise InvalidCoverUrlError from exc
 
 
 @functools.cache
@@ -182,4 +184,4 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 @functools.cache
 def _get_cover_url_signer() -> Signer:
     """Return URL signer"""
-    return Signer(salt="cover_url")
+    return Signer(salt="cover_url", algorithm="sha1")

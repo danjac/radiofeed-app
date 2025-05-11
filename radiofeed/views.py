@@ -137,7 +137,7 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, size: int) -> FileResponse:
+def cover_image(_, encrypted: str, size: int) -> FileResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
@@ -148,7 +148,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     # check cover url is legit
     try:
-        cover_url = decrypt_cover_url(request.META.get("QUERY_STRING", ""))
+        cover_url = decrypt_cover_url(encrypted)
     except InvalidCoverUrlError as exc:
         raise Http404 from exc
 

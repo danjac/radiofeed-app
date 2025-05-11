@@ -6,6 +6,7 @@ from radiofeed.cover_image import (
     encrypt_cover_url,
     get_cover_image_attrs,
     get_cover_image_sizes,
+    get_cover_image_url,
     get_metadata_info,
     get_placeholder_path,
     get_placeholder_url,
@@ -58,7 +59,7 @@ class TestGetCoverImageAttrs:
                 {
                     "height": 96,
                     "width": 96,
-                    "src": "/covers/96/cover.webp?",
+                    "size": 96,
                 },
                 id="card",
             ),
@@ -67,8 +68,8 @@ class TestGetCoverImageAttrs:
                 {
                     "height": 160,
                     "width": 160,
-                    "src": "/covers/160/cover.webp?",
                     "sizes": "(max-width: 1023.99px) 144px, (min-width: 1024px) 160px",
+                    "size": 160,
                 },
                 id="detail",
             ),
@@ -80,7 +81,7 @@ class TestGetCoverImageAttrs:
         assert attrs["width"] == expected["width"]
         assert attrs["alt"] == "test pic"
         assert attrs["title"] == "test pic"
-        assert attrs["src"].startswith(expected["src"])
+        assert attrs["src"] == get_cover_image_url("test.jpg", expected["size"])
 
         if "sizes" in expected:
             assert attrs["sizes"] == expected["sizes"]

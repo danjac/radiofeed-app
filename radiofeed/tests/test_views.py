@@ -115,7 +115,7 @@ class TestCoverImage:
 
     @pytest.mark.django_db
     def test_unsigned_url(self, client, db):
-        response = client.get(f"{reverse('cover_image', args=[96])}?{self.cover_url}")
+        response = client.get(f"{reverse('cover_image', args=['test.jpg', 96])}")
         assert404(response)
 
     @pytest.mark.django_db
