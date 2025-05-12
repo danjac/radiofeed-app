@@ -1,5 +1,5 @@
 {% with action=action|default:request.path method=method|default:"post" %}
-  <form class="space-y-3"
+  <form class="{{ class|default:"space-y-3" }}"
         action="{{ action }}"
         method="{{ method }}"
         {% if htmx %}
