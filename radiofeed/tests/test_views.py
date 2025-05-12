@@ -98,7 +98,7 @@ class TestCoverImage:
     cover_url = "http://example.com/test.png"
 
     @pytest.mark.django_db
-    def test_ok(self, client, db, mocker):
+    def test_ok(self, client, mocker):
         def _handler(request):
             return httpx.Response(http.HTTPStatus.OK, content=b"")
 
@@ -109,20 +109,20 @@ class TestCoverImage:
         assert200(response)
 
     @pytest.mark.django_db
-    def test_not_accepted_size(self, client, db):
+    def test_not_accepted_size(self, client):
         response = client.get(get_cover_image_url(self.cover_url, 500))
         assert404(response)
 
     @pytest.mark.django_db
-    def test_unsigned_url(self, client, db, mocker):
+    def test_unsigned_url(self, client, mocker):
         response = client.get(f"{reverse('cover_image', args=['test.jpg', 96])}")
         mock_client = mocker.patch("radiofeed.views.get_client")
         assert200(response)
         mock_client.assert_not_called()
 
     @pytest.mark.django_db
-    def test_failed_download(self, client, db, mocker):
-        def _handler(request):
+    def test_failed_download(self, client, mocker):
+        def _handler(_):
             raise httpx.HTTPError("invalid")
 
         mock_client = Client(transport=httpx.MockTransport(_handler))
@@ -132,8 +132,8 @@ class TestCoverImage:
         assert200(response)
 
     @pytest.mark.django_db
-    def test_failed_process(self, client, db, mocker):
-        def _handler(request):
+    def test_failed_process(self, client, mocker):
+        def _handler(_):
             return httpx.Response(http.HTTPStatus.OK, content=b"")
 
         mock_client = Client(transport=httpx.MockTransport(_handler))
