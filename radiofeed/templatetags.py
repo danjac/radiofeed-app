@@ -109,10 +109,14 @@ def fragment(
     Fragment name is resolved to a template name for example:
 
         {% fragment "pagination.links" id="pagination" %}
-        ...
+            my content here...
         {% endfragment %}
 
-    resolves to the template name "pagination/links.html".
+    resolves to the template name "pagination/links.html":
+
+        <ul id="{{ id }}">
+            {{ content }} # content inserted here
+        </ul>
     """
     template = context.template.engine.get_template(  # type: ignore[reportOptionalMemberAccess]
         _resolve_fragment_template(fragment_name),
