@@ -11,9 +11,7 @@
                 {% fragment "header.nav.item" %}
                     {% if request.search %}
                         {% url "episodes:search_episodes" as search_episodes_url %}
-                        {% fragment "search.button" search_url=search_episodes_url %}
-                            Search Episodes
-                        {% endfragment %}
+                        {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
                     {% else %}
                         {% if ordering == "asc" %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>

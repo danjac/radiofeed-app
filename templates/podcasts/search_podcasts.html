@@ -9,9 +9,7 @@
         {% fragment "header.nav" %}
             {% fragment "header.nav.item" %}
                 {% url "podcasts:search_itunes" as search_itunes_url %}
-                {% fragment "search.button" search_url=search_itunes_url %}
-                    Search iTunes
-                {% endfragment %}
+                {% include "search/button.html" with search_url=search_itunes_url label="Search iTunes" %}
             {% endfragment %}
 
             {% fragment "header.nav.item" %}

@@ -14,9 +14,7 @@
                         {% if request.search %}
                             {% fragment "header.nav.item" %}
                                 {% url "episodes:search_episodes" as search_episodes_url %}
-                                {% fragment "search.button" search_url=search_episodes_url %}
-                                    Search Episodes
-                                {% endfragment %}
+                                {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
                             {% endfragment %}
                         {% elif season and season in podcast.seasons %}
                             {% fragment "header.nav.item" %}

@@ -2,9 +2,6 @@
 <button class="inline-flex items-center btn btn-default"
         tabindex="0"
         role="link"
-        {% if title %}
-            title="{{ title }}"
-        {% endif %}
         {# fmt:off #}
         x-data="{
             url: '{{ search_url|escapejs }}',
@@ -24,5 +21,5 @@
         :disabled="!search"
         @search.window="search=$event.detail; $nextTick(process);">
     {% heroicon_mini "magnifying-glass" %}
-    {{ content }}
+    {{ label }}
 </button>
