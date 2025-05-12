@@ -7,6 +7,15 @@
         color: inherit;
         border-radius: var(--radius-md);
         padding: theme("padding.1") theme("padding.2");
+
+        &.error {
+            border-color: var(--color-red-800);
+            --tw-ring-color: var(--color-red-800);
+            @variant dark {
+                border-color: var(--color-red-500);
+                --tw-ring-color: var(--color-red-500);
+            }
+        }
     }
 
     /* search inputs */

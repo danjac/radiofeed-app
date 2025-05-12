@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 <fieldset class="space-y-3 form-control">
-    {% with widget_type=field|widget_type %}
+    {% with widget_type=field|widget_type WIDGET_ERROR_CLASS="error" %}
         {% if widget_type == "checkboxinput" %}
             <div class="flex items-center space-x-3 w-full">
                 {% render_field field class="form-checkbox" %}
