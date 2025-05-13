@@ -5,6 +5,7 @@ from radiofeed.cover_image import (
     decrypt_cover_url,
     encrypt_cover_url,
     get_cover_image_attrs,
+    get_cover_image_class,
     get_cover_image_sizes,
     get_cover_image_url,
     get_metadata_info,
@@ -93,3 +94,14 @@ class TestGetCoverImageAttrs:
             assert attrs["sizes"] == expected["sizes"]
         else:
             assert "sizes" not in attrs
+
+
+class TestCoverImageClass:
+    def test_get_cover_image_class(self):
+        assert get_cover_image_class("card", "object-cover") == "size-16 object-cover"
+
+    def test_remove_duplicates(self):
+        assert (
+            get_cover_image_class("card", "object-cover size-16")
+            == "size-16 object-cover"
+        )

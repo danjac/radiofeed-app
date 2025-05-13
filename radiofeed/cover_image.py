@@ -147,8 +147,8 @@ def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
     """Returns default CSS class for the cover image."""
     return " ".join(
         dict.fromkeys(
-            itertools.chain(
-                *[
+            itertools.chain.from_iterable(
+                [
                     classnames.split()
                     for classnames in [
                         _COVER_IMAGE_CLASSES[variant],
