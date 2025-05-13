@@ -15,12 +15,12 @@ class Client:
         timeout: int = 5,
         **kwargs,
     ) -> None:
-        self._headers = {
+        headers = {
             "User-Agent": settings.USER_AGENT,
         } | (headers or {})
 
         self._client = httpx.Client(
-            headers=self._headers,
+            headers=headers,
             follow_redirects=follow_redirects,
             timeout=timeout,
             **kwargs,
