@@ -503,7 +503,10 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 
     MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 
-    DEBUG_TOOLBAR_CONFIG = {"ROOT_TAG_EXTRA_ATTRS": "hx-preserve"}
+    DEBUG_TOOLBAR_CONFIG = {
+        "ROOT_TAG_EXTRA_ATTRS": "hx-preserve",
+        "UPDATE_ON_FETCH": True,
+    }
 
     # INTERNAL_IPS required for debug toolbar
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
