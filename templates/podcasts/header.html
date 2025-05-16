@@ -5,14 +5,14 @@
         <nav class="flex justify-center items-center sm:justify-start">
             {% cache cache_timeout podcast-header-nav request.path %}
                 <ul class="flex items-center space-x-4 lg:space-x-6">
-                    {% fragment "podcasts.header.item" name="detail" active=active url=podcast.get_detail_url %}
+                    {% fragment "podcasts.header.item" name="detail" url=podcast.get_detail_url %}
                         About
                     {% endfragment %}
-                    {% fragment "podcasts.header.item" name="episodes" active=active url=podcast.get_episodes_url %}
+                    {% fragment "podcasts.header.item" name="episodes" url=podcast.get_episodes_url %}
                         Episodes ({{ podcast.num_episodes }})
                     {% endfragment %}
                     {% if podcast.has_similar %}
-                        {% fragment "podcasts.header.item" name="similar" active=active url=podcast.get_similar_url %}
+                        {% fragment "podcasts.header.item" name="similar" url=podcast.get_similar_url %}
                             Similar
                         {% endfragment %}
                     {% endif %}
