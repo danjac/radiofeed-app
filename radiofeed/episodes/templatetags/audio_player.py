@@ -1,4 +1,3 @@
-import contextlib
 from typing import Literal
 
 from django import template
@@ -39,11 +38,14 @@ def audio_player(
 
 def _get_audio_log(request: HttpRequest) -> AudioLog | None:
     if request.user.is_authenticated and (episode_id := request.player.get()):
-        with contextlib.suppress(AudioLog.DoesNotExist):
-            return request.user.audio_logs.select_related(
+        return (
+            request.user.audio_logs.select_related(
                 "episode",
                 "episode__podcast",
-            ).get(episode_id=episode_id)
+            )
+            .filter(episode_id=episode_id)
+            .first()
+        )
     return None
 
 
