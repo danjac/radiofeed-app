@@ -3,18 +3,30 @@ from typing import Literal
 from django import template
 from django.http import HttpRequest
 from django.template.context import RequestContext
+from django.templatetags.static import static
+from django.utils.html import format_html
 
 from radiofeed import cover_image
 from radiofeed.episodes.models import AudioLog, Episode
 
 register = template.Library()
 
+Action = Literal["load", "play", "close"]
+
+
+@register.simple_tag(takes_context=True)
+def audio_player_js(context: RequestContext) -> str:
+    """Renders the audio player JavaScript."""
+    if context.request.user.is_authenticated:
+        return format_html('<script src="{}"></script>', static("audio_player.js"))
+    return ""
+
 
 @register.inclusion_tag("episodes/audio_player.html", takes_context=True)
 def audio_player(
     context: RequestContext,
     audio_log: AudioLog | None = None,
-    action: Literal["load", "play", "close"] = "load",
+    action: Action = "load",
 ) -> dict:
     """Renders the audio player."""
 
@@ -24,8 +36,8 @@ def audio_player(
     }
 
     if (
-        context.request.user.is_authenticated
-        and action in ("load", "play")
+        action != "close"
+        and context.request.user.is_authenticated
         and (audio_log := audio_log or _get_audio_log(context.request))
     ):
         return context_dct | {

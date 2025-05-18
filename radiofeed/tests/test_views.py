@@ -24,8 +24,10 @@ class TestErrorPages:
             pytest.param("500.html"),
         ],
     )
-    def test_render_page(self, rf, template_name):
-        response = TemplateResponse(rf.get("/"), template_name)
+    def test_render_page(self, rf, anonymous_user, template_name):
+        req = rf.get("/")
+        req.user = anonymous_user
+        response = TemplateResponse(req, template_name)
         assert b"Error" in response.render().content
 
 

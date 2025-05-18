@@ -71,9 +71,7 @@
                 {% cookie_banner %}
             </div>
             {% partialdef scripts inline=True %}
-                {% if user.is_authenticated %}
-                    <script src="{% static 'audio-player.js' %}"></script>
-                {% endif %}
+                {% audio_player_js %}
                 {% django_htmx_script %}
                 <script>
                     if (typeof navigator.serviceWorker !== 'undefined') {
