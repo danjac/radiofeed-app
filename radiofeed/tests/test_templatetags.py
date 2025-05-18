@@ -2,7 +2,7 @@ import json
 
 import pytest
 from django.contrib.sites.models import Site
-from django.template.context import RequestContext
+from django.template.context import Context
 
 from radiofeed.templatetags import absolute_uri, csrf_header, format_duration
 
@@ -27,7 +27,7 @@ class TestCsrfHeader:
         settings.CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
         mocker.patch("radiofeed.templatetags.get_token", return_value="abc123")
         req = rf.get("/")
-        value = csrf_header(RequestContext(req), value=1)
+        value = csrf_header(Context({"request": req}), value=1)
         assert json.loads(value) == {"X-CSRFTOKEN": "abc123", "value": 1}
 
 

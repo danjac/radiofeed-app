@@ -9,7 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.middleware.csrf import get_token
 from django.shortcuts import resolve_url
-from django.template.context import Context, RequestContext
+from django.template.context import Context
 from django.template.defaultfilters import pluralize
 
 from radiofeed import pwa
@@ -60,23 +60,25 @@ def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str
 
 
 @register.simple_tag(takes_context=True)
-def csrf_header(context: RequestContext, **kwargs) -> str:
+def csrf_header(context: Context, **kwargs) -> str:
     """Returns CSRF token header in JSON format.
     Additional arbitrary arguments also can be passed to the JSON object.
     """
-    return json.dumps(
-        {
-            _csrf_header_name(): get_token(context.request),
-        }
-        | kwargs,
-        cls=DjangoJSONEncoder,
-    )
+    if request := context.get("request", None):
+        kwargs |= {_csrf_header_name(): get_token(request)}
+    return json.dumps(kwargs, cls=DjangoJSONEncoder)
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
-def cookie_banner(context: RequestContext) -> dict:
+def cookie_banner(context: Context) -> dict:
     """Returns True if user has accepted cookies."""
-    return {"cookies_accepted": settings.GDPR_COOKIE_NAME in context.request.COOKIES}
+    cookies_accepted = False
+    if request := context.get("request", None):
+        cookies_accepted = settings.GDPR_COOKIE_NAME in request.COOKIES
+    return {
+        "cookies_accepted": cookies_accepted,
+        "request": request,
+    }
 
 
 @register.inclusion_tag("cover_image.html")

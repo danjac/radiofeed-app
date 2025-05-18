@@ -2,7 +2,7 @@ from typing import Literal
 
 from django import template
 from django.http import HttpRequest
-from django.template.context import RequestContext
+from django.template.context import Context
 from django.templatetags.static import static
 from django.utils.html import format_html
 
@@ -15,34 +15,36 @@ Action = Literal["load", "play", "close"]
 
 
 @register.simple_tag(takes_context=True)
-def audio_player_js(context: RequestContext) -> str:
+def audio_player_js(context: Context) -> str:
     """Renders the audio player JavaScript."""
-    if context.request.user.is_authenticated:
-        return format_html('<script src="{}"></script>', static("audio_player.js"))
+    if (request := context.get("request", None)) and request.user.is_authenticated:
+        return format_html('<script src="{}"></script>', static("audio-player.js"))
     return ""
 
 
 @register.inclusion_tag("episodes/audio_player.html", takes_context=True)
 def audio_player(
-    context: RequestContext,
+    context: Context,
     audio_log: AudioLog | None = None,
     action: Action = "load",
 ) -> dict:
     """Renders the audio player."""
 
+    request = context.get("request", None)
+
     context_dct = {
-        "request": context.request,
+        "request": request,
         "action": action,
     }
 
     if (
         action != "close"
-        and context.request.user.is_authenticated
-        and (audio_log := audio_log or _get_audio_log(context.request))
+        and request is not None
+        and (audio_log := audio_log or _get_audio_log(request))
     ):
         return context_dct | {
             "audio_log": audio_log,
-            "metadata": _get_media_metadata(context.request, audio_log.episode),
+            "metadata": _get_media_metadata(request, audio_log.episode),
         }
 
     return context_dct

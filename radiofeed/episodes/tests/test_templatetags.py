@@ -1,5 +1,5 @@
 import pytest
-from django.template.context import RequestContext
+from django.template.context import Context
 
 from radiofeed.episodes.middleware import PlayerDetails
 from radiofeed.episodes.templatetags.audio_player import audio_player
@@ -13,7 +13,7 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = audio_log.user
 
-        dct = audio_player(RequestContext(req), audio_log, action="play")
+        dct = audio_player(Context({"request": req}), audio_log, action="play")
         assert dct["audio_log"] == audio_log
         assert dct["request"] == req
         assert dct["action"] == "play"
@@ -24,7 +24,7 @@ class TestAudioPlayer:
         req = rf.get("/")
         req.user = audio_log.user
 
-        dct = audio_player(RequestContext(req), audio_log, action="close")
+        dct = audio_player(Context({"request": req}), audio_log, action="close")
         assert "audio_log" not in dct
         assert dct["request"] == req
         assert dct["action"] == "close"
@@ -38,7 +38,7 @@ class TestAudioPlayer:
         req.player.set(audio_log.episode.pk)
         req.user = audio_log.user
 
-        dct = audio_player(RequestContext(req))
+        dct = audio_player(Context({"request": req}))
         assert dct["audio_log"] == audio_log
         assert dct["request"] == req
         assert dct["action"] == "load"
@@ -50,7 +50,7 @@ class TestAudioPlayer:
         req.player = PlayerDetails(request=req)
         req.user = user
 
-        dct = audio_player(RequestContext(req))
+        dct = audio_player(Context({"request": req}))
         assert "audio_log" not in dct
         assert dct["request"] == req
         assert dct["action"] == "load"
@@ -62,7 +62,7 @@ class TestAudioPlayer:
         req.player = PlayerDetails(request=req)
         req.user = anonymous_user
 
-        dct = audio_player(RequestContext(req))
+        dct = audio_player(Context({"request": req}))
         assert "audio_log" not in dct
         assert dct["request"] == req
         assert dct["action"] == "load"

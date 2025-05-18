@@ -70,8 +70,8 @@
                 {% audio_player %}
                 {% cookie_banner %}
             </div>
+            {% audio_player_js %}
             {% partialdef scripts inline=True %}
-                {% audio_player_js %}
                 {% django_htmx_script %}
                 <script>
                     if (typeof navigator.serviceWorker !== 'undefined') {
