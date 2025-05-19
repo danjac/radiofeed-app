@@ -31,10 +31,13 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 get_cover_image_class = register.simple_tag(get_cover_image_class)
 
 
+_jsonify = functools.partial(json.dumps, cls=DjangoJSONEncoder)
+
+
 @register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
-    return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
+    return _jsonify(settings.HTMX_CONFIG)
 
 
 @register.simple_tag
@@ -66,7 +69,7 @@ def csrf_header(context: Context, **kwargs) -> str:
     """
     if request := context.get("request", None):
         kwargs |= {_csrf_header_name(): get_token(request)}
-    return json.dumps(kwargs, cls=DjangoJSONEncoder)
+    return _jsonify(kwargs)
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
