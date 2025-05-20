@@ -48,6 +48,9 @@ def get_manifest(request: HttpRequest) -> dict:
         "short_name": truncatechars(request.site.name, 12),
         "start_url": start_url,
         "theme_color": get_theme_color(),
+        "background": {
+            "service-worker": static("service-worker.js"),
+        },
         "display_override": [
             "minimal-ui",
             "window-controls-overlay",
