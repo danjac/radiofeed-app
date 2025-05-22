@@ -205,7 +205,7 @@
                 </div>
             {% endpartialdef audio_log %}
             {% cache cache_timeout episode-description episode.pk %}
-                {% include "markdown.html" with content=episode.description %}
+                {% markdown episode.description %}
             {% endcache %}
         </article>
     {% endwith %}

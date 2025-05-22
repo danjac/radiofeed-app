@@ -102,6 +102,13 @@ def cover_image(
     }
 
 
+@register.inclusion_tag("markdown.html")
+def markdown(content: str | None) -> dict:
+    """Render content as Markdown."""
+    content = render_markdown(content) if content else ""
+    return {"content": content}
+
+
 @register.simple_block_tag(takes_context=True)
 def fragment(
     context: Context,
@@ -129,12 +136,6 @@ def fragment(
 
     with context.push(content=content, **extra_context):
         return template.render(context)
-
-
-@register.filter
-def markdown(content: str | None) -> str:
-    """Render content as Markdown."""
-    return render_markdown(content or "")
 
 
 @register.filter
