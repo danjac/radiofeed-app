@@ -1,4 +1,5 @@
 import datetime
+import functools
 import io
 from typing import Final
 
@@ -149,9 +150,7 @@ def cover_image(_, encrypted: str, size: int) -> FileResponse:
     output: io.BufferedIOBase
 
     try:
-        response = get_client().get(decrypt_cover_url(encrypted))
-
-        image = Image.open(io.BytesIO(response.content)).resize(
+        image = Image.open(io.BytesIO(_fetch_cover_image(encrypted))).resize(
             (size, size),
             Image.Resampling.LANCZOS,
         )
@@ -172,3 +171,9 @@ def cover_image(_, encrypted: str, size: int) -> FileResponse:
         output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
+
+
+@functools.cache
+def _fetch_cover_image(encrypted: str) -> bytes:
+    """Fetches the image from the remote source."""
+    return get_client().get(decrypt_cover_url(encrypted)).content
