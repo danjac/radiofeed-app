@@ -3,6 +3,7 @@ import binascii
 import functools
 import itertools
 import pathlib
+import urllib.parse
 from typing import Final, Literal
 
 from django.conf import settings
@@ -112,28 +113,30 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @functools.cache
 def encrypt_cover_url(cover_url: str) -> str:
     """Encrypt the cover URL."""
-    return (
-        force_str(
-            base64.urlsafe_b64encode(
-                force_bytes(_get_cover_url_signer().sign(cover_url)),
-            )
+    scheme = urllib.parse.urlparse(cover_url).scheme
+    prefix = "s" if scheme == "https" else "h"
+    cover_url = prefix + cover_url[len(scheme) + 3 :]
+
+    return force_str(
+        base64.urlsafe_b64encode(
+            force_bytes(_get_cover_url_signer().sign(cover_url)),
         )
-        .rstrip("=")
-        .removeprefix("aHR0")  # We assume all URLs start with "http"
-    )
+    ).rstrip("=")
 
 
 @functools.cache
 def decrypt_cover_url(encrypted_url: str) -> str:
     """Decrypt the cover URL."""
     try:
-        return _get_cover_url_signer().unsign(
+        cover_url = _get_cover_url_signer().unsign(
             force_str(
                 base64.urlsafe_b64decode(
-                    f"aHR0{encrypted_url}==",
+                    f"{encrypted_url}==",
                 )
             )
         )
+        scheme = "https" if cover_url.startswith("s") else "http"
+        return f"{scheme}://{cover_url[1:]}"
     except (
         BadSignature,
         DjangoUnicodeDecodeError,

@@ -117,7 +117,9 @@ class TestCoverImage:
 
     @pytest.mark.django_db
     def test_unsigned_url(self, client, mocker):
-        response = client.get(f"{reverse('cover_image', args=['test.jpg', 96])}")
+        response = client.get(
+            f"{reverse('cover_image', kwargs={'encrypted': 'test.jpg', 'size': 96})}"
+        )
         mock_client = mocker.patch("radiofeed.views.get_client")
         assert200(response)
         mock_client.assert_not_called()
