@@ -4,7 +4,9 @@ from typing import Final
 
 from django import template
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
+from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.template.defaultfilters import pluralize
 
@@ -40,6 +42,14 @@ def htmx_config() -> str:
 def theme_color() -> str:
     """Returns theme color in meta tag."""
     return pwa.get_theme_color()
+
+
+@register.simple_tag
+def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
+    """Returns absolute URI for the given path."""
+    scheme = "https" if settings.USE_HTTPS else "http"
+    url = resolve_url(path, *args, **kwargs)
+    return f"{scheme}://{site.domain}{url}"
 
 
 @register.simple_block_tag(takes_context=True)

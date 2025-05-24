@@ -84,10 +84,10 @@
 
             {% for podcast in podcasts %}
                 <div class="podcast">
-                    <h3><a href="{{ absolute_uri }}{{ podcast.get_absolute_url }}">{{ podcast.cleaned_title }}</a></h3>
+                    <h3><a href="{% absolute_uri site podcast.get_absolute_url %}">{{ podcast.cleaned_title }}</a></h3>
                     <div class="podcast-content">
                         {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_image_attrs %}
-                        <img src="{{ absolute_uri }}{{ cover_image_attrs.src }}"
+                        <img src="{% absolute_uri site cover_image_attrs.src %}"
                              width="{{ cover_image_attrs.width }}"
                              height="{{ cover_image_attrs.height }}"
                              alt="{{ cover_image_attrs.alt }}"

@@ -90,7 +90,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
         "".join(
-            [
+            (
                 reverse(
                     "cover_image",
                     kwargs={
@@ -103,7 +103,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
                         "url": get_cover_url_signer().sign(cover_url),
                     }
                 ),
-            ]
+            )
         )
         if cover_url
         else get_placeholder_url(size)

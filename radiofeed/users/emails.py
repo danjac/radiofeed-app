@@ -2,7 +2,6 @@ import functools
 import urllib.parse
 
 from allauth.account.models import EmailAddress
-from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.core.signing import TimestampSigner
@@ -11,6 +10,7 @@ from django.template import loader
 from django.urls import reverse
 
 from radiofeed.html import strip_html
+from radiofeed.templatetags import absolute_uri
 
 
 def send_notification_email(  # noqa: PLR0913
@@ -24,14 +24,13 @@ def send_notification_email(  # noqa: PLR0913
     **kwargs,
 ) -> None:
     """Sends an email to the given recipient."""
-    absolute_uri = get_absolute_uri(site)
 
-    unsubscribe_url = absolute_uri + get_unsubscribe_url(recipient.email)
+    unsubscribe_url = absolute_uri(site, get_unsubscribe_url(recipient.email))
 
     html_content = loader.render_to_string(
         template_name,
         context={
-            "absolute_uri": absolute_uri,
+            "site": site,
             "recipient": recipient.user,
             "unsubscribe_url": unsubscribe_url,
         }
@@ -73,16 +72,10 @@ def get_unsubscribe_signer() -> TimestampSigner:
     return TimestampSigner(salt="unsubscribe")
 
 
-def get_absolute_uri(site: Site) -> str:
-    """Get the absolute URI for the given site."""
-    scheme = "https" if settings.USE_HTTPS else "http"
-    return f"{scheme}://{site.domain}"
-
-
 def get_unsubscribe_url(email: str) -> str:
     """Generate an unsubscribe URL for the given email address."""
     return "".join(
-        [
+        (
             reverse("users:unsubscribe"),
             "?",
             urllib.parse.urlencode(
@@ -90,5 +83,5 @@ def get_unsubscribe_url(email: str) -> str:
                     "email": get_unsubscribe_signer().sign(email),
                 }
             ),
-        ]
+        )
     )
