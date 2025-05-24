@@ -8,9 +8,9 @@
 {% block content %}
     {% include "account/header.html" with active="preferences" %}
     {% partialdef form inline=True %}
-        {% fragment "form" htmx=True target="preferences-form" %}
+        {% fragment "form.html" htmx=True target="preferences-form" %}
             {{ form }}
-            {% fragment "form.buttons" %}
+            {% fragment "form/buttons.html" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "check" %}
                     Save Changes

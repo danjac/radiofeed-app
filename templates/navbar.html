@@ -129,7 +129,7 @@
             {% include "navbar/menu.html" %}
         </nav>
     {% else %}
-        {% fragment "navbar.cta" %}
+        {% fragment "navbar/cta.html" %}
             <a href="{% url 'account_signup' %}">Sign up</a>
             or
             <a href="{% url 'account_login' %}">log in</a>
@@ -141,7 +141,7 @@
          x-transition
          x-show="show"
          @cta.window="show = true; content = $event.detail.content; dismissable = $event.detail.dismissable;">
-        {% fragment "navbar.cta" %}
+        {% fragment "navbar/cta.html" %}
             <div class="relative">
                 <button @click="show = false"
                         class="absolute top-0 right-0 pl-2 text-white cursor-pointer hover:opacity-75"

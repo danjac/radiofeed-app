@@ -7,19 +7,19 @@
 {% block content %}
     {% include "header.html" with title="Sign In" %}
     <div class="space-y-3">
-        {% fragment "socialaccount.buttons" process="login" %}Login with{% endfragment %}
+        {% fragment "socialaccount/buttons.html" process="login" %}Login with{% endfragment %}
         <p>
             If you have not created an account yet, then please
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.
         </p>
-        {% fragment "form" hx_disable=True %}
+        {% fragment "form.html" hx_disable=True %}
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
                        value="{{ redirect_field_value }}" />
             {% endif %}
             {{ form }}
-            {% fragment "form.buttons" %}
+            {% fragment "form/buttons.html" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "arrow-right-on-rectangle" %}
                     Sign In

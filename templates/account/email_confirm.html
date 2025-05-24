@@ -13,8 +13,8 @@
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
             {% url "account_confirm_email" key=confirmation.key as action %}
-            {% fragment "form" class="flex justify-center sm:justify-start flex-column" %}
-                {% fragment "form.buttons" %}
+            {% fragment "form.html" class="flex justify-center sm:justify-start flex-column" %}
+                {% fragment "form/buttons.html" %}
                     <button class="btn btn-primary">
                         {% heroicon_mini "check" %}
                         Confirm E-Mail

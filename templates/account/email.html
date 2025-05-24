@@ -11,7 +11,7 @@
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
-                    {% fragment "form" %}
+                    {% fragment "form.html" %}
                         {% for emailaddress in emailaddresses %}
                             <div class="flex items-center space-x-3">
                                 <input type="radio"
@@ -29,7 +29,7 @@
                                 </label>
                             </div>
                         {% endfor %}
-                        {% fragment "form.buttons" %}
+                        {% fragment "form/buttons.html" %}
                             <button class="btn btn-primary"
                                     name="action_primary"
                                     {% if num_addresses == 1 %}
@@ -74,9 +74,9 @@
         {% if can_add_email %}
             <hr class="border"/>
             <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
-            {% fragment "form" %}
+            {% fragment "form.html" %}
                 {{ form }}
-                {% fragment "form.buttons" %}
+                {% fragment "form/buttons.html" %}
                     <button class="btn btn-primary"
                             type="submit"
                             name="action_add"

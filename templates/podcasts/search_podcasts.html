@@ -5,14 +5,14 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" title="Search Podcasts" %}
-        {% fragment "header.nav" %}
-            {% fragment "header.nav.item" %}
+    {% fragment "header.html" title="Search Podcasts" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav/item.html" %}
                 {% url "podcasts:search_itunes" as search_itunes_url %}
                 {% include "search/button.html" with search_url=search_itunes_url label="Search iTunes" %}
             {% endfragment %}
 
-            {% fragment "header.nav.item" %}
+            {% fragment "header/nav/item.html" %}
                 {% include "search/form.html" with placeholder="Search: Podcasts" %}
             {% endfragment %}
 
@@ -20,13 +20,13 @@
     {% endfragment %}
     {% partialdef pagination inline=True %}
         {% cache cache_timeout search-podcasts request.get_full_path %}
-            {% fragment "pagination" %}
+            {% fragment "pagination.html" %}
                 {% for podcast in page %}
-                    {% fragment "pagination.item" %}
+                    {% fragment "pagination/item.html" %}
                         {% include "podcasts/podcast.html" %}
                     {% endfragment %}
                 {% empty %}
-                    {% fragment "pagination.empty" %}
+                    {% fragment "pagination/empty.html" %}
                         <p>
 
                             No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.

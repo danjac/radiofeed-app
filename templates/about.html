@@ -6,8 +6,8 @@
 
 {% block content %}
     {% with site_name=request.site.name %}
-        {% fragment "header" %}
-            {% fragment "header.title" %}
+        {% fragment "header.html" %}
+            {% fragment "header/title.html" %}
                 About {{ site_name }}
             {% endfragment %}
         {% endfragment %}

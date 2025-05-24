@@ -7,8 +7,8 @@
         <div class="space-y-3">
             <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
             <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>
-            {% fragment "form" hx_disable=True %}
-                {% fragment "form.buttons" %}
+            {% fragment "form.html" hx_disable=True %}
+                {% fragment "form/buttons.html" %}
                     <button class="btn btn-danger"
                             name="confirm-delete"
                             value="true"

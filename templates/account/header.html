@@ -1,14 +1,14 @@
 {% load heroicons %}
 {% load get_account_settings from users %}
 {% get_account_settings active as settings %}
-{% fragment "header" %}
-    {% fragment "header.title" %}Settings for {{ user.username }}{% endfragment %}
-    {% fragment "header.nav" %}
-        {% fragment "header.nav.item" %}
-            {% fragment "header.nav.dropdown" id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
+{% fragment "header.html" %}
+    {% fragment "header/title.html" %}Settings for {{ user.username }}{% endfragment %}
+    {% fragment "header/nav.html" %}
+        {% fragment "header/nav/item.html" %}
+            {% fragment "header/nav/dropdown.html" id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
 
                 {% for item in settings.items %}
-                    {% fragment "header.nav.dropdown.item" url=item.url icon=item.icon %}
+                    {% fragment "header/nav/dropdown/item.html" url=item.url icon=item.icon %}
                         {{ item.label }}
                     {% endfragment %}
                 {% endfor %}

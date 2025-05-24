@@ -5,10 +5,10 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" title="Bookmarks" %}
+    {% fragment "header.html" title="Bookmarks" %}
         {% if request.search or page.has_other_pages %}
-            {% fragment "header.nav" %}
-                {% fragment "header.nav.item" %}
+            {% fragment "header/nav.html" %}
+                {% fragment "header/nav/item.html" %}
                     {% if request.search %}
                         {% url "episodes:search_episodes" as search_episodes_url %}
                         {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
@@ -20,7 +20,7 @@
                         {% endif %}
                     {% endif %}
                 {% endfragment %}
-                {% fragment "header.nav.item" %}
+                {% fragment "header/nav/item.html" %}
                     {% include "search/form.html" with placeholder="Search: Bookmarks" clearable=True %}
                 {% endfragment %}
             {% endfragment %}
@@ -28,13 +28,13 @@
     {% endfragment %}
 
     {% partialdef pagination inline=True %}
-        {% fragment "pagination" %}
+        {% fragment "pagination.html" %}
             {% for bookmark in page %}
-                {% fragment "pagination.item" %}
+                {% fragment "pagination/item.html" %}
                     {% include "episodes/episode.html" with episode=bookmark.episode %}
                 {% endfragment %}
             {% empty %}
-                {% fragment "pagination.empty" %}
+                {% fragment "pagination/empty.html" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
                     {% else %}

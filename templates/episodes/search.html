@@ -5,14 +5,14 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" title="Search Episodes" %}
-        {% fragment "header.nav" %}
-            {% fragment "header.nav.item" %}
+    {% fragment "header.html" title="Search Episodes" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav/item.html" %}
                 {% url "podcasts:search_podcasts" as search_podcasts_url %}
                 {% include "search/button.html" with search_url=search_podcasts_url label="Search Podcasts" %}
             {% endfragment %}
 
-            {% fragment "header.nav.item" %}
+            {% fragment "header/nav/item.html" %}
                 {% include "search/form.html" with placeholder="Search: Episodes" %}
             {% endfragment %}
 
@@ -21,13 +21,13 @@
 
     {% partialdef pagination inline=True %}
         {% cache cache_timeout search-episodes request.get_full_path %}
-            {% fragment "pagination" %}
+            {% fragment "pagination.html" %}
                 {% for episode in page %}
-                    {% fragment "pagination.item" %}
+                    {% fragment "pagination/item.html" %}
                         {% include "episodes/episode.html" %}
                     {% endfragment %}
                 {% empty %}
-                    {% fragment "pagination.empty" %}
+                    {% fragment "pagination/empty.html" %}
                         No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                     {% endfragment %}
 

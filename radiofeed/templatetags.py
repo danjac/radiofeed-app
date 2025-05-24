@@ -113,27 +113,11 @@ def markdown(content: str | None) -> dict:
 def fragment(
     context: Context,
     content: str,
-    fragment_name: str,
+    template_name: str,
     **extra_context,
 ) -> str:
-    """Renders a block fragment.
-
-    Fragment name is resolved to a template name for example:
-
-        {% fragment "pagination.links" id="pagination" %}
-            my content here...
-        {% endfragment %}
-
-    resolves to the template name "pagination/links.html":
-
-        <ul id="{{ id }}">
-            {{ content }} # content inserted here
-        </ul>
-    """
-    template = context.template.engine.get_template(  # type: ignore[reportOptionalMemberAccess]
-        _resolve_fragment_template(fragment_name),
-    )
-
+    """Renders a block fragment."""
+    template = context.template.engine.get_template(template_name)  # type: ignore[reportOptionalMemberAccess]
     with context.push(content=content, **extra_context):
         return template.render(context)
 
@@ -148,11 +132,6 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
-
-
-@functools.cache
-def _resolve_fragment_template(fragment_name: str) -> str:
-    return f"{fragment_name.replace('.', '/')}.html"
 
 
 @functools.cache

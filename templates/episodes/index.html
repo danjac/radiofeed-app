@@ -5,9 +5,9 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header" title="New Releases" %}
-        {% fragment "header.nav" %}
-            {% fragment "header.nav.item" %}
+    {% fragment "header.html" title="New Releases" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav/item.html" %}
                 {% url "episodes:search_episodes" as search_url %}
                 {% include "search/form.html" with placeholder="Search: Episodes" %}
             {% endfragment %}
@@ -15,13 +15,13 @@
     {% endfragment %}
 
     {% partialdef pagination inline=True %}
-        {% fragment "pagination" %}
+        {% fragment "pagination.html" %}
             {% for episode in page %}
-                {% fragment "pagination.item" %}
+                {% fragment "pagination/item.html" %}
                     {% include "episodes/episode.html" %}
                 {% endfragment %}
             {% empty %}
-                {% fragment "pagination.empty" %}
+                {% fragment "pagination/empty.html" %}
                     <p>You're not following any podcasts yet.</p>
                     <p>
                         Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.

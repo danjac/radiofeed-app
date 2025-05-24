@@ -28,9 +28,9 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline=True %}
-                {% fragment "form" htmx=True multipart=True target="import-feeds-form" %}
+                {% fragment "form.html" htmx=True multipart=True target="import-feeds-form" %}
                     {{ upload_form }}
-                    {% fragment "form.buttons" %}
+                    {% fragment "form/buttons.html" %}
                         <button class="btn btn-default">
                             {% heroicon_mini "arrow-up-tray" %}
                             Upload OPML
