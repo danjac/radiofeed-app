@@ -38,12 +38,13 @@ def send_notification_email(  # noqa: PLR0913
         | (context or {}),
     )
 
-    headers = {"<List-Unsubscribe>": f"<{unsubscribe_url}>"} | (headers or {})
+    headers = {"List-Unsubscribe": f"<{unsubscribe_url}>"} | (headers or {})
 
     msg = EmailMultiAlternatives(
         subject=subject,
         body=strip_html(html_content),
         to=[recipient.email],
+        headers=headers,
         **kwargs,
     )
 
