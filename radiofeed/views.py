@@ -5,6 +5,7 @@ from typing import Final
 
 import httpx
 from django.conf import settings
+from django.core.signing import BadSignature
 from django.http import (
     FileResponse,
     Http404,
@@ -21,8 +22,7 @@ from PIL import Image
 
 from radiofeed import pwa
 from radiofeed.cover_image import (
-    URLDecryptionError,
-    decrypt_cover_url,
+    get_cover_url_signer,
     get_placeholder_path,
     is_cover_image_size,
 )
@@ -138,19 +138,24 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(_, encrypted: str, size: int) -> FileResponse:
+def cover_image(request: HttpRequest, size: int) -> FileResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
     """
-    # only specific image sizes permitted
+
     if not is_cover_image_size(size):
+        raise Http404
+
+    cover_url = request.GET.get("url", None)
+
+    if not cover_url:
         raise Http404
 
     output: io.BufferedIOBase
 
     try:
-        image = Image.open(io.BytesIO(_fetch_cover_image(encrypted))).resize(
+        image = Image.open(io.BytesIO(_fetch_cover_image(cover_url))).resize(
             (size, size),
             Image.Resampling.LANCZOS,
         )
@@ -160,10 +165,10 @@ def cover_image(_, encrypted: str, size: int) -> FileResponse:
         output.seek(0)
 
     except (
+        BadSignature,
         OSError,
         httpx.HTTPError,
         httpx.StreamError,
-        URLDecryptionError,
     ):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
@@ -174,6 +179,7 @@ def cover_image(_, encrypted: str, size: int) -> FileResponse:
 
 
 @functools.cache
-def _fetch_cover_image(encrypted: str) -> bytes:
+def _fetch_cover_image(cover_url: str) -> bytes:
     """Fetches the image from the remote source."""
-    return get_client().get(decrypt_cover_url(encrypted)).content
+    unsigned = get_cover_url_signer().unsign(cover_url)
+    return get_client().get(unsigned).content

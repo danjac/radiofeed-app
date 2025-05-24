@@ -17,7 +17,7 @@ urlpatterns = [
     path("privacy/", views.privacy, name="privacy"),
     path("accept-cookies/", views.accept_cookies, name="accept_cookies"),
     path(
-        "covers/<int:size>/<str:encrypted>.webp",
+        "covers/<int:size>/cover.webp",
         views.cover_image,
         name="cover_image",
     ),
