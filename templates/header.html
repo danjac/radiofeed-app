@@ -1,6 +1,6 @@
 <header class="pb-3 mb-3 space-y-3 border-b sm:flex sm:justify-between sm:space-y-0">
     {% if title %}
-        {% fragment "header.title" %}{{ title }}{% endfragment %}
+        {% include "header/title.html" with content=title %}
     {% endif %}
     {{ content }}
 </header>
