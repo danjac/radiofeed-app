@@ -74,7 +74,8 @@
                                  hx-target="this"
                                  hx-indicator="this"
                                  hx-swap="outerHTML"
-                                 hx-headers="{% csrf_header %}">
+
+                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
                                     <button class="text-lg btn btn-primary btn-outline"
                                             aria-label="Close Player"
@@ -111,7 +112,7 @@
                              hx-target="this"
                              hx-swap="outerHTML"
                              hx-indicator="this"
-                             hx-headers="{% csrf_header %}">
+                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
                                 <button class="btn btn-default btn-outline"
                                         aria-label="Remove Episode from your Bookmarks"
@@ -196,7 +197,7 @@
                                     hx-indicator="this"
                                     hx-push-url="false"
                                     hx-swap="outerHTML"
-                                    hx-headers="{% csrf_header %}">
+                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% heroicon_mini "trash" size=16 %}
                                 Remove
                             </button>

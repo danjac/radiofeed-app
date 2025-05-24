@@ -1,10 +1,7 @@
-import json
-
 import pytest
 from django.contrib.sites.models import Site
-from django.template.context import Context
 
-from radiofeed.templatetags import absolute_uri, csrf_header, format_duration
+from radiofeed.templatetags import format_duration
 
 
 @pytest.fixture
@@ -20,16 +17,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-class TestCsrfHeader:
-    def test_header(self, rf, mocker):
-        mocker.patch("radiofeed.templatetags.get_token", return_value="abc123")
-        value = csrf_header(Context({"request": rf.get("/")}))
-        assert json.loads(value) == {"X-CSRFToken": "abc123"}
-
-    def test_no_header(self):
-        assert csrf_header(Context({})) == ""
 
 
 class TestFormatDuration:
@@ -53,22 +40,3 @@ class TestFormatDuration:
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
-
-
-class TestAbsoluteUri:
-    @pytest.mark.django_db
-    def test_plain_url(self, settings):
-        settings.USE_HTTPS = False
-        assert absolute_uri("/podcasts/") == "http://example.com/podcasts/"
-
-    @pytest.mark.django_db
-    def test_https(self, settings):
-        settings.USE_HTTPS = True
-        assert absolute_uri("/podcasts/") == "https://example.com/podcasts/"
-
-    @pytest.mark.django_db
-    def test_object(self, podcast, settings):
-        settings.USE_HTTPS = False
-        assert (
-            absolute_uri(podcast) == f"http://example.com{podcast.get_absolute_url()}"
-        )

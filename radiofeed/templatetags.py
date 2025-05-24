@@ -4,11 +4,7 @@ from typing import Final
 
 from django import template
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Model
-from django.middleware.csrf import get_token
-from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.template.defaultfilters import pluralize
 
@@ -46,28 +42,17 @@ def theme_color() -> str:
     return pwa.get_theme_color()
 
 
-@register.simple_tag
-@functools.cache
-def get_site() -> Site:
-    """Returns the current Site instance. Use when `request.site` is unavailable, e.g. in emails run from cronjobs."""
-
-    return Site.objects.get_current()
-
-
-@register.simple_tag
-def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str:
-    """Returns the absolute URL to site domain. Use this if request is unavailable."""
-    path = resolve_url(url, *url_args, **url_kwargs) if url else ""
-    scheme = "https" if settings.USE_HTTPS else "http"
-    return f"{scheme}://{get_site().domain}{path}"
-
-
-@register.simple_tag(takes_context=True)
-def csrf_header(context: Context) -> str:
-    """Returns CSRF token header in JSON format."""
-    if request := context.get("request", None):
-        return _jsonify({"X-CSRFToken": get_token(request)})
-    return ""
+@register.simple_block_tag(takes_context=True)
+def fragment(
+    context: Context,
+    content: str,
+    template_name: str,
+    **extra_context,
+) -> str:
+    """Renders a block fragment."""
+    template = context.template.engine.get_template(template_name)  # type: ignore[reportOptionalMemberAccess]
+    with context.push(content=content, **extra_context):
+        return template.render(context)
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
@@ -105,19 +90,6 @@ def markdown(content: str | None) -> dict:
     """Render content as Markdown."""
     content = render_markdown(content) if content else ""
     return {"content": content}
-
-
-@register.simple_block_tag(takes_context=True)
-def fragment(
-    context: Context,
-    content: str,
-    template_name: str,
-    **extra_context,
-) -> str:
-    """Renders a block fragment."""
-    template = context.template.engine.get_template(template_name)  # type: ignore[reportOptionalMemberAccess]
-    with context.push(content=content, **extra_context):
-        return template.render(context)
 
 
 @register.filter

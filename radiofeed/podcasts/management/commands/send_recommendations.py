@@ -1,11 +1,15 @@
 from allauth.account.models import EmailAddress
+from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management.base import BaseCommand, CommandParser
 from django.db import transaction
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
-from radiofeed.users.emails import get_recipients, send_notification_email
+from radiofeed.users.emails import (
+    get_recipients,
+    send_notification_email,
+)
 
 
 class Command(BaseCommand):
@@ -25,9 +29,14 @@ class Command(BaseCommand):
 
     def handle(self, **options) -> None:
         """Handle implementation."""
+
+        site = Site.objects.get_current()
+
         connection = get_connection()
+
         execute_thread_pool(
             lambda recipient: self._send_recommendations_email(
+                site,
                 recipient,
                 options["num_podcasts"],
                 connection=connection,
@@ -37,6 +46,7 @@ class Command(BaseCommand):
 
     def _send_recommendations_email(
         self,
+        site: Site,
         recipient: EmailAddress,
         num_podcasts: int,
         **kwargs,
@@ -52,11 +62,13 @@ class Command(BaseCommand):
         )[:num_podcasts]:
             with transaction.atomic():
                 send_notification_email(
+                    site,
                     recipient,
                     f"Hi, {recipient.user.name}, here are some podcasts you might like!",
                     "podcasts/emails/recommendations.html",
                     {
                         "podcasts": podcasts,
+                        "site": site,
                     },
                     **kwargs,
                 )
