@@ -1,15 +1,16 @@
 import collections
-import contextlib
 import functools
 import itertools
-import operator
 import statistics
 from collections.abc import Iterator
 
 from django.db.models import QuerySet
 from django.utils import timezone
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import (
+    HashingVectorizer,
+    TfidfTransformer,
+)
+from sklearn.neighbors import NearestNeighbors
 
 from radiofeed import tokenizer
 from radiofeed.podcasts.models import Category, Podcast, Recommendation
@@ -43,25 +44,43 @@ class _Recommender:
         *,
         since: timezone.timedelta | None = None,
         num_matches: int = 12,
-        max_features: int = 5000,
     ) -> None:
         self._language = language
         self._since = since or timezone.timedelta(days=90)
         self._num_matches = num_matches
 
-        self._vectorizer = TfidfVectorizer(
-            stop_words=list(tokenizer.get_stopwords(self._language)),
-            max_features=max_features,
-        )
-
     def recommend(self) -> None:
         """Creates recommendation instances."""
+
+        podcasts = Podcast.objects.filter(
+            pub_date__gt=timezone.now() - self._since,
+            language__iexact=self._language,
+            active=True,
+            private=False,
+        ).exclude(extracted_text="")
+
+        corpus = podcasts.values_list("extracted_text", flat=True)
+
+        hasher = HashingVectorizer(
+            stop_words=list(tokenizer.get_stopwords(self._language)),
+            n_features=5000,
+            alternate_sign=False,
+        )
+
+        # Transform corpus counts and fit TFIDF
+        try:
+            counts = hasher.transform(corpus)
+        except StopIteration:
+            return
+
+        transformer = TfidfTransformer()
+        transformer.fit(counts)
 
         # Delete existing recommendations first
         Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
 
         for batch in itertools.batched(
-            self._build_matches_dict().items(),
+            self._build_matches_dict(hasher, transformer, podcasts).items(),
             1000,
             strict=False,
         ):
@@ -81,59 +100,84 @@ class _Recommender:
 
     def _build_matches_dict(
         self,
+        hasher: HashingVectorizer,
+        transformer: TfidfTransformer,
+        podcasts: QuerySet[Podcast],
     ) -> collections.defaultdict[tuple[int, int], list[float]]:
-        matches = collections.defaultdict(list)
-
+        matches: collections.defaultdict[tuple[int, int], list[float]] = (
+            collections.defaultdict(list)
+        )
         for category in get_categories():
-            for batch in itertools.batched(
-                self._get_podcasts(category)
-                .values_list("id", "extracted_text")
-                .iterator(),
-                1000,
-                strict=False,
+            for (
+                podcast_id,
+                recommended_id,
+                similarity,
+            ) in self._find_matches_for_category(
+                category,
+                hasher,
+                transformer,
+                podcasts,
             ):
-                for (
-                    podcast_id,
-                    recommended_id,
-                    similarity,
-                ) in self._find_similarities(dict(batch)):
-                    matches[podcast_id, recommended_id].append(similarity)
+                matches[(podcast_id, recommended_id)].append(similarity)
 
         return matches
 
-    def _get_podcasts(self, category: Category) -> QuerySet[Podcast]:
-        return Podcast.objects.filter(
-            pub_date__gt=timezone.now() - self._since,
-            language__iexact=self._language,
-            categories=category,
-            active=True,
-            private=False,
-        ).exclude(extracted_text="")
-
-    def _find_similarities(
-        self, rows: dict[int, str]
+    def _find_matches_for_category(
+        self,
+        category: Category,
+        hasher: HashingVectorizer,
+        transformer: TfidfTransformer,
+        podcasts: QuerySet[Podcast],
     ) -> Iterator[tuple[int, int, float]]:
-        # build a data model of podcasts with same language and category
-
-        with contextlib.suppress(ValueError):
-            cosine_sim = cosine_similarity(
-                self._vectorizer.fit_transform(rows.values())
+        """Finds matches for the given podcasts based on their text content."""
+        try:
+            podcast_ids, texts = zip(
+                *podcasts.filter(categories=category).values_list(
+                    "id",
+                    "extracted_text",
+                ),
+                strict=True,
             )
+        except ValueError:
+            return
 
-            podcast_ids = list(rows.keys())
+        # Vectorize category texts
+        x_counts = hasher.transform(texts)
+        x_tfidf = transformer.transform(x_counts)
 
-            for current_id, similar in zip(podcast_ids, cosine_sim, strict=True):
-                with contextlib.suppress(IndexError):
-                    for index, similarity in itertools.islice(
-                        sorted(
-                            enumerate(similar),
-                            key=operator.itemgetter(1),
-                            reverse=True,
-                        ),
-                        self._num_matches,
-                    ):
-                        if (
-                            similarity > 0
-                            and (recommended_id := podcast_ids[index]) != current_id
-                        ):
-                            yield current_id, recommended_id, similarity
+        n_neighbors = min(self._num_matches, len(podcast_ids))
+
+        if n_neighbors <= 1:
+            return
+
+        # Nearest neighbors (cosine similarity)
+        nn = NearestNeighbors(
+            n_neighbors=n_neighbors,
+            metric="cosine",
+            algorithm="brute",
+        ).fit(x_tfidf)
+
+        distances, indices = nn.kneighbors(x_tfidf)
+
+        # Use numpy for vectorized processing
+        # Skip self matches at index 0
+        distances = distances[:, 1:]
+        indices = indices[:, 1:]
+
+        # Calculate similarity
+        similarities = 1 - distances  # shape: (num_podcasts, n_neighbors-1)
+
+        # Filter positive similarities
+        mask = similarities > 0
+
+        for i, podcast_id in enumerate(podcast_ids):
+            # Get indices and similarities for this podcast's neighbors where similarity > 0
+            filtered_indices = indices[i][mask[i]]
+            filtered_similarities = similarities[i][mask[i]]
+
+            for recommended_idx, similarity in zip(
+                filtered_indices,
+                filtered_similarities,
+                strict=True,
+            ):
+                yield podcast_id, podcast_ids[recommended_idx], float(similarity)

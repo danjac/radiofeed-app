@@ -41,6 +41,7 @@ dependencies = [
     "sentry-sdk>=2.13.0",
     "whitenoise[brotli]>=6.7.0",
     "django-widget-tweaks>=1.5.0",
+    "typer>=0.15.4",
 ]
 
 [tool.uv]
