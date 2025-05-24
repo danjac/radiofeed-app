@@ -4,6 +4,7 @@ import itertools
 import statistics
 from collections.abc import Iterator
 
+import numpy as np
 from django.db.models import QuerySet
 from django.utils import timezone
 from sklearn.feature_extraction.text import (
@@ -130,26 +131,25 @@ class _Recommender:
         podcasts: QuerySet[Podcast],
     ) -> Iterator[tuple[int, int, float]]:
         """Finds matches for the given podcasts based on their text content."""
-        try:
-            podcast_ids, texts = zip(
-                *podcasts.filter(categories=category)
-                .values_list(
-                    "id",
-                    "extracted_text",
-                )
-                .iterator(),
-                strict=True,
-            )
-        except ValueError:
+        arr = np.array(
+            podcasts.filter(categories=category).values_list(
+                "id",
+                "extracted_text",
+            ),
+            dtype=object,
+        )  # shape (N, 2)
+
+        if arr.size == 0:
             return
 
-        # Vectorize category texts
+        podcast_ids = arr[:, 0]
+        texts = arr[:, 1]
+
         x_counts = hasher.transform(texts)
         x_tfidf = transformer.transform(x_counts)
 
-        n_neighbors = min(self._num_matches, len(podcast_ids))
+        n_neighbors = min(self._num_matches, podcast_ids.size)
 
-        # Nearest neighbors (cosine similarity)
         nn = NearestNeighbors(
             n_neighbors=n_neighbors,
             metric="cosine",
@@ -158,25 +158,21 @@ class _Recommender:
 
         distances, indices = nn.kneighbors(x_tfidf)
 
-        # Use numpy for vectorized processing
         # Skip self matches at index 0
         distances = distances[:, 1:]
         indices = indices[:, 1:]
 
-        # Calculate similarity
-        similarities = 1 - distances  # shape: (num_podcasts, n_neighbors-1)
+        similarities = 1 - distances
 
-        # Filter positive similarities
         mask = similarities > 0
+        rows, cols = np.where(mask)
 
-        for idx, podcast_id in enumerate(podcast_ids):
-            # Get indices and similarities for this podcast's neighbors where similarity > 0
-            filtered_indices = indices[idx][mask[idx]]
-            filtered_similarities = similarities[idx][mask[idx]]
+        podcast_ids_for_rows = podcast_ids[rows]
+        recommended_indices = indices[rows, cols]
+        recommended_ids = podcast_ids[recommended_indices]
 
-            for recommended_idx, similarity in zip(
-                filtered_indices,
-                filtered_similarities,
-                strict=True,
-            ):
-                yield podcast_id, podcast_ids[recommended_idx], float(similarity)
+        sim_values = similarities[rows, cols]
+
+        results = np.column_stack((podcast_ids_for_rows, recommended_ids, sim_values))
+        for podcast_id, recommended_id, sim in results:
+            yield int(podcast_id), int(recommended_id), float(sim)
