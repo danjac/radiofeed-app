@@ -1,10 +1,12 @@
 import datetime
 import functools
+import hashlib
 import io
 from typing import Final
 
 import httpx
 from django.conf import settings
+from django.core.cache import cache
 from django.core.signing import BadSignature
 from django.http import (
     FileResponse,
@@ -26,7 +28,7 @@ from radiofeed.cover_image import (
     get_placeholder_path,
     is_cover_image_size,
 )
-from radiofeed.http_client import get_client
+from radiofeed.http_client import Client, get_client
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
@@ -147,15 +149,19 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     if not is_cover_image_size(size):
         raise Http404
 
-    cover_url = request.GET.get("url", None)
+    signed_url = request.GET.get("url", None)
 
-    if not cover_url:
+    if not signed_url:
         raise Http404
 
     output: io.BufferedIOBase
 
     try:
-        image = Image.open(io.BytesIO(_fetch_cover_image(cover_url))).resize(
+        cover_url = get_cover_url_signer().unsign(signed_url)
+
+        image = Image.open(
+            io.BytesIO(_fetch_cover_image(get_client(), cover_url))
+        ).resize(
             (size, size),
             Image.Resampling.LANCZOS,
         )
@@ -178,8 +184,17 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     return FileResponse(output, content_type="image/webp")
 
 
+def _fetch_cover_image(client: Client, cover_url: str) -> bytes:
+    """Fetches the cached image from the remote source."""
+    cache_key = _cover_image_cache_key(cover_url)
+    content = cache.get(cache_key, None)
+    if content is None:
+        content = client.get(cover_url).content
+        cache.set(cache_key, content, _CACHE_TIMEOUT)
+    return content
+
+
 @functools.cache
-def _fetch_cover_image(cover_url: str) -> bytes:
-    """Fetches the image from the remote source."""
-    unsigned = get_cover_url_signer().unsign(cover_url)
-    return get_client().get(unsigned).content
+def _cover_image_cache_key(cover_url: str) -> str:
+    """Generates a cache key for the cover image based on its URL."""
+    return "cover:" + hashlib.sha256(cover_url.encode("utf-8")).hexdigest()
