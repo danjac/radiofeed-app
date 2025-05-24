@@ -63,13 +63,11 @@ def absolute_uri(url: Model | str | None = None, *url_args, **url_kwargs) -> str
 
 
 @register.simple_tag(takes_context=True)
-def csrf_header(context: Context, **kwargs) -> str:
-    """Returns CSRF token header in JSON format.
-    Additional arbitrary arguments also can be passed to the JSON object.
-    """
+def csrf_header(context: Context) -> str:
+    """Returns CSRF token header in JSON format."""
     if request := context.get("request", None):
-        kwargs |= {_csrf_header_name(): get_token(request)}
-    return _jsonify(kwargs)
+        return _jsonify({"X-CSRFToken": get_token(request)})
+    return ""
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
@@ -132,8 +130,3 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
-
-
-@functools.cache
-def _csrf_header_name() -> str:
-    return settings.CSRF_HEADER_NAME.replace("HTTP_", "", 1).replace("_", "-")

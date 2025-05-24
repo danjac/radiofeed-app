@@ -23,12 +23,13 @@ def auth_req(req, user):
 
 
 class TestCsrfHeader:
-    def test_header(self, rf, mocker, settings):
-        settings.CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
+    def test_header(self, rf, mocker):
         mocker.patch("radiofeed.templatetags.get_token", return_value="abc123")
-        req = rf.get("/")
-        value = csrf_header(Context({"request": req}), value=1)
-        assert json.loads(value) == {"X-CSRFTOKEN": "abc123", "value": 1}
+        value = csrf_header(Context({"request": rf.get("/")}))
+        assert json.loads(value) == {"X-CSRFToken": "abc123"}
+
+    def test_no_header(self):
+        assert csrf_header(Context({})) == ""
 
 
 class TestFormatDuration:
