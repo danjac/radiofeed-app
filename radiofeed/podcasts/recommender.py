@@ -1,7 +1,6 @@
 import collections
 import functools
 import itertools
-import statistics
 from collections.abc import Iterator
 
 import numpy as np
@@ -92,7 +91,7 @@ class _Recommender:
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=statistics.median(similarities),
+                similarity=np.median(similarities),
                 frequency=len(similarities),
             )
 
