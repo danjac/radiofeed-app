@@ -132,10 +132,12 @@ class _Recommender:
         """Finds matches for the given podcasts based on their text content."""
         try:
             podcast_ids, texts = zip(
-                *podcasts.filter(categories=category).values_list(
+                *podcasts.filter(categories=category)
+                .values_list(
                     "id",
                     "extracted_text",
-                ),
+                )
+                .iterator(),
                 strict=True,
             )
         except ValueError:
@@ -146,9 +148,6 @@ class _Recommender:
         x_tfidf = transformer.transform(x_counts)
 
         n_neighbors = min(self._num_matches, len(podcast_ids))
-
-        if n_neighbors <= 1:
-            return
 
         # Nearest neighbors (cosine similarity)
         nn = NearestNeighbors(
@@ -170,10 +169,10 @@ class _Recommender:
         # Filter positive similarities
         mask = similarities > 0
 
-        for i, podcast_id in enumerate(podcast_ids):
+        for idx, podcast_id in enumerate(podcast_ids):
             # Get indices and similarities for this podcast's neighbors where similarity > 0
-            filtered_indices = indices[i][mask[i]]
-            filtered_similarities = similarities[i][mask[i]]
+            filtered_indices = indices[idx][mask[idx]]
+            filtered_similarities = similarities[idx][mask[idx]]
 
             for recommended_idx, similarity in zip(
                 filtered_indices,
