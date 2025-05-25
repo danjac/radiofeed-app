@@ -31,10 +31,12 @@ class _Recommender:
         *,
         since: timezone.timedelta | None = None,
         num_matches: int = 12,
+        batch_size: int = 1000,
     ) -> None:
         self._language = language
         self._since = since or timezone.timedelta(days=90)
         self._num_matches = num_matches
+        self._batch_size = batch_size
 
     def recommend(self) -> None:
         # Delete existing recommendations for the language
@@ -42,10 +44,10 @@ class _Recommender:
 
         for batch in itertools.batched(
             self._create_recommendations(),
-            1000,
+            self._batch_size,
             strict=False,
         ):
-            Recommendation.objects.bulk_create(batch, batch_size=100)
+            Recommendation.objects.bulk_create(batch, batch_size=self._batch_size)
 
     def _create_recommendations(self) -> Iterator[Recommendation]:
         podcasts = Podcast.objects.filter(
