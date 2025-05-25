@@ -1,4 +1,3 @@
-import collections
 import functools
 import itertools
 from collections.abc import Iterator
@@ -72,27 +71,36 @@ class _Recommender:
         transformer = TfidfTransformer()
         transformer.fit(counts)
 
-        matches = collections.defaultdict(list)
+        matches = np.empty((0, 3), dtype=object)  # empty array with shape (0,3)
 
         for category in get_categories():
-            for (
-                podcast_id,
-                recommended_id,
-                similarity,
-            ) in self._find_matches_for_category(
+            matches_for_category = self._find_matches_for_category(
                 category,
                 hasher,
                 transformer,
                 podcasts,
-            ):
-                matches[(podcast_id, recommended_id)].append(similarity)
+            )
 
-        for (podcast_id, recommended_id), similarities in matches.items():
+            if matches_for_category.size > 0:
+                matches = np.concatenate((matches, matches_for_category))
+
+        if matches.size == 0:
+            return
+
+        podcast_ids = matches[:, 0].astype(int)
+        recommended_ids = matches[:, 1].astype(int)
+        similarities = matches[:, 2].astype(float)
+
+        keys = np.stack((podcast_ids, recommended_ids), axis=1)
+        unique_keys, inverse_indices = np.unique(keys, axis=0, return_inverse=True)
+
+        for idx, (podcast_id, recommended_id) in enumerate(unique_keys):
+            group_similarities = similarities[inverse_indices == idx]
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=np.median(similarities),
-                frequency=len(similarities),
+                similarity=np.median(group_similarities),
+                frequency=group_similarities.size,
             )
 
     def _find_matches_for_category(
@@ -111,7 +119,7 @@ class _Recommender:
         )
 
         if arr.size == 0:
-            return arr
+            return np.empty((0, 3), dtype=object)
 
         podcast_ids = arr[:, 0]
         texts = arr[:, 1]
@@ -128,9 +136,8 @@ class _Recommender:
 
         distances, indices = nn.kneighbors(tfidf)
 
-        # Skip self-matches
-        distances = distances[:, 1:]
-        indices = indices[:, 1:]
+        distances = distances[:, 1:]  # skip self
+        indices = indices[:, 1:]  # skip self
 
         similarities = 1 - distances
         mask = similarities > 0

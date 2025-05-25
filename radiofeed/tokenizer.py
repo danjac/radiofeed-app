@@ -91,7 +91,7 @@ def get_stopwords(language: str) -> frozenset[str]:
 
     return frozenset(
         itertools.chain.from_iterable(
-            _remove_digits_and_punctuation(word).casefold()
+            _remove_digits_and_punctuation(word).casefold().split()
             for word in set(
                 _CORPORATE_STOPWORDS
                 + _get_corpus_stopwords(language)
