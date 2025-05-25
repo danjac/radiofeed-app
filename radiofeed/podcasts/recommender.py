@@ -55,13 +55,13 @@ class _Recommender:
             private=False,
         ).exclude(extracted_text="")
 
-        corpus = podcasts.values_list("extracted_text", flat=True)
-
         hasher = HashingVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
             n_features=5000,
             alternate_sign=False,
         )
+
+        corpus = podcasts.values_list("extracted_text", flat=True)
 
         try:
             counts = hasher.transform(corpus)

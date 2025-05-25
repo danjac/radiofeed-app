@@ -1,9 +1,9 @@
 import contextlib
 import datetime
 import functools
-import itertools
 import pathlib
 import re
+import unicodedata
 from collections.abc import Iterator
 from datetime import date, timedelta
 from typing import Final
@@ -82,24 +82,27 @@ def tokenize(language: str, text: str) -> list[str]:
 
 
 @functools.cache
-def get_stopwords(language: str) -> frozenset[str]:
+def get_stopwords(language: str) -> set[str]:
     """Return all stopwords for a language, if available.
 
     Args:
         language: 2-char language code e.g. "en"
     """
 
-    return frozenset(
-        itertools.chain.from_iterable(
-            _remove_digits_and_punctuation(word).casefold().split()
-            for word in set(
-                _CORPORATE_STOPWORDS
-                + _get_corpus_stopwords(language)
-                + _get_extra_stopwords(language)
-                + list(_get_date_stopwords(language))
-            )
+    stopwords = {
+        _strip_accents(word).casefold()
+        for word in set(
+            _CORPORATE_STOPWORDS
+            + _get_corpus_stopwords(language)
+            + _get_extra_stopwords(language)
+            + list(_get_date_stopwords(language))
         )
-    )
+    }
+
+    # Compatibility with hash-based stopword lists
+    stopwords.update(_re_token().findall(" ".join(stopwords)))
+
+    return stopwords
 
 
 @functools.cache
@@ -157,17 +160,28 @@ def _remove_digits_and_punctuation(text: str) -> str:
     return _re_punctuation().sub("", _re_digits().sub("", text))
 
 
+def _strip_accents(text: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFKD", text) if not unicodedata.combining(c)
+    )
+
+
 @functools.cache
 def _stopwords_path(language: str) -> pathlib.Path:
     return settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"
 
 
 @functools.cache
+def _re_token() -> re.Pattern:
+    return re.compile(r"\b\w+\b", flags=re.UNICODE)
+
+
+@functools.cache
 def _re_punctuation() -> re.Pattern:
     """Return a compiled regex pattern to match multiple spaces."""
-    return re.compile(r"([^\s\w]|_:.?-)+")
+    return re.compile(r"([^\s\w]|_:.?-)+", flags=re.UNICODE)
 
 
 @functools.cache
 def _re_digits() -> re.Pattern:
-    return re.compile(r"\d+")
+    return re.compile(r"\d+", flags=re.UNICODE)
