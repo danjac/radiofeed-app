@@ -1,9 +1,9 @@
 import collections
 import functools
 import itertools
+import statistics
 from collections.abc import Iterator
 
-import numpy as np
 from django.db.models import QuerySet
 from django.utils import timezone
 from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
@@ -93,7 +93,7 @@ class _Recommender:
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=np.mean(similarities),
+                similarity=statistics.mean(similarities),
                 frequency=len(similarities),
             )
 
