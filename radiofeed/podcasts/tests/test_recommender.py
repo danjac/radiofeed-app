@@ -1,11 +1,7 @@
 import pytest
-from sklearn.feature_extraction.text import (
-    HashingVectorizer,
-    TfidfTransformer,
-)
 
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
-from radiofeed.podcasts.recommender import _Recommender, get_categories, recommend
+from radiofeed.podcasts.models import Category, Recommendation
+from radiofeed.podcasts.recommender import get_categories, recommend
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
@@ -137,56 +133,15 @@ class TestRecommend:
     @pytest.mark.django_db
     def test_matches_for_category_empty_queryset(self):
         # Create a category with no podcasts assigned
-        empty_category = Category.objects.create(name="EmptyCategory")
+        Category.objects.create(name="EmptyCategory")
 
         # Make sure at least one podcast exists, but not in empty_category
-        PodcastFactory(categories=[])
-
-        recommender = _Recommender(language="en")
-
-        hasher = HashingVectorizer(
-            stop_words=[],
-            n_features=5000,
-            alternate_sign=False,
+        PodcastFactory(
+            title="podcast 3",
+            extracted_text="Philosophy things thinking",
+            language="en",
         )
-        transformer = TfidfTransformer()
 
-        # forcibly call _find_matches_for_category on empty_category, should handle ValueError and return empty
-        matches = list(
-            recommender._matches_for_category(
-                empty_category,
-                hasher,
-                transformer,
-                Podcast.objects.all(),
-            )
-        )
-        assert matches == []
+        recommend("en")
 
-    @pytest.mark.django_db
-    def test_matches_for_category_single_podcast_returns_empty(self):
-        category = Category.objects.create(name="SoloCategory")
-        PodcastFactory(categories=[category])
-
-        hasher = HashingVectorizer(
-            stop_words=[],
-            n_features=5000,
-            alternate_sign=False,
-        )
-        transformer = TfidfTransformer()
-
-        # Fit transformer with dummy data so it is ready
-        sample_texts = ["dummy text one", "dummy text two"]
-        counts = hasher.transform(sample_texts)
-        transformer.fit(counts)
-
-        recommender = _Recommender(language="en")
-
-        matches = list(
-            recommender._matches_for_category(
-                category,
-                hasher,
-                transformer,
-                Podcast.objects.filter(categories=category),
-            )
-        )
-        assert matches == []
+        assert Recommendation.objects.exists() is False
