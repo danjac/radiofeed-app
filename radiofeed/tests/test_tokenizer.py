@@ -33,4 +33,4 @@ class TestCleanText:
         assert clean_text("<p>test</p>") == "test"
 
     def test_remove_numbers(self):
-        assert clean_text("Tuesday, September 1st, 2020") == "Tuesday September st "
+        assert clean_text("Tuesday, September 1st, 2020") == "Tuesday September st"

@@ -1,5 +1,6 @@
 import contextlib
 import datetime
+import functools
 import itertools
 import pathlib
 import re
@@ -57,31 +58,9 @@ _tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
 
 
-def get_stopwords(language: str) -> frozenset[str]:
-    """Return all stopwords for a language, if available.
-
-    Args:
-        language: 2-char language code e.g. "en"
-    """
-
-    return frozenset(
-        itertools.chain.from_iterable(
-            clean_text(word).split()
-            for word in set(
-                _CORPORATE_STOPWORDS
-                + _get_corpus_stopwords(language)
-                + _get_extra_stopwords(language)
-                + list(_get_date_stopwords(language))
-            )
-        )
-    )
-
-
 def clean_text(text: str) -> str:
     """Scrub text of any HTML tags and entities, punctuation and numbers."""
-    text = strip_html(text)
-    text = re.sub(r"([^\s\w]|_:.?-)+", "", text)
-    return re.sub(r"\d+", "", text)
+    return _remove_digits_and_punctuation(strip_html(text)).strip()
 
 
 def tokenize(language: str, text: str) -> list[str]:
@@ -102,6 +81,28 @@ def tokenize(language: str, text: str) -> list[str]:
     return []
 
 
+@functools.cache
+def get_stopwords(language: str) -> frozenset[str]:
+    """Return all stopwords for a language, if available.
+
+    Args:
+        language: 2-char language code e.g. "en"
+    """
+
+    return frozenset(
+        itertools.chain.from_iterable(
+            _remove_digits_and_punctuation(word).casefold()
+            for word in set(
+                _CORPORATE_STOPWORDS
+                + _get_corpus_stopwords(language)
+                + _get_extra_stopwords(language)
+                + list(_get_date_stopwords(language))
+            )
+        )
+    )
+
+
+@functools.cache
 def _get_date_stopwords(language: str) -> Iterator[str]:
     now = timezone.now()
     with translation.override(language):
@@ -116,6 +117,7 @@ def _get_date_stopwords(language: str) -> Iterator[str]:
             yield _format_date(dt, "l")
 
 
+@functools.cache
 def _get_extra_stopwords(language: str) -> list[str]:
     path = _stopwords_path(language)
 
@@ -132,6 +134,7 @@ def _get_extra_stopwords(language: str) -> list[str]:
     )
 
 
+@functools.cache
 def _get_corpus_stopwords(language: str) -> list[str]:
     if name := _STOPWORDS_LANGUAGES.get(language, None):
         with contextlib.suppress(AttributeError, KeyError, OSError):
@@ -149,5 +152,22 @@ def _format_date(value: date, fmt: str) -> str:
     return date_format(value, fmt).casefold()
 
 
+def _remove_digits_and_punctuation(text: str) -> str:
+    """Strip non-alphanumeric characters from text."""
+    return _re_punctuation().sub("", _re_digits().sub("", text))
+
+
+@functools.cache
 def _stopwords_path(language: str) -> pathlib.Path:
     return settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"
+
+
+@functools.cache
+def _re_punctuation() -> re.Pattern:
+    """Return a compiled regex pattern to match multiple spaces."""
+    return re.compile(r"([^\s\w]|_:.?-)+")
+
+
+@functools.cache
+def _re_digits() -> re.Pattern:
+    return re.compile(r"\d+")
