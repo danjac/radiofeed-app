@@ -31,7 +31,7 @@ class _Recommender:
         *,
         since: timezone.timedelta | None = None,
         num_matches: int = 12,
-        batch_size: int = 1000,
+        batch_size: int = 100,
     ) -> None:
         self._language = language
         self._since = since or timezone.timedelta(days=90)

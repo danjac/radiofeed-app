@@ -17,6 +17,9 @@ class Command(BaseCommand):
         execute_thread_pool(self._create_recommendations, self._get_languages())
 
     def _create_recommendations(self, language: str) -> None:
+        self.stdout.write(
+            self.style.NOTICE(f"Creating recommendations for language: {language}"),
+        )
         recommender.recommend(language)
         self.stdout.write(
             self.style.SUCCESS(f"Recommendations created for language: {language}"),
@@ -29,5 +32,6 @@ class Command(BaseCommand):
                 "language_code",
                 flat=True,
             )
+            .order_by("language_code")
             .distinct()
         )
