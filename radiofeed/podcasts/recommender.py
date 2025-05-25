@@ -49,12 +49,6 @@ class _Recommender:
             Recommendation.objects.bulk_create(batch, batch_size=100)
 
     def _create_recommendations(self) -> Iterator[Recommendation]:
-        hasher = HashingVectorizer(
-            stop_words=list(tokenizer.get_stopwords(self._language)),
-            n_features=5000,
-            alternate_sign=False,
-        )
-
         podcasts = Podcast.objects.filter(
             pub_date__gt=timezone.now() - self._since,
             language__iexact=self._language,
@@ -63,6 +57,12 @@ class _Recommender:
         ).exclude(extracted_text="")
 
         corpus = podcasts.values_list("extracted_text", flat=True)
+
+        hasher = HashingVectorizer(
+            stop_words=list(tokenizer.get_stopwords(self._language)),
+            n_features=5000,
+            alternate_sign=False,
+        )
 
         try:
             counts = hasher.transform(corpus)
@@ -141,4 +141,10 @@ class _Recommender:
         recommended_ids = podcast_ids[recommended_indices]
         sim_values = similarities[rows, cols]
 
-        return np.column_stack((podcast_ids_for_rows, recommended_ids, sim_values))
+        return np.column_stack(
+            (
+                podcast_ids_for_rows,
+                recommended_ids,
+                sim_values,
+            )
+        )
