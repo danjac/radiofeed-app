@@ -71,21 +71,24 @@ class _Recommender:
         transformer = TfidfTransformer()
         transformer.fit(counts)
 
-        matches = np.empty((0, 3), dtype=object)  # empty array with shape (0,3)
+        # Build matches across all categories
 
-        for category in get_categories():
-            matches_for_category = self._find_matches_for_category(
+        matches = [
+            category_matches
+            for category in get_categories()
+            for category_matches in self._matches_for_category(
                 category,
                 hasher,
                 transformer,
                 podcasts,
             )
+            if category_matches
+        ]
 
-            if matches_for_category.size > 0:
-                matches = np.concatenate((matches, matches_for_category))
-
-        if matches.size == 0:
+        if not matches:
             return
+
+        matches = np.array(matches, dtype=object)
 
         podcast_ids = matches[:, 0].astype(int)
         recommended_ids = matches[:, 1].astype(int)
@@ -99,17 +102,17 @@ class _Recommender:
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=np.median(group_similarities),
+                similarity=np.mean(group_similarities),
                 frequency=group_similarities.size,
             )
 
-    def _find_matches_for_category(
+    def _matches_for_category(
         self,
         category: Category,
         hasher: HashingVectorizer,
         transformer: TfidfTransformer,
         podcasts: QuerySet[Podcast],
-    ) -> np.ndarray:
+    ) -> list[tuple[int, int, float]]:
         arr = np.array(
             podcasts.filter(categories=category).values_list(
                 "id",
@@ -119,7 +122,7 @@ class _Recommender:
         )
 
         if arr.size == 0:
-            return np.empty((0, 3), dtype=object)
+            return []
 
         podcast_ids = arr[:, 0]
         texts = arr[:, 1]
@@ -139,19 +142,23 @@ class _Recommender:
         distances = distances[:, 1:]  # skip self
         indices = indices[:, 1:]  # skip self
 
+        # remove any smilarities that are not positive
         similarities = 1 - distances
         mask = similarities > 0
         rows, cols = np.where(mask)
 
         podcast_ids_for_rows = podcast_ids[rows]
+
         recommended_indices = indices[rows, cols]
         recommended_ids = podcast_ids[recommended_indices]
+
         sim_values = similarities[rows, cols]
 
-        return np.column_stack(
-            (
+        return list(
+            zip(
                 podcast_ids_for_rows,
                 recommended_ids,
                 sim_values,
+                strict=True,
             )
         )

@@ -135,7 +135,7 @@ class TestRecommend:
         assert recs_2.first().recommended == podcast_1
 
     @pytest.mark.django_db
-    def test_find_matches_for_category_empty_queryset(self):
+    def test_matches_for_category_empty_queryset(self):
         # Create a category with no podcasts assigned
         empty_category = Category.objects.create(name="EmptyCategory")
 
@@ -153,7 +153,7 @@ class TestRecommend:
 
         # forcibly call _find_matches_for_category on empty_category, should handle ValueError and return empty
         matches = list(
-            recommender._find_matches_for_category(
+            recommender._matches_for_category(
                 empty_category,
                 hasher,
                 transformer,
@@ -163,7 +163,7 @@ class TestRecommend:
         assert matches == []
 
     @pytest.mark.django_db
-    def test_find_matches_for_category_single_podcast_returns_empty(self):
+    def test_matches_for_category_single_podcast_returns_empty(self):
         category = Category.objects.create(name="SoloCategory")
         PodcastFactory(categories=[category])
 
@@ -182,7 +182,7 @@ class TestRecommend:
         recommender = _Recommender(language="en")
 
         matches = list(
-            recommender._find_matches_for_category(
+            recommender._matches_for_category(
                 category,
                 hasher,
                 transformer,
