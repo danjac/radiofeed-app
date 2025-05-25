@@ -1,5 +1,6 @@
 import contextlib
 import datetime
+import itertools
 import pathlib
 import re
 from collections.abc import Iterator
@@ -62,11 +63,17 @@ def get_stopwords(language: str) -> frozenset[str]:
     Args:
         language: 2-char language code e.g. "en"
     """
+
     return frozenset(
-        _CORPORATE_STOPWORDS
-        + _get_corpus_stopwords(language)
-        + _get_extra_stopwords(language)
-        + list(_get_date_stopwords(language))
+        itertools.chain.from_iterable(
+            clean_text(word).split()
+            for word in set(
+                _CORPORATE_STOPWORDS
+                + _get_corpus_stopwords(language)
+                + _get_extra_stopwords(language)
+                + list(_get_date_stopwords(language))
+            )
+        )
     )
 
 
