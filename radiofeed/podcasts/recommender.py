@@ -1,3 +1,4 @@
+import collections
 import functools
 import itertools
 from collections.abc import Iterator
@@ -74,38 +75,26 @@ class _Recommender:
         transformer.fit(counts)
 
         # Build matches across all categories
+        matches = collections.defaultdict(list)
 
-        matches = [
-            category_matches
-            for category in get_categories()
-            for category_matches in self._matches_for_category(
+        for category in get_categories():
+            for podcast_id, recommended_id, similarity in self._matches_for_category(
                 category,
                 hasher,
                 transformer,
                 podcasts,
-            )
-            if category_matches
-        ]
+            ):
+                matches[(podcast_id, recommended_id)].append(similarity)
 
         if not matches:
             return
 
-        matches = np.array(matches, dtype=object)
-
-        podcast_ids = matches[:, 0].astype(int)
-        recommended_ids = matches[:, 1].astype(int)
-        similarities = matches[:, 2].astype(float)
-
-        keys = np.stack((podcast_ids, recommended_ids), axis=1)
-        unique_keys, inverse_indices = np.unique(keys, axis=0, return_inverse=True)
-
-        for idx, (podcast_id, recommended_id) in enumerate(unique_keys):
-            group_similarities = similarities[inverse_indices == idx]
+        for (podcast_id, recommended_id), similarities in matches.items():
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=np.mean(group_similarities),
-                frequency=group_similarities.size,
+                similarity=np.mean(similarities),
+                frequency=len(similarities),
             )
 
     def _matches_for_category(
@@ -114,24 +103,21 @@ class _Recommender:
         hasher: HashingVectorizer,
         transformer: TfidfTransformer,
         podcasts: QuerySet[Podcast],
-    ) -> list[tuple[int, int, float]]:
-        arr = np.array(
-            podcasts.filter(categories=category).values_list(
-                "id",
-                "extracted_text",
-            ),
-            dtype=object,
-        )
-
-        if arr.size == 0:
-            return []
-
-        podcast_ids = arr[:, 0]
-        texts = arr[:, 1]
+    ) -> Iterator[tuple[int, int, float]]:
+        try:
+            podcast_ids, texts = zip(
+                *podcasts.filter(categories=category).values_list(
+                    "id",
+                    "extracted_text",
+                ),
+                strict=True,
+            )
+        except ValueError:
+            return
 
         tfidf = transformer.transform(hasher.transform(texts))
 
-        n_neighbors = min(self._num_matches, podcast_ids.size)
+        n_neighbors = min(self._num_matches, len(podcast_ids))
 
         nn = NearestNeighbors(
             n_neighbors=n_neighbors,
@@ -141,26 +127,16 @@ class _Recommender:
 
         distances, indices = nn.kneighbors(tfidf)
 
-        distances = distances[:, 1:]  # skip self
-        indices = indices[:, 1:]  # skip self
-
-        # remove any smilarities that are not positive
-        similarities = 1 - distances
-        mask = similarities > 0
-        rows, cols = np.where(mask)
-
-        podcast_ids_for_rows = podcast_ids[rows]
-
-        recommended_indices = indices[rows, cols]
-        recommended_ids = podcast_ids[recommended_indices]
-
-        sim_values = similarities[rows, cols]
-
-        return list(
-            zip(
-                podcast_ids_for_rows,
-                recommended_ids,
-                sim_values,
+        for row_id, row_distances, row_indices in zip(
+            podcast_ids,
+            distances,
+            indices,
+            strict=True,
+        ):
+            for dist, idx in zip(
+                row_distances[1:],
+                row_indices[1:],
                 strict=True,
-            )
-        )
+            ):
+                if (similarity := 1 - dist) > 0:
+                    yield (row_id, podcast_ids[idx], similarity)
