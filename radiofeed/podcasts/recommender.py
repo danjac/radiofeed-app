@@ -46,14 +46,12 @@ class _Recommender:
             Recommendation.objects.bulk_create(batch)
 
     def _create_recommendations(self) -> Iterator[Recommendation]:
-        queryset = self._get_queryset()
-
         podcast_ids = []
         corpus = []
 
         categories_map = collections.defaultdict(set)
 
-        for podcast_id, text, categories in queryset.values_list(
+        for podcast_id, text, categories in self._get_queryset().values_list(
             "id",
             "extracted_text",
             "category_ids",
@@ -88,7 +86,6 @@ class _Recommender:
             )
 
     def _get_queryset(self) -> QuerySet[Podcast]:
-        # Return active public podcasts within timeframe that have at least one category
         return (
             Podcast.objects.annotate(
                 category_ids=ArrayAgg(
@@ -119,11 +116,13 @@ class _Recommender:
 
         for category_podcast_ids in categories_map.values():
             indices = [
-                id_to_index[pid] for pid in category_podcast_ids if pid in id_to_index
+                id_to_index[podcast_id]
+                for podcast_id in category_podcast_ids
+                if podcast_id in id_to_index
             ]
 
             tfidf_subset = tfidf_matrix[indices]
-            subset_ids = [podcast_ids[i] for i in indices]
+            subset_ids = [podcast_ids[idx] for idx in indices]
 
             n_neighbors = min(self._num_matches, len(subset_ids))
 
@@ -141,11 +140,11 @@ class _Recommender:
                 neighbors,
                 strict=True,
             ):
-                for dist, idx in zip(
+                for distance, idx in zip(
                     row_distances[1:],
                     row_indices[1:],
                     strict=True,
                 ):
-                    similarity = 1 - dist
+                    similarity = 1 - distance
                     if similarity > 0:
                         yield row_id, subset_ids[idx], similarity
