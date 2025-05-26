@@ -1,5 +1,4 @@
 import collections
-import functools
 import itertools
 import statistics
 from collections.abc import Iterator
@@ -10,13 +9,7 @@ from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
 from sklearn.neighbors import NearestNeighbors
 
 from radiofeed import tokenizer
-from radiofeed.podcasts.models import Category, Podcast, Recommendation
-
-
-@functools.cache
-def get_categories() -> list["Category"]:
-    """Returns all categories from cache."""
-    return list(Category.objects.all())
+from radiofeed.podcasts.models import Podcast, Recommendation
 
 
 def recommend(language: str, **kwargs) -> None:
@@ -67,6 +60,16 @@ class _Recommender:
         except ValueError:
             return
 
+        categories_map = collections.defaultdict(set)
+
+        for podcast_id, category_id in Podcast.categories.through.objects.filter(
+            podcast_id__in=podcast_ids
+        ).values_list("podcast_id", "category_id"):
+            categories_map[category_id].add(podcast_id)
+
+        if not categories_map:
+            return
+
         hasher = HashingVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
             n_features=self.n_features,
@@ -75,7 +78,14 @@ class _Recommender:
 
         tfidf_matrix = TfidfTransformer().fit_transform(hasher.transform(corpus))
 
-        matches = self._build_matches_by_category(tfidf_matrix, podcast_ids)
+        matches = collections.defaultdict(list)
+
+        for podcast_id, recommended_id, similarity in self._build_matches_by_category(
+            tfidf_matrix,
+            podcast_ids,
+            categories_map,
+        ):
+            matches[(podcast_id, recommended_id)].append(similarity)
 
         for (podcast_id, recommended_id), similarities in matches.items():
             yield Recommendation(
@@ -89,19 +99,8 @@ class _Recommender:
         self,
         tfidf_matrix: csr_matrix,
         podcast_ids: tuple[int, ...],
-    ) -> dict[tuple[int, int], list[float]]:
-        matches = collections.defaultdict(list)
-
-        categories_map = collections.defaultdict(set)
-
-        for podcast_id, category_id in Podcast.categories.through.objects.filter(
-            podcast_id__in=podcast_ids
-        ).values_list("podcast_id", "category_id"):
-            categories_map[category_id].add(podcast_id)
-
-        if not categories_map:
-            return matches
-
+        categories_map: dict[int, set[int]],
+    ) -> Iterator[tuple[int, int, float]]:
         id_to_index = {podcast_id: idx for idx, podcast_id in enumerate(podcast_ids)}
 
         for category_podcast_ids in categories_map.values():
@@ -135,6 +134,4 @@ class _Recommender:
                 ):
                     similarity = 1 - dist
                     if similarity > 0:
-                        matches[(row_id, subset_ids[idx])].append(similarity)
-
-        return matches
+                        yield row_id, subset_ids[idx], similarity

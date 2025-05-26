@@ -1,7 +1,7 @@
 import pytest
 
 from radiofeed.podcasts.models import Category, Recommendation
-from radiofeed.podcasts.recommender import get_categories, recommend
+from radiofeed.podcasts.recommender import recommend
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
@@ -9,11 +9,6 @@ from radiofeed.podcasts.tests.factories import (
 
 
 class TestRecommender:
-    @pytest.fixture(autouse=True)
-    def clear_categories_cache(self):
-        # ensure fresh category list each time
-        get_categories.cache_clear()
-
     @pytest.mark.django_db
     def test_no_suitable_matches_for_podcasts(self):
         # must provide extracted_text and language, since the new logic filters on these
@@ -28,10 +23,6 @@ class TestRecommender:
 
 
 class TestRecommend:
-    @pytest.fixture(autouse=True)
-    def clear_categories_cache(self):
-        get_categories.cache_clear()
-
     @pytest.mark.django_db
     def test_recommend_with_no_podcasts(self):
         # No podcasts inserted, corpus is empty
