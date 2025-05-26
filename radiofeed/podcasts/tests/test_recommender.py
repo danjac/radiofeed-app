@@ -9,26 +9,12 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
-class TestRecommender:
-    @pytest.mark.django_db
-    def test_no_suitable_matches_for_podcasts(self):
-        # must provide extracted_text and language, since the new logic filters on these
-        PodcastFactory(
-            title="Cool science podcast",
-            extracted_text="science physics astronomy",
-            language="en",
-        )
-
-        recommend("en")
-        assert Recommendation.objects.count() == 0
-
-
 class TestRecommend:
     @pytest.mark.django_db
     def test_recommend_with_no_podcasts(self):
         # No podcasts inserted, corpus is empty
         recommend("en")  # Should handle empty corpus without exception
-        assert Recommendation.objects.count() == 0
+        assert Recommendation.objects.exists() is False
 
     @pytest.mark.django_db
     def test_handle_empty_data_frame(self):
@@ -119,14 +105,14 @@ class TestRecommend:
     @pytest.mark.django_db
     def test_one_podcast(self):
         # set up categories
-        cat_1 = CategoryFactory(name="Science")
+        cat = CategoryFactory()
 
         # two science podcasts share cat_1
         PodcastFactory(
             title="podcast 1",
             extracted_text="Cool science podcast science physics astronomy",
             language="en",
-            categories=[cat_1],
+            categories=[cat],
         )
 
         recommend("en")
