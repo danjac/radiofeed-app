@@ -45,17 +45,16 @@ _STOPWORDS_LANGUAGES: Final = {
     "uk": "ukrainian",
 }
 
-_CORPORATE_STOPWORDS: Final = [
+_CORPORATE_STOPWORDS: Final = {
     "apple",
     "patreon",
     "spotify",
     "stitcher",
     "itunes",
-]
+}
 
-
-_tokenizer = RegexpTokenizer(r"\w+")
 _lemmatizer = WordNetLemmatizer()
+_tokenizer = RegexpTokenizer(r"\w+")
 
 
 def clean_text(text: str) -> str:
@@ -91,58 +90,16 @@ def get_stopwords(language: str) -> set[str]:
 
     stopwords = {
         _strip_accents(word).casefold()
-        for word in set(
-            _CORPORATE_STOPWORDS
-            + _get_corpus_stopwords(language)
-            + _get_extra_stopwords(language)
-            + list(_get_date_stopwords(language))
-        )
+        for word in _CORPORATE_STOPWORDS
+        | _get_corpus_stopwords(language)
+        | _get_date_stopwords(language)
+        | _get_extra_stopwords(language)
     }
 
     # Compatibility with hash-based stopword lists
     stopwords.update(_re_token().findall(" ".join(stopwords)))
 
     return stopwords
-
-
-@functools.cache
-def _get_date_stopwords(language: str) -> Iterator[str]:
-    now = timezone.now()
-    with translation.override(language):
-        for month in range(1, 13):
-            dt = datetime.date(now.year, month, 1)
-            yield _format_date(dt, "b")
-            yield _format_date(dt, "F")
-
-        for day in range(7):
-            dt = now + timedelta(days=day)
-            yield _format_date(dt, "D")
-            yield _format_date(dt, "l")
-
-
-@functools.cache
-def _get_extra_stopwords(language: str) -> list[str]:
-    path = _stopwords_path(language)
-
-    return (
-        [
-            word
-            for word in (
-                word.strip().casefold() for word in path.read_text().splitlines()
-            )
-            if word
-        ]
-        if path.exists()
-        else []
-    )
-
-
-@functools.cache
-def _get_corpus_stopwords(language: str) -> list[str]:
-    if name := _STOPWORDS_LANGUAGES.get(language, None):
-        with contextlib.suppress(AttributeError, KeyError, OSError):
-            return stopwords.words(name)
-    return []
 
 
 def _lemmatized_tokens(text: str) -> Iterator[str]:
@@ -167,8 +124,53 @@ def _strip_accents(text: str) -> str:
 
 
 @functools.cache
-def _stopwords_path(language: str) -> pathlib.Path:
-    return settings.BASE_DIR / "nltk" / "stopwords" / f"stopwords_{language}.txt"
+def _get_date_stopwords(language: str) -> set[str]:
+    now = timezone.now()
+    stopwords = set()
+    with translation.override(language):
+        for month in range(1, 13):
+            dt = datetime.date(now.year, month, 1)
+            stopwords.add(_format_date(dt, "b"))
+            stopwords.add(_format_date(dt, "F"))
+
+        for day in range(7):
+            dt = now + timedelta(days=day)
+            stopwords.add(_format_date(dt, "D"))
+            stopwords.add(_format_date(dt, "l"))
+    return stopwords
+
+
+@functools.cache
+def _get_extra_stopwords(language: str) -> set[str]:
+    if (path := _extra_stopwords_path(language)) and path.exists():
+        return {
+            word
+            for word in (
+                word.strip().casefold() for word in path.read_text().splitlines()
+            )
+            if word
+        }
+    return set()
+
+
+@functools.cache
+def _get_corpus_stopwords(language: str) -> set[str]:
+    if name := _get_stopwords_language(language):
+        with contextlib.suppress(AttributeError, KeyError, OSError):
+            return set(stopwords.words(name))
+    return set()
+
+
+@functools.cache
+def _get_stopwords_language(language: str) -> str | None:
+    return _STOPWORDS_LANGUAGES.get(language, None)
+
+
+@functools.cache
+def _extra_stopwords_path(language: str) -> pathlib.Path | None:
+    if name := _get_stopwords_language(language):
+        return settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
+    return None
 
 
 @functools.cache
@@ -178,7 +180,6 @@ def _re_token() -> re.Pattern:
 
 @functools.cache
 def _re_punctuation() -> re.Pattern:
-    """Return a compiled regex pattern to match multiple spaces."""
     return re.compile(r"([^\s\w]|_:.?-)+", flags=re.UNICODE)
 
 
