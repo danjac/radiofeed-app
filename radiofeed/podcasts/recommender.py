@@ -10,7 +10,6 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
 from sklearn.neighbors import NearestNeighbors
 
-from radiofeed import tokenizer
 from radiofeed.podcasts.models import Podcast, Recommendation
 
 
@@ -69,7 +68,6 @@ class _Recommender:
             return
 
         hasher = HashingVectorizer(
-            stop_words=list(tokenizer.get_stopwords(self._language)),
             n_features=self.n_features,
             alternate_sign=False,
         )
