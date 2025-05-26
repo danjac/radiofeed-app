@@ -20,8 +20,8 @@ def recommend(language: str, **kwargs) -> None:
 
 
 class _Recommender:
-    batch_size: int = 100
-    n_features: int = 3000
+    _batch_size: int = 100
+    _n_features: int = 3000
 
     def __init__(
         self,
@@ -40,10 +40,10 @@ class _Recommender:
 
         for batch in itertools.batched(
             self._create_recommendations(),
-            self.batch_size,
+            self._batch_size,
             strict=False,
         ):
-            Recommendation.objects.bulk_create(batch, batch_size=self.batch_size)
+            Recommendation.objects.bulk_create(batch)
 
     def _create_recommendations(self) -> Iterator[Recommendation]:
         queryset = self._get_queryset()
@@ -67,11 +67,7 @@ class _Recommender:
         if not podcast_ids:
             return
 
-        hasher = HashingVectorizer(
-            n_features=self.n_features,
-            alternate_sign=False,
-        )
-
+        hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
         tfidf_matrix = TfidfTransformer().fit_transform(hasher.transform(corpus))
 
         matches = collections.defaultdict(list)
