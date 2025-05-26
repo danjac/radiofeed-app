@@ -4,8 +4,8 @@ import itertools
 import statistics
 from collections.abc import Iterator
 
-from django.db.models import QuerySet
 from django.utils import timezone
+from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
 from sklearn.neighbors import NearestNeighbors
 
@@ -26,18 +26,19 @@ def recommend(language: str, **kwargs) -> None:
 
 
 class _Recommender:
+    batch_size: int = 100
+    n_features: int = 3000
+
     def __init__(
         self,
         language: str,
         *,
         since: timezone.timedelta | None = None,
         num_matches: int = 12,
-        batch_size: int = 100,
     ) -> None:
         self._language = language
         self._since = since or timezone.timedelta(days=90)
         self._num_matches = num_matches
-        self._batch_size = batch_size
 
     def recommend(self) -> None:
         # Delete existing recommendations for the language
@@ -45,49 +46,36 @@ class _Recommender:
 
         for batch in itertools.batched(
             self._create_recommendations(),
-            self._batch_size,
+            self.batch_size,
             strict=False,
         ):
-            Recommendation.objects.bulk_create(batch, batch_size=self._batch_size)
+            Recommendation.objects.bulk_create(batch, batch_size=self.batch_size)
 
     def _create_recommendations(self) -> Iterator[Recommendation]:
-        podcasts = Podcast.objects.filter(
+        queryset = Podcast.objects.filter(
             pub_date__gt=timezone.now() - self._since,
             language__iexact=self._language,
             active=True,
             private=False,
         ).exclude(extracted_text="")
 
+        try:
+            podcast_ids, corpus = zip(
+                *queryset.values_list("id", "extracted_text"),
+                strict=True,
+            )
+        except ValueError:
+            return
+
         hasher = HashingVectorizer(
             stop_words=list(tokenizer.get_stopwords(self._language)),
-            n_features=5000,
+            n_features=self.n_features,
             alternate_sign=False,
         )
 
-        corpus = podcasts.values_list("extracted_text", flat=True)
+        tfidf_matrix = TfidfTransformer().fit_transform(hasher.transform(corpus))
 
-        try:
-            counts = hasher.transform(corpus)
-        except StopIteration:
-            return
-
-        transformer = TfidfTransformer()
-        transformer.fit(counts)
-
-        # Build matches across all categories
-        matches = collections.defaultdict(list)
-
-        for category in get_categories():
-            for podcast_id, recommended_id, similarity in self._matches_for_category(
-                category,
-                hasher,
-                transformer,
-                podcasts,
-            ):
-                matches[(podcast_id, recommended_id)].append(similarity)
-
-        if not matches:
-            return
+        matches = self._build_matches_by_category(tfidf_matrix, podcast_ids)
 
         for (podcast_id, recommended_id), similarities in matches.items():
             yield Recommendation(
@@ -97,46 +85,56 @@ class _Recommender:
                 frequency=len(similarities),
             )
 
-    def _matches_for_category(
+    def _build_matches_by_category(
         self,
-        category: Category,
-        hasher: HashingVectorizer,
-        transformer: TfidfTransformer,
-        podcasts: QuerySet[Podcast],
-    ) -> Iterator[tuple[int, int, float]]:
-        try:
-            podcast_ids, texts = zip(
-                *podcasts.filter(categories=category).values_list(
-                    "id",
-                    "extracted_text",
-                ),
-                strict=True,
-            )
-        except ValueError:
-            return
+        tfidf_matrix: csr_matrix,
+        podcast_ids: tuple[int, ...],
+    ) -> dict[tuple[int, int], list[float]]:
+        matches = collections.defaultdict(list)
 
-        tfidf = transformer.transform(hasher.transform(texts))
+        categories_map = collections.defaultdict(set)
 
-        n_neighbors = min(self._num_matches, len(podcast_ids))
+        for podcast_id, category_id in Podcast.categories.through.objects.filter(
+            podcast_id__in=podcast_ids
+        ).values_list("podcast_id", "category_id"):
+            categories_map[category_id].add(podcast_id)
 
-        nn = NearestNeighbors(
-            n_neighbors=n_neighbors,
-            metric="cosine",
-            algorithm="brute",
-        ).fit(tfidf)
+        if not categories_map:
+            return matches
 
-        distances, indices = nn.kneighbors(tfidf)
+        id_to_index = {podcast_id: idx for idx, podcast_id in enumerate(podcast_ids)}
 
-        for row_id, row_distances, row_indices in zip(
-            podcast_ids,
-            distances,
-            indices,
-            strict=True,
-        ):
-            for dist, idx in zip(
-                row_distances[1:],
-                row_indices[1:],
+        for category_podcast_ids in categories_map.values():
+            indices = [
+                id_to_index[pid] for pid in category_podcast_ids if pid in id_to_index
+            ]
+
+            tfidf_subset = tfidf_matrix[indices]
+            subset_ids = [podcast_ids[i] for i in indices]
+
+            n_neighbors = min(self._num_matches, len(subset_ids))
+
+            nn = NearestNeighbors(
+                n_neighbors=n_neighbors,
+                metric="cosine",
+                algorithm="brute",
+            ).fit(tfidf_subset)
+
+            distances, neighbors = nn.kneighbors(tfidf_subset)
+
+            for row_id, row_distances, row_indices in zip(
+                subset_ids,
+                distances,
+                neighbors,
                 strict=True,
             ):
-                if (similarity := 1 - dist) > 0:
-                    yield (row_id, podcast_ids[idx], similarity)
+                for dist, idx in zip(
+                    row_distances[1:],
+                    row_indices[1:],
+                    strict=True,
+                ):
+                    similarity = 1 - dist
+                    if similarity > 0:
+                        matches[(row_id, subset_ids[idx])].append(similarity)
+
+        return matches
