@@ -76,7 +76,7 @@ class _Recommender:
 
         matches = collections.defaultdict(list)
 
-        for podcast_id, recommended_id, similarity in self._build_matches_by_category(
+        for podcast_id, recommended_id, similarity in self._matches_by_category(
             tfidf_matrix,
             podcast_ids,
             categories_map,
@@ -113,7 +113,7 @@ class _Recommender:
             .exclude(extracted_text="")
         )
 
-    def _build_matches_by_category(
+    def _matches_by_category(
         self,
         tfidf_matrix: csr_matrix,
         podcast_ids: list[int],
