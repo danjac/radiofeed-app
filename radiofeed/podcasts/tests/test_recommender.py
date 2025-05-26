@@ -3,6 +3,7 @@ import pytest
 from radiofeed.podcasts.models import Category, Recommendation
 from radiofeed.podcasts.recommender import recommend
 from radiofeed.podcasts.tests.factories import (
+    CategoryFactory,
     PodcastFactory,
     RecommendationFactory,
 )
@@ -65,13 +66,7 @@ class TestRecommend:
     @pytest.mark.django_db
     def test_create_recommendations(self):
         # set up categories
-        Category.objects.bulk_create(
-            [Category(name=n) for n in ("Science", "Philosophy", "Society & Culture")],
-            ignore_conflicts=True,
-        )
-        cat_1 = Category.objects.get(name="Science")
-        cat_2 = Category.objects.get(name="Philosophy")
-        cat_3 = Category.objects.get(name="Society & Culture")
+        cat_1, cat_2, cat_3 = CategoryFactory.create_batch(3)
 
         # two science podcasts share cat_1
         podcast_1 = PodcastFactory(
@@ -120,6 +115,23 @@ class TestRecommend:
         recs_2 = Recommendation.objects.filter(podcast=podcast_2)
         assert recs_2.count() == 1
         assert recs_2.first().recommended == podcast_1
+
+    @pytest.mark.django_db
+    def test_one_podcast(self):
+        # set up categories
+        cat_1 = CategoryFactory(name="Science")
+
+        # two science podcasts share cat_1
+        PodcastFactory(
+            title="podcast 1",
+            extracted_text="Cool science podcast science physics astronomy",
+            language="en",
+            categories=[cat_1],
+        )
+
+        recommend("en")
+
+        assert Recommendation.objects.exists() is False
 
     @pytest.mark.django_db
     def test_matches_for_category_empty_queryset(self):
