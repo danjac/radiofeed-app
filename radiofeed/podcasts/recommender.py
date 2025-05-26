@@ -3,6 +3,8 @@ import itertools
 import statistics
 from collections.abc import Iterator
 
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
@@ -45,29 +47,25 @@ class _Recommender:
             Recommendation.objects.bulk_create(batch, batch_size=self.batch_size)
 
     def _create_recommendations(self) -> Iterator[Recommendation]:
-        queryset = Podcast.objects.filter(
-            pub_date__gt=timezone.now() - self._since,
-            language__iexact=self._language,
-            active=True,
-            private=False,
-        ).exclude(extracted_text="")
+        queryset = self._get_queryset()
 
-        try:
-            podcast_ids, corpus = zip(
-                *queryset.values_list("id", "extracted_text"),
-                strict=True,
-            )
-        except ValueError:
-            return
+        podcast_ids = []
+        corpus = []
 
         categories_map = collections.defaultdict(set)
 
-        for podcast_id, category_id in Podcast.categories.through.objects.filter(
-            podcast_id__in=podcast_ids
-        ).values_list("podcast_id", "category_id"):
-            categories_map[category_id].add(podcast_id)
+        for podcast_id, text, categories in queryset.values_list(
+            "id",
+            "extracted_text",
+            "category_ids",
+        ):
+            podcast_ids.append(podcast_id)
+            corpus.append(text)
 
-        if not categories_map:
+            for category_id in categories:
+                categories_map[category_id].add(podcast_id)
+
+        if not podcast_ids:
             return
 
         hasher = HashingVectorizer(
@@ -95,10 +93,32 @@ class _Recommender:
                 frequency=len(similarities),
             )
 
+    def _get_queryset(self) -> QuerySet[Podcast]:
+        # Return active public podcasts within timeframe that have at least one category
+        return (
+            Podcast.objects.annotate(
+                category_ids=ArrayAgg(
+                    "categories__id",
+                    filter=~Q(
+                        categories__pk=None,
+                    ),
+                    distinct=True,
+                ),
+            )
+            .filter(
+                category_ids__len__gt=0,
+                pub_date__gt=timezone.now() - self._since,
+                language__iexact=self._language,
+                active=True,
+                private=False,
+            )
+            .exclude(extracted_text="")
+        )
+
     def _build_matches_by_category(
         self,
         tfidf_matrix: csr_matrix,
-        podcast_ids: tuple[int, ...],
+        podcast_ids: list[int],
         categories_map: dict[int, set[int]],
     ) -> Iterator[tuple[int, int, float]]:
         id_to_index = {podcast_id: idx for idx, podcast_id in enumerate(podcast_ids)}
