@@ -468,22 +468,11 @@ class Recommendation(models.Model):
         related_name="similar",
     )
 
-    frequency = models.PositiveIntegerField(default=0)
-
-    similarity = models.DecimalField(
+    score = models.DecimalField(
         decimal_places=10,
         max_digits=100,
         null=True,
         blank=True,
-    )
-
-    score = models.GeneratedField(
-        expression=models.F("frequency") * models.F("similarity"),
-        db_persist=True,
-        output_field=models.DecimalField(
-            decimal_places=10,
-            max_digits=100,
-        ),
     )
 
     objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()

@@ -81,8 +81,7 @@ class _Recommender:
             yield Recommendation(
                 podcast_id=podcast_id,
                 recommended_id=recommended_id,
-                similarity=statistics.mean(similarities),
-                frequency=len(similarities),
+                score=statistics.mean(similarities) * len(similarities),
             )
 
     def _get_queryset(self) -> QuerySet[Podcast]:

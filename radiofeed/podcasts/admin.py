@@ -293,8 +293,6 @@ class RecommendationAdmin(admin.ModelAdmin):
     readonly_fields = (
         "podcast",
         "recommended",
-        "frequency",
-        "similarity",
         "score",
     )
     ordering = ("-score",)
