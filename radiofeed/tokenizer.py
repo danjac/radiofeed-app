@@ -12,7 +12,6 @@ from django.conf import settings
 from django.utils import timezone, translation
 from django.utils.formats import date_format
 
-from nltk import langnames
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
@@ -90,6 +89,8 @@ def tokenize(language: str, text: str) -> list[str]:
 @functools.cache
 def get_language_codes() -> set[str]:
     """Return ISO 639 2-char language codes ."""
+    from nltk import langnames  # ensure we load this lazily
+
     return set(langnames.iso639short.values())
 
 
