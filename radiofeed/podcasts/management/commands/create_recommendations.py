@@ -28,7 +28,7 @@ class Command(BaseCommand):
     def _get_languages(self) -> QuerySet:
         return (
             Podcast.objects.annotate(language_code=Lower("language"))
-            .filter(language_code__in=tokenizer.LANGUAGE_CODES)
+            .filter(language_code__in=tokenizer.get_language_codes())
             .values_list(
                 "language_code",
                 flat=True,

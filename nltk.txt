@@ -1,3 +1,4 @@
+bcp47
 stopwords
 wordnet
 omw-1.4

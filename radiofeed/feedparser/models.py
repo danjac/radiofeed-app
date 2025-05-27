@@ -278,7 +278,7 @@ class Feed(BaseModel):
         """Validate media type."""
         if value and len(value) > 1:
             value = value.casefold()[:2]
-            if value in tokenizer.LANGUAGE_CODES:
+            if value in tokenizer.get_language_codes():
                 return value
         return cls.DEFAULT_LANGUAGE
 
