@@ -22,6 +22,7 @@ def recommend(language: str, **kwargs) -> None:
 class _Recommender:
     _batch_size: int = 100
     _n_features: int = 3000
+    _weight: int = 10
 
     def __init__(
         self,
@@ -77,12 +78,21 @@ class _Recommender:
         ):
             matches[(podcast_id, recommended_id)].append(similarity)
 
+        if not matches:
+            return
+
+        global_mean = statistics.mean([s for sims in matches.values() for s in sims])
+
         for (podcast_id, recommended_id), similarities in matches.items():
-            yield Recommendation(
-                podcast_id=podcast_id,
-                recommended_id=recommended_id,
-                score=statistics.mean(similarities) * len(similarities),
+            score = (sum(similarities) + self._weight * global_mean) / (
+                len(similarities) + self._weight
             )
+            if score > 0:
+                yield Recommendation(
+                    podcast_id=podcast_id,
+                    recommended_id=recommended_id,
+                    score=score,
+                )
 
     def _get_queryset(self) -> QuerySet[Podcast]:
         return (

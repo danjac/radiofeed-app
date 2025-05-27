@@ -33,8 +33,7 @@ class PodcastFactory(factory.django.DjangoModelFactory):
 
 
 class RecommendationFactory(factory.django.DjangoModelFactory):
-    frequency = 3
-    similarity = 5
+    score = 0.5
 
     podcast = factory.SubFactory(PodcastFactory)
     recommended = factory.SubFactory(PodcastFactory)

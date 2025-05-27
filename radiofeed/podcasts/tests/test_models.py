@@ -26,11 +26,6 @@ class TestRecommendationModel:
             == "podcast 1 | recommended 2"
         )
 
-    @pytest.mark.django_db
-    def test_score(self):
-        recommendation = RecommendationFactory(similarity=0.5, frequency=3)
-        assert recommendation.score == 1.5
-
 
 class TestCategoryManager:
     @pytest.fixture
