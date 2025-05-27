@@ -8,6 +8,7 @@ from collections.abc import Iterator
 from datetime import date, timedelta
 from typing import Final
 
+import pycountry
 from django.conf import settings
 from django.utils import timezone, translation
 from django.utils.formats import date_format
@@ -89,9 +90,11 @@ def tokenize(language: str, text: str) -> list[str]:
 @functools.cache
 def get_language_codes() -> set[str]:
     """Return ISO 639 2-char language codes ."""
-    from nltk import langnames  # ensure we load this lazily
-
-    return set(langnames.iso639short.values())
+    return {
+        language.alpha_2
+        for language in pycountry.languages
+        if hasattr(language, "alpha_2")
+    }
 
 
 @functools.cache
