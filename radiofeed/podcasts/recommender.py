@@ -21,7 +21,7 @@ def recommend(language: str, **kwargs) -> None:
 
 class _Recommender:
     _batch_size: int = 100
-    _n_features: int = 3000
+    _n_features: int = 30000
 
     def __init__(
         self,
