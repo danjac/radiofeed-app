@@ -8,6 +8,7 @@ from collections.abc import Iterator
 from datetime import date, timedelta
 from typing import Final
 
+import pycountry
 from django.conf import settings
 from django.utils import timezone, translation
 from django.utils.formats import date_format
@@ -78,6 +79,16 @@ def tokenize(language: str, text: str) -> list[str]:
             if token and token not in stopwords_for_language
         ]
     return []
+
+
+@functools.cache
+def get_language_codes() -> set[str]:
+    """Return all available ISO 3166-1 language codes."""
+    return {
+        lang.alpha_2.casefold()
+        for lang in pycountry.languages
+        if hasattr(lang, "alpha_2")
+    }
 
 
 @functools.cache

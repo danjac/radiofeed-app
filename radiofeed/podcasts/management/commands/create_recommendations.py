@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
 
+from radiofeed import tokenizer
 from radiofeed.podcasts import recommender
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
@@ -27,6 +28,7 @@ class Command(BaseCommand):
     def _get_languages(self) -> QuerySet:
         return (
             Podcast.objects.annotate(language_code=Lower("language"))
+            .filter(language_code__in=tokenizer.get_language_codes())
             .values_list(
                 "language_code",
                 flat=True,

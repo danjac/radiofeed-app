@@ -247,7 +247,7 @@ class Item(BaseModel):
 class Feed(BaseModel):
     """RSS/Atom Feed model."""
 
-    DEFAULT_LANGUAGE: ClassVar = "en"
+    DEFAULT_LANGUAGE: ClassVar[str] = "en"
 
     title: str = Field(..., min_length=1)
 
@@ -276,9 +276,11 @@ class Feed(BaseModel):
     @classmethod
     def validate_language(cls, value: Any) -> str:
         """Validate media type."""
-        return (
-            value.casefold()[:2] if value and len(value) > 1 else cls.DEFAULT_LANGUAGE
-        )
+        if value and len(value) > 1:
+            value = value.casefold()[:2]
+            if value in tokenizer.get_language_codes():
+                return value
+        return cls.DEFAULT_LANGUAGE
 
     @field_validator("categories", mode="after")
     @classmethod
