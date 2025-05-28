@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.db.models import QuerySet
+from django.db.models import ValuesQuerySet
 from django.db.models.functions import Lower
 
 from radiofeed import tokenizer
@@ -25,14 +25,11 @@ class Command(BaseCommand):
             ),
         )
 
-    def _get_languages(self) -> QuerySet:
+    def _get_languages(self) -> ValuesQuerySet:
         return (
             Podcast.objects.annotate(language_code=Lower("language"))
             .filter(language_code__in=tokenizer.get_language_codes())
-            .values_list(
-                "language_code",
-                flat=True,
-            )
+            .values_list("language_code", flat=True)
             .order_by("language_code")
             .distinct()
         )
