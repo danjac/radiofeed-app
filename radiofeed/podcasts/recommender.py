@@ -1,11 +1,11 @@
 import collections
-import itertools
 import statistics
 from collections.abc import Iterator
 
 import numpy as np
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q, QuerySet
+from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.utils import timezone
 from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
@@ -21,42 +21,63 @@ def recommend(language: str, **kwargs) -> None:
 
 
 class _Recommender:
-    _batch_size: int = 100
-    _n_features: int = 30000
-
     def __init__(
         self,
         language: str,
         *,
         since: timezone.timedelta | None = None,
         num_matches: int = 12,
+        n_features: int = 30000,
     ) -> None:
         self._language = language
         self._since = since or timezone.timedelta(days=90)
         self._num_matches = num_matches
+        self._n_features = n_features
 
-    def recommend(self) -> None:
-        # Delete existing recommendations for the language
-        Recommendation.objects.filter(podcast__language=self._language).bulk_delete()
+    def recommend(self) -> list[Recommendation]:
+        """Generates recommendations for podcasts in the specified language."""
 
-        for batch in itertools.batched(
-            self._create_recommendations(),
-            self._batch_size,
-            strict=False,
-        ):
-            Recommendation.objects.bulk_create(batch)
+        Recommendation.objects.filter(
+            podcast__language__iexact=self._language
+        ).bulk_delete()
 
-    def _create_recommendations(self) -> Iterator[Recommendation]:
+        return Recommendation.objects.bulk_create(
+            self._create_recommendations(self._get_queryset())
+        )
+
+    def _get_queryset(self) -> QuerySet:
+        return (
+            Podcast.objects.annotate(
+                category_ids=ArrayAgg(
+                    "categories__id",
+                    filter=~Q(
+                        categories__pk=None,
+                    ),
+                    distinct=True,
+                ),
+            )
+            .filter(
+                category_ids__len__gt=0,
+                pub_date__gt=timezone.now() - self._since,
+                language__iexact=self._language,
+                active=True,
+                private=False,
+            )
+            .exclude(extracted_text="")
+            .values_list(
+                "id",
+                "extracted_text",
+                "category_ids",
+            )
+        )
+
+    def _create_recommendations(self, queryset: QuerySet) -> Iterator[Recommendation]:
         podcast_ids = []
         corpus = []
 
         categories_map = collections.defaultdict(set)
 
-        for podcast_id, text, categories in self._get_queryset().values_list(
-            "id",
-            "extracted_text",
-            "category_ids",
-        ):
+        for podcast_id, text, categories in queryset:
             podcast_ids.append(podcast_id)
             corpus.append(text)
 
@@ -84,27 +105,6 @@ class _Recommender:
                 recommended_id=recommended_id,
                 score=len(similarities) * statistics.mean(similarities),
             )
-
-    def _get_queryset(self) -> QuerySet[Podcast]:
-        return (
-            Podcast.objects.annotate(
-                category_ids=ArrayAgg(
-                    "categories__id",
-                    filter=~Q(
-                        categories__pk=None,
-                    ),
-                    distinct=True,
-                ),
-            )
-            .filter(
-                category_ids__len__gt=0,
-                pub_date__gt=timezone.now() - self._since,
-                language__iexact=self._language,
-                active=True,
-                private=False,
-            )
-            .exclude(extracted_text="")
-        )
 
     def _matches_by_category(
         self,
