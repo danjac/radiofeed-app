@@ -5,7 +5,7 @@ import re
 import unicodedata
 from collections.abc import Iterator
 from datetime import date, timedelta
-from typing import Final, NewType
+from typing import Final
 
 import pycountry
 from django.conf import settings
@@ -59,7 +59,6 @@ _CORPORATE_STOPWORDS: Final = {
     "itunes",
 }
 
-iso639_code = NewType("iso639_code", str)
 
 _lemmatizer = WordNetLemmatizer()
 _tokenizer = RegexpTokenizer(r"\w+")
@@ -70,7 +69,7 @@ def clean_text(text: str) -> str:
     return _remove_digits_and_punctuation(strip_html(text)).strip()
 
 
-def tokenize(language: iso639_code, text: str) -> list[str]:
+def tokenize(language: str, text: str) -> list[str]:
     """Extract all relevant keywords from text, removing any stopwords, HTML tags etc.
 
     Args:
@@ -89,7 +88,7 @@ def tokenize(language: iso639_code, text: str) -> list[str]:
 
 
 @functools.cache
-def get_language_codes() -> set[iso639_code]:
+def get_language_codes() -> set[str]:
     """Return ISO 639 2-char language codes ."""
     return {
         language.alpha_2
@@ -99,25 +98,19 @@ def get_language_codes() -> set[iso639_code]:
 
 
 @functools.cache
-def get_stopwords(language: iso639_code) -> set[str]:
+def get_stopwords(language: str) -> set[str]:
     """Return all stopwords for a language, if available.
 
     Args:
         language: 2-char language code e.g. "en"
     """
 
-    stopwords = {
-        _strip_accents(word).casefold()
+    return {
+        _strip_accents(word).strip().casefold()
         for word in _CORPORATE_STOPWORDS
         | _get_corpus_stopwords(language)
         | _get_date_stopwords(language)
-        | _get_extra_stopwords(language)
     }
-
-    # Compatibility with hash-based stopword lists
-    stopwords.update(_re_token().findall(" ".join(stopwords)))
-
-    return stopwords
 
 
 def _lemmatized_tokens(text: str) -> Iterator[str]:
@@ -141,46 +134,38 @@ def _strip_accents(text: str) -> str:
     )
 
 
-def _get_date_stopwords(language: iso639_code) -> set[str]:
+def _get_corpus_stopwords(language: str) -> set[str]:
+    words = set()
+    if name := _STOPWORDS_LANGUAGES.get(language):
+        words.update(stopwords.words(name))
+
+        path = settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
+
+        if path.exists():
+            words.update(
+                {
+                    word
+                    for word in (word.strip() for word in path.read_text().splitlines())
+                    if word
+                }
+            )
+    return words
+
+
+def _get_date_stopwords(language: str) -> set[str]:
     now = timezone.now()
-    stopwords = set()
+    words = set()
     with translation.override(language):
         for month in range(1, 13):
             dt = datetime.date(now.year, month, 1)
-            stopwords.add(_format_date(dt, "b"))
-            stopwords.add(_format_date(dt, "F"))
+            words.add(_format_date(dt, "b"))
+            words.add(_format_date(dt, "F"))
 
         for day in range(7):
             dt = now + timedelta(days=day)
-            stopwords.add(_format_date(dt, "D"))
-            stopwords.add(_format_date(dt, "l"))
-    return stopwords
-
-
-def _get_extra_stopwords(language: iso639_code) -> set[str]:
-    if name := _STOPWORDS_LANGUAGES.get(language):
-        path = settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
-        if path.exists():
-            return {
-                word
-                for word in (
-                    word.strip().casefold() for word in path.read_text().splitlines()
-                )
-                if word
-            }
-    return set()
-
-
-def _get_corpus_stopwords(language: iso639_code) -> set[str]:
-    if name := _STOPWORDS_LANGUAGES.get(language):
-        with contextlib.suppress(AttributeError, KeyError, OSError):
-            return set(stopwords.words(name))
-    return set()
-
-
-@functools.cache
-def _re_token() -> re.Pattern:
-    return re.compile(r"\b\w+\b", flags=re.UNICODE)
+            words.add(_format_date(dt, "D"))
+            words.add(_format_date(dt, "l"))
+    return words
 
 
 @functools.cache
