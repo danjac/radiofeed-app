@@ -2,6 +2,7 @@ import collections
 import itertools
 import statistics
 from collections.abc import Iterator
+from typing import Final
 
 import numpy as np
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -13,6 +14,8 @@ from sklearn.feature_extraction.text import HashingVectorizer, TfidfTransformer
 from sklearn.neighbors import NearestNeighbors
 
 from radiofeed.podcasts.models import Podcast, Recommendation
+
+_default_timeframe: Final = timezone.timedelta(days=90)
 
 
 def recommend(language: str, **kwargs) -> None:
@@ -26,12 +29,12 @@ class _Recommender:
         self,
         language: str,
         *,
-        since: timezone.timedelta | None = None,
+        timeframe: timezone.timedelta | None = None,
         num_matches: int = 12,
         n_features: int = 30000,
     ) -> None:
         self._language = language
-        self._since = since or timezone.timedelta(days=90)
+        self._timeframe = timeframe or _default_timeframe
         self._num_matches = num_matches
         self._n_features = n_features
 
@@ -62,7 +65,7 @@ class _Recommender:
             )
             .filter(
                 category_ids__len__gt=0,
-                pub_date__gt=timezone.now() - self._since,
+                pub_date__gt=timezone.now() - self._timeframe,
                 language__iexact=self._language,
                 active=True,
                 private=False,
@@ -76,12 +79,23 @@ class _Recommender:
         )
 
     def _recommend(self) -> Iterator[Recommendation]:
-        podcast_ids, corpus, categories_map = self._build_dataset()
+        podcast_ids = []
+        corpus = []
+
+        categories_map = collections.defaultdict(set)
+
+        for podcast_id, text, categories in self._get_queryset():
+            podcast_ids.append(podcast_id)
+            corpus.append(text)
+
+            for category_id in categories:
+                categories_map[category_id].add(podcast_id)
 
         if not podcast_ids or not corpus or not categories_map:
             return
 
-        tfidf_matrix = self._build_matrix(corpus)
+        hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
+        tfidf_matrix = TfidfTransformer().fit_transform(hasher.transform(corpus))
 
         matches = collections.defaultdict(list)
 
@@ -98,26 +112,6 @@ class _Recommender:
                 recommended_id=recommended_id,
                 score=len(similarities) * statistics.mean(similarities),
             )
-
-    def _build_matrix(self, corpus: list[str]) -> csr_matrix:
-        """Builds a TF-IDF matrix from the provided corpus."""
-        hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
-        return TfidfTransformer().fit_transform(hasher.transform(corpus))
-
-    def _build_dataset(self) -> tuple[list[int], list[str], dict[int, set[int]]]:
-        podcast_ids = []
-        corpus = []
-
-        categories_map = collections.defaultdict(set)
-
-        for podcast_id, text, categories in self._get_queryset():
-            podcast_ids.append(podcast_id)
-            corpus.append(text)
-
-            for category_id in categories:
-                categories_map[category_id].add(podcast_id)
-
-        return podcast_ids, corpus, categories_map
 
     def _recommend_by_category(
         self,
