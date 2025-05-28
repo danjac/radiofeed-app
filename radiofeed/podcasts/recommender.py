@@ -3,6 +3,7 @@ import itertools
 import statistics
 from collections.abc import Iterator
 
+import numpy as np
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q, QuerySet
 from django.utils import timezone
@@ -121,7 +122,7 @@ class _Recommender:
             ]
 
             tfidf_subset = tfidf_matrix[indices]
-            subset_ids = [podcast_ids[idx] for idx in indices]
+            subset_ids = np.array([podcast_ids[idx] for idx in indices])
 
             n_neighbors = min(self._num_matches, len(subset_ids))
 
@@ -133,16 +134,16 @@ class _Recommender:
 
             distances, neighbors = nn.kneighbors(tfidf_subset)
 
-            for row_idx, row_id in enumerate(subset_ids):
-                row_distances = distances[row_idx, 1:]
-                row_indices = neighbors[row_idx, 1:]
-                similarities = 1 - row_distances
+            # Exclude self-match in first column
+            similarities = 1 - distances[:, 1:]
+            filtered_neighbors = neighbors[:, 1:]
 
-                mask = similarities > 0
+            # Filter for positive similarity only
+            mask = similarities > 0
+            row_idxs, col_idxs = np.where(mask)
 
-                for similarity, neighbor_idx in zip(
-                    similarities[mask],
-                    row_indices[mask],
-                    strict=True,
-                ):
-                    yield row_id, subset_ids[neighbor_idx], similarity
+            row_ids = subset_ids[row_idxs]
+            neighbor_ids = subset_ids[filtered_neighbors[row_idxs, col_idxs]]
+            sims = similarities[row_idxs, col_idxs]
+
+            yield from zip(row_ids, neighbor_ids, sims, strict=True)
