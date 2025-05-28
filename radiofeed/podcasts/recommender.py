@@ -111,9 +111,7 @@ class _Recommender:
         podcast_ids: list[int],
         categories_map: dict[int, set[int]],
     ) -> Iterator[tuple[int, int, float]]:
-        id_to_index = {
-            podcast_id: index for index, podcast_id in enumerate(podcast_ids)
-        }
+        id_to_index = {podcast_id: idx for idx, podcast_id in enumerate(podcast_ids)}
 
         for category_podcast_ids in categories_map.values():
             indices = [
@@ -123,7 +121,7 @@ class _Recommender:
             ]
 
             tfidf_subset = tfidf_matrix[indices]
-            subset_ids = [podcast_ids[index] for index in indices]
+            subset_ids = [podcast_ids[idx] for idx in indices]
 
             n_neighbors = min(self._num_matches, len(subset_ids))
 
@@ -135,17 +133,16 @@ class _Recommender:
 
             distances, neighbors = nn.kneighbors(tfidf_subset)
 
-            for row_id, row_distances, row_indices in zip(
-                subset_ids,
-                distances,
-                neighbors,
-                strict=True,
-            ):
-                for distance, index in zip(
-                    itertools.islice(row_distances, 1, None),
-                    itertools.islice(row_indices, 1, None),
+            for row_idx, row_id in enumerate(subset_ids):
+                row_distances = distances[row_idx, 1:]
+                row_indices = neighbors[row_idx, 1:]
+                similarities = 1 - row_distances
+
+                mask = similarities > 0
+
+                for similarity, neighbor_idx in zip(
+                    similarities[mask],
+                    row_indices[mask],
                     strict=True,
                 ):
-                    similarity = 1 - distance
-                    if similarity > 0:
-                        yield row_id, subset_ids[index], similarity
+                    yield row_id, subset_ids[neighbor_idx], similarity
