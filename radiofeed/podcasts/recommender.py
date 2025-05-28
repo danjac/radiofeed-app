@@ -43,7 +43,7 @@ class _Recommender:
         ).bulk_delete()
 
         for batch in itertools.batched(
-            self._create_recommendations(self._get_queryset()),
+            self._recommend(self._get_queryset()),
             n=100,
             strict=False,
         ):
@@ -75,7 +75,7 @@ class _Recommender:
             )
         )
 
-    def _create_recommendations(self, queryset: QuerySet) -> Iterator[Recommendation]:
+    def _recommend(self, queryset: QuerySet) -> Iterator[Recommendation]:
         podcast_ids = []
         corpus = []
 
@@ -88,7 +88,7 @@ class _Recommender:
             for category_id in categories:
                 categories_map[category_id].add(podcast_id)
 
-        if not podcast_ids:
+        if not podcast_ids or not corpus or not categories_map:
             return
 
         hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
@@ -96,7 +96,7 @@ class _Recommender:
 
         matches = collections.defaultdict(list)
 
-        for podcast_id, recommended_id, similarity in self._matches_by_category(
+        for podcast_id, recommended_id, similarity in self._recommend_by_category(
             tfidf_matrix,
             podcast_ids,
             categories_map,
@@ -110,7 +110,7 @@ class _Recommender:
                 score=len(similarities) * statistics.mean(similarities),
             )
 
-    def _matches_by_category(
+    def _recommend_by_category(
         self,
         tfidf_matrix: csr_matrix,
         podcast_ids: list[int],
