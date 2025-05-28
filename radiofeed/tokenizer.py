@@ -1,12 +1,11 @@
 import contextlib
 import datetime
 import functools
-import pathlib
 import re
 import unicodedata
 from collections.abc import Iterator
 from datetime import date, timedelta
-from typing import Final
+from typing import Final, NewType
 
 import pycountry
 from django.conf import settings
@@ -60,6 +59,8 @@ _CORPORATE_STOPWORDS: Final = {
     "itunes",
 }
 
+iso639_code = NewType("iso639_code", str)
+
 _lemmatizer = WordNetLemmatizer()
 _tokenizer = RegexpTokenizer(r"\w+")
 
@@ -69,7 +70,7 @@ def clean_text(text: str) -> str:
     return _remove_digits_and_punctuation(strip_html(text)).strip()
 
 
-def tokenize(language: str, text: str) -> list[str]:
+def tokenize(language: iso639_code, text: str) -> list[str]:
     """Extract all relevant keywords from text, removing any stopwords, HTML tags etc.
 
     Args:
@@ -88,7 +89,7 @@ def tokenize(language: str, text: str) -> list[str]:
 
 
 @functools.cache
-def get_language_codes() -> set[str]:
+def get_language_codes() -> set[iso639_code]:
     """Return ISO 639 2-char language codes ."""
     return {
         language.alpha_2
@@ -98,7 +99,7 @@ def get_language_codes() -> set[str]:
 
 
 @functools.cache
-def get_stopwords(language: str) -> set[str]:
+def get_stopwords(language: iso639_code) -> set[str]:
     """Return all stopwords for a language, if available.
 
     Args:
@@ -141,7 +142,7 @@ def _strip_accents(text: str) -> str:
 
 
 @functools.cache
-def _get_date_stopwords(language: str) -> set[str]:
+def _get_date_stopwords(language: iso639_code) -> set[str]:
     now = timezone.now()
     stopwords = set()
     with translation.override(language):
@@ -158,36 +159,26 @@ def _get_date_stopwords(language: str) -> set[str]:
 
 
 @functools.cache
-def _get_extra_stopwords(language: str) -> set[str]:
-    if (path := _extra_stopwords_path(language)) and path.exists():
-        return {
-            word
-            for word in (
-                word.strip().casefold() for word in path.read_text().splitlines()
-            )
-            if word
-        }
+def _get_extra_stopwords(language: iso639_code) -> set[str]:
+    if name := _STOPWORDS_LANGUAGES.get(language):
+        path = settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
+        if path.exists():
+            return {
+                word
+                for word in (
+                    word.strip().casefold() for word in path.read_text().splitlines()
+                )
+                if word
+            }
     return set()
 
 
 @functools.cache
-def _get_corpus_stopwords(language: str) -> set[str]:
-    if name := _get_stopwords_language(language):
+def _get_corpus_stopwords(language: iso639_code) -> set[str]:
+    if name := _STOPWORDS_LANGUAGES.get(language):
         with contextlib.suppress(AttributeError, KeyError, OSError):
             return set(stopwords.words(name))
     return set()
-
-
-@functools.cache
-def _get_stopwords_language(language: str) -> str | None:
-    return _STOPWORDS_LANGUAGES.get(language, None)
-
-
-@functools.cache
-def _extra_stopwords_path(language: str) -> pathlib.Path | None:
-    if name := _get_stopwords_language(language):
-        return settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
-    return None
 
 
 @functools.cache
