@@ -66,7 +66,17 @@ _tokenizer = RegexpTokenizer(r"\w+")
 
 def clean_text(text: str) -> str:
     """Scrub text of any HTML tags and entities, punctuation and numbers."""
-    return _remove_digits_and_punctuation(strip_html(text)).strip()
+    return (
+        _re_punctuation()
+        .sub(
+            "",
+            _re_digits().sub(
+                "",
+                strip_html(text),
+            ),
+        )
+        .strip()
+    )
 
 
 def tokenize(language: str, text: str) -> list[str]:
@@ -121,11 +131,6 @@ def _lemmatized_tokens(text: str) -> Iterator[str]:
 
 def _format_date(value: date, fmt: str) -> str:
     return date_format(value, fmt).casefold()
-
-
-def _remove_digits_and_punctuation(text: str) -> str:
-    """Strip non-alphanumeric characters from text."""
-    return _re_punctuation().sub("", _re_digits().sub("", text))
 
 
 def _strip_accents(text: str) -> str:
