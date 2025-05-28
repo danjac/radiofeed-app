@@ -43,7 +43,7 @@ class _Recommender:
         ).bulk_delete()
 
         for batch in itertools.batched(
-            self._recommend(self._get_queryset()),
+            self._recommend(),
             n=100,
             strict=False,
         ):
@@ -75,24 +75,13 @@ class _Recommender:
             )
         )
 
-    def _recommend(self, queryset: QuerySet) -> Iterator[Recommendation]:
-        podcast_ids = []
-        corpus = []
-
-        categories_map = collections.defaultdict(set)
-
-        for podcast_id, text, categories in queryset:
-            podcast_ids.append(podcast_id)
-            corpus.append(text)
-
-            for category_id in categories:
-                categories_map[category_id].add(podcast_id)
+    def _recommend(self) -> Iterator[Recommendation]:
+        podcast_ids, corpus, categories_map = self._build_dataset()
 
         if not podcast_ids or not corpus or not categories_map:
             return
 
-        hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
-        tfidf_matrix = TfidfTransformer().fit_transform(hasher.transform(corpus))
+        tfidf_matrix = self._build_matrix(corpus)
 
         matches = collections.defaultdict(list)
 
@@ -109,6 +98,26 @@ class _Recommender:
                 recommended_id=recommended_id,
                 score=len(similarities) * statistics.mean(similarities),
             )
+
+    def _build_matrix(self, corpus: list[str]) -> csr_matrix:
+        """Builds a TF-IDF matrix from the provided corpus."""
+        hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
+        return TfidfTransformer().fit_transform(hasher.transform(corpus))
+
+    def _build_dataset(self) -> tuple[list[int], list[str], dict[int, set[int]]]:
+        podcast_ids = []
+        corpus = []
+
+        categories_map = collections.defaultdict(set)
+
+        for podcast_id, text, categories in self._get_queryset():
+            podcast_ids.append(podcast_id)
+            corpus.append(text)
+
+            for category_id in categories:
+                categories_map[category_id].add(podcast_id)
+
+        return podcast_ids, corpus, categories_map
 
     def _recommend_by_category(
         self,
