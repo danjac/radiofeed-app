@@ -141,7 +141,6 @@ def _strip_accents(text: str) -> str:
     )
 
 
-@functools.cache
 def _get_date_stopwords(language: iso639_code) -> set[str]:
     now = timezone.now()
     stopwords = set()
@@ -158,7 +157,6 @@ def _get_date_stopwords(language: iso639_code) -> set[str]:
     return stopwords
 
 
-@functools.cache
 def _get_extra_stopwords(language: iso639_code) -> set[str]:
     if name := _STOPWORDS_LANGUAGES.get(language):
         path = settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
@@ -173,7 +171,6 @@ def _get_extra_stopwords(language: iso639_code) -> set[str]:
     return set()
 
 
-@functools.cache
 def _get_corpus_stopwords(language: iso639_code) -> set[str]:
     if name := _STOPWORDS_LANGUAGES.get(language):
         with contextlib.suppress(AttributeError, KeyError, OSError):
