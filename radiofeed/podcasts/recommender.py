@@ -1,4 +1,5 @@
 import collections
+import itertools
 import statistics
 from collections.abc import Iterator
 
@@ -34,16 +35,19 @@ class _Recommender:
         self._num_matches = num_matches
         self._n_features = n_features
 
-    def recommend(self) -> list[Recommendation]:
+    def recommend(self) -> None:
         """Generates recommendations for podcasts in the specified language."""
 
         Recommendation.objects.filter(
             podcast__language__iexact=self._language
         ).bulk_delete()
 
-        return Recommendation.objects.bulk_create(
-            self._create_recommendations(self._get_queryset())
-        )
+        for batch in itertools.batched(
+            self._create_recommendations(self._get_queryset()),
+            n=100,
+            strict=False,
+        ):
+            Recommendation.objects.bulk_create(batch)
 
     def _get_queryset(self) -> QuerySet:
         return (
