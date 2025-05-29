@@ -1,4 +1,6 @@
 import collections
+import dataclasses
+import functools
 import itertools
 import statistics
 from collections.abc import Iterator
@@ -18,67 +20,44 @@ from radiofeed.podcasts.models import Podcast, Recommendation
 _default_timeframe: Final = timezone.timedelta(days=90)
 
 
-def recommend(language: str, **kwargs) -> None:
+def recommend(
+    language: str,
+    *,
+    timeframe: timezone.timedelta | None = None,
+    num_matches: int = 12,
+    n_features: int = 30000,
+    batch_size: int = 100,
+) -> None:
     """Generates Recommendation instances based on podcast similarity, grouped by
     language and category. Existing recommendations are first deleted."""
-    _Recommender(language, **kwargs).recommend()
+
+    Recommendation.objects.filter(podcast__language__iexact=language).bulk_delete()
+
+    recommender = _Recommender(
+        language=language,
+        timeframe=timeframe or _default_timeframe,
+        num_matches=num_matches,
+        n_features=n_features,
+    )
+
+    for batch in itertools.batched(
+        recommender.recommend(),
+        batch_size,
+        strict=False,
+    ):
+        Recommendation.objects.bulk_create(batch)
 
 
+@dataclasses.dataclass(frozen=True, kw_only=True)
 class _Recommender:
-    def __init__(
-        self,
-        language: str,
-        *,
-        timeframe: timezone.timedelta | None = None,
-        num_matches: int = 12,
-        n_features: int = 30000,
-    ) -> None:
-        self._language = language
-        self._timeframe = timeframe or _default_timeframe
-        self._num_matches = num_matches
-        self._n_features = n_features
+    language: str
+    timeframe: timezone.timedelta
 
-    def recommend(self) -> None:
-        """Generates recommendations for podcasts in the specified language."""
+    num_matches: int
+    n_features: int
 
-        Recommendation.objects.filter(
-            podcast__language__iexact=self._language
-        ).bulk_delete()
-
-        for batch in itertools.batched(
-            self._recommend(),
-            n=100,
-            strict=False,
-        ):
-            Recommendation.objects.bulk_create(batch)
-
-    def _get_queryset(self) -> QuerySet:
-        return (
-            Podcast.objects.annotate(
-                category_ids=ArrayAgg(
-                    "categories__id",
-                    filter=~Q(
-                        categories__pk=None,
-                    ),
-                    distinct=True,
-                ),
-            )
-            .filter(
-                category_ids__len__gt=0,
-                pub_date__gt=timezone.now() - self._timeframe,
-                language__iexact=self._language,
-                active=True,
-                private=False,
-            )
-            .exclude(extracted_text="")
-            .values_list(
-                "id",
-                "extracted_text",
-                "category_ids",
-            )
-        )
-
-    def _recommend(self) -> Iterator[Recommendation]:
+    def recommend(self) -> Iterator[Recommendation]:
+        """Build Recommendation instances based on podcast similarity, grouped by category."""
         podcast_ids = []
         corpus = []
 
@@ -94,8 +73,9 @@ class _Recommender:
         if not podcast_ids or not corpus or not categories_map:
             return
 
-        hasher = HashingVectorizer(n_features=self._n_features, alternate_sign=False)
-        tfidf_matrix = TfidfTransformer().fit_transform(hasher.transform(corpus))
+        tfidf_matrix = _tfidf_transformer().fit_transform(
+            _hasher(self.n_features).transform(corpus)
+        )
 
         matches = collections.defaultdict(list)
 
@@ -112,6 +92,32 @@ class _Recommender:
                 recommended_id=recommended_id,
                 score=len(similarities) * statistics.mean(similarities),
             )
+
+    def _get_queryset(self) -> QuerySet:
+        return (
+            Podcast.objects.annotate(
+                category_ids=ArrayAgg(
+                    "categories__id",
+                    filter=~Q(
+                        categories__pk=None,
+                    ),
+                    distinct=True,
+                ),
+            )
+            .filter(
+                category_ids__len__gt=0,
+                pub_date__gt=timezone.now() - self.timeframe,
+                language__iexact=self.language,
+                active=True,
+                private=False,
+            )
+            .exclude(extracted_text="")
+            .values_list(
+                "id",
+                "extracted_text",
+                "category_ids",
+            )
+        )
 
     def _recommend_by_category(
         self,
@@ -131,7 +137,7 @@ class _Recommender:
             tfidf_subset = tfidf_matrix[indices]
             subset_ids = np.array([podcast_ids[idx] for idx in indices])
 
-            n_neighbors = min(self._num_matches, len(subset_ids))
+            n_neighbors = min(self.num_matches, len(subset_ids))
 
             nn = NearestNeighbors(
                 n_neighbors=n_neighbors,
@@ -154,3 +160,13 @@ class _Recommender:
             sims = similarities[row_idxs, col_idxs]
 
             yield from zip(row_ids, neighbor_ids, sims, strict=True)
+
+
+@functools.cache
+def _hasher(n_features: int) -> HashingVectorizer:
+    return HashingVectorizer(n_features=n_features, alternate_sign=False)
+
+
+@functools.cache
+def _tfidf_transformer() -> TfidfTransformer:
+    return TfidfTransformer()
