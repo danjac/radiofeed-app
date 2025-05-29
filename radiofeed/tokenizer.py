@@ -4,7 +4,6 @@ import functools
 import re
 import unicodedata
 from collections.abc import Iterator
-from datetime import date, timedelta
 from typing import Final
 
 import pycountry
@@ -129,10 +128,6 @@ def _lemmatized_tokens(text: str) -> Iterator[str]:
             yield _lemmatizer.lemmatize(token)
 
 
-def _format_date(value: date, fmt: str) -> str:
-    return date_format(value, fmt).casefold()
-
-
 def _strip_accents(text: str) -> str:
     return "".join(
         c for c in unicodedata.normalize("NFKD", text) if not unicodedata.combining(c)
@@ -163,13 +158,13 @@ def _get_date_stopwords(language: str) -> set[str]:
     with translation.override(language):
         for month in range(1, 13):
             dt = datetime.date(now.year, month, 1)
-            words.add(_format_date(dt, "b"))
-            words.add(_format_date(dt, "F"))
+            words.add(date_format(dt, "b"))
+            words.add(date_format(dt, "F"))
 
         for day in range(7):
-            dt = now + timedelta(days=day)
-            words.add(_format_date(dt, "D"))
-            words.add(_format_date(dt, "l"))
+            dt = now + timezone.timedelta(days=day)
+            words.add(date_format(dt, "D"))
+            words.add(date_format(dt, "l"))
     return words
 
 
