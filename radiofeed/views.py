@@ -146,40 +146,31 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     URL should be signed, so we can verify the request comes from this site.
     """
 
-    if not is_cover_image_size(size):
+    if not is_cover_image_size(size) or not (
+        signed_url := request.GET.get("url", None)
+    ):
         raise Http404
-
-    signed_url = request.GET.get("url", None)
-
-    if not signed_url:
-        raise Http404
-
-    output: io.BufferedIOBase
 
     try:
         cover_url = get_cover_url_signer().unsign(signed_url)
-
         image = Image.open(
-            io.BytesIO(_fetch_cover_image(get_client(), cover_url))
-        ).resize(
-            (size, size),
-            Image.Resampling.LANCZOS,
-        )
-
-        output = io.BytesIO()
-        image.save(output, format="webp", optimize=True, quality=90)
-        output.seek(0)
-
+            io.BytesIO(
+                _fetch_cover_image(get_client(), cover_url),
+            )
+        ).resize((size, size), Image.Resampling.LANCZOS)
     except (
-        BadSignature,
         OSError,
+        BadSignature,
         httpx.HTTPError,
         httpx.StreamError,
     ):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
-
         output = get_placeholder_path(size).open("rb")
+    else:
+        output = io.BytesIO()
+        image.save(output, format="webp", optimize=True, quality=90)
+        output.seek(0)
 
     return FileResponse(output, content_type="image/webp")
 
