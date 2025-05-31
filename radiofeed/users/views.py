@@ -179,12 +179,12 @@ def unsubscribe(request: HttpRequest) -> HttpResponse:
         EmailAddress.DoesNotExist,
     ):
         messages.error(request, "Email address not found")
-        return redirect("index")
+    else:
+        user.send_email_notifications = False
+        user.save()
 
-    user.send_email_notifications = False
-    user.save()
+        messages.success(request, "You have been unsubscribed from email notifications")
 
-    messages.success(request, "You have been unsubscribed from email notifications")
     return redirect("index")
 
 
