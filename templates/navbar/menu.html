@@ -1,44 +1,11 @@
 {% load heroicons %}
 <ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
-
-    {% url "podcasts:subscriptions" as subscriptions_url %}
-    {% fragment "navbar/menu/item.html" url=subscriptions_url icon="rss" %}
-        Subscriptions
-    {% endfragment %}
-
-    {% url "episodes:index" as episodes_url %}
-    {% fragment "navbar/menu/item.html" url=episodes_url icon="sparkles" %}
-        New Releases
-    {% endfragment %}
-
-    {% url "podcasts:discover" as discover_url %}
-    {% fragment "navbar/menu/item.html" url=discover_url icon="magnifying-glass" %}
-        Discover
-    {% endfragment %}
-
-    {% url "podcasts:category_list" as categories_url %}
-    {% fragment "navbar/menu/item.html" url=categories_url icon="tag" %}
-        Categories
-    {% endfragment %}
-
-    {% url "episodes:bookmarks" as bookmarks_url %}
-    {% fragment "navbar/menu/item.html" url=bookmarks_url icon="bookmark" %}
-        Bookmarks
-    {% endfragment %}
-
-    {% url "episodes:history" as history_url %}
-    {% fragment "navbar/menu/item.html" url=history_url icon="clock" %}
-        History
-    {% endfragment %}
-
-    {% url "podcasts:private_feeds" as private_feeds_url %}
-    {% fragment "navbar/menu/item.html" url=private_feeds_url icon="lock-closed" %}
-        Private Feeds
-    {% endfragment %}
-
-    {% url "about" as about_url %}
-    {% fragment "navbar/menu/item.html" url=about_url icon="information-circle" %}
-        About
-    {% endfragment %}
-
+    {% include "navbar/menu/item.html" with title="Subscriptions" url_name="podcasts:subscriptions" icon="rss" %}
+    {% include "navbar/menu/item.html" with title="New Releases" url_name="episodes:index" icon="sparkles" %}
+    {% include "navbar/menu/item.html" with title="Discover" url_name="podcasts:discover" icon="magnifying-glass" %}
+    {% include "navbar/menu/item.html" with title="Categories" url_name="podcasts:category_list" icon="tag" %}
+    {% include "navbar/menu/item.html" with title="Bookmarks" url_name="episodes:bookmarks" icon="bookmark" %}
+    {% include "navbar/menu/item.html" with title="History" url_name="episodes:history" icon="clock" %}
+    {% include "navbar/menu/item.html" with title="Private Feeds" url_name="podcasts:private_feeds" icon="lock-closed" %}
+    {% include "navbar/menu/item.html" with title="About" url_name="about" icon="information-circle" %}
 </ul>
