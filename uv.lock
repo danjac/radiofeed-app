@@ -136,14 +136,14 @@ wheels = [
 
 [[package]]
 name = "click"
-version = "8.1.8"
+version = "8.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a", size = 226593 }
+sdist = { url = "https://files.pythonhosted.org/packages/60/6c/8ca2efa64cf75a977a0d7fac081354553ebe483345c734fb6b6515d96bbc/click-8.2.1.tar.gz", hash = "sha256:27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202", size = 286342 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/d4/7ebdbd03970677812aac39c869717059dbb71a4cfc033ca6e5221787892c/click-8.1.8-py3-none-any.whl", hash = "sha256:63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2", size = 98188 },
+    { url = "https://files.pythonhosted.org/packages/85/32/10bb5764d90a8eee674e9dc6f4db6a0ab47c8c4d0d83c27f7c39ac415a4d/click-8.2.1-py3-none-any.whl", hash = "sha256:61a3265b914e850b85317d0b3109c7f8cd35a670f963866005d6ef1d5175a12b", size = 102215 },
 ]
 
 [[package]]
@@ -223,15 +223,15 @@ wheels = [
 
 [[package]]
 name = "dj-database-url"
-version = "2.3.0"
+version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/98/9f/fc9905758256af4f68a55da94ab78a13e7775074edfdcaddd757d4921686/dj_database_url-2.3.0.tar.gz", hash = "sha256:ae52e8e634186b57e5a45e445da5dc407a819c2ceed8a53d1fac004cc5288787", size = 10980 }
+sdist = { url = "https://files.pythonhosted.org/packages/81/c0/5d660bbe707c8bce8c9217c9af92345170c204e29005628dc57528b648d7/dj_database_url-3.0.0.tar.gz", hash = "sha256:749a7a42d88d6c741c1d2f4ab24c2ae0d5cd12f00f2d1d55ff9f5fadabe8a2c3", size = 12594 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/91/641a4e5c8903ed59f6cbcce571003bba9c5d2f731759c31db0ba83bb0bdb/dj_database_url-2.3.0-py3-none-any.whl", hash = "sha256:bb0d414ba0ac5cd62773ec7f86f8cc378a9dbb00a80884c2fc08cc570452521e", size = 7793 },
+    { url = "https://files.pythonhosted.org/packages/e8/7b/d68df6365e442ae6370d6d970915329eae85bce5afb3602058d9ccc71700/dj_database_url-3.0.0-py3-none-any.whl", hash = "sha256:cbb84b2e3f372460b1e43692bf9fdc0c32e78930ee101db470cba56105fca1e5", size = 8835 },
 ]
 
 [[package]]
@@ -259,13 +259,13 @@ wheels = [
 
 [[package]]
 name = "django-allauth"
-version = "65.8.1"
+version = "65.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/65/3a/b9f572de1decadc668c7d73d0751ff05ff282d3c2cd17d7f74d17afd1fc4/django_allauth-65.8.1.tar.gz", hash = "sha256:38f54708eb06e542af33beeb553e0abb0d7524fded43a5e42c078f20d8e9fc18", size = 1681310 }
+sdist = { url = "https://files.pythonhosted.org/packages/9d/a3/00aa9d5bb5df4f7464495675074dc11107c08b3eea3462fb3edc059d71e1/django_allauth-65.9.0.tar.gz", hash = "sha256:a06bca9974df44321e94c33bcf770bb6f924d1a44b57defbce4d7ec54a55483e", size = 1710514 }
 
 [package.optional-dependencies]
 socialaccount = [
@@ -466,7 +466,7 @@ wheels = [
 
 [[package]]
 name = "django-typer"
-version = "3.1.1"
+version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -474,9 +474,9 @@ dependencies = [
     { name = "shellingham" },
     { name = "typer-slim" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/92/4fd0b39f0dd6e30c6564d1282fc8fd47c7331fd079508e61a14d024322e6/django_typer-3.1.1.tar.gz", hash = "sha256:0d0ff327867d653fc3a9b29b311b464f90780b1eeb37e84610cabbed169f6db6", size = 2906680 }
+sdist = { url = "https://files.pythonhosted.org/packages/f7/24/606d027e7dab212eb5c27abaf3f1259eb6ecbb015eaa165d1aac2df1c167/django_typer-3.2.0.tar.gz", hash = "sha256:9c4bfb3b8fbc9f49c5e847994ce8ea2130052e4207f8b0e6edd2ebcf743a8cc3", size = 2907087 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/4a/a630f679751813b8096d71ea643c5fba069f4d87444d958c519cd00e9c24/django_typer-3.1.1-py3-none-any.whl", hash = "sha256:e9eaff17ae0f79d99b3f84c1df71b1bdfe74824b6baa9985fd066a021c4ceb5e", size = 295565 },
+    { url = "https://files.pythonhosted.org/packages/ab/f3/8d95ee14d4c5120584a45aadbcd3b93e32c52f2774c9f4fc1e134b82a561/django_typer-3.2.0-py3-none-any.whl", hash = "sha256:e9727ac3ffc24cc2fc954a3a4b1c710552240692cc3bb21f1b7725c45c3d6de7", size = 295600 },
 ]
 
 [[package]]
@@ -1610,15 +1610,15 @@ wheels = [
 
 [[package]]
 name = "typer-slim"
-version = "0.15.4"
+version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/75/fb85e49851d127316f30b7f6001fa0d378c14afdac280dace89d49992518/typer_slim-0.15.4.tar.gz", hash = "sha256:1d9fe638da58f4bdeae891512c47ed83915f81e7a0ee062cf6c572ff38473128", size = 101615 }
+sdist = { url = "https://files.pythonhosted.org/packages/ae/96/5749d5b6920fab0db15ce39d850b86dfee21518cd1c81b7a5fe5a495a92a/typer_slim-0.16.0.tar.gz", hash = "sha256:d6483c367f98529884a5d45a028f5d2686ae93cd9d33d518661069f382c08546", size = 102664 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b6/7f/44304801838529b1051e00fb30e1750cacd10da31da1f3b0fa0e96ae6045/typer_slim-0.15.4-py3-none-any.whl", hash = "sha256:6d134e1b048da37ceacc1ccc3ad28a6f966c8f0833cc1513cf12a21de0da8ed8", size = 45315 },
+    { url = "https://files.pythonhosted.org/packages/41/2d/dc1f0c872615aef018783408ac993be7832726a4b30032e317e9f2858267/typer_slim-0.16.0-py3-none-any.whl", hash = "sha256:8aa94eef73b876506b9d239cd70cfedefac95541be8f060688aabfc800f53d67", size = 46377 },
 ]
 
 [[package]]
