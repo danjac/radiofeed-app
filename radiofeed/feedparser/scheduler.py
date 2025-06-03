@@ -15,12 +15,11 @@ def schedule(feed: Feed) -> timedelta:
             a - b
             for a, b in itertools.pairwise(
                 sorted(
-                    [item.pub_date for item in feed.items],
+                    feed.pub_dates,
                     reverse=True,
                 )
             )
         )
-
     except ValueError:
         frequency = Podcast.DEFAULT_PARSER_FREQUENCY
 

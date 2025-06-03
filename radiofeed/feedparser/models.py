@@ -297,8 +297,13 @@ class Feed(BaseModel):
     @model_validator(mode="after")
     def validate_pub_date(self) -> "Feed":
         """Set default pub date based on max items pub date."""
-        self.pub_date = max(item.pub_date for item in self.items)
+        self.pub_date = max(self.pub_dates)
         return self
+
+    @property
+    def pub_dates(self) -> list[datetime]:
+        """Return sorted list of pub dates for all items in feed."""
+        return [item.pub_date for item in self.items]
 
     def tokenize(self) -> str:
         """Tokenize feed for search."""
