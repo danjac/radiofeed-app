@@ -1,5 +1,6 @@
 import collections
 import itertools
+import math
 import statistics
 from collections.abc import Iterator
 from typing import Final
@@ -87,12 +88,17 @@ class _Recommender:
 
     def _build_dataset(self) -> None:
         self._podcast_ids: list[int] = []
+        self._podcast_index: dict[int, int] = {}
         self._corpus: list[str] = []
-        self._categories: dict[int, set[int]] = collections.defaultdict(set)
-        self._category_sizes: collections.Counter = collections.Counter()
 
-        for podcast_id, text, category_ids in self._get_queryset():
+        self._categories = collections.defaultdict(set)
+        self._category_sizes = collections.Counter()
+
+        for counter, (podcast_id, text, category_ids) in enumerate(
+            self._get_queryset()
+        ):
             self._podcast_ids.append(podcast_id)
+            self._podcast_index[podcast_id] = counter
             self._corpus.append(text)
 
             for category_id in category_ids:
@@ -100,7 +106,7 @@ class _Recommender:
                 self._category_sizes[category_id] += 1
 
     def _empty(self) -> bool:
-        return not self._podcast_ids or not self._corpus or not self._categories
+        return not self._podcast_ids or not self._categories
 
     def _get_queryset(self) -> QuerySet:
         return (
@@ -123,14 +129,13 @@ class _Recommender:
         )
 
     def _find_similarities(self) -> Iterator[tuple[int, int, float, int]]:
-        podcast_index = {pid: idx for idx, pid in enumerate(self._podcast_ids)}
         tfidf_matrix = _transformer.fit_transform(_hasher.transform(self._corpus))
 
         for category_id, category_podcast_ids in self._categories.items():
             indices = [
-                podcast_index[pid]
+                self._podcast_index[pid]
                 for pid in category_podcast_ids
-                if pid in podcast_index
+                if pid in self._podcast_index
             ]
 
             subset_ids = np.array([self._podcast_ids[idx] for idx in indices])
@@ -168,10 +173,11 @@ class _Recommender:
             )
 
     def _calculate_score(self, values: list[tuple[float, int]]) -> float:
-        """Compute recommendation score adjusted by category size."""
+        """Compute a weighted score that adjusts for category size."""
         scores = []
         for similarity, category_id in values:
-            category_size = self._category_sizes.get(category_id, 1)
-            adjusted = similarity / category_size
-            scores.append(adjusted)
-        return len(values) * statistics.mean(scores)
+            size = self._category_sizes.get(category_id, 1)
+            weight = 1 / (1 + math.log(size))
+            scores.append(similarity * weight)
+
+        return len(scores) * statistics.mean(scores)
