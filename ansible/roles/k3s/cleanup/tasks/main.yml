@@ -10,6 +10,9 @@
         # Delete old logs
         journalctl --vacuum-time=1d || true
 
+        # Clean dependencies
+        apt clean
+
 - name: Create daily cronjob for cleanup
   cron:
     name: "Daily k3s cleanup"
