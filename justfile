@@ -94,9 +94,10 @@ precommitall:
 apb playbook *args:
     ansible-playbook -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} {{ args }}
 
+# Run Github workflow
 [group('deployment')]
-deploy:
-    gh workflow run deploy.yml
+gh workflow *args:
+    gh workflow run {{ workflow }}.yml {{ args }}
 
 # Run Django manage.py commands on production server
 [group('production')]
