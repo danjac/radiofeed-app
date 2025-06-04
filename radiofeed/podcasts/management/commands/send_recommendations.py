@@ -31,14 +31,14 @@ class Command(BaseCommand):
         """Handle implementation."""
 
         site = Site.objects.get_current()
-
         connection = get_connection()
+        num_podcasts = options["num_podcasts"]
 
         execute_thread_pool(
             lambda recipient: self._send_recommendations_email(
                 site,
                 recipient,
-                options["num_podcasts"],
+                num_podcasts,
                 connection=connection,
             ),
             get_recipients(),
