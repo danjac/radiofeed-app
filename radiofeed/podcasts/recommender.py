@@ -64,9 +64,7 @@ class _Recommender:
 
     def recommend(self) -> Iterator[Recommendation]:
         """Build Recommendation instances based on podcast similarity, grouped by category."""
-        self._build_dataset()
-
-        if self._empty():
+        if not self._build_dataset():
             return
 
         matches = collections.defaultdict(list)
@@ -86,13 +84,16 @@ class _Recommender:
                 score=self._calculate_score(values),
             )
 
-    def _build_dataset(self) -> None:
+    def _build_dataset(self) -> bool:
         self._podcast_ids: list[int] = []
         self._podcast_index: dict[int, int] = {}
         self._corpus: list[str] = []
 
         self._categories = collections.defaultdict(set)
         self._category_sizes = collections.Counter()
+
+        # return True if we have relevant data
+        has_data: bool = False
 
         for counter, (podcast_id, text, category_ids) in enumerate(
             self._get_queryset()
@@ -105,8 +106,9 @@ class _Recommender:
                 self._categories[category_id].add(podcast_id)
                 self._category_sizes[category_id] += 1
 
-    def _empty(self) -> bool:
-        return not self._podcast_ids or not self._categories
+                has_data = True
+
+        return has_data
 
     def _get_queryset(self) -> QuerySet:
         return (
