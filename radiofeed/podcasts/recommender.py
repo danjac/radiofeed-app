@@ -85,7 +85,6 @@ class _Recommender:
             )
 
     def _build_dataset(self) -> bool:
-        self._podcast_ids: list[int] = []
         self._podcast_index: dict[int, int] = {}
         self._corpus: list[str] = []
 
@@ -98,7 +97,6 @@ class _Recommender:
         for counter, (podcast_id, text, category_ids) in enumerate(
             self._get_queryset()
         ):
-            self._podcast_ids.append(podcast_id)
             self._podcast_index[podcast_id] = counter
             self._corpus.append(text)
 
@@ -132,6 +130,7 @@ class _Recommender:
 
     def _find_similarities(self) -> Iterator[tuple[int, int, float, int]]:
         tfidf_matrix = _transformer.fit_transform(_hasher.transform(self._corpus))
+        podcast_ids = list(self._podcast_index.keys())
 
         for category_id, category_podcast_ids in self._categories.items():
             indices = [
@@ -140,7 +139,7 @@ class _Recommender:
                 if pid in self._podcast_index
             ]
 
-            subset_ids = np.array([self._podcast_ids[idx] for idx in indices])
+            subset_ids = np.array([podcast_ids[idx] for idx in indices])
             n_neighbors = min(self._num_matches, len(subset_ids))
 
             if n_neighbors <= 1:
