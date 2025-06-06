@@ -2,7 +2,7 @@ import functools
 import itertools
 from collections.abc import Iterator
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.db.utils import DataError
 from django.utils import timezone
@@ -108,7 +108,7 @@ class _FeedParser:
                 )
                 self._podcast.categories.set(categories)
                 self._sync_episodes(feed)
-        except DataError as exc:
+        except (DataError, IntegrityError) as exc:
             raise InvalidDataError from exc
 
     def _handle_error(self, exc: FeedParserError, **fields) -> None:
