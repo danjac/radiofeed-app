@@ -1,12 +1,101 @@
 import dataclasses
+import functools
 from collections.abc import Iterator
+from typing import Final
 
 import httpx
+import pycountry
 from django.conf import settings
 from django.db import transaction
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
+
+_BLACKLIST_COUNTRIES: Final = {
+    "ad",
+    "aq",
+    "as",
+    "aw",
+    "ax",
+    "bd",
+    "bi",
+    "bl",
+    "bq",
+    "bv",
+    "cc",
+    "cf",
+    "ck",
+    "cu",
+    "cw",
+    "cx",
+    "dj",
+    "eh",
+    "er",
+    "et",
+    "fk",
+    "fo",
+    "gf",
+    "gg",
+    "gi",
+    "gl",
+    "gn",
+    "gp",
+    "gq",
+    "gs",
+    "gu",
+    "hm",
+    "ht",
+    "im",
+    "io",
+    "ir",
+    "je",
+    "ki",
+    "km",
+    "kp",
+    "li",
+    "ls",
+    "mc",
+    "mf",
+    "mh",
+    "mp",
+    "mq",
+    "nc",
+    "nf",
+    "nu",
+    "pf",
+    "pm",
+    "pn",
+    "pr",
+    "ps",
+    "re",
+    "sd",
+    "sh",
+    "sj",
+    "sm",
+    "so",
+    "ss",
+    "sx",
+    "sy",
+    "tf",
+    "tg",
+    "tk",
+    "tl",
+    "tv",
+    "um",
+    "va",
+    "vi",
+    "wf",
+    "ws",
+    "yt",
+}
+
+
+@functools.cache
+def get_countries() -> set[str]:
+    """Returns a list of countries supported by iTunes."""
+    return {
+        country.alpha_2.lower() for country in pycountry.countries
+    } - _BLACKLIST_COUNTRIES
 
 
 class ItunesError(Exception):
@@ -57,29 +146,16 @@ def search(
     return feeds
 
 
-def search_lazy(
-    client: Client,
-    search_term: str,
-    **kwargs,
-) -> Iterator[Feed]:
+def search_lazy(client: Client, search_term: str, **kwargs) -> Iterator[Feed]:
     """Search iTunes podcast API. Results are evaluated lazily."""
     yield from search(client, search_term, **kwargs)
 
 
-def fetch_chart(
-    client: Client,
-    country: str,
-    *,
-    limit: int = settings.DEFAULT_PAGE_SIZE,
-) -> list[Feed]:
-    """Fetch top chart from iTunes podcast API. Any new podcasts will be added.
-    All podcasts in the chart will be promoted.
-    """
+def fetch_chart(client: Client, country: str, limit: int, **defaults) -> list[Feed]:
+    """Fetch top chart from iTunes podcast API. Any new podcasts will be added."""
 
-    itunes_ids = _fetch_itunes_ids(
-        client,
-        f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top-subscriber/{limit}/podcasts.json",
-    )
+    url = f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json"
+    itunes_ids = _fetch_itunes_ids(client, url)
 
     if not itunes_ids:
         return []
@@ -92,31 +168,33 @@ def fetch_chart(
         },
     ):
         with transaction.atomic():
-            # demote all promoted podcasts
-            Podcast.objects.filter(promoted=True).update(promoted=False)
-
             rss_feeds = {feed.rss for feed in feeds}
 
             # check duplicates
             rss_feeds |= set(
-                Podcast.objects.filter(duplicates__rss__in=rss_feeds).values_list(
-                    "rss", flat=True
-                )
+                Podcast.objects.filter(
+                    duplicates__rss__in=rss_feeds,
+                ).values_list("rss", flat=True)
             )
 
-            # add or update podcasts
+            kwargs = {
+                "unique_fields": ["rss"],
+                "ignore_conflicts": True,
+                "update_fields": False,
+            }
+
+            if defaults:
+                kwargs |= {
+                    "update_fields": list(defaults.keys()),
+                    "ignore_conflicts": False,
+                    "update_conflicts": True,
+                }
+
             Podcast.objects.bulk_create(
-                [
-                    Podcast(
-                        rss=rss,
-                        promoted=True,
-                    )
-                    for rss in rss_feeds
-                ],
-                unique_fields=["rss"],
-                update_fields=["promoted"],
-                update_conflicts=True,
+                (Podcast(rss=rss, **defaults) for rss in rss_feeds),
+                **kwargs,
             )
+
     return feeds
 
 
