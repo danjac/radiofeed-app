@@ -15,6 +15,6 @@ cronjobs:
       schedule: "0 16 * * 5" # 4:00 PM on Fridays
       command: "{{ manage_cmd }} send_recommendations"
 
-    - name: "fetch-itunes-chart"
+    - name: "fetch-top-itunes"
       schedule: "15 3 * * *" # 3:15 AM every day
-      command: "{{ manage_cmd }} fetch_itunes_chart {{ itunes_chart_country }}"
+      command: "{{ manage_cmd }} fetch_itunes_chart"
