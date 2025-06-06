@@ -1,12 +1,9 @@
 import datetime
-import functools
-import hashlib
 import io
 from typing import Final
 
 import httpx
 from django.conf import settings
-from django.core.cache import cache
 from django.core.signing import BadSignature
 from django.http import (
     FileResponse,
@@ -28,7 +25,7 @@ from radiofeed.cover_image import (
     get_placeholder_path,
     is_cover_image_size,
 )
-from radiofeed.http_client import Client, get_client
+from radiofeed.http_client import get_client
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
@@ -146,23 +143,21 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     URL should be signed, so we can verify the request comes from this site.
     """
 
-    if not is_cover_image_size(size) or not (
-        signed_url := request.GET.get("url", None)
-    ):
+    signed_url = request.GET.get("url", None)
+
+    if not is_cover_image_size(size) or not signed_url:
         raise Http404
 
     try:
         cover_url = get_cover_url_signer().unsign(signed_url)
-        image = Image.open(
-            io.BytesIO(
-                _fetch_cover_image(get_client(), cover_url),
-            )
-        ).resize((size, size), Image.Resampling.LANCZOS)
+        content = get_client().get(cover_url).content
+        image = Image.open(io.BytesIO(content)).resize(
+            (size, size), Image.Resampling.LANCZOS
+        )
     except (
         OSError,
         BadSignature,
         httpx.HTTPError,
-        httpx.StreamError,
     ):
         # if error we should return a placeholder, so we don't keep
         # trying to fetch and process a bad image instead of caching result
@@ -173,19 +168,3 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         output.seek(0)
 
     return FileResponse(output, content_type="image/webp")
-
-
-def _fetch_cover_image(client: Client, cover_url: str) -> bytes:
-    """Fetches the cached image from the remote source."""
-    cache_key = _cover_image_cache_key(cover_url)
-    content = cache.get(cache_key, None)
-    if content is None:
-        content = client.get(cover_url).content
-        cache.set(cache_key, content, _CACHE_TIMEOUT)
-    return content
-
-
-@functools.cache
-def _cover_image_cache_key(cover_url: str) -> str:
-    """Generates a cache key for the cover image based on its URL."""
-    return "cover:" + hashlib.sha256(cover_url.encode("utf-8")).hexdigest()
