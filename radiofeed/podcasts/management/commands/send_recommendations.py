@@ -56,7 +56,7 @@ class Command(BaseCommand):
             .recommended(recipient.user)
             .order_by(
                 "-relevance",
-                "-promoted",
+                "itunes_ranking",
                 "-pub_date",
             )
         )[:num_podcasts]:

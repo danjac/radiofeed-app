@@ -19,7 +19,7 @@ class TestFetchTopItunes:
                 PodcastFactory(),
             ],
         )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", "gb")
         patched.assert_called()
 
     @pytest.mark.django_db
@@ -28,7 +28,7 @@ class TestFetchTopItunes:
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=itunes.ItunesError("Error"),
         )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", "gb")
         patched.assert_called()
 
 

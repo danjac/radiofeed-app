@@ -109,6 +109,10 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         """Returns only published podcasts (pub_date NOT NULL)."""
         return self.filter(pub_date__isnull=not published)
 
+    def promoted(self) -> models.QuerySet["Podcast"]:
+        """Returns all podcasts with an iTunes ranking."""
+        return self.filter(itunes_ranking__isnull=False)
+
     def scheduled(self) -> models.QuerySet["Podcast"]:
         """Returns all podcasts scheduled for feed parser update.
 
@@ -165,15 +169,9 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                     output_field=models.DecimalField(),
                 ),
             )
-            .filter(
-                models.Q(relevance__gt=0)
-                | models.Q(
-                    promoted=True,
-                    language=settings.DISCOVER_LANGUAGE,
-                ),
-            )
+            .filter(models.Q(relevance__gt=0) | models.Q(itunes_ranking__isnull=False))
             .exclude(pk__in=exclude)
-        )
+        ) | self.promoted()
 
 
 class Podcast(models.Model):
@@ -254,7 +252,7 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
-    itunes_ranking = models.PositiveIntegerField(default=0)
+    itunes_ranking = models.PositiveIntegerField(null=True, blank=True)
 
     podcast_type = models.CharField(
         max_length=10,
@@ -267,8 +265,6 @@ class Podcast(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     explicit = models.BooleanField(default=False)
-
-    promoted = models.BooleanField(default=False)
 
     categories = models.ManyToManyField(
         "podcasts.Category",
@@ -291,7 +287,7 @@ class Podcast(models.Model):
             models.Index(fields=["active"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
-            models.Index(fields=["promoted"]),
+            models.Index(fields=["itunes_ranking", "-pub_date"]),
             models.Index(fields=["content_hash"]),
             models.Index(
                 Lower("title"),

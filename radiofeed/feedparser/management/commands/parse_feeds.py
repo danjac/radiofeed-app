@@ -49,7 +49,7 @@ class Command(BaseCommand):
             .filter(active=True)
             .order_by(
                 F("subscribers").desc(),
-                F("promoted").desc(),
+                F("itunes_ranking").asc(nulls_last=True),
                 F("parsed").asc(nulls_first=True),
             )[:limit]
         )

@@ -142,14 +142,13 @@ class TestPubDateFilter:
 class TestPromotedFilter:
     @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(promoted=False)
         f = PromotedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
+        assert qs.count() == 3
 
     @pytest.mark.django_db
     def test_promoted(self, podcasts, podcast_admin, req):
-        promoted = PodcastFactory(promoted=True)
+        promoted = PodcastFactory(itunes_ranking=1)
         f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1

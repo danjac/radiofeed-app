@@ -1,101 +1,12 @@
 import dataclasses
-import functools
 from collections.abc import Iterator
-from typing import Final
 
 import httpx
-import pycountry
 from django.conf import settings
 from django.db import transaction
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
-
-_BLACKLIST_COUNTRIES: Final = {
-    "ad",
-    "aq",
-    "as",
-    "aw",
-    "ax",
-    "bd",
-    "bi",
-    "bl",
-    "bq",
-    "bv",
-    "cc",
-    "cf",
-    "ck",
-    "cu",
-    "cw",
-    "cx",
-    "dj",
-    "eh",
-    "er",
-    "et",
-    "fk",
-    "fo",
-    "gf",
-    "gg",
-    "gi",
-    "gl",
-    "gn",
-    "gp",
-    "gq",
-    "gs",
-    "gu",
-    "hm",
-    "ht",
-    "im",
-    "io",
-    "ir",
-    "je",
-    "ki",
-    "km",
-    "kp",
-    "li",
-    "ls",
-    "mc",
-    "mf",
-    "mh",
-    "mp",
-    "mq",
-    "nc",
-    "nf",
-    "nu",
-    "pf",
-    "pm",
-    "pn",
-    "pr",
-    "ps",
-    "re",
-    "sd",
-    "sh",
-    "sj",
-    "sm",
-    "so",
-    "ss",
-    "sx",
-    "sy",
-    "tf",
-    "tg",
-    "tk",
-    "tl",
-    "tv",
-    "um",
-    "va",
-    "vi",
-    "wf",
-    "ws",
-    "yt",
-}
-
-
-@functools.cache
-def get_countries() -> set[str]:
-    """Returns a list of countries supported by iTunes."""
-    return {
-        country.alpha_2.lower() for country in pycountry.countries
-    } - _BLACKLIST_COUNTRIES
 
 
 class ItunesError(Exception):
@@ -151,12 +62,7 @@ def search_lazy(client: Client, search_term: str, **kwargs) -> Iterator[Feed]:
     yield from search(client, search_term, **kwargs)
 
 
-def fetch_chart(
-    client: Client,
-    country: str,
-    limit: int,
-    **defaults,
-) -> list[Feed]:
+def fetch_chart(client: Client, country: str, limit: int) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added."""
 
     url = f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json"
@@ -172,14 +78,20 @@ def fetch_chart(
             "id": ",".join(itunes_ids),
         },
     ):
+        rss_feeds = {feed.rss: feed for feed in feeds}.keys()
+
+        canonical_urls = dict(
+            Podcast.objects.filter(duplicates__rss__in=rss_feeds).values_list(
+                "rss", "canonical"
+            )
+        )
+
         with transaction.atomic():
             # ordered, remove duplicates
-            rss_feeds = {feed.rss: feed for feed in feeds}.keys()
-
-            canonical_urls = dict(
-                Podcast.objects.filter(
-                    duplicates__rss__in=rss_feeds,
-                ).values_list("rss", "canonical")
+            #
+            # demote current rankings
+            Podcast.objects.filter(itunes_ranking__isnull=False).update(
+                itunes_ranking=None
             )
 
             deduped = []
@@ -190,19 +102,12 @@ def fetch_chart(
 
             Podcast.objects.bulk_create(
                 (
-                    Podcast(
-                        rss=rss,
-                        itunes_ranking=ranking,
-                        **defaults,
-                    )
+                    Podcast(rss=rss, itunes_ranking=ranking)
                     for ranking, rss in enumerate(deduped, start=1)
                 ),
                 unique_fields=["rss"],
                 update_conflicts=True,
-                update_fields=[
-                    "itunes_ranking",
-                    *defaults.keys(),
-                ],
+                update_fields=["itunes_ranking"],
             )
 
     return feeds

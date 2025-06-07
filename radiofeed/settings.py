@@ -520,10 +520,6 @@ GDPR_COOKIE_NAME = "accept-cookies"
 
 USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 
-# Language for promoted podcasts on discover page
-
-DISCOVER_LANGUAGE = env("DISCOVER_LANGUAGE", default="en")
-
 # Default page size for paginated views
 
 DEFAULT_PAGE_SIZE = 30

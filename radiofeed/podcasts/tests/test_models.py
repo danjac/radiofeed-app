@@ -214,7 +214,7 @@ class TestPodcastManager:
     def test_recommended(self, user):
         podcast = SubscriptionFactory(subscriber=user).podcast
         RecommendationFactory.create_batch(3, podcast=podcast)
-        PodcastFactory(promoted=True)
+        PodcastFactory(itunes_ranking=1)
         assert Podcast.objects.recommended(user).count() == 4
 
     @pytest.mark.django_db
