@@ -32,7 +32,7 @@ def audio_player(
 
     request = context.get("request", None)
 
-    context_dct = {
+    rv = {
         "request": request,
         "action": action,
     }
@@ -42,12 +42,15 @@ def audio_player(
         and request is not None
         and (audio_log := audio_log or _get_audio_log(request))
     ):
-        return context_dct | {
+        rv |= {
             "audio_log": audio_log,
-            "metadata": _get_media_metadata(request, audio_log.episode),
+            "metadata": _get_media_metadata(
+                request,
+                audio_log.episode,
+            ),
         }
 
-    return context_dct
+    return rv
 
 
 def _get_audio_log(request: HttpRequest) -> AudioLog | None:
