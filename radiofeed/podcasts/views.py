@@ -50,7 +50,10 @@ def discover(request: HttpRequest) -> HttpResponse:
             promoted=True,
             language=settings.DISCOVER_LANGUAGE,
         )
-        .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+        .order_by(
+            "itunes_ranking",
+            "-pub_date",
+        )[: settings.DEFAULT_PAGE_SIZE]
     )
 
     return render(

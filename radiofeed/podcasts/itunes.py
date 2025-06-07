@@ -151,7 +151,12 @@ def search_lazy(client: Client, search_term: str, **kwargs) -> Iterator[Feed]:
     yield from search(client, search_term, **kwargs)
 
 
-def fetch_chart(client: Client, country: str, limit: int, **defaults) -> list[Feed]:
+def fetch_chart(
+    client: Client,
+    country: str,
+    limit: int,
+    **defaults,
+) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added."""
 
     url = f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json"
@@ -168,31 +173,36 @@ def fetch_chart(client: Client, country: str, limit: int, **defaults) -> list[Fe
         },
     ):
         with transaction.atomic():
-            rss_feeds = {feed.rss for feed in feeds}
+            # ordered, remove duplicates
+            rss_feeds = {feed.rss: feed for feed in feeds}.keys()
 
-            # check duplicates
-            rss_feeds |= set(
+            canonical_urls = dict(
                 Podcast.objects.filter(
                     duplicates__rss__in=rss_feeds,
-                ).values_list("rss", flat=True)
+                ).values_list("rss", "canonical")
             )
 
-            kwargs = {
-                "unique_fields": ["rss"],
-                "ignore_conflicts": True,
-                "update_fields": False,
-            }
+            deduped = []
 
-            if defaults:
-                kwargs |= {
-                    "update_fields": list(defaults.keys()),
-                    "ignore_conflicts": False,
-                    "update_conflicts": True,
-                }
+            for rss in rss_feeds:
+                canonical = canonical_urls.get(rss)
+                deduped.append(canonical or rss)
 
             Podcast.objects.bulk_create(
-                (Podcast(rss=rss, **defaults) for rss in rss_feeds),
-                **kwargs,
+                (
+                    Podcast(
+                        rss=rss,
+                        itunes_ranking=ranking,
+                        **defaults,
+                    )
+                    for ranking, rss in enumerate(deduped, start=1)
+                ),
+                unique_fields=["rss"],
+                update_conflicts=True,
+                update_fields=[
+                    "itunes_ranking",
+                    *defaults.keys(),
+                ],
             )
 
     return feeds

@@ -254,6 +254,8 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
+    itunes_ranking = models.PositiveIntegerField(default=0)
+
     podcast_type = models.CharField(
         max_length=10,
         choices=PodcastType.choices,
