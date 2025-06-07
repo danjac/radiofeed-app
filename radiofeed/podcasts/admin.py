@@ -61,17 +61,21 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class ParserErrorFilter(admin.SimpleListFilter):
+class ParserResultFilter(admin.SimpleListFilter):
     """Filters based on parser error."""
 
-    title = "Parser Error"
-    parameter_name = "parser_error"
+    title = "Parser Result"
+    parameter_name = "parser_result"
 
     def lookups(
         self, request: HttpRequest, model_admin: admin.ModelAdmin
     ) -> list[tuple[str, StrOrPromise]]:
         """Returns lookup values/labels."""
-        return [("none", "No Error"), *Podcast.ParserError.choices]
+        return [
+            ("none", "Not Parsed"),
+            ("success", "Success"),
+            *Podcast.ParserError.choices,
+        ]
 
     def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
         """Returns filtered queryset."""
@@ -79,8 +83,10 @@ class ParserErrorFilter(admin.SimpleListFilter):
         match self.value():
             case value if value in Podcast.ParserError:  # type: ignore[attr-defined]
                 return queryset.filter(parser_error=value)
+            case "success":
+                return queryset.filter(parser_error="", parsed__isnull=False)
             case "none":
-                return queryset.filter(parser_error="")
+                return queryset.filter(parsed__isnull=True)
             case _:
                 return queryset
 
@@ -103,34 +109,6 @@ class PodcastTypeFilter(admin.SimpleListFilter):
         match self.value():
             case value if value in Podcast.PodcastType:  # type: ignore[attr-defined]
                 return queryset.filter(podcast_type=value)
-            case _:
-                return queryset
-
-
-class ParsedFilter(admin.SimpleListFilter):
-    """Filters podcasts based on parsed time."""
-
-    title = "Parsed"
-    parameter_name = "parsed"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (
-            ("yes", "Parsed"),
-            ("no", "Not parsed"),
-        )
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        match self.value():
-            case "yes":
-                return queryset.filter(parsed__isnull=False)
-            case "no":
-                return queryset.filter(parsed__isnull=True)
             case _:
                 return queryset
 
@@ -255,8 +233,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        ParsedFilter,
-        ParserErrorFilter,
+        ParserResultFilter,
         PodcastTypeFilter,
         PrivateFilter,
         PromotedFilter,
