@@ -46,7 +46,10 @@ def discover(request: HttpRequest) -> HttpResponse:
     """Shows all promoted podcasts."""
     podcasts = (
         _get_podcasts()
-        .filter(promoted=True)
+        .filter(
+            promoted=True,
+            language=settings.DISCOVER_LANGUAGE,
+        )
         .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
     )
 

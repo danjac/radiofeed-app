@@ -166,7 +166,11 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                 ),
             )
             .filter(
-                models.Q(relevance__gt=0) | models.Q(promoted=True),
+                models.Q(relevance__gt=0)
+                | models.Q(
+                    promoted=True,
+                    language=settings.DISCOVER_LANGUAGE,
+                ),
             )
             .exclude(pk__in=exclude)
         )
