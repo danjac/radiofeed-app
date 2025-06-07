@@ -2,6 +2,7 @@ from django.core.management import BaseCommand, CommandParser
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
+from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
 
@@ -19,7 +20,7 @@ class Command(BaseCommand):
             "-l",
             "--limit",
             type=int,
-            default=100,
+            default=30,
             help="Number of feeds to fetch",
         )
 
@@ -29,6 +30,9 @@ class Command(BaseCommand):
         countries = itunes.get_countries()
 
         limit = options["limit"]
+
+        # Demote the all podcasts
+        Podcast.objects.filter(promoted=True).update(promoted=False)
 
         execute_thread_pool(
             lambda country: self._fetch_itunes_chart(
