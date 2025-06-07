@@ -7,6 +7,7 @@ from django.utils import timezone
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
+    ParsedFilter,
     ParserErrorFilter,
     PodcastAdmin,
     PodcastTypeFilter,
@@ -112,6 +113,31 @@ class TestPodcastAdmin:
     def test_next_scheduled_update_inactive(self, mocker, podcast_admin):
         podcast = PodcastFactory(active=False)
         assert podcast_admin.next_scheduled_update(podcast) == "-"
+
+
+class TestParsedFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(parsed=None)
+        f = ParsedFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_no(self, podcasts, podcast_admin, req):
+        no_parsed = PodcastFactory(parsed=None)
+        f = ParsedFilter(req, {"parsed": ["no"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == no_parsed
+
+    @pytest.mark.django_db
+    def test_yes(self, podcasts, podcast_admin, req):
+        no_parsed = PodcastFactory(parsed=None)
+        f = ParsedFilter(req, {"parsed": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert no_parsed not in qs
 
 
 class TestPubDateFilter:
@@ -220,6 +246,17 @@ class TestParserErrorFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert duplicate in qs
+
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req, duplicate):
+        f = ParserErrorFilter(
+            req,
+            {"parser_error": ["none"]},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
 
 
 class TestPodcastTypeFilter:
