@@ -78,32 +78,16 @@ def fetch_chart(client: Client, country: str, limit: int) -> list[Feed]:
             "id": ",".join(itunes_ids),
         },
     ):
-        rss_feeds = {feed.rss: feed for feed in feeds}.keys()
-
-        canonical_urls = dict(
-            Podcast.objects.filter(duplicates__rss__in=rss_feeds).values_list(
-                "rss", "canonical"
-            )
-        )
-
         with transaction.atomic():
-            # ordered, remove duplicates
-            #
             # demote current rankings
             Podcast.objects.filter(itunes_ranking__isnull=False).update(
                 itunes_ranking=None
             )
 
-            deduped = []
-
-            for rss in rss_feeds:
-                canonical = canonical_urls.get(rss)
-                deduped.append(canonical or rss)
-
             Podcast.objects.bulk_create(
                 (
-                    Podcast(rss=rss, itunes_ranking=ranking)
-                    for ranking, rss in enumerate(deduped, start=1)
+                    Podcast(rss=url, itunes_ranking=ranking)
+                    for ranking, url in enumerate(_get_canonical_urls(feeds), start=1)
                 ),
                 unique_fields=["rss"],
                 update_conflicts=True,
@@ -160,3 +144,19 @@ def _parse_feed(feed: dict) -> Feed | None:
         )
     except KeyError:
         return None
+
+
+def _get_canonical_urls(feeds: list[Feed]) -> list[str]:
+    """Returns a list of canonical URLs for the given feeds."""
+
+    # make sure we fetch only unique feeds in the right order
+    urls = {feed.rss: feed for feed in feeds}.keys()
+
+    # in certain cases, we may have duplicates in the database
+    canonical_urls = dict(
+        Podcast.objects.filter(
+            duplicates__rss__in=urls,
+        ).values_list("rss", "canonical")
+    )
+
+    return [canonical_urls.get(url, url) for url in urls]
