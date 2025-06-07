@@ -3,6 +3,10 @@ cronjobs:
       schedule: "5 5 * * *" # 5:05 AM every day
       command: "{{ manage_cmd }} clearsessions"
 
+    - name: "remove-old-podcasts"
+      schedule: "7 15 * * *" # 7:15 AM every day
+      command: "{{ manage_cmd }} remove_old_podcasts --noinput"
+
     - name: "parse-feeds"
       schedule: "*/6 * * * *" # Every 6 minutes
       command: "{{ manage_cmd }} parse_feeds"

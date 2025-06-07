@@ -1,4 +1,7 @@
+import itertools
+
 from django.core.management.base import BaseCommand, CommandParser
+from django.db import transaction
 from django.db.models import Exists, OuterRef, Q, QuerySet
 from django.utils import timezone
 
@@ -36,8 +39,8 @@ class Command(BaseCommand):
         if self._confirm_removal(noinput=noinput):
             podcasts = self._get_queryset()
             if num_podcasts := podcasts.count():
-                podcasts.delete()
-
+                self.stdout.write(f"Deleting {num_podcasts} old podcasts...")
+                self._batch_delete(podcasts)
                 self.stdout.write(
                     self.style.SUCCESS(
                         f"{num_podcasts} old podcasts removed.",
@@ -56,6 +59,18 @@ class Command(BaseCommand):
             ).lower()
             == "y"
         )
+
+    def _batch_delete(
+        self, queryset: QuerySet["Podcast"], batch_size: int = 100
+    ) -> None:
+        """Batch delete old podcasts."""
+        for batch in itertools.batched(
+            queryset.values_list("pk", flat=True).iterator(),
+            batch_size,
+            strict=False,
+        ):
+            with transaction.atomic():
+                queryset.filter(pk__in=set(batch)).delete()
 
     def _get_queryset(self) -> QuerySet["Podcast"]:
         return Podcast.objects.alias(
