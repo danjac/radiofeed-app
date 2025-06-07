@@ -17,4 +17,4 @@ cronjobs:
 
     - name: "fetch-top-itunes"
       schedule: "15 13 * * *" # 13:15 AM every day
-      command: "{{ manage_cmd }} fetch_top_itunes -p {{ itunes_chart_country }}"
+      command: "{{ manage_cmd }} fetch_top_itunes"
