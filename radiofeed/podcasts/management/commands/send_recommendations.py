@@ -7,16 +7,13 @@ from django_typer.management import Typer
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
-from radiofeed.users.emails import (
-    get_recipients,
-    send_notification_email,
-)
+from radiofeed.users.emails import get_recipients, send_notification_email
 
 app = Typer()
 
 
 @app.command()
-def handle(num_podcasts: int = 6):
+def handle(num_podcasts: int = 6) -> None:
     """Send podcast recommendations to users"""
 
     site = Site.objects.get_current()
@@ -42,11 +39,7 @@ def _send_recommendations_email(
     if podcasts := (
         Podcast.objects.published()
         .recommended(recipient.user)
-        .order_by(
-            "-relevance",
-            "itunes_ranking",
-            "-pub_date",
-        )
+        .order_by("-relevance", "itunes_ranking", "-pub_date")
     )[:num_podcasts]:
         with transaction.atomic():
             send_notification_email(

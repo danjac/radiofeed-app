@@ -12,7 +12,7 @@ app = Typer()
 
 
 @app.command()
-def handle():
+def handle() -> None:
     """Create recommendations for all podcasts"""
     execute_thread_pool(_create_recommendations, _get_languages())
 

@@ -8,7 +8,7 @@ app = Typer()
 
 
 @app.command()
-def handle(country: str, limit: int = 30):
+def handle(country: str, limit: int = 30) -> None:
     """Fetch the top iTunes podcasts for a given country."""
     typer.echo(f"Fetching iTunes chart for {country}...")
 
