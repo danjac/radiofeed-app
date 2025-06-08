@@ -19,7 +19,7 @@ class TestRemoveOldPodcasts:
         PodcastFactory(
             pub_date=timezone.now() - timezone.timedelta(days=366),
         )
-        mocker.patch("builtins.input", return_value="Y")
+        mocker.patch("typer.confirm", return_value=True)
         call_command("delete_inactive_podcasts")
         assert not Podcast.objects.exists()
 
@@ -36,7 +36,7 @@ class TestRemoveOldPodcasts:
         PodcastFactory(
             pub_date=timezone.now() - timezone.timedelta(days=366),
         )
-        mocker.patch("builtins.input", return_value="n")
+        mocker.patch("typer.confirm", return_value=False)
         call_command("delete_inactive_podcasts")
         assert Podcast.objects.exists()
 
