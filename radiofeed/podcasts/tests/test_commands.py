@@ -20,7 +20,7 @@ class TestRemoveOldPodcasts:
             pub_date=timezone.now() - timezone.timedelta(days=366),
         )
         mocker.patch("builtins.input", return_value="Y")
-        call_command("remove_old_podcasts")
+        call_command("delete_inactive_podcasts")
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
@@ -28,7 +28,7 @@ class TestRemoveOldPodcasts:
         PodcastFactory(
             pub_date=timezone.now() - timezone.timedelta(days=366),
         )
-        call_command("remove_old_podcasts", noinput=True)
+        call_command("delete_inactive_podcasts", noinput=True)
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
@@ -37,13 +37,13 @@ class TestRemoveOldPodcasts:
             pub_date=timezone.now() - timezone.timedelta(days=366),
         )
         mocker.patch("builtins.input", return_value="n")
-        call_command("remove_old_podcasts")
+        call_command("delete_inactive_podcasts")
         assert Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_remove_inactive_podcast(self):
         PodcastFactory(active=False)
-        call_command("remove_old_podcasts", noinput=True)
+        call_command("delete_inactive_podcasts", noinput=True)
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
@@ -51,7 +51,7 @@ class TestRemoveOldPodcasts:
         PodcastFactory(
             pub_date=timezone.now() - timezone.timedelta(days=30),
         )
-        call_command("remove_old_podcasts", noinput=True)
+        call_command("delete_inactive_podcasts", noinput=True)
         assert Podcast.objects.exists()
 
     @pytest.mark.django_db
@@ -59,7 +59,7 @@ class TestRemoveOldPodcasts:
         SubscriptionFactory(
             podcast__pub_date=timezone.now() - timezone.timedelta(days=366),
         )
-        call_command("remove_old_podcasts", noinput=True)
+        call_command("delete_inactive_podcasts", noinput=True)
         assert Podcast.objects.exists()
 
     @pytest.mark.django_db
@@ -67,7 +67,7 @@ class TestRemoveOldPodcasts:
         BookmarkFactory(
             episode__podcast__pub_date=timezone.now() - timezone.timedelta(days=366),
         )
-        call_command("remove_old_podcasts", noinput=True)
+        call_command("delete_inactive_podcasts", noinput=True)
         assert Podcast.objects.exists()
 
     @pytest.mark.django_db
@@ -75,7 +75,7 @@ class TestRemoveOldPodcasts:
         AudioLogFactory(
             episode__podcast__pub_date=timezone.now() - timezone.timedelta(days=366),
         )
-        call_command("remove_old_podcasts", noinput=True)
+        call_command("delete_inactive_podcasts", noinput=True)
         assert Podcast.objects.exists()
 
 
