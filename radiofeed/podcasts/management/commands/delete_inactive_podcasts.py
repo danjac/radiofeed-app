@@ -14,7 +14,7 @@ from radiofeed.podcasts.models import Podcast, Subscription
 class Command(BaseCommand):
     """Command implementation."""
 
-    help = "Removes old podcast content"
+    help = "Deletes inactive podcasts."
 
     prompt = (
         "This command will delete podcasts that are no longer active or have "

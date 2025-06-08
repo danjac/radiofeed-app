@@ -1,35 +1,32 @@
-from django.core.management.base import BaseCommand
+import typer
 from django.db.models import QuerySet
 from django.db.models.functions import Lower
+from django_typer.management import Typer
 
 from radiofeed import tokenizer
 from radiofeed.podcasts import recommender
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
+app = Typer()
 
-class Command(BaseCommand):
-    """Command implementation."""
 
-    help = "Create recommendations for all podcasts"
+@app.command()
+def handle():
+    """Create recommendations for all podcasts"""
+    execute_thread_pool(_create_recommendations, _get_languages())
 
-    def handle(self, **options) -> None:
-        """Handle implementation."""
-        execute_thread_pool(self._create_recommendations, self._get_languages())
 
-    def _create_recommendations(self, language: str) -> None:
-        recommender.recommend(language)
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Recommendations created for language: {language}",
-            ),
-        )
+def _create_recommendations(language: str) -> None:
+    recommender.recommend(language)
+    typer.secho(f"Recommendations created for language: {language}", fg="green")
 
-    def _get_languages(self) -> QuerySet:
-        return (
-            Podcast.objects.annotate(language_code=Lower("language"))
-            .filter(language_code__in=tokenizer.get_language_codes())
-            .values_list("language_code", flat=True)
-            .order_by("language_code")
-            .distinct()
-        )
+
+def _get_languages() -> QuerySet:
+    return (
+        Podcast.objects.annotate(language_code=Lower("language"))
+        .filter(language_code__in=tokenizer.get_language_codes())
+        .values_list("language_code", flat=True)
+        .order_by("language_code")
+        .distinct()
+    )
