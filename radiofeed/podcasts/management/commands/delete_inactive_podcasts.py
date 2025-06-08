@@ -16,6 +16,13 @@ class Command(BaseCommand):
 
     help = "Removes old podcast content"
 
+    prompt = (
+        "This command will delete podcasts that are no longer active or have "
+        "a publication date older than {since}. It will not remove "
+        "podcasts that have bookmarks, listening history, or subscriptions. "
+        "Are you sure you want to proceed? (Y/n) "
+    )
+
     def add_arguments(self, parser: CommandParser) -> None:
         """Add command line arguments for the command."""
 
@@ -28,7 +35,7 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            "--days-since-updated",
+            "--days-since",
             "-d",
             type=int,
             help="Delete podcasts last updated since",
@@ -47,14 +54,14 @@ class Command(BaseCommand):
         self,
         *,
         noinput: bool,
-        days_since_updated: int,
+        days_since: int,
         batch_size: int,
         **options,
     ) -> None:
         """Removes podcasts:
 
         - no longer active
-        - pub date older than 1 year
+        - pub date older than number of days
 
         Does not remove podcasts having:
 
@@ -62,34 +69,19 @@ class Command(BaseCommand):
         - Listening history
         - Subscriptions
         """
-        since = timezone.now() - timezone.timedelta(days=days_since_updated)
-        if self._confirm_removal(noinput=noinput, since=since):
+        since = timezone.now() - timezone.timedelta(days=days_since)
+        if noinput or input(self.prompt.format(since=timesince(since))).lower() == "y":
             podcasts = self._get_queryset(since)
             if num_podcasts := podcasts.count():
                 self.stdout.write(
-                    f"Deleting {num_podcasts} inactive podcast{pluralize(num_podcasts)}...",
+                    f"Deleting {num_podcasts} inactive podcast{pluralize(num_podcasts)}..."
                 )
-                self._batch_delete(podcasts, batch_size, num_podcasts)
+                self._delete_podcasts(podcasts, batch_size, num_podcasts)
                 self.stdout.write(
-                    self.style.SUCCESS(
-                        f"{num_podcasts} inactive podcasts removed.",
-                    )
+                    self.style.SUCCESS(f"{num_podcasts} inactive podcasts removed.")
                 )
             else:
                 self.stdout.write("No old podcasts found to remove.")
-
-    def _confirm_removal(self, *, noinput: bool, since: datetime) -> bool:
-        return noinput or (
-            input(
-                "This command will delete podcasts that are no longer active or have "
-                "a publication date older than {since}. It will not remove "
-                "podcasts that have bookmarks, listening history, or subscriptions. "
-                "Are you sure you want to proceed? (Y/n) ".format(
-                    since=timesince(since)
-                )
-            ).lower()
-            == "y"
-        )
 
     def _get_queryset(self, since: datetime) -> QuerySet["Podcast"]:
         return Podcast.objects.alias(
@@ -109,7 +101,7 @@ class Command(BaseCommand):
             has_subscriptions=False,
         )
 
-    def _batch_delete(
+    def _delete_podcasts(
         self,
         queryset: QuerySet["Podcast"],
         batch_size: int,
