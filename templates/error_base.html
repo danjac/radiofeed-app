@@ -10,17 +10,18 @@
             {% include "default_base.html#head" %}
         </head>
         <body class="mx-auto font-sans antialiased container-xl scroll-smooth">
+            {% include "messages.html" %}
             <div class="flex flex-col h-screen">
                 <div class="grow">
                     {% include "navbar.html" %}
                     <div class="flex relative py-6 px-2 mx-auto min-h-screen">
                         <main class="mx-auto w-full xl:w-5/6">
-                            <header class="pb-3 mb-3 space-y-3 border-b">
-                                <h1 class="flex justify-center items-center text-xl font-bold text-center sm:justify-start lg:text-2xl xl:text-3xl sm:text-start">
+                            {% fragment "header.html" %}
+                                {% fragment "header/title.html" %}
                                     {% block error_header %}
                                     {% endblock error_header %}
-                                </h1>
-                            </header>
+                                {% endfragment %}
+                            {% endfragment %}
                             <div class="space-y-3 text-center sm:text-start">
                                 {% block error_description %}
                                 {% endblock error_description %}

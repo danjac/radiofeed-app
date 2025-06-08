@@ -42,7 +42,7 @@ class TestRemoveOldPodcasts:
 
     @pytest.mark.django_db
     def test_remove_inactive_podcast(self):
-        PodcastFactory(active=False)
+        PodcastFactory(active=False, pub_date=None)
         call_command("delete_inactive_podcasts", noinput=True)
         assert not Podcast.objects.exists()
 
