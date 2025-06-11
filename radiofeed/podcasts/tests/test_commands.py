@@ -1,82 +1,13 @@
 import pytest
 from django.core.management import call_command
-from django.utils import timezone
 
-from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
     SubscriptionFactory,
 )
 from radiofeed.users.tests.factories import EmailAddressFactory
-
-
-class TestRemoveOldPodcasts:
-    @pytest.mark.django_db
-    def test_remove_old_podcast(self, mocker):
-        PodcastFactory(
-            pub_date=timezone.now() - timezone.timedelta(days=366),
-        )
-        mocker.patch("typer.confirm", return_value=True)
-        call_command("delete_inactive_podcasts")
-        assert not Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_noinput(self):
-        PodcastFactory(
-            pub_date=timezone.now() - timezone.timedelta(days=366),
-        )
-        call_command("delete_inactive_podcasts", noinput=True)
-        assert not Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_cancel_command(self, mocker):
-        PodcastFactory(
-            pub_date=timezone.now() - timezone.timedelta(days=366),
-        )
-        mocker.patch("typer.confirm", return_value=False)
-        call_command("delete_inactive_podcasts")
-        assert Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_remove_inactive_podcast(self):
-        PodcastFactory(active=False, pub_date=None)
-        call_command("delete_inactive_podcasts", noinput=True)
-        assert not Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_active_podcast(self):
-        PodcastFactory(
-            pub_date=timezone.now() - timezone.timedelta(days=30),
-        )
-        call_command("delete_inactive_podcasts", noinput=True)
-        assert Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_remove_subscribed_podcast(self):
-        SubscriptionFactory(
-            podcast__pub_date=timezone.now() - timezone.timedelta(days=366),
-        )
-        call_command("delete_inactive_podcasts", noinput=True)
-        assert Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_remove_bookmarked_podcast(self):
-        BookmarkFactory(
-            episode__podcast__pub_date=timezone.now() - timezone.timedelta(days=366),
-        )
-        call_command("delete_inactive_podcasts", noinput=True)
-        assert Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_remove_listened_podcast(self):
-        AudioLogFactory(
-            episode__podcast__pub_date=timezone.now() - timezone.timedelta(days=366),
-        )
-        call_command("delete_inactive_podcasts", noinput=True)
-        assert Podcast.objects.exists()
 
 
 class TestFetchTopItunes:
