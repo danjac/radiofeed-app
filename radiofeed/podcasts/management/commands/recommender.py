@@ -7,28 +7,15 @@ from django.db.models.functions import Lower
 from django_typer.management import Typer
 
 from radiofeed import tokenizer
-from radiofeed.http_client import get_client
-from radiofeed.podcasts import itunes, recommender
+from radiofeed.podcasts import recommender
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
 
-app = Typer(name="podcasts")
+app = Typer(name="recommender")
 
 
-@app.command()
-def fetch_top_itunes(country: str, limit: int = 30) -> None:
-    """Fetch the top iTunes podcasts for a given country."""
-    typer.echo(f"Fetching iTunes chart for {country}...")
-
-    try:
-        for feed in itunes.fetch_chart(get_client(), country, limit):
-            typer.secho(f"Fetched iTunes feed: {feed}", fg="green")
-    except itunes.ItunesError as exc:
-        typer.secho(f"Error fetching iTunes feed: {exc}", fg="red")
-
-
-@app.command()
+@app.command("create")
 def create_recommendations() -> None:
     """Create recommendations for all podcasts"""
     languages = (
@@ -41,7 +28,7 @@ def create_recommendations() -> None:
     execute_thread_pool(_create_recommendations, languages)
 
 
-@app.command()
+@app.command("send")
 def send_recommendations(num_podcasts: int = 6) -> None:
     """Send podcast recommendations to users"""
 
