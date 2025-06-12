@@ -5,6 +5,7 @@ from django.core.mail import get_connection
 from django.db import transaction
 from django.db.models.functions import Lower
 from django_typer.management import Typer
+from rich.progress import track
 
 from radiofeed import tokenizer
 from radiofeed.podcasts import recommender
@@ -25,7 +26,9 @@ def create_recommendations() -> None:
         .order_by("language_code")
         .distinct()
     )
-    execute_thread_pool(recommender.recommend, languages)
+
+    for language in track(languages, "Generating recommendations..."):
+        recommender.recommend(language)
     typer.secho("Recommendations created for all podcasts", fg="green")
 
 
