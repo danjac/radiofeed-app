@@ -25,7 +25,8 @@ def create_recommendations() -> None:
         .order_by("language_code")
         .distinct()
     )
-    execute_thread_pool(_create_recommendations, languages)
+    execute_thread_pool(recommender.recommend, languages)
+    typer.secho("Recommendations created for all podcasts", fg="green")
 
 
 @app.command("send")
@@ -35,49 +36,30 @@ def send_recommendations(num_podcasts: int = 6) -> None:
     site = Site.objects.get_current()
     connection = get_connection()
 
-    execute_thread_pool(
-        lambda recipient: _send_recommendations_email(
-            site,
-            recipient,
-            num_podcasts,
-            connection=connection,
-        ),
-        get_recipients(),
-    )
+    def _send_recommendations_email(recipient: EmailAddress) -> None:
+        if podcasts := (
+            Podcast.objects.published()
+            .recommended(recipient.user)
+            .order_by("-relevance", "itunes_ranking", "-pub_date")
+        )[:num_podcasts]:
+            with transaction.atomic():
+                send_notification_email(
+                    site,
+                    recipient,
+                    f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+                    "podcasts/emails/recommendations.html",
+                    {
+                        "podcasts": podcasts,
+                        "site": site,
+                    },
+                    connection=connection,
+                )
 
+                recipient.user.recommended_podcasts.add(*podcasts)
 
-def _create_recommendations(language: str) -> None:
-    recommender.recommend(language)
-    typer.secho(f"Recommendations created for language: {language}", fg="green")
+                typer.secho(
+                    f"{len(podcasts)} recommendations sent to {recipient.user}",
+                    fg="green",
+                )
 
-
-def _send_recommendations_email(
-    site: Site,
-    recipient: EmailAddress,
-    num_podcasts: int,
-    **kwargs,
-) -> None:
-    if podcasts := (
-        Podcast.objects.published()
-        .recommended(recipient.user)
-        .order_by("-relevance", "itunes_ranking", "-pub_date")
-    )[:num_podcasts]:
-        with transaction.atomic():
-            send_notification_email(
-                site,
-                recipient,
-                f"Hi, {recipient.user.name}, here are some podcasts you might like!",
-                "podcasts/emails/recommendations.html",
-                {
-                    "podcasts": podcasts,
-                    "site": site,
-                },
-                **kwargs,
-            )
-
-            recipient.user.recommended_podcasts.add(*podcasts)
-
-            typer.secho(
-                f"{len(podcasts)} recommendations sent to {recipient.user}",
-                fg="green",
-            )
+    execute_thread_pool(_send_recommendations_email, get_recipients())
