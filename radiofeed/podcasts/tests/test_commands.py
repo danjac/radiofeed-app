@@ -1,9 +1,9 @@
 import pytest
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.management.commands.itunes import fetch_top_itunes
-from radiofeed.podcasts.management.commands.recommender import (
+from radiofeed.podcasts.management.commands.podcasts import (
     create_recommendations,
+    fetch_top_itunes,
     send_recommendations,
 )
 from radiofeed.podcasts.tests.factories import (
@@ -75,7 +75,7 @@ class TestSendRecommendationsEmails:
     @pytest.mark.django_db(transaction=True)
     def test_exception_raised(self, mocker, mailoutbox, recipient):
         mocker.patch(
-            "radiofeed.podcasts.management.commands.recommender.send_notification_email",
+            "radiofeed.podcasts.management.commands.podcasts.send_notification_email",
             side_effect=Exception("Error"),
         )
         subscription = SubscriptionFactory(subscriber=recipient.user)
