@@ -1,8 +1,20 @@
+import io
+import pathlib
+
 import pytest
 
 from radiofeed.feedparser.exceptions import DuplicateError
-from radiofeed.feedparser.management.commands.feedparser import parse_feeds
+from radiofeed.feedparser.management.commands.feedparser import import_opml, parse_feeds
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
+
+
+class TestImportOpml:
+    @pytest.mark.django_db
+    def test_import_opml(self, mocker):
+        path = pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
+        import_opml(io.BytesIO(path.read_bytes()))
+        assert Podcast.objects.count() == 11
 
 
 class TestParseFeeds:

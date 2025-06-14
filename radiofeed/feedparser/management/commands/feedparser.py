@@ -4,6 +4,7 @@ from django_typer.management import Typer
 
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.feedparser.feed_parser import parse_feed
+from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
@@ -37,3 +38,13 @@ def parse_feeds(limit: int = 360) -> None:
             typer.secho(f"{podcast}: {exc.parser_error.label}", fg="red")
 
     execute_thread_pool(_parse_feed, podcasts)
+
+
+@app.command()
+def import_opml(file: typer.FileBinaryRead) -> None:
+    """Import podcasts from an OPML file."""
+    Podcast.objects.bulk_create(
+        (Podcast(rss=url) for url in parse_opml(file.read())),
+        ignore_conflicts=True,
+    )
+    typer.secho("OPML import completed successfully.", fg="green")

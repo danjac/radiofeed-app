@@ -5,7 +5,7 @@ cronjobs:
 
     - name: "parse-feeds"
       schedule: "*/6 * * * *" # Every 6 minutes
-      command: "{{ manage_cmd }} feedparser"
+      command: "{{ manage_cmd }} feedparser parse-feeds"
 
     - name: "create-recommendations"
       schedule: "20 4 * * *" # 4:20 AM every day
