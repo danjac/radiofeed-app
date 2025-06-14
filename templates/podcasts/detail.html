@@ -10,7 +10,9 @@
     <article class="space-y-3">
         {% with owner=podcast.cleaned_owner %}
             {% if owner %}
-                <h2 class="text-lg font-semibold">{{ owner }}</h2>
+                <h2 class="text-lg font-semibold">
+                    <a class="link" href="{% url 'podcasts:search_podcasts' %}?{{ request.search.param }}={{ owner|urlencode }}">{{ owner }}</a>
+                </h2>
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
