@@ -40,7 +40,7 @@ def create_recommendations() -> None:
         logger.info("Recommendations created for language: %s", language)
 
 
-def send_recommendations(num_podcasts: int = 6) -> None:
+def send_recommendations() -> None:
     """Send podcast recommendations to users"""
 
     broker = get_broker()
@@ -48,15 +48,10 @@ def send_recommendations(num_podcasts: int = 6) -> None:
     logger.info("Sending podcast recommendations to users...")
 
     for recipient_id in get_recipients().values_list("id", flat=True):
-        async_task(
-            send_recommendations_email,
-            recipient_id,
-            num_podcasts=num_podcasts,
-            broker=broker,
-        )
+        async_task(send_recommendations_email, recipient_id, broker=broker)
 
 
-def send_recommendations_email(recipient_id: int, num_podcasts: int) -> None:
+def send_recommendations_email(recipient_id: int, num_podcasts: int = 6) -> None:
     """Send podcast recommendations email to a specific recipient."""
 
     recipient = get_recipients().get(pk=recipient_id)
