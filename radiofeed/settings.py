@@ -128,7 +128,7 @@ REDIS_URL = CACHES["default"]["LOCATION"]
 
 Q_CLUSTER = {
     "redis": REDIS_URL,
-    "workers": env.int("Q_WORKERS", default=4),
+    "workers": env.int("Q_WORKERS", default=2),
     "timeout": env.int("Q_TIMEOUT", default=60),
     "queue_limit": env.int("Q_QUEUE_LIMIT", default=60),
 }
