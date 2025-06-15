@@ -117,6 +117,7 @@
             - redis_service
             - django_cronjobs
             - django_deployment
+            - django_scheduler_deployment
             - django_service
             - ingress_route
 
