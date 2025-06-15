@@ -137,7 +137,8 @@ def _strip_accents(text: str) -> str:
 def _get_corpus_stopwords(language: str) -> set[str]:
     words = set()
     if name := _STOPWORDS_LANGUAGES.get(language):
-        words.update(stopwords.words(name))
+        with contextlib.suppress(AttributeError):
+            words.update(stopwords.words(name))
 
         path = settings.BASE_DIR / "nltk" / "stopwords" / f"{name}.txt"
 
