@@ -40,6 +40,7 @@ INSTALLED_APPS: list[str] = [
     "csp",
     "django_htmx",
     "django_linear_migrations",
+    "django_q",
     "django_tailwind_cli",
     "django_typer",
     "django_version_checks",
@@ -123,8 +124,14 @@ CACHES = {
 }
 
 
-# Required for health check
 REDIS_URL = CACHES["default"]["LOCATION"]
+
+Q_CLUSTER = {
+    "redis": REDIS_URL,
+    "workers": env.int("Q_WORKERS", default=4),
+    "timeout": env.int("Q_TIMEOUT", default=60),
+    "queue_limit": env.int("Q_QUEUE_LIMIT", default=60),
+}
 
 # Templates
 
