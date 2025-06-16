@@ -4,7 +4,6 @@ from django.core.mail import get_connection
 from django.db import transaction
 from django.db.models.functions import Lower
 from django_typer.management import Typer
-from rich.progress import track
 
 from radiofeed import tokenizer
 from radiofeed.http_client import get_client
@@ -38,8 +37,9 @@ def create_recommendations() -> None:
         .distinct()
     )
 
-    for language in track(languages, "Generating recommendations..."):
+    for language in languages:
         recommender.recommend(language)
+        typer.secho("Recommendations created for language: {language}", fg="green")
     typer.secho("Recommendations created for all podcasts", fg="green")
 
 
@@ -51,7 +51,7 @@ def send_recommendations(num_podcasts: int = 6) -> None:
     connection = get_connection()
     emails_sent = 0
 
-    for recipient in track(get_recipients(), "Sending recommendations..."):
+    for recipient in get_recipients():
         if podcasts := (
             Podcast.objects.published()
             .recommended(recipient.user)

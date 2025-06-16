@@ -1,9 +1,6 @@
-import contextlib
-
 import typer
 from django.db.models import Count, F
 from django_typer.management import Typer
-from rich.progress import track
 
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.feedparser.feed_parser import parse_feed
@@ -30,12 +27,17 @@ def parse_feeds(limit: int = 360) -> None:
     )
 
     client = get_client()
-    num_podcasts = podcasts.count()
 
-    for podcast in track(podcasts, description=f"Syncing {num_podcasts} RSS feeds..."):
-        with contextlib.suppress(FeedParserError):
+    for podcast in podcasts:
+        try:
             parse_feed(podcast, client)
-    typer.secho(f"{num_podcasts} feeds parsed", fg="green")
+            typer.secho(f"{podcast}: Success", fg="green")
+        except FeedParserError as exc:
+            typer.secho(f"{podcast}: {exc.parser_error.label}", fg="red")
+        except Exception as exc:
+            typer.secho(f"{podcast}: {exc}", fg="red")
+
+    typer.secho(f"{podcasts.count()} podcasts parsed", fg="green")
 
 
 @app.command()
