@@ -71,15 +71,3 @@ class TestSendRecommendationsEmails:
         send_recommendations()
         assert len(mailoutbox) == 0
         assert recipient.user.recommended_podcasts.count() == 0
-
-    @pytest.mark.django_db(transaction=True)
-    def test_exception_raised(self, mocker, mailoutbox, recipient):
-        mocker.patch(
-            "radiofeed.podcasts.management.commands.podcasts.send_notification_email",
-            side_effect=Exception("Error"),
-        )
-        subscription = SubscriptionFactory(subscriber=recipient.user)
-        RecommendationFactory.create_batch(3, podcast=subscription.podcast)
-        send_recommendations()
-        assert len(mailoutbox) == 0
-        assert recipient.user.recommended_podcasts.count() == 0

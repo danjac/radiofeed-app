@@ -1,13 +1,15 @@
+import contextlib
+
 import typer
 from django.db.models import Count, F
 from django_typer.management import Typer
+from rich.progress import track
 
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import execute_thread_pool
 
 app = Typer(name="feedparser")
 
@@ -28,16 +30,12 @@ def parse_feeds(limit: int = 360) -> None:
     )
 
     client = get_client()
+    num_podcasts = podcasts.count()
 
-    def _parse_feed(podcast: Podcast) -> None:
-        """Parse a single feed."""
-        try:
+    for podcast in track(podcasts, description=f"Syncing {num_podcasts} RSS feeds..."):
+        with contextlib.suppress(FeedParserError):
             parse_feed(podcast, client)
-            typer.secho(f"{podcast}: Success", fg="green")
-        except FeedParserError as exc:
-            typer.secho(f"{podcast}: {exc.parser_error.label}", fg="red")
-
-    execute_thread_pool(_parse_feed, podcasts)
+    typer.secho(f"{num_podcasts} feeds parsed", fg="green")
 
 
 @app.command()

@@ -1,5 +1,4 @@
 import typer
-from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.db import transaction
@@ -11,7 +10,6 @@ from radiofeed import tokenizer
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes, recommender
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
 
 app = Typer(name="podcasts")
@@ -51,8 +49,9 @@ def send_recommendations(num_podcasts: int = 6) -> None:
 
     site = Site.objects.get_current()
     connection = get_connection()
+    emails_sent = 0
 
-    def _send_recommendations_email(recipient: EmailAddress) -> None:
+    for recipient in track(get_recipients(), "Sending recommendations..."):
         if podcasts := (
             Podcast.objects.published()
             .recommended(recipient.user)
@@ -72,10 +71,6 @@ def send_recommendations(num_podcasts: int = 6) -> None:
                 )
 
                 recipient.user.recommended_podcasts.add(*podcasts)
+                emails_sent += 1
 
-                typer.secho(
-                    f"{len(podcasts)} recommendations sent to {recipient.user}",
-                    fg="green",
-                )
-
-    execute_thread_pool(_send_recommendations_email, get_recipients())
+    typer.secho(f"{emails_sent} emails sent", fg="green")
