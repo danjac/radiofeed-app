@@ -292,6 +292,7 @@ class Podcast(models.Model):
             models.Index(fields=["pub_date"]),
             models.Index(fields=["itunes_ranking", "-pub_date"]),
             models.Index(fields=["content_hash"]),
+            models.Index(fields=["parser_result"]),
             models.Index(
                 Lower("title"),
                 name="%(app_label)s_%(class)s_lwr_title_idx",
