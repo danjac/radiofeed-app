@@ -164,7 +164,7 @@ def _get_canonical_urls(feeds: list[Feed]) -> list[str]:
     """Returns a list of canonical URLs for the given feeds."""
 
     # make sure we fetch only unique feeds in the right order
-    urls = {feed.rss: feed for feed in feeds}.keys()
+    urls = dict.fromkeys(feed.rss for feed in feeds).keys()
 
     # in certain cases, we may have duplicates in the database
     canonical_urls = dict(
