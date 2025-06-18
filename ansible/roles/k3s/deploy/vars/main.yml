@@ -5,16 +5,16 @@ cronjobs:
 
     - name: "parse-feeds"
       schedule: "*/6 * * * *" # Every 6 minutes
-      command: "{{ manage_cmd }} feedparser parse-feeds"
+      command: "{{ manage_cmd }} parse_feeds"
 
     - name: "create-recommendations"
       schedule: "20 4 * * *" # 4:20 AM every day
-      command: "{{ manage_cmd }} podcasts create-recommendations"
+      command: "{{ manage_cmd }} create_recommendations"
 
     - name: "send-recommendations"
       schedule: "0 16 * * 5" # 4:00 PM on Fridays
-      command: "{{ manage_cmd }} podcasts send-recommendations"
+      command: "{{ manage_cmd }} send_recommendations"
 
     - name: "fetch-top-itunes"
       schedule: "15 3 * * *" # 3:15 AM every day
-      command: "{{ manage_cmd }} podcasts fetch-top-itunes {{ itunes_chart_country }}"
+      command: "{{ manage_cmd }} fetch_top_itunes {{ itunes_chart_country }}"

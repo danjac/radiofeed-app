@@ -1,11 +1,7 @@
 import pytest
+from django.core.management import call_command
 
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.management.commands.podcasts import (
-    create_recommendations,
-    fetch_top_itunes,
-    send_recommendations,
-)
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
@@ -23,7 +19,7 @@ class TestFetchTopItunes:
                 PodcastFactory(),
             ],
         )
-        fetch_top_itunes("gb")
+        call_command("fetch_top_itunes", "gb")
         patched.assert_called()
 
     @pytest.mark.django_db
@@ -32,7 +28,7 @@ class TestFetchTopItunes:
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=itunes.ItunesError("Error"),
         )
-        fetch_top_itunes("gb")
+        call_command("fetch_top_itunes", "gb")
         patched.assert_called()
 
 
@@ -45,7 +41,7 @@ class TestCreateRecommendations:
                 ("en", RecommendationFactory.create_batch(3)),
             ],
         )
-        create_recommendations()
+        call_command("create_recommendations")
         patched.assert_called()
 
 
@@ -61,13 +57,13 @@ class TestSendRecommendationsEmails:
     def test_has_recommendations(self, mailoutbox, recipient):
         subscription = SubscriptionFactory(subscriber=recipient.user)
         RecommendationFactory.create_batch(3, podcast=subscription.podcast)
-        send_recommendations()
+        call_command("send_recommendations")
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [recipient.email]
         assert recipient.user.recommended_podcasts.count() == 3
 
     @pytest.mark.django_db(transaction=True)
     def test_has_no_recommendations(self, mailoutbox, recipient):
-        send_recommendations()
+        call_command("send_recommendations")
         assert len(mailoutbox) == 0
         assert recipient.user.recommended_podcasts.count() == 0
