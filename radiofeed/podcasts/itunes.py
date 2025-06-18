@@ -47,13 +47,13 @@ def search(
         },
     ):
         Podcast.objects.bulk_create(
-            [
+            (
                 Podcast(
                     rss=feed.rss,
                     title=feed.title,
                 )
                 for feed in feeds
-            ],
+            ),
             ignore_conflicts=True,
         )
 
@@ -115,10 +115,10 @@ def _fetch_feeds(client: Client, url: str, params: dict) -> list[Feed]:
     """Fetches and parses feeds from iTunes API."""
     return [
         feed
-        for feed in [
+        for feed in (
             _parse_feed(result)
             for result in _fetch_json(client, url, params).get("results", [])
-        ]
+        )
         if feed
     ]
 
@@ -127,10 +127,10 @@ def _fetch_itunes_ids(client: Client, url: str) -> set[str]:
     """Fetches podcast IDs from results."""
     return {
         itunes_id
-        for itunes_id in [
+        for itunes_id in (
             result.get("id")
             for result in _fetch_json(client, url).get("feed", {}).get("results", [])
-        ]
+        )
         if itunes_id
     }
 
