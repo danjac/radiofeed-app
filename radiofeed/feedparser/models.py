@@ -308,14 +308,16 @@ class Feed(BaseModel):
     def tokenize(self) -> str:
         """Tokenize feed for search."""
         text = " ".join(
-            value
-            for value in [
-                self.title,
-                self.description,
-                self.owner,
+            [
+                value
+                for value in [
+                    self.title,
+                    self.description,
+                    self.owner,
+                    *self.categories,
+                    *[item.title for item in self.items][:6],
+                ]
+                if value
             ]
-            + list(self.categories)
-            + [item.title for item in self.items][:6]
-            if value
         )
         return " ".join(tokenizer.tokenize(self.language, text))
