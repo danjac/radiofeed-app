@@ -110,34 +110,6 @@ class PodcastTypeFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class PubDateFilter(admin.SimpleListFilter):
-    """Filters podcasts based on last pub date."""
-
-    title = "Pub Date"
-    parameter_name = "pub_date"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> tuple[tuple[str, str], ...]:
-        """Returns lookup values/labels."""
-        return (
-            ("yes", "With pub date"),
-            ("no", "With no pub date"),
-        )
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        match self.value():
-            case "yes":
-                return queryset.published()
-            case "no":
-                return queryset.published(published=False)
-            case _:
-                return queryset
-
-
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
@@ -234,7 +206,6 @@ class PodcastAdmin(admin.ModelAdmin):
         PodcastTypeFilter,
         PrivateFilter,
         PromotedFilter,
-        PubDateFilter,
         ScheduledFilter,
         SubscribedFilter,
     )

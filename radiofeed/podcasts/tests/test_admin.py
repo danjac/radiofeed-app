@@ -12,7 +12,6 @@ from radiofeed.podcasts.admin import (
     PodcastTypeFilter,
     PrivateFilter,
     PromotedFilter,
-    PubDateFilter,
     RecommendationAdmin,
     ScheduledFilter,
     SubscribedFilter,
@@ -112,31 +111,6 @@ class TestPodcastAdmin:
     def test_next_scheduled_update_inactive(self, mocker, podcast_admin):
         podcast = PodcastFactory(active=False)
         assert podcast_admin.next_scheduled_update(podcast) == "-"
-
-
-class TestPubDateFilter:
-    @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(pub_date=None)
-        f = PubDateFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    @pytest.mark.django_db
-    def test_no(self, podcasts, podcast_admin, req):
-        no_pub_date = PodcastFactory(pub_date=None)
-        f = PubDateFilter(req, {"pub_date": ["no"]}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == no_pub_date
-
-    @pytest.mark.django_db
-    def test_yes(self, podcasts, podcast_admin, req):
-        no_pub_date = PodcastFactory(pub_date=None)
-        f = PubDateFilter(req, {"pub_date": ["yes"]}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert no_pub_date not in qs
 
 
 class TestPromotedFilter:
