@@ -33,7 +33,11 @@ class Command(BaseCommand):
             if podcasts := (
                 Podcast.objects.published()
                 .recommended(recipient.user)
-                .order_by("-relevance", "itunes_ranking", "-pub_date")
+                .order_by(
+                    "-relevance",
+                    "promoted",
+                    "-pub_date",
+                )
             )[:num_podcasts]:
                 with transaction.atomic():
                     send_notification_email(

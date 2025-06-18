@@ -109,10 +109,6 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         """Returns only published podcasts (pub_date NOT NULL)."""
         return self.filter(pub_date__isnull=not published)
 
-    def promoted(self) -> models.QuerySet["Podcast"]:
-        """Returns all podcasts with an iTunes ranking."""
-        return self.filter(itunes_ranking__isnull=False)
-
     def scheduled(self) -> models.QuerySet["Podcast"]:
         """Returns all podcasts scheduled for feed parser update.
 
@@ -169,9 +165,9 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                     output_field=models.DecimalField(),
                 ),
             )
-            .filter(models.Q(relevance__gt=0) | models.Q(itunes_ranking__isnull=False))
+            .filter(models.Q(relevance__gt=0) | models.Q(promoted=True))
             .exclude(pk__in=exclude)
-        ) | self.promoted()
+        )
 
 
 class Podcast(models.Model):
@@ -255,7 +251,7 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
-    itunes_ranking = models.PositiveIntegerField(null=True, blank=True)
+    promoted = models.BooleanField(default=False)
 
     podcast_type = models.CharField(
         max_length=10,
@@ -288,9 +284,9 @@ class Podcast(models.Model):
     class Meta:
         indexes: ClassVar[list] = [
             models.Index(fields=["active"]),
+            models.Index(fields=["promoted"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
-            models.Index(fields=["itunes_ranking", "-pub_date"]),
             models.Index(fields=["content_hash"]),
             models.Index(fields=["parser_result"]),
             models.Index(

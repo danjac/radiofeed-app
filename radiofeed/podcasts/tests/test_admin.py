@@ -148,7 +148,7 @@ class TestPromotedFilter:
 
     @pytest.mark.django_db
     def test_promoted(self, podcasts, podcast_admin, req):
-        promoted = PodcastFactory(itunes_ranking=1)
+        promoted = PodcastFactory(promoted=True)
         f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1

@@ -94,18 +94,13 @@ def fetch_chart(client: Client, country: str, limit: int) -> list[Feed]:
     ):
         with transaction.atomic():
             # demote current rankings
-            Podcast.objects.filter(itunes_ranking__isnull=False).update(
-                itunes_ranking=None
-            )
+            Podcast.objects.filter(promoted=True).update(promoted=False)
 
             Podcast.objects.bulk_create(
-                (
-                    Podcast(rss=url, itunes_ranking=ranking)
-                    for ranking, url in enumerate(_get_canonical_urls(feeds), start=1)
-                ),
+                (Podcast(rss=url, promoted=True) for url in _get_canonical_urls(feeds)),
                 unique_fields=["rss"],
                 update_conflicts=True,
-                update_fields=["itunes_ranking"],
+                update_fields=["promoted"],
             )
 
     return feeds
