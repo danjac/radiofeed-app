@@ -92,7 +92,7 @@ class _FeedParser:
             with transaction.atomic():
                 self._update(
                     num_retries=0,
-                    parser_error="",
+                    parser_result=Podcast.ParserResult.SUCCESS,
                     active=not feed.complete,
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),
@@ -139,7 +139,7 @@ class _FeedParser:
             active=active,
             num_retries=num_retries,
             frequency=frequency,
-            parser_error=exc.parser_error,
+            parser_result=exc.result,
             **fields,
         )
         raise exc

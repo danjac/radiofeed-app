@@ -6,7 +6,7 @@ from radiofeed.podcasts.models import Podcast
 class FeedParserError(Exception):
     """Base feed parser exception."""
 
-    parser_error: Podcast.ParserError
+    result: Podcast.ParserResult
 
     def __init__(self, *args, response: httpx.Response | None = None, **kwargs):
         self.response = response
@@ -16,34 +16,34 @@ class FeedParserError(Exception):
 class DiscontinuedError(FeedParserError):
     """Podcast has been discontinued and no longer available."""
 
-    parser_error = Podcast.ParserError.DISCONTINUED
+    result = Podcast.ParserResult.DISCONTINUED
 
 
 class DuplicateError(FeedParserError):
     """Another identical podcast exists in the database."""
 
-    parser_error = Podcast.ParserError.DUPLICATE
+    result = Podcast.ParserResult.DUPLICATE
 
 
 class InvalidRSSError(FeedParserError):
     """Error parsing RSS content."""
 
-    parser_error = Podcast.ParserError.INVALID_RSS
+    result = Podcast.ParserResult.INVALID_RSS
 
 
 class NotModifiedError(FeedParserError):
     """RSS feed has not been modified since last update."""
 
-    parser_error = Podcast.ParserError.NOT_MODIFIED
+    result = Podcast.ParserResult.NOT_MODIFIED
 
 
 class UnavailableError(FeedParserError):
     """Content is inaccessible due to temporary network issue, 500 error etc."""
 
-    parser_error = Podcast.ParserError.UNAVAILABLE
+    result = Podcast.ParserResult.UNAVAILABLE
 
 
 class InvalidDataError(FeedParserError):
     """Error caused by invalid data e.g. bad date strings."""
 
-    parser_error = Podcast.ParserError.INVALID_DATA
+    result = Podcast.ParserResult.INVALID_DATA

@@ -73,20 +73,17 @@ class ParserResultFilter(admin.SimpleListFilter):
         """Returns lookup values/labels."""
         return [
             ("none", "Not Parsed"),
-            ("success", "Success"),
-            *Podcast.ParserError.choices,
+            *Podcast.ParserResult.choices,
         ]
 
     def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
         """Returns filtered queryset."""
 
         match self.value():
-            case value if value in Podcast.ParserError:  # type: ignore[attr-defined]
-                return queryset.filter(parser_error=value)
-            case "success":
-                return queryset.filter(parser_error="", parsed__isnull=False)
+            case value if value in Podcast.ParserResult:  # type: ignore[attr-defined]
+                return queryset.filter(parser_result=value)
             case "none":
-                return queryset.filter(parsed__isnull=True)
+                return queryset.filter(parser_result="")
             case _:
                 return queryset
 
@@ -267,7 +264,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "parsed",
-        "parser_error",
+        "parser_result",
         "frequency",
         "next_scheduled_update",
         "modified",

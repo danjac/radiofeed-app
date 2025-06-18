@@ -43,9 +43,7 @@ class Command(BaseCommand):
                 parse_feed(podcast, client)
                 self.stdout.write(self.style.SUCCESS(f"{podcast}: Success"))
             except FeedParserError as exc:
-                self.stderr.write(
-                    self.style.ERROR(f"{podcast}: {exc.parser_error.label}")
-                )
+                self.stderr.write(self.style.ERROR(f"{podcast}: {exc.result.label}"))
             except Exception as exc:
                 self.stderr.write(self.style.ERROR(f"{podcast}: {exc}"))
 

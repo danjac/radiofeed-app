@@ -201,7 +201,7 @@ class TestParserResultFilter:
     @pytest.fixture
     def duplicate(self):
         return PodcastFactory(
-            parser_error=Podcast.ParserError.DUPLICATE,
+            parser_result=Podcast.ParserResult.DUPLICATE,
             parsed=timezone.now(),
         )
 
@@ -215,7 +215,7 @@ class TestParserResultFilter:
     def test_duplicate(self, podcasts, podcast_admin, req, duplicate):
         f = ParserResultFilter(
             req,
-            {"parser_result": [Podcast.ParserError.DUPLICATE]},
+            {"parser_result": [Podcast.ParserResult.DUPLICATE]},
             Podcast,
             podcast_admin,
         )
@@ -225,18 +225,18 @@ class TestParserResultFilter:
 
     @pytest.mark.django_db
     def test_success(self, podcasts, podcast_admin, req, duplicate):
+        PodcastFactory(parser_result=Podcast.ParserResult.SUCCESS)
         f = ParserResultFilter(
             req,
-            {"parser_result": ["success"]},
+            {"parser_result": [Podcast.ParserResult.SUCCESS]},
             Podcast,
             podcast_admin,
         )
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
+        assert qs.count() == 1
 
     @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req, duplicate):
-        podcast = PodcastFactory(parsed=None)
         f = ParserResultFilter(
             req,
             {"parser_result": ["none"]},
@@ -244,8 +244,7 @@ class TestParserResultFilter:
             podcast_admin,
         )
         qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == podcast
+        assert qs.count() == 3
 
 
 class TestPodcastTypeFilter:

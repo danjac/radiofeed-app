@@ -34,7 +34,7 @@ class TestParseFeeds:
         mock_parse.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
-    def test_feed_parser_error(self, mocker):
+    def test_feed_parser_result(self, mocker):
         mock_parse = mocker.patch(self._PARSE_FEED, side_effect=DuplicateError())
         PodcastFactory(pub_date=None)
         call_command("parse_feeds")

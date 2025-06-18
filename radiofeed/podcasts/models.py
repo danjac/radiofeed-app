@@ -181,7 +181,8 @@ class Podcast(models.Model):
     MIN_PARSER_FREQUENCY: Final = timedelta(hours=1)
     MAX_PARSER_FREQUENCY: Final = timedelta(days=3)
 
-    class ParserError(models.TextChoices):
+    class ParserResult(models.TextChoices):
+        SUCCESS = "success", "Success"
         DISCONTINUED = "discontinued", "Discontinued"
         DUPLICATE = "duplicate", "Duplicate"
         INVALID_DATA = "invalid_data", "Invalid Data"
@@ -220,8 +221,10 @@ class Podcast(models.Model):
 
     parsed = models.DateTimeField(null=True, blank=True)
 
-    parser_error = models.CharField(
-        max_length=30, choices=ParserError.choices, blank=True
+    parser_result = models.CharField(
+        max_length=30,
+        choices=ParserResult.choices,
+        blank=True,
     )
 
     frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
