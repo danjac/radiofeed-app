@@ -149,7 +149,7 @@ class TestSearchItunes:
             ),
         ]
         mock_search = mocker.patch(
-            "radiofeed.podcasts.itunes.search_lazy",
+            "radiofeed.podcasts.itunes.search_cached",
             return_value=iter(feeds),
         )
 
@@ -166,7 +166,7 @@ class TestSearchItunes:
     @pytest.mark.django_db
     def test_search_error(self, client, auth_user, mocker):
         mocker.patch(
-            "radiofeed.podcasts.itunes.search_lazy",
+            "radiofeed.podcasts.itunes.search_cached",
             side_effect=itunes.ItunesError("Error"),
         )
         response = client.get(self.url, {"search": "test"})

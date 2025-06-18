@@ -1,9 +1,12 @@
 import dataclasses
-from collections.abc import Iterator
+import hashlib
 
 import httpx
 from django.conf import settings
+from django.core.cache import cache
 from django.db import transaction
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
@@ -57,9 +60,20 @@ def search(
     return feeds
 
 
-def search_lazy(client: Client, search_term: str, **kwargs) -> Iterator[Feed]:
-    """Search iTunes podcast API. Results are evaluated lazily."""
-    yield from search(client, search_term, **kwargs)
+def search_cached(
+    client: Client,
+    search_term: str,
+    *,
+    limit: int = settings.DEFAULT_PAGE_SIZE,
+    cache_timeout: int = settings.DEFAULT_CACHE_TIMEOUT,
+) -> list[Feed]:
+    """Search iTunes podcast API. Results are cached."""
+    cache_key = _get_cache_key(search_term, limit)
+    feeds = cache.get(cache_key, None)
+    if feeds is None:
+        feeds = search(client, search_term, limit=limit)
+        cache.set(cache_key, feeds, timeout=cache_timeout)
+    return feeds
 
 
 def fetch_chart(client: Client, country: str, limit: int) -> list[Feed]:
@@ -160,3 +174,10 @@ def _get_canonical_urls(feeds: list[Feed]) -> list[str]:
     )
 
     return [canonical_urls.get(url, url) for url in urls]
+
+
+def _get_cache_key(search_term: str, limit: int) -> str:
+    value = search_term.strip().casefold()
+    digest = hashlib.sha256(force_bytes(value)).digest()
+    encoded = urlsafe_base64_encode(digest).rstrip("=")
+    return f"itunes:{encoded}:{limit}"

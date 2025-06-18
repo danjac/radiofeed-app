@@ -21,17 +21,15 @@
         {% endfragment %}
     {% endfragment %}
 
-    {% cache cache_timeout search-itunes request.search.value %}
-        {% fragment "pagination.html" %}
-            {% for feed in feeds %}
-                {% fragment "pagination/item.html" %}
-                    {% include "podcasts/itunes_feed.html" %}
-                {% endfragment %}
-            {% empty %}
-                {% fragment "pagination/empty.html" %}
-                    No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                {% endfragment %}
-            {% endfor %}
-        {% endfragment %}
-    {% endcache %}
+    {% fragment "pagination.html" %}
+        {% for feed in feeds %}
+            {% fragment "pagination/item.html" %}
+                {% include "podcasts/itunes_feed.html" %}
+            {% endfragment %}
+        {% empty %}
+            {% fragment "pagination/empty.html" %}
+                No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+            {% endfragment %}
+        {% endfor %}
+    {% endfragment %}
 {% endblock content %}

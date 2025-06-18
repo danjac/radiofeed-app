@@ -384,7 +384,12 @@ class TestSearch:
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db
-    def test_lazy(self, good_client):
-        feeds = list(itunes.search_lazy(good_client, "test"))
-        assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
+    def test_cached(self, mocker, _locmem_cache):
+        client = Client()
+        mock_search = mocker.patch(
+            "radiofeed.podcasts.itunes.search",
+            return_value=MOCK_SEARCH_RESULT,
+        )
+        itunes.search_cached(client, "test")
+        itunes.search_cached(client, "test")
+        mock_search.assert_called_once()
