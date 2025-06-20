@@ -125,11 +125,7 @@ def robots(_) -> HttpResponse:
 def security(_) -> HttpResponse:
     """Generates security.txt file containing contact details etc."""
     return HttpResponse(
-        "\n".join(
-            [
-                f"Contact: mailto:{settings.CONTACT_EMAIL}",
-            ]
-        ),
+        f"Contact: mailto:{settings.CONTACT_EMAIL}",
         content_type="text/plain",
     )
 
