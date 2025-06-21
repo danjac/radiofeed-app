@@ -117,7 +117,6 @@
             - redis_service
             - celeryworker_deployment
             - celerybeat_deployment
-            - django_cronjobs
             - django_deployment
             - django_service
             - ingress_route
