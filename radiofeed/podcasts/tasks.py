@@ -14,9 +14,8 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def fetch_top_itunes(self, country: str, *, limit: int) -> None:
+def fetch_top_itunes(country: str, *, limit: int = 30) -> None:
     """Fetch the top iTunes podcasts for a given country."""
-    self.stdout.write(f"Fetching top {limit} iTunes podcasts for country: {country}")
     logger.info("Fetching top %d iTunes podcasts for country: %s", limit, country)
 
     try:

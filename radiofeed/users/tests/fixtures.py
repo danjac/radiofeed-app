@@ -3,7 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.test import Client
 
 from radiofeed.users.models import User
-from radiofeed.users.tests.factories import UserFactory
+from radiofeed.users.tests.factories import EmailAddressFactory, UserFactory
 
 
 @pytest.fixture
@@ -27,3 +27,11 @@ def staff_user(client: Client) -> User:
     user = UserFactory(is_staff=True)
     client.force_login(user)
     return user
+
+
+@pytest.fixture
+def recipient():
+    return EmailAddressFactory(
+        verified=True,
+        primary=True,
+    )
