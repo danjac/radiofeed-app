@@ -115,6 +115,8 @@
             - postgres_service
             - redis_deployment
             - redis_service
+            - celeryworker_deployment
+            - celerybeat_deployment
             - django_cronjobs
             - django_deployment
             - django_service
