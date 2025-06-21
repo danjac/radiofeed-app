@@ -24,6 +24,8 @@
 .venv
 .vim
 .vscode
+celerybeat-schedule
+celerybeat.pid
 ansible
 justfile
 locust
