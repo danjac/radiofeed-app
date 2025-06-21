@@ -47,7 +47,6 @@ dependencies = [
     "pycountry>=24.6.1",
     "celery>=5.5.3",
     "django-celery-beat>=2.8.1",
-    "django-celery-results>=2.6.0",
 ]
 
 [tool.uv]

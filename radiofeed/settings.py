@@ -39,7 +39,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount.providers.google",
     "csp",
     "django_celery_beat",
-    "django_celery_results",
     "django_htmx",
     "django_linear_migrations",
     "django_tailwind_cli",
@@ -389,9 +388,11 @@ CELERY_BROKER_URL = CELERY_RESULT_BACKEND = REDIS_URL
 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
 CELERY_RESULT_SERIALIZER = "json"
 
 CELERY_TASK_TRACK_STARTED = True  # exposes “STARTED” state
+
 
 # Logging
 # https://docs.djangoproject.com/en/5.0/howto/logging/
