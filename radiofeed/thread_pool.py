@@ -39,4 +39,5 @@ def execute_thread_pool(
                 results.append(future.result())
             except Exception as exc:
                 logger.exception(exc)
+    logger.debug("%d tasks completed.", len(results))
     return results
