@@ -1,3 +1,4 @@
+from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
@@ -5,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from radiofeed.podcasts.models import Podcast
+from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
 
 
@@ -27,32 +29,44 @@ class Command(BaseCommand):
 
         site = Site.objects.get_current()
         connection = get_connection()
-        emails_sent = 0
 
-        for recipient in get_recipients():
-            if podcasts := (
-                Podcast.objects.published()
-                .recommended(recipient.user)
-                .order_by(
-                    "-relevance",
-                    "promoted",
-                    "-pub_date",
+        execute_thread_pool(
+            lambda recipient: self._send_recommendations_email(
+                recipient,
+                site,
+                num_podcasts,
+                connection=connection,
+            ),
+            get_recipients(),
+        )
+
+    def _send_recommendations_email(
+        self,
+        recipient: EmailAddress,
+        site: Site,
+        num_podcasts: int,
+        **kwargs,
+    ):
+        if podcasts := (
+            Podcast.objects.published()
+            .recommended(recipient.user)
+            .order_by(
+                "-relevance",
+                "promoted",
+                "-pub_date",
+            )
+        )[:num_podcasts]:
+            with transaction.atomic():
+                send_notification_email(
+                    site,
+                    recipient,
+                    f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+                    "podcasts/emails/recommendations.html",
+                    {
+                        "podcasts": podcasts,
+                        "site": site,
+                    },
+                    **kwargs,
                 )
-            )[:num_podcasts]:
-                with transaction.atomic():
-                    send_notification_email(
-                        site,
-                        recipient,
-                        f"Hi, {recipient.user.name}, here are some podcasts you might like!",
-                        "podcasts/emails/recommendations.html",
-                        {
-                            "podcasts": podcasts,
-                            "site": site,
-                        },
-                        connection=connection,
-                    )
 
-                    recipient.user.recommended_podcasts.add(*podcasts)
-                    emails_sent += 1
-
-        self.stdout.write(self.style.SUCCESS(f"{emails_sent} emails sent."))
+                recipient.user.recommended_podcasts.add(*podcasts)

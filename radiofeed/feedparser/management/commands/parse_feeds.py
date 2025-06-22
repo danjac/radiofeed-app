@@ -6,6 +6,7 @@ from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
+from radiofeed.thread_pool import execute_thread_pool
 
 
 class Command(BaseCommand):
@@ -36,15 +37,11 @@ class Command(BaseCommand):
         )
 
         client = get_client()
-        num_podcasts = podcasts.count()
+        execute_thread_pool(lambda podcast: self._parse_feed(podcast, client), podcasts)
 
-        for podcast in podcasts:
-            try:
-                parse_feed(podcast, client)
-                self.stdout.write(self.style.SUCCESS(f"{podcast}: Success"))
-            except FeedParserError as exc:
-                self.stderr.write(self.style.NOTICE(f"{podcast}: {exc.result.label}"))
-            except Exception as exc:
-                self.stderr.write(self.style.ERROR(f"{podcast}: {exc}"))
-
-        self.stdout.write(self.style.SUCCESS(f"{num_podcasts} podcasts parsed"))
+    def _parse_feed(self, podcast, client):
+        try:
+            parse_feed(podcast, client)
+            self.stdout.write(self.style.SUCCESS(f"{podcast}: Success"))
+        except FeedParserError as exc:
+            self.stderr.write(self.style.NOTICE(f"{podcast}: {exc.result.label}"))
