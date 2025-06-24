@@ -1,6 +1,6 @@
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db.models import Count, F
+from django.db.models import Case, Count, IntegerField, When
 
 from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.feedparser.feed_parser import parse_feed
@@ -27,12 +27,21 @@ class Command(BaseCommand):
 
         podcasts = (
             Podcast.objects.scheduled()
-            .alias(subscribers=Count("subscriptions"))
+            .annotate(
+                subscribers=Count("subscriptions"),
+                is_new=Case(
+                    When(parsed__isnull=True, then=1),
+                    default=0,
+                    output_field=IntegerField(),
+                ),
+            )
             .filter(active=True)
             .order_by(
-                F("subscribers").desc(),
-                F("promoted").asc(),
-                F("parsed").asc(nulls_first=True),
+                "-subscribers",
+                "-promoted",
+                "-is_new",
+                "parsed",
+                "updated",
             )[:limit]
         )
 
