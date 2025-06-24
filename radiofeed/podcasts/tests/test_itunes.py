@@ -268,19 +268,48 @@ class TestFetchTopChart:
 
     @pytest.mark.django_db
     def test_get_top_chart(self, good_client):
-        feeds = itunes.fetch_chart(good_client, country="us", limit=10)
+        feeds = itunes.fetch_chart(
+            good_client,
+            country="us",
+            limit=10,
+            promote=True,
+        )
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
+
+    @pytest.mark.django_db
+    def test_get_top_chart_promote(self, good_client):
+        feeds = itunes.fetch_chart(
+            good_client,
+            country="us",
+            limit=10,
+            promote=True,
+        )
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
 
     @pytest.mark.django_db
     def test_already_exists(self, good_client):
-        podcast = PodcastFactory(
+        PodcastFactory(
             rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
         )
         feeds = itunes.fetch_chart(good_client, country="us", limit=10)
         assert len(feeds) == 1
 
+    @pytest.mark.django_db
+    def test_already_exists_promote(self, good_client):
+        podcast = PodcastFactory(
+            rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
+        )
+        feeds = itunes.fetch_chart(
+            good_client,
+            country="us",
+            limit=10,
+            promote=True,
+        )
+        assert len(feeds) == 1
         podcast.refresh_from_db()
+        assert podcast.promoted is True
 
     @pytest.mark.django_db
     def test_canonical_already_exists(self, good_client):
@@ -297,7 +326,12 @@ class TestFetchTopChart:
         podcast = PodcastFactory(rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"])
 
         PodcastFactory()
-        feeds = itunes.fetch_chart(good_client, country="us", limit=10)
+        feeds = itunes.fetch_chart(
+            good_client,
+            country="us",
+            limit=10,
+            promote=True,
+        )
 
         assert len(feeds) == 1
         assert feeds[0].rss == podcast.rss

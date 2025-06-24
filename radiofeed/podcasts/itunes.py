@@ -76,7 +76,13 @@ def search_cached(
     return feeds
 
 
-def fetch_chart(client: Client, country: str, limit: int) -> list[Feed]:
+def fetch_chart(
+    client: Client,
+    country: str,
+    *,
+    limit: int,
+    promote: bool = False,
+) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added."""
 
     url = f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json"
@@ -92,15 +98,24 @@ def fetch_chart(client: Client, country: str, limit: int) -> list[Feed]:
             "id": ",".join(itunes_ids),
         },
     ):
-        with transaction.atomic():
-            # demote current rankings
-            Podcast.objects.filter(promoted=True).update(promoted=False)
+        if promote:
+            with transaction.atomic():
+                # demote current promoted podcasts
+                Podcast.objects.filter(promoted=True).update(promoted=False)
 
+                Podcast.objects.bulk_create(
+                    (
+                        Podcast(rss=url, promoted=True)
+                        for url in _get_canonical_urls(feeds)
+                    ),
+                    unique_fields=["rss"],
+                    update_conflicts=True,
+                    update_fields=["promoted"],
+                )
+        else:
             Podcast.objects.bulk_create(
-                (Podcast(rss=url, promoted=True) for url in _get_canonical_urls(feeds)),
-                unique_fields=["rss"],
-                update_conflicts=True,
-                update_fields=["promoted"],
+                (Podcast(rss=feed.rss) for feed in feeds),
+                ignore_conflicts=True,
             )
 
     return feeds

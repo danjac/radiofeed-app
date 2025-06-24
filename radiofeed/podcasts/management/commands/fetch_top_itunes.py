@@ -17,6 +17,15 @@ class Command(BaseCommand):
             type=str,
             help="Country code for fetching iTunes podcasts",
         )
+
+        parser.add_argument(
+            "--promote",
+            "-p",
+            action="store_true",
+            default=False,
+            help="Promote the podcasts",
+        )
+
         parser.add_argument(
             "--limit",
             "-l",
@@ -25,14 +34,26 @@ class Command(BaseCommand):
             help="Number of top podcasts to fetch (default: 30)",
         )
 
-    def handle(self, country: str, *, limit: int, **options) -> None:
+    def handle(
+        self,
+        country: str,
+        *,
+        limit: int,
+        promote: bool,
+        **options,
+    ) -> None:
         """Fetch the top iTunes podcasts for a given country."""
         self.stdout.write(
             f"Fetching top {limit} iTunes podcasts for country: {country}"
         )
 
         try:
-            for feed in itunes.fetch_chart(get_client(), country, limit):
+            for feed in itunes.fetch_chart(
+                get_client(),
+                country,
+                limit=limit,
+                promote=promote,
+            ):
                 self.stdout.write(self.style.SUCCESS(f"Fetched iTunes feed: {feed}"))
         except itunes.ItunesError as exc:
             self.stdout.write(self.style.ERROR(f"Error fetching iTunes feed: {exc}"))
