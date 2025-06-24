@@ -20,15 +20,15 @@ class Command(BaseCommand):
             .distinct()
         )
 
-        execute_thread_pool(self._create_recommendations, languages)
+        def _create_recommendations(language: str) -> None:
+            """Create recommendations for a specific language."""
+            recommender.recommend(language)
+            self.stdout.write(
+                self.style.SUCCESS(f"Recommendations created for language: {language}")
+            )
+
+        execute_thread_pool(_create_recommendations, languages)
 
         self.stdout.write(
             self.style.SUCCESS("Recommendations created for all languages")
-        )
-
-    def _create_recommendations(self, language: str) -> None:
-        """Create recommendations for a specific language."""
-        recommender.recommend(language)
-        self.stdout.write(
-            self.style.SUCCESS(f"Recommendations created for language: {language}")
         )

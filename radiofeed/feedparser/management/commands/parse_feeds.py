@@ -37,11 +37,12 @@ class Command(BaseCommand):
         )
 
         client = get_client()
-        execute_thread_pool(lambda podcast: self._parse_feed(podcast, client), podcasts)
 
-    def _parse_feed(self, podcast, client):
-        try:
-            parse_feed(podcast, client)
-            self.stdout.write(self.style.SUCCESS(f"{podcast}: Success"))
-        except FeedParserError as exc:
-            self.stderr.write(self.style.NOTICE(f"{podcast}: {exc.result.label}"))
+        def _parse_feed(podcast):
+            try:
+                parse_feed(podcast, client)
+                self.stdout.write(self.style.SUCCESS(f"{podcast}: Success"))
+            except FeedParserError as exc:
+                self.stderr.write(self.style.NOTICE(f"{podcast}: {exc.result.label}"))
+
+        execute_thread_pool(_parse_feed, podcasts)
