@@ -37,9 +37,9 @@ class Command(BaseCommand):
             )
             .filter(active=True)
             .order_by(
+                "-is_new",
                 "-subscribers",
                 "-promoted",
-                "-is_new",
                 "parsed",
                 "updated",
             )[:limit]
