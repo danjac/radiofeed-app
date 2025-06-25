@@ -170,7 +170,7 @@ def _parse_feed(feed: dict) -> Feed | None:
         return None
 
 
-def _get_canonical_urls(feeds: list[Feed]) -> list[str]:
+def _get_canonical_urls(feeds: list[Feed]) -> set[str]:
     """Returns a list of canonical URLs for the given feeds."""
 
     # make sure we fetch only unique feeds in the right order
@@ -183,7 +183,7 @@ def _get_canonical_urls(feeds: list[Feed]) -> list[str]:
         ).values_list("rss", "canonical")
     )
 
-    return [canonical_urls.get(url, url) for url in urls]
+    return {canonical_urls.get(url, url) for url in urls}
 
 
 def _get_cache_key(search_term: str, limit: int) -> str:
