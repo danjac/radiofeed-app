@@ -98,23 +98,21 @@ def fetch_chart(
             "id": ",".join(itunes_ids),
         },
     ):
+        urls = _get_canonical_urls(feeds)
         if promote:
             with transaction.atomic():
                 # demote current promoted podcasts
                 Podcast.objects.filter(promoted=True).update(promoted=False)
 
                 Podcast.objects.bulk_create(
-                    (
-                        Podcast(rss=url, promoted=True)
-                        for url in _get_canonical_urls(feeds)
-                    ),
+                    (Podcast(rss=url, promoted=True) for url in urls),
                     unique_fields=["rss"],
                     update_conflicts=True,
                     update_fields=["promoted"],
                 )
         else:
             Podcast.objects.bulk_create(
-                (Podcast(rss=feed.rss) for feed in feeds),
+                (Podcast(rss=url) for url in urls),
                 ignore_conflicts=True,
             )
 

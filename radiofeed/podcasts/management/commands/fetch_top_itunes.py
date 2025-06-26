@@ -1,8 +1,30 @@
+from typing import Final
+
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
+from radiofeed.thread_pool import execute_thread_pool
+
+COUNTRIES: Final = (
+    "br",
+    "ca",
+    "cn",
+    "de",
+    "dk",
+    "es",
+    "fi",
+    "fr",
+    "gb",
+    "it",
+    "jp",
+    "kr",
+    "no",
+    "pl",
+    "sv",
+    "us",
+)
 
 
 class Command(BaseCommand):
@@ -13,17 +35,18 @@ class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser) -> None:
         """Add command line arguments."""
         parser.add_argument(
-            "country",
+            "--promote",
+            "-p",
             type=str,
-            help="Country code for fetching iTunes podcasts",
+            help="Country code for promoted iTunes podcasts",
         )
 
         parser.add_argument(
-            "--promote",
-            "-p",
-            action="store_true",
-            default=False,
-            help="Promote the podcasts",
+            "--countries",
+            "-c",
+            nargs="+",
+            default=COUNTRIES,
+            help=f"List of country codes to fetch top podcasts for (default {COUNTRIES})",
         )
 
         parser.add_argument(
@@ -36,24 +59,34 @@ class Command(BaseCommand):
 
     def handle(
         self,
-        country: str,
         *,
+        countries: list[str],
+        promote: str,
         limit: int,
-        promote: bool,
         **options,
     ) -> None:
         """Fetch the top iTunes podcasts for a given country."""
-        self.stdout.write(
-            f"Fetching top {limit} iTunes podcasts for country: {country}"
-        )
 
-        try:
-            for feed in itunes.fetch_chart(
-                get_client(),
-                country,
-                limit=limit,
-                promote=promote,
-            ):
-                self.stdout.write(self.style.SUCCESS(f"Fetched iTunes feed: {feed}"))
-        except itunes.ItunesError as exc:
-            self.stdout.write(self.style.ERROR(f"Error fetching iTunes feed: {exc}"))
+        def _fetch_chart(country: str) -> None:
+            """Fetch the top iTunes podcasts for a specific country."""
+
+            self.stdout.write(
+                f"Fetching top {limit} iTunes podcasts for country: {country}"
+            )
+
+            try:
+                for feed in itunes.fetch_chart(
+                    get_client(),
+                    country,
+                    limit=limit,
+                    promote=promote == country,
+                ):
+                    self.stdout.write(
+                        self.style.SUCCESS(f"Fetched iTunes feed: {feed}")
+                    )
+            except itunes.ItunesError as exc:
+                self.stdout.write(
+                    self.style.ERROR(f"Error fetching iTunes feed: {exc}")
+                )
+
+        execute_thread_pool(_fetch_chart, countries)

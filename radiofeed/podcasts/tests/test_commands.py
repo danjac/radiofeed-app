@@ -1,6 +1,7 @@
 import pytest
 from django.core.management import call_command
 
+from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
@@ -19,8 +20,20 @@ class TestFetchTopItunes:
                 PodcastFactory(),
             ],
         )
-        call_command("fetch_top_itunes", "gb")
+        call_command("fetch_top_itunes")
         patched.assert_called()
+
+    @pytest.mark.django_db
+    def test_promote(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[
+                PodcastFactory(),
+            ],
+        )
+        client = get_client()
+        call_command("fetch_top_itunes", promote="gb", countries=["gb"])
+        patched.assert_called_with(client, "gb", promote=True, limit=30)
 
     @pytest.mark.django_db
     def test_error(self, mocker):
@@ -28,7 +41,7 @@ class TestFetchTopItunes:
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=itunes.ItunesError("Error"),
         )
-        call_command("fetch_top_itunes", "gb")
+        call_command("fetch_top_itunes")
         patched.assert_called()
 
 
