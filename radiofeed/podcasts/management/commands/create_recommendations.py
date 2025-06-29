@@ -4,7 +4,6 @@ from django.db.models.functions import Lower
 from radiofeed import tokenizer
 from radiofeed.podcasts import recommender
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import execute_thread_pool
 
 
 class Command(BaseCommand):
@@ -20,15 +19,9 @@ class Command(BaseCommand):
             .distinct()
         )
 
-        def _create_recommendations(language: str) -> None:
+        for language in languages:
             """Create recommendations for a specific language."""
             recommender.recommend(language)
             self.stdout.write(
                 self.style.SUCCESS(f"Recommendations created for language: {language}")
             )
-
-        execute_thread_pool(_create_recommendations, languages)
-
-        self.stdout.write(
-            self.style.SUCCESS("Recommendations created for all languages")
-        )

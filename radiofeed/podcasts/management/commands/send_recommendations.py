@@ -3,10 +3,9 @@ from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from django.db.models import QuerySet
 
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
 
 
@@ -30,35 +29,47 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
-        def _send_recommendations_email(recipient: EmailAddress):
-            if podcasts := (
-                Podcast.objects.published()
-                .recommended(recipient.user)
-                .order_by(
-                    "-relevance",
-                    "promoted",
-                    "-pub_date",
+        for recipient in get_recipients():
+            if podcasts := self._get_podcasts_for_recipient(recipient, num_podcasts):
+                self._send_notification_email(
+                    recipient,
+                    site,
+                    podcasts,
+                    connection=connection,
                 )
-            )[:num_podcasts]:
-                with transaction.atomic():
-                    send_notification_email(
-                        site,
-                        recipient,
-                        f"Hi, {recipient.user.name}, here are some podcasts you might like!",
-                        "podcasts/emails/recommendations.html",
-                        {
-                            "podcasts": podcasts,
-                            "site": site,
-                        },
-                        connection=connection,
+
+                recipient.user.recommended_podcasts.add(*podcasts)
+
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"{num_podcasts} recommendations sent to {recipient.email}"
                     )
+                )
 
-                    recipient.user.recommended_podcasts.add(*podcasts)
+    def _get_podcasts_for_recipient(
+        self, recipient: EmailAddress, num_podcasts: int
+    ) -> QuerySet[Podcast]:
+        return (
+            Podcast.objects.published()
+            .recommended(recipient.user)
+            .order_by("-relevance", "promoted", "-pub_date")
+        )[:num_podcasts]
 
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"{num_podcasts} recommendations sent to {recipient.email}"
-                        )
-                    )
-
-        execute_thread_pool(_send_recommendations_email, get_recipients())
+    def _send_notification_email(
+        self,
+        recipient: EmailAddress,
+        site: Site,
+        podcasts: QuerySet[Podcast],
+        **kwargs,
+    ) -> None:
+        send_notification_email(
+            site,
+            recipient,
+            f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+            "podcasts/emails/recommendations.html",
+            {
+                "podcasts": podcasts,
+                "site": site,
+            },
+            **kwargs,
+        )

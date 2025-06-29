@@ -5,7 +5,6 @@ from django.core.management.base import BaseCommand
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
-from radiofeed.thread_pool import execute_thread_pool
 
 COUNTRIES: Final = (
     "br",
@@ -67,9 +66,7 @@ class Command(BaseCommand):
     ) -> None:
         """Fetch the top iTunes podcasts for a given country."""
 
-        def _fetch_chart(country: str) -> None:
-            """Fetch the top iTunes podcasts for a specific country."""
-
+        for country in countries:
             self.stdout.write(
                 f"Fetching top {limit} iTunes podcasts for country: {country}"
             )
@@ -88,5 +85,3 @@ class Command(BaseCommand):
                 self.stdout.write(
                     self.style.ERROR(f"Error fetching iTunes feed: {exc}")
                 )
-
-        execute_thread_pool(_fetch_chart, countries)
