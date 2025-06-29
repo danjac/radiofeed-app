@@ -65,6 +65,7 @@ class Command(BaseCommand):
         **options,
     ) -> None:
         """Fetch the top iTunes podcasts for a given country."""
+        client = get_client()
 
         for country in countries:
             self.stdout.write(
@@ -73,7 +74,7 @@ class Command(BaseCommand):
 
             try:
                 for feed in itunes.fetch_chart(
-                    get_client(),
+                    client,
                     country,
                     limit=limit,
                     promote=promote == country,

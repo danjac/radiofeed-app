@@ -23,7 +23,6 @@ class Command(BaseCommand):
 
     def handle(self, *, limit: int, **options) -> None:
         """Parse feeds for all active podcasts."""
-
         podcasts = (
             Podcast.objects.scheduled()
             .annotate(
