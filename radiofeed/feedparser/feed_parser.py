@@ -21,9 +21,9 @@ from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 
 
-def parse_feed(podcast: Podcast, client: Client) -> None:
+def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
     """Updates a Podcast instance with its RSS or Atom feed source."""
-    _FeedParser(podcast).parse(client)
+    return _FeedParser(podcast).parse(client)
 
 
 @functools.cache
@@ -36,7 +36,7 @@ class _FeedParser:
     def __init__(self, podcast: Podcast) -> None:
         self._podcast = podcast
 
-    def parse(self, client: Client) -> None:
+    def parse(self, client: Client) -> Podcast.ParserResult:
         canonical = None
 
         etag, modified, content_hash = (
@@ -66,7 +66,7 @@ class _FeedParser:
             if canonical := self._get_canonical(response.url, content_hash):
                 raise DuplicateError
 
-            self._handle_success(
+            return self._handle_success(
                 feed=rss_parser.parse_rss(response.content),
                 rss=response.url,
                 content_hash=content_hash,
@@ -76,7 +76,7 @@ class _FeedParser:
                 updated=updated,
             )
         except FeedParserError as exc:
-            self._handle_error(
+            return self._handle_error(
                 exc,
                 canonical=canonical,
                 content_hash=content_hash,
@@ -86,13 +86,14 @@ class _FeedParser:
                 updated=updated,
             )
 
-    def _handle_success(self, feed: Feed, **fields) -> None:
+    def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
         keywords, categories = self._parse_categories(feed)
         try:
             with transaction.atomic():
+                result = Podcast.ParserResult.SUCCESS
                 self._update(
                     num_retries=0,
-                    parser_result=Podcast.ParserResult.SUCCESS,
+                    parser_result=result,
                     active=not feed.complete,
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),
@@ -108,10 +109,11 @@ class _FeedParser:
                 )
                 self._podcast.categories.set(categories)
                 self._sync_episodes(feed)
+                return result
         except (DataError, IntegrityError) as exc:
             raise InvalidDataError from exc
 
-    def _handle_error(self, exc: FeedParserError, **fields) -> None:
+    def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
         # Handle errors when parsing a feed
         active = True
         num_retries = self._podcast.num_retries
@@ -142,7 +144,7 @@ class _FeedParser:
             parser_result=exc.result,
             **fields,
         )
-        raise exc
+        return exc.result
 
     def _update(self, **fields) -> None:
         # Update the podcast with the new fields

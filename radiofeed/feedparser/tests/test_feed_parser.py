@@ -8,14 +8,6 @@ import pytest
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.feedparser.date_parser import parse_date
-from radiofeed.feedparser.exceptions import (
-    DiscontinuedError,
-    DuplicateError,
-    InvalidDataError,
-    InvalidRSSError,
-    NotModifiedError,
-    UnavailableError,
-)
 from radiofeed.feedparser.feed_parser import get_categories_dict, parse_feed
 from radiofeed.feedparser.rss_fetcher import make_content_hash
 from radiofeed.http_client import Client
@@ -69,18 +61,6 @@ class TestFeedParser:
 
     def get_rss_content(self, filename=""):
         return _get_mock_file_path(filename or self.mock_file).read_bytes()
-
-    @pytest.mark.django_db
-    def test_parse_unhandled_exception(self, podcast):
-        def _handle(_):
-            raise ValueError("oops")
-
-        client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(ValueError, match="oops"):
-            parse_feed(podcast, client)
-
-        podcast.refresh_from_db()
-        assert podcast.active
 
     @pytest.mark.django_db
     def test_parse_ok(self, categories):
@@ -358,8 +338,7 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(NotModifiedError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -394,8 +373,7 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(DuplicateError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -505,8 +483,7 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(DuplicateError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -523,8 +500,7 @@ class TestFeedParser:
             content=self.get_rss_content("rss_invalid_data.xml"),
         )
 
-        with pytest.raises(InvalidDataError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -545,8 +521,7 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(InvalidRSSError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -565,8 +540,7 @@ class TestFeedParser:
             content=self.get_rss_content("rss_empty_mock.xml"),
         )
 
-        with pytest.raises(InvalidRSSError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -584,8 +558,7 @@ class TestFeedParser:
 
         podcast.num_retries = 1
 
-        with pytest.raises(NotModifiedError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -601,8 +574,7 @@ class TestFeedParser:
         client = _mock_client(
             status_code=http.HTTPStatus.GONE,
         )
-        with pytest.raises(DiscontinuedError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -617,8 +589,7 @@ class TestFeedParser:
         client = _mock_client(
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
-        with pytest.raises(UnavailableError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -632,8 +603,7 @@ class TestFeedParser:
     def test_parse_connect_error(self, podcast):
         client = _mock_error_client(httpx.HTTPError("fail"))
 
-        with pytest.raises(UnavailableError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 

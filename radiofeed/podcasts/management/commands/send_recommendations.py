@@ -45,9 +45,4 @@ class Command(BaseCommand):
                 )
 
                 recipient.user.recommended_podcasts.add(*podcasts)
-
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"{num_podcasts} recommendations sent to {recipient.email}"
-                    )
-                )
+                self.stdout.write(f"Recommendations sent to {recipient.email}")

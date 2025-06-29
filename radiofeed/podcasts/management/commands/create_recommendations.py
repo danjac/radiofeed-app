@@ -21,8 +21,4 @@ class Command(BaseCommand):
 
         for language in languages:
             recommender.recommend(language)
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Recommendations created for language: {language}",
-                )
-            )
+            self.stdout.write(f"Recommendations created for language: {language}")

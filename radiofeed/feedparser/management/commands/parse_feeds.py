@@ -2,7 +2,6 @@ from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
 from django.db.models import Case, Count, IntegerField, When
 
-from radiofeed.feedparser.exceptions import FeedParserError
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
@@ -46,8 +45,5 @@ class Command(BaseCommand):
         client = get_client()
 
         for podcast in podcasts:
-            try:
-                parse_feed(podcast, client)
-                self.stdout.write(self.style.SUCCESS(f"{podcast}: Success"))
-            except FeedParserError as exc:
-                self.stderr.write(self.style.NOTICE(f"{podcast}: {exc.result.label}"))
+            result = parse_feed(podcast, client)
+            self.stdout.write(f"{podcast}: {result.label}")
