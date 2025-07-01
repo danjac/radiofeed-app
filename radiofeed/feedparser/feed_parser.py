@@ -37,7 +37,7 @@ class _FeedParser:
         self._podcast = podcast
 
     def parse(self, client: Client) -> Podcast.ParserResult:
-        canonical = None
+        canonical_id: int | None = None
 
         etag, modified, content_hash = (
             self._podcast.etag,
@@ -63,7 +63,7 @@ class _FeedParser:
             if content_hash == self._podcast.content_hash:
                 raise NotModifiedError
 
-            if canonical := self._get_canonical(response.url, content_hash):
+            if canonical_id := self._get_canonical(response.url, content_hash):
                 raise DuplicateError
 
             return self._handle_success(
@@ -78,7 +78,7 @@ class _FeedParser:
         except FeedParserError as exc:
             return self._handle_error(
                 exc,
-                canonical=canonical,
+                canonical_id=canonical_id,
                 content_hash=content_hash,
                 etag=etag,
                 modified=modified,
@@ -150,7 +150,7 @@ class _FeedParser:
         # Update the podcast with the new fields
         Podcast.objects.filter(pk=self._podcast.pk).update(**fields)
 
-    def _get_canonical(self, url: str, content_hash: str) -> Podcast | None:
+    def _get_canonical(self, url: str, content_hash: str) -> int | None:
         # Get the canonical podcast if it exists: matches the RSS feed URL or content hash
         return (
             Podcast.objects.exclude(pk=self._podcast.pk)
@@ -158,6 +158,7 @@ class _FeedParser:
                 Q(rss=url) | Q(content_hash=content_hash),
                 canonical__isnull=True,
             )
+            .values_list("pk", flat=True)
             .first()
         )
 
