@@ -4,7 +4,6 @@ import hashlib
 import httpx
 from django.conf import settings
 from django.core.cache import cache
-from django.db import transaction
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
@@ -81,7 +80,7 @@ def fetch_chart(
     country: str,
     *,
     limit: int,
-    promote: bool = False,
+    **fields,
 ) -> list[Feed]:
     """Fetch top chart from iTunes podcast API. Any new podcasts will be added."""
 
@@ -99,22 +98,17 @@ def fetch_chart(
         },
     ):
         urls = _get_canonical_urls(feeds)
-        if promote:
-            with transaction.atomic():
-                # demote current promoted podcasts
-                Podcast.objects.filter(promoted=True).update(promoted=False)
+        podcasts = (Podcast(rss=url, **fields) for url in urls)
 
-                Podcast.objects.bulk_create(
-                    (Podcast(rss=url, promoted=True) for url in urls),
-                    unique_fields=["rss"],
-                    update_conflicts=True,
-                    update_fields=["promoted"],
-                )
-        else:
+        if fields:
             Podcast.objects.bulk_create(
-                (Podcast(rss=url) for url in urls),
-                ignore_conflicts=True,
+                podcasts,
+                unique_fields=["rss"],
+                update_conflicts=True,
+                update_fields=fields,
             )
+        else:
+            Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
 
     return feeds
 

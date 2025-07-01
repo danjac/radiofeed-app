@@ -272,7 +272,7 @@ class TestFetchTopChart:
             good_client,
             country="us",
             limit=10,
-            promote=True,
+            promoted=True,
         )
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
@@ -283,7 +283,7 @@ class TestFetchTopChart:
             good_client,
             country="us",
             limit=10,
-            promote=True,
+            promoted=True,
         )
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
@@ -305,7 +305,7 @@ class TestFetchTopChart:
             good_client,
             country="us",
             limit=10,
-            promote=True,
+            promoted=True,
         )
         assert len(feeds) == 1
         podcast.refresh_from_db()
@@ -322,19 +322,16 @@ class TestFetchTopChart:
         assert len(feeds) == 1
 
     @pytest.mark.django_db
-    def test_demote(self, good_client):
+    def test_no_fields(self, good_client):
         podcast = PodcastFactory(rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"])
 
         PodcastFactory()
-        feeds = itunes.fetch_chart(
-            good_client,
-            country="us",
-            limit=10,
-            promote=True,
-        )
+        feeds = itunes.fetch_chart(good_client, country="us", limit=10)
 
         assert len(feeds) == 1
         assert feeds[0].rss == podcast.rss
+        podcast.refresh_from_db()
+        assert podcast.promoted is False
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):

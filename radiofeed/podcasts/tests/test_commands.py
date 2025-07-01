@@ -33,7 +33,7 @@ class TestFetchTopItunes:
         )
         client = get_client()
         call_command("fetch_top_itunes", promote="gb", countries=["gb"])
-        patched.assert_called_with(client, "gb", promote=True, limit=30)
+        patched.assert_called_with(client, "gb", promoted=True, limit=30)
 
     @pytest.mark.django_db
     def test_error(self, mocker):
