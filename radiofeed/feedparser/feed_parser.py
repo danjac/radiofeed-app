@@ -87,10 +87,10 @@ class _FeedParser:
             )
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
+        result = Podcast.ParserResult.SUCCESS
         keywords, categories = self._parse_categories(feed)
         try:
             with transaction.atomic():
-                result = Podcast.ParserResult.SUCCESS
                 self._update(
                     num_retries=0,
                     parser_result=result,
