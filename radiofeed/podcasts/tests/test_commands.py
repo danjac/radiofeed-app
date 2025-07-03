@@ -1,5 +1,5 @@
 import pytest
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
@@ -22,6 +22,30 @@ class TestFetchTopItunes:
         )
         call_command("fetch_top_itunes")
         patched.assert_called()
+
+    @pytest.mark.django_db
+    def test_invalid_country(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[
+                PodcastFactory(),
+            ],
+        )
+        with pytest.raises(CommandError):
+            call_command("fetch_top_itunes", countries=["tz"])
+        patched.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_invalid_promoted_country(self, mocker):
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[
+                PodcastFactory(),
+            ],
+        )
+        with pytest.raises(CommandError):
+            call_command("fetch_top_itunes", promote="tz")
+        patched.assert_not_called()
 
     @pytest.mark.django_db
     def test_promote(self, mocker):

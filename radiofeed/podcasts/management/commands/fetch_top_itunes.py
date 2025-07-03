@@ -1,6 +1,6 @@
 from typing import Final
 
-from django.core.management import CommandParser
+from django.core.management import CommandError, CommandParser
 from django.core.management.base import BaseCommand
 
 from radiofeed.http_client import get_client
@@ -67,6 +67,10 @@ class Command(BaseCommand):
     ) -> None:
         """Fetch the top iTunes podcasts for a given country."""
         client = get_client()
+
+        for country in [promote, *countries]:
+            if country is not None and country not in COUNTRIES:
+                raise CommandError(f"{country} is not an available country code.")
 
         for country in countries:
             self.stdout.write(
