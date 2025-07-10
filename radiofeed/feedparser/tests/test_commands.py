@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 from django.core.management import call_command
 
 from radiofeed.podcasts.models import Podcast
@@ -10,7 +11,6 @@ class TestParseFeeds:
 
     @pytest.mark.django_db()(transaction=True)
     def test_ok(self, mocker):
-        mock_parse = mocker.patch(self._PARSE_FEED)
         mock_parse = mocker.patch(
             self._PARSE_FEED,
             return_value=Podcast.ParserResult.SUCCESS,
@@ -18,6 +18,15 @@ class TestParseFeeds:
         PodcastFactory(pub_date=None)
         call_command("parse_feeds")
         mock_parse.assert_called()
+
+    @pytest.mark.django_db
+    @pytest.mark.usefixtures("_locmem_cache")
+    def test_locked(self, mocker):
+        cache.set("parse-feeds-lock", value=True, timeout=60)
+        mock_parse = mocker.patch(self._PARSE_FEED)
+        PodcastFactory(pub_date=None)
+        call_command("parse_feeds")
+        mock_parse.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)
     def test_not_scheduled(self, mocker):

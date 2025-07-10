@@ -1,6 +1,7 @@
+from django.core.cache import cache
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db.models import Case, Count, IntegerField, When
+from django.db.models import Case, Count, IntegerField, QuerySet, When
 
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.http_client import get_client
@@ -9,6 +10,8 @@ from radiofeed.podcasts.models import Podcast
 
 class Command(BaseCommand):
     """Parse feeds for all active podcasts."""
+
+    cache_lock_name = "parse-feeds-lock"
 
     def add_arguments(self, parser: CommandParser) -> None:
         """Add command line arguments for the parse_feeds command."""
@@ -20,9 +23,37 @@ class Command(BaseCommand):
             help="Limit the number of podcasts to parse (default: 360)",
         )
 
-    def handle(self, *, limit: int, **options) -> None:
+        parser.add_argument(
+            "--lock-timeout",
+            "-t",
+            type=int,
+            default=60 * 60,
+            help="Lock timeout in seconds (default: 3600)",
+        )
+
+    def handle(self, *, limit: int, lock_timeout: int, **options) -> None:
         """Parse feeds for all active podcasts."""
-        podcasts = (
+
+        if cache.get(self.cache_lock_name):
+            self.stdout.write(
+                self.style.ERROR("Another parse_feeds command is already running.")
+            )
+            return
+
+        cache.set(self.cache_lock_name, value=True, timeout=lock_timeout)
+
+        try:
+            client = get_client()
+
+            for podcast in self._get_scheduled_podcasts(limit):
+                result = parse_feed(podcast, client)
+                self.stdout.write(f"{podcast}: {result.label}")
+
+        finally:
+            cache.delete(self.cache_lock_name)
+
+    def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
+        return (
             Podcast.objects.scheduled()
             .annotate(
                 subscribers=Count("subscriptions"),
@@ -41,9 +72,3 @@ class Command(BaseCommand):
                 "updated",
             )[:limit]
         )
-
-        client = get_client()
-
-        for podcast in podcasts:
-            result = parse_feed(podcast, client)
-            self.stdout.write(f"{podcast}: {result.label}")
