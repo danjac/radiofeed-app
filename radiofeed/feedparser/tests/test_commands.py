@@ -1,6 +1,6 @@
 import pytest
 from django.core.cache import cache
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
@@ -25,7 +25,8 @@ class TestParseFeeds:
         cache.set("parse-feeds-lock", value=True, timeout=60)
         mock_parse = mocker.patch(self._PARSE_FEED)
         PodcastFactory(pub_date=None)
-        call_command("parse_feeds")
+        with pytest.raises(CommandError):
+            call_command("parse_feeds")
         mock_parse.assert_not_called()
 
     @pytest.mark.django_db()(transaction=True)

@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from django.core.management import CommandParser
+from django.core.management import CommandError, CommandParser
 from django.core.management.base import BaseCommand
 from django.db.models import Case, Count, IntegerField, QuerySet, When
 
@@ -35,10 +35,7 @@ class Command(BaseCommand):
         """Parse feeds for all active podcasts."""
 
         if cache.get(self.cache_lock_name):
-            self.stdout.write(
-                self.style.ERROR("Another parse_feeds command is already running.")
-            )
-            return
+            raise CommandError("Another parse_feeds command is already running.")
 
         cache.set(self.cache_lock_name, value=True, timeout=lock_timeout)
 
