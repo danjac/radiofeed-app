@@ -3,6 +3,10 @@ cronjobs:
       schedule: "*/6 * * * *" # Every 6 minutes
       command: "{{ manage_cmd }} parse_feeds"
 
+    - name: "clear-sessions"
+      schedule: "20 5 * * *" # 5:20 AM every day
+      command: "{{ manage_cmd }} clearsessions"
+
     - name: "create-recommendations"
       schedule: "20 4 * * *" # 4:20 AM every day
       command: "{{ manage_cmd }} create_recommendations"
