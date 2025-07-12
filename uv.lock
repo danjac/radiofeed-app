@@ -437,7 +437,7 @@ wheels = [
 
 [[package]]
 name = "django-tailwind-cli"
-version = "4.2.4"
+version = "4.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
@@ -445,9 +445,9 @@ dependencies = [
     { name = "requests" },
     { name = "semver" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f8/00/78a9688303f5d11551084b2bacb445af7503ecc87936d6ef300df1f45a55/django_tailwind_cli-4.2.4.tar.gz", hash = "sha256:023072bdc956c6b171c75eaa9950a5730f9107cfabd72922985ff345238335fb", size = 68070 }
+sdist = { url = "https://files.pythonhosted.org/packages/7d/14/319efb2f43b635382cee74e80da7ab383c69e98cf6ef35c00a754454931e/django_tailwind_cli-4.3.0.tar.gz", hash = "sha256:20da555409eccaeb3c38837b33186b6523f44cb88c80136de3bac3b593253331", size = 101182 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/97/061fbc27d5a06878dd2b9ce8f67d63579b14bf8858e5354ad698fff5a33b/django_tailwind_cli-4.2.4-py3-none-any.whl", hash = "sha256:5857e6e664fbbc1b266889894057b131ff8617e48e8666a219563245170a72e2", size = 12273 },
+    { url = "https://files.pythonhosted.org/packages/12/1a/1c15852b3002929ed08992aeaaea703c43a43345dc19a09fd457593f52a6/django_tailwind_cli-4.3.0-py3-none-any.whl", hash = "sha256:0ff7d7374a390e63cba77894a13de2bf8721320a5bad97361cb14e160cc824b5", size = 29704 },
 ]
 
 [[package]]
