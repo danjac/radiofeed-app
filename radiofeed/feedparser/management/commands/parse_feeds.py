@@ -1,5 +1,4 @@
-from django.core.cache import cache
-from django.core.management import CommandError, CommandParser
+from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
 from django.db.models import Case, Count, IntegerField, QuerySet, When
 
@@ -11,8 +10,6 @@ from radiofeed.podcasts.models import Podcast
 class Command(BaseCommand):
     """Parse feeds for all active podcasts."""
 
-    cache_lock_name = "parse-feeds-lock"
-
     def add_arguments(self, parser: CommandParser) -> None:
         """Add command line arguments for the parse_feeds command."""
         parser.add_argument(
@@ -23,31 +20,14 @@ class Command(BaseCommand):
             help="Limit the number of podcasts to parse (default: 360)",
         )
 
-        parser.add_argument(
-            "--lock-timeout",
-            "-t",
-            type=int,
-            default=60 * 60,
-            help="Lock timeout in seconds (default: 3600)",
-        )
-
-    def handle(self, *, limit: int, lock_timeout: int, **options) -> None:
+    def handle(self, *, limit: int, **options) -> None:
         """Parse feeds for all active podcasts."""
 
-        if cache.get(self.cache_lock_name):
-            raise CommandError("Another parse_feeds command is already running.")
+        client = get_client()
 
-        cache.set(self.cache_lock_name, value=True, timeout=lock_timeout)
-
-        try:
-            client = get_client()
-
-            for podcast in self._get_scheduled_podcasts(limit):
-                result = parse_feed(podcast, client)
-                self.stdout.write(f"{podcast}: {result.label}")
-
-        finally:
-            cache.delete(self.cache_lock_name)
+        for podcast in self._get_scheduled_podcasts(limit):
+            result = parse_feed(podcast, client)
+            self.stdout.write(f"{podcast}: {result.label}")
 
     def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
         return (
