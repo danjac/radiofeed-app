@@ -1,6 +1,6 @@
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db.models import Case, Count, IntegerField, QuerySet, When
+from django.db.models import Case, Count, IntegerField, When
 
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.http_client import get_client
@@ -25,12 +25,7 @@ class Command(BaseCommand):
 
         client = get_client()
 
-        for podcast in self._get_scheduled_podcasts(limit):
-            result = parse_feed(podcast, client)
-            self.stdout.write(f"{podcast}: {result.label}")
-
-    def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
-        return (
+        podcasts = (
             Podcast.objects.scheduled()
             .annotate(
                 subscribers=Count("subscriptions"),
@@ -49,3 +44,7 @@ class Command(BaseCommand):
                 "updated",
             )[:limit]
         )
+
+        for podcast in podcasts:
+            result = parse_feed(podcast, client)
+            self.stdout.write(f"{podcast}: {result.label}")
