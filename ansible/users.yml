@@ -1,0 +1,9 @@
+- name: Create deployment user
+  hosts: all
+  remote_user: root
+  become: false
+  gather_facts: true
+  vars:
+      ansible_user: root
+  roles:
+      - user

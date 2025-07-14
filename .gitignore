@@ -58,3 +58,4 @@ ansible/.vault_pass
 ansible/hosts.yml
 ansible/certs
 ansible/scripts
+ansible/ssh-keys
