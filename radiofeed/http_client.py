@@ -1,4 +1,5 @@
 import functools
+from typing import ContextManager
 
 import httpx
 from django.conf import settings
@@ -33,6 +34,13 @@ class Client:
         response.raise_for_status()
 
         return response
+
+    def stream(
+        self, url: str, headers: dict | None = None, **kwargs
+    ) -> ContextManager[httpx.Response]:
+        """Does an HTTP GET request."""
+
+        return self._client.stream("GET", url, headers=headers, **kwargs)
 
 
 @functools.cache

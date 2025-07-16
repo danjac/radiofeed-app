@@ -9,10 +9,14 @@ from django.core.signing import Signer
 from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
+from PIL import Image
 
 from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
+
+# prevent PIL from raising an error on large images
+Image.MAX_IMAGE_PIXELS = 20_000_000
 
 
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {

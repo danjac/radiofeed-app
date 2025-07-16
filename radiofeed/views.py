@@ -146,10 +146,12 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     try:
         cover_url = get_cover_url_signer().unsign(signed_url)
-        content = get_client().get(cover_url).content
-        image = Image.open(io.BytesIO(content)).resize(
-            (size, size), Image.Resampling.LANCZOS
-        )
+        with get_client().stream(cover_url) as response:
+            response.raise_for_status()
+            content = response.read()
+            image = Image.open(io.BytesIO(content)).resize(
+                (size, size), Image.Resampling.LANCZOS
+            )
     except (
         OSError,
         BadSignature,
