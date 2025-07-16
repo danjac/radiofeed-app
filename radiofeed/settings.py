@@ -45,6 +45,7 @@ INSTALLED_APPS: list[str] = [
     "health_check",
     "health_check.db",
     "health_check.cache",
+    "health_check.contrib.db_heartbeat",
     "health_check.contrib.migrations",
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
