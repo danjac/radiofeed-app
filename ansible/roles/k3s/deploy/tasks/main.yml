@@ -2,8 +2,8 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
   vars:
-      memory_request_percent: 0.2
-      memory_limit_percent: 0.5
+      memory_request_percent: 0.3
+      memory_limit_percent: 0.75
       cpu_request_percent: 0.2
       cpu_limit_percent: 0.3
       cloudflare_cert: "cloudflare.pem"
