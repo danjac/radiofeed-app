@@ -59,12 +59,8 @@ def fetch_rss(
     """Fetches RSS or Atom feed."""
     try:
         try:
-            return Response(
-                client.get(
-                    url,
-                    headers=build_http_headers(etag=etag, modified=modified),
-                )
-            )
+            client.head(url, headers=build_http_headers(etag=etag, modified=modified))
+            return Response(client.get(url))
         except httpx.HTTPStatusError as exc:
             match exc.response.status_code:
                 case http.HTTPStatus.GONE:
