@@ -98,17 +98,62 @@ class TestAcceptCookies:
 
 class TestCoverImage:
     cover_url = "http://example.com/test.png"
+    content_length = 1024 * 1024
 
     @pytest.mark.django_db
     def test_ok(self, client, mocker):
         def _handler(request):
-            return httpx.Response(http.HTTPStatus.OK, content=b"test value")
+            return httpx.Response(
+                http.HTTPStatus.OK,
+                content=b"test value",
+                headers={"Content-Length": str(self.content_length)},
+            )
 
         mock_client = Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
         mocker.patch("PIL.Image.open", return_value=mocker.Mock())
         response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)
+
+    @pytest.mark.django_db
+    def test_exceeds_limit(self, client, mocker):
+        def _handler(request):
+            return httpx.Response(
+                http.HTTPStatus.OK, headers={"Content-Length": str(1000 * 1000 * 3)}
+            )
+
+        mock_client = Client(transport=httpx.MockTransport(_handler))
+        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
+        mock_image = mocker.patch("PIL.Image.open", return_value=mocker.Mock())
+        response = client.get(get_cover_image_url(self.cover_url, 96))
+        assert200(response)
+        mock_image.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_invalid_content_length(self, client, mocker, settings):
+        def _handler(request):
+            return httpx.Response(
+                http.HTTPStatus.OK, headers={"Content-Length": "invalid"}
+            )
+
+        mock_client = Client(transport=httpx.MockTransport(_handler))
+        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
+        mock_image = mocker.patch("PIL.Image.open", return_value=mocker.Mock())
+        response = client.get(get_cover_image_url(self.cover_url, 96))
+        assert200(response)
+        mock_image.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_no_content_length(self, client, mocker, settings):
+        def _handler(request):
+            return httpx.Response(http.HTTPStatus.OK)
+
+        mock_client = Client(transport=httpx.MockTransport(_handler))
+        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
+        mock_image = mocker.patch("PIL.Image.open", return_value=mocker.Mock())
+        response = client.get(get_cover_image_url(self.cover_url, 96))
+        assert200(response)
+        mock_image.assert_not_called()
 
     @pytest.mark.django_db
     def test_not_accepted_size(self, client):
@@ -148,7 +193,11 @@ class TestCoverImage:
     @pytest.mark.django_db
     def test_failed_process(self, client, mocker):
         def _handler(_):
-            return httpx.Response(http.HTTPStatus.OK, content=b"")
+            return httpx.Response(
+                http.HTTPStatus.OK,
+                content=b"",
+                headers={"Content-Length": str(self.content_length)},
+            )
 
         mock_client = Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)

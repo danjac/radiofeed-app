@@ -146,10 +146,22 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
 
     try:
         cover_url = get_cover_url_signer().unsign(signed_url)
+        client = get_client()
+
+        response = client.head(cover_url)
+
+        try:
+            content_length = int(response.headers.get("Content-Length", None))
+        except (ValueError, TypeError):
+            # assume max if not provided
+            content_length = settings.COVER_IMAGE_MAX_SIZE + 1
+
+        if content_length > settings.COVER_IMAGE_MAX_SIZE:
+            raise ValueError("Cover image too large")
 
         buffer = io.BytesIO()
 
-        with get_client().stream(cover_url) as response:
+        with client.stream(cover_url) as response:
             response.raise_for_status()
 
             for chunk in response.iter_bytes():
@@ -159,6 +171,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         image = Image.open(buffer).resize((size, size), Image.Resampling.LANCZOS)
     except (
         OSError,
+        ValueError,
         BadSignature,
         httpx.HTTPError,
     ):

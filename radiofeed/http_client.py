@@ -35,10 +35,17 @@ class Client:
 
         return response
 
+    def head(self, url: str, headers: dict | None = None, **kwargs) -> httpx.Response:
+        """Does an HTTP HEAD request."""
+        response = self._client.head(url, headers=headers, **kwargs)
+        response.raise_for_status()
+
+        return response
+
     def stream(
         self, url: str, headers: dict | None = None, **kwargs
     ) -> ContextManager[httpx.Response]:
-        """Does an HTTP GET request."""
+        """Does an HTTP GET request and returns a stream."""
 
         return self._client.stream("GET", url, headers=headers, **kwargs)
 
