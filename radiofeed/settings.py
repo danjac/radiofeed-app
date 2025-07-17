@@ -517,10 +517,15 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # PROJECT-SPECIFIC SETTINGS
+#
 
 # Cookie used to check user accepts cookies
 
 GDPR_COOKIE_NAME = "accept-cookies"
+
+# Max of retries for feed parser before podcast is marked as inactive
+
+FEED_PARSER_MAX_RETRIES = env.int("FEED_PARSER_MAX_RETRIES", default=30)
 
 # User-Agent header for API calls from this site
 

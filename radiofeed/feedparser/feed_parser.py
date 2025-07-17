@@ -2,6 +2,7 @@ import functools
 import itertools
 from collections.abc import Iterator
 
+from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.db.utils import DataError
@@ -127,6 +128,7 @@ class _FeedParser:
                 active = False
             case _:
                 num_retries += 1
+                active = num_retries < settings.FEED_PARSER_MAX_RETRIES
 
         frequency = (
             scheduler.reschedule(
