@@ -104,7 +104,7 @@ class TestSaveCoverImage:
 
         mocker.patch("radiofeed.cover_image.Image.open", get_mock_image)
 
-        save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
+        save_cover_image(100, io.BytesIO())
 
     def test_too_large(self, mocker, settings):
         settings.COVER_IMAGE_MAX_SIZE = 1 * 1024 * 1024  # 1 MB
@@ -121,12 +121,12 @@ class TestSaveCoverImage:
         mocker.patch("radiofeed.cover_image.Image.open", get_mock_image)
 
         with pytest.raises(CoverImageError):
-            save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
+            save_cover_image(100, io.BytesIO())
 
     def test_error(self, mocker):
         mocker.patch("radiofeed.cover_image.Image.open", side_effect=OSError())
         with pytest.raises(CoverImageError):
-            save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
+            save_cover_image(100, io.BytesIO())
 
 
 class TestGetMetadataInfo:

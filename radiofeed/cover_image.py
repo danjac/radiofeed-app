@@ -4,7 +4,7 @@ import itertools
 import logging
 import pathlib
 import urllib.parse
-from typing import Final, Literal
+from typing import BinaryIO, Final, Literal
 
 import httpx
 from django.conf import settings
@@ -110,7 +110,11 @@ def get_cover_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
-def fetch_cover_image(client: Client, cover_url: str) -> io.BytesIO:
+def fetch_cover_image(
+    client: Client,
+    cover_url: str,
+    output: BinaryIO | None = None,
+) -> BinaryIO:
     """Fetches the cover image.
 
     Raises CoverImageError if the image is too large or cannot be fetched or processed.
@@ -127,18 +131,19 @@ def fetch_cover_image(client: Client, cover_url: str) -> io.BytesIO:
         if content_length > settings.COVER_IMAGE_MAX_SIZE:
             raise CoverImageTooLargeError
 
-        buffer = io.BytesIO()
+        output = output or io.BytesIO()
 
         with client.stream(cover_url) as response:
             response.raise_for_status()
 
             for chunk in response.iter_bytes():
-                buffer.write(chunk)
-                if buffer.tell() > settings.COVER_IMAGE_MAX_SIZE:
+                output.write(chunk)
+                if output.tell() > settings.COVER_IMAGE_MAX_SIZE:
                     raise CoverImageTooLargeError
 
-        buffer.seek(0)
-        return buffer
+        output.truncate()
+        output.seek(0)
+        return output
 
     except (ValueError, httpx.HTTPError) as exc:
         logger.exception(exc)
@@ -146,15 +151,16 @@ def fetch_cover_image(client: Client, cover_url: str) -> io.BytesIO:
 
 
 def save_cover_image(
-    input: io.BytesIO,
-    output: io.BytesIO,
     size: int,
+    input: BinaryIO,
     *,
+    output: BinaryIO | None = None,
     format: str = "webp",
     quality: float = 90,
-) -> None:
-    """Creates a PIL Image from the given data."""
+) -> BinaryIO:
+    """Creates a PIL Image from the given input stream and saves it to the output stream."""
     try:
+        input.seek(0)
         with Image.open(input) as original:
             width, height = original.size
             pixels = width * height
@@ -166,7 +172,13 @@ def save_cover_image(
                 )
 
             image = original.resize((size, size), Image.Resampling.LANCZOS)
+
+            output = output or io.BytesIO()
+
             image.save(output, format=format, quality=quality, optimize=True)
+            output.truncate()
+            output.seek(0)
+            return output
     except (
         Image.UnidentifiedImageError,
         Image.DecompressionBombError,

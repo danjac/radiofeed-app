@@ -1,5 +1,4 @@
 import datetime
-import io
 from typing import Final
 
 from django.conf import settings
@@ -152,13 +151,10 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from exc
 
     try:
-        output = io.BytesIO()
-        save_cover_image(
-            fetch_cover_image(get_client(), cover_url),
-            output,
+        output = save_cover_image(
             size,
+            fetch_cover_image(get_client(), cover_url),
         )
-        output.seek(0)
     except CoverImageError:
         output = get_placeholder_path(size).open("rb")
 
