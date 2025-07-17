@@ -102,7 +102,7 @@ class TestCoverImage:
     @pytest.mark.django_db
     def test_ok(self, client, mocker):
         def _handler(request):
-            return httpx.Response(http.HTTPStatus.OK, content=b"")
+            return httpx.Response(http.HTTPStatus.OK, content=b"test value")
 
         mock_client = Client(transport=httpx.MockTransport(_handler))
         mocker.patch("radiofeed.views.get_client", return_value=mock_client)
