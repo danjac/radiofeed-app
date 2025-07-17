@@ -110,9 +110,9 @@ class _FeedParser:
                 )
                 self._podcast.categories.set(categories)
                 self._sync_episodes(feed)
-            return result
         except (DataError, IntegrityError) as exc:
             raise InvalidDataError from exc
+        return result
 
     def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
         # Handle errors when parsing a feed
