@@ -464,7 +464,7 @@ wheels = [
 
 [[package]]
 name = "django-typer"
-version = "3.2.0"
+version = "3.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -472,9 +472,9 @@ dependencies = [
     { name = "shellingham" },
     { name = "typer-slim" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f7/24/606d027e7dab212eb5c27abaf3f1259eb6ecbb015eaa165d1aac2df1c167/django_typer-3.2.0.tar.gz", hash = "sha256:9c4bfb3b8fbc9f49c5e847994ce8ea2130052e4207f8b0e6edd2ebcf743a8cc3", size = 2907087 }
+sdist = { url = "https://files.pythonhosted.org/packages/f7/46/b0f8baf87a4c32ef1cd91db655736d676e1a4d56437c7d14f0795164e37a/django_typer-3.2.1.tar.gz", hash = "sha256:6a28acae7c9ad870583c77f65153badc7ab61c041c46697bd258a8fe921bf0af", size = 2913754 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/f3/8d95ee14d4c5120584a45aadbcd3b93e32c52f2774c9f4fc1e134b82a561/django_typer-3.2.0-py3-none-any.whl", hash = "sha256:e9727ac3ffc24cc2fc954a3a4b1c710552240692cc3bb21f1b7725c45c3d6de7", size = 295600 },
+    { url = "https://files.pythonhosted.org/packages/1f/6f/c6057c9fe1c8b8097fba0e401a3d79f68d5df498280b4356a539bf8d9b62/django_typer-3.2.1-py3-none-any.whl", hash = "sha256:7acdecc47955a72526db76d34ebc98d565f28f432ffb3ec5e3151df3dd542f4d", size = 295596 },
 ]
 
 [[package]]
