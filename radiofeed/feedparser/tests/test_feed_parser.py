@@ -613,3 +613,22 @@ class TestFeedParser:
         assert podcast.parsed
 
         assert podcast.num_retries == 1
+
+    @pytest.mark.django_db
+    def test_parse_exceeds_max_retries(self, settings):
+        settings.FEED_PARSER_MAX_RETRIES = 30
+
+        podcast = PodcastFactory(num_retries=31)
+
+        client = _mock_error_client(httpx.HTTPError("fail"))
+
+        parse_feed(podcast, client)
+
+        podcast.refresh_from_db()
+
+        assert podcast.parser_result == Podcast.ParserResult.UNAVAILABLE
+
+        assert not podcast.active
+        assert podcast.parsed
+
+        assert podcast.num_retries == 32
