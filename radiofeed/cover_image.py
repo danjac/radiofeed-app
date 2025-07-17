@@ -1,6 +1,7 @@
 import functools
 import io
 import itertools
+import logging
 import pathlib
 import urllib.parse
 import warnings
@@ -19,6 +20,7 @@ from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
 
+logger = logging.getLogger(__name__)
 
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "card": (96, 96),
@@ -32,8 +34,6 @@ _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
     "tile": "size-40 lg:size-56",
 }
 
-# Handle potential decompression bomb warnings from PIL
-Image.MAX_IMAGE_PIXELS = (settings.COVER_IMAGE_MAX_SIZE * 4) // 3
 # Raises an error instead of a warning for decompression bombs
 #
 warnings.simplefilter("error", Image.DecompressionBombWarning)
@@ -94,17 +94,13 @@ def get_cover_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
-def fetch_cover_image(
-    client: Client,
-    cover_url: str,
-    size: int,
-) -> io.BufferedIOBase:
-    """Fetches and resizes the cover image in WEBP format from the given URL.
-    If error returns a placeholder image.
+def fetch_cover_image(client: Client, cover_url: str) -> io.BytesIO:
+    """Fetches the cover image.
 
     Raises CoverImageError if the image is too large or cannot be fetched or processed.
     """
     try:
+        logger.debug("Fetching cover image from %s", cover_url)
         response = client.head(cover_url)
 
         try:
@@ -126,21 +122,34 @@ def fetch_cover_image(
                     raise CoverImageTooLargeError
 
         buffer.seek(0)
+        return buffer
 
-        image = Image.open(buffer).resize((size, size), Image.Resampling.LANCZOS)
+    except (ValueError, httpx.HTTPError) as exc:
+        logger.exception(exc)
+        raise CoverImageError from exc
 
-        output = io.BytesIO()
-        image.save(output, format="webp", optimize=True, quality=90)
-        output.seek(0)
 
-        return output
-
+def save_cover_image(
+    input: io.BytesIO,
+    output: io.BytesIO,
+    size: int,
+    *,
+    format: str = "webp",
+    quality: float = 90,
+) -> None:
+    """Creates a PIL Image from the given data."""
+    # Handle potential decompression bomb warnings from PIL
+    Image.MAX_IMAGE_PIXELS = settings.COVER_IMAGE_MAX_SIZE * 4
+    try:
+        image = Image.open(input).resize((size, size), Image.Resampling.LANCZOS)
+        image.save(output, format=format, quality=quality, optimize=True)
     except (
-        OSError,
-        ValueError,
+        Image.UnidentifiedImageError,
         Image.DecompressionBombError,
-        httpx.HTTPError,
+        Image.DecompressionBombWarning,
+        OSError,
     ) as exc:
+        logger.exception(exc)
         raise CoverImageError from exc
 
 

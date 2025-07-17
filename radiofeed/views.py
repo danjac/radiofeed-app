@@ -1,4 +1,5 @@
 import datetime
+import io
 from typing import Final
 
 from django.conf import settings
@@ -23,6 +24,7 @@ from radiofeed.cover_image import (
     get_cover_url_signer,
     get_placeholder_path,
     is_cover_image_size,
+    save_cover_image,
 )
 from radiofeed.http_client import get_client
 
@@ -150,7 +152,13 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from exc
 
     try:
-        output = fetch_cover_image(get_client(), cover_url, size)
+        output = io.BytesIO()
+        save_cover_image(
+            fetch_cover_image(get_client(), cover_url),
+            output,
+            size,
+        )
+        output.seek(0)
     except CoverImageError:
         output = get_placeholder_path(size).open("rb")
 

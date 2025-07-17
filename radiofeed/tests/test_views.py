@@ -98,12 +98,24 @@ class TestCoverImage:
     @pytest.mark.django_db
     def test_ok(self, client, mocker):
         mocker.patch("radiofeed.views.fetch_cover_image", return_value=b"ok")
+        mocker.patch("radiofeed.views.save_cover_image")
+        response = client.get(get_cover_image_url(self.cover_url, 96))
+        assert200(response)
+
+    @pytest.mark.django_db
+    def test_invalid_fetch(self, client, mocker):
+        mocker.patch(
+            "radiofeed.views.fetch_cover_image",
+            return_value=b"ok",
+            side_effect=CoverImageError(),
+        )
         response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)
 
     @pytest.mark.django_db
     def test_invalid_image(self, client, mocker):
-        mocker.patch("radiofeed.views.fetch_cover_image", side_effect=CoverImageError())
+        mocker.patch("radiofeed.views.fetch_cover_image", return_value=b"ok")
+        mocker.patch("radiofeed.views.save_cover_image", side_effect=CoverImageError())
         response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)
 

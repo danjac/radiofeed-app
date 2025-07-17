@@ -1,4 +1,5 @@
 import contextlib
+import io
 
 import httpx
 import pytest
@@ -14,6 +15,7 @@ from radiofeed.cover_image import (
     get_metadata_info,
     get_placeholder_path,
     get_placeholder_url,
+    save_cover_image,
 )
 from radiofeed.http_client import Client
 
@@ -26,32 +28,24 @@ class TestFetchCoverImage:
             return httpx.Response(200)
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
-        assert fetch_cover_image(client, self.cover_url, 96)
-        mock_image.assert_called()
+        assert fetch_cover_image(client, self.cover_url)
 
     def test_content_length_ok(self, mocker):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "123"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
-        assert fetch_cover_image(client, self.cover_url, 96)
-        mock_image.assert_called()
+        assert fetch_cover_image(client, self.cover_url)
 
     def test_content_length_invalid(self, mocker):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "invalid"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
-        assert fetch_cover_image(client, self.cover_url, 96)
-        mock_image.assert_called()
+        assert fetch_cover_image(client, self.cover_url)
 
     def test_chunked_content_too_long(self, mocker, settings):
         settings.COVER_IMAGE_MAX_SIZE = 100
-
-        mocker.patch("radiofeed.cover_image.Image.open")
 
         # mock entire fetch
         client = mocker.Mock()
@@ -74,7 +68,7 @@ class TestFetchCoverImage:
         mocker.patch("radiofeed.cover_image.io.BytesIO", return_value=mock_bytesio)
 
         with pytest.raises(CoverImageTooLargeError):
-            fetch_cover_image(client, self.cover_url, 96)
+            fetch_cover_image(client, self.cover_url)
 
     def test_content_length_too_long(self, mocker, settings):
         settings.COVER_IMAGE_MAX_SIZE = 100
@@ -83,19 +77,27 @@ class TestFetchCoverImage:
             return httpx.Response(200, headers={"Content-Length": "200"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
         with pytest.raises(CoverImageTooLargeError):
-            fetch_cover_image(client, self.cover_url, 96)
-        mock_image.assert_not_called()
+            fetch_cover_image(client, self.cover_url)
 
     def test_http_error(self, mocker):
         def _handler(request):
             raise httpx.HTTPError("invalid")
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mocker.patch("radiofeed.cover_image.Image.open")
         with pytest.raises(CoverImageError):
-            fetch_cover_image(client, self.cover_url, 96)
+            fetch_cover_image(client, self.cover_url)
+
+
+class TestSaveCoverImage:
+    def test_ok(self, mocker):
+        mocker.patch("radiofeed.cover_image.Image.open")
+        save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
+
+    def test_error(self, mocker):
+        mocker.patch("radiofeed.cover_image.Image.open", side_effect=OSError())
+        with pytest.raises(CoverImageError):
+            save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
 
 
 class TestGetMetadataInfo:
