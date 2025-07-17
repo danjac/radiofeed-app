@@ -110,7 +110,7 @@ class _FeedParser:
                 )
                 self._podcast.categories.set(categories)
                 self._sync_episodes(feed)
-                return result
+            return result
         except (DataError, IntegrityError) as exc:
             raise InvalidDataError from exc
 
