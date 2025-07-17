@@ -43,6 +43,12 @@ class CoverImageError(Exception):
     """Base class for cover image fetching errors."""
 
 
+class CoverImageTooLargeError(CoverImageError):
+    """Raised when the cover image exceeds the maximum allowed size."""
+
+    message = "Cover image size exceeds limit"
+
+
 def get_cover_image_attrs(
     variant: CoverImageVariant,
     cover_url: str | None,
@@ -107,7 +113,7 @@ def fetch_cover_image(
             content_length = 0
 
         if content_length > settings.COVER_IMAGE_MAX_SIZE:
-            raise CoverImageError("Cover image size exceeds limit")
+            raise CoverImageTooLargeError
 
         buffer = io.BytesIO()
 
@@ -117,7 +123,7 @@ def fetch_cover_image(
             for chunk in response.iter_bytes():
                 buffer.write(chunk)
                 if buffer.tell() > settings.COVER_IMAGE_MAX_SIZE:
-                    raise CoverImageError("Cover image size exceeds limit")
+                    raise CoverImageTooLargeError
 
         buffer.seek(0)
 

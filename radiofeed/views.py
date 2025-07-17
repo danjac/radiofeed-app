@@ -1,8 +1,6 @@
 import datetime
-import io
 from typing import Final
 
-import httpx
 from django.conf import settings
 from django.core.signing import BadSignature
 from django.http import (
@@ -17,10 +15,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
-from PIL import Image
 
 from radiofeed import pwa
 from radiofeed.cover_image import (
+    CoverImageError,
+    fetch_cover_image,
     get_cover_url_signer,
     get_placeholder_path,
     is_cover_image_size,
@@ -137,50 +136,22 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
+    If error in downloading the image, a placeholder is returned instead.
     """
 
     signed_url = request.GET.get("url", None)
 
-    if not is_cover_image_size(size) or not signed_url:
+    if not signed_url or not is_cover_image_size(size):
         raise Http404
 
     try:
         cover_url = get_cover_url_signer().unsign(signed_url)
-        client = get_client()
+    except BadSignature as exc:
+        raise Http404 from exc
 
-        response = client.head(cover_url)
-
-        try:
-            content_length = int(response.headers.get("Content-Length", None))
-        except (ValueError, TypeError):
-            # assume max if not provided
-            content_length = settings.COVER_IMAGE_MAX_SIZE + 1
-
-        if content_length > settings.COVER_IMAGE_MAX_SIZE:
-            raise ValueError("Cover image too large")
-
-        buffer = io.BytesIO()
-
-        with client.stream(cover_url) as response:
-            response.raise_for_status()
-
-            for chunk in response.iter_bytes():
-                buffer.write(chunk)
-
-        buffer.seek(0)
-        image = Image.open(buffer).resize((size, size), Image.Resampling.LANCZOS)
-    except (
-        OSError,
-        ValueError,
-        BadSignature,
-        httpx.HTTPError,
-    ):
-        # if error we should return a placeholder, so we don't keep
-        # trying to fetch and process a bad image instead of caching result
+    try:
+        output = fetch_cover_image(get_client(), cover_url, size)
+    except CoverImageError:
         output = get_placeholder_path(size).open("rb")
-    else:
-        output = io.BytesIO()
-        image.save(output, format="webp", optimize=True, quality=90)
-        output.seek(0)
 
     return FileResponse(output, content_type="image/webp")

@@ -50,6 +50,18 @@ class TestFetchCoverImage:
         assert fetch_cover_image(client, "test.jpg", 96)
         mock_image.assert_called()
 
+    def test_chunked_content_too_long(self, mocker, settings):
+        settings.COVER_IMAGE_MAX_SIZE = 100
+
+        def _handler(request):
+            return httpx.Response(200)
+
+        client = Client(transport=httpx.MockTransport(_handler))
+
+        mocker.patch("radiofeed.cover_image.Image.open", return_value=b"ok")
+
+        assert fetch_cover_image(client, "test.jpg", 96)
+
     def test_content_length_too_long(self, mocker, settings):
         settings.COVER_IMAGE_MAX_SIZE = 100
 
