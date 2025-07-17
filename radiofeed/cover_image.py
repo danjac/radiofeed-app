@@ -137,6 +137,7 @@ def fetch_cover_image(
 
     except (
         OSError,
+        ValueError,
         Image.DecompressionBombError,
         httpx.HTTPError,
     ) as exc:

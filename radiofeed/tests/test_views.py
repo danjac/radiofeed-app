@@ -4,7 +4,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
-from radiofeed.cover_image import get_cover_image_url
+from radiofeed.cover_image import CoverImageError, get_cover_image_url
 from radiofeed.tests.asserts import assert200, assert404
 
 
@@ -98,6 +98,12 @@ class TestCoverImage:
     @pytest.mark.django_db
     def test_ok(self, client, mocker):
         mocker.patch("radiofeed.views.fetch_cover_image", return_value=b"ok")
+        response = client.get(get_cover_image_url(self.cover_url, 96))
+        assert200(response)
+
+    @pytest.mark.django_db
+    def test_invalid_image(self, client, mocker):
+        mocker.patch("radiofeed.views.fetch_cover_image", side_effect=CoverImageError())
         response = client.get(get_cover_image_url(self.cover_url, 96))
         assert200(response)
 

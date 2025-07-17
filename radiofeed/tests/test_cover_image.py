@@ -2,6 +2,8 @@ import httpx
 import pytest
 
 from radiofeed.cover_image import (
+    CoverImageError,
+    CoverImageTooLargeError,
     fetch_cover_image,
     get_cover_image_attrs,
     get_cover_image_class,
@@ -15,28 +17,15 @@ from radiofeed.http_client import Client
 
 
 class TestFetchCoverImage:
-    """
-      @pytest.mark.django_db
-    -    def test_failed_download(self, client, mocker):
-    -        def _handler(_):
-    -            raise httpx.HTTPError("invalid")
-    -
-    -        mock_client = Client(transport=httpx.MockTransport(_handler))
-    -        mocker.patch("radiofeed.views.get_client", return_value=mock_client)
-    -
-    -        response = client.get(get_cover_image_url(self.cover_url, 96))
-    -        assert200(response)
-    """
+    cover_url = "https://example.com/test.jpg"
 
     def test_ok(self, mocker):
         def _handler(request):
             return httpx.Response(200)
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch(
-            "radiofeed.cover_image.Image.open", return_value=b"ok"
-        )
-        assert fetch_cover_image(client, "test.jpg", 96)
+        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
+        assert fetch_cover_image(client, self.cover_url, 96)
         mock_image.assert_called()
 
     def test_content_length_ok(self, mocker):
@@ -44,10 +33,17 @@ class TestFetchCoverImage:
             return httpx.Response(200, headers={"Content-Length": "123"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch(
-            "radiofeed.cover_image.Image.open", return_value=b"ok"
-        )
-        assert fetch_cover_image(client, "test.jpg", 96)
+        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
+        assert fetch_cover_image(client, self.cover_url, 96)
+        mock_image.assert_called()
+
+    def test_content_length_invalid(self, mocker):
+        def _handler(request):
+            return httpx.Response(200, headers={"Content-Length": "invalid"})
+
+        client = Client(transport=httpx.MockTransport(_handler))
+        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
+        assert fetch_cover_image(client, self.cover_url, 96)
         mock_image.assert_called()
 
     def test_chunked_content_too_long(self, mocker, settings):
@@ -58,9 +54,9 @@ class TestFetchCoverImage:
 
         client = Client(transport=httpx.MockTransport(_handler))
 
-        mocker.patch("radiofeed.cover_image.Image.open", return_value=b"ok")
+        mocker.patch("radiofeed.cover_image.Image.open")
 
-        assert fetch_cover_image(client, "test.jpg", 96)
+        assert fetch_cover_image(client, self.cover_url, 96)
 
     def test_content_length_too_long(self, mocker, settings):
         settings.COVER_IMAGE_MAX_SIZE = 100
@@ -69,10 +65,9 @@ class TestFetchCoverImage:
             return httpx.Response(200, headers={"Content-Length": "200"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch(
-            "radiofeed.cover_image.Image.open", return_value=b"ok"
-        )
-        assert fetch_cover_image(client, "test.jpg", 96)
+        mock_image = mocker.patch("radiofeed.cover_image.Image.open")
+        with pytest.raises(CoverImageTooLargeError):
+            fetch_cover_image(client, self.cover_url, 96)
         mock_image.assert_not_called()
 
     def test_http_error(self, mocker):
@@ -80,11 +75,9 @@ class TestFetchCoverImage:
             raise httpx.HTTPError("invalid")
 
         client = Client(transport=httpx.MockTransport(_handler))
-        mock_image = mocker.patch(
-            "radiofeed.cover_image.Image.open", return_value=b"ok"
-        )
-        assert fetch_cover_image(client, "test.jpg", 96)
-        mock_image.assert_not_called()
+        mocker.patch("radiofeed.cover_image.Image.open")
+        with pytest.raises(CoverImageError):
+            fetch_cover_image(client, self.cover_url, 96)
 
 
 class TestGetMetadataInfo:
