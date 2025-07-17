@@ -1,9 +1,12 @@
 import functools
+import io
 import itertools
 import pathlib
 import urllib.parse
+import warnings
 from typing import Final, Literal
 
+import httpx
 from django.conf import settings
 from django.core.signing import Signer
 from django.http import HttpRequest
@@ -11,12 +14,10 @@ from django.templatetags.static import static
 from django.urls import reverse
 from PIL import Image
 
+from radiofeed.http_client import Client
 from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
-
-# prevent PIL from raising an error on large images
-Image.MAX_IMAGE_PIXELS = 20_000_000
 
 
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
@@ -30,6 +31,16 @@ _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
     "detail": "size-36 lg:size-40",
     "tile": "size-40 lg:size-56",
 }
+
+# Handle potential decompression bomb warnings from PIL
+Image.MAX_IMAGE_PIXELS = (settings.COVER_IMAGE_MAX_SIZE * 4) // 3
+# Raises an error instead of a warning for decompression bombs
+#
+warnings.simplefilter("error", Image.DecompressionBombWarning)
+
+
+class CoverImageError(Exception):
+    """Base class for cover image fetching errors."""
 
 
 def get_cover_image_attrs(
@@ -75,6 +86,55 @@ def get_cover_image_attrs(
     )
 
     return attrs | {"srcset": srcset, "sizes": sizes}
+
+
+def fetch_cover_image(
+    client: Client,
+    cover_url: str,
+    size: int,
+) -> io.BufferedIOBase:
+    """Fetches and resizes the cover image in WEBP format from the given URL.
+    If error returns a placeholder image.
+
+    Raises CoverImageError if the image is too large or cannot be fetched or processed.
+    """
+    try:
+        response = client.head(cover_url)
+
+        try:
+            content_length = int(response.headers.get("Content-Length", 0))
+        except ValueError:
+            content_length = 0
+
+        if content_length > settings.COVER_IMAGE_MAX_SIZE:
+            raise CoverImageError("Cover image size exceeds limit")
+
+        buffer = io.BytesIO()
+
+        with client.stream(cover_url) as response:
+            response.raise_for_status()
+
+            for chunk in response.iter_bytes():
+                buffer.write(chunk)
+                if buffer.tell() > settings.COVER_IMAGE_MAX_SIZE:
+                    raise CoverImageError("Cover image size exceeds limit")
+
+        buffer.seek(0)
+
+        image = Image.open(buffer).resize((size, size), Image.Resampling.LANCZOS)
+
+        output = io.BytesIO()
+        image.save(output, format="webp", optimize=True, quality=90)
+        output.seek(0)
+
+        return output
+
+    except (
+        OSError,
+        Image.DecompressionBombError,
+        httpx.HTTPError,
+    ) as exc:
+        raise CoverImageError from exc
 
 
 def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
