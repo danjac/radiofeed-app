@@ -90,9 +90,38 @@ class TestFetchCoverImage:
 
 
 class TestSaveCoverImage:
-    def test_ok(self, mocker):
-        mocker.patch("radiofeed.cover_image.Image.open")
+    def test_ok(self, mocker, settings):
+        settings.COVER_IMAGE_MAX_SIZE = 16 * 1024 * 1024  # 1 MB
+
+        mock_image = mocker.Mock()
+        mock_image.format = "png"
+        mock_image.mode = "RGBA"
+        mock_image.size = (100, 100)
+
+        @contextlib.contextmanager
+        def get_mock_image(*args, **kwargs):
+            yield mock_image
+
+        mocker.patch("radiofeed.cover_image.Image.open", get_mock_image)
+
         save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
+
+    def test_too_large(self, mocker, settings):
+        settings.COVER_IMAGE_MAX_SIZE = 1 * 1024 * 1024  # 1 MB
+
+        mock_image = mocker.Mock()
+        mock_image.format = "png"
+        mock_image.mode = "RGBA"
+        mock_image.size = (10000, 10000)
+
+        @contextlib.contextmanager
+        def get_mock_image(*args, **kwargs):
+            yield mock_image
+
+        mocker.patch("radiofeed.cover_image.Image.open", get_mock_image)
+
+        with pytest.raises(CoverImageError):
+            save_cover_image(io.BytesIO(), io.BytesIO(), size=100)
 
     def test_error(self, mocker):
         mocker.patch("radiofeed.cover_image.Image.open", side_effect=OSError())

@@ -4,7 +4,6 @@ import itertools
 import logging
 import pathlib
 import urllib.parse
-import warnings
 from typing import Final, Literal
 
 import httpx
@@ -34,9 +33,26 @@ _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
     "tile": "size-40 lg:size-56",
 }
 
-# Raises an error instead of a warning for decompression bombs
-#
-warnings.simplefilter("error", Image.DecompressionBombWarning)
+_COMPRESSION_RATIOS: Final[dict[str, float]] = {
+    "jpeg": 16.0,
+    "jpg": 16.0,
+    "webp": 14.0,
+    "png": 3.0,
+    "gif": 3.0,
+    "bmp": 1.0,  # uncompressed
+    "tiff": 1.5,
+}
+
+_BYTES_PER_PIXEL: Final[dict[str, float]] = {
+    "RGB": 3,
+    "RGBA": 4,
+    "L": 1,
+    "P": 1,
+    "CMYK": 4,
+    "1": 0.125,
+    "I": 4,
+    "F": 4,
+}
 
 
 class CoverImageError(Exception):
@@ -138,15 +154,22 @@ def save_cover_image(
     quality: float = 90,
 ) -> None:
     """Creates a PIL Image from the given data."""
-    # Handle potential decompression bomb warnings from PIL
-    Image.MAX_IMAGE_PIXELS = settings.COVER_IMAGE_MAX_SIZE * 4
     try:
-        image = Image.open(input).resize((size, size), Image.Resampling.LANCZOS)
-        image.save(output, format=format, quality=quality, optimize=True)
+        with Image.open(input) as original:
+            width, height = original.size
+            pixels = width * height
+            max_pixels = get_max_pixels(original.format, original.mode)
+
+            if pixels > max_pixels:
+                raise CoverImageTooLargeError(
+                    f"Cover image exceeds pixel limit: {pixels} {max_pixels}"
+                )
+
+            image = original.resize((size, size), Image.Resampling.LANCZOS)
+            image.save(output, format=format, quality=quality, optimize=True)
     except (
         Image.UnidentifiedImageError,
         Image.DecompressionBombError,
-        Image.DecompressionBombWarning,
         OSError,
     ) as exc:
         logger.exception(exc)
@@ -207,6 +230,15 @@ def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
             )
         ).keys()
     )
+
+
+@functools.cache
+def get_max_pixels(format: str, mode: str) -> int:
+    """Returns max pixels based on estimated compression ratio and bytes per pixel"""
+    compression_ratio = _COMPRESSION_RATIOS.get(format.lower(), 3.0)
+    bytes_per_pixel = _BYTES_PER_PIXEL.get(mode.upper(), 3.0)
+
+    return int((settings.COVER_IMAGE_MAX_SIZE * compression_ratio) / bytes_per_pixel)
 
 
 @functools.cache

@@ -525,10 +525,9 @@ GDPR_COOKIE_NAME = "accept-cookies"
 
 # Max permitted size of cover images in bytes
 
-COVER_IMAGE_MAX_SIZE = env.int("COVER_IMAGE_MAX_SIZE", default=2 * 1024 * 1024)  # 2 MB
-
-# Prevent decompression bomb errors in PIL
-COVER_IMAGE_MAX_SIZE_PIXELS = (COVER_IMAGE_MAX_SIZE * 4) // 3
+COVER_IMAGE_MAX_SIZE = env.int(
+    "COVER_IMAGE_MAX_SIZE", default=12 * 1024 * 1024
+)  # 12 MB
 
 # Max of retries for feed parser before podcast is marked as inactive
 
