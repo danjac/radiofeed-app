@@ -70,8 +70,6 @@ class CoverImageInvalidError(CoverImageError):
 class CoverImageTooLargeError(CoverImageError):
     """Raised when the cover image exceeds the maximum allowed size."""
 
-    message = "Cover image size exceeds limit"
-
 
 def get_cover_image_attrs(
     variant: CoverImageVariant,
