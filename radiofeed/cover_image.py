@@ -1,7 +1,6 @@
 import functools
 import io
 import itertools
-import logging
 import pathlib
 import urllib.parse
 from typing import BinaryIO, Final, Literal
@@ -19,7 +18,6 @@ from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
 
-logger = logging.getLogger(__name__)
 
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "card": (96, 96),
@@ -120,7 +118,6 @@ def fetch_cover_image(
     Raises CoverImageError if the image is too large or cannot be fetched or processed.
     """
     try:
-        logger.debug("Fetching cover image from %s", cover_url)
         response = client.head(cover_url)
 
         try:
@@ -145,8 +142,7 @@ def fetch_cover_image(
         output.seek(0)
         return output
 
-    except (ValueError, httpx.HTTPError) as exc:
-        logger.exception(exc)
+    except httpx.HTTPError as exc:
         raise CoverImageError from exc
 
 
@@ -184,7 +180,6 @@ def save_cover_image(
         Image.DecompressionBombError,
         OSError,
     ) as exc:
-        logger.exception(exc)
         raise CoverImageError from exc
 
 
