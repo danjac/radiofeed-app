@@ -1,8 +1,10 @@
+import contextlib
 import functools
 import io
 import itertools
 import pathlib
 import urllib.parse
+from collections.abc import Generator
 from typing import BinaryIO, Final, Literal
 
 import httpx
@@ -55,6 +57,14 @@ _BYTES_PER_PIXEL: Final[dict[str, float]] = {
 
 class CoverImageError(Exception):
     """Base class for cover image fetching errors."""
+
+
+class CoverImageNotFoundError(CoverImageError):
+    """Raised when the cover image cannot be found."""
+
+
+class CoverImageInvalidError(CoverImageError):
+    """Raised when the cover image is invalid."""
 
 
 class CoverImageTooLargeError(CoverImageError):
@@ -128,22 +138,17 @@ def fetch_cover_image(
         if content_length > settings.COVER_IMAGE_MAX_SIZE:
             raise CoverImageTooLargeError
 
-        output = output or io.BytesIO()
+        with _handle_output_stream(output or io.BytesIO()) as rv:
+            with client.stream(cover_url) as response:
+                for chunk in response.iter_bytes():
+                    rv.write(chunk)
+                    if rv.tell() > settings.COVER_IMAGE_MAX_SIZE:
+                        raise CoverImageTooLargeError
 
-        with client.stream(cover_url) as response:
-            response.raise_for_status()
-
-            for chunk in response.iter_bytes():
-                output.write(chunk)
-                if output.tell() > settings.COVER_IMAGE_MAX_SIZE:
-                    raise CoverImageTooLargeError
-
-        output.truncate()
-        output.seek(0)
-        return output
+            return rv
 
     except httpx.HTTPError as exc:
-        raise CoverImageError from exc
+        raise CoverImageNotFoundError from exc
 
 
 def save_cover_image(
@@ -159,28 +164,21 @@ def save_cover_image(
         input.seek(0)
         with Image.open(input) as original:
             width, height = original.size
-            pixels = width * height
-            max_pixels = get_max_pixels(original.format, original.mode)
 
-            if pixels > max_pixels:
-                raise CoverImageTooLargeError(
-                    f"Cover image exceeds pixel limit: {pixels} {max_pixels}"
-                )
+            if (width * height) > get_max_pixels(original.format, original.mode):
+                raise CoverImageTooLargeError
 
             image = original.resize((size, size), Image.Resampling.LANCZOS)
 
-            output = output or io.BytesIO()
-
-            image.save(output, format=format, quality=quality, optimize=True)
-            output.truncate()
-            output.seek(0)
-            return output
+            with _handle_output_stream(output or io.BytesIO()) as rv:
+                image.save(rv, format=format, quality=quality, optimize=True)
+                return rv
     except (
         Image.UnidentifiedImageError,
         Image.DecompressionBombError,
         OSError,
     ) as exc:
-        raise CoverImageError from exc
+        raise CoverImageInvalidError from exc
 
 
 def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
@@ -282,3 +280,10 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 def get_cover_url_signer() -> Signer:
     """Return URL signer"""
     return Signer(salt="cover_url")
+
+
+@contextlib.contextmanager
+def _handle_output_stream(output: BinaryIO) -> Generator[BinaryIO]:
+    yield output
+    output.truncate()
+    output.seek(0)

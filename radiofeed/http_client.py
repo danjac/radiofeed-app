@@ -1,5 +1,6 @@
+import contextlib
 import functools
-from typing import ContextManager
+from collections.abc import Generator
 
 import httpx
 from django.conf import settings
@@ -42,12 +43,15 @@ class Client:
 
         return response
 
+    @contextlib.contextmanager
     def stream(
         self, url: str, headers: dict | None = None, **kwargs
-    ) -> ContextManager[httpx.Response]:
+    ) -> Generator[httpx.Response]:
         """Does an HTTP GET request and returns a stream."""
 
-        return self._client.stream("GET", url, headers=headers, **kwargs)
+        with self._client.stream("GET", url, headers=headers, **kwargs) as response:
+            response.raise_for_status()
+            yield response
 
 
 @functools.cache
