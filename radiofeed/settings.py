@@ -94,6 +94,7 @@ DATABASES = {
 if env.bool("USE_CONNECTION_POOL", default=True):
     # Connection pool settings
     # https://www.psycopg.org/psycopg3/docs/api/pool.html#psycopg_pool.ConnectionPool
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
     DATABASES["default"]["OPTIONS"] = {
         "pool": (
             {
