@@ -157,6 +157,14 @@
                                    title="Link to Website">Website</a>
                             {% endif %}
                         {% endwith %}
+                        {% if user.is_staff %}
+                            <div>
+                                <a href="{% url "admin:episodes_episode_change" episode.pk %}"
+                                   target="_blank"
+                                   rel="noopener"
+                                   class="link">Admin</a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
