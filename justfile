@@ -121,6 +121,6 @@ remote_script script playbook *args:
     #!/usr/bin/bash
     if [ ! -f "{{ script_dir / script }}" ]; then
         echo "{{ script }} not found, generating it..."
-        just pb {{ playbook }}
+        just apb {{ playbook }}
     fi
     {{ script_dir / script }} {{ args }}
