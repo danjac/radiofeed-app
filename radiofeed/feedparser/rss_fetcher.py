@@ -1,3 +1,4 @@
+import dataclasses
 import hashlib
 import http
 from typing import Final
@@ -25,23 +26,23 @@ _ACCEPT: Final = (
 )
 
 
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class Response:
     """Wraps an HTTP response with convenient accessors for feed-related metadata."""
 
-    def __init__(self, response: httpx.Response) -> None:
-        self._response = response
-        self.url = str(response.url)
-        self.content = response.content
+    content: bytes
+    headers: httpx.Headers
+    url: str
 
     @cached_property
     def etag(self) -> str:
         """Returns the ETag header if available, otherwise an empty string."""
-        return self._response.headers.get("ETag", "")
+        return self.headers.get("ETag", "")
 
     @cached_property
     def modified(self) -> timezone.datetime | None:
         """Returns the Last-Modified header as a parsed datetime, or None if unavailable."""
-        return parse_date(self._response.headers.get("Last-Modified"))
+        return parse_date(self.headers.get("Last-Modified"))
 
     @cached_property
     def content_hash(self) -> str:
@@ -61,7 +62,12 @@ def fetch_rss(
         try:
             headers = build_http_headers(etag=etag, modified=modified)
             client.head(url, headers=headers)
-            return Response(client.get(url, headers=headers))
+            response = client.get(url, headers=headers)
+            return Response(
+                content=response.content,
+                headers=response.headers,
+                url=str(response.url),
+            )
         except httpx.HTTPStatusError as exc:
             match exc.response.status_code:
                 case http.HTTPStatus.GONE:
