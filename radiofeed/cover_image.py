@@ -33,14 +33,15 @@ _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
     "tile": "size-40 lg:size-56",
 }
 
+
 _COMPRESSION_RATIOS: Final[dict[str, float]] = {
     "jpeg": 16.0,
     "jpg": 16.0,
-    "webp": 14.0,
-    "png": 3.0,
-    "gif": 3.0,
-    "bmp": 1.0,  # uncompressed
-    "tiff": 1.5,
+    "webp": 12.0,
+    "png": 25.0,
+    "gif": 15.0,
+    "bmp": 1.0,
+    "tiff": 2.0,
 }
 
 _BYTES_PER_PIXEL: Final[dict[str, float]] = {

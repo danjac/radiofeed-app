@@ -112,7 +112,7 @@ class TestSaveCoverImage:
         mock_image = mocker.Mock()
         mock_image.format = "png"
         mock_image.mode = "RGBA"
-        mock_image.size = (10000, 10000)
+        mock_image.size = (100000, 100000)
 
         @contextlib.contextmanager
         def get_mock_image(*args, **kwargs):
