@@ -166,7 +166,7 @@ def save_cover_image(
     format: str = "webp",
     quality: float = 90,
 ) -> BinaryIO:
-    """Creates a PIL Image from the given input stream and saves it to the output stream."""
+    """Saves image to the output stream."""
     try:
         with _handle_output_stream(output or io.BytesIO()) as rv:
             image.save(rv, format=format, quality=quality, optimize=True)
