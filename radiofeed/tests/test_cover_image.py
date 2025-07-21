@@ -1,5 +1,4 @@
 import contextlib
-import io
 
 import httpx
 import pytest
@@ -23,26 +22,40 @@ from radiofeed.http_client import Client
 class TestFetchCoverImage:
     cover_url = "https://example.com/test.jpg"
 
-    def test_ok(self, mocker):
+    @pytest.fixture
+    def mock_image(self, mocker):
+        mock_image = mocker.Mock()
+
+        mock_image.size = (1000, 1000)
+        mock_image.format = "png"
+        mock_image.mode = "RGBA"
+
+        mock_image.resize.return_value = mocker.Mock()
+
+        mocker.patch("radiofeed.cover_image.Image.open", return_value=mock_image)
+
+        return mock_image
+
+    def test_ok(self, mock_image):
         def _handler(request):
             return httpx.Response(200)
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_cover_image(client, self.cover_url)
+        assert fetch_cover_image(client, self.cover_url, 200)
 
-    def test_content_length_ok(self, mocker):
+    def test_content_length_ok(self, mock_image):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "123"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_cover_image(client, self.cover_url)
+        assert fetch_cover_image(client, self.cover_url, 200)
 
-    def test_content_length_invalid(self, mocker):
+    def test_content_length_invalid(self, mock_image):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "invalid"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_cover_image(client, self.cover_url)
+        assert fetch_cover_image(client, self.cover_url, 200)
 
     def test_chunked_content_too_long(self, mocker, settings):
         settings.COVER_IMAGE_MAX_SIZE = 100
@@ -68,9 +81,9 @@ class TestFetchCoverImage:
         mocker.patch("radiofeed.cover_image.io.BytesIO", return_value=mock_bytesio)
 
         with pytest.raises(CoverImageTooLargeError):
-            fetch_cover_image(client, self.cover_url)
+            fetch_cover_image(client, self.cover_url, 200)
 
-    def test_content_length_too_long(self, mocker, settings):
+    def test_content_length_too_long(self, settings):
         settings.COVER_IMAGE_MAX_SIZE = 100
 
         def _handler(request):
@@ -78,15 +91,25 @@ class TestFetchCoverImage:
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverImageTooLargeError):
-            fetch_cover_image(client, self.cover_url)
+            fetch_cover_image(client, self.cover_url, 200)
 
-    def test_http_error(self, mocker):
+    def test_too_many_pixels(self, mock_image):
+        def _handler(request):
+            return httpx.Response(200)
+
+        mock_image.size = (10_000_000, 10_000_000)
+
+        client = Client(transport=httpx.MockTransport(_handler))
+        with pytest.raises(CoverImageTooLargeError):
+            fetch_cover_image(client, self.cover_url, 200)
+
+    def test_http_error(self):
         def _handler(request):
             raise httpx.HTTPError("invalid")
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverImageError):
-            fetch_cover_image(client, self.cover_url)
+            fetch_cover_image(client, self.cover_url, 200)
 
 
 class TestSaveCoverImage:
@@ -94,39 +117,20 @@ class TestSaveCoverImage:
         settings.COVER_IMAGE_MAX_SIZE = 16 * 1024 * 1024  # 1 MB
 
         mock_image = mocker.Mock()
-        mock_image.format = "png"
-        mock_image.mode = "RGBA"
-        mock_image.size = (100, 100)
 
         @contextlib.contextmanager
         def get_mock_image(*args, **kwargs):
             yield mock_image
 
-        mocker.patch("radiofeed.cover_image.Image.open", get_mock_image)
-
-        save_cover_image(100, io.BytesIO())
-
-    def test_too_large(self, mocker, settings):
-        settings.COVER_IMAGE_MAX_SIZE = 1 * 1024 * 1024  # 1 MB
-
-        mock_image = mocker.Mock()
-        mock_image.format = "png"
-        mock_image.mode = "RGBA"
-        mock_image.size = (100000, 100000)
-
-        @contextlib.contextmanager
-        def get_mock_image(*args, **kwargs):
-            yield mock_image
-
-        mocker.patch("radiofeed.cover_image.Image.open", get_mock_image)
-
-        with pytest.raises(CoverImageError):
-            save_cover_image(100, io.BytesIO())
+        save_cover_image(mock_image)
+        mock_image.save.assert_called()
 
     def test_error(self, mocker):
-        mocker.patch("radiofeed.cover_image.Image.open", side_effect=OSError())
+        mock_image = mocker.Mock()
+        mock_image.save.side_effect = OSError("invalid")
+
         with pytest.raises(CoverImageError):
-            save_cover_image(100, io.BytesIO())
+            save_cover_image(mock_image)
 
 
 class TestGetMetadataInfo:

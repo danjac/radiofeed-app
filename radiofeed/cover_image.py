@@ -120,10 +120,9 @@ def get_cover_image_attrs(
 def fetch_cover_image(
     client: Client,
     cover_url: str,
-    output: BinaryIO | None = None,
-) -> BinaryIO:
-    """Fetches the cover image.
-
+    size: int,
+) -> Image.Image:
+    """Fetches the cover image, resizing to the specified size.
     Raises CoverImageError if the image is too large or cannot be fetched or processed.
     """
     try:
@@ -137,22 +136,31 @@ def fetch_cover_image(
         if content_length > settings.COVER_IMAGE_MAX_SIZE:
             raise CoverImageTooLargeError
 
-        with _handle_output_stream(output or io.BytesIO()) as rv:
+        with _handle_output_stream(io.BytesIO()) as output:
             with client.stream(cover_url) as response:
                 for chunk in response.iter_bytes():
-                    rv.write(chunk)
-                    if rv.tell() > settings.COVER_IMAGE_MAX_SIZE:
+                    output.write(chunk)
+                    if output.tell() > settings.COVER_IMAGE_MAX_SIZE:
                         raise CoverImageTooLargeError
 
-            return rv
+            image = Image.open(output)
+            width, height = image.size
 
-    except httpx.HTTPError as exc:
+            if (width * height) > get_max_pixels(image.format, image.mode):
+                raise CoverImageTooLargeError
+
+            return image.resize((size, size), Image.Resampling.LANCZOS)
+
+    except (
+        httpx.HTTPError,
+        Image.UnidentifiedImageError,
+        Image.DecompressionBombError,
+    ) as exc:
         raise CoverImageNotFoundError from exc
 
 
 def save_cover_image(
-    size: int,
-    input: BinaryIO,
+    image: Image.Image,
     *,
     output: BinaryIO | None = None,
     format: str = "webp",
@@ -160,23 +168,10 @@ def save_cover_image(
 ) -> BinaryIO:
     """Creates a PIL Image from the given input stream and saves it to the output stream."""
     try:
-        input.seek(0)
-        with Image.open(input) as original:
-            width, height = original.size
-
-            if (width * height) > get_max_pixels(original.format, original.mode):
-                raise CoverImageTooLargeError
-
-            image = original.resize((size, size), Image.Resampling.LANCZOS)
-
-            with _handle_output_stream(output or io.BytesIO()) as rv:
-                image.save(rv, format=format, quality=quality, optimize=True)
-                return rv
-    except (
-        Image.UnidentifiedImageError,
-        Image.DecompressionBombError,
-        OSError,
-    ) as exc:
+        with _handle_output_stream(output or io.BytesIO()) as rv:
+            image.save(rv, format=format, quality=quality, optimize=True)
+            return rv
+    except OSError as exc:
         raise CoverImageInvalidError from exc
 
 

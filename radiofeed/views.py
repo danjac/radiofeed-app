@@ -151,10 +151,7 @@ def cover_image(request: HttpRequest, size: int) -> FileResponse:
         raise Http404 from exc
 
     try:
-        output = save_cover_image(
-            size,
-            fetch_cover_image(get_client(), cover_url),
-        )
+        output = save_cover_image(fetch_cover_image(get_client(), cover_url, size))
     except CoverImageError:
         output = get_placeholder_path(size).open("rb")
 
