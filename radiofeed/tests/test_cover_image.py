@@ -2,6 +2,7 @@ import contextlib
 
 import httpx
 import pytest
+from PIL.Image import UnidentifiedImageError
 
 from radiofeed.cover_image import (
     CoverImageError,
@@ -108,6 +109,19 @@ class TestFetchCoverImage:
             raise httpx.HTTPError("invalid")
 
         client = Client(transport=httpx.MockTransport(_handler))
+        with pytest.raises(CoverImageError):
+            fetch_cover_image(client, self.cover_url, 200)
+
+    def test_image_invalid(self, mocker):
+        def _handler(request):
+            return httpx.Response(200)
+
+        client = Client(transport=httpx.MockTransport(_handler))
+
+        mocker.patch(
+            "radiofeed.cover_image.Image.open", side_effect=UnidentifiedImageError()
+        )
+
         with pytest.raises(CoverImageError):
             fetch_cover_image(client, self.cover_url, 200)
 

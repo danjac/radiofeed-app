@@ -68,6 +68,10 @@ class CoverImageInvalidError(CoverImageError):
     """Raised when the cover image is invalid."""
 
 
+class CoverImageSaveError(CoverImageError):
+    """Raised when the cover image cannot be saved."""
+
+
 class CoverImageTooLargeError(CoverImageError):
     """Raised when the cover image exceeds the maximum allowed size."""
 
@@ -125,6 +129,7 @@ def fetch_cover_image(
     """Fetches the cover image, resizing to the specified size.
     Raises CoverImageError if the image is too large or cannot be fetched or processed.
     """
+
     try:
         response = client.head(cover_url)
 
@@ -150,13 +155,13 @@ def fetch_cover_image(
                 raise CoverImageTooLargeError
 
             return image.resize((size, size), Image.Resampling.LANCZOS)
-
+    except httpx.HTTPError as exc:
+        raise CoverImageNotFoundError from exc
     except (
-        httpx.HTTPError,
         Image.UnidentifiedImageError,
         Image.DecompressionBombError,
     ) as exc:
-        raise CoverImageNotFoundError from exc
+        raise CoverImageInvalidError from exc
 
 
 def save_cover_image(
@@ -172,7 +177,7 @@ def save_cover_image(
             image.save(rv, format=format, quality=quality, optimize=True)
             return rv
     except OSError as exc:
-        raise CoverImageInvalidError from exc
+        raise CoverImageSaveError from exc
 
 
 def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
