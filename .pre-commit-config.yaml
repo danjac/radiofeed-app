@@ -75,6 +75,6 @@ repos:
       hooks:
           - id: validate-pyproject
     - repo: https://github.com/owenlamont/uv-secure
-      rev: 0.12.1
+      rev: 0.12.2
       hooks:
           - id: uv-secure
