@@ -12,7 +12,7 @@ OptionalXmlElement: TypeAlias = lxml.etree._Element | None
 class XPathParser:
     """Parses XML document using XPath."""
 
-    def __init__(self, namespaces: dict[str, str] | None = None) -> None:
+    def __init__(self, namespaces: tuple[tuple[str, str], ...] = ()) -> None:
         self._namespaces = namespaces
 
     def iterparse(
@@ -56,7 +56,7 @@ class XPathParser:
         if element is None:
             return
         for path in paths:
-            yield from self._xpath(path)(element)
+            yield from _xpath(path, self._namespaces)(element)
 
     def itervalues(self, element: OptionalXmlElement, *paths) -> Iterator[str]:
         """Find matching non-empty strings from attributes or text."""
@@ -65,6 +65,7 @@ class XPathParser:
                 if isinstance(value, str) and (cleaned := value.strip()):
                     yield cleaned
 
-    @functools.lru_cache(maxsize=60)  # noqa: B019
-    def _xpath(self, path: str) -> lxml.etree.XPath:
-        return lxml.etree.XPath(path, namespaces=self._namespaces)
+
+@functools.cache
+def _xpath(path: str, namespaces: tuple[tuple[str, str], ...]) -> lxml.etree.XPath:
+    return lxml.etree.XPath(path, namespaces=namespaces)

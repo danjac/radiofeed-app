@@ -26,14 +26,14 @@ def parse_rss(content: bytes) -> Feed:
 class _RSSParser:
     """Parses RSS or Atom document."""
 
-    _NAMESPACES: Final = {
-        "atom": "http://www.w3.org/2005/Atom",
-        "content": "http://purl.org/rss/1.0/modules/content/",
-        "googleplay": "http://www.google.com/schemas/play-podcasts/1.0",
-        "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
-        "media": "http://search.yahoo.com/mrss/",
-        "podcast": "https://podcastindex.org/namespace/1.0",
-    }
+    _NAMESPACES: Final = (
+        ("atom", "http://www.w3.org/2005/Atom"),
+        ("content", "http://purl.org/rss/1.0/modules/content/"),
+        ("googleplay", "http://www.google.com/schemas/play-podcasts/1.0"),
+        ("itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd"),
+        ("media", "http://search.yahoo.com/mrss/"),
+        ("podcast", "https://podcastindex.org/namespace/1.0"),
+    )
 
     def __init__(self) -> None:
         self._parser = XPathParser(self._NAMESPACES)
