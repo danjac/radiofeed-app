@@ -6,13 +6,14 @@ from typing import TypeAlias
 
 import lxml.etree
 
+Namespaces: TypeAlias = tuple[tuple[str, str], ...]
 OptionalXmlElement: TypeAlias = lxml.etree._Element | None
 
 
 class XPathParser:
     """Parses XML document using XPath."""
 
-    def __init__(self, namespaces: tuple[tuple[str, str], ...] = ()) -> None:
+    def __init__(self, namespaces: Namespaces = ()) -> None:
         self._namespaces = namespaces
 
     def iterparse(
@@ -67,5 +68,5 @@ class XPathParser:
 
 
 @functools.cache
-def _xpath(path: str, namespaces: tuple[tuple[str, str], ...]) -> lxml.etree.XPath:
+def _xpath(path: str, namespaces: Namespaces) -> lxml.etree.XPath:
     return lxml.etree.XPath(path, namespaces=namespaces)
