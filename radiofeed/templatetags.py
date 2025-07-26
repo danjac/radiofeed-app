@@ -59,7 +59,32 @@ def fragment(
     template_name: str,
     **extra_context,
 ) -> str:
-    """Renders a block fragment."""
+    """Renders a block fragment.
+    This is useful for rendering a block of HTML with a specific template.
+    The fragment template should have a `content` variable that will be replaced.
+
+    For example:
+
+        header.html:
+
+        <header>
+            <h1>{{ title }}</h1>
+            {{ content }}
+        </header>
+
+        Usage in a template:
+
+        {% fragment content "header.html" title="Home page" %}
+            <p>This is the content of the fragment.</p>
+        {% endfragment %}
+
+        Renders as:
+
+        <header>
+            <h1>Home page</h1>
+            <p>This is the content of the fragment.</p>
+        </header>
+    """
     template = context.template.engine.get_template(template_name)  # type: ignore[reportOptionalMemberAccess]
     with context.push(content=content, **extra_context):
         return template.render(context)
