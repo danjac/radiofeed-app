@@ -60,8 +60,8 @@ class CoverImageError(Exception):
     """Base class for cover image fetching errors."""
 
 
-class CoverImageNotFoundError(CoverImageError):
-    """Raised when the cover image cannot be found."""
+class CoverImageFetchError(CoverImageError):
+    """Raised when the cover image cannot be fetched."""
 
 
 class CoverImageInvalidError(CoverImageError):
@@ -156,7 +156,7 @@ def fetch_cover_image(
 
             return image.resize((size, size), Image.Resampling.LANCZOS)
     except httpx.HTTPError as exc:
-        raise CoverImageNotFoundError from exc
+        raise CoverImageFetchError from exc
     except (
         Image.UnidentifiedImageError,
         Image.DecompressionBombError,
