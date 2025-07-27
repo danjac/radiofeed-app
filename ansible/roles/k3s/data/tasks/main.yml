@@ -1,0 +1,15 @@
+- name: Set systemd mount unit name
+  set_fact:
+    systemd_mount_unit_name: "{{ postgres_volume | regex_replace('/', '-') | regex_replace('^-', '') }}.mount"
+
+- name: Create systemd mount unit from template
+  template:
+    src: mount_volume.j2
+    dest: "/etc/systemd/system/{{ systemd_mount_unit_name }}"
+  notify: Reload systemd
+
+- name: Enable and start mount unit
+  systemd:
+    name: "{{ systemd_mount_unit_name }}"
+    enabled: yes
+    state: started

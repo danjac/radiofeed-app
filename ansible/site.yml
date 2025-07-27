@@ -22,6 +22,13 @@
   roles:
       - k3s/cluster
 
+- name: Volume set up for DB node
+  hosts: database
+  become: true
+  gather_facts: true
+  roles:
+    - k3s/data
+
 - name: Cleanup tasks for k3s
   hosts: all
   become: true
