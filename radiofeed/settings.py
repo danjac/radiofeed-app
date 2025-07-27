@@ -108,9 +108,6 @@ if env.bool("USE_CONNECTION_POOL", default=True):
             }
         ),
     }
-else:
-    DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=0)
-
 
 # Caches
 
