@@ -156,8 +156,8 @@ def episodes(
             if season := int(request.GET.get("season", "")):
                 episodes = episodes.filter(season=season)
 
-        ordering = "asc" if podcast.is_serial() else "desc"
-        ordering = request.GET.get("order", ordering)
+        default_ordering = "asc" if podcast.is_serial() else "desc"
+        ordering = request.GET.get("order", default_ordering)
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
     return render_pagination(
