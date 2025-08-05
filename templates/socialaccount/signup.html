@@ -11,20 +11,20 @@
             <p>
                 You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form:
             </p>
-            {% fragment "form.html" hx_disable=True %}
+            {% blockinclude "form.html" hx_disable=True %}
                 {% if redirect_field_value %}
                     <input type="hidden"
                            name="{{ redirect_field_name }}"
                            value="{{ redirect_field_value }}" />
                 {% endif %}
                 {{ form }}
-                {% fragment "form/buttons.html" %}
+                {% blockinclude "form/buttons.html" %}
                     <button class="btn btn-primary">
                         {% heroicon_mini "plus" %}
                         Sign Up
                     </button>
-                {% endfragment %}
-            {% endfragment %}
+                {% endblockinclude %}
+            {% endblockinclude %}
         </div>
     {% endwith %}
 {% endblock content %}

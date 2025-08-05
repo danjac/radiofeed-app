@@ -5,10 +5,10 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" title="Bookmarks" %}
+    {% blockinclude "header.html" title="Bookmarks" %}
         {% if request.search or page.has_other_pages %}
-            {% fragment "header/nav.html" %}
-                {% fragment "header/nav/item.html" %}
+            {% blockinclude "header/nav.html" %}
+                {% blockinclude "header/nav/item.html" %}
                     {% if request.search %}
                         {% url "episodes:search_episodes" as search_episodes_url %}
                         {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
@@ -19,22 +19,22 @@
                             <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">Oldest First</a>
                         {% endif %}
                     {% endif %}
-                {% endfragment %}
-                {% fragment "header/nav/item.html" %}
+                {% endblockinclude %}
+                {% blockinclude "header/nav/item.html" %}
                     {% include "search/form.html" with placeholder="Search: Bookmarks" clearable=True %}
-                {% endfragment %}
-            {% endfragment %}
+                {% endblockinclude %}
+            {% endblockinclude %}
         {% endif %}
-    {% endfragment %}
+    {% endblockinclude %}
 
     {% partialdef pagination inline=True %}
-        {% fragment "pagination.html" %}
+        {% blockinclude "pagination.html" %}
             {% for bookmark in page %}
-                {% fragment "pagination/item.html" %}
+                {% blockinclude "pagination/item.html" %}
                     {% include "episodes/episode.html" with episode=bookmark.episode %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% empty %}
-                {% fragment "pagination/empty.html" %}
+                {% blockinclude "pagination/empty.html" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
                     {% else %}
@@ -44,8 +44,8 @@
                             To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
                         </p>
                     {% endif %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% endfor %}
-        {% endfragment %}
+        {% endblockinclude %}
     {% endpartialdef pagination %}
 {% endblock content %}

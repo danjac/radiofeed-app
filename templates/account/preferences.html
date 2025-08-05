@@ -8,14 +8,14 @@
 {% block content %}
     {% include "account/header.html" with active="preferences" %}
     {% partialdef form inline=True %}
-        {% fragment "form.html" htmx=True target="preferences-form" %}
+        {% blockinclude "form.html" htmx=True target="preferences-form" %}
             {{ form }}
-            {% fragment "form/buttons.html" %}
+            {% blockinclude "form/buttons.html" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "check" %}
                     Save Changes
                 </button>
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
     {% endpartialdef form %}
 {% endblock content %}

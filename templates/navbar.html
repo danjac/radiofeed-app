@@ -129,19 +129,19 @@
             {% include "navbar/menu.html" %}
         </nav>
     {% else %}
-        {% fragment "navbar/cta.html" %}
+        {% blockinclude "navbar/cta.html" %}
             <a href="{% url 'account_signup' %}">Sign up</a>
             or
             <a href="{% url 'account_login' %}">log in</a>
             to follow your favorite podcasts and episodes!
-        {% endfragment %}
+        {% endblockinclude %}
     {% endif %}
     <div x-data="{show: false, content: '', dismissable: false}"
          x-cloak
          x-transition
          x-show="show"
          @cta.window="show = true; content = $event.detail.content; dismissable = $event.detail.dismissable;">
-        {% fragment "navbar/cta.html" %}
+        {% blockinclude "navbar/cta.html" %}
             <div class="relative">
                 <button @click="show = false"
                         class="absolute top-0 right-0 pl-2 text-white cursor-pointer hover:opacity-75"
@@ -149,7 +149,7 @@
                     {% heroicon_mini "x-mark" %}
                 </button>
                 <div class="pr-6" x-html="content"></div>
-        {% endfragment %}
+        {% endblockinclude %}
     </div>
 </div>
 </header>

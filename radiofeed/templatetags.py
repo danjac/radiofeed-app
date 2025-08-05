@@ -53,15 +53,15 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
 
 
 @register.simple_block_tag(takes_context=True)
-def fragment(
+def blockinclude(
     context: Context,
     content: str,
     template_name: str,
     **extra_context,
 ) -> str:
-    """Renders a block fragment.
+    """Renders a block include.
     This is useful for rendering a block of HTML with a specific template.
-    The fragment template should have a `content` variable that will be replaced.
+    The included template should have a `content` variable that will be replaced.
 
     For example:
 
@@ -74,15 +74,15 @@ def fragment(
 
         Usage in a template:
 
-        {% fragment content "header.html" title="Home page" %}
-            <p>This is the content of the fragment.</p>
-        {% endfragment %}
+        {% blockinclude content "header.html" title="Home page" %}
+            <p>This is the content of the blockinclude.</p>
+        {% endblockinclude %}
 
         Renders as:
 
         <header>
             <h1>Home page</h1>
-            <p>This is the content of the fragment.</p>
+            <p>This is the content of the blockinclude.</p>
         </header>
     """
     template = context.template.engine.get_template(template_name)  # type: ignore[reportOptionalMemberAccess]

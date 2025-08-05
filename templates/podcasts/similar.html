@@ -7,12 +7,12 @@
 {% block content %}
     {% include "podcasts/header.html" with active="similar" %}
     {% cache cache_timeout similar-podcasts podcast.pk %}
-        {% fragment "pagination.html" %}
+        {% blockinclude "pagination.html" %}
             {% for recommendation in recommendations %}
-                {% fragment "pagination/item.html" %}
+                {% blockinclude "pagination/item.html" %}
                     {% include "podcasts/podcast.html" with podcast=recommendation.recommended %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% endfor %}
-        {% endfragment %}
+        {% endblockinclude %}
     {% endcache %}
 {% endblock content %}

@@ -6,30 +6,30 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" title="Search iTunes" %}
-        {% fragment "header/nav.html" %}
-            {% fragment "header/nav/item.html" %}
+    {% blockinclude "header.html" title="Search iTunes" %}
+        {% blockinclude "header/nav.html" %}
+            {% blockinclude "header/nav/item.html" %}
                 {% url "podcasts:search_podcasts" as search_podcasts_url %}
 
                 {% include "search/button.html" with search_url=search_podcasts_url label="Search Podcasts" %}
-            {% endfragment %}
+            {% endblockinclude %}
 
-            {% fragment "header/nav/item.html" %}
+            {% blockinclude "header/nav/item.html" %}
                 {% include "search/form.html" with placeholder="Search: iTunes" %}
-            {% endfragment %}
+            {% endblockinclude %}
 
-        {% endfragment %}
-    {% endfragment %}
+        {% endblockinclude %}
+    {% endblockinclude %}
 
-    {% fragment "pagination.html" %}
+    {% blockinclude "pagination.html" %}
         {% for feed in feeds %}
-            {% fragment "pagination/item.html" %}
+            {% blockinclude "pagination/item.html" %}
                 {% include "podcasts/itunes_feed.html" %}
-            {% endfragment %}
+            {% endblockinclude %}
         {% empty %}
-            {% fragment "pagination/empty.html" %}
+            {% blockinclude "pagination/empty.html" %}
                 No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-            {% endfragment %}
+            {% endblockinclude %}
         {% endfor %}
-    {% endfragment %}
+    {% endblockinclude %}
 {% endblock content %}

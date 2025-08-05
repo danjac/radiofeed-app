@@ -7,24 +7,24 @@
 {% block content %}
     {% include "header.html" with title="Sign In" %}
     <div class="space-y-3">
-        {% fragment "socialaccount/buttons.html" process="login" %}Login with{% endfragment %}
+        {% blockinclude "socialaccount/buttons.html" process="login" %}Login with{% endblockinclude %}
         <p>
             If you have not created an account yet, then please
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.
         </p>
-        {% fragment "form.html" hx_disable=True %}
+        {% blockinclude "form.html" hx_disable=True %}
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
                        value="{{ redirect_field_value }}" />
             {% endif %}
             {{ form }}
-            {% fragment "form/buttons.html" %}
+            {% blockinclude "form/buttons.html" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "arrow-right-on-rectangle" %}
                     Sign In
                 </button>
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
     </div>
 {% endblock content %}

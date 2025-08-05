@@ -6,13 +6,13 @@
 
 {% block content %}
     {% cache cache_timeout categories request.get_full_path %}
-        {% fragment "header.html" title="Categories" %}
-            {% fragment "header/nav.html" %}
-                {% fragment "header/nav/item.html" %}
+        {% blockinclude "header.html" title="Categories" %}
+            {% blockinclude "header/nav.html" %}
+                {% blockinclude "header/nav/item.html" %}
                     {% include "search/form.html" with placeholder="Search: Categories" clearable=True %}
-                {% endfragment %}
-            {% endfragment %}
-        {% endfragment %}
+                {% endblockinclude %}
+            {% endblockinclude %}
+        {% endblockinclude %}
         {% if categories %}
             <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
                 {% for category in categories %}

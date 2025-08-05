@@ -8,9 +8,9 @@
     {% include "header.html" with title="Private Feeds" %}
     <div class="space-y-3">
         {% partialdef form inline=True %}
-            {% fragment "form.html" htmx=True target="private-feed-form" %}
+            {% blockinclude "form.html" htmx=True target="private-feed-form" %}
                 {{ form }}
-                {% fragment "form/buttons.html" %}
+                {% blockinclude "form/buttons.html" %}
                     <button class="btn btn-primary">
                         {% heroicon_mini "plus" %}
                         Add Feed
@@ -22,8 +22,8 @@
                         {% heroicon_mini "arrow-uturn-left" %}
                         Cancel
                     </a>
-                {% endfragment %}
-            {% endfragment %}
+                {% endblockinclude %}
+            {% endblockinclude %}
         {% endpartialdef form %}
         <div class="space-y-3 prose dark:prose-invert">
             <p>

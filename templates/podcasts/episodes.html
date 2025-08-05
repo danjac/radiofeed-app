@@ -6,34 +6,34 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "podcasts/header.html" podcast=podcast active="episodes" %}
+    {% blockinclude "podcasts/header.html" podcast=podcast active="episodes" %}
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
                 {% if request.search or season or num_episodes > page_size %}
-                    {% fragment "header/nav.html" %}
+                    {% blockinclude "header/nav.html" %}
                         {% if request.search %}
-                            {% fragment "header/nav/item.html" %}
+                            {% blockinclude "header/nav/item.html" %}
                                 {% url "episodes:search_episodes" as search_episodes_url %}
                                 {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
-                            {% endfragment %}
+                            {% endblockinclude %}
                         {% elif season and season in podcast.seasons %}
-                            {% fragment "header/nav/item.html" %}
+                            {% blockinclude "header/nav/item.html" %}
                                 {% with current_season=season|stringformat:"s" %}
-                                    {% fragment "header/nav/dropdown.html" id="seasons-dropdown" label="Season "|add:current_season current=season %}
-                                        {% fragment "header/nav/dropdown/item.html" url=request.path %}
+                                    {% blockinclude "header/nav/dropdown.html" id="seasons-dropdown" label="Season "|add:current_season current=season %}
+                                        {% blockinclude "header/nav/dropdown/item.html" url=request.path %}
                                             All Seasons
-                                        {% endfragment %}
+                                        {% endblockinclude %}
                                         {% for season in podcast.seasons %}
                                             {% querystring season=season as season_qs %}
-                                            {% fragment "header/nav/dropdown/item.html" url=request.path|add:season_qs %}
+                                            {% blockinclude "header/nav/dropdown/item.html" url=request.path|add:season_qs %}
                                                 Season {{ season }}
-                                            {% endfragment %}
+                                            {% endblockinclude %}
                                         {% endfor %}
-                                    {% endfragment %}
+                                    {% endblockinclude %}
                                 {% endwith %}
-                            {% endfragment %}
+                            {% endblockinclude %}
                         {% else %}
-                            {% fragment "header/nav/item.html" %}
+                            {% blockinclude "header/nav/item.html" %}
                                 {% if ordering == "asc" %}
                                     <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
                                         Newest First</a>
@@ -41,35 +41,35 @@
                                     <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
                                         Oldest First</a>
                                 {% endif %}
-                            {% endfragment %}
+                            {% endblockinclude %}
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
-                            {% fragment "header/nav/item.html" %}
+                            {% blockinclude "header/nav/item.html" %}
                                 {% include "search/form.html" with placeholder="Search: Podcast" clearable=True %}
-                            {% endfragment %}
+                            {% endblockinclude %}
                         {% endif %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% endif %}
             {% endwith %}
         {% endcache %}
-    {% endfragment %}
+    {% endblockinclude %}
     {% partialdef pagination inline=True %}
         {% cache cache_timeout podcast-episodes request.get_full_path %}
-            {% fragment "pagination.html" %}
+            {% blockinclude "pagination.html" %}
                 {% for episode in page %}
-                    {% fragment "pagination/item.html" %}
+                    {% blockinclude "pagination/item.html" %}
                         {% include "podcasts/episode.html" %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% empty %}
-                    {% fragment "pagination/empty.html" %}
+                    {% blockinclude "pagination/empty.html" %}
                         {% if request.search %}
                             No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
                         {% else %}
                             This podcast does not have any episodes.
                         {% endif %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% endfor %}
-            {% endfragment %}
+            {% endblockinclude %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

@@ -5,40 +5,40 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" title="Private Feeds" %}
-        {% fragment "header/nav.html" %}
+    {% blockinclude "header.html" title="Private Feeds" %}
+        {% blockinclude "header/nav.html" %}
             {% if not request.search %}
-                {% fragment "header/nav/item.html" %}
+                {% blockinclude "header/nav/item.html" %}
                     <a class="btn btn-default" href="{% url "podcasts:add_private_feed" %}">
                         {% heroicon_mini "plus" %}
                         Add Private Feed
                     </a>
-                {% endfragment %}
+                {% endblockinclude %}
             {% endif %}
             {% if request.search or page.has_other_pages %}
                 {% if request.search %}
-                    {% fragment "header/nav/item.html" %}
+                    {% blockinclude "header/nav/item.html" %}
 
                         {% url "podcasts:search_podcasts" as search_podcasts_url %}
 
                         {% include "search/button.html" with search_url=search_podcasts_url label="Search Podcasts" %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% endif %}
-                {% fragment "header/nav/item.html" %}
+                {% blockinclude "header/nav/item.html" %}
                     {% include "search/form.html" with placeholder="Search: Private Feeds" clearable=True %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% endif %}
-        {% endfragment %}
-    {% endfragment %}
+        {% endblockinclude %}
+    {% endblockinclude %}
 
     {% partialdef pagination inline=True %}
-        {% fragment "pagination.html" %}
+        {% blockinclude "pagination.html" %}
             {% for podcast in page %}
-                {% fragment "pagination/item.html" %}
+                {% blockinclude "pagination/item.html" %}
                     {% include "podcasts/podcast.html" %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% empty %}
-                {% fragment "pagination/empty.html" %}
+                {% blockinclude "pagination/empty.html" %}
                     {% if request.search %}
                         No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
                     {% else %}
@@ -47,8 +47,8 @@
                             To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
                         </p>
                     {% endif %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% endfor %}
-        {% endfragment %}
+        {% endblockinclude %}
     {% endpartialdef pagination %}
 {% endblock content %}
