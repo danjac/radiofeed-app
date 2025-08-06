@@ -1,8 +1,8 @@
-Ansible playbooks for deploying [Radiofeed](https://github.com/danjac/radiofeed-app)
+This directory contains Ansible playbooks for deploying [Radiofeed](https://github.com/danjac/radiofeed-app) to a K3s cluster.
 
 ## Architecture
 
-The architecture can run on cheap VM hosting e.g. Hetzner or Digital Ocean droplets. It runs the Django web application, PostgreSQL database, Redis cache, and cronjobs in a [K3s](https://www.rancher.com/products/k3s) cluster. It assumes you are using Cloudflare for DNS and caching.
+The architecture can run on cheap VM hosting e.g. Hetzner or Digital Ocean droplets. It runs the Django web application, PostgreSQL database, Redis cache, and cronjobs in a [K3s](https://www.rancher.com/products/k3s) cluster. It assumes you are using Cloudflare for DNS and caching. Traefik is used as the ingress controller for load-balancing.
 
 ## Setup
 
@@ -21,8 +21,8 @@ You should have root SSH access to your servers.
 
 1. Ensure you have access to a Radiofeed Docker image. The default image is `ghcr.io/danjac/radiofeed-app`. If this image is not available, you will need to build and push it yourself to a container registry.
 
-2. Run `just pb site` to deploy to your servers.
+2. Run `just apb site` in the project root directory to deploy to your servers.
 
-## Upgrade
+## Upgrading
 
-To update server dependencies, run `just pb upgrade`.
+To update server dependencies, run `just apb upgrade`.
