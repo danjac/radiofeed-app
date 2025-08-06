@@ -1,33 +1,35 @@
 all:
-  vars:
-    ansible_user: ubuntu
   children:
     server:
       hosts:
-        123.34.5.678:
-          private_ip: 10.0.0.3
+        123.456.78.910:
+          private_ip: 10.0.0.1
           hostname: server
           role: server
     agents:
-       hosts:
-          678.76.5.433:
-            hostname: database
-            role: database
-          37.38.38.160:
-            hostname: jobrunner
-            role: jobrunner
-          123.34.5.678:
-            hostname: webapp-1
-            role: webapp
-          678.76.5.432:
-            hostname: webapp-2
-            role: webapp
+      hosts:
+        123.456.78.911:
+          hostname: database
+          role: database
+        123.456.78.912:
+          hostname: jobrunner
+          role: jobrunner
+        123.456.78.913:
+          hostname: webapp-1
+          role: webapp
+        123.456.78.914:
+          hostname: webapp-2
+          role: webapp
   vars:
-    admins: "danjac2018@gmail.com"
-    contact_email: "danjac2018@gmail.com"
-    domain: "radiofeed.app"
-    mailgun_api_key: "*******"
+    admin_url: "my-admin/"
+    admins: "admin@gmail.com"
+    contact_email: "contact@gmail.com"
+    domain: "myapp.com"
+    mailgun_api_key: ""
     mailgun_api_url: "https://api.eu.mailgun.net/v3"
-    postgres_password: *****
-    secret_key: "*******"
-    sentry_url: "https://*****@****.ingest.us.sentry.io/****"
+    postgres_volume: ""
+    postgres_password: dbpasswd
+    pwa_sha256_fingerprints: ""
+    secret_key: seekrit1
+    secret_key_fallbacks: "seekrit2,seekrit3"
+    sentry_url: "https://xxxx.ingest.us.sentry.io/xxxxx"
