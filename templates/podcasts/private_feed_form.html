@@ -7,7 +7,7 @@
 {% block content %}
     {% include "header.html" with title="Private Feeds" %}
     <div class="space-y-3">
-        {% partialdef form inline=True %}
+        {% partialdef form inline %}
             {% blockinclude "form.html" htmx=True target="private-feed-form" %}
                 {{ form }}
                 {% blockinclude "form/buttons.html" %}

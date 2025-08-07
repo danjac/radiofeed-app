@@ -7,7 +7,7 @@
 
 {% block content %}
     {% include "account/header.html" with active="preferences" %}
-    {% partialdef form inline=True %}
+    {% partialdef form inline %}
         {% blockinclude "form.html" htmx=True target="preferences-form" %}
             {{ form }}
             {% blockinclude "form/buttons.html" %}

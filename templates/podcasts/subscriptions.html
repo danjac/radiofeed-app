@@ -21,7 +21,7 @@
             {% endblockinclude %}
         {% endif %}
     {% endblockinclude %}
-    {% partialdef pagination inline=True %}
+    {% partialdef pagination inline %}
         {% blockinclude "pagination.html" %}
             {% for podcast in page %}
                 {% blockinclude "pagination/item.html" %}

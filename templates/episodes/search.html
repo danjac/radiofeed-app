@@ -19,7 +19,7 @@
         {% endblockinclude %}
     {% endblockinclude %}
 
-    {% partialdef pagination inline=True %}
+    {% partialdef pagination inline %}
         {% cache cache_timeout search-episodes request.get_full_path %}
             {% blockinclude "pagination.html" %}
                 {% for episode in page %}

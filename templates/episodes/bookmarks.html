@@ -27,7 +27,7 @@
         {% endif %}
     {% endblockinclude %}
 
-    {% partialdef pagination inline=True %}
+    {% partialdef pagination inline %}
         {% blockinclude "pagination.html" %}
             {% for bookmark in page %}
                 {% blockinclude "pagination/item.html" %}

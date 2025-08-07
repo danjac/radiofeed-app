@@ -67,7 +67,7 @@
             <div class="flex items-center space-x-3 sm:space-x-6">
                 {% cover_image "detail" cover_url=episode.get_cover_url title=episode.cleaned_title %}
                 <div class="flex flex-col place-content-between h-32">
-                    {% partialdef audio_player_button inline=True %}
+                    {% partialdef audio_player_button inline %}
                         {% with target="audio-player-button" %}
                             <div id="{{ target }}"
                                  hx-push-url="false"
@@ -106,7 +106,7 @@
                             </div>
                         {% endwith %}
                     {% endpartialdef audio_player_button %}
-                    {% partialdef bookmark_button inline=True %}
+                    {% partialdef bookmark_button inline %}
                         <div id="bookmark-button"
                              hx-push-url="false"
                              hx-target="this"
@@ -183,7 +183,7 @@
                     <div title="File Size">{{ episode.file_size|filesizeformat }}</div>
                 {% endif %}
             </div>
-            {% partialdef audio_log inline=True %}
+            {% partialdef audio_log inline %}
                 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
                     {% if audio_log and not is_playing %}
                         <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">

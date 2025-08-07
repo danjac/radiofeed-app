@@ -18,7 +18,7 @@
 
         {% endblockinclude %}
     {% endblockinclude %}
-    {% partialdef pagination inline=True %}
+    {% partialdef pagination inline %}
         {% cache cache_timeout search-podcasts request.get_full_path %}
             {% blockinclude "pagination.html" %}
                 {% for podcast in page %}

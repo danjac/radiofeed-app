@@ -14,7 +14,7 @@
         {% endblockinclude %}
     {% endblockinclude %}
 
-    {% partialdef pagination inline=True %}
+    {% partialdef pagination inline %}
         {% blockinclude "pagination.html" %}
             {% for episode in page %}
                 {% blockinclude "pagination/item.html" %}
