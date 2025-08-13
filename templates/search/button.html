@@ -12,6 +12,7 @@
             get searchUrl() {
                 const params = new URLSearchParams();
                 params.append('{{ request.search.param }}', this.search);
+                console.log('searchUrl', this.url, params.toString());
                 return `${this.url}?${params.toString()}`;
             },
         }"{# fmt:on #}
