@@ -5,7 +5,15 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "podcasts/header.html" with active="similar" %}
+
+    {% blockinclude "podcasts/header.html" podcast=podcast active="similar" %}
+        {% blockinclude "header/nav.html" %}
+            {% blockinclude "header/nav/item.html" %}
+                {% url "podcasts:search_podcasts" as search_url %}
+                {% include "search/form.html" with placeholder="Search: Podcasts" %}
+            {% endblockinclude %}
+        {% endblockinclude %}
+    {% endblockinclude %}
     {% cache cache_timeout similar-podcasts podcast.pk %}
         {% blockinclude "pagination.html" %}
             {% for recommendation in recommendations %}
