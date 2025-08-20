@@ -85,9 +85,15 @@ def blockinclude(
             <p>This is the content of the blockinclude.</p>
         </header>
     """
-    template = context.template.engine.get_template(template_name)  # type: ignore[reportOptionalMemberAccess]
+    if context.template is None:
+        raise template.TemplateSyntaxError(
+            "blockinclude tag can only be used in a template context"
+        )
+
+    tmpl = context.template.engine.get_template(template_name)
+
     with context.push(content=content, **extra_context):
-        return template.render(context)
+        return tmpl.render(context)
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)

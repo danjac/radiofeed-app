@@ -1,7 +1,8 @@
 import pytest
 from django.contrib.sites.models import Site
+from django.template import TemplateSyntaxError
 
-from radiofeed.templatetags import format_duration
+from radiofeed.templatetags import blockinclude, format_duration
 
 
 @pytest.fixture
@@ -17,6 +18,15 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
+
+
+class TestBlockInclude:
+    def test_context_template_none(self, mocker):
+        """Test blockinclude with no template."""
+        mock_context = mocker.MagicMock()
+        mock_context.template = None
+        with pytest.raises(TemplateSyntaxError):
+            blockinclude(mock_context, "content", "index.html")
 
 
 class TestFormatDuration:
