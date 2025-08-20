@@ -8,9 +8,10 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
+    HttpResponseRedirect,
     JsonResponse,
 )
-from django.shortcuts import redirect, render
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
@@ -35,19 +36,19 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def index(request) -> HttpResponse:
+def index(request) -> TemplateResponse | HttpResponseRedirect:
     """Landing page of site."""
 
     # if user logged in, redirect to their home page
     if request.user.is_authenticated:
-        return redirect(settings.LOGIN_REDIRECT_URL)
-    return render(request, "index.html")
+        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+    return TemplateResponse(request, "index.html")
 
 
 @require_safe
-def about(request: HttpRequest) -> HttpResponse:
+def about(request: HttpRequest) -> TemplateResponse:
     """Renders About page."""
-    return render(
+    return TemplateResponse(
         request,
         "about.html",
         {
@@ -57,9 +58,9 @@ def about(request: HttpRequest) -> HttpResponse:
 
 
 @require_safe
-def privacy(request: HttpRequest) -> HttpResponse:
+def privacy(request: HttpRequest) -> TemplateResponse:
     """Renders Privacy page."""
-    return render(request, "privacy.html")
+    return TemplateResponse(request, "privacy.html")
 
 
 @require_POST

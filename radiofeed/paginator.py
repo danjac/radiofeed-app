@@ -4,10 +4,11 @@ from typing import TypeAlias, TypeVar
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db.models import Model, QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
+from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
-from radiofeed.partials import render_partial_for_target
+from radiofeed.partials import render_partial_response
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)
@@ -114,7 +115,7 @@ def paginate(
     ).get_page(request.GET.get(param, ""))
 
 
-def render_pagination(  # noqa: PLR0913
+def render_paginated_response(  # noqa: PLR0913
     request: HttpRequest,
     template_name: str,
     object_list: ObjectList,
@@ -123,15 +124,15 @@ def render_pagination(  # noqa: PLR0913
     target: str = "pagination",
     partial: str = "pagination",
     **pagination_kwargs,
-) -> HttpResponse:
+) -> TemplateResponse:
     """Render pagination response.
 
-    This function is a wrapper around `render_partial_for_target` function.
+    This function is a wrapper around `render_partial_response` function.
 
     It renders a partial template with paginated data. The `Page` object is passed to the template context as `page`.
     """
 
-    return render_partial_for_target(
+    return render_partial_response(
         request,
         template_name,
         {

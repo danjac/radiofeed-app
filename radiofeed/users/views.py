@@ -5,15 +5,15 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.signing import BadSignature
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpRequest, HttpResponseRedirect
 from django.template.defaultfilters import pluralize
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
 from radiofeed.http import require_form_methods
-from radiofeed.partials import render_partial_for_target
+from radiofeed.partials import render_partial_response
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
@@ -35,18 +35,18 @@ class UserStat(TypedDict):
 @login_required
 def user_preferences(
     request: HttpRequest,
-) -> HttpResponse:
+) -> TemplateResponse | HttpResponseRedirect:
     """Allow user to edit their preferences."""
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return redirect("users:preferences")
+            return HttpResponseRedirect(reverse("users:preferences"))
     else:
         form = UserPreferencesForm(instance=request.user)
 
-    return render_partial_for_target(
+    return render_partial_response(
         request,
         "account/preferences.html",
         {
@@ -61,7 +61,7 @@ def user_preferences(
 @login_required
 def import_podcast_feeds(
     request: HttpRequest,
-) -> HttpResponse:
+) -> TemplateResponse | HttpResponseRedirect:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
@@ -75,11 +75,11 @@ def import_podcast_feeds(
                 )
             else:
                 messages.info(request, "No new podcasts found in uploaded file")
-            return redirect("users:import_podcast_feeds")
+            return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
     else:
         form = OpmlUploadForm()
 
-    return render_partial_for_target(
+    return render_partial_response(
         request,
         "account/podcast_feeds.html",
         {
@@ -92,7 +92,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
+def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
@@ -104,7 +104,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date")
     )
 
-    response = render(
+    response = TemplateResponse(
         request,
         "feedparser/podcasts.opml",
         {
@@ -121,7 +121,7 @@ def export_podcast_feeds(request: HttpRequest) -> HttpResponse:
 
 @require_safe
 @login_required
-def user_stats(request: HttpRequest) -> HttpResponse:
+def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     stats = [
         UserStat(
@@ -149,11 +149,11 @@ def user_stats(request: HttpRequest) -> HttpResponse:
             url=reverse("episodes:history"),
         ),
     ]
-    return render(request, "account/stats.html", {"stats": stats})
+    return TemplateResponse(request, "account/stats.html", {"stats": stats})
 
 
 @require_safe
-def unsubscribe(request: HttpRequest) -> HttpResponse:
+def unsubscribe(request: HttpRequest) -> HttpResponseRedirect:
     """Unsubscribe user from email notifications.
 
     The email address should be an encrypted token. Look up the EmailAddress instance and the user,
@@ -185,11 +185,11 @@ def unsubscribe(request: HttpRequest) -> HttpResponse:
 
         messages.success(request, "You have been unsubscribed from email notifications")
 
-    return redirect("index")
+    return HttpResponseRedirect(reverse("index"))
 
 
 @require_form_methods
-def delete_account(request: HttpRequest) -> HttpResponse:
+def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Delete account on confirmation."""
     if (
         request.user.is_authenticated
@@ -199,5 +199,5 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         request.user.delete()
         logout(request)
         messages.info(request, "Your account has been deleted")
-        return redirect("index")
-    return render(request, "account/delete_account.html")
+        return HttpResponseRedirect(reverse("index"))
+    return TemplateResponse(request, "account/delete_account.html")

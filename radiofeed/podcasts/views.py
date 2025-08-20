@@ -6,14 +6,16 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, QuerySet
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404, HttpRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
-from radiofeed.paginator import render_pagination
-from radiofeed.partials import render_partial_for_target
+from radiofeed.paginator import render_paginated_response
+from radiofeed.partials import render_partial_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
 from radiofeed.podcasts.models import Category, Podcast
@@ -24,7 +26,7 @@ if TYPE_CHECKING:
 
 @require_safe
 @login_required
-def subscriptions(request: HttpRequest) -> HttpResponse:
+def subscriptions(request: HttpRequest) -> TemplateResponse:
     """Render podcast index page."""
     podcasts = _get_podcasts().subscribed(request.user).distinct()
 
@@ -37,12 +39,12 @@ def subscriptions(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination(request, "podcasts/subscriptions.html", podcasts)
+    return render_paginated_response(request, "podcasts/subscriptions.html", podcasts)
 
 
 @require_safe
 @login_required
-def discover(request: HttpRequest) -> HttpResponse:
+def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     podcasts = (
         _get_podcasts()
@@ -50,7 +52,7 @@ def discover(request: HttpRequest) -> HttpResponse:
         .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
     )
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/discover.html",
         {
@@ -63,7 +65,7 @@ def discover(request: HttpRequest) -> HttpResponse:
 @login_required
 def search_podcasts(
     request: HttpRequest,
-) -> HttpResponse:
+) -> TemplateResponse | HttpResponseRedirect:
     """Search all public podcasts in database."""
 
     if request.search:
@@ -78,20 +80,22 @@ def search_podcasts(
             )
         )
 
-        return render_pagination(request, "podcasts/search_podcasts.html", podcasts)
+        return render_paginated_response(
+            request, "podcasts/search_podcasts.html", podcasts
+        )
 
-    return redirect("podcasts:discover")
+    return HttpResponseRedirect(reverse("podcasts:discover"))
 
 
 @require_safe
 @login_required
-def search_itunes(request: HttpRequest) -> HttpResponse:
+def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
         try:
             feeds = itunes.search_cached(get_client(), request.search.value)
-            return render(
+            return TemplateResponse(
                 request,
                 "podcasts/search_itunes.html",
                 {
@@ -101,19 +105,21 @@ def search_itunes(request: HttpRequest) -> HttpResponse:
         except itunes.ItunesError as exc:
             messages.error(request, f"Failed to search iTunes: {exc}")
 
-    return redirect("podcasts:discover")
+    return HttpResponseRedirect(reverse("podcasts:discover"))
 
 
 @require_safe
 @login_required
-def podcast_detail(request: HttpRequest, podcast_id: int, slug: str) -> HttpResponse:
+def podcast_detail(
+    request: HttpRequest, podcast_id: int, slug: str
+) -> TemplateResponse:
     """Details for a single podcast."""
 
     podcast = _get_podcast_or_404(podcast_id)
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/detail.html",
         {
@@ -125,11 +131,11 @@ def podcast_detail(request: HttpRequest, podcast_id: int, slug: str) -> HttpResp
 
 @require_safe
 @login_required
-def latest_episode(_, podcast_id: int) -> HttpResponse:
+def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
     """Redirects to latest episode."""
     podcast = _get_podcast_or_404(podcast_id)
     if episode := podcast.episodes.order_by("-pub_date").first():
-        return redirect(episode)
+        return HttpResponseRedirect(episode.get_absolute_url())
     raise Http404
 
 
@@ -137,7 +143,7 @@ def latest_episode(_, podcast_id: int) -> HttpResponse:
 @login_required
 def episodes(
     request: HttpRequest, podcast_id: int, slug: str | None = None
-) -> HttpResponse:
+) -> TemplateResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
@@ -160,7 +166,7 @@ def episodes(
         ordering = request.GET.get("order", default_ordering)
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
-    return render_pagination(
+    return render_paginated_response(
         request,
         "podcasts/episodes.html",
         episodes,
@@ -178,7 +184,7 @@ def similar(
     request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
-) -> HttpResponse:
+) -> TemplateResponse:
     """List similar podcasts based on recommendations."""
 
     podcast = _get_podcast_or_404(podcast_id)
@@ -187,7 +193,7 @@ def similar(
         "-score"
     )[: settings.DEFAULT_PAGE_SIZE]
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/similar.html",
         {
@@ -199,7 +205,7 @@ def similar(
 
 @require_safe
 @login_required
-def category_list(request: HttpRequest) -> HttpResponse:
+def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.alias(
@@ -217,7 +223,7 @@ def category_list(request: HttpRequest) -> HttpResponse:
     if request.search:
         categories = categories.search(request.search.value)
 
-    return render(
+    return TemplateResponse(
         request,
         "podcasts/categories.html",
         {
@@ -229,8 +235,10 @@ def category_list(request: HttpRequest) -> HttpResponse:
 @require_safe
 @login_required
 def category_detail(
-    request: HttpRequest, category_id: int, slug: str | None = None
-) -> HttpResponse:
+    request: HttpRequest,
+    category_id: int,
+    slug: str | None = None,
+) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -248,7 +256,7 @@ def category_detail(
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination(
+    return render_paginated_response(
         request,
         "podcasts/category_detail.html",
         podcasts,
@@ -260,7 +268,9 @@ def category_detail(
 
 @require_POST
 @login_required
-def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def subscribe(
+    request: HttpRequest, podcast_id: int
+) -> TemplateResponse | HttpResponseConflict:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
 
@@ -276,7 +286,7 @@ def subscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_DELETE
 @login_required
-def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def unsubscribe(request: HttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
     request.user.subscriptions.filter(podcast=podcast).delete()
@@ -286,7 +296,7 @@ def unsubscribe(request: HttpRequest, podcast_id: int) -> HttpResponse:
 
 @require_safe
 @login_required
-def private_feeds(request: HttpRequest) -> HttpResponse:
+def private_feeds(request: HttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
 
@@ -299,14 +309,12 @@ def private_feeds(request: HttpRequest) -> HttpResponse:
     else:
         podcasts = podcasts.order_by("-pub_date")
 
-    return render_pagination(request, "podcasts/private_feeds.html", podcasts)
+    return render_paginated_response(request, "podcasts/private_feeds.html", podcasts)
 
 
 @require_form_methods
 @login_required
-def add_private_feed(
-    request: HttpRequest,
-) -> HttpResponse:
+def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
 
     user = cast("User", request.user)
@@ -316,19 +324,22 @@ def add_private_feed(
 
         if form.is_valid():
             podcast, is_new = form.save()
-            if is_new:
-                messages.success(
-                    request,
-                    "Podcast added to your Private Feeds and will appear here soon",
-                )
-                return redirect("podcasts:private_feeds")
 
-            messages.success(request, "Podcast added to your Private Feeds")
-            return redirect(podcast)
+            if is_new:
+                success_message = (
+                    "Podcast added to your Private Feeds and will appear here soon"
+                )
+                redirect_url = reverse("podcasts:private_feeds")
+            else:
+                success_message = "Podcast added to your Private Feeds"
+                redirect_url = podcast.get_absolute_url()
+
+            messages.success(request, success_message)
+            return HttpResponseRedirect(redirect_url)
     else:
         form = PrivateFeedForm(user=user)
 
-    return render_partial_for_target(
+    return render_partial_response(
         request,
         "podcasts/private_feed_form.html",
         {
@@ -341,7 +352,7 @@ def add_private_feed(
 
 @require_DELETE
 @login_required
-def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
+def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponseRedirect:
     """Delete private feed."""
 
     _get_podcast_or_404(
@@ -351,7 +362,7 @@ def remove_private_feed(request: HttpRequest, podcast_id: int) -> HttpResponse:
     ).delete()
 
     messages.info(request, "Removed from Private Feeds")
-    return redirect("podcasts:private_feeds")
+    return HttpResponseRedirect(reverse("podcasts:private_feeds"))
 
 
 def _get_podcasts() -> QuerySet[Podcast]:
@@ -364,8 +375,8 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 
 def _render_subscribe_action(
     request: HttpRequest, podcast: Podcast, *, is_subscribed: bool
-) -> HttpResponse:
-    return render(
+) -> TemplateResponse:
+    return TemplateResponse(
         request,
         "podcasts/detail.html#subscribe_button",
         {

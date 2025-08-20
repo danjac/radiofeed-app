@@ -1,8 +1,8 @@
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.http import HttpRequest
+from django.template.response import TemplateResponse
 
 
-def render_partial_for_target(
+def render_partial_response(
     request: HttpRequest,
     template_name: str,
     context: dict | None = None,
@@ -10,7 +10,7 @@ def render_partial_for_target(
     target: str,
     partial: str,
     **response_kwargs,
-) -> HttpResponse:
+) -> TemplateResponse:
     """Conditionally renders a template partial if `target` matches the HX-Target header.
 
     Otherwise renders the full template.
@@ -18,4 +18,9 @@ def render_partial_for_target(
     if request.htmx.target == target:
         template_name += f"#{partial}"
 
-    return render(request, template_name, context, **response_kwargs)
+    return TemplateResponse(
+        request,
+        template_name,
+        context or {},
+        **response_kwargs,
+    )
