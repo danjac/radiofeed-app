@@ -74,7 +74,7 @@ def blockinclude(
 
         Usage in a template:
 
-        {% blockinclude content "header.html" title="Home page" %}
+        {% blockinclude "header.html" title="Home page" %}
             <p>This is the content of the blockinclude.</p>
         {% endblockinclude %}
 
