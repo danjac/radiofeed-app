@@ -15,7 +15,7 @@ def render_partial_response(
 
     Otherwise renders the full template.
     """
-    if request.htmx.target == target:
+    if target and request.htmx.target == target:
         template_name += f"#{partial}"
 
     return TemplateResponse(
