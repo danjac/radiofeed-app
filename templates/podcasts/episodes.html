@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "podcasts/header.html" podcast=podcast active="episodes" %}
+    {% blockinclude "podcasts/header.html" active="episodes" %}
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
                 {% if request.search or season or num_episodes > page_size %}
