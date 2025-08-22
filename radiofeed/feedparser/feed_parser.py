@@ -1,3 +1,4 @@
+import dataclasses
 import functools
 import itertools
 from collections.abc import Iterator
@@ -24,7 +25,7 @@ from radiofeed.podcasts.models import Category, Podcast
 
 def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
     """Updates a Podcast instance with its RSS or Atom feed source."""
-    return _FeedParser(podcast).parse(client)
+    return _FeedParser(podcast=podcast).parse(client)
 
 
 @functools.cache
@@ -33,24 +34,26 @@ def get_categories_dict() -> dict[str, Category]:
     return {category.name.casefold(): category for category in Category.objects.all()}
 
 
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class _FeedParser:
-    def __init__(self, podcast: Podcast) -> None:
-        self._podcast = podcast
+    podcast: Podcast
 
     def parse(self, client: Client) -> Podcast.ParserResult:
+        """Parse the podcast's RSS feed and update the Podcast instance."""
+
         canonical_id: int | None = None
 
         etag, modified, content_hash = (
-            self._podcast.etag,
-            self._podcast.modified,
-            self._podcast.content_hash,
+            self.podcast.etag,
+            self.podcast.modified,
+            self.podcast.content_hash,
         )
         updated = parsed = timezone.now()
 
         try:
             response = rss_fetcher.fetch_rss(
                 client,
-                self._podcast.rss,
+                self.podcast.rss,
                 etag=etag,
                 modified=modified,
             )
@@ -61,14 +64,19 @@ class _FeedParser:
                 response.content_hash,
             )
 
-            if content_hash == self._podcast.content_hash:
+            # Not all feeds use ETag or Last-Modified headers correctly,
+            # so we also check the content hash to see if the feed has changed.
+
+            if content_hash == self.podcast.content_hash:
                 raise NotModifiedError
 
-            if canonical_id := self._get_canonical(response.url, content_hash):
+            if canonical_id := self._get_canonical_id(response.url, content_hash):
                 raise DuplicateError
 
+            feed = rss_parser.parse_rss(response.content)
+
             return self._handle_success(
-                feed=rss_parser.parse_rss(response.content),
+                feed=feed,
                 rss=response.url,
                 content_hash=content_hash,
                 etag=etag,
@@ -89,10 +97,10 @@ class _FeedParser:
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
         result = Podcast.ParserResult.SUCCESS
-        keywords, categories = self._parse_categories(feed)
+        keywords, categories = _parse_categories(feed)
         try:
             with transaction.atomic():
-                self._update(
+                Podcast.objects.filter(pk=self.podcast.pk).update(
                     num_retries=0,
                     parser_result=result,
                     active=not feed.complete,
@@ -108,16 +116,20 @@ class _FeedParser:
                     ),
                     **fields,
                 )
-                self._podcast.categories.set(categories)
-                self._sync_episodes(feed)
+                self.podcast.categories.set(categories)
+                self._parse_episodes(feed)
         except (DataError, IntegrityError) as exc:
             raise InvalidDataError from exc
         return result
 
-    def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
+    def _handle_error(
+        self,
+        exc: FeedParserError,
+        **fields,
+    ) -> Podcast.ParserResult:
         # Handle errors when parsing a feed
         active = True
-        num_retries = self._podcast.num_retries
+        num_retries = self.podcast.num_retries
 
         match exc:
             case NotModifiedError():
@@ -132,14 +144,14 @@ class _FeedParser:
 
         frequency = (
             scheduler.reschedule(
-                self._podcast.pub_date,
-                self._podcast.frequency,
+                self.podcast.pub_date,
+                self.podcast.frequency,
             )
             if active
-            else self._podcast.frequency
+            else self.podcast.frequency
         )
 
-        self._update(
+        Podcast.objects.filter(pk=self.podcast.pk).update(
             active=active,
             num_retries=num_retries,
             frequency=frequency,
@@ -148,14 +160,9 @@ class _FeedParser:
         )
         return exc.result
 
-    def _update(self, **fields) -> None:
-        # Update the podcast with the new fields
-        Podcast.objects.filter(pk=self._podcast.pk).update(**fields)
-
-    def _get_canonical(self, url: str, content_hash: str) -> int | None:
-        # Get the canonical podcast if it exists: matches the RSS feed URL or content hash
+    def _get_canonical_id(self, url: str, content_hash: str) -> int | None:
         return (
-            Podcast.objects.exclude(pk=self._podcast.pk)
+            Podcast.objects.exclude(pk=self.podcast.pk)
             .filter(
                 Q(rss=url) | Q(content_hash=content_hash),
                 canonical__isnull=True,
@@ -164,27 +171,10 @@ class _FeedParser:
             .first()
         )
 
-    def _parse_categories(self, feed: Feed) -> tuple[str, set[Category]]:
-        # Parse categories from the feed: return keywords and Category instances
-        categories_dct = get_categories_dict()
-
-        # Get the categories that are in the database
-        categories = {
-            categories_dct[category]
-            for category in feed.categories
-            if category in categories_dct
-        }
-
-        # Get the keywords that are not in the database
-        keywords = " ".join(feed.categories - set(categories_dct.keys()))
-
-        return keywords, categories
-
-    def _sync_episodes(self, feed: Feed) -> None:
-        # Update and insert episodes in the database
-
+    def _parse_episodes(self, feed: Feed) -> None:
+        """Parse the podcast's RSS feed and update the episodes."""
         # Delete any episodes that are not in the feed
-        qs = Episode.objects.filter(podcast=self._podcast)
+        qs = Episode.objects.filter(podcast=self.podcast)
         qs.exclude(guid__in={item.guid for item in feed.items}).delete()
 
         # Create a dictionary of guids to episode pks
@@ -197,7 +187,7 @@ class _FeedParser:
         ):
             Episode.objects.fast_update(
                 batch,
-                fields=[
+                fields=(
                     "cover_url",
                     "description",
                     "duration",
@@ -211,7 +201,7 @@ class _FeedParser:
                     "pub_date",
                     "season",
                     "title",
-                ],
+                ),
             )
 
         for batch in itertools.batched(
@@ -221,30 +211,45 @@ class _FeedParser:
         ):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
-    def _episodes_for_update(
-        self, feed: Feed, guids: dict[str, int]
-    ) -> Iterator[Episode]:
-        # Return all episodes that are already in the database
-        # fast_update() requires that we have no episodes with the same PK
-        episode_ids = set()
-        for item in feed.items:
-            episode_id = guids.get(item.guid)
-            if episode_id and episode_id not in episode_ids:
-                yield self._make_episode(item, pk=episode_id)
-                episode_ids.add(episode_id)
-
     def _episodes_for_insert(
         self, feed: Feed, guids: dict[str, int]
     ) -> Iterator[Episode]:
-        # Return all episodes that are not in the database
+        """Return episodes that are not in the database."""
         for item in feed.items:
             if item.guid not in guids:
-                yield self._make_episode(item)
+                yield self._parse_episode(item)
 
-    def _make_episode(self, item: Item, **fields) -> Episode:
-        # Build Episode instance from a feed item
+    def _episodes_for_update(
+        self, feed: Feed, guids: dict[str, int]
+    ) -> Iterator[Episode]:
+        """Return episodes that are already in the database."""
+        # fast_update() requires that we have no episodes with the same PK
+        episode_ids = set()
+        for item in feed.items:
+            if (episode_id := guids.get(item.guid)) and episode_id not in episode_ids:
+                yield self._parse_episode(item, pk=episode_id)
+                episode_ids.add(episode_id)
+
+    def _parse_episode(self, item: Item, **fields) -> Episode:
         return Episode(
-            podcast=self._podcast,
+            podcast=self.podcast,
             **item.model_dump(exclude={"categories"}),
             **fields,
         )
+
+
+def _parse_categories(feed: Feed) -> tuple[str, set[Category]]:
+    # Parse categories from the feed: return keywords and Category instances
+    categories_dct = get_categories_dict()
+
+    # Get the categories that are in the database
+    categories = {
+        categories_dct[category]
+        for category in feed.categories
+        if category in categories_dct
+    }
+
+    # Get the keywords that are not in the database
+    keywords = " ".join(feed.categories - set(categories_dct.keys()))
+
+    return keywords, categories
