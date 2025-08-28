@@ -15,9 +15,9 @@
         {% endblockinclude %}
     {% endblockinclude %}
     {% cache cache_timeout discover-podcasts %}
-        {% blockinclude "pagination.html" %}
+        {% blockinclude "browse.html" %}
             {% for podcast in podcasts %}
-                {% blockinclude "pagination/item.html" %}
+                {% blockinclude "browse/item.html" %}
                     {% include "podcasts/podcast.html" %}
                 {% endblockinclude %}
             {% endfor %}

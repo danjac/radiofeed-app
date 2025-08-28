@@ -25,11 +25,11 @@
         {% cache cache_timeout category-podcasts request.get_full_path %}
             {% blockinclude "pagination.html" %}
                 {% for podcast in page %}
-                    {% blockinclude "pagination/item.html" %}
+                    {% blockinclude "browse/item.html" %}
                         {% include "podcasts/podcast.html" %}
                     {% endblockinclude %}
                 {% empty %}
-                    {% blockinclude "pagination/empty.html" %}
+                    {% blockinclude "browse/empty.html" %}
                         {% if request.search %}
                             No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         {% else %}

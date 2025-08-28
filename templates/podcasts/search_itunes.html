@@ -21,13 +21,13 @@
         {% endblockinclude %}
     {% endblockinclude %}
 
-    {% blockinclude "pagination.html" %}
+    {% blockinclude "browse.html" %}
         {% for feed in feeds %}
-            {% blockinclude "pagination/item.html" %}
+            {% blockinclude "browse/item.html" %}
                 {% include "podcasts/itunes_feed.html" %}
             {% endblockinclude %}
         {% empty %}
-            {% blockinclude "pagination/empty.html" %}
+            {% blockinclude "browse/empty.html" %}
                 No feeds found in iTunes for &quot;<strong>{{ request.search.value }}</strong>&quot;.
             {% endblockinclude %}
         {% endfor %}

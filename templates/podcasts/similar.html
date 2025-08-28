@@ -7,9 +7,9 @@
 {% block content %}
     {% include "podcasts/header.html" with active="similar" %}
     {% cache cache_timeout similar-podcasts podcast.pk %}
-        {% blockinclude "pagination.html" %}
+        {% blockinclude "browse.html" %}
             {% for recommendation in recommendations %}
-                {% blockinclude "pagination/item.html" %}
+                {% blockinclude "browse/item.html" %}
                     {% include "podcasts/podcast.html" with podcast=recommendation.recommended %}
                 {% endblockinclude %}
             {% endfor %}

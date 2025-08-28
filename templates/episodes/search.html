@@ -23,14 +23,13 @@
         {% cache cache_timeout search-episodes request.get_full_path %}
             {% blockinclude "pagination.html" %}
                 {% for episode in page %}
-                    {% blockinclude "pagination/item.html" %}
+                    {% blockinclude "browse/item.html" %}
                         {% include "episodes/episode.html" %}
                     {% endblockinclude %}
                 {% empty %}
-                    {% blockinclude "pagination/empty.html" %}
+                    {% blockinclude "browse/empty.html" %}
                         No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                     {% endblockinclude %}
-
                 {% endfor %}
             {% endblockinclude %}
         {% endcache %}

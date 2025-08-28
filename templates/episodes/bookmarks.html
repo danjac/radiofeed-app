@@ -30,11 +30,11 @@
     {% partialdef pagination inline %}
         {% blockinclude "pagination.html" %}
             {% for bookmark in page %}
-                {% blockinclude "pagination/item.html" %}
+                {% blockinclude "browse/item.html" %}
                     {% include "episodes/episode.html" with episode=bookmark.episode %}
                 {% endblockinclude %}
             {% empty %}
-                {% blockinclude "pagination/empty.html" %}
+                {% blockinclude "browse/empty.html" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
                     {% else %}
