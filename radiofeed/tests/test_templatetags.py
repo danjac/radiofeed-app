@@ -2,7 +2,7 @@ import pytest
 from django.contrib.sites.models import Site
 from django.template import TemplateSyntaxError
 
-from radiofeed.templatetags import blockinclude, format_duration
+from radiofeed.templatetags import blockinclude, format_duration, htmlattrs
 
 
 @pytest.fixture
@@ -18,6 +18,25 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
+
+
+class TestHtmlAttrs:
+    def test_attrs_is_none(self):
+        assert htmlattrs(None, required=True) == " required"
+
+    def test_snake_to_kebab_case(self):
+        assert htmlattrs({"x_data": True}) == " x-data"
+
+    def test_append_cases(self):
+        assert (
+            htmlattrs(
+                {
+                    "class": "text-lg",
+                },
+                **{"class": "font-italic"},
+            )
+            == ' class="font-italic text-lg"'
+        )
 
 
 class TestBlockInclude:

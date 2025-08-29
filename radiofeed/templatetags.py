@@ -6,6 +6,7 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.template.defaultfilters import pluralize
@@ -50,6 +51,47 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     scheme = "https" if settings.USE_HTTPS else "http"
     url = resolve_url(path, *args, **kwargs)
     return f"{scheme}://{site.domain}{url}"
+
+
+@register.simple_tag
+def attrs(**values) -> dict:
+    """Returns attributes as dictionary."""
+    return values
+
+
+@register.simple_tag
+def htmlattrs(attrs: dict | None, **defaults) -> str:
+    """Renders attributes as HTML attributes.
+
+    Use with `attrs` to pass attributes to an include template.
+
+    Example:
+
+        {% attrs id="test" class="text-lg" required=True as attrs %}
+        {% include "header.html" attrs=attrs %}
+
+    In include template:
+        <h1 {% htmlattrs attrs id="xyz" class="text-red-100" %}>Header</h1>
+
+    This would be rendered as:
+        <h1 class="text-red-100 text-lg" id="test" required>Header</h1>
+
+    Default values are overriden, except for `class`, which is appended.
+    """
+    merged = {}
+    classnames = []
+    # Merge dictionaries, replacing "_" in name with "-"
+    for dct in [defaults, attrs]:
+        if dct:
+            if classes := dct.pop("class", None):
+                classnames += classes.split()
+            merged |= {name.replace("_", "-"): value for name, value in dct.items()}
+
+    if classnames:
+        merged["class"] = " ".join(dict.fromkeys(classnames).keys())
+
+    # render safe html string
+    return flatatt(merged)
 
 
 @register.simple_block_tag(takes_context=True)
