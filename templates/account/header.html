@@ -5,7 +5,7 @@
     {% blockinclude "header/title.html" %}Settings for {{ user.username }}{% endblockinclude %}
     {% blockinclude "header/nav.html" %}
         {% blockinclude "header/nav/item.html" %}
-            {% blockinclude "header/nav/dropdown.html" id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
+            {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
 
                 {% for item in settings.items %}
                     {% blockinclude "header/nav/dropdown/item.html" url=item.url icon=item.icon %}

@@ -19,7 +19,7 @@
                         {% elif season and season in podcast.seasons %}
                             {% blockinclude "header/nav/item.html" %}
                                 {% with current_season=season|stringformat:"s" %}
-                                    {% blockinclude "header/nav/dropdown.html" id="seasons-dropdown" label="Season "|add:current_season current=season %}
+                                    {% blockinclude "header/nav/dropdown.html" dropdown_id="seasons-dropdown" label="Season "|add:current_season current=season %}
                                         {% blockinclude "header/nav/dropdown/item.html" url=request.path %}
                                             All Seasons
                                         {% endblockinclude %}

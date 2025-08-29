@@ -1,8 +1,8 @@
 {% load heroicons %}
 <nav x-data="{showDropdown: false}"
      class="relative"
-     id="{{ id }}">
-    <button id="{{ id }}-btn"
+     id="{{ dropdown_id }}">
+    <button id="{{ dropdown_id }}-btn"
             tabindex="0"
             @click="showDropdown = !showDropdown"
             @click.outside="showDropdown=false"
