@@ -303,7 +303,7 @@ def _render_audio_log(
     audio_log: AudioLog,
     *,
     show_audio_log: bool,
-):
+) -> TemplateResponse:
     context = {"episode": audio_log.episode}
 
     if show_audio_log:
