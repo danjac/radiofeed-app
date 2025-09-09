@@ -451,6 +451,44 @@ class TestHistory:
         assert len(response.context["page"].object_list) == 1
 
 
+class TestMarkAudioLogComplete:
+    @pytest.mark.django_db
+    def test_ok(self, client, auth_user, episode):
+        audio_log = AudioLogFactory(user=auth_user, episode=episode, current_time=300)
+
+        response = client.post(
+            self.url(episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-log",
+            },
+        )
+
+        assert200(response)
+
+        audio_log.refresh_from_db()
+        assert audio_log.current_time == 0
+
+    @pytest.mark.django_db
+    def test_is_playing(self, client, auth_user, player_episode):
+        """Do not mark complete if episode is currently playing"""
+
+        response = client.post(
+            self.url(player_episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-log",
+            },
+        )
+
+        assert404(response)
+
+        assert AudioLog.objects.filter(user=auth_user, episode=player_episode).exists()
+
+    def url(self, episode):
+        return reverse("episodes:mark_audio_log_complete", args=[episode.pk])
+
+
 class TestRemoveAudioLog:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):

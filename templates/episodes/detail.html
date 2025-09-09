@@ -184,7 +184,12 @@
                 {% endif %}
             </div>
             {% partialdef audio_log inline %}
-                <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}>
+                <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}
+                     hx-push-url="false"
+                     hx-swap="outerHTML"
+                     hx-target="#audio-log"
+                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                >
                     {% if audio_log and not is_playing %}
                         <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
                             <div class="flex flex-wrap items-center space-x-2">
@@ -196,19 +201,29 @@
                                     <span>{{ audio_log.percent_complete }}% complete</span>
                                 {% endif %}
                             </div>
-                            <button class="text-sm btn btn-danger"
-                                    title="Remove episode from your History"
-                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
-                                    hx-confirm="Are you sure you want to remove this episode from your History?"
-                                    hx-disabled-elt="this"
-                                    hx-target="#audio-log"
-                                    hx-indicator="this"
-                                    hx-push-url="false"
-                                    hx-swap="outerHTML"
-                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                                {% heroicon_mini "trash" size=16 %}
-                                Remove
-                            </button>
+                            <div class="flex flex-wrap items-center space-x-2">
+                                {% if audio_log.percent_complete %}
+                                    <button class="text-sm btn btn-default"
+                                            title="Mark episode complete"
+                                            hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
+                                            hx-disabled-elt="this"
+                                            hx-indicator="this"
+                                    >
+                                        {% heroicon_mini "check" size=16 %}
+                                        Complete
+                                    </button>
+                                {% endif %}
+                                <button class="text-sm btn btn-danger"
+                                        title="Remove episode from your History"
+                                        hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                                        hx-confirm="Are you sure you want to remove this episode from your History?"
+                                        hx-disabled-elt="this"
+                                        hx-indicator="this"
+                                >
+                                    {% heroicon_mini "trash" size=16 %}
+                                    Remove
+                                </button>
+                            </div>
                         </div>
                     {% endif %}
                 </div>

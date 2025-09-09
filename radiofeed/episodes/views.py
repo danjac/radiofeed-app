@@ -176,6 +176,27 @@ def history(request: HttpRequest) -> TemplateResponse:
     )
 
 
+@require_POST
+@login_required
+def mark_audio_log_complete(request: HttpRequest, episode_id: int) -> TemplateResponse:
+    """Marks audio log complete."""
+
+    if request.player.has(episode_id):
+        raise Http404
+
+    audio_log = get_object_or_404(
+        request.user.audio_logs.select_related("episode"),
+        episode__pk=episode_id,
+    )
+
+    audio_log.current_time = 0
+    audio_log.save()
+
+    messages.success(request, "Episode marked complete")
+
+    return _render_audio_log(request, audio_log, show_audio_log=True)
+
+
 @require_DELETE
 @login_required
 def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
@@ -193,13 +214,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     messages.info(request, "Removed from History")
 
-    return TemplateResponse(
-        request,
-        "episodes/detail.html#audio_log",
-        {
-            "episode": audio_log.episode,
-        },
-    )
+    return _render_audio_log(request, audio_log, show_audio_log=False)
 
 
 @require_safe
@@ -281,3 +296,17 @@ def _render_bookmark_action(
             "is_bookmarked": is_bookmarked,
         },
     )
+
+
+def _render_audio_log(
+    request: HttpRequest,
+    audio_log: AudioLog,
+    *,
+    show_audio_log: bool,
+):
+    context = {"episode": audio_log.episode}
+
+    if show_audio_log:
+        context["audio_log"] = audio_log
+
+    return TemplateResponse(request, "episodes/detail.html#audio_log", context)
