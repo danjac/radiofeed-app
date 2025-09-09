@@ -50,6 +50,7 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
+    # TBD: remove in Django 6.0
     "template_partials",
     "widget_tweaks",
     "radiofeed.episodes",
@@ -132,6 +133,8 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
+                # TBD: remove in Django 6.0
+                "template_partials.templatetags.partials",
                 "radiofeed.templatetags",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
