@@ -187,7 +187,7 @@
                 <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}
                      hx-push-url="false"
                      hx-swap="outerHTML"
-                     hx-target="#audio-log"
+                     hx-target="this"
                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                 >
                     {% if audio_log and not is_playing %}

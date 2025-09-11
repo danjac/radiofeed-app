@@ -68,7 +68,7 @@ def htmlattrs(attrs: dict | None, **defaults) -> str:
     Example:
 
         {% attrs id="test" class="text-lg" required=True as attrs %}
-        {% include "header.html" attrs=attrs %}
+        {% include "header.html" with attrs=attrs %}
 
     In include template:
         <h1 {% htmlattrs attrs id="xyz" class="text-red-100" %}>Header</h1>

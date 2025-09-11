@@ -140,7 +140,8 @@ def render_paginated_response(  # noqa: PLR0913
                 request,
                 object_list,
                 **pagination_kwargs,
-            )
+            ),
+            "pagination_target": target,
         }
         | (extra_context or {}),
         target=target,
