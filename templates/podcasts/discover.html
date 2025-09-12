@@ -1,26 +1,22 @@
-{% extends "base.html" %}
 {% load cache %}
-
-{% block title %}
-    {{ block.super }} | Discover
-{% endblock title %}
-
-{% block content %}
-    {% blockinclude "header.html" title="Discover" %}
-        {% blockinclude "header/nav.html" %}
-            {% blockinclude "header/nav/item.html" %}
-                {% url "podcasts:search_podcasts" as search_url %}
-                {% include "search/form.html" with placeholder="Search: Podcasts" %}
-            {% endblockinclude %}
-        {% endblockinclude %}
-    {% endblockinclude %}
+<c-layout title="Discover">
+    <c-header title="Discover">
+        <c-header.nav>
+            <c-header.nav.item>
+                <c-search.form
+                    url="{% url 'podcasts:search_podcasts' %}"
+                    placeholder="Search: Podcasts"
+                />
+            </c-header.nav.item>
+        </c-header.nav>
+    </c-header>
     {% cache cache_timeout discover-podcasts %}
-        {% blockinclude "browse.html" %}
+        <c-browse>
             {% for podcast in podcasts %}
-                {% blockinclude "browse/item.html" %}
-                    {% include "podcasts/podcast.html" %}
-                {% endblockinclude %}
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="podcast" />
+                </c-browse.item>
             {% endfor %}
-        {% endblockinclude %}
+        </c-browse>
     {% endcache %}
-{% endblock content %}
+</c-layout>

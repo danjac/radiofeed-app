@@ -1,15 +1,10 @@
-{% extends "base.html" %}
-{% load heroicons socialaccount %}
-{% block title %}
-    {{ block.super }} | Social Logins
-{% endblock title %}
-
-{% block content %}
-    {% include "account/header.html" with active="social_logins" %}
+{% load socialaccount %}
+<c-layout title="Social Logins">
+    <c-account.header active="social_logins" />
     <div class="space-y-3">
         {% if form.accounts %}
             <p>You can sign in to your account using any of the following third party accounts:</p>
-            {% blockinclude "form.html" %}
+            <c-form>
                 {% for base_account in form.accounts %}
                     {% with account=base_account.get_provider_account %}
                         <div>
@@ -18,7 +13,7 @@
                                 <input id="id_account_{{ base_account.id }}"
                                        type="radio"
                                        name="account"
-                                       class="inline-block mr-3"
+                                       class="inline-block mr-3 form-radio"
                                        value="{{ base_account.id }}" />
                                 <div class="{{ base_account.provider }} {{ account.get_brand.id }}">
                                     {{ account.get_brand.name }}
@@ -28,26 +23,28 @@
                         </div>
                     {% endwith %}
                 {% endfor %}
-                {% blockinclude "form/buttons.html" %}
-                    <button class="btn btn-danger"
-                            type="submit"
-                            name="action_remove"
-                            value="1"
-                            title="Remove this connection"
+                <c-form.buttons>
+                    <c-button variant="danger"
+                              icon="trash"
+                              type="submit"
+                              name="action_remove"
+                              value="1"
+                              title="Remove this connection"
                     >
-                        {% heroicon_mini "trash" %}
                         Remove
-                    </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                    </c-button>
+                </c-form.buttons>
+            </c-form>
             <hr class="border" />
         {% else %}
             <p>You currently have no social network accounts connected to this account.</p>
         {% endif %}
         <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
-            {% include "socialaccount/buttons.html" with process="connect" %}
+            <c-socialaccount.buttons process="connect" />
         </ul>
     </div>
-    {% providers_media_js %}
-{% endblock content %}
+    <c-slot name="scripts">
+        {% providers_media_js %}
+    </c-slot>
+</c-layout>

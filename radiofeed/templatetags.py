@@ -6,13 +6,12 @@ from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
-from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.template.defaultfilters import pluralize
 
 from radiofeed import pwa
-from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
+from radiofeed.cover_image import get_cover_image_attrs
 from radiofeed.html import render_markdown
 
 _TIME_PARTS: Final = [
@@ -48,136 +47,12 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{url}"
 
 
-@register.simple_tag
-def buildattrs(*attrs: dict | None, **extra_attrs) -> dict:
-    """Returns attributes as dictionary."""
-    merged = {}
-    for dct in (dct for dct in (*attrs, extra_attrs) if dct):
-        merged |= dct
-    return merged
-
-
-@register.simple_tag
-def htmlattrs(*attrs: dict | None, **defaults) -> str:
-    """Renders attributes as HTML attributes.
-
-    Use with `buildattrs` to pass attributes to an include template.
-
-    Example:
-
-        {% buildattrs id="test" class="text-lg" required=True as attrs %}
-        {% include "header.html" with attrs=attrs %}
-
-    In include template:
-        <h1 {% htmlattrs attrs id="xyz" class="text-red-100" %}>Header</h1>
-
-    This would be rendered as:
-        <h1 class="text-red-100 text-lg" id="test" required>Header</h1>
-
-    Default values are overriden, except for `class`, which is appended.
-
-    Note that snake case attribute names are converted to kebab case e.g. `hx_get` -> `hx-get`
-    """
-    merged_attrs = {}
-    merged_classes = []
-
-    for dct in (dct.copy() for dct in (defaults, *attrs) if dct):
-        # Extract classes
-        if classes := dct.pop("class", None):
-            merged_classes += classes.split()
-
-        merged_attrs |= {
-            name.replace(
-                "_",
-                "-",
-            ): value
-            for name, value in dct.items()
-        }
-
-    # Combine unique class names, preserving original order
-    if merged_classes:
-        merged_attrs["class"] = " ".join(dict.fromkeys(merged_classes).keys())
-
-    return flatatt(merged_attrs)
-
-
-@register.simple_block_tag(takes_context=True)
-def blockinclude(
-    context: Context,
-    content: str,
-    template_name: str,
-    *,
-    only: bool = False,
-    **extra_context,
-) -> str:
-    """Renders a block include.
-    This is useful for rendering a block of HTML with a specific template.
-    The included template should have a `content` variable that will be replaced.
-
-    For example:
-
-        header.html:
-
-        <header>
-            <h1>{{ title }}</h1>
-            {{ content }}
-        </header>
-
-        Usage in a template:
-
-        {% blockinclude "header.html" title="Home page" %}
-            <p>This is the content of the blockinclude.</p>
-        {% endblockinclude %}
-
-        Renders as:
-
-        <header>
-            <h1>Home page</h1>
-            <p>This is the content of the blockinclude.</p>
-        </header>
-
-    If `only` is `True` then will only include the variables provided.
-    """
-    if context.template is None:
-        raise template.TemplateSyntaxError(
-            "blockinclude tag can only be used in a template context"
-        )
-
-    tmpl = context.template.engine.get_template(template_name)
-    context = context.new() if only else context
-
-    with context.push(content=content, **extra_context):
-        return tmpl.render(context)
-
-
-@register.inclusion_tag("cookie_banner.html", takes_context=True)
-def cookie_banner(context: Context) -> dict:
+@register.simple_tag(takes_context=True)
+def get_cookies_accepted(context: Context) -> bool:
     """Returns True if user has accepted cookies."""
-    cookies_accepted = False
     if request := context.get("request", None):
-        cookies_accepted = settings.GDPR_COOKIE_NAME in request.COOKIES
-    return {
-        "cookies_accepted": cookies_accepted,
-        "request": request,
-    }
-
-
-@register.inclusion_tag("cover_image.html")
-def cover_image(
-    variant: CoverImageVariant,
-    cover_url: str | None,
-    title: str,
-    **attrs,
-) -> dict:
-    """Renders a cover image."""
-    return {
-        "default_attrs": get_cover_image_attrs(
-            variant,
-            cover_url,
-            title,
-        ),
-        "extra_attrs": attrs,
-    }
+        return settings.GDPR_COOKIE_NAME in request.COOKIES
+    return False
 
 
 @register.inclusion_tag("markdown.html")

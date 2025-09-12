@@ -1,0 +1,33 @@
+<ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
+    <c-navbar.menu.item url="{% url 'podcasts:subscriptions' %}" icon="rss">
+        Subscriptions
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'episodes:index' %}" icon="sparkles">
+        New Releases
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'podcasts:discover' %}" icon="magnifying-glass">
+        Discover
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'podcasts:category_list' %}" icon="tag">
+        Categories
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'episodes:bookmarks' %}" icon="bookmark">
+        Bookmarks
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'episodes:history' %}" icon="clock">
+        History
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'podcasts:private_feeds' %}" icon="lock-closed">
+        Private Feeds
+    </c-navbar.menu.item>
+
+    <c-navbar.menu.item url="{% url 'about' %}" icon="information-circle">
+        About
+    </c-navbar.menu.item>
+</ul>

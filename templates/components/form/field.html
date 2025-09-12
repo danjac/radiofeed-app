@@ -1,0 +1,9 @@
+{% load widget_tweaks %}
+<c-vars field />
+<div class="space-y-3 form-control">
+    {% with widget_type=field|widget_type %}
+        <c-component is="form.fields.{{ widget_type|lower }}" :field="field" :attrs="attrs" />
+    {% endwith %}
+    <c-form.errors :errors="field.errors" />
+    <c-form.help-text :field="field" />
+</div>

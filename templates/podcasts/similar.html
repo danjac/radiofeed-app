@@ -1,18 +1,13 @@
-{% extends "base.html" %}
 {% load cache %}
-{% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }} | Similar
-{% endblock title %}
-
-{% block content %}
-    {% include "podcasts/header.html" with active="similar" %}
+<c-layout title="{{ podcast.cleaned_title }} | Similar">
+    <c-podcasts.header active="similar" />
     {% cache cache_timeout similar-podcasts podcast.pk %}
-        {% blockinclude "browse.html" %}
+        <c-browse>
             {% for recommendation in recommendations %}
-                {% blockinclude "browse/item.html" %}
-                    {% include "podcasts/podcast.html" with podcast=recommendation.recommended %}
-                {% endblockinclude %}
+                <c-browse.item>
+                    <c-podcasts.podcast :podcast="recommendation.recommended" />
+                </c-browse.item>
             {% endfor %}
-        {% endblockinclude %}
+        </c-browse>
     {% endcache %}
-{% endblock content %}
+</c-layout>

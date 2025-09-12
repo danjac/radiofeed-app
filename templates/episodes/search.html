@@ -1,37 +1,32 @@
-{% extends "base.html" %}
 {% load cache %}
-{% block title %}
-    {{ block.super }} | Search Episodes
-{% endblock title %}
-
-{% block content %}
-    {% blockinclude "header.html" title="Search Episodes" %}
-        {% blockinclude "header/nav.html" %}
-            {% blockinclude "header/nav/item.html" %}
-                {% url "podcasts:search_podcasts" as search_podcasts_url %}
-                {% include "search/button.html" with search_url=search_podcasts_url label="Search Podcasts" %}
-            {% endblockinclude %}
-
-            {% blockinclude "header/nav/item.html" %}
-                {% include "search/form.html" with placeholder="Search: Episodes" %}
-            {% endblockinclude %}
-
-        {% endblockinclude %}
-    {% endblockinclude %}
+<c-layout title="Search | Episodes">
+    <c-header title="Search Episodes">
+        <c-header.nav>
+            <c-header.nav.item>
+                <c-search.button url="{% url 'podcasts:search_podcasts' %}">
+                    Search Podcasts
+                </c-search.button>
+            </c-header.nav.item>
+            <c-header.nav.item>
+                <c-search.form placeholder="Search: Episodes" />
+            </c-header.nav.item>
+        </c-header.nav>
+    </c-header>
 
     {% partialdef pagination inline %}
         {% cache cache_timeout search-episodes request.get_full_path %}
-            {% blockinclude "paginate.html" %}
+            <c-paginate :page="page">
                 {% for episode in page %}
-                    {% blockinclude "browse/item.html" %}
-                        {% include "episodes/episode.html" %}
-                    {% endblockinclude %}
+                    <c-browse.item>
+                        <c-episodes.episode :episode="episode" />
+                    </c-browse.item>
                 {% empty %}
-                    {% blockinclude "browse/empty.html" %}
+                    <c-browse.empty>
+
                         No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                    {% endblockinclude %}
+                    </c-browse.empty>
                 {% endfor %}
-            {% endblockinclude %}
+            </c-paginate>
         {% endcache %}
     {% endpartialdef %}
-{% endblock content %}
+</c-layout>

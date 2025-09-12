@@ -1,27 +1,23 @@
-{% extends "base.html" %}
-{% load heroicons %}
-
-{% block content %}
+<c-layout title="Delete Account">
     {% if user.is_authenticated %}
-        {% include "account/header.html" with active="delete_account" %}
+        <c-account.header active="delete_account" />
         <div class="space-y-3">
             <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
             <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>
-            {% blockinclude "form.html" hx_disable=True %}
-                {% blockinclude "form/buttons.html" %}
-                    <button class="btn btn-danger"
-                            name="confirm-delete"
-                            value="true"
-                            @click="if(!confirm('Are you sure ?')) $event.preventDefault()"
-                    >
-                        {% heroicon_mini "trash" %}
+            <c-form hx-disable>
+                <c-form.buttons>
+                    <c-button variant="danger"
+                              icon="trash"
+                              name="confirm-delete"
+                              value="true"
+                              @click="if(!confirm('Are you sure ?')) $event.preventDefault()">
                         Yes, delete my account
-                    </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                    </c-button>
+                </c-form.buttons>
+            </c-form>
         </div>
     {% else %}
-        {% include "header.html" with title="Delete Account" %}
+        <c-header title="Delete Account" />
         <div class="space-y-3">
             <p>
                 You must be logged in to delete your data. All user data, including subscriptions, bookmarks and listening history, will be irrevocably deleted.
@@ -35,4 +31,4 @@
             </p>
         </div>
     {% endif %}
-{% endblock content %}
+</c-layout>

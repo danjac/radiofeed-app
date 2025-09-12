@@ -1,13 +1,3 @@
-{% extends "error_base.html" %}
-
-{% block title %}
-    {{ block.super }} | 405: Method Not Allowed
-{% endblock title %}
-
-{% block error_header %}
-    404: Method Not Allowed
-{% endblock error_header %}
-
-{% block error_description %}
+<c-layout.error :title="405: Method Not Allowed">
     <p>Sorry, you cannot perform this action.</p>
-{% endblock error_description %}
+</c-layout.error>

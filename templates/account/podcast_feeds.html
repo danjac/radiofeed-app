@@ -1,12 +1,7 @@
-{% extends "base.html" %}
 {% load heroicons %}
 
-{% block title %}
-    {{ block.super }} | Import/Export Feeds
-{% endblock title %}
-
-{% block content %}
-    {% include "account/header.html" with active="feeds" %}
+<c-layout title="Import/Export Feeds">
+    <c-account.header active="feeds" />
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
@@ -28,16 +23,15 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline %}
-                {% blockinclude "form.html" htmx=True multipart=True target="import-feeds-form" %}
+                <c-form htmx multipart target="import-feeds-form">
                     {{ upload_form }}
-                    {% blockinclude "form/buttons.html" %}
-                        <button class="btn btn-default">
-                            {% heroicon_mini "arrow-up-tray" %}
+                    <c-form.buttons>
+                        <c-button variant="default" icon="arrow-up-tray">
                             Upload OPML
-                        </button>
-                    {% endblockinclude %}
-                {% endblockinclude %}
+                        </c-button>
+                    </c-form.buttons>
+                </c-form>
             {% endpartialdef form %}
         </div>
     </div>
-{% endblock content %}
+</c-layout>

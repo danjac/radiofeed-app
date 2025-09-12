@@ -1,20 +1,14 @@
-{% extends "account/base.html" %}
-{% load heroicons %}
-{% block title %}
-    {{ block.super }} | Login
-{% endblock title %}
-
-{% block content %}
+<c-layout title="Sign In">
     {% with provider_name=provider.name %}
-        {% blockinclude "header.html" %}
-            {% blockinclude "header/title.html" %}
+        <c-header>
+            <c-header.title>
                 {% if process == "connect" %}
                     Connect to {{ provider_name }}
                 {% else %}
                     Sign In Via {{ provider_name }}
                 {% endif %}
-            {% endblockinclude %}
-        {% endblockinclude %}
+            </c-header.title>
+        </c-header>
         <p class="mb-3">
             {% if process == "connect" %}
                 You are about to connect a new third party account from {{ provider_name }}.
@@ -22,22 +16,23 @@
                 You are about to sign in using a third party account from {{ provider_name }}.
             {% endif %}
         </p>
-        {% blockinclude "form.html" hx_disable=True %}
+        <c-form hx-disable>
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
                        value="{{ redirect_field_value }}" />
             {% endif %}
-            {% blockinclude "form/buttons.html" %}
-                <button class="btn btn-primary">
-                    {% heroicon_mini "arrow-right-on-rectangle" %}
+            <c-form.buttons>
+                <c-button variant="primary"
+                          icon="arrow-right-on-rectangle"
+                >
                     {% if process == "connect" %}
                         Connect
                     {% else %}
                         Sign In
                     {% endif %}
-                </button>
-            {% endblockinclude %}
-        {% endblockinclude %}
+                </c-button>
+            </c-form.buttons>
+        </c-form>
     {% endwith %}
-{% endblock content %}
+</c-layout>

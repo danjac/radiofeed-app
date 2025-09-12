@@ -1,3 +1,0 @@
-{% blockinclude "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=episode.get_cover_url %}
-    {{ episode.pub_date|date:"DATE_FORMAT" }}
-{% endblockinclude %}

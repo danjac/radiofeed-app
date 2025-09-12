@@ -1,43 +1,39 @@
-{% extends "base.html" %}
 {% load cache %}
-{% block title %}
-    {{ block.super }}| Categories | {{ category.name }} Podcasts
-{% endblock title %}
-
-{% block content %}
-    {% blockinclude "header.html" title=category.name %}
-        {% if page.has_other_pages or request.search %}
-            {% blockinclude "header/nav.html" %}
+<c-layout title="Categories | {{ category.name }} Podcasts">
+    <c-header :title="category.name">
+        {% if request.search or page.has_other_pages %}
+            <c-header.nav>
                 {% if request.search %}
-                    {% blockinclude "header/nav/item.html" %}
-                        {% url "podcasts:search_podcasts" as search_podcasts_url %}
-                        {% include "search/button.html" with search_url=search_podcasts_url label="Search Podcasts" %}
-                    {% endblockinclude %}
+                    <c-header.nav.item>
+                        <c-search.button url="{% url 'podcasts:search_podcasts' %}">
+                            Search Podcasts
+                        </c-search.button>
+                    </c-header.nav.item>
                 {% endif %}
-                {% blockinclude "header/nav/item.html" %}
-                    {% include "search/form.html" with placeholder="Search: "|add:category.name clearable=True %}
-                {% endblockinclude %}
-            {% endblockinclude %}
+                <c-header.nav.item>
+                    <c-search.form placeholder="Search: {{ category.name }}" clearable />
+                </c-header.nav.item>
+            </c-header.nav>
         {% endif %}
-    {% endblockinclude %}
+    </c-header>
 
     {% partialdef pagination inline %}
         {% cache cache_timeout category-podcasts request.get_full_path %}
-            {% blockinclude "paginate.html" %}
+            <c-paginate :page="page">
                 {% for podcast in page %}
-                    {% blockinclude "browse/item.html" %}
-                        {% include "podcasts/podcast.html" %}
-                    {% endblockinclude %}
+                    <c-browse.item>
+                        <c-podcasts.podcast :podcast="podcast" />
+                    </c-browse.item>
                 {% empty %}
-                    {% blockinclude "browse/empty.html" %}
+                    <c-browse.empty>
                         {% if request.search %}
                             No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         {% else %}
                             Category {{ category.name }} does not have any podcasts.
                         {% endif %}
-                    {% endblockinclude %}
+                    </c-browse.empty>
                 {% endfor %}
-            {% endblockinclude %}
+            </c-paginate>
         {% endcache %}
     {% endpartialdef pagination %}
-{% endblock content %}
+</c-layout>

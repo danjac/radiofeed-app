@@ -1,0 +1,6 @@
+<c-vars name active />
+<li>
+    <a class="link {% if active == name %}active{% endif %}"
+       href="{{ url }}"
+       {% if active == name %}aria-active="page"{% endif %}>{{ slot }}</a>
+</li>

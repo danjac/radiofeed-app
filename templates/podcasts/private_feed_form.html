@@ -1,29 +1,25 @@
-{% extends "base.html" %}
-{% load heroicons %}
-{% block title %}
-    {{ block.super }} | Private Feeds | Add Private Feed
-{% endblock title %}
-
-{% block content %}
-    {% include "header.html" with title="Private Feeds" %}
+<c-layout title="Private Feeds | Add Private Feed">
+    <c-header title="Private Feeds" />
     <div class="space-y-3">
         {% partialdef form inline %}
-            {% blockinclude "form.html" htmx=True target="private-feed-form" %}
+            <c-form htmx target="private-feed-form">
                 {{ form }}
-                {% blockinclude "form/buttons.html" %}
-                    <button class="btn btn-primary">
-                        {% heroicon_mini "plus" %}
+                <c-form.buttons>
+                    <c-button.primary icon="plus">
                         Add Feed
-                    </button>
-                    <a class="btn btn-default" href="{% url 'podcasts:private_feeds' %}"
-                       hx-swap="innerHTML"
-                       hx-target="#content"
+                    </c-button.primary>
+                    <c-button.default
+                        icon="arrow-uturn-left"
+                        role="link"
+                        hx-get="{% url 'podcasts:private_feeds' %}"
+                        hx-swap="innerHTML"
+                        hx-target="#content"
+                        hx-push-url="true"
                     >
-                        {% heroicon_mini "arrow-uturn-left" %}
                         Cancel
-                    </a>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                    </c-button.default>
+                </c-form.buttons>
+            </c-form>
         {% endpartialdef form %}
         <div class="space-y-3 prose dark:prose-invert">
             <p>
@@ -36,4 +32,4 @@
                         target="_blank">URL encoding service</a> to encode the username and password if required.</p>
         </div>
     </div>
-{% endblock content %}
+</c-layout>
