@@ -83,9 +83,10 @@ def htmlattrs(attrs: dict | None, **defaults) -> str:
     # Merge dictionaries, replacing "_" in name with "-"
     for dct in [defaults, attrs]:
         if dct:
-            if classnames := dct.pop("class", None):
+            clone = dct.copy()
+            if classnames := clone.pop("class", None):
                 classes.append(classnames)
-            merged |= {name.replace("_", "-"): value for name, value in dct.items()}
+            merged |= {name.replace("_", "-"): value for name, value in clone.items()}
 
     if classes:
         merged["class"] = merge_classes(*classes)
