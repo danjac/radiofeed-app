@@ -160,7 +160,11 @@ def episodes(
     else:
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = request.GET.get("order", default_ordering)
-        episodes = _order_podcast_episodes(episodes, ordering)
+
+        if ordering == "asc":
+            episodes = episodes.order_by("pub_date", "pk")
+        else:
+            episodes = episodes.order_by("-pub_date", "-pk")
 
     return _render_episodes(request, podcast, episodes, {"ordering": ordering})
 
@@ -176,12 +180,14 @@ def season(
     """Render episodes for a podcast season."""
     podcast = _get_podcast_or_404(podcast_id)
 
-    episodes = _order_podcast_episodes(
-        podcast.episodes.filter(season=season).select_related(
-            "podcast",
-        ),
-        "asc" if podcast.is_serial() else "desc",
+    episodes = podcast.episodes.filter(season=season).select_related(
+        "podcast",
     )
+
+    if podcast.is_serial():
+        episodes = episodes.order_by("pub_date", "pk")
+    else:
+        episodes = episodes.order_by("-pub_date", "-pk")
 
     return _render_episodes(
         request,
@@ -386,14 +392,6 @@ def _get_podcasts() -> QuerySet[Podcast]:
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
-
-
-def _order_podcast_episodes(
-    episodes: QuerySet[Episode], ordering: str
-) -> QuerySet[Episode]:
-    if ordering == "asc":
-        return episodes.order_by("pub_date", "pk")
-    return episodes.order_by("-pub_date", "-pk")
 
 
 def _render_subscribe_action(
