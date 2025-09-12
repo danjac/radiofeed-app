@@ -17,7 +17,7 @@ from radiofeed.cover_image import (
     get_cover_image_attrs,
     get_cover_image_class,
 )
-from radiofeed.html import render_markdown
+from radiofeed.html import merge_classes, render_markdown
 
 _TIME_PARTS: Final = [
     ("hour", 60 * 60),
@@ -79,16 +79,16 @@ def htmlattrs(attrs: dict | None, **defaults) -> str:
     Default values are overriden, except for `class`, which is appended.
     """
     merged = {}
-    classnames = []
+    classes = []
     # Merge dictionaries, replacing "_" in name with "-"
     for dct in [defaults, attrs]:
         if dct:
-            if classes := dct.pop("class", None):
-                classnames += classes.split()
+            if classnames := dct.pop("class", None):
+                classes.append(classnames)
             merged |= {name.replace("_", "-"): value for name, value in dct.items()}
 
-    if classnames:
-        merged["class"] = " ".join(dict.fromkeys(classnames).keys())
+    if classes:
+        merged["class"] = merge_classes(*classes)
 
     # render safe html string
     return flatatt(merged)

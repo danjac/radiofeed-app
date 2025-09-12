@@ -15,6 +15,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from PIL import Image
 
+from radiofeed.html import merge_classes
 from radiofeed.http_client import Client
 from radiofeed.pwa import ImageInfo
 
@@ -220,20 +221,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 @functools.cache
 def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
     """Returns default CSS class for the cover image."""
-    return " ".join(
-        dict.fromkeys(
-            itertools.chain.from_iterable(
-                [
-                    classnames.split()
-                    for classnames in [
-                        _COVER_IMAGE_CLASSES[variant],
-                        *classes,
-                    ]
-                    if classnames
-                ]
-            )
-        ).keys()
-    )
+    return merge_classes(_COVER_IMAGE_CLASSES[variant], *classes)
 
 
 @functools.cache
