@@ -273,17 +273,7 @@ class TestLatestEpisode:
         return reverse("podcasts:latest_episode", args=[podcast.pk])
 
 
-class TestPodcastEpisodes:
-    @pytest.mark.django_db
-    def test_get_episodes(self, client, auth_user, podcast):
-        EpisodeFactory.create_batch(33, podcast=podcast)
-
-        response = client.get(podcast.get_episodes_url())
-        assert200(response)
-
-        assert len(response.context["page"].object_list) == 30
-        assert response.context["ordering"] == "desc"
-
+class TestPodcastSeason:
     @pytest.mark.django_db
     def test_get_episodes_for_season(self, client, auth_user, podcast):
         EpisodeFactory.create_batch(20, podcast=podcast, season=1)
@@ -302,6 +292,18 @@ class TestPodcastEpisodes:
         assert200(response)
 
         assert len(response.context["page"].object_list) == 20
+        assert response.context["ordering"] == "desc"
+
+
+class TestPodcastEpisodes:
+    @pytest.mark.django_db
+    def test_get_episodes(self, client, auth_user, podcast):
+        EpisodeFactory.create_batch(33, podcast=podcast)
+
+        response = client.get(podcast.get_episodes_url())
+        assert200(response)
+
+        assert len(response.context["page"].object_list) == 30
         assert response.context["ordering"] == "desc"
 
     @pytest.mark.django_db

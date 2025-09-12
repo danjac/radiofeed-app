@@ -143,13 +143,10 @@ def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
 def episodes(
     request: HttpRequest,
     podcast_id: int,
-    season: int | None = None,
     slug: str | None = None,
 ) -> TemplateResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
-
-    current_season: Season | None = None
     ordering: str = "desc"
 
     episodes = podcast.episodes.select_related("podcast")
@@ -160,14 +157,38 @@ def episodes(
             "-pub_date",
         )
     else:
-        if season is not None:
-            current_season = Season(podcast=podcast, season=season)
-            episodes = episodes.filter(season=season)
-
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = request.GET.get("order", default_ordering)
-
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
+
+    return render_paginated_response(
+        request,
+        "podcasts/episodes.html",
+        episodes,
+        {
+            "podcast": podcast,
+            "ordering": ordering,
+        },
+    )
+
+
+@require_safe
+@login_required
+def season(
+    request: HttpRequest,
+    podcast_id: int,
+    season: int,
+    slug: str | None = None,
+) -> TemplateResponse:
+    """Render episodes for a podcast season."""
+    podcast = _get_podcast_or_404(podcast_id)
+    current_season = Season(podcast=podcast, season=season)
+
+    episodes = podcast.episodes.filter(season=season).select_related("podcast")
+    episodes = episodes.filter(season=season)
+
+    ordering = "asc" if podcast.is_serial() else "desc"
+    episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
     return render_paginated_response(
         request,
