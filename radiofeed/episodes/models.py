@@ -87,12 +87,12 @@ class Episode(models.Model):
             )
         ]
         indexes: ClassVar[list] = [
-            models.Index(fields=["podcast", "pub_date"]),
-            models.Index(fields=["podcast", "-pub_date"]),
+            models.Index(fields=["podcast", "pub_date", "id"]),
+            models.Index(fields=["podcast", "-pub_date", "-id"]),
             models.Index(fields=["podcast", "season"]),
+            models.Index(fields=["pub_date", "id"]),
+            models.Index(fields=["-pub_date", "-id"]),
             models.Index(fields=["guid"]),
-            models.Index(fields=["pub_date"]),
-            models.Index(fields=["-pub_date"]),
             GinIndex(fields=["search_vector"]),
         ]
 
