@@ -39,7 +39,6 @@ class Command(BaseCommand):
                     "podcasts/emails/recommendations.html",
                     {
                         "podcasts": podcasts,
-                        "site": site,
                     },
                     connection=connection,
                 )
