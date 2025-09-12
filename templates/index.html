@@ -1,57 +1,53 @@
-{% spaceless %}
-    {% load cache heroicons static %}
-    {% with site_name=request.site.name %}
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <title>{{ site_name }}</title>
-                {% include "default_base.html#head" %}
-            </head>
-            <body class="mx-auto font-sans antialiased text-white from-purple-900 to-black bg-linear-to-b container-xl scroll-smooth">
-                {% include "messages.html" %}
-                <div class="py-6 px-6 mx-auto space-y-3 min-h-screen lg:py-12 lg:space-y-12">
-                    <div class="space-y-3 lg:space-y-6">
-                        <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ site_name }}</h1>
-                        <h2 class="text-xl font-bold text-center lg:text-2xl">
-                            <strong>{{ site_name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts in your browser.
-                        </h2>
-                    </div>
-                    <div class="gap-6 py-6 lg:grid lg:grid-cols-2">
-                        <div class="justify-center pb-6 mb-6 space-y-12 border-b border-gray-500 lg:content-center lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0">
-                            <div class="space-y-3 lg:space-y-6">
-                                <div class="flex justify-center items-center">
-                                    <a href="{% url "account_signup" %}"
-                                       class="flex justify-center items-center !py-3 w-full text-xl sm:w-1/2 lg:w-full lg:text-3xl xl:w-2/3 btn btn-lg btn-primary">{% heroicon_solid "plus" class="mr-2" %}Sign up to {{ site_name }}</a>
-                                </div>
-                                <div class="flex relative items-center py-5">
-                                    <div class="border-t border-gray-500 grow"></div>
-                                    <span class="mx-4 font-bold shrink">OR</span>
-                                    <div class="border-t border-gray-500 grow"></div>
-                                </div>
-                                <div class="flex justify-center items-center">
-                                    <a href="{% url "account_login" %}"
-                                       class="flex justify-center items-center !py-3 w-full sm:w-1/2 lg:w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline text-white! hover:bg-inherit!">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
-                                </div>
-                                <p class="text-lg text-center lg:text-xl">
-                                    Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ site_name }}</a>
-                                </p>
+{% load cache heroicons static %}
+{% with site_name=request.site.name %}
+    {# djlint: off #}
+    <!DOCTYPE html>
+    <html lang="en">
+        <c-layout.head :title="title" />
+        <body class="mx-auto font-sans antialiased text-white from-purple-900 to-black bg-linear-to-b container-xl scroll-smooth">
+            <c-messages />
+            <div class="py-6 px-6 mx-auto space-y-3 min-h-screen lg:py-12 lg:space-y-12">
+                <div class="space-y-3 lg:space-y-6">
+                    <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ site_name }}</h1>
+                    <h2 class="text-xl font-bold text-center lg:text-2xl">
+                        <strong>{{ site_name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts in your browser.
+                    </h2>
+                </div>
+                <div class="gap-6 py-6 lg:grid lg:grid-cols-2">
+                    <div class="justify-center pb-6 mb-6 space-y-12 border-b border-gray-500 lg:content-center lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0">
+                        <div class="space-y-3 lg:space-y-6">
+                            <div class="flex justify-center items-center">
+                                <a href="{% url "account_signup" %}"
+                                   class="flex justify-center items-center !py-3 w-full text-xl sm:w-1/2 lg:w-full lg:text-3xl xl:w-2/3 btn btn-lg btn-primary">{% heroicon_solid "plus" class="mr-2" %}Sign up to {{ site_name }}</a>
                             </div>
+                            <div class="flex relative items-center py-5">
+                                <div class="border-t border-gray-500 grow"></div>
+                                <span class="mx-4 font-bold shrink">OR</span>
+                                <div class="border-t border-gray-500 grow"></div>
+                            </div>
+                            <div class="flex justify-center items-center">
+                                <a href="{% url "account_login" %}"
+                                   class="flex justify-center items-center !py-3 w-full sm:w-1/2 lg:w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline text-white! hover:bg-inherit!">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
+                            </div>
+                            <p class="text-lg text-center lg:text-xl">
+                                Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ site_name }}</a>
+                            </p>
                         </div>
-                        <div class="justify-center items-center pl-3 sm:flex sm:content-center">
-                            <ul class="space-y-3 font-semibold text-base pl-3 lg:px-0 lg:space-y-6 lg:text-lg list-outside list-image-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=')]">
-                                <li class="pl-2">Subscribe to your favorite podcasts</li>
-                                <li class="pl-2">Listen to episodes online using our audio player</li>
-                                <li class="pl-2">Find exciting and interesting new content</li>
-                                <li class="pl-2">Receive a weekly email newsletter with personalized recommendations</li>
-                                <li class="pl-2">Bookmark your favorite episodes or those you want to listen to later</li>
-                                <li class="pl-2">Subscribe to private feeds from Patreon and other services</li>
-                            </ul>
-                        </div>
+                    </div>
+                    <div class="justify-center items-center pl-3 sm:flex sm:content-center">
+                        <ul class="space-y-3 font-semibold text-base pl-3 lg:px-0 lg:space-y-6 lg:text-lg list-outside list-image-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=')]">
+                            <li class="pl-2">Subscribe to your favorite podcasts</li>
+                            <li class="pl-2">Listen to episodes online using our audio player</li>
+                            <li class="pl-2">Find exciting and interesting new content</li>
+                            <li class="pl-2">Receive a weekly email newsletter with personalized recommendations</li>
+                            <li class="pl-2">Bookmark your favorite episodes or those you want to listen to later</li>
+                            <li class="pl-2">Subscribe to private feeds from Patreon and other services</li>
+                        </ul>
                     </div>
                 </div>
-                {% cookie_banner %}
-                {% include "default_base.html#scripts" %}
-            </body>
-        </html>
-    {% endwith %}
-{% endspaceless %}
+            </div>
+            <c-cookie-banner />
+            <c-service-worker />
+        </body>
+    </html>
+{% endwith %}

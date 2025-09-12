@@ -1,21 +1,13 @@
-{% extends "base.html" %}
-{% load heroicons %}
-
-{% block title %}
-    {{ block.super }} | Preferences
-{% endblock title %}
-
-{% block content %}
-    {% include "account/header.html" with active="preferences" %}
+<c-layout title="Preferences">
+    <c-account.header active="preferences" />
     {% partialdef form inline %}
-        {% blockinclude "form.html" htmx=True target="preferences-form" %}
+        <c-form htmx target="preferences-form">
             {{ form }}
-            {% blockinclude "form/buttons.html" %}
-                <button class="btn btn-primary">
-                    {% heroicon_mini "check" %}
+            <c-form.buttons>
+                <c-button.primary icon="check">
                     Save Changes
-                </button>
-            {% endblockinclude %}
-        {% endblockinclude %}
+                </c-button.primary>
+            </c-form.buttons>
+        </c-form>
     {% endpartialdef form %}
-{% endblock content %}
+</c-layout>

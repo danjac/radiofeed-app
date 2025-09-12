@@ -1,11 +1,5 @@
-{% extends "base.html" %}
-
-{% block title %}
-    {{ block.super }} | Statistics
-{% endblock title %}
-
-{% block content %}
-    {% include "account/header.html" with active="stats" %}
+<c-layout title="Statistics">
+    <c-account.header active="stats" />
     <table class="w-full">
         <tbody class="divide-y divide-solid">
             <tr class="flex justify-between pt-0 pb-3">
@@ -24,4 +18,4 @@
             {% endfor %}
         </tbody>
     </table>
-{% endblock content %}
+</c-layout>

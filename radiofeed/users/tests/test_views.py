@@ -33,6 +33,8 @@ class Test3rdPartyAuthTemplates:
             "account/password_change.html",
             "account/password_reset.html",
             "account/password_reset_done.html",
+            "account/password_reset_from_key.html",
+            "account/password_set.html",
             "account/signup.html",
             "socialaccount/connections.html",
             "socialaccount/login.html",

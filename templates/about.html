@@ -1,16 +1,6 @@
-{% extends "base.html" %}
-
-{% block title %}
-    {{ block.super }} | About
-{% endblock title %}
-
-{% block content %}
+<c-layout title="About">
     {% with site_name=request.site.name %}
-        {% blockinclude "header.html" %}
-            {% blockinclude "header/title.html" %}
-                About {{ site_name }}
-            {% endblockinclude %}
-        {% endblockinclude %}
+        <c-header title="About {{ site_name }}" />
         <div class="space-y-6">
             <p class="prose dark:prose-invert">
                 <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.
@@ -73,4 +63,4 @@
             </ul>
         </div>
     {% endwith %}
-{% endblock content %}
+</c-layout>

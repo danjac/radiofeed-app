@@ -1,12 +1,6 @@
-{% extends "base.html" %}
 {% load cache heroicons %}
-
-{% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }}
-{% endblock title %}
-
-{% block content %}
-    {% include "podcasts/header.html" with active="detail" %}
+<c-layout :title="podcast.cleaned_title">
+    <c-podcasts.header :podcast="podcast" active="detail" />
     <article class="space-y-3">
         {% with owner=podcast.cleaned_owner %}
             {% if owner %}
@@ -16,30 +10,34 @@
             {% endif %}
         {% endwith %}
         <div class="flex items-center space-x-3 sm:space-x-6">
-            {% cover_image "detail" podcast.cover_url podcast.cleaned_title %}
+            <c-cover-image variant="detail"
+                           :cover-url="podcast.cover_url"
+                           :title="podcast.cleaned_title" />
+
             <div class="flex flex-col place-content-between h-32">
                 {% if podcast.private %}
                     <div>
                         {% if is_subscribed %}
-                            <button class="text-lg btn btn-danger"
-                                    aria-label="Remove podcast from your Private Feeds"
-                                    title="Remove podcast from your Private Feeds"
-                                    hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
-                                    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                                    hx-push-url="true"
-                                    hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
+                            <c-button.danger
+                                icon="trash"
+                                aria-label="Remove podcast from your Private Feeds"
+                                title="Remove podcast from your Private Feeds"
+                                hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
+                                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                hx-push-url="true"
+                                hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
                             >
-                                {% heroicon_mini "trash" size=24 %}
                                 Remove
-                            </button>
+                            </c-button.danger>
                         {% else %}
-                            <button class="text-lg btn btn-default"
-                                    disabled
-                                    aria-label="This is a private feed, you cannot subscribe to it."
+                            <c-button.default
+                                icon="eye-slash"
+                                size="lg"
+                                disabled
+                                aria-label="This is a private feed, you cannot subscribe to it."
                             >
-                                {% heroicon_mini "eye-slash" size=24 %}
                                 Subscribe
-                            </button>
+                            </c-button.default>
                         {% endif %}
                     </div>
                 {% else %}
@@ -51,26 +49,30 @@
                              hx-swap="outerHTML"
                              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_subscribed %}
-                                <button class="text-lg btn btn-primary btn-outline"
-                                        aria-label="Unsubscribe from this Podcast"
-                                        title="Unsubscribe from this Podcast"
-                                        hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
-                                        hx-disabled-elt="this"
-                                        hx-trigger="click once">
-                                    {% heroicon_mini "eye-slash" size=24 %}
+                                <c-button
+                                    variant="primary"
+                                    icon="eye-slash"
+                                    size="lg"
+                                    outline
+                                    aria-label="Unsubscribe from this Podcast"
+                                    title="Unsubscribe from this Podcast"
+                                    hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
+                                    hx-disabled-elt="this"
+                                    hx-trigger="click once">
                                     Unsubscribe
-                                </button>
+                                </c-button>
                             {% else %}
-                                <button class="text-lg btn btn-primary"
-                                        label="Subscribe"
-                                        aria-label="Subscribe to this Podcast"
-                                        title="Subscribe to this Podcast"
-                                        hx-post="{% url "podcasts:subscribe" podcast.pk %}"
-                                        hx-disabled-elt="this"
-                                        hx-trigger="click once">
-                                    {% heroicon_mini "eye" size=24 %}
+                                <c-button
+                                    variant="primary"
+                                    icon="eye"
+                                    size="lg"
+                                    aria-label="Subscribe to this Podcast"
+                                    title="Subscribe to this Podcast"
+                                    hx-post="{% url "podcasts:subscribe" podcast.pk %}"
+                                    hx-disabled-elt="this"
+                                    hx-trigger="click once">
                                     Subscribe
-                                </button>
+                                </c-button>
                             {% endif %}
                         </div>
                     {% endpartialdef subscribe_button %}
@@ -131,4 +133,4 @@
             {% markdown podcast.description %}
         {% endcache %}
     </article>
-{% endblock content %}
+</c-layout>

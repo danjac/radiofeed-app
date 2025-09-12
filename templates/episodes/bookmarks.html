@@ -1,17 +1,12 @@
-{% extends "base.html" %}
-{% load heroicons %}
-{% block title %}
-    {{ block.super }}| Bookmarks
-{% endblock title %}
-
-{% block content %}
-    {% blockinclude "header.html" title="Bookmarks" %}
+<c-layout title="Bookmarks">
+    <c-header title="Bookmarks">
         {% if request.search or page.has_other_pages %}
-            {% blockinclude "header/nav.html" %}
-                {% blockinclude "header/nav/item.html" %}
+            <c-header.nav>
+                <c-header.nav.item>
                     {% if request.search %}
-                        {% url "episodes:search_episodes" as search_episodes_url %}
-                        {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
+                        <c-search.button url="{% url 'episodes:search_episodes' %}">
+                            Search Episodes
+                        </c-search.button>
                     {% else %}
                         {% if ordering == "asc" %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
@@ -19,22 +14,22 @@
                             <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">Oldest First</a>
                         {% endif %}
                     {% endif %}
-                {% endblockinclude %}
-                {% blockinclude "header/nav/item.html" %}
-                    {% include "search/form.html" with placeholder="Search: Bookmarks" clearable=True %}
-                {% endblockinclude %}
-            {% endblockinclude %}
+                </c-header.nav.item>
+                <c-header.nav.item>
+                    <c-search.form placeholder="Search: Bookmarks" clearable />
+                </c-header.nav.item>
+            </c-header.nav>
         {% endif %}
-    {% endblockinclude %}
+    </c-header>
 
     {% partialdef pagination inline %}
-        {% blockinclude "paginate.html" %}
+        <c-paginate :page="page">
             {% for bookmark in page %}
-                {% blockinclude "browse/item.html" %}
-                    {% include "episodes/episode.html" with episode=bookmark.episode %}
-                {% endblockinclude %}
+                <c-browse.item>
+                    <c-episodes.episode :episode="bookmark.episode" />
+                </c-browse.item>
             {% empty %}
-                {% blockinclude "browse/empty.html" %}
+                <c-browse.empty>
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your bookmarks.
                     {% else %}
@@ -44,8 +39,8 @@
                             To add an episode, just click the <strong>Bookmark</strong> button in the episode description.
                         </p>
                     {% endif %}
-                {% endblockinclude %}
+                </c-browse.empty>
             {% endfor %}
-        {% endblockinclude %}
+        </c-paginate>
     {% endpartialdef pagination %}
-{% endblock content %}
+</c-layout>

@@ -45,3 +45,14 @@ class TestPlayerDetails:
     def test_has_true(self, player):
         player.set(self.episode_id)
         assert player.has(self.episode_id)
+
+    def test_audio_log_not_authenticated(self, anonymous_user, player):
+        player.request.user = anonymous_user
+        player.set(self.episode_id)
+        assert player.audio_log is None
+
+    @pytest.mark.django_db
+    def test_audio_log_authenticated(self, audio_log, player):
+        player.request.user = audio_log.user
+        player.set(audio_log.episode_id)
+        assert player.audio_log == audio_log

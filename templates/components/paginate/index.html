@@ -1,0 +1,16 @@
+<c-vars page target="pagination" />
+{% with has_other_pages=page.has_other_pages %}
+    <c-browse :id="target">
+        {% if has_other_pages %}
+            <li class="pb-3">
+                <c-paginate.links :page="page" :target="target" />
+            </li>
+        {% endif %}
+        {{ slot }}
+        {% if has_other_pages %}
+            <li class="pt-3">
+                <c-paginate.links :page="page" :target="target" />
+            </li>
+        {% endif %}
+    </c-browse>
+{% endwith %}

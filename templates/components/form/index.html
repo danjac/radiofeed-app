@@ -1,0 +1,32 @@
+<c-vars :action="request.path"
+        method="post"
+        class
+        target
+        multipart
+        htmx
+        hx_disable
+        hx_swap
+/>
+
+<form action="{{ action }}"
+      method="{{ method }}"
+      class="space-y-3 {{ class }}"
+      {% if htmx %}
+        id="{{ target }}"
+        hx-{{ method }}="{{ action }}"
+        hx-target="this"
+        hx-validate="true"
+        hx-disabled-elt="this"
+        hx-swap="{{ hx_swap|default:'outerHTML' }}"
+      {% elif hx_disable %}
+        hx-disable=True
+      {% endif %}
+      {% if multipart %}
+        enctype="multipart/form-data"
+        {% if htmx %}
+          hx-encoding="multipart/form-data"
+        {% endif %}
+      {% endif %}>
+  {% csrf_token %}
+  {{ slot }}
+</form>

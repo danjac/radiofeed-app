@@ -1,51 +1,43 @@
-{% extends "base.html" %}
 {% load cache %}
-
-{% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }} | {{ season }}
-{% endblock title %}
-
-{% block content %}
-    {% blockinclude "podcasts/header.html" active="episodes" %}
-        {% cache cache_timeout podcast-season-nav request.get_full_path %}
-            {% blockinclude "header/nav.html" %}
-                {% blockinclude "header/nav/item.html" %}
-                    {% blockinclude "header/nav/dropdown.html" dropdown_id="seasons-dropdown" label=season %}
-                        {% blockinclude "header/nav/dropdown/item.html" url=podcast.get_episodes_url %}
-                            All Seasons
-                        {% endblockinclude %}
-                        {% for season in podcast.seasons %}
-                            {% blockinclude "header/nav/dropdown/item.html" url=season.url %}
-                                {{ season }}
-                            {% endblockinclude %}
-                        {% endfor %}
-                    {% endblockinclude %}
-                {% endblockinclude %}
-                {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
+<c-layout title="{{ podcast.cleaned_title }} | {{ season }}">
+    <c-podcasts.header active="episodes">
+        {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
+            {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
+                <c-header.nav>
+                    <c-header.nav.item>
+                        <c-header.nav.dropdown :label="season" dropdown-id="seasons-dropdown">
+                            <c-header.nav.dropdown.item :url="request.path">
+                                All Seasons
+                            </c-header.nav.dropdown.item>
+                            {% for season in podcast.seasons %}
+                                <c-header.nav.dropdown.item :url="season.url">
+                                    {{ season }}
+                                </c-header.nav.dropdown.item>
+                            {% endfor %}
+                        </c-header.nav.dropdown>
+                    </c-header.nav.item>
                     {% if num_episodes > page_size %}
-                        {% blockinclude "header/nav/item.html" %}
-                            {% with search_url=podcast.get_episodes_url %}
-                                {% include "search/form.html" with placeholder="Search: Podcast" clearable=True %}
-                            {% endwith %}
-                        {% endblockinclude %}
+                        <c-header.nav.item>
+                            <c-search.form placeholder="Search: Podcast" clearable />
+                        </c-header.nav.item>
                     {% endif %}
-                {% endwith %}
-            {% endblockinclude %}
+                </c-header.nav>
+            {% endwith %}
         {% endcache %}
-    {% endblockinclude %}
+    </c-podcasts.header>
     {% partialdef pagination inline %}
-        {% cache cache_timeout podcast-season-episodes request.get_full_path %}
-            {% blockinclude "paginate.html" %}
+        {% cache cache_timeout podcast-episodes request.get_full_path %}
+            <c-paginate :page="page">
                 {% for episode in page %}
-                    {% blockinclude "browse/item.html" %}
-                        {% include "podcasts/episode.html" %}
-                    {% endblockinclude %}
+                    <c-browse.item>
+                        <c-podcasts.episode :episode="episode" />
+                    </c-browse.item>
                 {% empty %}
-                    {% blockinclude "browse/empty.html" %}
+                    <c-browse.empty>
                         This season does not have any episodes.
-                    {% endblockinclude %}
+                    </c-browse.empty>
                 {% endfor %}
-            {% endblockinclude %}
+            </c-paginate>
         {% endcache %}
     {% endpartialdef pagination %}
-{% endblock content %}
+</c-layout>

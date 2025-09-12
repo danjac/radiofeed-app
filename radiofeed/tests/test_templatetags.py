@@ -1,8 +1,8 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.template import Context, Template, TemplateSyntaxError
+from django.template import Context
 
-from radiofeed.templatetags import blockinclude, format_duration, htmlattrs
+from radiofeed.templatetags import format_duration, get_cookies_accepted
 
 
 @pytest.fixture
@@ -20,54 +20,22 @@ def auth_req(req, user):
     return req
 
 
-class TestHtmlAttrs:
-    def test_attrs_is_none(self):
-        assert htmlattrs(None, required=True) == " required"
+class TestGetCookiesAccepted:
+    def test_not_accepted(self, rf):
+        req = rf.get("/")
+        req.COOKIES = {}
+        context = Context({"request": req})
+        assert get_cookies_accepted(context) is False
 
-    def test_snake_to_kebab_case(self):
-        assert htmlattrs({"x_data": True}) == " x-data"
+    def test_accepted(self, rf):
+        req = rf.get("/")
+        req.COOKIES = {"accept-cookies": True}
+        context = Context({"request": req})
+        assert get_cookies_accepted(context) is True
 
-    def test_append_cases(self):
-        assert (
-            htmlattrs(
-                {
-                    "class": "text-lg",
-                },
-                **{"class": "font-italic"},
-            )
-            == ' class="font-italic text-lg"'
-        )
-
-
-class TestBlockInclude:
-    def test_blockinclude(self):
-        tmpl = """
-            {% blockinclude "tests/blockinclude_test.html" arg="testarg" %}
-                content is here
-            {% endblockinclude %}
-        """
-        result = Template(tmpl).render(Context({"var": "test"}))
-        assert "content is here" in result
-        assert "var is passed" in result
-        assert "arg: testarg" in result
-
-    def test_only(self):
-        tmpl = """
-            {% blockinclude "tests/blockinclude_test.html" arg="testarg" only=True %}
-                content is here
-            {% endblockinclude %}
-        """
-        result = Template(tmpl).render(Context({"var": "test"}))
-        assert "content is here" in result
-        assert "var is passed" not in result
-        assert "arg: testarg" in result
-
-    def test_context_template_none(self, mocker):
-        """Test blockinclude with no template."""
-        mock_context = mocker.MagicMock()
-        mock_context.template = None
-        with pytest.raises(TemplateSyntaxError):
-            blockinclude(mock_context, "content", "index.html")
+    def test_request_not_in_context(self):
+        context = Context()
+        assert get_cookies_accepted(context) is False
 
 
 class TestFormatDuration:

@@ -1,0 +1,16 @@
+{# djlint:off #}
+<c-vars variant cover_url title class />
+{% get_cover_image_attrs variant cover_url title as cover_attrs %}
+<img class="object-cover text-transparent bg-transparent border {{ cover_attrs.class }} {{ class }}"
+     aria_hidden="true"
+     loading="lazy"
+     decoding="async"
+     alt="{{ cover_attrs.alt }}"
+     title="{{ cover_attrs.title }}"
+     src="{{ cover_attrs.src }}"
+     width="{{ cover_attrs.width }}"
+     height="{{ cover_attrs.height }}"
+     {% if cover_attrs.srcset %}srcset="{{ cover_attrs.srcset }}"{% endif %}
+     {% if cover_attrs.sizes %}sizes="{{ cover_attrs.sizes }}"{% endif %}
+     {{ attrs }}
+>

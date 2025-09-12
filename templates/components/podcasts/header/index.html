@@ -1,0 +1,39 @@
+{% load cache %}
+<c-vars podcast active />
+<header class="pb-3 mb-3 space-y-6 border-b xl:space-y-9">
+    <c-header.title>
+        {{ podcast.cleaned_title }}
+    </c-header.title>
+    <div class="space-y-3 md:flex md:justify-between md:space-y-0">
+        <nav class="flex justify-center items-center sm:justify-start">
+            {% cache cache_timeout podcast-header-nav request.path %}
+                <ul class="flex items-center space-x-4 lg:space-x-6">
+                    <c-podcasts.header.item
+                        name="detail"
+                        :url="podcast.get_detail_url"
+                        :active="active"
+                    >
+                        About
+                    </c-podcasts.header.item>
+                    <c-podcasts.header.item
+                        name="episodes"
+                        :url="podcast.get_episodes_url"
+                        :active="active"
+                    >
+                        Episodes ({{ podcast.num_episodes }})
+                    </c-podcasts.header.item>
+                    {% if podcast.has_similar %}
+                        <c-podcasts.header.item
+                            name="similar"
+                            :url="podcast.get_similar_url"
+                            :active="active"
+                        >
+                            Similar
+                        </c-podcasts.header.item>
+                    {% endif %}
+                </ul>
+            {% endcache %}
+        </nav>
+        {{ slot }}
+    </div>
+</header>

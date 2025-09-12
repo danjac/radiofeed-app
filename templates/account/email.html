@@ -1,17 +1,12 @@
-{% extends "base.html" %}
 {% load heroicons %}
-{% block title %}
-    {{ block.super }} | Email Addresses
-{% endblock title %}
-
-{% block content %}
-    {% include "account/header.html" with active="email" %}
+<c-layout title="Email Addresses">
+    <c-account.header active="email" />
     <div class="space-y-3">
         {% with emailaddresses=user.emailaddress_set.all %}
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
-                    {% blockinclude "form.html" %}
+                    <c-form>
                         {% for emailaddress in emailaddresses %}
                             <div class="flex items-center space-x-3">
                                 <input type="radio"
@@ -29,40 +24,46 @@
                                 </label>
                             </div>
                         {% endfor %}
-                        {% blockinclude "form/buttons.html" %}
-                            <button class="btn btn-primary"
+                        <c-form.buttons>
+                            {% if num_addresses == 1 %}
+                                <c-button.default
+                                    icon="hand-thumb-up"
+                                    disabled
+                                    title="You cannot set the only e-mail address associated with your account as primary."
+                                >
+                                    Primary
+                                </c-button.default>
+                                <c-button.default
+                                    icon="trash"
+                                    disabled
+                                    title="You cannot remove the only e-mail address associated with your account."
+                                >
+                                    Remove
+                                </c-button.default>
+                            {% else %}
+                                <c-button.primary
+                                    icon="hand-thumb-up"
                                     name="action_primary"
-                                    {% if num_addresses == 1 %}
-                                        disabled
-                                        title="You cannot set the only e-mail address associated with your account as primary."
-                                    {% else %}
-                                    {% endif %}
-                                    value="1">
-                                {% heroicon_mini "hand-thumb-up" %}
-                                Primary
-                            </button>
-
-                            <button class="btn btn-danger"
+                                    value="1"
+                                >
+                                    Primary
+                                </c-button.primary>
+                                <c-button.danger
+                                    icon="trash"
                                     name="action_remove"
-                                    {% if num_addresses == 1 %}
-                                        disabled
-                                        title="You cannot remove the only e-mail address associated with your account."
-                                    {% else %}
-                                    {% endif %}
-                                    value="1">
-                                {% heroicon_mini "trash" %}
-                                Remove
-                            </button>
-
-                            <button class="btn btn-default"
-                                    name="action_send"
-                                    value="1">
-                                {% heroicon_mini "envelope" %}
+                                    value="1"
+                                >
+                                    Remove
+                                </c-button.danger>
+                            {% endif %}
+                            <c-button.default
+                                icon="envelope"
+                                name="action_send"
+                                value="1">
                                 Re-Verify
-                            </button>
-
-                        {% endblockinclude %}
-                    {% endblockinclude %}
+                            </c-button.default>
+                        </c-form.buttons>
+                    </c-form>
                 {% else %}
                     <p>
                         <strong>Warning:</strong>
@@ -74,18 +75,17 @@
         {% if can_add_email %}
             <hr class="border"/>
             <h2 class="text-base font-semibold lg:text-lg">Add New E-mail Address</h2>
-            {% blockinclude "form.html" %}
+            <c-form>
                 {{ form }}
-                {% blockinclude "form/buttons.html" %}
-                    <button class="btn btn-primary"
-                            type="submit"
-                            name="action_add"
-                            value="1">
-                        {% heroicon_mini "plus" %}
+                <c-form.buttons>
+                    <c-button variant="primary"
+                              icon="plus"
+                              name="action_add"
+                              value="1">
                         Add E-Mail
-                    </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                    </c-button>
+                </c-form.buttons>
+            </c-form>
         {% endif %}
     </div>
-{% endblock content %}
+</c-layout>

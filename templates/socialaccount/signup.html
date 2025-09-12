@@ -1,30 +1,26 @@
-{% extends "base.html" %}
-{% load heroicons %}
-{% block title %}
-    {{ block.super }}  | Signup
-{% endblock title %}
-
-{% block content %}
+<c-layout title="Sign Up">
+    <c-header title="Sign Up" />
     {% with provider_name=account.get_provider.name site_name=site.name %}
-        {% include "header.html" with title="Sign Up" %}
         <div class="space-y-3">
             <p>
                 You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form:
             </p>
-            {% blockinclude "form.html" hx_disable=True %}
+            <c-form hx-disable>
                 {% if redirect_field_value %}
                     <input type="hidden"
                            name="{{ redirect_field_name }}"
                            value="{{ redirect_field_value }}" />
                 {% endif %}
-                {{ form }}
-                {% blockinclude "form/buttons.html" %}
-                    <button class="btn btn-primary">
-                        {% heroicon_mini "plus" %}
+                <div class="grid-cols-2 gap-3 space-y-3 sm:grid sm:space-y-0">
+                    {{ form }}
+                </div>
+                <c-form.buttons>
+                    <c-button variant="primary" icon="plus">
                         Sign Up
-                    </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                    </c-button>
+                </c-form.buttons>
+            </c-form>
+
         </div>
     {% endwith %}
-{% endblock content %}
+</c-layout>
