@@ -58,7 +58,7 @@
                 {% if season %}
                     <a class="link" href="{{ season.url }}">{{ season }}</a>
                 {% endif %}
-                <a href="{{ episodes_url }}"
+                <a href="{{ podcast.get_episodes_url }}"
                    title="See all episodes for {{ podcast.cleaned_title }}"
                    class="inline-block link">See all episodes</a>
             </div>
