@@ -11,6 +11,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.paginator import render_paginated_response
@@ -161,15 +162,7 @@ def episodes(
         ordering = request.GET.get("order", default_ordering)
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
-    return render_paginated_response(
-        request,
-        "podcasts/episodes.html",
-        episodes,
-        {
-            "podcast": podcast,
-            "ordering": ordering,
-        },
-    )
+    return _render_episodes(request, podcast, episodes, {"ordering": ordering})
 
 
 @require_safe
@@ -182,7 +175,6 @@ def season(
 ) -> TemplateResponse:
     """Render episodes for a podcast season."""
     podcast = _get_podcast_or_404(podcast_id)
-    current_season = Season(podcast=podcast, season=season)
 
     episodes = podcast.episodes.filter(season=season).select_related("podcast")
     episodes = episodes.filter(season=season)
@@ -190,15 +182,8 @@ def season(
     ordering = "asc" if podcast.is_serial() else "desc"
     episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
-    return render_paginated_response(
-        request,
-        "podcasts/episodes.html",
-        episodes,
-        {
-            "podcast": podcast,
-            "season": current_season,
-            "ordering": ordering,
-        },
+    return _render_episodes(
+        request, podcast, episodes, {"season": Season(podcast=podcast, season=season)}
     )
 
 
@@ -407,4 +392,21 @@ def _render_subscribe_action(
             "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
+    )
+
+
+def _render_episodes(
+    request: HttpRequest,
+    podcast: Podcast,
+    episodes: QuerySet[Episode],
+    extra_context: dict | None = None,
+):
+    return render_paginated_response(
+        request,
+        "podcasts/episodes.html",
+        episodes,
+        {
+            "podcast": podcast,
+        }
+        | (extra_context or {}),
     )

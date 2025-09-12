@@ -292,7 +292,7 @@ class TestPodcastSeason:
         assert200(response)
 
         assert len(response.context["page"].object_list) == 20
-        assert response.context["ordering"] == "desc"
+        assert response.context["season"].season == 1
 
 
 class TestPodcastEpisodes:
