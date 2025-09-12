@@ -1,3 +1,4 @@
+import dataclasses
 from datetime import datetime, timedelta
 from typing import ClassVar, Final
 
@@ -365,14 +366,15 @@ class Podcast(models.Model):
         return False if self.private else self.recommendations.exists()
 
     @cached_property
-    def seasons(self) -> list[int]:
+    def seasons(self) -> list["Season"]:
         """Returns list of seasons."""
-        return list(
-            self.episodes.filter(season__isnull=False)
+        return [
+            Season(podcast=self, season=season)
+            for season in self.episodes.filter(season__isnull=False)
             .values_list("season", flat=True)
             .order_by("season")
             .distinct()
-        )
+        ]
 
     def get_next_scheduled_update(self) -> datetime:
         """Returns estimated next update:
@@ -497,4 +499,28 @@ class Recommendation(models.Model):
                 f"podcast {self.podcast_id}",
                 f"recommended {self.recommended_id}",
             ]
+        )
+
+
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Season:
+    """Encapsulates podcast season"""
+
+    podcast: Podcast
+    season: int
+
+    def __str__(self) -> str:
+        """Return season."""
+        return f"Season {self.season}"
+
+    @cached_property
+    def url(self) -> str:
+        """Returns URL of season."""
+        return reverse(
+            "podcasts:season",
+            kwargs={
+                "podcast_id": self.podcast.pk,
+                "slug": self.podcast.slug,
+                "season": self.season,
+            },
         )

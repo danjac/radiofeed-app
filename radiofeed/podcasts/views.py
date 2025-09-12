@@ -1,4 +1,3 @@
-import contextlib
 from typing import TYPE_CHECKING, cast
 
 from django.conf import settings
@@ -18,7 +17,7 @@ from radiofeed.paginator import render_paginated_response
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
-from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.podcasts.models import Category, Podcast, Season
 
 if TYPE_CHECKING:
     from radiofeed.users.models import User  # pragma: no cover
@@ -142,15 +141,18 @@ def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
 @require_safe
 @login_required
 def episodes(
-    request: HttpRequest, podcast_id: int, slug: str | None = None
+    request: HttpRequest,
+    podcast_id: int,
+    season: int | None = None,
+    slug: str | None = None,
 ) -> TemplateResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
 
-    episodes = podcast.episodes.select_related("podcast")
-
+    current_season: Season | None = None
     ordering: str = "desc"
-    season: int | None = None
+
+    episodes = podcast.episodes.select_related("podcast")
 
     if request.search:
         episodes = episodes.search(request.search.value).order_by(
@@ -158,12 +160,13 @@ def episodes(
             "-pub_date",
         )
     else:
-        with contextlib.suppress(ValueError):
-            if season := int(request.GET.get("season", "")):
-                episodes = episodes.filter(season=season)
+        if season is not None:
+            current_season = Season(podcast=podcast, season=season)
+            episodes = episodes.filter(season=season)
 
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = request.GET.get("order", default_ordering)
+
         episodes = episodes.order_by("pub_date" if ordering == "asc" else "-pub_date")
 
     return render_paginated_response(
@@ -172,8 +175,8 @@ def episodes(
         episodes,
         {
             "podcast": podcast,
+            "season": current_season,
             "ordering": ordering,
-            "season": season,
         },
     )
 

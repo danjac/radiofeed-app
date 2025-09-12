@@ -23,6 +23,7 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
+from radiofeed.podcasts.models import Season
 from radiofeed.throttle import throttle
 
 
@@ -74,11 +75,18 @@ def episode_detail(
         pk=episode_id,
     )
 
+    season = (
+        Season(podcast=episode.podcast, season=episode.season)
+        if episode.season
+        else None
+    )
+
     return TemplateResponse(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
+            "season": season,
             "audio_log": request.user.audio_logs.filter(episode=episode).first(),
             "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
             "is_playing": request.player.has(episode.pk),

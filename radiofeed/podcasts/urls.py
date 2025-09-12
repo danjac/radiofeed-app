@@ -20,6 +20,11 @@ urlpatterns = [
         name="episodes",
     ),
     path(
+        "podcasts/<slug:slug>-<int:podcast_id>/season/<int:season>/",
+        views.episodes,
+        name="season",
+    ),
+    path(
         "podcasts/<slug:slug>-<int:podcast_id>/similar/",
         views.similar,
         name="similar",

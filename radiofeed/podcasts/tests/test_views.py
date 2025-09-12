@@ -289,7 +289,16 @@ class TestPodcastEpisodes:
         EpisodeFactory.create_batch(20, podcast=podcast, season=1)
         EpisodeFactory.create_batch(10, podcast=podcast, season=2)
 
-        response = client.get(f"{podcast.get_episodes_url()}?season=1")
+        response = client.get(
+            reverse(
+                "podcasts:season",
+                kwargs={
+                    "podcast_id": podcast.pk,
+                    "slug": podcast.slug,
+                    "season": 1,
+                },
+            )
+        )
         assert200(response)
 
         assert len(response.context["page"].object_list) == 20

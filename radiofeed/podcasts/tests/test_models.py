@@ -292,7 +292,9 @@ class TestPodcastModel:
         EpisodeFactory.create_batch(3, podcast=podcast, season=2)
         EpisodeFactory.create_batch(3, podcast=podcast, season=1)
         EpisodeFactory.create_batch(1, podcast=podcast, season=None)
-        assert podcast.seasons == [1, 2]
+        assert len(podcast.seasons) == 2
+        assert podcast.seasons[0].season == 1
+        assert podcast.seasons[1].season == 2
 
     def test_get_next_scheduled_update_pub_date_none(self):
         now = timezone.now()
