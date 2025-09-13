@@ -129,7 +129,7 @@ def blockinclude(
             <p>This is the content of the blockinclude.</p>
         </header>
 
-    If `only` is passed then will only include the variables provided.
+    If `only` is `True` then will only include the variables provided.
     """
     if context.template is None:
         raise template.TemplateSyntaxError(
@@ -137,9 +137,7 @@ def blockinclude(
         )
 
     tmpl = context.template.engine.get_template(template_name)
-
-    if only:
-        context = context.new()
+    context = context.new() if only else context
 
     with context.push(content=content, **extra_context):
         return tmpl.render(context)
