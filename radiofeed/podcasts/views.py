@@ -148,9 +148,8 @@ def episodes(
 ) -> TemplateResponse:
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
-    ordering: str = "desc"
-
     episodes = podcast.episodes.select_related("podcast")
+    ordering = request.GET.get("order", None)
 
     if request.search:
         episodes = episodes.search(request.search.value).order_by(
@@ -159,14 +158,17 @@ def episodes(
         )
     else:
         default_ordering = "asc" if podcast.is_serial() else "desc"
-        ordering = request.GET.get("order", default_ordering)
+        ordering = ordering or default_ordering
+        order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
+        episodes = episodes.order_by(*order_by)
 
-    return _render_episodes(
+    return _render_podcast_episodes(
         request,
         podcast,
         episodes,
-        {"ordering": ordering},
-        ascending=ordering == "asc",
+        {
+            "ordering": ordering,
+        },
     )
 
 
@@ -185,14 +187,16 @@ def season(
         "podcast",
     )
 
-    return _render_episodes(
+    order_by = ("pub_date", "id") if podcast.is_serial() else ("-pub_date", "-id")
+    episodes = episodes.order_by(*order_by)
+
+    return _render_podcast_episodes(
         request,
         podcast,
         episodes,
         {
             "season": Season(podcast=podcast, season=season),
         },
-        ascending=podcast.is_serial(),
     )
 
 
@@ -404,19 +408,16 @@ def _render_subscribe_action(
     )
 
 
-def _render_episodes(
+def _render_podcast_episodes(
     request: HttpRequest,
     podcast: Podcast,
     episodes: QuerySet[Episode],
     extra_context: dict | None = None,
-    *,
-    ascending: bool,
 ):
-    order_by = ("pub_date", "id") if ascending else ("-pub_date", "-id")
     return render_paginated_response(
         request,
         "podcasts/episodes.html",
-        episodes.order_by(*order_by),
+        episodes,
         {
             "podcast": podcast,
         }
