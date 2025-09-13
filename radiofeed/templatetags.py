@@ -1,4 +1,5 @@
 import functools
+import itertools
 import json
 from typing import Final
 
@@ -12,12 +13,8 @@ from django.template.context import Context
 from django.template.defaultfilters import pluralize
 
 from radiofeed import pwa
-from radiofeed.cover_image import (
-    CoverImageVariant,
-    get_cover_image_attrs,
-    get_cover_image_class,
-)
-from radiofeed.html import merge_classes, render_markdown
+from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
+from radiofeed.html import render_markdown
 
 _TIME_PARTS: Final = [
     ("hour", 60 * 60),
@@ -27,7 +24,6 @@ _TIME_PARTS: Final = [
 register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
-get_cover_image_class = register.simple_tag(get_cover_image_class)
 
 
 _jsonify = functools.partial(json.dumps, cls=DjangoJSONEncoder)
@@ -60,7 +56,7 @@ def attrs(**values) -> dict:
 
 
 @register.simple_tag
-def htmlattrs(attrs: dict | None, **defaults) -> str:
+def htmlattrs(*attrs: dict | None, **defaults) -> str:
     """Renders attributes as HTML attributes.
 
     Use with `attrs` to pass attributes to an include template.
@@ -77,21 +73,24 @@ def htmlattrs(attrs: dict | None, **defaults) -> str:
         <h1 class="text-red-100 text-lg" id="test" required>Header</h1>
 
     Default values are overriden, except for `class`, which is appended.
+
+    Note that snake case attribute names are converted to kebab case e.g. `hx_get` -> `hx-get`
     """
     merged = {}
     classes = []
     # Merge dictionaries, replacing "_" in name with "-"
-    for dct in [defaults, attrs]:
+    for dct in [defaults, *attrs]:
         if dct:
             clone = dct.copy()
+            # Extract classes
             if classnames := clone.pop("class", None):
                 classes.append(classnames)
             merged |= {name.replace("_", "-"): value for name, value in clone.items()}
 
     if classes:
-        merged["class"] = merge_classes(*classes)
+        # Combine all the extracted class names
+        merged["class"] = _merge_classes(*classes)
 
-    # render safe html string
     return flatatt(merged)
 
 
@@ -160,12 +159,12 @@ def cover_image(
 ) -> dict:
     """Renders a cover image."""
     return {
-        "attrs": get_cover_image_attrs(
+        "default_attrs": get_cover_image_attrs(
             variant,
             cover_url,
             title,
-            **attrs,
         ),
+        "extra_attrs": attrs,
     }
 
 
@@ -186,3 +185,12 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
+
+
+def _merge_classes(*classnames: str) -> str:
+    """Merges CSS classes into single string of unique names, preserving original order."""
+    return " ".join(
+        dict.fromkeys(
+            itertools.chain.from_iterable([group.split() for group in classnames])
+        ).keys()
+    )

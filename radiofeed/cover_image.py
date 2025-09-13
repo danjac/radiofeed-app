@@ -15,7 +15,6 @@ from django.templatetags.static import static
 from django.urls import reverse
 from PIL import Image
 
-from radiofeed.html import merge_classes
 from radiofeed.http_client import Client
 from radiofeed.pwa import ImageInfo
 
@@ -81,23 +80,20 @@ def get_cover_image_attrs(
     variant: CoverImageVariant,
     cover_url: str | None,
     title: str,
-    **attrs: str,
 ) -> dict:
     """Returns the HTML attributes for an image."""
+    classes = _COVER_IMAGE_CLASSES[variant]
     min_size, full_size = _COVER_IMAGE_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
     attrs = {
         "alt": title,
         "title": title,
+        "class": classes,
         "src": full_src,
         "width": full_size,
         "height": full_size,
-        "class": get_cover_image_class(
-            variant,
-            attrs.pop("class", ""),
-        ),
-    } | attrs
+    }
 
     # no size variations
     if min_size == full_size:
@@ -216,12 +212,6 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
         if cover_url
         else get_placeholder_url(size)
     )
-
-
-@functools.cache
-def get_cover_image_class(variant: CoverImageVariant, *classes: str) -> str:
-    """Returns default CSS class for the cover image."""
-    return merge_classes(_COVER_IMAGE_CLASSES[variant], *classes)
 
 
 @functools.cache

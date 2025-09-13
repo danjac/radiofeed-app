@@ -1,7 +1,6 @@
 import functools
 import html
 import io
-import itertools
 import re
 from typing import Final
 
@@ -124,15 +123,6 @@ def linkify(content: str) -> str:
         if node.parent and node.parent.name != "a":
             node.replace_with(_make_soup(urlize(str(node))))
     return str(soup)
-
-
-def merge_classes(*classnames: str) -> str:
-    """Merges CSS classes into single string of unique names, preserving original order."""
-    return " ".join(
-        dict.fromkeys(
-            itertools.chain.from_iterable([group.split() for group in classnames])
-        ).keys()
-    )
 
 
 def _make_soup(content: str) -> bs4.BeautifulSoup:
