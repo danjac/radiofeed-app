@@ -161,12 +161,13 @@ def episodes(
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = request.GET.get("order", default_ordering)
 
-        if ordering == "asc":
-            episodes = episodes.order_by("pub_date", "pk")
-        else:
-            episodes = episodes.order_by("-pub_date", "-pk")
-
-    return _render_episodes(request, podcast, episodes, {"ordering": ordering})
+    return _render_episodes(
+        request,
+        podcast,
+        episodes,
+        {"ordering": ordering},
+        ascending=ordering == "asc",
+    )
 
 
 @require_safe
@@ -184,11 +185,6 @@ def season(
         "podcast",
     )
 
-    if podcast.is_serial():
-        episodes = episodes.order_by("pub_date", "pk")
-    else:
-        episodes = episodes.order_by("-pub_date", "-pk")
-
     return _render_episodes(
         request,
         podcast,
@@ -196,6 +192,7 @@ def season(
         {
             "season": Season(podcast=podcast, season=season),
         },
+        ascending=podcast.is_serial(),
     )
 
 
@@ -412,11 +409,14 @@ def _render_episodes(
     podcast: Podcast,
     episodes: QuerySet[Episode],
     extra_context: dict | None = None,
+    *,
+    ascending: bool,
 ):
+    order_by = ("pub_date", "id") if ascending else ("-pub_date", "-id")
     return render_paginated_response(
         request,
         "podcasts/episodes.html",
-        episodes,
+        episodes.order_by(*order_by),
         {
             "podcast": podcast,
         }
