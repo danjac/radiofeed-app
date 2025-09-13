@@ -1,6 +1,6 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.template import TemplateSyntaxError
+from django.template import Context, Template, TemplateSyntaxError
 
 from radiofeed.templatetags import blockinclude, format_duration, htmlattrs
 
@@ -40,6 +40,18 @@ class TestHtmlAttrs:
 
 
 class TestBlockInclude:
+    def test_blockinclude(self):
+        tmpl = """
+            {% blockinclude "tests/blockinclude_test.html" arg="testarg" %}
+                {% if var %}
+                    var is passed
+                {% endif %}
+            {% endblockinclude %}
+        """
+        result = Template(tmpl).render(Context({"var": "test"}))
+        assert "var is passed" in result
+        assert "arg: testarg" in result
+
     def test_context_template_none(self, mocker):
         """Test blockinclude with no template."""
         mock_context = mocker.MagicMock()

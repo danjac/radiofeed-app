@@ -126,6 +126,8 @@ def blockinclude(
             <h1>Home page</h1>
             <p>This is the content of the blockinclude.</p>
         </header>
+
+    If `only` is passed then will only include the variables provided.
     """
     if context.template is None:
         raise template.TemplateSyntaxError(
