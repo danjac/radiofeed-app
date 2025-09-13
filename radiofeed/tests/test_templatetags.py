@@ -43,13 +43,23 @@ class TestBlockInclude:
     def test_blockinclude(self):
         tmpl = """
             {% blockinclude "tests/blockinclude_test.html" arg="testarg" %}
-                {% if var %}
-                    var is passed
-                {% endif %}
+                content is here
             {% endblockinclude %}
         """
         result = Template(tmpl).render(Context({"var": "test"}))
+        assert "content is here" in result
         assert "var is passed" in result
+        assert "arg: testarg" in result
+
+    def test_only(self):
+        tmpl = """
+            {% blockinclude "tests/blockinclude_test.html" arg="testarg" only=True %}
+                content is here
+            {% endblockinclude %}
+        """
+        result = Template(tmpl).render(Context({"var": "test"}))
+        assert "content is here" in result
+        assert "var is passed" not in result
         assert "arg: testarg" in result
 
     def test_context_template_none(self, mocker):

@@ -99,6 +99,8 @@ def blockinclude(
     context: Context,
     content: str,
     template_name: str,
+    *,
+    only: bool = False,
     **extra_context,
 ) -> str:
     """Renders a block include.
@@ -135,6 +137,9 @@ def blockinclude(
         )
 
     tmpl = context.template.engine.get_template(template_name)
+
+    if only:
+        context = context.new()
 
     with context.push(content=content, **extra_context):
         return tmpl.render(context)
