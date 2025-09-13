@@ -28,7 +28,7 @@
     {% endblockinclude %}
 
     {% partialdef pagination inline %}
-        {% blockinclude "pagination.html" %}
+        {% blockinclude "paginate.html" %}
             {% for bookmark in page %}
                 {% blockinclude "browse/item.html" %}
                     {% include "episodes/episode.html" with episode=bookmark.episode %}

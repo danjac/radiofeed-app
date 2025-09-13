@@ -32,7 +32,7 @@
     {% endblockinclude %}
 
     {% partialdef pagination inline %}
-        {% blockinclude "pagination.html" %}
+        {% blockinclude "paginate.html" %}
             {% for podcast in page %}
                 {% blockinclude "browse/item.html" %}
                     {% include "podcasts/podcast.html" %}

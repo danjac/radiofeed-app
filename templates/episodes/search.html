@@ -21,7 +21,7 @@
 
     {% partialdef pagination inline %}
         {% cache cache_timeout search-episodes request.get_full_path %}
-            {% blockinclude "pagination.html" %}
+            {% blockinclude "paginate.html" %}
                 {% for episode in page %}
                     {% blockinclude "browse/item.html" %}
                         {% include "episodes/episode.html" %}

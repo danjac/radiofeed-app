@@ -23,7 +23,7 @@
 
     {% partialdef pagination inline %}
         {% cache cache_timeout category-podcasts request.get_full_path %}
-            {% blockinclude "pagination.html" %}
+            {% blockinclude "paginate.html" %}
                 {% for podcast in page %}
                     {% blockinclude "browse/item.html" %}
                         {% include "podcasts/podcast.html" %}

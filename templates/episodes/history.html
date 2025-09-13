@@ -28,7 +28,7 @@
     {% endblockinclude %}
 
     {% partialdef pagination inline %}
-        {% blockinclude "pagination.html" %}
+        {% blockinclude "paginate.html" %}
             {% for audio_log in page %}
                 {% blockinclude "browse/item.html" %}
                     {% include "episodes/episode.html" with episode=audio_log.episode %}
