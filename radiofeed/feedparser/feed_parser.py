@@ -122,11 +122,7 @@ class _FeedParser:
             raise InvalidDataError from exc
         return result
 
-    def _handle_error(
-        self,
-        exc: FeedParserError,
-        **fields,
-    ) -> Podcast.ParserResult:
+    def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
         # Handle errors when parsing a feed
         active = True
         num_retries = self.podcast.num_retries
