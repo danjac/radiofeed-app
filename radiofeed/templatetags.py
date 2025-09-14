@@ -1,5 +1,4 @@
 import functools
-import itertools
 import json
 from typing import Final
 
@@ -76,22 +75,23 @@ def htmlattrs(*attrs: dict | None, **defaults) -> str:
 
     Note that snake case attribute names are converted to kebab case e.g. `hx_get` -> `hx-get`
     """
-    merged = {}
-    classes = []
-    # Merge dictionaries, replacing "_" in name with "-"
-    for dct in [defaults, *attrs]:
-        if dct:
-            clone = dct.copy()
-            # Extract classes
-            if classnames := clone.pop("class", None):
-                classes.append(classnames)
-            merged |= {name.replace("_", "-"): value for name, value in clone.items()}
+    merged_attrs = {}
+    merged_classes = []
 
-    if classes:
-        # Combine all the extracted class names
-        merged["class"] = _merge_classes(*classes)
+    for dct in (dct.copy() for dct in (defaults, *attrs) if dct):
+        # Extract classes
+        if classes := dct.pop("class", None):
+            merged_classes += classes.split()
 
-    return flatatt(merged)
+        merged_attrs.update(
+            {name.replace("_", "-"): value for name, value in dct.items()}
+        )
+
+    # Combine unique class names, preserving original order
+    if merged_classes:
+        merged_attrs["class"] = " ".join(dict.fromkeys(merged_classes).keys())
+
+    return flatatt(merged_attrs)
 
 
 @register.simple_block_tag(takes_context=True)
@@ -190,12 +190,3 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
-
-
-def _merge_classes(*classnames: str) -> str:
-    """Merges CSS classes into single string of unique names, preserving original order."""
-    return " ".join(
-        dict.fromkeys(
-            itertools.chain.from_iterable([group.split() for group in classnames])
-        ).keys()
-    )
