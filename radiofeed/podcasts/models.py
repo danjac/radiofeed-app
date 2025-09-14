@@ -393,12 +393,16 @@ class Podcast(models.Model):
     def seasons(self) -> list[Season]:
         """Returns list of seasons."""
         return [
-            Season(podcast=self, season=season)
+            self.get_season(season)
             for season in self.episodes.filter(season__isnull=False)
             .values_list("season", flat=True)
             .order_by("season")
             .distinct()
         ]
+
+    def get_season(self, season: int) -> Season:
+        """Returns Season instance."""
+        return Season(podcast=self, season=season)
 
     def get_next_scheduled_update(self) -> datetime:
         """Returns estimated next update:

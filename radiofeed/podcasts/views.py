@@ -18,7 +18,7 @@ from radiofeed.paginator import render_paginated_response
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.forms import PrivateFeedForm
-from radiofeed.podcasts.models import Category, Podcast, Season
+from radiofeed.podcasts.models import Category, Podcast
 
 if TYPE_CHECKING:
     from radiofeed.users.models import User  # pragma: no cover
@@ -194,9 +194,7 @@ def season(
         request,
         podcast,
         episodes,
-        {
-            "season": Season(podcast=podcast, season=season),
-        },
+        {"season": podcast.get_season(season)},
     )
 
 

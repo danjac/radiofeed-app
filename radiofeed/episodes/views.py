@@ -23,7 +23,6 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
-from radiofeed.podcasts.models import Season
 from radiofeed.throttle import throttle
 
 
@@ -76,7 +75,9 @@ def episode_detail(
     )
 
     season = (
-        Season(podcast=episode.podcast, season=episode.season)
+        episode.podcast.get_season(
+            season=episode.season,
+        )
         if episode.season
         else None
     )
