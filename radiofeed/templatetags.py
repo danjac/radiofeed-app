@@ -49,20 +49,23 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
 
 
 @register.simple_tag
-def attrs(**values) -> dict:
+def buildattrs(*attrs: dict | None, **extra_attrs) -> dict:
     """Returns attributes as dictionary."""
-    return values
+    merged = {}
+    for dct in (dct for dct in (*attrs, extra_attrs) if dct):
+        merged |= dct
+    return merged
 
 
 @register.simple_tag
 def htmlattrs(*attrs: dict | None, **defaults) -> str:
     """Renders attributes as HTML attributes.
 
-    Use with `attrs` to pass attributes to an include template.
+    Use with `buildattrs` to pass attributes to an include template.
 
     Example:
 
-        {% attrs id="test" class="text-lg" required=True as attrs %}
+        {% buildattrs id="test" class="text-lg" required=True as attrs %}
         {% include "header.html" with attrs=attrs %}
 
     In include template:
@@ -83,9 +86,13 @@ def htmlattrs(*attrs: dict | None, **defaults) -> str:
         if classes := dct.pop("class", None):
             merged_classes += classes.split()
 
-        merged_attrs.update(
-            {name.replace("_", "-"): value for name, value in dct.items()}
-        )
+        merged_attrs |= {
+            name.replace(
+                "_",
+                "-",
+            ): value
+            for name, value in dct.items()
+        }
 
     # Combine unique class names, preserving original order
     if merged_classes:

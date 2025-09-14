@@ -1,5 +1,5 @@
 {% with has_other_pages=page.has_other_pages %}
-    {% attrs id=pagination_target as attrs %}
+    {% buildattrs id=pagination_target as attrs %}
     {% blockinclude "browse.html" attrs=attrs %}
         {% if has_other_pages %}
             <li class="pb-3">
