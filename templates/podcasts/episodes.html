@@ -42,7 +42,9 @@
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
                             {% blockinclude "header/nav/item.html" %}
-                                {% include "search/form.html" with placeholder="Search: Podcast" clearable=True %}
+                                {% with search_url=podcast.get_episodes_url %}
+                                    {% include "search/form.html" with placeholder="Search: Podcast" clearable=True %}
+                                {% endwith %}
                             {% endblockinclude %}
                         {% endif %}
                     {% endblockinclude %}
