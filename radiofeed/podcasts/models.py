@@ -20,6 +20,30 @@ from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Season:
+    """Encapsulates podcast season"""
+
+    podcast: "Podcast"
+    season: int
+
+    def __str__(self) -> str:
+        """Return season."""
+        return f"Season {self.season}"
+
+    @cached_property
+    def url(self) -> str:
+        """Returns URL of season."""
+        return reverse(
+            "podcasts:season",
+            kwargs={
+                "podcast_id": self.podcast.pk,
+                "slug": self.podcast.slug,
+                "season": self.season,
+            },
+        )
+
+
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
@@ -366,7 +390,7 @@ class Podcast(models.Model):
         return False if self.private else self.recommendations.exists()
 
     @cached_property
-    def seasons(self) -> list["Season"]:
+    def seasons(self) -> list[Season]:
         """Returns list of seasons."""
         return [
             Season(podcast=self, season=season)
@@ -499,28 +523,4 @@ class Recommendation(models.Model):
                 f"podcast {self.podcast_id}",
                 f"recommended {self.recommended_id}",
             ]
-        )
-
-
-@dataclasses.dataclass(kw_only=True, frozen=True)
-class Season:
-    """Encapsulates podcast season"""
-
-    podcast: Podcast
-    season: int
-
-    def __str__(self) -> str:
-        """Return season."""
-        return f"Season {self.season}"
-
-    @cached_property
-    def url(self) -> str:
-        """Returns URL of season."""
-        return reverse(
-            "podcasts:season",
-            kwargs={
-                "podcast_id": self.podcast.pk,
-                "slug": self.podcast.slug,
-                "season": self.season,
-            },
         )
