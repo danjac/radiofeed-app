@@ -2,32 +2,19 @@
 {% load cache %}
 
 {% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }} | Episodes{% if season %} | Season {{ season }} {% endif %}
+    {{ block.super }} | {{ podcast.cleaned_title }} | Episodes
 {% endblock title %}
 
 {% block content %}
     {% blockinclude "podcasts/header.html" active="episodes" %}
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
-                {% if request.search or season or num_episodes > page_size %}
+                {% if request.search or num_episodes > page_size %}
                     {% blockinclude "header/nav.html" %}
                         {% if request.search %}
                             {% blockinclude "header/nav/item.html" %}
                                 {% url "episodes:search_episodes" as search_episodes_url %}
                                 {% include "search/button.html" with search_url=search_episodes_url label="Search Episodes" %}
-                            {% endblockinclude %}
-                        {% elif season and podcast.seasons %}
-                            {% blockinclude "header/nav/item.html" %}
-                                {% blockinclude "header/nav/dropdown.html" dropdown_id="seasons-dropdown" label=season %}
-                                    {% blockinclude "header/nav/dropdown/item.html" url=request.path %}
-                                        All Seasons
-                                    {% endblockinclude %}
-                                    {% for season in podcast.seasons %}
-                                        {% blockinclude "header/nav/dropdown/item.html" url=season.url %}
-                                            {{ season }}
-                                        {% endblockinclude %}
-                                    {% endfor %}
-                                {% endblockinclude %}
                             {% endblockinclude %}
                         {% else %}
                             {% blockinclude "header/nav/item.html" %}
@@ -42,9 +29,7 @@
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
                             {% blockinclude "header/nav/item.html" %}
-                                {% with search_url=podcast.get_episodes_url %}
-                                    {% include "search/form.html" with placeholder="Search: Podcast" clearable=True %}
-                                {% endwith %}
+                                {% include "search/form.html" with placeholder="Search: Podcast" clearable=True %}
                             {% endblockinclude %}
                         {% endif %}
                     {% endblockinclude %}

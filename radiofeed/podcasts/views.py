@@ -11,7 +11,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from radiofeed.episodes.models import Episode
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.paginator import render_paginated_response
@@ -162,11 +161,12 @@ def episodes(
         order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
         episodes = episodes.order_by(*order_by)
 
-    return _render_podcast_episodes(
+    return render_paginated_response(
         request,
-        podcast,
+        "podcasts/episodes.html",
         episodes,
         {
+            "podcast": podcast,
             "ordering": ordering,
         },
     )
@@ -190,11 +190,14 @@ def season(
     order_by = ("pub_date", "id") if podcast.is_serial() else ("-pub_date", "-id")
     episodes = episodes.order_by(*order_by)
 
-    return _render_podcast_episodes(
+    return render_paginated_response(
         request,
-        podcast,
+        "podcasts/season.html",
         episodes,
-        {"season": podcast.get_season(season)},
+        {
+            "podcast": podcast,
+            "season": podcast.get_season(season),
+        },
     )
 
 
@@ -403,21 +406,4 @@ def _render_subscribe_action(
             "podcast": podcast,
             "is_subscribed": is_subscribed,
         },
-    )
-
-
-def _render_podcast_episodes(
-    request: HttpRequest,
-    podcast: Podcast,
-    episodes: QuerySet[Episode],
-    extra_context: dict | None = None,
-):
-    return render_paginated_response(
-        request,
-        "podcasts/episodes.html",
-        episodes,
-        {
-            "podcast": podcast,
-        }
-        | (extra_context or {}),
     )
