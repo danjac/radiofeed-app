@@ -1,9 +1,11 @@
 {% load widget_tweaks %}
 <c-vars field />
-<div class="space-y-3 form-control">
+<fieldset class="space-y-3 form-control"
+          {% if field.aria_describedby %} aria-describedby="{{ field.aria_describedby }}"{% endif %}
+>
     {% with widget_type=field|widget_type %}
         <c-component is="form.fields.{{ widget_type|lower }}" :field="field" :attrs="attrs" />
     {% endwith %}
     <c-form.errors :errors="field.errors" />
     <c-form.help-text :field="field" />
-</div>
+</fieldset>
