@@ -6,7 +6,7 @@
                 <c-header.nav>
                     <c-header.nav.item>
                         <c-header.nav.dropdown :label="season" dropdown-id="seasons-dropdown">
-                            <c-header.nav.dropdown.item :url="request.path">
+                            <c-header.nav.dropdown.item :url="podcast.get_episodes_url">
                                 All Seasons
                             </c-header.nav.dropdown.item>
                             {% for season in podcast.seasons %}
