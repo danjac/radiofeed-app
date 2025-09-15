@@ -1,6 +1,4 @@
 {% load widget_tweaks %}
 <c-vars field />
 <c-form.label :field="field" />
-{% with WIDGET_ERROR_CLASS="error" %}
-    {% render_field field class="form-input" %}
-{% endwith %}
+{% render_field field class="form-input" %}
