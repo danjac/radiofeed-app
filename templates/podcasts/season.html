@@ -2,11 +2,11 @@
 <c-layout title="{{ podcast.cleaned_title }} | {{ season }}">
     <c-podcasts.header active="episodes">
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
-            {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
+            {% with num_episodes=podcast.num_episodes page_size=page.page_size episodes_url=podcast.get_episodes_url %}
                 <c-header.nav>
                     <c-header.nav.item>
                         <c-header.nav.dropdown :label="season" dropdown-id="seasons-dropdown">
-                            <c-header.nav.dropdown.item :url="podcast.get_episodes_url">
+                            <c-header.nav.dropdown.item :url="episodes_url">
                                 All Seasons
                             </c-header.nav.dropdown.item>
                             {% for season in podcast.seasons %}
@@ -18,7 +18,10 @@
                     </c-header.nav.item>
                     {% if num_episodes > page_size %}
                         <c-header.nav.item>
-                            <c-search.form placeholder="Search: Podcast" clearable />
+                            <c-search.form
+                                placeholder="Search: Podcast"
+                                :url="episodes_url"
+                                clearable />
                         </c-header.nav.item>
                     {% endif %}
                 </c-header.nav>
