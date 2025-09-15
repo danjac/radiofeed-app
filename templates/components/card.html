@@ -5,10 +5,9 @@
    class="flex items-center space-x-3 cursor-pointer group"
    {{ attrs }}
 >
-    <c-cover-image
-        variant="card"
+    <c-cover.card
         class="group-hover:opacity-75"
-        :cover_url="cover_url"
+        :url="cover_url"
         :title="title"
     />
     <div class="flex flex-col place-content-between h-16 leading-tight">

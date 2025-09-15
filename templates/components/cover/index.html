@@ -1,6 +1,6 @@
 {# djlint:off #}
-<c-vars variant cover_url title class />
-{% get_cover_image_attrs variant cover_url title as cover_attrs %}
+<c-vars variant url title class />
+{% get_cover_image_attrs variant url title as cover_attrs %}
 <img class="object-cover text-transparent bg-transparent border {{ cover_attrs.class }} {{ class }}"
      aria_hidden="true"
      loading="lazy"
