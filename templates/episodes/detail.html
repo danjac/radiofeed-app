@@ -71,30 +71,30 @@
                                  hx-swap="outerHTML"
                                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
-                                    <c-button variant="primary"
-                                              icon="stop-circle"
-                                              size="lg"
-                                              outline
-                                              aria-label="Close Player"
-                                              title="Close Player"
-                                              hx-post="{% url "episodes:close_player" %}"
-                                              hx-disabled-elt="this"
-                                              hx-trigger="click once"
+                                    <c-button.primary
+                                        icon="stop-circle"
+                                        size="lg"
+                                        outline
+                                        aria-label="Close Player"
+                                        title="Close Player"
+                                        hx-post="{% url "episodes:close_player" %}"
+                                        hx-disabled-elt="this"
+                                        hx-trigger="click once"
                                     >
 
                                         Close
-                                    </c-button>
+                                    </c-button.primary>
                                 {% else %}
-                                    <c-button variant="primary"
-                                              icon="play-circle"
-                                              size="lg"
-                                              aria-label="Open Episode in Player"
-                                              title="Open Episode in Player"
-                                              hx-disabled-elt="this"
-                                              hx-post="{% url "episodes:start_player" episode.pk %}"
-                                              hx-trigger="click once">
+                                    <c-button.primary
+                                        icon="play-circle"
+                                        size="lg"
+                                        aria-label="Open Episode in Player"
+                                        title="Open Episode in Player"
+                                        hx-disabled-elt="this"
+                                        hx-post="{% url "episodes:start_player" episode.pk %}"
+                                        hx-trigger="click once">
                                         Play
-                                    </c-button>
+                                    </c-button.primary>
                                 {% endif %}
                                 {% if request.htmx.target == target %}
                                     <c-audio-player :audio-log="audio_log" :action="action" />
@@ -113,27 +113,28 @@
                              hx-indicator="this"
                              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
-                                <button class="btn btn-default btn-outline"
-                                        aria-label="Remove Episode from your Bookmarks"
-                                        title="Remove Episode from your Bookmarks"
-                                        hx-disabled-elt="this"
-                                        hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
-                                        hx-trigger="click once"
+                                <c-button.default
+                                    aria-label="Remove Episode from your Bookmarks"
+                                    title="Remove Episode from your Bookmarks"
+                                    outline
+                                    icon="bookmark-slash"
+                                    hx-disabled-elt="this"
+                                    hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
+                                    hx-trigger="click once"
                                 >
-                                    {% heroicon_mini "bookmark-slash" %}
                                     Bookmark
-                                </button>
+                                </c-button.default>
                             {% else %}
-                                <button class="btn btn-default"
-                                        aria-label="Add Episode to your Bookmarks"
-                                        title="Add Episode to your Bookmarks"
-                                        hx-disabled-elt="this"
-                                        hx-post="{% url "episodes:add_bookmark" episode.pk %}"
-                                        hx-trigger="click once"
+                                <c-button.default
+                                    icon="bookmark"
+                                    aria-label="Add Episode to your Bookmarks"
+                                    title="Add Episode to your Bookmarks"
+                                    hx-disabled-elt="this"
+                                    hx-post="{% url "episodes:add_bookmark" episode.pk %}"
+                                    hx-trigger="click once"
                                 >
-                                    {% heroicon_mini "bookmark" %}
                                     Bookmark
-                                </button>
+                                </c-button.default>
 
                             {% endif %}
                         </div>
@@ -202,28 +203,28 @@
                             </div>
                             <div class="flex flex-wrap items-center space-x-2">
                                 {% if audio_log.percent_complete %}
-                                    <c-button variant="default"
-                                              icon="check"
-                                              size="sm"
-                                              hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
-                                              hx-disabled-elt="this"
-                                              hx-indicator="this"
+                                    <c-button.default
+                                        icon="check"
+                                        size="sm"
+                                        hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
+                                        hx-disabled-elt="this"
+                                        hx-indicator="this"
 
                                     >
                                         Complete
-                                    </c-button>
+                                    </c-button.default>
                                 {% endif %}
-                                <c-button variant="danger"
-                                          icon="trash"
-                                          size="sm"
-                                          title="Remove episode from your History"
-                                          hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
-                                          hx-confirm="Are you sure you want to remove this episode from your History?"
-                                          hx-disabled-elt="this"
-                                          hx-indicator="this"
+                                <c-button.danger
+                                    icon="trash"
+                                    size="sm"
+                                    title="Remove episode from your History"
+                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                                    hx-confirm="Are you sure you want to remove this episode from your History?"
+                                    hx-disabled-elt="this"
+                                    hx-indicator="this"
                                 >
                                     Remove
-                                </c-button>
+                                </c-button.danger>
                             </div>
                         </div>
                     {% endif %}
