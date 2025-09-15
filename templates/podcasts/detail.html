@@ -50,8 +50,7 @@
                              hx-swap="outerHTML"
                              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_subscribed %}
-                                <c-button
-                                    variant="primary"
+                                <c-button.primary
                                     icon="eye-slash"
                                     size="lg"
                                     outline
@@ -61,10 +60,9 @@
                                     hx-disabled-elt="this"
                                     hx-trigger="click once">
                                     Unsubscribe
-                                </c-button>
+                                </c-button.primary>
                             {% else %}
-                                <c-button
-                                    variant="primary"
+                                <c-button.primary
                                     icon="eye"
                                     size="lg"
                                     aria-label="Subscribe to this Podcast"
@@ -73,7 +71,7 @@
                                     hx-disabled-elt="this"
                                     hx-trigger="click once">
                                     Subscribe
-                                </c-button>
+                                </c-button.primary>
                             {% endif %}
                         </div>
                     {% endpartialdef subscribe_button %}
