@@ -40,7 +40,7 @@
                     </main>
                 </div>
             </div>
-            <c-audio-player :audio-log="request.player.audio_log" />
+            <c-audio-player :audio_log="request.player.get_audio_log" />
             <c-cookie-banner />
         </div>
         {% if user.is_authenticated %}

@@ -1,7 +1,6 @@
 import dataclasses
 
 from django.http import HttpRequest, HttpResponse
-from django.utils.functional import cached_property
 
 from radiofeed.episodes.models import AudioLog
 from radiofeed.middleware import BaseMiddleware
@@ -40,8 +39,7 @@ class PlayerDetails:
         the episode ID from the session."""
         return self.request.session.pop(self.session_id, None)
 
-    @cached_property
-    def audio_log(self) -> AudioLog | None:
+    def get_audio_log(self) -> AudioLog | None:
         """Returns current audio log, if any."""
         if self.request.user.is_authenticated and (episode_id := self.get()):
             return (

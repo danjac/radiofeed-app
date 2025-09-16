@@ -1,7 +1,7 @@
 {% load audio_player heroicons static %}
 <c-vars audio_log action="load" />
 {% if request.user.is_authenticated %}
-    <div id="audio-player"{% if request.htmx %} hx-swap-oob="true"{% endif %}>
+    <div id="audio-player" {{ attrs }}>
         {% if audio_log and action != "close" %}
             {% with episode=audio_log.episode podcast=audio_log.episode.podcast metadata_tag="audioplayer-metadata" %}
                 {% get_media_metadata episode as metadata %}
