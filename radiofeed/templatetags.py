@@ -55,11 +55,10 @@ def get_cookies_accepted(context: Context) -> bool:
     return False
 
 
-@register.inclusion_tag("markdown.html")
-def markdown(content: str | None) -> dict:
+@register.filter
+def markdown(content: str | None) -> str:
     """Render content as Markdown."""
-    content = render_markdown(content) if content else ""
-    return {"content": content}
+    return render_markdown(content) if content else ""
 
 
 @register.filter

@@ -236,7 +236,7 @@
                 </div>
             {% endpartialdef audio_log %}
             {% cache cache_timeout episode-description episode.pk %}
-                {% markdown episode.description %}
+                <c-markdown :content="episode.description" />
             {% endcache %}
         </article>
     {% endwith %}
