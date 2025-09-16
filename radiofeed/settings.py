@@ -50,7 +50,6 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "widget_tweaks",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",

@@ -2,7 +2,7 @@ import functools
 import json
 from typing import Final
 
-from django import template
+from django import forms, template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
@@ -72,3 +72,23 @@ def format_duration(total_seconds: int) -> str:
         if value:
             parts.append(f"{value} {label}{pluralize(value)}")
     return " ".join(parts)
+
+
+@register.filter
+def widget_type(field: forms.Field) -> str:
+    """Returns the widget class name for the bound field."""
+    return field.field.widget.__class__.__name__.lower()
+
+
+@register.simple_tag
+def render_field(field: forms.Field, **attrs) -> str:
+    """Returns rendered widget."""
+    attrs = {
+        k.replace(
+            "_",
+            "-",
+        ): v
+        for k, v in attrs.items()
+        if v not in (None, False)
+    }
+    return field.as_widget(attrs=attrs)
