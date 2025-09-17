@@ -28,6 +28,12 @@ _jsonify = functools.partial(json.dumps, cls=DjangoJSONEncoder)
 
 
 @register.simple_tag
+def meta_config() -> dict:
+    """Returns META config settings."""
+    return settings.META_CONFIG
+
+
+@register.simple_tag
 def htmx_config() -> str:
     """Returns HTMX config in meta tag."""
     return _jsonify(settings.HTMX_CONFIG)

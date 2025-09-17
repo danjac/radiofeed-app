@@ -11,16 +11,16 @@
     <link rel="canonical" href="{{ request.build_absolute_uri }}">
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="theme-color" content="{% theme_color %}">
-    <meta name="htmx-config" content="{% htmx_config %}">
     <meta name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=no">
     <meta name="mobile-wep-app-capable" content="yes">
     <meta name="apple-mobile-wep-app-capable" content="yes">
-    <meta name="copyright" content="Dan Jacob {% now "Y" %}">
-    <meta name="cache-control" content="no-cache">
-    <meta name="description" content="Podcast aggregator site">
-    <meta name="keywords" content="podcasts, rss, feeds">
+    <meta name="theme-color" content="{% theme_color %}">
+    <meta name="htmx-config" content="{% htmx_config %}">
+    {% meta_config as meta %}
+    <meta name="copyright" content="{{ meta.copyright }}">
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="keywords" content="{{ meta.keywords }}">
     <script defer src="{% static "vendor/alpine-3.14.8.min.js" %}"></script>
     <script defer src="{% static "vendor/htmx-2.0.5.min.js" %}"></script>
 </head>

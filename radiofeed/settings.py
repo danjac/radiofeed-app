@@ -561,6 +561,14 @@ USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 
 DEFAULT_PAGE_SIZE = 30
 
+# Site meta configuration
+
+META_CONFIG = {
+    "copyright": env("META_COPYRIGHT", default="Site owner"),
+    "description": env("META_DESCRIPTION", default="Podcast aggregator site"),
+    "keywords": env("META_KEYWORDS", "podcasts, rss, feeds"),
+}
+
 # HTMX configuration
 # https://htmx.org/docs/#config
 
