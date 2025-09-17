@@ -38,7 +38,7 @@ def index(request: HttpRequest) -> HttpResponse:
         )
         .select_related("podcast")
         .order_by("-pub_date", "-id")
-    ).distinct()
+    )
 
     return render_paginated_response(request, "episodes/index.html", episodes)
 
