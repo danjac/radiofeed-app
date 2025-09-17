@@ -1,32 +1,30 @@
 <c-vars :action="request.path"
         method="post"
-        class
-        target
-        multipart
+        class="space-y-3"
         htmx
-        hx_disable
-        hx_swap
+        multipart
+        hx-swap="outerHTML"
+        hx-target="this"
 />
 
 <form action="{{ action }}"
       method="{{ method }}"
-      class="space-y-3 {{ class }}"
+      class="{{ class }}"
       {% if htmx %}
-        id="{{ target }}"
         hx-{{ method }}="{{ action }}"
-        hx-target="this"
-        hx-validate="true"
         hx-disabled-elt="this"
-        hx-swap="{{ hx_swap|default:'outerHTML' }}"
-      {% elif hx_disable %}
-        hx-disable="true"
+        hx-swap="{{ hx_swap }}"
+        hx-target="{{ hx_target }}"
+        hx-validate="true"
       {% endif %}
       {% if multipart %}
         enctype="multipart/form-data"
         {% if htmx %}
           hx-encoding="multipart/form-data"
         {% endif %}
-      {% endif %}>
+      {% endif %}
+      {{ attrs }}
+>
   {% csrf_token %}
   {{ slot }}
 </form>

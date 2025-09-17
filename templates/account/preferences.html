@@ -1,7 +1,7 @@
 <c-layout title="Preferences">
     <c-account.header active="preferences" />
     {% partialdef form inline %}
-        <c-form htmx target="preferences-form">
+        <c-form htmx id="preferences-form">
             {{ form }}
             <c-form.buttons>
                 <c-button.primary icon="check">

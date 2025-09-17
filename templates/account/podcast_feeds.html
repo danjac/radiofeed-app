@@ -23,7 +23,7 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline %}
-                <c-form htmx multipart target="import-feeds-form">
+                <c-form htmx multipart id="import-feeds-form">
                     {{ upload_form }}
                     <c-form.buttons>
                         <c-button variant="default" icon="arrow-up-tray">

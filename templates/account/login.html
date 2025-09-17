@@ -10,7 +10,7 @@
             If you have not created an account yet, then please
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.
         </p>
-        <c-form hx-disable>
+        <c-form hx-disable="true">
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"

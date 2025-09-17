@@ -16,7 +16,7 @@
                 You are about to sign in using a third party account from {{ provider_name }}.
             {% endif %}
         </p>
-        <c-form hx-disable>
+        <c-form hx-disable="true">
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"

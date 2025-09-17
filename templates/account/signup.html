@@ -10,7 +10,7 @@
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
-        <c-form hx-disable>
+        <c-form hx-disable="true">
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
