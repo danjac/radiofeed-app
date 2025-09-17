@@ -1,9 +1,7 @@
 {% load static tailwind_cli %}
 <c-vars title />
 <head>
-    <title>
-        {{ request.site.name }} {% if title %} | {{ title }} {% endif %}
-    </title>
+    <c-layout.title :title="title" />
     {% tailwind_css %}
     <link rel="icon" type="image/x-icon" href="{% static "img/favicon.ico" %}">
     <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">

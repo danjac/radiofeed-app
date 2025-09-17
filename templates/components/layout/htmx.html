@@ -1,5 +1,3 @@
 <c-vars title />
-<title>
-    {{ request.site.name }} {% if title %} | {{ title }} {% endif %}
-</title>
+<c-layout.title :title="title" />
 {{ slot }}
