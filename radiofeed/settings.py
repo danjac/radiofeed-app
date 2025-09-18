@@ -149,6 +149,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "radiofeed.context_processors.cache_timeout",
             ],
+            # https://django-cotton.com/docs/django-template-partials
             "loaders": [
                 (
                     "template_partials.loader.Loader",
