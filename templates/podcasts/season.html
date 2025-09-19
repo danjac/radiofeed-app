@@ -5,7 +5,7 @@
             {% with num_episodes=podcast.num_episodes page_size=page.page_size episodes_url=podcast.get_episodes_url %}
                 <c-header.nav>
                     <c-header.nav.item>
-                        <c-header.nav.dropdown :label="season" dropdown-id="seasons-dropdown">
+                        <c-header.nav.dropdown :label="season" id="seasons-dropdown">
                             <c-header.nav.dropdown.item :url="episodes_url">
                                 All Seasons
                             </c-header.nav.dropdown.item>
