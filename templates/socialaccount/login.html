@@ -23,15 +23,13 @@
                        value="{{ redirect_field_value }}" />
             {% endif %}
             <c-form.buttons>
-                <c-button variant="primary"
-                          icon="arrow-right-on-rectangle"
-                >
+                <c-button.primary icon="arrow-right-on-rectangle">
                     {% if process == "connect" %}
                         Connect
                     {% else %}
                         Sign In
                     {% endif %}
-                </c-button>
+                </c-button.primary>
             </c-form.buttons>
         </c-form>
     {% endwith %}

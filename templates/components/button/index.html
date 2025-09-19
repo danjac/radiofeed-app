@@ -1,11 +1,18 @@
 {% load heroicons %}
 {# fmt:off #}
-<c-vars variant="default" icon class size="md" outline :icon_sizes="{
+<c-vars variant="default"
+    icon
+    class
+    size="md"
+    tag="button"
+    outline
+    :icon_sizes="{
         "lg": 24,
         "md": 20,
         "sm": 16,
-    }" />
-<button
+    }"
+/>
+<{{ tag }}
     class="
     btn
     btn-{{ variant }}
@@ -17,5 +24,5 @@
 >
     {% heroicon_mini icon size=icon_sizes|get_item:size %}
     {{ slot }}
-</button>
+</{{ tag }}>
 {# fmt:on #}

@@ -6,13 +6,13 @@
             <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>
             <c-form hx-disable="true">
                 <c-form.buttons>
-                    <c-button variant="danger"
-                              icon="trash"
-                              name="confirm-delete"
-                              value="true"
-                              @click="if(!confirm('Are you sure ?')) $event.preventDefault()">
+                    <c-button.danger
+                        icon="trash"
+                        name="confirm-delete"
+                        value="true"
+                        @click="if(!confirm('Are you sure ?')) $event.preventDefault()">
                         Yes, delete my account
-                    </c-button>
+                    </c-button.danger>
                 </c-form.buttons>
             </c-form>
         </div>

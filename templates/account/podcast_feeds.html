@@ -1,5 +1,3 @@
-{% load heroicons %}
-
 <c-layout title="Import/Export Feeds">
     <c-account.header active="feeds" />
     <div class="space-y-3">
@@ -7,12 +5,13 @@
             <div class="space-y-3">
                 <h2 class="text-base font-semibold lg:text-lg">Export feeds</h2>
                 <div>
-                    <a class="btn btn-default"
-                       href="{% url 'users:export_podcast_feeds' %}"
-                       hx-disable="true">
-                        {% heroicon_mini "arrow-down-tray" %}
+                    <c-button.default
+                        tag="a"
+                        icon="arrow-down-tray"
+                        href="{% url 'users:export_podcast_feeds' %}"
+                        hx-disable="true">
                         Download OPML
-                    </a>
+                    </c-button.default>
                 </div>
                 <p>
                     <strong>Note:</strong> private feeds will not be included.
@@ -26,9 +25,9 @@
                 <c-form htmx multipart id="import-feeds-form">
                     {{ upload_form }}
                     <c-form.buttons>
-                        <c-button variant="default" icon="arrow-up-tray">
+                        <c-button.default icon="arrow-up-tray">
                             Upload OPML
-                        </c-button>
+                        </c-button.default>
                     </c-form.buttons>
                 </c-form>
             {% endpartialdef form %}
