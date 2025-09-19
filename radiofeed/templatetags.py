@@ -28,19 +28,19 @@ _jsonify = functools.partial(json.dumps, cls=DjangoJSONEncoder)
 
 
 @register.simple_tag
-def meta_config() -> dict:
+def get_meta_config() -> dict:
     """Returns META config settings."""
     return settings.META_CONFIG
 
 
 @register.simple_tag
-def htmx_config() -> str:
+def get_htmx_config() -> str:
     """Returns HTMX config in meta tag."""
     return _jsonify(settings.HTMX_CONFIG)
 
 
 @register.simple_tag
-def theme_color() -> str:
+def get_theme_color() -> str:
     """Returns theme color in meta tag."""
     return pwa.get_theme_color()
 
