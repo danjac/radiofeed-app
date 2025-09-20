@@ -1576,7 +1576,7 @@ wheels = [
 
 [[package]]
 name = "typer"
-version = "0.17.4"
+version = "0.19.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1584,22 +1584,22 @@ dependencies = [
     { name = "shellingham" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/92/e8/2a73ccf9874ec4c7638f172efc8972ceab13a0e3480b389d6ed822f7a822/typer-0.17.4.tar.gz", hash = "sha256:b77dc07d849312fd2bb5e7f20a7af8985c7ec360c45b051ed5412f64d8dc1580", size = 103734 }
+sdist = { url = "https://files.pythonhosted.org/packages/40/48/b648a9e38df4fa0b5e935767845038daa68b270a0dcc87a8f5b042f187bf/typer-0.19.0.tar.gz", hash = "sha256:f290580f52c60222574d4261fb26e316204558be4add913ee53e4680f16cd6d2", size = 104759 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/72/6b3e70d32e89a5cbb6a4513726c1ae8762165b027af569289e19ec08edd8/typer-0.17.4-py3-none-any.whl", hash = "sha256:015534a6edaa450e7007eba705d5c18c3349dcea50a6ad79a5ed530967575824", size = 46643 },
+    { url = "https://files.pythonhosted.org/packages/30/5c/3e5e443718ca54ab01a746ceaaea9575af312a4e456426406002994e7c43/typer-0.19.0-py3-none-any.whl", hash = "sha256:3c6abeb8f01b97b9be84b8dd134956b4c15a3eef0e11382c537dc083886f908f", size = 46877 },
 ]
 
 [[package]]
 name = "typer-slim"
-version = "0.17.4"
+version = "0.17.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e2/ef/dc076911b8f4123943c1957e31351a5a98afc780468f5e8a50e7b581e464/typer_slim-0.17.4.tar.gz", hash = "sha256:c25430a74e45546df3e76b53bdfd0a1d86569d319f9c387e76e1b25a4dd72a0c", size = 103755 }
+sdist = { url = "https://files.pythonhosted.org/packages/71/19/79ce7f1e0ff64f0b011aac73d13a82ddfb2ca236434a1e238424baae3159/typer_slim-0.17.5.tar.gz", hash = "sha256:833a422a7cd7e27e74fcd5d76bdf51b9264c84037daceffb04b152f1a435883a", size = 103779 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c3/87/542ac401409f79534ef435dafd2d7532cd018c017157322975f76de2f0ee/typer_slim-0.17.4-py3-none-any.whl", hash = "sha256:b0edb16f7978d945b5bc23c057c2af99e58c0601827bddbbe240b4b52eb364bc", size = 46703 },
+    { url = "https://files.pythonhosted.org/packages/4e/77/9a212a891a3884345612e7f37e81c93a97836a3361681b9c288e80d46c32/typer_slim-0.17.5-py3-none-any.whl", hash = "sha256:fdd3155287586af53170e87a08b6811dea243f700186b9c7d32403d2f4c9c943", size = 46708 },
 ]
 
 [[package]]
