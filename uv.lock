@@ -1576,7 +1576,7 @@ wheels = [
 
 [[package]]
 name = "typer"
-version = "0.19.0"
+version = "0.19.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1584,9 +1584,9 @@ dependencies = [
     { name = "shellingham" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/48/b648a9e38df4fa0b5e935767845038daa68b270a0dcc87a8f5b042f187bf/typer-0.19.0.tar.gz", hash = "sha256:f290580f52c60222574d4261fb26e316204558be4add913ee53e4680f16cd6d2", size = 104759 }
+sdist = { url = "https://files.pythonhosted.org/packages/03/ea/9cc57c3c627fd7a6a0907ea371019fe74c3ec00e3cf209a6864140a602ad/typer-0.19.1.tar.gz", hash = "sha256:cb881433a4b15dacc875bb0583d1a61e78497806741f9aba792abcab390c03e6", size = 104802 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/30/5c/3e5e443718ca54ab01a746ceaaea9575af312a4e456426406002994e7c43/typer-0.19.0-py3-none-any.whl", hash = "sha256:3c6abeb8f01b97b9be84b8dd134956b4c15a3eef0e11382c537dc083886f908f", size = 46877 },
+    { url = "https://files.pythonhosted.org/packages/1e/fa/6473c00b5eb26a2ba427813107699d3e6f4e1a4afad3f7494b17bdef3422/typer-0.19.1-py3-none-any.whl", hash = "sha256:914b2b39a1da4bafca5f30637ca26fa622a5bf9f515e5fdc772439f306d5682a", size = 46876 },
 ]
 
 [[package]]
