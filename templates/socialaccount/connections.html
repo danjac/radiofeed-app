@@ -1,10 +1,16 @@
-{% load socialaccount %}
-<c-layout title="Social Logins">
-    <c-account.header active="social_logins" />
+{% extends "base.html" %}
+{% load heroicons socialaccount %}
+
+{% block title %}
+    {{ block.super }} | Social Logins
+{% endblock title %}
+
+{% block content %}
+    {% include "account/header.html" with active="social_logins" %}
     <div class="space-y-3">
         {% if form.accounts %}
             <p>You can sign in to your account using any of the following third party accounts:</p>
-            <c-form>
+            {% blockinclude "form.html" %}
                 {% for base_account in form.accounts %}
                     {% with account=base_account.get_provider_account %}
                         <div>
@@ -23,28 +29,26 @@
                         </div>
                     {% endwith %}
                 {% endfor %}
-                <c-form.buttons>
-                    <c-button.danger
-                        icon="trash"
-                        type="submit"
-                        name="action_remove"
-                        value="1"
-                        title="Remove this connection"
+                {% blockinclude "form.html#buttons" %}
+                    <button class="btn btn-danger"
+                            type="submit"
+                            name="action_remove"
+                            value="1"
+                            title="Remove this connection"
                     >
+                        {% heroicon_mini "trash" class="mr-2" %}
                         Remove
-                    </c-button>
-                </c-form.buttons>
-            </c-form>
+                    </button>
+                {% endblockinclude %}
+            {% endblockinclude %}
             <hr class="border" />
         {% else %}
             <p>You currently have no social network accounts connected to this account.</p>
         {% endif %}
         <h2 class="text-lg font-semibold">Add a 3rd Party Account</h2>
         <ul class="flex items-center">
-            <c-socialaccount.buttons process="connect" />
+            {% include "socialaccount/buttons.html" with process="connect" %}
         </ul>
     </div>
-    <c-slot name="scripts">
-        {% providers_media_js %}
-    </c-slot>
-</c-layout>
+    {% providers_media_js %}
+{% endblock content %}

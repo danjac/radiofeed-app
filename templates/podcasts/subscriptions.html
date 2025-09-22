@@ -1,28 +1,33 @@
-<c-layout title="Subscriptions">
-    <c-header title="Subscriptions">
+{% extends "base.html" %}
+
+{% block title %}
+    {{ block.super }} | Subscriptions
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "header.html" title="Subscriptions" %}
         {% if request.search or page.has_other_pages %}
-            <c-header.nav>
+            {% blockinclude "header/nav.html" %}
                 {% if request.search %}
-                    <c-header.nav.item>
-                        <c-search.button url="{% url 'podcasts:search_podcasts' %}">
-                            Search Podcasts
-                        </c-search.button>
-                    </c-header.nav.item>
+                    {% blockinclude "header/nav.html#item" %}
+                        {% url "podcasts:search_podcasts" as search_button_url %}
+                        {% include "search.html#button" with content="Search Podcasts" %}
+                    {% endblockinclude %}
                 {% endif %}
-                <c-header.nav.item>
-                    <c-search.form placeholder="Search: Subscriptions" clearable />
-                </c-header.nav.item>
-            </c-header.nav>
+                {% blockinclude "header/nav.html#item" %}
+                    {% include "search.html#form" with placeholder="Search: Subscriptions" clearable=True %}
+                {% endblockinclude %}
+            {% endblockinclude %}
         {% endif %}
-    </c-header>
+    {% endblockinclude %}
     {% partialdef pagination inline %}
-        <c-paginate :page="page">
+        {% blockinclude "paginate.html" %}
             {% for podcast in page %}
-                <c-browse.item>
-                    <c-podcasts.podcast :podcast="podcast" />
-                </c-browse.item>
+                {% blockinclude "browse.html#item" %}
+                    {% include "podcasts/cards.html#podcast" %}
+                {% endblockinclude %}
             {% empty %}
-                <c-browse.empty>
+                {% blockinclude "browse.html#empty" %}
                     {% if request.search %}
                         No subscriptions found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                     {% else %}
@@ -32,8 +37,8 @@
                         </p>
                         <p>You can also <a href="{% url 'users:import_podcast_feeds' %}">import </a>an <a href="https://en.wikipedia.org/wiki/OPML" target="_blank" rel="noopener nofollow">OPML</a> file containing your favorite feeds from other podcast applications.</p>
                     {% endif %}
-                </c-browse.empty>
+                {% endblockinclude %}
             {% endfor %}
-        </c-paginate>
+        {% endblockinclude %}
     {% endpartialdef pagination %}
-</c-layout>
+{% endblock content %}

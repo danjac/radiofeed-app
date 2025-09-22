@@ -1,0 +1,20 @@
+{% load get_account_settings from users %}
+{% get_account_settings active as settings %}
+{% blockinclude "header.html" %}
+    {% blockinclude "header.html#title" %}
+        Settings for {{ user.username }}
+    {% endblockinclude %}
+    {% blockinclude "header/nav.html" %}
+        {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
+
+            {% for item in settings.items %}
+                {% blockinclude "header/nav/dropdown.html#item" url=item.url icon=item.icon %}
+
+                    {{ item.label }}
+
+                {% endblockinclude %}
+            {% endfor %}
+
+        {% endblockinclude %}
+    {% endblockinclude %}
+{% endblockinclude %}

@@ -1,0 +1,15 @@
+<ul class="divide-y divide-solid"{% if target %} id="{{ target }}"{% endif %}>
+    {{ content }}
+</ul>
+
+{% partialdef item %}
+    <li class="py-3 first:pt-0 last:pb-0">
+        {{ content }}
+    </li>
+{% endpartialdef %}
+
+{% partialdef empty %}
+    <li class="space-y-3 text-center prose sm:text-start dark:prose-invert">
+        {{ content }}
+    </li>
+{% endpartialdef %}

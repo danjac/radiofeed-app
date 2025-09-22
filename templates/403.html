@@ -1,3 +1,9 @@
-<c-layout.error :title="403: Permission Denied">
+{% extends "error_base.html" %}
+
+{% block header %}
+    403: Permission Denied
+{% endblock header %}
+
+{% block description %}
     <p>Sorry, you do not have permission to view this page.</p>
-</c-layout.error>
+{% endblock description %}

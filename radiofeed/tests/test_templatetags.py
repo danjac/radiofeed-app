@@ -1,8 +1,8 @@
 import pytest
 from django.contrib.sites.models import Site
-from django.template import Context
+from django.template import RequestContext, TemplateSyntaxError
 
-from radiofeed.templatetags import format_duration, get_cookies_accepted
+from radiofeed.templatetags import blockinclude, cookie_banner, format_duration
 
 
 @pytest.fixture
@@ -20,22 +20,26 @@ def auth_req(req, user):
     return req
 
 
-class TestGetCookiesAccepted:
+class TestBlockinclude:
+    def test_render_no_template_obj(self, mocker):
+        context = mocker.Mock()
+        context.template = None
+        with pytest.raises(TemplateSyntaxError):
+            blockinclude(context, "header.html#title", "test")
+
+
+class TestCookieBanner:
     def test_not_accepted(self, rf):
         req = rf.get("/")
         req.COOKIES = {}
-        context = Context({"request": req})
-        assert get_cookies_accepted(context) is False
+        context = RequestContext(request=req)
+        assert cookie_banner(context) == {"cookies_accepted": False}
 
     def test_accepted(self, rf):
         req = rf.get("/")
         req.COOKIES = {"accept-cookies": True}
-        context = Context({"request": req})
-        assert get_cookies_accepted(context) is True
-
-    def test_request_not_in_context(self):
-        context = Context()
-        assert get_cookies_accepted(context) is False
+        context = RequestContext(request=req)
+        assert cookie_banner(context) == {"cookies_accepted": True}
 
 
 class TestFormatDuration:

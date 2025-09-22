@@ -1,3 +1,9 @@
-<c-layout.error :title="405: Method Not Allowed">
+{% extends "error_base.html" %}
+
+{% block header %}
+    405: Method Not Allowed
+{% endblock header %}
+
+{% block description %}
     <p>Sorry, you cannot perform this action.</p>
-</c-layout.error>
+{% endblock description %}

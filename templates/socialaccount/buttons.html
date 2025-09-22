@@ -1,0 +1,21 @@
+{% load socialaccount %}
+{% get_providers as providers %}
+{% if providers %}
+    <div class="flex items-center space-x-3">
+        {% if content %}
+            <div class="font-semibold">{{ content }}</div>
+        {% endif %}
+        {% for provider in providers %}
+            <form method="post"
+                  action="{% provider_login_url provider.id process=process %}"
+                  hx-disable="true">
+                {% csrf_token %}
+                <button class="flex items-center btn btn-default btn-outline">
+                    {% include "socialaccount/icons/"|add:provider.id|add:".svg" with class="mr-2" %}
+                    {{ provider.name }}
+                </button>
+            </form>
+        {% endfor %}
+    </div>
+    {% providers_media_js %}
+{% endif %}

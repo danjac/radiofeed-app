@@ -1,3 +1,9 @@
-<c-layout.error :title="400: Bad Request">
+{% extends "error_base.html" %}
+
+{% block header %}
+    400: Bad Request
+{% endblock header %}
+
+{% block description %}
     <p>Sorry, there seems to have been a problem processing your request.</p>
-</c-layout.error>
+{% endblock description %}

@@ -1,3 +1,9 @@
-<c-layout.error :title="500: Internal Server Error">
+{% extends "error_base.html" %}
+
+{% block header %}
+    500: Internal Server Error
+{% endblock header %}
+
+{% block description %}
     <p>Sorry, an unexpected error has occurred. The site admins have already been notified.</p>
-</c-layout.error>
+{% endblock description %}

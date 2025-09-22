@@ -1,17 +1,22 @@
-<c-layout title="Import/Export Feeds">
-    <c-account.header active="feeds" />
+{% extends "base.html" %}
+{% load heroicons %}
+{% block title %}
+    {{ block.super }} | Import/Export Feeds
+{% endblock title %}
+
+{% block content %}
+    {% include "account/header.html" with active="feeds" %}
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
                 <h2 class="text-base font-semibold lg:text-lg">Export feeds</h2>
                 <div>
-                    <c-button.default
-                        tag="a"
-                        icon="arrow-down-tray"
-                        href="{% url 'users:export_podcast_feeds' %}"
-                        hx-disable="true">
+                    <a class="btn btn-default"
+                       href="{% url 'users:export_podcast_feeds' %}"
+                       hx-disable="true">
+                        {% heroicon_mini "arrow-down-tray" class="mr-2" %}
                         Download OPML
-                    </c-button.default>
+                    </a>
                 </div>
                 <p>
                     <strong>Note:</strong> private feeds will not be included.
@@ -22,15 +27,16 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline %}
-                <c-form htmx multipart id="import-feeds-form">
+                {% blockinclude "form.html" htmx=True multipart=True target="import-feeds-form" %}
                     {{ upload_form }}
-                    <c-form.buttons>
-                        <c-button.default icon="arrow-up-tray">
+                    {% blockinclude "form.html#buttons" %}
+                        <button class="btn btn-default">
+                            {% heroicon_mini "arrow-up-tray" class="mr-2" %}
                             Upload OPML
-                        </c-button.default>
-                    </c-form.buttons>
-                </c-form>
+                        </button>
+                    {% endblockinclude %}
+                {% endblockinclude %}
             {% endpartialdef form %}
         </div>
     </div>
-</c-layout>
+{% endblock content %}

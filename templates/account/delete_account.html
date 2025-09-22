@@ -1,23 +1,31 @@
-<c-layout title="Delete Account">
+{% extends "base.html" %}
+{% load heroicons %}
+
+{% block title %}
+    {{ block.super }} | Delete Account
+{% endblock title %}
+
+{% block content %}
     {% if user.is_authenticated %}
-        <c-account.header active="delete_account" />
+        {% include "account/header.html" with active="delete_account" %}
         <div class="space-y-3">
             <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
             <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>
-            <c-form hx-disable="true">
-                <c-form.buttons>
-                    <c-button.danger
-                        icon="trash"
-                        name="confirm-delete"
-                        value="true"
-                        @click="if(!confirm('Are you sure ?')) $event.preventDefault()">
+            {% blockinclude "form.html" hx_disable=True %}
+                {% blockinclude "form.html#buttons" %}
+                    <button class="btn btn-danger"
+                            name="confirm-delete"
+                            value="true"
+                            @click="if(!confirm('Are you sure ?')) $event.preventDefault()">
+                        {% heroicon_mini "trash" class="mr-2" %}
                         Yes, delete my account
-                    </c-button.danger>
-                </c-form.buttons>
-            </c-form>
+                    </button>
+
+                {% endblockinclude %}
+            {% endblockinclude %}
         </div>
     {% else %}
-        <c-header title="Delete Account" />
+        {% include "header.html" with title="Delete Account" %}
         <div class="space-y-3">
             <p>
                 You must be logged in to delete your data. All user data, including subscriptions, bookmarks and listening history, will be irrevocably deleted.
@@ -26,9 +34,9 @@
                 More details on our data policy can be found <a class="link" href="{% url "privacy" %}">here</a>.
             </p>
             <p>
-                <a class="link"
-                   href="{% url "account_login" %}{% querystring next=request.path|urlencode %}">Please log in to delete your account.</a>
+                <a class="underline link"
+                   href="{% url "account_login" %}{% querystring next=request.path|urlencode %}">Please log in to delete your account</a>
             </p>
         </div>
     {% endif %}
-</c-layout>
+{% endblock content %}

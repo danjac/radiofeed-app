@@ -1,5 +1,10 @@
-{% load cache heroicons %}
-<c-layout title="{{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}">
+{% extends "base.html" %}
+{% load audio_player cache heroicons %}
+{% block title %}
+    {{ block.super }} | {{ episode.podcast.cleaned_title }} | {{ episode.cleaned_title }}
+{% endblock title %}
+
+{% block content %}
     <header class="pb-3 mb-3 space-y-6 border-b xl:space-y-9">
         <h1 class="text-xl font-bold md:text-2xl xl:text-3xl">
             {{ episode.cleaned_title }}
@@ -58,10 +63,7 @@
                    class="inline-block link">See all episodes</a>
             </div>
             <div class="flex items-center space-x-3 sm:space-x-6">
-                <c-cover.detail
-                    :url="episode.get_cover_url"
-                    :title="episode.cleaned_title"
-                />
+                {% cover_image "detail" episode.get_cover_url episode.cleaned_title %}
                 <div class="flex flex-col place-content-between h-32">
                     {% partialdef audio_player_button inline %}
                         {% with target="audio-player-button" %}
@@ -72,37 +74,32 @@
                                  hx-swap="outerHTML"
                                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
-                                    <c-button.primary
-                                        icon="stop-circle"
-                                        size="lg"
-                                        outline
+                                    <button
+                                        class="text-lg btn btn-primary btn-outline"
                                         aria-label="Close Player"
                                         title="Close Player"
                                         hx-post="{% url "episodes:close_player" %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once"
                                     >
+                                        {% heroicon_mini "stop-circle" size=24 class="mr-2" %}
 
                                         Close
-                                    </c-button.primary>
+                                    </button>
                                 {% else %}
-                                    <c-button.primary
-                                        icon="play-circle"
-                                        size="lg"
+                                    <button
+                                        class="text-lg btn btn-primary"
                                         aria-label="Open Episode in Player"
                                         title="Open Episode in Player"
                                         hx-disabled-elt="this"
                                         hx-post="{% url "episodes:start_player" episode.pk %}"
                                         hx-trigger="click once">
+                                        {% heroicon_mini "play" size=24 class="mr-2" %}
                                         Play
-                                    </c-button.primary>
+                                    </button>
                                 {% endif %}
                                 {% if request.htmx.target == target %}
-                                    <c-audio-player
-                                        :audio_log="audio_log"
-                                        :action="action"
-                                        hx-swap-oob="true"
-                                    />
+                                    {% audio_player audio_log action=action hx_oob=True %}
                                     {% with hx_oob=True %}
                                         {% partial audio_log %}
                                     {% endwith %}
@@ -118,19 +115,20 @@
                              hx-indicator="this"
                              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
-                                <c-button.default
+                                <button
+                                    class="btn btn-default btn-outline"
                                     aria-label="Remove Episode from your Bookmarks"
                                     title="Remove Episode from your Bookmarks"
-                                    outline
-                                    icon="bookmark-slash"
                                     hx-disabled-elt="this"
                                     hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
                                     hx-trigger="click once"
                                 >
+                                    {% heroicon_mini "bookmark-slash" class="mr-2" %}
                                     Bookmark
-                                </c-button.default>
+                                </button>
                             {% else %}
-                                <c-button.default
+                                <button
+                                    class="btn btn-default"
                                     icon="bookmark"
                                     aria-label="Add Episode to your Bookmarks"
                                     title="Add Episode to your Bookmarks"
@@ -138,8 +136,9 @@
                                     hx-post="{% url "episodes:add_bookmark" episode.pk %}"
                                     hx-trigger="click once"
                                 >
+                                    {% heroicon_mini "bookmark" class="mr-2" %}
                                     Bookmark
-                                </c-button.default>
+                                </button>
 
                             {% endif %}
                         </div>
@@ -208,36 +207,36 @@
                             </div>
                             <div class="flex flex-wrap items-center space-x-2">
                                 {% if audio_log.percent_complete %}
-                                    <c-button.default
-                                        icon="check"
-                                        size="sm"
+                                    <button
+                                        class="text-sm btn btn-default"
                                         hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
                                         hx-disabled-elt="this"
                                         hx-indicator="this"
 
                                     >
+                                        {% heroicon_mini "check" size=16 class="mr-2" %}
                                         Complete
-                                    </c-button.default>
+                                    </button>
                                 {% endif %}
-                                <c-button.danger
-                                    icon="trash"
-                                    size="sm"
+                                <button
+                                    class="text-sm btn btn-danger"
                                     title="Remove episode from your History"
                                     hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                                     hx-confirm="Are you sure you want to remove this episode from your History?"
                                     hx-disabled-elt="this"
                                     hx-indicator="this"
                                 >
+                                    {% heroicon_mini "trash" size=16 class="mr-2" %}
                                     Remove
-                                </c-button.danger>
+                                </button>
                             </div>
                         </div>
                     {% endif %}
                 </div>
             {% endpartialdef audio_log %}
             {% cache cache_timeout episode-description episode.pk %}
-                <c-markdown :content="episode.description" />
+                {% markdown episode.description %}
             {% endcache %}
         </article>
     {% endwith %}
-</c-layout>
+{% endblock content %}

@@ -28,7 +28,7 @@ _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
 }
 
 _COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
-    "card": "size-16",
+    "card": "size-16 group-hover:opacity-75",
     "detail": "size-36 lg:size-40",
     "tile": "size-40 lg:size-56",
 }

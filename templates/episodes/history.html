@@ -1,35 +1,45 @@
-<c-layout title="History">
-    <c-header title="History">
-        {% if request.search or page.has_other_pages %}
-            <c-header.nav>
-                <c-header.nav.item>
-                    {% if request.search %}
-                        <c-search.button url="{% url 'episodes:search_episodes' %}">
-                            Search Episodes
-                        </c-search.button>
-                    {% else %}
-                        {% if ordering == "asc" %}
-                            <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">Newest First</a>
-                        {% else %}
-                            <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">Oldest First</a>
-                        {% endif %}
-                    {% endif %}
-                </c-header.nav.item>
-                <c-header.nav.item>
-                    <c-search.form placeholder="Search: History" clearable />
-                </c-header.nav.item>
-            </c-header.nav>
-        {% endif %}
-    </c-header>
+{% extends "base.html" %}
 
+{% block title %}
+    {{ block.super }} | History
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "header.html" title="History" %}
+        {% if request.search or page.has_other_pages %}
+            {% blockinclude "header/nav.html" %}
+                {% if request.search %}
+                    {% blockinclude "header/nav.html#item" %}
+                        {% url "episodes:search_episodes" as search_button_url %}
+                        {% blockinclude "search.html#button" %}
+                            Search Episodes
+                        {% endblockinclude %}
+                    {% endblockinclude %}
+                {% else %}
+                    {% blockinclude "header/nav.html#item" %}
+                        {% if ordering == "asc" %}
+                            <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
+                                Newest First</a>
+                        {% else %}
+                            <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
+                                Oldest First</a>
+                        {% endif %}
+                    {% endblockinclude %}
+                {% endif %}
+                {% blockinclude "header/nav.html#item" %}
+                    {% include "search.html#form" with placeholder="Search: History" clearable=True %}
+                {% endblockinclude %}
+            {% endblockinclude %}
+        {% endif %}
+    {% endblockinclude %}
     {% partialdef pagination inline %}
-        <c-paginate :page="page">
+        {% blockinclude "paginate.html" %}
             {% for audio_log in page %}
-                <c-browse.item>
-                    <c-episodes.episode :episode="audio_log.episode" />
-                </c-browse.item>
+                {% blockinclude "browse.html#item" %}
+                    {% include "episodes/cards.html#episode" with episode=audio_log.episode %}
+                {% endblockinclude %}
             {% empty %}
-                <c-browse.empty>
+                {% blockinclude "browse.html#empty" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your history.
                     {% else %}
@@ -38,8 +48,9 @@
                             To start enjoying some podcasts, just click the <strong>Play</strong> button on any episode page. Once you begin listening, episodes will show up here.
                         </p>
                     {% endif %}
-                </c-browse.empty>
+
+                {% endblockinclude %}
             {% endfor %}
-        </c-paginate>
+        {% endblockinclude %}
     {% endpartialdef pagination %}
-</c-layout>
+{% endblock content %}

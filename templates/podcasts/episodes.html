@@ -1,18 +1,24 @@
+{% extends "base.html" %}
 {% load cache %}
-<c-layout title="{{ podcast.cleaned_title }} | Episodes">
-    <c-podcasts.header active="episodes">
+{% block title %}
+    {{ block.super }} | {{ podcast.cleaned_title }} | Episodes
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "podcasts/header.html" active="episodes" %}
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
                 {% if request.search or num_episodes > page_size %}
-                    <c-header.nav>
+                    {% blockinclude "header/nav.html" %}
                         {% if request.search %}
-                            <c-header.nav.item>
-                                <c-search.button url="{% url 'episodes:search_episodes' %}">
+                            {% blockinclude "header/nav.html#item" %}
+                                {% url "episodes:search_episodes" as search_button_url %}
+                                {% blockinclude "search.html#button" %}
                                     Search Episodes
-                                </c-search.button>
-                            </c-header.nav.item>
+                                {% endblockinclude %}
+                            {% endblockinclude %}
                         {% else %}
-                            <c-header.nav.item>
+                            {% blockinclude "header/nav.html#item" %}
                                 {% if ordering == "asc" %}
                                     <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
                                         Newest First</a>
@@ -20,35 +26,35 @@
                                     <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
                                         Oldest First</a>
                                 {% endif %}
-                            </c-header.nav.item>
+                            {% endblockinclude %}
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
-                            <c-header.nav.item>
-                                <c-search.form placeholder="Search: Podcast" clearable />
-                            </c-header.nav.item>
+                            {% blockinclude "header/nav.html#item" %}
+                                {% include "search.html#form" with placeholder="Search: Podcast" clearable=True %}
+                            {% endblockinclude %}
                         {% endif %}
-                    </c-header.nav>
+                    {% endblockinclude %}
                 {% endif %}
             {% endwith %}
         {% endcache %}
-    </c-podcasts.header>
+    {% endblockinclude %}
     {% partialdef pagination inline %}
         {% cache cache_timeout podcast-episodes request.get_full_path %}
-            <c-paginate :page="page">
+            {% blockinclude "paginate.html" %}
                 {% for episode in page %}
-                    <c-browse.item>
-                        <c-podcasts.episode :episode="episode" />
-                    </c-browse.item>
+                    {% blockinclude "browse.html#item" %}
+                        {% include "podcasts/cards.html#episode" %}
+                    {% endblockinclude %}
                 {% empty %}
-                    <c-browse.empty>
+                    {% blockinclude "browse.html#empty" %}
                         {% if request.search %}
                             No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
                         {% else %}
                             This podcast does not have any episodes.
                         {% endif %}
-                    </c-browse.empty>
+                    {% endblockinclude %}
                 {% endfor %}
-            </c-paginate>
+            {% endblockinclude %}
         {% endcache %}
     {% endpartialdef pagination %}
-</c-layout>
+{% endblock content %}

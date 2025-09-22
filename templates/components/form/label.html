@@ -1,7 +1,0 @@
-<c-vars field />
-<label class="block font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}"
-       for="{{ field.id_for_label }}"
-       {{ attrs }}>
-    {{ field.label }}
-    {% if not field.field.required %}(optional){% endif %}
-</label>
