@@ -1,0 +1,49 @@
+{% with has_other_pages=page.has_other_pages %}
+    {% blockinclude "browse.html" target=pagination_target %}
+        {% if has_other_pages %}
+            <li class="pb-3">
+                {% include "paginate.html#links" %}
+            </li>
+        {% endif %}
+        {{ content }}
+        {% if has_other_pages %}
+            <li class="pt-3">
+                {% include "paginate.html#links" %}
+            </li>
+        {% endif %}
+    {% endblockinclude %}
+{% endwith %}
+
+{% partialdef links %}
+    <nav role="navigation"
+         aria-label="Pagination"
+         hx-swap="outerHTML show:window:top"
+         hx-target="#{{ pagination_target }}">
+        <ul class="flex justify-between items-center">
+            <li>
+                {% if page.has_previous %}
+                    <a href="{{ request.path }}{% querystring page=page.previous_page_number %}"
+                       aria-label="Previous Page"
+                       title="Previous Page"
+                       class="link">Previous</a>
+                {% else %}
+                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                          title="First Page"
+                          aria-label="First Page">Previous</span>
+                {% endif %}
+            </li>
+            <li>
+                {% if page.has_next %}
+                    <a href="{{ request.path }}{% querystring page=page.next_page_number %}"
+                       aria-label="Next Page"
+                       title="Next Page"
+                       class="link">Next</a>
+                {% else %}
+                    <span class="text-gray-600 cursor-not-allowed dark:text-gray-300"
+                          title="Last Page"
+                          aria-label="Last Page">Next</span>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+{% endpartialdef %}

@@ -1,0 +1,11 @@
+<nav>
+    <ul class="justify-center items-center space-y-3 sm:flex sm:justify-end sm:space-y-0 sm:space-x-3">
+        {{ content }}
+    </ul>
+</nav>
+
+{% partialdef item %}
+    <li class="flex justify-center items-center sm:justify-end">
+        {{ content }}
+    </li>
+{% endpartialdef %}

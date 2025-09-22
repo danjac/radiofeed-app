@@ -1,0 +1,21 @@
+{% load heroicons %}
+<ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
+    {% include "navbar/menu.html#item" with url_name="podcasts:subscriptions" icon="rss" label="Subscriptions" %}
+    {% include "navbar/menu.html#item" with url_name="episodes:index" icon="sparkles" label="New Releases" %}
+    {% include "navbar/menu.html#item" with url_name="podcasts:discover" icon="magnifying-glass" label="Discover" %}
+    {% include "navbar/menu.html#item" with url_name="podcasts:category_list" icon="tag" label="Categories" %}
+    {% include "navbar/menu.html#item" with url_name="episodes:bookmarks" icon="bookmark" label="Bookmarks" %}
+    {% include "navbar/menu.html#item" with url_name="episodes:history" icon="clock" label="History" %}
+    {% include "navbar/menu.html#item" with url_name="podcasts:private_feeds" icon="lock-closed" label="Private Feeds" %}
+    {% include "navbar/menu.html#item" with url_name="about" icon="information-circle" label="About" %}
+</ul>
+
+{% partialdef item %}
+    <li>
+        <a href="{% url url_name %}"
+           class="inline-flex items-center w-full sm:w-auto link">
+            {% heroicon_outline icon class="mr-3" %}
+            {{ label }}
+        </a>
+    </li>
+{% endpartialdef %}

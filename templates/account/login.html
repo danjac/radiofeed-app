@@ -1,27 +1,32 @@
-<c-layout title="Sign In">
-    <c-header title="Sign In" />
+{% extends "base.html" %}
+{% load heroicons %}
+{% block title %}
+    {{ block.super }} | Sign In
+{% endblock title %}
+
+{% block content %}
+    {% include "header.html" with title="Sign In" %}
     <div class="space-y-3">
-        <c-socialaccount.buttons process="login">
-            <c-slot name="extra">
-                Log in with
-            </c-slot>
-        </c-socialaccount.buttons>
+        {% blockinclude "socialaccount/buttons.html" process="login" %}
+            Log in with
+        {% endblockinclude %}
         <p>
             If you have not created an account yet, then please
             <a class="underline link" href="{{ signup_url }}">sign up</a> first.
         </p>
-        <c-form hx-disable="true">
+        {% blockinclude "form.html" hx_disable=True %}
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
                        value="{{ redirect_field_value }}" />
             {% endif %}
             {{ form }}
-            <c-form.buttons>
-                <c-button.primary icon="arrow-right-on-rectangle">
+            {% blockinclude "form.html#buttons" %}
+                <button class="btn btn-primary">
+                    {% heroicon_mini "arrow-right-on-rectangle" class="mr-2" %}
                     Sign In
-                </c-button.primary>
-            </c-form.buttons>
-        </c-form>
+                </button>
+            {% endblockinclude %}
+        {% endblockinclude %}
     </div>
-</c-layout>
+{% endblock content %}

@@ -1,46 +1,44 @@
+{% extends "base.html" %}
 {% load cache %}
-<c-layout title="{{ podcast.cleaned_title }} | {{ season }}">
-    <c-podcasts.header active="episodes">
-        {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
+{% block title %}
+    {{ block.super }} | {{ podcast.cleaned_title }} | {{ season }}
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "podcasts/header.html" active="episodes" %}
+        {% cache cache_timeout podcast-season-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size episodes_url=podcast.get_episodes_url %}
-                <c-header.nav>
-                    <c-header.nav.item>
-                        <c-header.nav.dropdown :label="season" id="seasons-dropdown">
-                            <c-header.nav.dropdown.item :url="episodes_url">
-                                All Seasons
-                            </c-header.nav.dropdown.item>
+                {% blockinclude "header/nav.html" %}
+                    {% blockinclude "header/nav.html#item" %}
+                        {% blockinclude "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
+                            {% include "header/nav/dropdown.html#item" with content="All Seasons" url=episodes_url %}
                             {% for season in podcast.seasons %}
-                                <c-header.nav.dropdown.item :url="season.url">
-                                    {{ season }}
-                                </c-header.nav.dropdown.item>
+                                {% include "header/nav/dropdown.html#item" with content=season url=season.url %}
                             {% endfor %}
-                        </c-header.nav.dropdown>
-                    </c-header.nav.item>
+                        {% endblockinclude %}
+                    {% endblockinclude %}
                     {% if num_episodes > page_size %}
-                        <c-header.nav.item>
-                            <c-search.form
-                                placeholder="Search: Podcast"
-                                :url="episodes_url"
-                                clearable />
-                        </c-header.nav.item>
+                        {% blockinclude "header/nav.html#item" %}
+                            {% include "search.html#form" with placeholder="Search: Podcast" search_url=episodes_url %}
+                        {% endblockinclude %}
                     {% endif %}
-                </c-header.nav>
+                {% endblockinclude %}
             {% endwith %}
         {% endcache %}
-    </c-podcasts.header>
+    {% endblockinclude %}
     {% partialdef pagination inline %}
-        {% cache cache_timeout podcast-episodes request.get_full_path %}
-            <c-paginate :page="page">
+        {% cache cache_timeout podcast-season-episodes request.get_full_path %}
+            {% blockinclude "paginate.html" %}
                 {% for episode in page %}
-                    <c-browse.item>
-                        <c-podcasts.episode :episode="episode" />
-                    </c-browse.item>
+                    {% blockinclude "browse.html#item" %}
+                        {% include "podcasts/cards.html#episode" %}
+                    {% endblockinclude %}
                 {% empty %}
-                    <c-browse.empty>
+                    {% blockinclude "browse.html#empty" %}
                         This season does not have any episodes.
-                    </c-browse.empty>
+                    {% endblockinclude %}
                 {% endfor %}
-            </c-paginate>
+            {% endblockinclude %}
         {% endcache %}
     {% endpartialdef pagination %}
-</c-layout>
+{% endblock content %}

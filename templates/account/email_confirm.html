@@ -1,28 +1,30 @@
-{% load account %}
+{% extends "base.html" %}
+{% load account heroicons %}
+{% block title %}
+    {{ block.super }} | Confirm Email Address
+{% endblock title %}
 
-<c-layout title="Confirm E-mail Address">
-    <c-header title="Confirm E-mail Address" />
+{% block content %}
     {% if confirmation %}
         <div class="space-y-6">
             {% user_display confirmation.email_address.user as user_display %}
             <p>
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
-            <form action="{% url 'account_confirm_email' key=confirmation.key %}"
-                  method="post"
-                  class="flex justify-center sm:justify-start flex-column"
-            >
-                {% csrf_token %}
-                <c-form.buttons>
-                    <c-button.primary icon="check">
+            {% url 'account_confirm_email' key=confirmation.key as action %}
+            {% blockinclude "form.html" class="flex justify-center space-y-3 sm:justify-start flex-column" %}
+                {% blockinclude "form.html#buttons" %}
+
+                    <button class="btn btn-primary">
+                        {% heroicon_mini "check" class="mr-2" %}
                         Confirm E-Mail
-                    </c-button.primary>
-                </c-form.buttons>
-            </form>
+                    </button>
+                {% endblockinclude %}
+            {% endblockinclude %}
     {% else %}
         <p>
             This e-mail confirmation link expired or is invalid. Please <a href="{% url 'account_email' %}">issue a new e-mail confirmation request</a>.
         </p>
     {% endif %}
-</div>
-</c-layout>
+    </div>
+{% endblock content %}

@@ -1,13 +1,20 @@
-<c-layout title="Preferences">
-    <c-account.header active="preferences" />
+{% extends "base.html" %}
+{% load heroicons %}
+{% block title %}
+    {{ block.super }} | Preferences
+{% endblock title %}
+
+{% block content %}
+    {% include "account/header.html" with active="preferences" %}
     {% partialdef form inline %}
-        <c-form htmx id="preferences-form">
+        {% blockinclude "form.html" htmx=True target="preferences-form" %}
             {{ form }}
-            <c-form.buttons>
-                <c-button.primary icon="check">
+            {% blockinclude "form.html#buttons" %}
+                <button class="btn btn-primary">
+                    {% heroicon_mini "check" class="mr-2" %}
                     Save Changes
-                </c-button.primary>
-            </c-form.buttons>
-        </c-form>
+                </button>
+            {% endblockinclude %}
+        {% endblockinclude %}
     {% endpartialdef form %}
-</c-layout>
+{% endblock content %}

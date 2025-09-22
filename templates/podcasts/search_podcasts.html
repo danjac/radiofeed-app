@@ -1,35 +1,40 @@
+{% extends "base.html" %}
 {% load cache %}
-<c-layout title="Search | Podcasts">
-    <c-header title="Search Podcasts">
-        <c-header.nav>
-            <c-header.nav.item>
-                <c-search.button url="{% url 'podcasts:search_itunes' %}">
-                    Search iTunes
-                </c-search.button>
-            </c-header.nav.item>
-            <c-header.nav.item>
-                <c-search.form placeholder="Search: Podcasts" />
-            </c-header.nav.item>
-        </c-header.nav>
-    </c-header>
+
+{% block title %}
+    {{ block.super }} Search | Podcasts
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "header.html" title="Search Podcasts" %}
+        {% blockinclude "header/nav.html" %}
+            {% blockinclude "header/nav.html#item" %}
+                {% url "podcasts:search_itunes" as search_button_url %}
+                {% include "search.html#button" with content="Search iTunes" %}
+            {% endblockinclude %}
+            {% blockinclude "header/nav.html#item" %}
+                {% include "search.html#form" with placeholder="Search: Podcasts" %}
+            {% endblockinclude %}
+        {% endblockinclude %}
+    {% endblockinclude %}
     {% partialdef pagination inline %}
         {% cache cache_timeout search-podcasts request.get_full_path %}
-            <c-paginate :page="page">
+            {% blockinclude "paginate.html" %}
                 {% for podcast in page %}
-                    <c-browse.item>
-                        <c-podcasts.podcast :podcast="podcast"/>
-                    </c-browse.item>
+                    {% blockinclude "browse.html#item" %}
+                        {% include "podcasts/cards.html#podcast" %}
+                    {% endblockinclude %}
                 {% empty %}
-                    <c-browse.empty>
+                    {% blockinclude "browse.html#empty" %}
                         <p>
                             No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         </p>
                         <p>
                             Click the <strong>Search iTunes</strong> button above to search the iTunes podcast directory.
                         </p>
-                    </c-browse.empty>
+                    {% endblockinclude %}
                 {% endfor %}
-            </c-paginate>
+            {% endblockinclude %}
         {% endcache %}
     {% endpartialdef pagination %}
-</c-layout>
+{% endblock content %}

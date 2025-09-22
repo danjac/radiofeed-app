@@ -1,6 +1,12 @@
-<c-layout title="Privacy">
+{% extends "base.html" %}
+
+{% block title %}
+    {{ block.super }} | Privacy
+{% endblock title %}
+
+{% block content %}
+    {% include "header.html" with title="Privacy" %}
     {% with site=request.site %}
-        <c-header title="Privacy" />
         <div class="space-y-6">
             <p class="prose dark:prose-invert">
                 This privacy policy ("policy") will help you understand how <strong>{{ site.name }}</strong> ("us", "we",
@@ -54,4 +60,4 @@
             </p>
         </div>
     {% endwith %}
-</c-layout>
+{% endblock content %}

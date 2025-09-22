@@ -7,11 +7,11 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
-from django.template.context import Context
+from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
 
 from radiofeed import pwa
-from radiofeed.cover_image import get_cover_image_attrs
+from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
 from radiofeed.html import render_markdown
 
 _TIME_PARTS: Final = [
@@ -53,38 +53,6 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{url}"
 
 
-@register.simple_tag(takes_context=True)
-def get_cookies_accepted(context: Context) -> bool:
-    """Returns True if user has accepted cookies."""
-    if request := context.get("request", None):
-        return settings.GDPR_COOKIE_NAME in request.COOKIES
-    return False
-
-
-@register.filter
-def markdown(content: str | None) -> str:
-    """Render content as Markdown."""
-    return render_markdown(content) if content else ""
-
-
-@register.filter
-def format_duration(total_seconds: int) -> str:
-    """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
-    parts: list[str] = []
-    for label, seconds in _TIME_PARTS:
-        value = total_seconds // seconds
-        total_seconds -= value * seconds
-        if value:
-            parts.append(f"{value} {label}{pluralize(value)}")
-    return " ".join(parts)
-
-
-@register.filter
-def widget_type(field: forms.Field) -> str:
-    """Returns the widget class name for the bound field."""
-    return field.field.widget.__class__.__name__.lower()
-
-
 @register.simple_tag
 def render_field(field: forms.Field, **attrs) -> str:
     """Returns rendered widget."""
@@ -97,3 +65,65 @@ def render_field(field: forms.Field, **attrs) -> str:
         if v not in (None, False)
     }
     return field.as_widget(attrs=attrs)
+
+
+@register.inclusion_tag("markdown.html")
+def markdown(content: str | None) -> dict:
+    """Render content as Markdown."""
+    markdown = render_markdown(content) if content else ""
+    return {"markdown": markdown}
+
+
+@register.inclusion_tag("cover_image.html")
+def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> dict:
+    """Renders a cover image."""
+    return {"attrs": get_cover_image_attrs(variant, cover_url, title)}
+
+
+@register.inclusion_tag("cookie_banner.html", takes_context=True)
+def cookie_banner(context: RequestContext):
+    """Renders GDPR cookie banner"""
+    cookies_accepted = settings.GDPR_COOKIE_NAME in context.request.COOKIES
+    return {"cookies_accepted": cookies_accepted}
+
+
+@register.simple_block_tag(takes_context=True)
+def blockinclude(
+    context: Context,
+    content: str,
+    template_name: str,
+    *,
+    only: bool = False,
+    **extra_context,
+) -> str:
+    """Renders include in block."""
+
+    if not context.template:
+        raise template.TemplateSyntaxError(
+            "Can only be used inside a template context."
+        )
+
+    tmpl = context.template.engine.get_template(template_name)
+
+    context = context.new() if only else context
+
+    with context.push(content=content, **extra_context):
+        return tmpl.render(context)
+
+
+@register.filter
+def widget_type(field: forms.Field) -> str:
+    """Returns the widget class name for the bound field."""
+    return field.field.widget.__class__.__name__.lower()
+
+
+@register.filter
+def format_duration(total_seconds: int) -> str:
+    """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
+    parts: list[str] = []
+    for label, seconds in _TIME_PARTS:
+        value = total_seconds // seconds
+        total_seconds -= value * seconds
+        if value:
+            parts.append(f"{value} {label}{pluralize(value)}")
+    return " ".join(parts)

@@ -1,25 +1,34 @@
-<c-layout title="Private Feeds | Add Private Feed">
-    <c-header title="Private Feeds" />
+{% extends "base.html" %}
+{% load heroicons %}
+
+{% block title %}
+    {{ block.super }} | Private Feeds | Add Private Feed
+{% endblock title %}
+
+{% block content %}
+    {% include "header.html" with title="Private Feeds" %}
     <div class="space-y-3">
         {% partialdef form inline %}
-            <c-form htmx id="private-feed-form">
+            {% blockinclude "form.html" htmx=True target="private-feed-form" %}
                 {{ form }}
-                <c-form.buttons>
-                    <c-button.primary icon="plus">
+                {% blockinclude "form.html#buttons" %}
+                    <button class="btn btn-primary">
+                        {% heroicon_mini "plus" class="mr-2" %}
                         Add Feed
-                    </c-button.primary>
-                    <c-button.default
-                        icon="arrow-uturn-left"
+                    </button>
+                    <button
+                        class="btn btn-default"
                         role="link"
                         hx-get="{% url 'podcasts:private_feeds' %}"
                         hx-swap="innerHTML"
                         hx-target="#content"
                         hx-push-url="true"
                     >
+                        {% heroicon_mini "arrow-uturn-left" class="mr-2" %}
                         Cancel
-                    </c-button.default>
-                </c-form.buttons>
-            </c-form>
+                    </button>
+                {% endblockinclude %}
+            {% endblockinclude %}
         {% endpartialdef form %}
         <div class="space-y-3 prose dark:prose-invert">
             <p>
@@ -32,4 +41,4 @@
                         target="_blank">URL encoding service</a> to encode the username and password if required.</p>
         </div>
     </div>
-</c-layout>
+{% endblock content %}

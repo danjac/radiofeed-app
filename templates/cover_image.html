@@ -1,0 +1,13 @@
+{# djlint:off #}
+<img class="object-cover text-transparent bg-transparent border {{ attrs.class }}"
+     aria_hidden="true"
+     loading="lazy"
+     decoding="async"
+     alt="{{ attrs.alt }}"
+     title="{{ attrs.title }}"
+     src="{{ attrs.src }}"
+     width="{{ attrs.width }}"
+     height="{{ attrs.height }}"
+     {% if attrs.srcset %}srcset="{{ attrs.srcset }}"{% endif %}
+     {% if attrs.sizes %}sizes="{{ attrs.sizes }}"{% endif %}
+>

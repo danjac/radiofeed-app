@@ -1,17 +1,77 @@
 import pytest
-from django.template import Context
+from django.template import RequestContext
 
-from radiofeed.episodes.templatetags.audio_player import get_media_metadata
+from radiofeed.episodes.middleware import PlayerDetails
+from radiofeed.episodes.templatetags.audio_player import (
+    audio_player,
+    get_media_metadata,
+)
 
 
 class TestGetMediaMetadata:
     @pytest.mark.django_db
     def test_get_media_metadata(self, rf, episode):
         req = rf.get("/")
-        context = Context({"request": req})
+        context = RequestContext(request=req)
         assert get_media_metadata(context, episode)
 
+
+class TestAudioPlayer:
     @pytest.mark.django_db
-    def test_request_missing(self, episode):
-        context = Context()
-        assert get_media_metadata(context, episode) == {}
+    def test_close(self, rf, audio_log):
+        req = rf.get("/")
+        req.user = audio_log.user
+        req.player = PlayerDetails(request=req)
+        req.session = {req.player.session_id: audio_log.episode_id}
+
+        context = RequestContext(request=req)
+
+        dct = audio_player(context, audio_log, action="close")
+        assert "audio_log" not in dct
+
+    @pytest.mark.django_db
+    def test_play(self, rf, audio_log):
+        req = rf.get("/")
+        req.user = audio_log.user
+
+        context = RequestContext(request=req)
+
+        dct = audio_player(context, audio_log, action="play")
+        assert dct["audio_log"] == audio_log
+
+    @pytest.mark.django_db
+    def test_load(self, rf, audio_log):
+        req = rf.get("/")
+        req.user = audio_log.user
+        req.player = PlayerDetails(request=req)
+        req.session = {req.player.session_id: audio_log.episode_id}
+
+        context = RequestContext(request=req)
+
+        dct = audio_player(context, None, action="load")
+        assert dct["audio_log"] == audio_log
+
+    @pytest.mark.django_db
+    def test_load_empty(self, rf, audio_log):
+        req = rf.get("/")
+        req.user = audio_log.user
+        req.player = PlayerDetails(request=req)
+        req.session = {}
+
+        context = RequestContext(request=req)
+
+        dct = audio_player(context, None, action="load")
+        assert dct["audio_log"] is None
+
+    @pytest.mark.django_db
+    def test_load_user_not_authenticated(self, rf, audio_log, anonymous_user):
+        req = rf.get("/")
+        req.user = anonymous_user
+        req.player = PlayerDetails(request=req)
+        req.session = {}
+        req.session = {req.player.session_id: audio_log.episode_id}
+
+        context = RequestContext(request=req)
+
+        dct = audio_player(context, None, action="load")
+        assert dct["audio_log"] is None

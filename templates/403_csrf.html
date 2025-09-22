@@ -1,5 +1,11 @@
+{% extends "error_base.html" %}
 {% load heroicons %}
-<c-layout.error :title="403: Permission Denied">
+
+{% block header %}
+    403: Permission Denied
+{% endblock header %}
+
+{% block description %}
     <p>Sorry, there's been a problem posting your form. Please reload this page and try again.</p>
     <p>
         <a class="inline-flex items-center btn btn-primary btn-lg"
@@ -9,4 +15,4 @@
             Reload Page
         </a>
     </p>
-</c-layout.error>
+{% endblock description %}

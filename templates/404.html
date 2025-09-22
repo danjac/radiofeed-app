@@ -1,3 +1,10 @@
-<c-layout.error :title="404: Not Found">
+{% extends "error_base.html" %}
+
+{% block header %}
+    404: Not Found
+{% endblock header %}
+
+{% block description %}
+
     <p>Sorry, this page does not exist, or it has been removed.</p>
-</c-layout.error>
+{% endblock description %}

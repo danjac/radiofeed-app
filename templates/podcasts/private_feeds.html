@@ -1,39 +1,44 @@
+{% extends "base.html" %}
 {% load heroicons %}
-<c-layout title="Private Feeds">
-    <c-header title="Private Feeds">
-        <c-header.nav>
+
+{% block title %}
+    {{ block.super }} | Private Feeds
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "header.html" title="Private Feeds" %}
+        {% blockinclude "header/nav.html" %}
             {% if not request.search %}
-                <c-header.nav.item>
+                {% blockinclude "header/nav.html#item" %}
                     <a class="btn btn-default"
                        href="{% url "podcasts:add_private_feed" %}">
                         {% heroicon_mini "plus" %}
                         Add Private Feed
                     </a>
-                </c-header.nav.item>
+                {% endblockinclude %}
             {% endif %}
             {% if request.search or page.has_other_pages %}
                 {% if request.search %}
-                    <c-header.nav.item>
-                        <c-search.button url="{% url 'podcasts:search_podcasts' %}">
-                            Search Podcasts
-                        </c-search.button>
-                    </c-header.nav.item>
+                    {% blockinclude "header/nav.html#item" %}
+                        {% url "podcasts:search_podcasts" as search_button_url %}
+                        {% include "search.html#button" with content="Search Podcasts" %}
+                    {% endblockinclude %}
                 {% endif %}
-                <c-header.nav.item>
-                    <c-search.form placeholder="Search: Private Feeds" clearable />
-                </c-header.nav.item>
+                {% blockinclude "header/nav.html#item" %}
+                    {% include "search.html#form" with placeholder="Search: Private Feeds" clearable=True %}
+                {% endblockinclude %}
             {% endif %}
-        </c-header.nav>
-    </c-header>
 
+        {% endblockinclude %}
+    {% endblockinclude %}
     {% partialdef pagination inline %}
-        <c-paginate :page="page">
+        {% blockinclude "paginate.html" %}
             {% for podcast in page %}
-                <c-browse.item>
-                    <c-podcasts.podcast :podcast="podcast" />
-                </c-browse.item>
+                {% blockinclude "browse.html#item" %}
+                    {% include "podcasts/cards.html#podcast" %}
+                {% endblockinclude %}
             {% empty %}
-                <c-browse.empty>
+                {% blockinclude "browse.html#empty" %}
                     {% if request.search %}
                         No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
                     {% else %}
@@ -42,9 +47,8 @@
                             To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
                         </p>
                     {% endif %}
-
-                </c-browse.empty>
+                {% endblockinclude %}
             {% endfor %}
-        </c-paginate>
+        {% endblockinclude %}
     {% endpartialdef pagination %}
-</c-layout>
+{% endblock content %}

@@ -50,13 +50,11 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
+    "template_partials",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
     "radiofeed.users",
-    # https://django-cotton.com/docs/django-template-partials
-    "django_cotton.apps.SimpleAppConfig",
-    "template_partials.apps.SimpleAppConfig",
 ]
 
 
@@ -133,7 +131,6 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "django_cotton.templatetags.cotton",
                 "template_partials.templatetags.partials",
                 "radiofeed.templatetags",
             ],
@@ -149,29 +146,9 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "radiofeed.context_processors.cache_timeout",
             ],
-            # https://django-cotton.com/docs/django-template-partials
-            "loaders": [
-                (
-                    "template_partials.loader.Loader",
-                    [
-                        (
-                            "django.template.loaders.cached.Loader",
-                            [
-                                "django_cotton.cotton_loader.Loader",
-                                "django.template.loaders.filesystem.Loader",
-                                "django.template.loaders.app_directories.Loader",
-                            ],
-                        )
-                    ],
-                )
-            ],
         },
     }
 ]
-
-# https://django-cotton.com/docs/configuration
-
-COTTON_DIR = "components"
 
 # prevent deprecation warnings
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

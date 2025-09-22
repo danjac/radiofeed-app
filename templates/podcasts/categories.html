@@ -1,12 +1,18 @@
+{% extends "base.html" %}
 {% load cache %}
-<c-layout title="Categories">
-    <c-header title="Categories">
-        <c-header.nav>
-            <c-header.nav.item>
-                <c-search.form placeholder="Search: Categories" clearable />
-            </c-header.nav.item>
-        </c-header.nav>
-    </c-header>
+
+{% block title %}
+    {{ block.super }} | Categories
+{% endblock title %}
+
+{% block content %}
+    {% blockinclude "header.html" title="Categories" %}
+        {% blockinclude "header/nav.html" %}
+            {% blockinclude "header/nav.html#item" %}
+                {% include "search.html#form" with placeholder="Search: Categories" clearable=True %}
+            {% endblockinclude %}
+        {% endblockinclude %}
+    {% endblockinclude %}
 
     {% cache cache_timeout categories request.get_full_path %}
         {% if categories %}
@@ -27,4 +33,4 @@
             </p>
         {% endif %}
     {% endcache %}
-</c-layout>
+{% endblock content %}

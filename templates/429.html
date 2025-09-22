@@ -1,3 +1,9 @@
-<c-layout.error :title="429: Too Many Requests">
+{% extends "error_base.html" %}
+
+{% block header %}
+    429: Too Many Requests
+{% endblock header %}
+
+{% block description %}
     <p>Sorry, too many requests at once! The servers cannae take it!</p>
-</c-layout.error>
+{% endblock description %}

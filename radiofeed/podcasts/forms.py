@@ -11,6 +11,7 @@ class PrivateFeedForm(forms.Form):
         max_length=300,
         label="Add Private Feed",
         help_text="RSS feed for podcast",
+        widget=forms.URLInput(attrs={"placeholder": "URL"}),
     )
 
     def __init__(self, *args, user: User, **kwargs) -> None:
