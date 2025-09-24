@@ -35,12 +35,7 @@
                                      tabindex="0"
                                      hx-get="{{ episode.get_absolute_url }}"
                                      hx-push-url="true">
-                                    <c-cover.card
-                                        class="group-hover:opacity-75"
-                                        :url="episode.get_cover_url"
-                                        :title="episode.cleaned_title"
-                                    />
-
+                                    {% cover_image "card" episode.get_cover_url episode.cleaned_title %}
                                     <div class="flex flex-col place-content-between h-16">
                                         <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2"
                                             aria-label="{{ episode.cleaned_title }}"
