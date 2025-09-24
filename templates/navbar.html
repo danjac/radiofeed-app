@@ -129,19 +129,19 @@
             {% include "navbar/menu.html" %}
         </nav>
     {% else %}
-        {% blockinclude "navbar.html#cta" %}
-            <a href="{% url 'account_signup' %}">Sign up</a>
+        <div class="p-3 font-bold text-center text-white bg-blue-600">
+            <a href="{% url 'account_signup' %}" class="underline">Sign up</a>
             or
-            <a href="{% url 'account_login' %}">log in</a>
+            <a href="{% url 'account_login' %}" class="underline">log in</a>
             to follow your favorite podcasts and episodes!
-        {% endblockinclude %}
+        </div>
     {% endif %}
     <div x-data="{show: false, content: '', dismissable: false}"
          x-cloak
          x-transition
          x-show="show"
          @cta.window="show = true; content = $event.detail.content; dismissable = $event.detail.dismissable;">
-        {% blockinclude "navbar.html#cta" %}
+        <div class="p-3 font-bold text-center text-white bg-blue-600 [&_a,&_button]:inline-flex [&_a,&_button]:underline [&_a,&_button]:hover:opacity-75 [&_a,&_button]:cursor-pointer">
             <div class="relative">
                 <button @click="show = false"
                         class="absolute top-0 right-0 pl-2 text-white cursor-pointer hover:opacity-75"
@@ -149,13 +149,7 @@
                     {% heroicon_mini "x-mark" %}
                 </button>
                 <div class="pr-6" x-html="content"></div>
-        {% endblockinclude %}
+            </div>
+        </div>
     </div>
-</div>
 </header>
-
-{% partialdef cta %}
-    <div class="p-3 font-bold text-center text-white bg-blue-600 [&_a,&_button]:inline-flex [&_a,&_button]:underline [&_a,&_button]:hover:opacity-75 [&_a,&_button]:cursor-pointer">
-        {{ content }}
-    </div>
-{% endpartialdef %}
