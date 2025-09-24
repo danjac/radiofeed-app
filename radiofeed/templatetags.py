@@ -96,7 +96,19 @@ def blockinclude(
     only: bool = False,
     **extra_context,
 ) -> str:
-    """Renders include in block."""
+    """Renders include in block.
+
+    Example:
+
+    {% blockinclude "header.html" %}
+    title goes here
+    {% endblockinclude %}
+
+    header.html:
+    <h1>{{ content }}</h1>
+
+    If `only` is passed it will not include outer context.
+    """
 
     if not context.template:
         raise template.TemplateSyntaxError(

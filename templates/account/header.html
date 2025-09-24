@@ -5,16 +5,16 @@
         Settings for {{ user.username }}
     {% endblockinclude %}
     {% blockinclude "header/nav.html" %}
-        {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
+        {% blockinclude "header/nav.html#item" %}
+            {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
+                {% for item in settings.items %}
+                    {% blockinclude "header/nav/dropdown.html#item" url=item.url icon=item.icon %}
 
-            {% for item in settings.items %}
-                {% blockinclude "header/nav/dropdown.html#item" url=item.url icon=item.icon %}
+                        {{ item.label }}
 
-                    {{ item.label }}
-
-                {% endblockinclude %}
-            {% endfor %}
-
+                    {% endblockinclude %}
+                {% endfor %}
+            {% endblockinclude %}
         {% endblockinclude %}
     {% endblockinclude %}
 {% endblockinclude %}
