@@ -35,7 +35,10 @@
 
 {# Default input #}
 {% partialdef input %}
-    {% render_field field class="form-input" %}
+    {% include "form/field.html#label" %}
+    {% with widget=field|widget %}
+        {% render_field field class="form-input" %}
+    {% endwith %}
 {% endpartialdef %}
 
 {% partialdef textinput %}
@@ -61,6 +64,7 @@
 
 {# Password input #}
 {% partialdef passwordinput %}
+    {% include "form/field.html#label" %}
     <div x-data="{ show: false }" class="inline-block relative">
         {% render_field field class="pr-10 form-input" x_ref="password" %}
         <button type="button"

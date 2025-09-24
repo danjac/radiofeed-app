@@ -124,9 +124,15 @@ def blockinclude(
 
 
 @register.filter
+def widget(field: forms.Field) -> forms.Widget:
+    """Returns widget for field."""
+    return field.field.widget
+
+
+@register.filter
 def widget_type(field: forms.Field) -> str:
     """Returns the widget class name for the bound field."""
-    return field.field.widget.__class__.__name__.lower()
+    return widget(field).__class__.__name__.lower()
 
 
 @register.filter
