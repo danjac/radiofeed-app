@@ -13,24 +13,24 @@ wheels = [
 
 [[package]]
 name = "anyio"
-version = "4.10.0"
+version = "4.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "idna" },
     { name = "sniffio" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f1/b4/636b3b65173d3ce9a38ef5f0522789614e590dab6a8d505340a4efe4c567/anyio-4.10.0.tar.gz", hash = "sha256:3f3fae35c96039744587aa5b8371e7e8e603c0702999535961dd336026973ba6", size = 213252 }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/78/7d432127c41b50bccba979505f272c16cbcadcc33645d5fa3a738110ae75/anyio-4.11.0.tar.gz", hash = "sha256:82a8d0b81e318cc5ce71a5f1f8b5c4e63619620b63141ef8c995fa0db95a57c4", size = 219094 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/12/e5e0282d673bb9746bacfb6e2dba8719989d3660cdb2ea79aee9a9651afb/anyio-4.10.0-py3-none-any.whl", hash = "sha256:60e474ac86736bbfd6f210f7a61218939c318f43f9972497381f1c5e930ed3d1", size = 107213 },
+    { url = "https://files.pythonhosted.org/packages/15/b3/9b1a8074496371342ec1e796a96f99c82c945a339cd81a8e73de28b4cf9e/anyio-4.11.0-py3-none-any.whl", hash = "sha256:0287e96f4d26d4149305414d4e3bc32f0dcd0862365a4bddea19d7a1ec38c4fc", size = 109097 },
 ]
 
 [[package]]
 name = "asgiref"
-version = "3.9.1"
+version = "3.9.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/90/61/0aa957eec22ff70b830b22ff91f825e70e1ef732c06666a805730f28b36b/asgiref-3.9.1.tar.gz", hash = "sha256:a5ab6582236218e5ef1648f242fd9f10626cfd4de8dc377db215d5d5098e3142", size = 36870 }
+sdist = { url = "https://files.pythonhosted.org/packages/7f/bf/0f3ecda32f1cb3bf1dca480aca08a7a8a3bdc4bed2343a103f30731565c9/asgiref-3.9.2.tar.gz", hash = "sha256:a0249afacb66688ef258ffe503528360443e2b9a8d8c4581b6ebefa58c841ef1", size = 36894 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/3c/0464dcada90d5da0e71018c04a140ad6349558afb30b3051b4264cc5b965/asgiref-3.9.1-py3-none-any.whl", hash = "sha256:f3bba7092a48005b5f5bacd747d36ee4a5a61f4a269a6df590b43144355ebd2c", size = 23790 },
+    { url = "https://files.pythonhosted.org/packages/c7/d1/69d02ce34caddb0a7ae088b84c356a625a93cd4ff57b2f97644c03fad905/asgiref-3.9.2-py3-none-any.whl", hash = "sha256:0b61526596219d70396548fc003635056856dba5d0d086f86476f10b33c75960", size = 23788 },
 ]
 
 [[package]]
@@ -461,16 +461,16 @@ wheels = [
 
 [[package]]
 name = "django-tailwind-cli"
-version = "4.4.0"
+version = "4.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "django-typer" },
     { name = "semver" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/79/a7d7ec29ebeaf405375b09f1e742601ff4191a6b3b23305b661799fdd419/django_tailwind_cli-4.4.0.tar.gz", hash = "sha256:7dd5c33b9d40538492728ec20e79efb08b54571074698f78b0943f0cf79881d0", size = 96505 }
+sdist = { url = "https://files.pythonhosted.org/packages/86/09/8359181201a03871e34d8d47685b15244e778c8ece9f209a86d543cb7767/django_tailwind_cli-4.4.2.tar.gz", hash = "sha256:c3ad962710fc95acf1bb45b1b7747fe549d50ff99228cadc4cf2f28fd8d4e8ce", size = 97420 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/17/8e71149de46eecc58eabc57f931fa8381d9debce4d9868f4e3a22ed9fa87/django_tailwind_cli-4.4.0-py3-none-any.whl", hash = "sha256:976fb98aca8c0fee80ab3bdb77845efd28904ce6c47db0e518425d9f60ea23a8", size = 31411 },
+    { url = "https://files.pythonhosted.org/packages/cf/08/8b8c7c4a4f9f4ad3c4815f53c4f98de19b5c37803a9af767d0cebd779af4/django_tailwind_cli-4.4.2-py3-none-any.whl", hash = "sha256:8d1d69ae19209b5d6fd66150d916edbced1d154eee55895d807441dbfe282cae", size = 31688 },
 ]
 
 [[package]]
@@ -1579,7 +1579,7 @@ wheels = [
 
 [[package]]
 name = "typer"
-version = "0.19.1"
+version = "0.19.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -1587,22 +1587,22 @@ dependencies = [
     { name = "shellingham" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/03/ea/9cc57c3c627fd7a6a0907ea371019fe74c3ec00e3cf209a6864140a602ad/typer-0.19.1.tar.gz", hash = "sha256:cb881433a4b15dacc875bb0583d1a61e78497806741f9aba792abcab390c03e6", size = 104802 }
+sdist = { url = "https://files.pythonhosted.org/packages/21/ca/950278884e2ca20547ff3eb109478c6baf6b8cf219318e6bc4f666fad8e8/typer-0.19.2.tar.gz", hash = "sha256:9ad824308ded0ad06cc716434705f691d4ee0bfd0fb081839d2e426860e7fdca", size = 104755 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1e/fa/6473c00b5eb26a2ba427813107699d3e6f4e1a4afad3f7494b17bdef3422/typer-0.19.1-py3-none-any.whl", hash = "sha256:914b2b39a1da4bafca5f30637ca26fa622a5bf9f515e5fdc772439f306d5682a", size = 46876 },
+    { url = "https://files.pythonhosted.org/packages/00/22/35617eee79080a5d071d0f14ad698d325ee6b3bf824fc0467c03b30e7fa8/typer-0.19.2-py3-none-any.whl", hash = "sha256:755e7e19670ffad8283db353267cb81ef252f595aa6834a0d1ca9312d9326cb9", size = 46748 },
 ]
 
 [[package]]
 name = "typer-slim"
-version = "0.19.1"
+version = "0.19.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/26/55/a57eb00dd34592281750830e1e5f05ad90cd7fc1829a292e411d8cf3d80c/typer_slim-0.19.1.tar.gz", hash = "sha256:4fb75d0688419f130ff8962e679aa2341ff258b8fa36c41e35d994aa7f1cf8fd", size = 104885 }
+sdist = { url = "https://files.pythonhosted.org/packages/75/d6/489402eda270c00555213bdd53061b23a0ae2b5dccbfe428ebcc9562d883/typer_slim-0.19.2.tar.gz", hash = "sha256:6f601e28fb8249a7507f253e35fb22ccc701403ce99bea6a9923909ddbfcd133", size = 104788 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/7f/c34fc71d08f2037276f6c3d1a2299d96bd12702c4d9cc298da6c1160a2de/typer_slim-0.19.1-py3-none-any.whl", hash = "sha256:e050c351613b4855844ef116244b66fb71c3864ae23c997c1c2c7f890fd89f90", size = 46935 },
+    { url = "https://files.pythonhosted.org/packages/a5/19/7aef771b3293e1b7c749eebb2948bb7ccd0e9b56aa222eb4d5e015087730/typer_slim-0.19.2-py3-none-any.whl", hash = "sha256:1c9cdbbcd5b8d30f4118d3cb7c52dc63438b751903fbd980a35df1dfe10c6c91", size = 46806 },
 ]
 
 [[package]]
