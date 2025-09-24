@@ -36,9 +36,7 @@
 {# Default input #}
 {% partialdef input %}
     {% include "form/field.html#label" %}
-    {% with widget=field|widget %}
-        {% render_field field class="form-input" %}
-    {% endwith %}
+    {% render_field field class="form-input" %}
 {% endpartialdef %}
 
 {% partialdef textinput %}
