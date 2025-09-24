@@ -8,11 +8,7 @@
         {% blockinclude "header/nav.html#item" %}
             {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
                 {% for item in settings.items %}
-                    {% blockinclude "header/nav/dropdown.html#item" url=item.url icon=item.icon %}
-
-                        {{ item.label }}
-
-                    {% endblockinclude %}
+                    {% include "header/nav/dropdown.html#item" with url=item.url icon=item.icon content=item.label %}
                 {% endfor %}
             {% endblockinclude %}
         {% endblockinclude %}
