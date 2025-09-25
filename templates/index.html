@@ -1,14 +1,9 @@
 {% load cache heroicons static %}
 {% with site_name=request.site.name %}
-    {# djlint: off #}
     <!DOCTYPE html>
     <html lang="en">
         <head>
-            <title>
-                {% block title %}
-                    {{ request.site.name }}
-                {% endblock title %}
-            </title>
+            <title>{{ request.site.name }}</title>
             {% include "default_base.html#head" %}
         </head>
         <body class="mx-auto font-sans antialiased text-white from-purple-900 to-black bg-linear-to-b container-xl scroll-smooth">
