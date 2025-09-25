@@ -7,16 +7,18 @@
         <nav class="flex justify-center items-center sm:justify-start">
             {% cache cache_timeout podcast-header-nav request.path %}
                 <ul class="flex items-center space-x-4 lg:space-x-6">
-                    {% blockinclude "podcasts/header.html#item" name="detail" url=podcast.get_detail_url %}
-                        About
-                    {% endblockinclude %}
-                    {% blockinclude "podcasts/header.html#item" name="episodes" url=podcast.get_episodes_url %}
-                        Episodes ({{ podcast.num_episodes }})
-                    {% endblockinclude %}
+                    {% with name="detail" url=podcast.get_detail_url label="About" %}
+                        {% partial item %}
+                    {% endwith %}
+                    {% with num_episodes=podcast.num_episodes|stringformat:"s" %}
+                        {% with name="episodes" url=podcast.get_episodes_url label="Episodes ("|add:num_episodes|add:")" %}
+                            {% partial item %}
+                        {% endwith %}
+                    {% endwith %}
                     {% if podcast.has_similar %}
-                        {% blockinclude "podcasts/header.html#item" name="similar" url=podcast.get_similar_url %}
-                            Similar
-                        {% endblockinclude %}
+                        {% with name="similar" url=podcast.get_similar_url label="Similar" %}
+                            {% partial item %}
+                        {% endwith %}
                     {% endif %}
                 </ul>
             {% endcache %}
@@ -29,6 +31,6 @@
     <li>
         <a class="link {% if active == name %}active{% endif %}"
            href="{{ url }}"
-           {% if active == name %}aria-active="page"{% endif %}>{{ content }}</a>
+           {% if active == name %}aria-active="page"{% endif %}>{{ label }}</a>
     </li>
 {% endpartialdef %}
