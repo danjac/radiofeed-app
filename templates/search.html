@@ -75,6 +75,6 @@
             :disabled="!search"
             @search.window="search=$event.detail; $nextTick(process);">
         {% heroicon_mini "magnifying-glass" %}
-        {{ content }}
+        {{ label }}
     </button>
 {% endpartialdef %}

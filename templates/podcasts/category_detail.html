@@ -13,7 +13,7 @@
                     {% if request.search %}
                         {% blockinclude "header/nav.html#item" %}
                             {% url "podcasts:search_podcasts" as search_button_url %}
-                            {% include "search.html#button" with content="Search Podcasts" %}
+                            {% include "search.html#button" with label="Search Podcasts" %}
                         {% endblockinclude %}
                     {% endif %}
                     {% blockinclude "header/nav.html#item" %}
