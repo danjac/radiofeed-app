@@ -203,7 +203,7 @@ def mark_audio_log_complete(request: HttpRequest, episode_id: int) -> TemplateRe
 
     messages.success(request, "Episode marked complete")
 
-    return _render_audio_log(request, audio_log, show_audio_log=True)
+    return _render_audio_log_action(request, audio_log, show_audio_log=True)
 
 
 @require_DELETE
@@ -223,7 +223,7 @@ def remove_audio_log(request: HttpRequest, episode_id: int) -> TemplateResponse:
 
     messages.info(request, "Removed from History")
 
-    return _render_audio_log(request, audio_log, show_audio_log=False)
+    return _render_audio_log_action(request, audio_log, show_audio_log=False)
 
 
 @require_safe
@@ -307,7 +307,7 @@ def _render_bookmark_action(
     )
 
 
-def _render_audio_log(
+def _render_audio_log_action(
     request: HttpRequest,
     audio_log: AudioLog,
     *,
