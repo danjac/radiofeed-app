@@ -1,12 +1,12 @@
 {% load heroicons %}
-<fieldset class="space-y-3 form-control{% if field.errors %} has-errors{% endif %}"
-          {% if field.aria_describedby %} aria-describedby="{{ field.aria_describedby }}"{% endif %}>
-    {% with widget_type=field|widget_type %}
+{% with widget_type=field|widget_type errors=field.errors described_by=field.aria_describedby %}
+    <fieldset class="space-y-3 form-control{% if errors %} has-errors{% endif %}"
+              {% if described_by %} aria-describedby="{{ described_by }}"{% endif %}>
         {% include "form/field.html#"|add:widget_type %}
-    {% endwith %}
-    {% include "form/field.html#errors" with errors=field.errors %}
-    {% include "form/field.html#help_text" %}
-</fieldset>
+        {% partial errors %}
+        {% partial help_text %}
+    </fieldset>
+{% endwith %}
 
 {% partialdef label %}
     <label class="block font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}"
@@ -35,34 +35,34 @@
 
 {# Default input #}
 {% partialdef input %}
-    {% include "form/field.html#label" %}
+    {% partial label %}
     {% render_field field class="form-input" %}
 {% endpartialdef %}
 
 {% partialdef textinput %}
-    {% include "form/field.html#input" %}
+    {% partial input %}
 {% endpartialdef %}
 
 {% partialdef fileinput %}
-    {% include "form/field.html#input" %}
+    {% partial input %}
 {% endpartialdef %}
 
 {# URL input #}
 {% partialdef urlinput %}
-    {% include "form/field.html#input" %}
+    {% partial input %}
 {% endpartialdef %}
 
 {# Checkbox input #}
 {% partialdef checkboxinput %}
     <div class="flex items-center space-x-3 w-full">
         {% render_field field class="form-checkbox" %}
-        {% include "form/field.html#label" %}
+        {% partial label %}
     </div>
 {% endpartialdef %}
 
 {# Password input #}
 {% partialdef passwordinput %}
-    {% include "form/field.html#label" %}
+    {% partial label %}
     <div x-data="{ show: false }" class="inline-block relative">
         {% render_field field class="pr-10 form-input" x_ref="password" %}
         <button type="button"

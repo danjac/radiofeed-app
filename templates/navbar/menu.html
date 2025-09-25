@@ -1,18 +1,49 @@
 {% load heroicons %}
 <ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
-    {% include "navbar/menu.html#item" with url_name="podcasts:subscriptions" icon="rss" label="Subscriptions" %}
-    {% include "navbar/menu.html#item" with url_name="episodes:index" icon="sparkles" label="New Releases" %}
-    {% include "navbar/menu.html#item" with url_name="podcasts:discover" icon="magnifying-glass" label="Discover" %}
-    {% include "navbar/menu.html#item" with url_name="podcasts:category_list" icon="tag" label="Categories" %}
-    {% include "navbar/menu.html#item" with url_name="episodes:bookmarks" icon="bookmark" label="Bookmarks" %}
-    {% include "navbar/menu.html#item" with url_name="episodes:history" icon="clock" label="History" %}
-    {% include "navbar/menu.html#item" with url_name="podcasts:private_feeds" icon="lock-closed" label="Private Feeds" %}
-    {% include "navbar/menu.html#item" with url_name="about" icon="information-circle" label="About" %}
+    {% with icon="rss" label="Subscriptions" %}
+        {% url "podcasts:subscriptions" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="sparkles" label="New Releases" %}
+        {% url "episodes:index" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="magnifying-glass" label="Discover" %}
+        {% url "podcasts:discover" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="tag" label="Categories" %}
+        {% url "podcasts:category_list" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="bookmark" label="Bookmarks" %}
+        {% url "episodes:bookmarks" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="clock" label="History" %}
+        {% url "episodes:history" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="lock-closed" label="Private Feeds" %}
+        {% url "podcasts:private_feeds" as url %}
+        {% partial item %}
+    {% endwith %}
+
+    {% with icon="information-circle" label="About" %}
+        {% url "about" as url %}
+        {% partial item %}
+    {% endwith %}
 </ul>
 
 {% partialdef item %}
     <li>
-        <a href="{% url url_name %}"
+        <a href="{{ url }}"
            class="inline-flex items-center w-full sm:w-auto link">
             {% heroicon_outline icon class="mr-3" %}
             {{ label }}
