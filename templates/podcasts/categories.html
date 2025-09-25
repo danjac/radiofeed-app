@@ -6,13 +6,13 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "header.html" title="Categories" %}
-        {% blockinclude "header/nav.html" %}
-            {% blockinclude "header/nav.html#item" %}
+    {% fragment "header.html" title="Categories" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav.html#item" %}
                 {% include "search.html#form" with placeholder="Search: Categories" clearable=True %}
-            {% endblockinclude %}
-        {% endblockinclude %}
-    {% endblockinclude %}
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
 
     {% cache cache_timeout categories request.get_full_path %}
         {% if categories %}

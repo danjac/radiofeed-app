@@ -2,7 +2,7 @@ import pytest
 from django.contrib.sites.models import Site
 from django.template import RequestContext, TemplateSyntaxError
 
-from radiofeed.templatetags import blockinclude, cookie_banner, format_duration
+from radiofeed.templatetags import cookie_banner, format_duration, fragment
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ class TestBlockinclude:
         context = mocker.Mock()
         context.template = None
         with pytest.raises(TemplateSyntaxError):
-            blockinclude(context, "header.html#title", "test")
+            fragment(context, "header.html#title", "test")
 
 
 class TestCookieBanner:

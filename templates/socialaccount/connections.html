@@ -10,7 +10,7 @@
     <div class="space-y-6">
         {% if form.accounts %}
             <p>You can sign in to your account using any of the following third party accounts:</p>
-            {% blockinclude "form.html" %}
+            {% fragment "form.html" %}
                 {% for base_account in form.accounts %}
                     {% with account=base_account.get_provider_account %}
                         <div>
@@ -29,7 +29,7 @@
                         </div>
                     {% endwith %}
                 {% endfor %}
-                {% blockinclude "form.html#buttons" %}
+                {% fragment "form.html#buttons" %}
                     <button class="btn btn-danger"
                             type="submit"
                             name="action_remove"
@@ -39,8 +39,8 @@
                         {% heroicon_mini "trash" class="mr-2" %}
                         Remove
                     </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                {% endfragment %}
+            {% endfragment %}
             <hr class="border" />
         {% else %}
             <p>You currently have no social network accounts connected to this account.</p>

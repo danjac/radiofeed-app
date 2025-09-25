@@ -5,40 +5,40 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "podcasts/header.html" active="episodes" %}
+    {% fragment "podcasts/header.html" active="episodes" %}
         {% cache cache_timeout podcast-season-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size episodes_url=podcast.get_episodes_url %}
-                {% blockinclude "header/nav.html" %}
-                    {% blockinclude "header/nav.html#item" %}
-                        {% blockinclude "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
+                {% fragment "header/nav.html" %}
+                    {% fragment "header/nav.html#item" %}
+                        {% fragment "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
                             {% include "header/nav/dropdown.html#item" with content="All Seasons" url=episodes_url %}
                             {% for season in podcast.seasons %}
                                 {% include "header/nav/dropdown.html#item" with content=season url=season.url %}
                             {% endfor %}
-                        {% endblockinclude %}
-                    {% endblockinclude %}
+                        {% endfragment %}
+                    {% endfragment %}
                     {% if num_episodes > page_size %}
-                        {% blockinclude "header/nav.html#item" %}
+                        {% fragment "header/nav.html#item" %}
                             {% include "search.html#form" with placeholder="Search: Podcast" search_url=episodes_url %}
-                        {% endblockinclude %}
+                        {% endfragment %}
                     {% endif %}
-                {% endblockinclude %}
+                {% endfragment %}
             {% endwith %}
         {% endcache %}
-    {% endblockinclude %}
+    {% endfragment %}
     {% partialdef pagination inline %}
         {% cache cache_timeout podcast-season-episodes request.get_full_path %}
-            {% blockinclude "paginate.html" %}
+            {% fragment "paginate.html" %}
                 {% for episode in page %}
-                    {% blockinclude "browse.html#item" %}
+                    {% fragment "browse.html#item" %}
                         {% include "podcasts/cards.html#episode" %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% empty %}
-                    {% blockinclude "browse.html#empty" %}
+                    {% fragment "browse.html#empty" %}
                         This season does not have any episodes.
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% endfor %}
-            {% endblockinclude %}
+            {% endfragment %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

@@ -1,7 +1,7 @@
 {% partialdef episode %}
     {% with podcast=episode.podcast %}
-        {% blockinclude "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=podcast.cover_url %}
+        {% fragment "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=podcast.cover_url %}
             {{ podcast.cleaned_title }}
-        {% endblockinclude %}
+        {% endfragment %}
     {% endwith %}
 {% endpartialdef %}

@@ -5,18 +5,18 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "podcasts/header.html" active="episodes" %}
+    {% fragment "podcasts/header.html" active="episodes" %}
         {% cache cache_timeout podcast-episodes-nav request.get_full_path %}
             {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
                 {% if request.search or num_episodes > page_size %}
-                    {% blockinclude "header/nav.html" %}
+                    {% fragment "header/nav.html" %}
                         {% if request.search %}
-                            {% blockinclude "header/nav.html#item" %}
+                            {% fragment "header/nav.html#item" %}
                                 {% url "episodes:search_episodes" as search_button_url %}
                                 {% include "search.html#button" with label="Search Episodes" %}
-                            {% endblockinclude %}
+                            {% endfragment %}
                         {% else %}
-                            {% blockinclude "header/nav.html#item" %}
+                            {% fragment "header/nav.html#item" %}
                                 {% if ordering == "asc" %}
                                     <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
                                         Newest First</a>
@@ -24,35 +24,35 @@
                                     <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
                                         Oldest First</a>
                                 {% endif %}
-                            {% endblockinclude %}
+                            {% endfragment %}
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
-                            {% blockinclude "header/nav.html#item" %}
+                            {% fragment "header/nav.html#item" %}
                                 {% include "search.html#form" with placeholder="Search: Podcast" clearable=True %}
-                            {% endblockinclude %}
+                            {% endfragment %}
                         {% endif %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% endif %}
             {% endwith %}
         {% endcache %}
-    {% endblockinclude %}
+    {% endfragment %}
     {% partialdef pagination inline %}
         {% cache cache_timeout podcast-episodes request.get_full_path %}
-            {% blockinclude "paginate.html" %}
+            {% fragment "paginate.html" %}
                 {% for episode in page %}
-                    {% blockinclude "browse.html#item" %}
+                    {% fragment "browse.html#item" %}
                         {% include "podcasts/cards.html#episode" %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% empty %}
-                    {% blockinclude "browse.html#empty" %}
+                    {% fragment "browse.html#empty" %}
                         {% if request.search %}
                             No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
                         {% else %}
                             This podcast does not have any episodes.
                         {% endif %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% endfor %}
-            {% endblockinclude %}
+            {% endfragment %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

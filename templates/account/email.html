@@ -11,7 +11,7 @@
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
-                    {% blockinclude "form.html" %}
+                    {% fragment "form.html" %}
                         {% for emailaddress in emailaddresses %}
                             <div class="flex items-center space-x-3">
                                 <input type="radio"
@@ -29,7 +29,7 @@
                                 </label>
                             </div>
                         {% endfor %}
-                        {% blockinclude "form.html#buttons" %}
+                        {% fragment "form.html#buttons" %}
                             {% if num_addresses == 1 %}
                                 <button
                                     class="btn btn-default"
@@ -72,8 +72,8 @@
                                 {% heroicon_mini "envelope" class="mr-2" %}
                                 Re-Verify
                             </button>
-                        {% endblockinclude %}
-                    {% endblockinclude %}
+                        {% endfragment %}
+                    {% endfragment %}
                 {% else %}
                     <p>
                         <strong>Warning:</strong>
@@ -85,9 +85,9 @@
         {% if can_add_email %}
             <hr class="border"/>
             <h2 class="text-base font-semibold lg:text-lg">Add New Email Address</h2>
-            {% blockinclude "form.html" %}
+            {% fragment "form.html" %}
                 {{ form }}
-                {% blockinclude "form.html#buttons" %}
+                {% fragment "form.html#buttons" %}
                     <button
                         class="btn btn-primary"
                         name="action_add"
@@ -96,8 +96,8 @@
                         Add Email
                     </button>
 
-                {% endblockinclude %}
-            {% endblockinclude %}
+                {% endfragment %}
+            {% endfragment %}
         {% endif %}
     </div>
 {% endblock content %}

@@ -12,15 +12,15 @@
                 Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is an e-mail address for user <strong>{{ user_display }}</strong>.
             </p>
             {% url 'account_confirm_email' key=confirmation.key as action %}
-            {% blockinclude "form.html" class="flex justify-center space-y-3 sm:justify-start flex-column" %}
-                {% blockinclude "form.html#buttons" %}
+            {% fragment "form.html" class="flex justify-center space-y-3 sm:justify-start flex-column" %}
+                {% fragment "form.html#buttons" %}
 
                     <button class="btn btn-primary">
                         {% heroicon_mini "check" class="mr-2" %}
                         Confirm E-Mail
                     </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                {% endfragment %}
+            {% endfragment %}
     {% else %}
         <p>
             This e-mail confirmation link expired or is invalid. Please <a href="{% url 'account_email' %}">issue a new e-mail confirmation request</a>.

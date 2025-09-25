@@ -88,7 +88,7 @@ def cookie_banner(context: RequestContext):
 
 
 @register.simple_block_tag(takes_context=True)
-def blockinclude(
+def fragment(
     context: Context,
     content: str,
     template_name: str,
@@ -100,9 +100,9 @@ def blockinclude(
 
     Example:
 
-    {% blockinclude "header.html" %}
+    {% fragment "header.html" %}
     title goes here
-    {% endblockinclude %}
+    {% endfragment %}
 
     header.html:
     <h1>{{ content }}</h1>

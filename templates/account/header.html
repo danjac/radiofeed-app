@@ -1,16 +1,16 @@
 {% load get_account_settings from users %}
 {% get_account_settings active as settings %}
-{% blockinclude "header.html" %}
-    {% blockinclude "header.html#title" %}
+{% fragment "header.html" %}
+    {% fragment "header.html#title" %}
         Settings for {{ user.username }}
-    {% endblockinclude %}
-    {% blockinclude "header/nav.html" %}
-        {% blockinclude "header/nav.html#item" %}
-            {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
+    {% endfragment %}
+    {% fragment "header/nav.html" %}
+        {% fragment "header/nav.html#item" %}
+            {% fragment "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
                 {% for item in settings.items %}
                     {% include "header/nav/dropdown.html#item" with url=item.url icon=item.icon content=item.label %}
                 {% endfor %}
-            {% endblockinclude %}
-        {% endblockinclude %}
-    {% endblockinclude %}
-{% endblockinclude %}
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
+{% endfragment %}
