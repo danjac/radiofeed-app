@@ -174,68 +174,70 @@
                     </div>
                 </div>
             </div>
-            {% if episode.is_explicit %}
-                <div title="May contain adult themes and language. Listener discretion advised."
-                     class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
-                    {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
-                </div>
-            {% endif %}
-            <div class="flex flex-wrap items-center space-x-3 font-semibold">
-                <div title="Release Date">{{ episode.pub_date|date:"DATE_FORMAT" }}</div>
-                {% if episode.duration_in_seconds %}
-                    <div title="Duration">{{ episode.duration_in_seconds|format_duration }}</div>
+            <div class="space-y-3">
+                {% if episode.is_explicit %}
+                    <div title="May contain adult themes and language. Listener discretion advised."
+                         class="flex items-center space-x-2 font-bold text-red-600 dark:text-red-500">
+                        {% heroicon_outline "exclamation-triangle" size=20 %} <span class="inline-block">Explicit</span>
+                    </div>
                 {% endif %}
-                {% if episode.file_size %}
-                    <div title="File Size">{{ episode.file_size|filesizeformat }}</div>
-                {% endif %}
-            </div>
-            {% partialdef audio_log inline %}
-                <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}
-                     hx-push-url="false"
-                     hx-swap="outerHTML"
-                     hx-target="this"
-                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                >
-                    {% if audio_log and not is_playing %}
-                        <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
-                            <div class="flex flex-wrap items-center space-x-2">
-                                <span>
-                                    Listened
-                                </span>
-                                <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
-                                {% if audio_log.percent_complete %}
-                                    <span>{{ audio_log.percent_complete }}% complete</span>
-                                {% endif %}
-                            </div>
-                            <div class="flex flex-wrap items-center space-x-2">
-                                {% if audio_log.percent_complete %}
-                                    <button
-                                        class="text-sm btn btn-default"
-                                        hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
-                                        hx-disabled-elt="this"
-                                        hx-indicator="this"
-
-                                    >
-                                        {% heroicon_mini "check" size=16 class="mr-2" %}
-                                        Complete
-                                    </button>
-                                {% endif %}
-                                <button
-                                    class="text-sm btn btn-danger"
-                                    title="Remove episode from your History"
-                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
-                                    hx-confirm="Are you sure you want to remove this episode from your History?"
-                                    hx-disabled-elt="this"
-                                    hx-indicator="this"
-                                >
-                                    {% heroicon_mini "trash" size=16 class="mr-2" %}
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
+                <div class="flex flex-wrap items-center space-x-3 font-semibold">
+                    <div title="Release Date">{{ episode.pub_date|date:"DATE_FORMAT" }}</div>
+                    {% if episode.duration_in_seconds %}
+                        <div title="Duration">{{ episode.duration_in_seconds|format_duration }}</div>
+                    {% endif %}
+                    {% if episode.file_size %}
+                        <div title="File Size">{{ episode.file_size|filesizeformat }}</div>
                     {% endif %}
                 </div>
-            {% endpartialdef audio_log %}
+                {% partialdef audio_log inline %}
+                    <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}
+                         hx-push-url="false"
+                         hx-swap="outerHTML"
+                         hx-target="this"
+                         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                    >
+                        {% if audio_log and not is_playing %}
+                            <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
+                                <div class="flex flex-wrap items-center space-x-2">
+                                    <span>
+                                        Listened
+                                    </span>
+                                    <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
+                                    {% if audio_log.percent_complete %}
+                                        <span>{{ audio_log.percent_complete }}% complete</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex flex-wrap items-center space-x-2">
+                                    {% if audio_log.percent_complete %}
+                                        <button
+                                            class="text-sm btn btn-default"
+                                            hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
+                                            hx-disabled-elt="this"
+                                            hx-indicator="this"
+
+                                        >
+                                            {% heroicon_mini "check" size=16 class="mr-2" %}
+                                            Complete
+                                        </button>
+                                    {% endif %}
+                                    <button
+                                        class="text-sm btn btn-danger"
+                                        title="Remove episode from your History"
+                                        hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                                        hx-confirm="Are you sure you want to remove this episode from your History?"
+                                        hx-disabled-elt="this"
+                                        hx-indicator="this"
+                                    >
+                                        {% heroicon_mini "trash" size=16 class="mr-2" %}
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endpartialdef audio_log %}
+            </div>
             {% cache cache_timeout episode-description episode.pk %}
                 {% markdown episode.description %}
             {% endcache %}
