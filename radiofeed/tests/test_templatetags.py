@@ -20,7 +20,7 @@ def auth_req(req, user):
     return req
 
 
-class TestBlockinclude:
+class TestFragment:
     def test_render_no_template_obj(self, mocker):
         context = mocker.Mock()
         context.template = None
