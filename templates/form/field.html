@@ -33,16 +33,20 @@
     {% endif %}
 {% endpartialdef %}
 
+{# FIELD DEFINITIONS #}
+
 {# Default input #}
 {% partialdef input %}
     {% partial label %}
     {% render_field field class="form-input" %}
 {% endpartialdef %}
 
+{# Text input #}
 {% partialdef textinput %}
     {% partial input %}
 {% endpartialdef %}
 
+{# File input #}
 {% partialdef fileinput %}
     {% partial input %}
 {% endpartialdef %}
