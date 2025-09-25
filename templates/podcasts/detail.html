@@ -6,7 +6,7 @@
 
 {% block content %}
     {% include "podcasts/header.html" with active="detail" %}
-    <article class="space-y-6">
+    <article class="space-y-3">
         {% with owner=podcast.cleaned_owner %}
             {% if owner %}
                 <h2 class="text-lg font-semibold">
