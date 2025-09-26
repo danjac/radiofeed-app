@@ -490,6 +490,11 @@ HEALTH_CHECK = {
 
 # Dev tools
 
+# Watchfiles
+# https://github.com/adamchainz/django-watchfiles
+if env.bool("USE_WATCHFILES", default=False):
+    INSTALLED_APPS += ["django_watchfiles"]
+
 # Django browser reload
 # https://github.com/adamchainz/django-browser-reload
 
