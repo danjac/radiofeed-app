@@ -209,10 +209,10 @@
                                 {% if audio_log.percent_complete %}
                                     <button
                                         class="text-sm btn btn-default"
+                                        title="Mark this episode complete"
                                         hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
                                         hx-disabled-elt="this"
                                         hx-indicator="this"
-
                                     >
                                         {% heroicon_mini "check" size=16 class="mr-2" %}
                                         Complete
