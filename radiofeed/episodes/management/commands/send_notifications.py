@@ -130,6 +130,6 @@ class Command(BaseCommand):
             .order_by(
                 "-num_listens",
                 "-is_subscribed",
-                "-pub_date",
+                "pub_date",
             )[:num_episodes]
         )
