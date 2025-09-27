@@ -52,8 +52,7 @@ class Command(BaseCommand):
         num_days: int,
         **options,
     ) -> None:
-        """Handle the command execution"""
-        """
+        """Handle the command execution
         Send list of episodes from past X days:
 
         1) from user's subscriptions
@@ -90,8 +89,6 @@ class Command(BaseCommand):
     def _get_episodes(
         self, user: User, num_episodes: int, since: datetime
     ) -> QuerySet[Episode]:
-        # group by query first
-
         return (
             Episode.objects.alias(
                 is_subscribed=Exists(
@@ -115,6 +112,7 @@ class Command(BaseCommand):
                 is_listened=Exists(
                     user.audio_logs.filter(episode=OuterRef("pk")),
                 ),
+                # group by podcast
                 rn=Window(
                     expression=RowNumber(),
                     partition_by=[F("podcast_id")],
@@ -125,12 +123,11 @@ class Command(BaseCommand):
                 Q(is_subscribed=True) | Q(is_recommended=True),
                 is_listened=False,
                 is_bookmarked=False,
-                pub_date__lt=since,
+                pub_date__gt=since,
                 rn=1,
             )
             .select_related("podcast")
             .order_by(
-                "podcast",
                 "-num_listens",
                 "-is_subscribed",
                 "-pub_date",
