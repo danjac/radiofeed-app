@@ -12,9 +12,10 @@ from django.db.models import (
     OuterRef,
     QuerySet,
     Subquery,
+    Value,
     Window,
 )
-from django.db.models.functions import RowNumber
+from django.db.models.functions import Coalesce, RowNumber
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -115,12 +116,15 @@ class Command(BaseCommand):
                     ),
                 ),
                 # number of times user has listened to podcast
-                num_listens=Subquery(
-                    user.audio_logs.filter(episode__podcast=OuterRef("podcast"))
-                    .values("episode__podcast")  # group by podcast
-                    .annotate(cnt=Count("*"))  # count per podcast
-                    .values("cnt")[:1],  # select just the count
-                    output_field=IntegerField(),
+                num_listens=Coalesce(
+                    Subquery(
+                        user.audio_logs.filter(episode__podcast=OuterRef("podcast"))
+                        .values("episode__podcast")  # group by podcast
+                        .annotate(cnt=Count("*"))  # count per podcast
+                        .values("cnt")[:1],  # select just the count
+                        output_field=IntegerField(),
+                    ),
+                    Value(0),
                 ),
             )
             .filter(
