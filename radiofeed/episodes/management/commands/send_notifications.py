@@ -10,7 +10,6 @@ from django.db.models import (
     F,
     IntegerField,
     OuterRef,
-    Q,
     QuerySet,
     Subquery,
     Window,
@@ -19,7 +18,6 @@ from django.db.models.functions import RowNumber
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts.models import Podcast
 from radiofeed.users.emails import get_recipients, send_notification_email
 from radiofeed.users.models import User
 
@@ -33,23 +31,25 @@ class Command(BaseCommand):
         """Add command line arguments for the command"""
         parser.add_argument(
             "--num-episodes",
+            "-n",
             type=int,
             default=6,
             help="Number of episodes to recommend per user",
         )
 
         parser.add_argument(
-            "--num-days",
+            "--days_since",
+            "-d",
             type=int,
             default=7,
-            help="Number of days since episodes published",
+            help="Period (days) since episodes published",
         )
 
     def handle(
         self,
         *,
         num_episodes: int,
-        num_days: int,
+        days_since: int,
         **options,
     ) -> None:
         """Handle the command execution
@@ -66,10 +66,11 @@ class Command(BaseCommand):
         1) podcast most times listened
         2) is subscribed
         """
-        since = timezone.now() - timedelta(days=num_days)
 
         site = Site.objects.get_current()
         connection = get_connection()
+
+        since = timezone.now() - timedelta(days=days_since)
 
         for recipient in get_recipients():
             if episodes := self._get_episodes(recipient.user, num_episodes, since):
@@ -87,18 +88,33 @@ class Command(BaseCommand):
                 self.stdout.write(f"Notifications sent to {recipient.email}")
 
     def _get_episodes(
-        self, user: User, num_episodes: int, since: datetime
+        self,
+        user: User,
+        num_episodes: int,
+        since: datetime,
     ) -> QuerySet[Episode]:
         return (
-            Episode.objects.alias(
-                is_subscribed=Exists(
-                    user.subscriptions.filter(
-                        podcast=OuterRef("podcast"),
+            Episode.objects.subscribed(user)
+            .alias(
+                # show one episode per podcast
+                # fetch only latest episode for the podcast
+                row_number=Window(
+                    expression=RowNumber(),
+                    partition_by=[F("podcast_id")],
+                    order_by=F("pub_date").desc(),
+                ),
+                # has bookmarked this episode
+                is_bookmarked=Exists(
+                    user.bookmarks.filter(episode=OuterRef("pk")),
+                ),
+                # has listened to any episode in this podcast within time period
+                is_listened=Exists(
+                    user.audio_logs.filter(
+                        episode__podcast=OuterRef("podcast"),
+                        listened__gt=since,
                     ),
                 ),
-                is_recommended=Exists(
-                    Podcast.objects.recommended(user).filter(pk=OuterRef("podcast"))
-                ),
+                # number of times user has listened to podcast
                 num_listens=Subquery(
                     user.audio_logs.filter(episode__podcast=OuterRef("podcast"))
                     .values("episode__podcast")  # group by podcast
@@ -106,30 +122,13 @@ class Command(BaseCommand):
                     .values("cnt")[:1],  # select just the count
                     output_field=IntegerField(),
                 ),
-                is_bookmarked=Exists(
-                    user.bookmarks.filter(episode=OuterRef("pk")),
-                ),
-                is_listened=Exists(
-                    user.audio_logs.filter(episode=OuterRef("pk")),
-                ),
-                # group by podcast
-                rn=Window(
-                    expression=RowNumber(),
-                    partition_by=[F("podcast_id")],
-                    order_by=F("pub_date").desc(),
-                ),
             )
             .filter(
-                Q(is_subscribed=True) | Q(is_recommended=True),
-                is_listened=False,
+                row_number=1,
                 is_bookmarked=False,
+                is_listened=False,
                 pub_date__gt=since,
-                rn=1,
             )
             .select_related("podcast")
-            .order_by(
-                "-num_listens",
-                "-is_subscribed",
-                "pub_date",
-            )[:num_episodes]
+            .order_by("-num_listens")[:num_episodes]
         )
