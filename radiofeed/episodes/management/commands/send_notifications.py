@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
@@ -61,7 +61,7 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
-        since = timezone.now() - timedelta(days=days_since)
+        since = timezone.now() - timezone.timedelta(days=days_since)
 
         for recipient in get_recipients():
             if episodes := self._get_episodes(recipient.user, num_episodes, since):
