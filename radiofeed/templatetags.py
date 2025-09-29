@@ -1,4 +1,3 @@
-import functools
 import json
 from typing import Final
 
@@ -24,9 +23,6 @@ register = template.Library()
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
-_jsonify = functools.partial(json.dumps, cls=DjangoJSONEncoder)
-
-
 @register.simple_tag
 def get_meta_config() -> dict:
     """Returns META config settings."""
@@ -36,7 +32,7 @@ def get_meta_config() -> dict:
 @register.simple_tag
 def get_htmx_config() -> str:
     """Returns HTMX config in meta tag."""
-    return _jsonify(settings.HTMX_CONFIG)
+    return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
 
 
 @register.simple_tag
