@@ -4,17 +4,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db.models import (
-    Count,
-    Exists,
-    F,
-    IntegerField,
-    OuterRef,
-    QuerySet,
-    Subquery,
-    Value,
-    Window,
-)
+from django.db import models
 from django.db.models.functions import Coalesce, RowNumber
 from django.utils import timezone
 
@@ -93,38 +83,40 @@ class Command(BaseCommand):
         user: User,
         num_episodes: int,
         since: datetime,
-    ) -> QuerySet[Episode]:
+    ) -> models.QuerySet[Episode]:
         return (
             Episode.objects.subscribed(user)
             .alias(
                 # show one episode per podcast
                 # fetch only latest episode for the podcast
-                row_number=Window(
+                row_number=models.Window(
                     expression=RowNumber(),
-                    partition_by=[F("podcast_id")],
-                    order_by=F("pub_date").desc(),
+                    partition_by=[models.F("podcast_id")],
+                    order_by=models.F("pub_date").desc(),
                 ),
                 # has bookmarked this episode
-                is_bookmarked=Exists(
-                    user.bookmarks.filter(episode=OuterRef("pk")),
+                is_bookmarked=models.Exists(
+                    user.bookmarks.filter(episode=models.OuterRef("pk")),
                 ),
                 # has listened to any episode in this podcast within time period
-                is_listened=Exists(
+                is_listened=models.Exists(
                     user.audio_logs.filter(
-                        episode__podcast=OuterRef("podcast"),
+                        episode__podcast=models.OuterRef("podcast"),
                         listened__gt=since,
                     ),
                 ),
                 # number of times user has listened to podcast
                 num_listens=Coalesce(
-                    Subquery(
-                        user.audio_logs.filter(episode__podcast=OuterRef("podcast"))
+                    models.Subquery(
+                        user.audio_logs.filter(
+                            episode__podcast=models.OuterRef("podcast")
+                        )
                         .values("episode__podcast")  # group by podcast
-                        .annotate(cnt=Count("*"))  # count per podcast
-                        .values("cnt")[:1],  # select just the count
-                        output_field=IntegerField(),
+                        .annotate(listens=models.Count("*"))  # count per podcast
+                        .values("listens")[:1],  # select just the count
+                        output_field=models.IntegerField(),
                     ),
-                    Value(0),
+                    models.Value(0),
                 ),
             )
             .filter(
