@@ -5,7 +5,6 @@ from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
 from django.db import models
-from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -83,49 +82,40 @@ class Command(BaseCommand):
         user: User,
         num_episodes: int,
         since: datetime,
-    ) -> models.QuerySet[Episode]:
-        latest_ids = (
-            Episode.objects.subscribed(user)
-            .alias(
-                # has bookmarked this episode
-                is_bookmarked=models.Exists(
-                    user.bookmarks.filter(episode=models.OuterRef("pk")),
-                ),
-                # has listened to any episode in this podcast within time period
-                is_listened=models.Exists(
-                    user.audio_logs.filter(
-                        episode__podcast=models.OuterRef("podcast"),
-                        listened__gt=since,
-                    ),
-                ),
+    ) -> list[Episode]:
+        is_listened = set(
+            user.audio_logs.filter(listened__gt=since).values_list(
+                "episode__podcast",
+                flat=True,
             )
-            .filter(
-                is_bookmarked=False,
-                is_listened=False,
-                pub_date__gte=since,
-            )
-            .order_by("podcast", "-pub_date", "-id")
-            .distinct("podcast")
-            .values_list("pk", flat=True)
         )
 
-        return (
-            Episode.objects.filter(pk__in=latest_ids)
-            .alias(
-                # number of times user has listened to podcast
-                num_listens=Coalesce(
-                    models.Subquery(
-                        user.audio_logs.filter(
-                            episode__podcast=models.OuterRef("podcast")
-                        )
-                        .values("episode__podcast")  # group by podcast
-                        .annotate(listens=models.Count("*"))  # count per podcast
-                        .values("listens")[:1],  # select just the count
-                        output_field=models.IntegerField(),
-                    ),
-                    models.Value(0),
-                ),
-            )
-            .select_related("podcast")
-            .order_by("-num_listens")[:num_episodes]
+        # get the latest episode from each podcast
+
+        latest_episodes = dict(
+            Episode.objects.subscribed(user)
+            .filter(pub_date__gte=since)
+            .exclude(podcast__in=is_listened)
+            .order_by("podcast", "-pub_date", "-pk")
+            .values_list("podcast", "pk")
+        ).values()
+
+        if not latest_episodes:
+            return []
+
+        # order by most listened podcasts first
+
+        audio_counts = dict(
+            user.audio_logs.values("episode__podcast")
+            .annotate(listens=models.Count("*"))
+            .values_list("episode__podcast", "listens")
         )
+
+        episodes = Episode.objects.filter(pk__in=latest_episodes).select_related(
+            "podcast"
+        )
+
+        return sorted(
+            episodes,
+            key=lambda e: (audio_counts.get(e.podcast_id, 0)),
+        )[:num_episodes]

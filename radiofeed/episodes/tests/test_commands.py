@@ -4,7 +4,6 @@ from django.utils import timezone
 
 from radiofeed.episodes.tests.factories import (
     AudioLogFactory,
-    BookmarkFactory,
     EpisodeFactory,
 )
 from radiofeed.podcasts.tests.factories import (
@@ -35,16 +34,6 @@ class TestSendRecommendationsEmails:
         AudioLogFactory(
             episode__podcast=subscription.podcast,
             listened=timezone.now() - timezone.timedelta(days=1),
-            user=recipient.user,
-        )
-        call_command("send_notifications")
-        assert len(mailoutbox) == 0
-
-    @pytest.mark.django_db(transaction=True)
-    def test_bookmarked(self, mailoutbox, recipient):
-        subscription = SubscriptionFactory(subscriber=recipient.user)
-        BookmarkFactory(
-            episode__podcast=subscription.podcast,
             user=recipient.user,
         )
         call_command("send_notifications")
