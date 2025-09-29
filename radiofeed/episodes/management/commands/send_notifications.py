@@ -118,4 +118,5 @@ class Command(BaseCommand):
         return sorted(
             episodes,
             key=lambda e: (audio_counts.get(e.podcast_id, 0)),
+            reverse=True,
         )[:num_episodes]
