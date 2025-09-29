@@ -50,15 +50,15 @@ wheels = [
 
 [[package]]
 name = "beautifulsoup4"
-version = "4.13.5"
+version = "4.14.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "soupsieve" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/85/2e/3e5079847e653b1f6dc647aa24549d68c6addb4c595cc0d902d1b19308ad/beautifulsoup4-4.13.5.tar.gz", hash = "sha256:5e70131382930e7c3de33450a2f54a63d5e4b19386eab43a5b34d594268f3695", size = 622954 }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/26/87ed168040d2c9fdf2fda7a137542f2b08bbab00f81983cc5427981315c6/beautifulsoup4-4.14.1.tar.gz", hash = "sha256:0c19f5b801d51cb13bd4c16ec697fa013209a3a88043c8ac3453144faf90b9b4", size = 625818 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/eb/f4151e0c7377a6e08a38108609ba5cede57986802757848688aeedd1b9e8/beautifulsoup4-4.13.5-py3-none-any.whl", hash = "sha256:642085eaa22233aceadff9c69651bc51e8bf3f874fb6d7104ece2beb24b47c4a", size = 105113 },
+    { url = "https://files.pythonhosted.org/packages/4c/f3/06c9eb3c7231caef6ed24a5d11d6d9976557d0db2b575916bdd183fc051e/beautifulsoup4-4.14.1-py3-none-any.whl", hash = "sha256:76684bc3423d8787a09b46ca84a899f00e7aa9ef1c75913c65e4d28392c20907", size = 106525 },
 ]
 
 [[package]]
@@ -475,7 +475,7 @@ wheels = [
 
 [[package]]
 name = "django-typer"
-version = "3.3.1"
+version = "3.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -483,9 +483,9 @@ dependencies = [
     { name = "shellingham" },
     { name = "typer-slim" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/15/1c/a11057ebe19fb475edfd724e5ca5a6ede0e67bd0346c5e29817bf4615fae/django_typer-3.3.1.tar.gz", hash = "sha256:c999cd5976921cb4dff52e184eb43aa6beda82bc4c28698280ad23de35bcdf6c", size = 3078502 }
+sdist = { url = "https://files.pythonhosted.org/packages/09/0e/91d8511ead5a1e848c7b7987a660df6063f23971b55372823732c8615b5e/django_typer-3.3.2.tar.gz", hash = "sha256:11ebfb21060414696df23ba556f9646d2fd5b59efbd99df14a1089c5fcdd1f3c", size = 3078697 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/4c/b75f24e4f41489fc95a0a354dd95aaa0b98f60e4e6e857af54adddba75df/django_typer-3.3.1-py3-none-any.whl", hash = "sha256:86ad7d1048726b628bdd1f46d9706cd3bc9c259cb913b3c4a4e1d2040f5c728d", size = 295786 },
+    { url = "https://files.pythonhosted.org/packages/ee/a2/6b65d5efdd1c41f9eef8efb807c92c9170c34d239eaf668cccad9cdf0e9b/django_typer-3.3.2-py3-none-any.whl", hash = "sha256:a3e225bc8fc65f9b1835473b0d8fca98c4adb1b5f12825ac70ba28e2e9f1dd74", size = 295789 },
 ]
 
 [[package]]
