@@ -1,6 +1,5 @@
-import datetime
-
 import pytest
+from django.utils import timezone
 
 from radiofeed.episodes.models import AudioLog, Bookmark, Episode
 from radiofeed.episodes.tests.factories import (
@@ -47,7 +46,7 @@ class TestEpisodeModel:
     @pytest.mark.django_db
     def test_next_episode_not_same_podcast(self, episode):
         EpisodeFactory(
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
+            pub_date=episode.pub_date + timezone.timedelta(days=2),
         )
 
         assert episode.next_episode is None
@@ -55,7 +54,7 @@ class TestEpisodeModel:
     @pytest.mark.django_db
     def test_previous_episode_not_same_podcast(self, episode):
         EpisodeFactory(
-            pub_date=episode.pub_date - datetime.timedelta(days=2),
+            pub_date=episode.pub_date - timezone.timedelta(days=2),
         )
 
         assert episode.previous_episode is None
@@ -64,7 +63,7 @@ class TestEpisodeModel:
     def test_next_episode(self, episode):
         next_episode = EpisodeFactory(
             podcast=episode.podcast,
-            pub_date=episode.pub_date + datetime.timedelta(days=2),
+            pub_date=episode.pub_date + timezone.timedelta(days=2),
         )
 
         assert episode.next_episode == next_episode
@@ -73,7 +72,7 @@ class TestEpisodeModel:
     def test_previous_episode(self, episode):
         previous_episode = EpisodeFactory(
             podcast=episode.podcast,
-            pub_date=episode.pub_date - datetime.timedelta(days=2),
+            pub_date=episode.pub_date - timezone.timedelta(days=2),
         )
 
         assert episode.previous_episode == previous_episode

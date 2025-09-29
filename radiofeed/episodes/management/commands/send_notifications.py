@@ -5,7 +5,7 @@ from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
 from django.db import models
-from django.db.models.functions import Coalesce, RowNumber
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -84,16 +84,9 @@ class Command(BaseCommand):
         num_episodes: int,
         since: datetime,
     ) -> models.QuerySet[Episode]:
-        return (
+        latest_ids = (
             Episode.objects.subscribed(user)
             .alias(
-                # show one episode per podcast
-                # fetch only latest episode for the podcast
-                row_number=models.Window(
-                    expression=RowNumber(),
-                    partition_by=[models.F("podcast_id")],
-                    order_by=models.F("pub_date").desc(),
-                ),
                 # has bookmarked this episode
                 is_bookmarked=models.Exists(
                     user.bookmarks.filter(episode=models.OuterRef("pk")),
@@ -105,6 +98,20 @@ class Command(BaseCommand):
                         listened__gt=since,
                     ),
                 ),
+            )
+            .filter(
+                is_bookmarked=False,
+                is_listened=False,
+                pub_date__gte=since,
+            )
+            .order_by("podcast", "-pub_date", "-id")
+            .distinct("podcast")
+            .values_list("pk", flat=True)
+        )
+
+        return (
+            Episode.objects.filter(pk__in=latest_ids)
+            .alias(
                 # number of times user has listened to podcast
                 num_listens=Coalesce(
                     models.Subquery(
@@ -118,12 +125,6 @@ class Command(BaseCommand):
                     ),
                     models.Value(0),
                 ),
-            )
-            .filter(
-                row_number=1,
-                is_bookmarked=False,
-                is_listened=False,
-                pub_date__gt=since,
             )
             .select_related("podcast")
             .order_by("-num_listens")[:num_episodes]

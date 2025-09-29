@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -28,14 +30,23 @@ from radiofeed.throttle import throttle
 
 @require_safe
 @login_required
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest, days_since: int = 14) -> HttpResponse:
     """List latest episodes from subscriptions."""
 
-    episodes = (
+    since = datetime.now() - timezone.timedelta(days=days_since)
+
+    latest_ids = (
         Episode.objects.subscribed(request.user)
         .filter(
-            pub_date__gt=timezone.now() - timezone.timedelta(days=14),
+            pub_date__gte=since,
         )
+        .order_by("podcast", "-pub_date", "-id")
+        .distinct("podcast")
+        .values_list("pk", flat=True)
+    )
+
+    episodes = (
+        Episode.objects.filter(pk__in=latest_ids)
         .select_related("podcast")
         .order_by("-pub_date", "-id")
     )
