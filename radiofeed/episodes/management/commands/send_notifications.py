@@ -1,10 +1,10 @@
+import collections
 from datetime import datetime
 
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db import models
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -43,18 +43,14 @@ class Command(BaseCommand):
         **options,
     ) -> None:
         """Handle the command execution
-        Send list of episodes from past X days:
+        Send list of [num_episodes] episodes from past [days_since]:
 
         1) from user's subscriptions
         2) do not include podcasts user has listened to in last X days
-        3) if no episodes, pull from recommendations
-        4) max num_episodes
-        5) must be from different podcasts
-        6) exclude listened or bookmarked episodes
+        3) must be from different podcasts
+        4) exclude bookmarked episodes
 
-        order by:
-        1) podcast most times listened
-        2) is subscribed
+        Order by frequency of user's listens to podcasts
         """
 
         site = Site.objects.get_current()
@@ -83,9 +79,18 @@ class Command(BaseCommand):
         num_episodes: int,
         since: datetime,
     ) -> list[Episode]:
-        is_listened = set(
-            user.audio_logs.filter(listened__gt=since).values_list(
-                "episode__podcast",
+        listened_podcasts = user.audio_logs.values(
+            "episode__podcast",
+            "listened",
+        )
+
+        is_listened = {
+            p["episode__podcast"] for p in listened_podcasts if p["listened"] > since
+        }
+
+        is_bookmarked = set(
+            user.bookmarks.values_list(
+                "episode",
                 flat=True,
             )
         )
@@ -96,27 +101,26 @@ class Command(BaseCommand):
             Episode.objects.subscribed(user)
             .filter(pub_date__gte=since)
             .exclude(podcast__in=is_listened)
-            .order_by("podcast", "-pub_date", "-pk")
+            .exclude(pk__in=is_bookmarked)
+            .order_by("podcast", "pub_date", "pk")
             .values_list("podcast", "pk")
-        ).values()
+        )
 
         if not latest_episodes:
             return []
 
         # order by most listened podcasts first
 
-        audio_counts = dict(
-            user.audio_logs.values("episode__podcast")
-            .annotate(listens=models.Count("*"))
-            .values_list("episode__podcast", "listens")
+        audio_counts = collections.Counter(
+            p["episode__podcast"] for p in listened_podcasts
         )
 
-        episodes = Episode.objects.filter(pk__in=latest_episodes).select_related(
-            "podcast"
-        )
+        episodes = Episode.objects.filter(
+            pk__in=latest_episodes.values()
+        ).select_related("podcast")
 
         return sorted(
             episodes,
-            key=lambda e: (audio_counts.get(e.podcast_id, 0)),
+            key=lambda e: audio_counts[e.podcast_id],
             reverse=True,
         )[:num_episodes]
