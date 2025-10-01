@@ -203,6 +203,8 @@
                                 <span>{{ audio_log.listened|date:"DATE_FORMAT" }}</span>
                                 {% if audio_log.percent_complete %}
                                     <span>{{ audio_log.percent_complete }}% complete</span>
+                                {% elif audio_log.current_time %}
+                                    <span>{{ audio_log.current_time|format_duration }}</span>
                                 {% endif %}
                             </div>
                             <div class="flex flex-wrap items-center space-x-2">
