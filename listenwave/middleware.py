@@ -9,6 +9,7 @@ from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
+
 from listenwave.request import Request
 
 

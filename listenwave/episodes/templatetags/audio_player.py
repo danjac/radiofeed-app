@@ -5,11 +5,7 @@ from django import template
 from listenwave import cover_image
 from listenwave.context import RequestContext
 from listenwave.episodes.models import AudioLog, Episode
-<<<<<<< HEAD
 from listenwave.request import Request, is_authenticated_request
-=======
-from listenwave.request import HttpRequest, is_authenticated_request
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
 
 register = template.Library()
 
@@ -63,11 +59,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
     }
 
 
-<<<<<<< HEAD
 def _get_audio_log(request: Request) -> AudioLog | None:
-=======
-def _get_audio_log(request: HttpRequest) -> AudioLog | None:
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     if is_authenticated_request(request) and (episode_id := request.player.get()):
         return (
             request.user.audio_logs.select_related(
