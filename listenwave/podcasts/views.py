@@ -52,13 +52,7 @@ def discover(request: AuthenticatedRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def search_podcasts(
-<<<<<<< HEAD
-    request: Request,
-=======
-    request: HttpRequest,
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
-) -> TemplateResponse | HttpResponseRedirect:
+def search_podcasts(request: Request) -> TemplateResponse | HttpResponseRedirect:
     """Search all public podcasts in database."""
 
     if request.search:
@@ -78,11 +72,7 @@ def search_podcasts(
 
 @require_safe
 @login_required
-<<<<<<< HEAD
 def search_itunes(request: Request) -> TemplateResponse | HttpResponseRedirect:
-=======
-def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
@@ -138,11 +128,7 @@ def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
 @require_safe
 @login_required
 def episodes(
-<<<<<<< HEAD
     request: Request,
-=======
-    request: HttpRequest,
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     podcast_id: int,
     slug: str | None = None,
 ) -> TemplateResponse:
@@ -173,11 +159,7 @@ def episodes(
 @require_safe
 @login_required
 def season(
-<<<<<<< HEAD
     request: Request,
-=======
-    request: HttpRequest,
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     podcast_id: int,
     season: int,
     slug: str | None = None,
@@ -206,11 +188,7 @@ def season(
 @require_safe
 @login_required
 def similar(
-<<<<<<< HEAD
     request: Request,
-=======
-    request: HttpRequest,
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     podcast_id: int,
     slug: str | None = None,
 ) -> TemplateResponse:
@@ -234,11 +212,7 @@ def similar(
 
 @require_safe
 @login_required
-<<<<<<< HEAD
 def category_list(request: Request) -> TemplateResponse:
-=======
-def category_list(request: HttpRequest) -> TemplateResponse:
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     """List all categories containing podcasts."""
     categories = (
         Category.objects.alias(
@@ -267,11 +241,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-<<<<<<< HEAD
 def category_detail(request: Request, slug: str) -> TemplateResponse:
-=======
-def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -396,11 +366,7 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 
 
 def _render_subscribe_action(
-<<<<<<< HEAD
     request: Request,
-=======
-    request: HttpRequest,
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
     podcast: Podcast,
     *,
     is_subscribed: bool,

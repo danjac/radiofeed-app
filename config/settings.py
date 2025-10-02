@@ -2,7 +2,6 @@ import pathlib
 from email.utils import getaddresses
 
 import sentry_sdk
-from django.csp.utils import CSP
 from django.urls import reverse_lazy
 from django.utils.csp import CSP  # type: ignore[reportMissingTypeStubs]
 from environs import Env
@@ -40,7 +39,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.google",
-    "csp",
     "django_htmx",
     "django_http_compression",
     "django_linear_migrations",
@@ -54,7 +52,6 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "template_partials",
     "listenwave.episodes",
     "listenwave.feedparser",
     "listenwave.podcasts",
@@ -75,9 +72,9 @@ MIDDLEWARE: list[str] = [
     "django.middleware.common.CommonMiddleware",
     "django_http_compression.middleware.HttpCompressionMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "csp.middleware.CSPMiddleware",
     "listenwave.middleware.HtmxCacheMiddleware",
     "listenwave.middleware.HtmxMessagesMiddleware",
     "listenwave.middleware.HtmxRedirectMiddleware",
@@ -136,7 +133,6 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "template_partials.templatetags.partials",
                 "listenwave.templatetags",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
