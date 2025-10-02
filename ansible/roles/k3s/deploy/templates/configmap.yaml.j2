@@ -3,15 +3,6 @@ kind: ConfigMap
 metadata:
   name: configmap
 data:
-   ADMINS: "{{ admins }}"
-   ADMIN_SITE_HEADER: "{{ admin_site_header }}"
-   ADMIN_URL: "{{ admin_url }}"
-   ALLOWED_HOSTS: "{{ allowed_hosts }}"
-   CONTACT_EMAIL: "{{ contact_email }}"
-   CSP_SCRIPT_WHITELIST: "{{ csp_script_whitelist }}"
-   MAILGUN_API_URL: "{{ mailgun_api_url }}"
-   MAILGUN_SENDER_DOMAIN: "{{ mailgun_sender_domain }}"
-   META_COPYRIGHT: "{{ meta_copyright }}"
-   META_DESCRIPTION: "{{ meta_description }}"
-   META_KEYWORDS: "{{ meta_keywords }}"
-   SECURE_SSL_REDIRECT: "false"
+{% for item in configmap %}
+   {{ item.name|upper }}: "{{ item.value }}"
+{% endfor %}

@@ -22,3 +22,65 @@ cronjobs:
     - name: "fetch-top-itunes"
       schedule: "15 3 * * *" # 3:15 AM every day
       command: "{{ manage_cmd }} fetch_top_itunes -p {{ itunes_chart_country }}"
+
+configmap:
+   - name: "admins"
+     value: "{{ admins }}"
+
+   - name: "admin_site_header"
+     value: "{{ admin_site_header }}"
+
+   - name: "admin_url"
+     value: "{{ admin_url }}"
+
+   - name: "allowed_hosts"
+     value: "{{ allowed_hosts }}"
+
+   - name: "contact_email"
+     value: "{{ contact_email }}"
+
+   - name: "csp_script_whitelist"
+     value: "{{ csp_script_whitelist }}"
+
+   - name: "mailgun_api_url"
+     value: "{{ mailgun_api_url }}"
+
+   - name: "mailgun_sender_domain"
+     value: "{{ mailgun_sender_domain }}"
+
+   - name: "meta_copyright"
+     value: "{{ meta_copyright }}"
+
+   - name: "meta_description"
+     value: "{{ meta_description }}"
+
+   - name: "meta_keywords"
+     value: "{{ meta_keywords }}"
+
+   - name: "secure_ssl_redirect"
+     value: "false"
+
+secrets:
+  - name: "database_url"
+    value: "{{ database_url }}"
+
+  - name: "mailgun_api_key"
+    value: "{{ mailgun_api_key }}"
+
+  - name: "postgres_password"
+    value: "{{ postgres_password }}"
+
+  - name: "pwa_sha256_fingerprints"
+    value: "{{ pwa_sha256_fingerprints }}"
+
+  - name: "redis_url"
+    value: "{{ redis_url }}"
+
+  - name: "secret_key"
+    value: "{{ secret_key }}"
+
+  - name: "secret_key_fallbacks"
+    value: "{{ secret_key_fallbacks }}"
+
+  - name: "sentry_url"
+    value: "{{ sentry_url }}"
