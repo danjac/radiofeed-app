@@ -128,6 +128,7 @@ REDIS_URL = CACHES["default"]["LOCATION"]
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
