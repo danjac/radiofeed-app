@@ -231,7 +231,7 @@ document.addEventListener("alpine:init", () => {
                         await fetch(this.timeUpdateUrl, {
                             method: "POST",
                             headers: {
-                                "X-CSRFToken": this.csrfToken,
+                                "{{ csrf_header }}": this.csrfToken,
                             },
                             body: new URLSearchParams({
                                 current_time: this.runtime,

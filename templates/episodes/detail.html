@@ -72,7 +72,7 @@
                                  hx-target="this"
                                  hx-indicator="this"
                                  hx-swap="outerHTML"
-                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                                 hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
                                     <button
                                         class="text-lg btn btn-primary btn-outline"
@@ -113,7 +113,7 @@
                              hx-target="this"
                              hx-swap="outerHTML"
                              hx-indicator="this"
-                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                             hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
                                 <button
                                     class="btn btn-default btn-outline"
@@ -192,7 +192,7 @@
                      hx-push-url="false"
                      hx-swap="outerHTML"
                      hx-target="this"
-                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                     hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'
                      {% if hx_oob %} hx-swap-oob="true"{% endif %}
                 >
                     {% if audio_log and not is_playing %}
