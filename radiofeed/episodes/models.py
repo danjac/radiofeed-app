@@ -11,6 +11,7 @@ from fast_update.query import FastUpdateQuerySet
 
 from radiofeed.fields import URLField
 from radiofeed.html import strip_html
+from radiofeed.podcasts.models import Season
 from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
@@ -117,6 +118,10 @@ class Episode(models.Model):
     def is_explicit(self) -> bool:
         """Check if either this specific episode or the podcast is explicit."""
         return self.explicit or self.podcast.explicit
+
+    def get_season(self) -> Season | None:
+        """Returns season object if episode has a season."""
+        return self.podcast.get_season(season=self.season) if self.season else None
 
     @cached_property
     def next_episode(self) -> Optional["Episode"]:

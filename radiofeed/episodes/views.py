@@ -74,23 +74,20 @@ def episode_detail(
         pk=episode_id,
     )
 
-    season = (
-        episode.podcast.get_season(
-            season=episode.season,
-        )
-        if episode.season
-        else None
-    )
+    audio_log = request.user.audio_logs.filter(episode=episode).first()
+    is_bookmarked = request.user.bookmarks.filter(episode=episode).exists()
+    is_playing = request.player.has(episode.pk)
+    season = episode.get_season()
 
     return TemplateResponse(
         request,
         "episodes/detail.html",
         {
             "episode": episode,
+            "audio_log": audio_log,
+            "is_bookmarked": is_bookmarked,
+            "is_playing": is_playing,
             "season": season,
-            "audio_log": request.user.audio_logs.filter(episode=episode).first(),
-            "is_bookmarked": request.user.bookmarks.filter(episode=episode).exists(),
-            "is_playing": request.player.has(episode.pk),
         },
     )
 
