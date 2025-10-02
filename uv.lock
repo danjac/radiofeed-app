@@ -281,16 +281,16 @@ wheels = [
 
 [[package]]
 name = "django"
-version = "5.2.8"
+version = "6.0b1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "sqlparse" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/05/a2/933dbbb3dd9990494960f6e64aca2af4c0745b63b7113f59a822df92329e/django-5.2.8.tar.gz", hash = "sha256:23254866a5bb9a2cfa6004e8b809ec6246eba4b58a7589bc2772f1bcc8456c7f", size = 10849032, upload-time = "2025-11-05T14:07:32.778Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b4/33/7f7f188e31b3283f95112d0fa45bb2bdefb4d4aae203d8df816763f44677/django-6.0b1.tar.gz", hash = "sha256:1a5435aba85a72fd471ad82b7f516fa607b8c59671c9c26e76753c5d275a6877", size = 11172994, upload-time = "2025-10-22T18:50:52.505Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5e/3d/a035a4ee9b1d4d4beee2ae6e8e12fe6dee5514b21f62504e22efcbd9fb46/django-5.2.8-py3-none-any.whl", hash = "sha256:37e687f7bd73ddf043e2b6b97cfe02fcbb11f2dbb3adccc6a2b18c6daa054d7f", size = 8289692, upload-time = "2025-11-05T14:07:28.761Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/1a/306fda7e62e27ccbcb92d97f67f1094352a9f22c62f3c2b238fa50eb82d7/django-6.0b1-py3-none-any.whl", hash = "sha256:9787a6afc0b003048159758f00c1b3e4b858b089d262680b6e30ea75ecac78e5", size = 8320481, upload-time = "2025-10-22T18:50:49.035Z" },
 ]
 
 [[package]]
@@ -1380,7 +1380,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.12.3" },
-    { name = "django", specifier = ">=5.1" },
+    { name = "django", specifier = ">=6.0a1,<6.1" },
     { name = "django-allauth", extras = ["socialaccount"], specifier = ">=64.2.0" },
     { name = "django-anymail", specifier = ">=11.1" },
     { name = "django-csp", specifier = ">=3.8" },
