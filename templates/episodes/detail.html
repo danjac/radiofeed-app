@@ -188,11 +188,12 @@
                 {% endif %}
             </div>
             {% partialdef audio_log inline %}
-                <div id="audio-log"{% if hx_oob %} hx-swap-oob="true"{% endif %}
+                <div id="audio-log"
                      hx-push-url="false"
                      hx-swap="outerHTML"
                      hx-target="this"
                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                     {% if hx_oob %} hx-swap-oob="true"{% endif %}
                 >
                     {% if audio_log and not is_playing %}
                         <div class="flex-wrap items-center space-y-3 font-semibold sm:flex sm:space-y-0 sm:space-x-3">
