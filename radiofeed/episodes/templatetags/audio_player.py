@@ -22,8 +22,7 @@ def audio_player(
 ) -> dict:
     """Returns audio player."""
 
-    dct = {
-        "request": context.request,
+    dct = context.flatten() | {
         "action": action,
         "hx_oob": hx_oob,
     }

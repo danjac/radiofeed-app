@@ -9,6 +9,7 @@
                     {# fmt:off #}
                     x-data="
                     audioPlayer(
+                        csrfHeader='{{ csrf_header }}',
                         csrfToken='{{ csrf_token }}',
                         metadataTag='{{ metadata_tag }}',
                         currentTime={{ audio_log.current_time|default:0 }},
