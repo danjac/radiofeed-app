@@ -55,9 +55,11 @@
                 {% if episode.episode %}
                     <span>Episode {{ episode.episode }}</span>
                 {% endif %}
-                {% if season %}
-                    <a class="link" href="{{ season.url }}">{{ season }}</a>
-                {% endif %}
+                {% with season=episode.get_season %}
+                    {% if season %}
+                        <a class="link" href="{{ season.url }}">{{ season }}</a>
+                    {% endif %}
+                {% endwith %}
                 <a href="{{ podcast.get_episodes_url }}"
                    title="See all episodes for {{ podcast.cleaned_title }}"
                    class="inline-block link">See all episodes</a>

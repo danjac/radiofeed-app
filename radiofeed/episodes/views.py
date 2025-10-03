@@ -75,9 +75,9 @@ def episode_detail(
     )
 
     audio_log = request.user.audio_logs.filter(episode=episode).first()
+
     is_bookmarked = request.user.bookmarks.filter(episode=episode).exists()
     is_playing = request.player.has(episode.pk)
-    season = episode.get_season()
 
     return TemplateResponse(
         request,
@@ -87,7 +87,6 @@ def episode_detail(
             "audio_log": audio_log,
             "is_bookmarked": is_bookmarked,
             "is_playing": is_playing,
-            "season": season,
         },
     )
 
