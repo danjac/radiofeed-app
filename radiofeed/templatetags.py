@@ -80,7 +80,7 @@ def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> dict:
 def cookie_banner(context: RequestContext):
     """Renders GDPR cookie banner"""
     cookies_accepted = settings.GDPR_COOKIE_NAME in context.request.COOKIES
-    return {"cookies_accepted": cookies_accepted}
+    return context.flatten() | {"cookies_accepted": cookies_accepted}
 
 
 @register.simple_block_tag(takes_context=True)

@@ -33,13 +33,13 @@ class TestCookieBanner:
         req = rf.get("/")
         req.COOKIES = {}
         context = RequestContext(request=req)
-        assert cookie_banner(context) == {"cookies_accepted": False}
+        assert cookie_banner(context)["cookies_accepted"] is False
 
     def test_accepted(self, rf):
         req = rf.get("/")
         req.COOKIES = {"accept-cookies": True}
         context = RequestContext(request=req)
-        assert cookie_banner(context) == {"cookies_accepted": True}
+        assert cookie_banner(context)["cookies_accepted"] is True
 
 
 class TestFormatDuration:
