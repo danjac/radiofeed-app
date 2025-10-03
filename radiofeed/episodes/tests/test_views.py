@@ -40,7 +40,7 @@ class TestIndex:
         response = client.get(_index_url)
         assert200(response)
         assertTemplateUsed(response, "episodes/index.html")
-        assert len(response.context["page"].object_list) == 0
+        assert len(response.context["episodes"]) == 0
 
     @pytest.mark.django_db
     def test_has_no_subscriptions(self, client, auth_user):
@@ -49,7 +49,7 @@ class TestIndex:
 
         assert200(response)
         assertTemplateUsed(response, "episodes/index.html")
-        assert len(response.context["page"].object_list) == 0
+        assert len(response.context["episodes"]) == 0
 
     @pytest.mark.django_db
     def test_has_subscriptions(self, client, auth_user):
@@ -60,7 +60,7 @@ class TestIndex:
 
         assert200(response)
         assertTemplateUsed(response, "episodes/index.html")
-        assert len(response.context["page"].object_list) == 1
+        assert len(response.context["episodes"]) == 1
 
 
 class TestSearchEpisodes:

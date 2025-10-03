@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -37,9 +38,15 @@ def index(request: HttpRequest, days_since: int = 14) -> HttpResponse:
         .filter(pub_date__gte=since)
         .order_by("-pub_date", "-id")
         .select_related("podcast")
-    )
+    )[: settings.DEFAULT_PAGE_SIZE]
 
-    return render_paginated_response(request, "episodes/index.html", episodes)
+    return TemplateResponse(
+        request,
+        "episodes/index.html",
+        {
+            "episodes": episodes,
+        },
+    )
 
 
 @require_safe
