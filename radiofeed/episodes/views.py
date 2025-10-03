@@ -23,7 +23,6 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
-from radiofeed.throttle import throttle
 
 
 @require_safe
@@ -126,7 +125,6 @@ def close_player(request: HttpRequest) -> TemplateResponse | HttpResponseNoConte
 
 
 @require_POST
-@throttle(limit=1, duration=5)
 def player_time_update(
     request: HttpRequest,
 ) -> HttpResponseNoContent | HttpResponseBadRequest | HttpResponseUnauthorized:
