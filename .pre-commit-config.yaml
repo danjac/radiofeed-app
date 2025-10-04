@@ -24,6 +24,10 @@ repos:
             args: [--write]
             files: ^templates
             types_or: [html]
+    - repo: https://github.com/opensource-nepal/commitlint
+      rev: v1.3.1
+      hooks:
+          - id: commitlint
     - repo: https://github.com/koalaman/shellcheck-precommit
       rev: v0.11.0
       hooks:
@@ -78,7 +82,3 @@ repos:
       rev: 0.14.1
       hooks:
           - id: uv-secure
-    - repo: https://github.com/opensource-nepal/commitlint
-      rev: v1.3.1
-      hooks:
-          - id: commitlint
