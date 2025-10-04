@@ -33,6 +33,7 @@ def index(request: HttpRequest, days_since: int = 14) -> HttpResponse:
 
     since = timezone.now() - timezone.timedelta(days=days_since)
 
+    # Get unique latest episode IDs from each subscribed podcast
     episode_ids = (
         Episode.objects.subscribed(request.user)
         .filter(pub_date__gte=since)
