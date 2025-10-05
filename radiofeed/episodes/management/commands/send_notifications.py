@@ -96,28 +96,21 @@ class Command(BaseCommand):
         )
 
         # get the latest episode from each podcast
-
-        latest_episodes = dict(
+        episode_ids = (
             Episode.objects.subscribed(user)
             .filter(pub_date__gte=since)
             .exclude(podcast__in=is_listened)
             .exclude(pk__in=is_bookmarked)
-            .order_by("podcast", "pub_date", "pk")
-            .values_list("podcast", "pk")
-        )
-
-        if not latest_episodes:
-            return []
+            .order_by("podcast", "-pub_date", "-id")
+            .distinct("podcast")
+        ).values("pk")
 
         # order by most listened podcasts first
-
         audio_counts = collections.Counter(
             p["episode__podcast"] for p in listened_podcasts
         )
 
-        episodes = Episode.objects.filter(
-            pk__in=latest_episodes.values()
-        ).select_related("podcast")
+        episodes = Episode.objects.filter(pk__in=episode_ids).select_related("podcast")
 
         return sorted(
             episodes,
