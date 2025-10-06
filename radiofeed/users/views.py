@@ -185,7 +185,13 @@ def unsubscribe(request: HttpRequest) -> HttpResponseRedirect:
 
         messages.success(request, "You have been unsubscribed from email notifications")
 
-    return HttpResponseRedirect(reverse("index"))
+    redirect_url = (
+        reverse("users:preferences")
+        if request.user.is_authenticated
+        else reverse("index")
+    )
+
+    return HttpResponseRedirect(redirect_url)
 
 
 @require_form_methods

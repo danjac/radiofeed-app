@@ -315,6 +315,6 @@ class TestUnsubscribe:
                 "email": get_unsubscribe_signer().sign(email_address.email),
             },
         )
-        assert response.url == reverse("index")
+        assert response.url == reverse("users:preferences")
         email_address.refresh_from_db()
         assert email_address.user.send_email_notifications is False
