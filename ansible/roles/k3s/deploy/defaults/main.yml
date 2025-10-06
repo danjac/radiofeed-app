@@ -2,7 +2,12 @@ admin_site_header: "Radiofeed Admin [Production]"
 admin_url: "admin/"
 admins: "admin@{{ domain }}"
 allowed_hosts: "*"
-conn_max_age: 60
+conn_pool_max_idle: 120
+conn_pool_max_lifetime: 1800
+conn_pool_max_size: 100
+conn_pool_max_waiting: 25
+conn_pool_min_size: 2
+conn_pool_timeout: 20
 contact_email: "contact@{{ domain }}"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
 docker_image: "ghcr.io/danjac/radiofeed-app:main"

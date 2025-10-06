@@ -36,6 +36,21 @@ configmap:
    - name: "allowed_hosts"
      value: "{{ allowed_hosts }}"
 
+   - name: "conn_pool_max_idle"
+     value: "{{ conn_pool_max_idle }}"
+
+   - name: "conn_pool_max_lifetime"
+     value: "{{ conn_pool_max_lifetime }}"
+
+   - name: "conn_pool_max_waiting"
+     value: "{{ conn_pool_max_waiting }}"
+
+   - name: "conn_pool_max_size"
+     value: "{{ conn_pool_max_size }}"
+
+   - name: "conn_pool_min_size"
+     value: "{{ conn_pool_min_size }}"
+
    - name: "contact_email"
      value: "{{ contact_email }}"
 
@@ -59,6 +74,7 @@ configmap:
 
    - name: "secure_ssl_redirect"
      value: "false"
+
 
 secrets:
   - name: "database_url"
