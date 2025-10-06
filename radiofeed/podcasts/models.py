@@ -71,6 +71,9 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "categories"
         ordering = ("name",)
+        indexes: ClassVar[list] = [
+            models.Index(fields=["name"]),
+        ]
 
     def __str__(self) -> str:
         """Returns category name."""
