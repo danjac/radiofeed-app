@@ -4,6 +4,10 @@ from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
+from django.db.models.fields.tuple_lookups import (  # type: ignore[reportMissingTypeStubs]
+    TupleGreaterThan,
+    TupleLessThan,
+)
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
@@ -121,18 +125,38 @@ class Episode(models.Model):
     @cached_property
     def next_episode(self) -> Optional["Episode"]:
         """Returns the next episode in this podcast."""
-        try:
-            return self.get_next_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
+        return (
+            self._get_other_episodes_in_podcast()
+            .filter(
+                TupleGreaterThan(
+                    (models.F("pub_date"), models.F("id")),
+                    (models.Value(self.pub_date), models.Value(self.id)),
+                ),
+            )
+            .order_by(
+                "pub_date",
+                "id",
+            )
+            .first()
+        )
 
     @cached_property
     def previous_episode(self) -> Optional["Episode"]:
         """Returns the previous episode in this podcast."""
-        try:
-            return self.get_previous_by_pub_date(podcast=self.podcast)
-        except self.DoesNotExist:
-            return None
+        return (
+            self._get_other_episodes_in_podcast()
+            .filter(
+                TupleLessThan(
+                    (models.F("pub_date"), models.F("id")),
+                    (models.Value(self.pub_date), models.Value(self.id)),
+                )
+            )
+            .order_by(
+                "-pub_date",
+                "-id",
+            )
+            .first()
+        )
 
     @cached_property
     def slug(self) -> str:
@@ -166,6 +190,11 @@ class Episode(models.Model):
             )
         except ValueError:
             return 0
+
+    def _get_other_episodes_in_podcast(self) -> models.QuerySet["Episode"]:
+        return self._meta.default_manager.filter(  # type: ignore[reportOptionalMemberAccess]
+            podcast=self.podcast,
+        ).exclude(pk=self.pk)
 
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
