@@ -133,7 +133,7 @@ def podcast_detail(
 def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
     """Redirects to latest episode."""
     podcast = _get_podcast_or_404(podcast_id)
-    if episode := podcast.episodes.order_by("-pub_date").first():
+    if episode := podcast.episodes.order_by("-pub_date", "-id").first():
         return HttpResponseRedirect(episode.get_absolute_url())
     raise Http404
 
