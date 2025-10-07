@@ -130,7 +130,7 @@ class Episode(models.Model):
             .filter(
                 TupleGreaterThan(
                     (models.F("pub_date"), models.F("id")),
-                    (models.Value(self.pub_date), models.Value(self.id)),
+                    (models.Value(self.pub_date), models.Value(self.pk)),
                 ),
             )
             .order_by(
@@ -148,7 +148,7 @@ class Episode(models.Model):
             .filter(
                 TupleLessThan(
                     (models.F("pub_date"), models.F("id")),
-                    (models.Value(self.pub_date), models.Value(self.id)),
+                    (models.Value(self.pub_date), models.Value(self.pk)),
                 )
             )
             .order_by(
