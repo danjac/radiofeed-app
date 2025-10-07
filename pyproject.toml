@@ -44,6 +44,7 @@ dependencies = [
     "numpy>=2.2.6",
     "scipy>=1.15.3",
     "pycountry>=24.6.1",
+    "python-slugify>=8.0.4",
 ]
 
 [tool.uv]

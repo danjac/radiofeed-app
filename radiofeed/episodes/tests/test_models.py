@@ -97,7 +97,7 @@ class TestEpisodeModel:
         assert episode.slug == "testing"
 
     def test_slug_if_title_empty(self):
-        assert Episode().slug == "no-title"
+        assert Episode().slug == "episode"
 
     def test_str(self):
         assert str(Episode(title="testing")) == "testing"

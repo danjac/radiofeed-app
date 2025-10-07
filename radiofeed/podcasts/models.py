@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
-from django.utils.text import slugify
+from slugify import slugify
 
 from radiofeed.fields import URLField
 from radiofeed.html import strip_html
@@ -374,7 +374,7 @@ class Podcast(models.Model):
     @cached_property
     def slug(self) -> str:
         """Returns slugified title."""
-        return slugify(self.title, allow_unicode=False) or "no-title"
+        return slugify(self.title) or "podcast"
 
     @cached_property
     def num_episodes(self) -> int:

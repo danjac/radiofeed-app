@@ -10,8 +10,8 @@ from django.db.models.fields.tuple_lookups import (  # type: ignore[reportMissin
 )
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.utils.text import slugify
 from fast_update.query import FastUpdateQuerySet
+from slugify import slugify
 
 from radiofeed.fields import URLField
 from radiofeed.html import strip_html
@@ -161,7 +161,7 @@ class Episode(models.Model):
     @cached_property
     def slug(self) -> str:
         """Returns slugified title, if any."""
-        return slugify(self.title, allow_unicode=False) or "no-title"
+        return slugify(self.title) or "episode"
 
     @cached_property
     def cleaned_title(self) -> str:
