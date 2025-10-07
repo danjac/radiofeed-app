@@ -145,11 +145,15 @@ def player_time_update(
     if request.user.is_authenticated:
         if episode_id := request.player.get():
             try:
+                current_time = int(request.POST["current_time"])
+                duration = int(request.POST["duration"])
+
                 request.user.audio_logs.update_or_create(
                     episode_id=episode_id,
                     defaults={
                         "listened": timezone.now(),
-                        "current_time": int(request.POST["current_time"]),
+                        "current_time": current_time,
+                        "duration": duration,
                     },
                 )
             except (IntegrityError, KeyError, ValueError):

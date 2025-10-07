@@ -260,7 +260,10 @@ class TestPlayerTimeUpdate:
     def test_is_running(self, client, player_episode):
         response = client.post(
             self.url,
-            {"current_time": "1030"},
+            {
+                "current_time": "1030",
+                "duration": "3600",
+            },
         )
 
         assert204(response)
@@ -278,7 +281,10 @@ class TestPlayerTimeUpdate:
 
         response = client.post(
             self.url,
-            {"current_time": "1030"},
+            {
+                "current_time": "1030",
+                "duration": "3600",
+            },
         )
 
         assert204(response)
@@ -293,7 +299,7 @@ class TestPlayerTimeUpdate:
     def test_player_not_in_session(self, client, auth_user, episode):
         response = client.post(
             self.url,
-            {"current_time": "1030"},
+            {"current_time": "1030", "duration": "3600"},
         )
 
         assert204(response)
@@ -307,7 +313,13 @@ class TestPlayerTimeUpdate:
 
     @pytest.mark.django_db
     def test_invalid_data(self, client, auth_user, player_episode):
-        response = client.post(self.url, {"current_time": "xyz"})
+        response = client.post(
+            self.url,
+            {
+                "current_time": "xyz",
+                "duration": "abc",
+            },
+        )
         assert400(response)
 
     @pytest.mark.django_db()(transaction=True)
@@ -316,12 +328,24 @@ class TestPlayerTimeUpdate:
         session[PlayerDetails.session_id] = 12345
         session.save()
 
-        response = client.post(self.url, {"current_time": 1000})
+        response = client.post(
+            self.url,
+            {
+                "current_time": "1000",
+                "duration": "3600",
+            },
+        )
         assert400(response)
 
     @pytest.mark.django_db
     def test_user_not_authenticated(self, client):
-        response = client.post(self.url, {"current_time": "1000"})
+        response = client.post(
+            self.url,
+            {
+                "current_time": "1000",
+                "duration": "3600",
+            },
+        )
         assert401(response)
 
 

@@ -237,6 +237,7 @@ document.addEventListener("alpine:init", () => {
                             },
                             body: new URLSearchParams({
                                 current_time: this.runtime,
+                                duration: parseInt(this.duration),
                             }),
                         });
                     } catch (error) {
