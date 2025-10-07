@@ -135,13 +135,7 @@ def close_player(request: HttpRequest) -> TemplateResponse | HttpResponseNoConte
 def player_time_update(
     request: HttpRequest,
 ) -> HttpResponseNoContent | HttpResponseBadRequest | HttpResponseUnauthorized:
-    """Update current play time of episode.
-
-    Time should be passed in POST as `current_time` integer value.
-
-    Returns:
-        HTTP BAD REQUEST if missing/invalid `current_time`, otherwise HTTP NO CONTENT.
-    """
+    """Update current play time of episode."""
     if request.user.is_authenticated:
         if episode_id := request.player.get():
             try:
