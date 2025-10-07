@@ -3,7 +3,7 @@ from email.utils import getaddresses
 
 import sentry_sdk
 from django.urls import reverse_lazy
-from django.utils.csp import CSP
+from django.utils.csp import CSP  # type: ignore[reportMissingTypeStubs]
 from environs import Env
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
