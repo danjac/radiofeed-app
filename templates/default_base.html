@@ -72,7 +72,7 @@
             {% if user.is_authenticated %}
                 <script src="{% static 'audio-player.js' %}"></script>
             {% endif %}
-            {% partialdef scripts %}
+            {% partialdef scripts inline %}
                 {% django_htmx_script %}
                 <script>
                     if (typeof navigator.serviceWorker !== 'undefined') {
