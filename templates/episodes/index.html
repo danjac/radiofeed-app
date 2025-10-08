@@ -9,7 +9,7 @@
         {% fragment "header/nav.html" %}
             {% fragment "header/nav.html#item" %}
                 {% url "episodes:search_episodes" as search_url %}
-                {% include "search.html#form" with placeholder="Search: Episodes" %}
+                {% include "header/nav/search.html#form" with placeholder="Search: Episodes" %}
             {% endfragment %}
         {% endfragment %}
     {% endfragment %}

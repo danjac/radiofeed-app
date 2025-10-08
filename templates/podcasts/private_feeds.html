@@ -21,11 +21,11 @@
                 {% if request.search %}
                     {% fragment "header/nav.html#item" %}
                         {% url "podcasts:search_podcasts" as search_button_url %}
-                        {% include "search.html#button" with label="Search Podcasts" %}
+                        {% include "header/nav/search.html#button" with label="Search Podcasts" %}
                     {% endfragment %}
                 {% endif %}
                 {% fragment "header/nav.html#item" %}
-                    {% include "search.html#form" with placeholder="Search: Private Feeds" clearable=True %}
+                    {% include "header/nav/search.html#form" with placeholder="Search: Private Feeds" clearable=True %}
                 {% endfragment %}
             {% endif %}
 

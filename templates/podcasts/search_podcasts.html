@@ -10,10 +10,10 @@
         {% fragment "header/nav.html" %}
             {% fragment "header/nav.html#item" %}
                 {% url "podcasts:search_itunes" as search_button_url %}
-                {% include "search.html#button" with label="Search iTunes" %}
+                {% include "header/nav/search.html#button" with label="Search iTunes" %}
             {% endfragment %}
             {% fragment "header/nav.html#item" %}
-                {% include "search.html#form" with placeholder="Search: Podcasts" %}
+                {% include "header/nav/search.html#form" with placeholder="Search: Podcasts" %}
             {% endfragment %}
         {% endfragment %}
     {% endfragment %}

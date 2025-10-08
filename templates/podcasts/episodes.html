@@ -13,7 +13,7 @@
                         {% if request.search %}
                             {% fragment "header/nav.html#item" %}
                                 {% url "episodes:search_episodes" as search_button_url %}
-                                {% include "search.html#button" with label="Search Episodes" %}
+                                {% include "header/nav/search.html#button" with label="Search Episodes" %}
                             {% endfragment %}
                         {% else %}
                             {% fragment "header/nav.html#item" %}
@@ -28,7 +28,7 @@
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
                             {% fragment "header/nav.html#item" %}
-                                {% include "search.html#form" with placeholder="Search: Podcast" clearable=True %}
+                                {% include "header/nav/search.html#form" with placeholder="Search: Podcast" clearable=True %}
                             {% endfragment %}
                         {% endif %}
                     {% endfragment %}
