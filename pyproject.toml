@@ -5,7 +5,7 @@ description = "Podcast aggregator app"
 authors = [
     {name = "Dan Jacob", email = "danjac2018@gmail.com"},
 ]
-requires-python = "==3.13.*"
+requires-python = "==3.14.*"
 readme = "README.md"
 license = {text = "MIT"}
 dependencies = [

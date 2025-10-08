@@ -1,5 +1,5 @@
 # Install Python dependencies
-FROM python:3.13.2-slim-bookworm AS python-base
+FROM python:3.14.0-slim-bookworm AS python-base
 
 ENV LC_CTYPE=C.utf8 \
     PYTHONUNBUFFERED=1 \
