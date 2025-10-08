@@ -1,3 +1,4 @@
+import http
 import json
 
 from django.conf import settings
@@ -8,8 +9,8 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -144,7 +145,7 @@ def close_player(request: HttpRequest) -> TemplateResponse | HttpResponseNoConte
 @require_POST
 def player_time_update(
     request: HttpRequest,
-) -> HttpResponseNoContent | HttpResponseBadRequest | HttpResponseUnauthorized:
+) -> HttpResponseNoContent | HttpResponseUnauthorized | JsonResponse:
     """Update current play time of episode."""
     if request.user.is_authenticated:
         if episode_id := request.player.get():
@@ -162,9 +163,17 @@ def player_time_update(
                 IntegrityError,
                 json.JSONDecodeError,
                 ValidationError,
-            ):
-                return HttpResponseBadRequest()
+            ) as exc:
+                match exc:
+                    case ValidationError():
+                        errors = exc.errors()
+                    case _:
+                        errors = [str(exc)]
 
+                return JsonResponse(
+                    {"errors": errors},
+                    status=http.HTTPStatus.BAD_REQUEST,
+                )
         return HttpResponseNoContent(content_type="application/json")
     return HttpResponseUnauthorized()
 
