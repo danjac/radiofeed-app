@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Install uv
 
-COPY --from=ghcr.io/astral-sh/uv:0.6.6 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.9.0 /uv /usr/local/bin/uv
 
 # Install Python dependencies
 
@@ -40,9 +40,9 @@ FROM python-base AS staticfiles
 
 COPY . /app
 
-RUN python manage.py tailwind build && \
-    python manage.py tailwind remove_cli && \
-    python manage.py collectstatic --no-input
+RUN uv run python manage.py tailwind build && \
+    uv run python manage.py tailwind remove_cli && \
+    uv run python manage.py collectstatic --no-input
 
 FROM python-base AS webapp
 
