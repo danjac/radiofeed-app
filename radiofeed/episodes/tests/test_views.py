@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -260,10 +262,13 @@ class TestPlayerTimeUpdate:
     def test_is_running(self, client, player_episode):
         response = client.post(
             self.url,
-            {
-                "current_time": "1030",
-                "duration": "3600",
-            },
+            json.dumps(
+                {
+                    "current_time": 1030,
+                    "duration": 3600,
+                }
+            ),
+            content_type="application/json",
         )
 
         assert204(response)
@@ -281,10 +286,13 @@ class TestPlayerTimeUpdate:
 
         response = client.post(
             self.url,
-            {
-                "current_time": "1030",
-                "duration": "3600",
-            },
+            json.dumps(
+                {
+                    "current_time": 1030,
+                    "duration": 3600,
+                }
+            ),
+            content_type="application/json",
         )
 
         assert204(response)
@@ -299,7 +307,13 @@ class TestPlayerTimeUpdate:
     def test_player_not_in_session(self, client, auth_user, episode):
         response = client.post(
             self.url,
-            {"current_time": "1030", "duration": "3600"},
+            json.dumps(
+                {
+                    "current_time": 1030,
+                    "duration": 3600,
+                }
+            ),
+            content_type="application/json",
         )
 
         assert204(response)
@@ -315,10 +329,13 @@ class TestPlayerTimeUpdate:
     def test_invalid_data(self, client, auth_user, player_episode):
         response = client.post(
             self.url,
-            {
-                "current_time": "xyz",
-                "duration": "abc",
-            },
+            json.dumps(
+                {
+                    "current_time": "xyz",
+                    "duration": "abc",
+                }
+            ),
+            content_type="application/json",
         )
         assert400(response)
 
@@ -330,10 +347,13 @@ class TestPlayerTimeUpdate:
 
         response = client.post(
             self.url,
-            {
-                "current_time": "1000",
-                "duration": "3600",
-            },
+            json.dumps(
+                {
+                    "current_time": 1000,
+                    "duration": 3600,
+                }
+            ),
+            content_type="application/json",
         )
         assert400(response)
 
@@ -341,10 +361,13 @@ class TestPlayerTimeUpdate:
     def test_user_not_authenticated(self, client):
         response = client.post(
             self.url,
-            {
-                "current_time": "1000",
-                "duration": "3600",
-            },
+            json.dumps(
+                {
+                    "current_time": 1000,
+                    "duration": 3600,
+                }
+            ),
+            content_type="application/json",
         )
         assert401(response)
 

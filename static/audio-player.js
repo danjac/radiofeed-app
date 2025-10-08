@@ -235,10 +235,11 @@ document.addEventListener("alpine:init", () => {
                             headers: {
                                 [this.csrfHeader]: this.csrfToken,
                             },
-                            body: new URLSearchParams({
+                            body: JSON.stringify({
                                 current_time: this.runtime,
                                 duration: parseInt(this.duration),
                             }),
+                            contentType: "application/json",
                         });
                     } catch (error) {
                         console.error("Failed to send time update", error);

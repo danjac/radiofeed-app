@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,6 +16,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
+from pydantic import BaseModel, ValidationError
 
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.episodes.templatetags.audio_player import Action
@@ -24,6 +27,13 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
+
+
+class PlayerUpdate(BaseModel):
+    """Data model for player time update."""
+
+    current_time: int
+    duration: int
 
 
 @require_safe
@@ -139,18 +149,20 @@ def player_time_update(
     if request.user.is_authenticated:
         if episode_id := request.player.get():
             try:
-                current_time = int(request.POST["current_time"])
-                duration = int(request.POST["duration"])
-
+                update = PlayerUpdate.model_validate(json.loads(request.body))
                 request.user.audio_logs.update_or_create(
                     episode_id=episode_id,
                     defaults={
                         "listened": timezone.now(),
-                        "current_time": current_time,
-                        "duration": duration,
+                        "current_time": update.current_time,
+                        "duration": update.duration,
                     },
                 )
-            except (IntegrityError, KeyError, ValueError):
+            except (
+                IntegrityError,
+                json.JSONDecodeError,
+                ValidationError,
+            ):
                 return HttpResponseBadRequest()
 
         return HttpResponseNoContent(content_type="application/json")
