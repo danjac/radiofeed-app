@@ -39,14 +39,11 @@ class PlayerUpdate(BaseModel):
 
 @require_safe
 @login_required
-def index(request: HttpRequest, days_since: int = 14) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions."""
-
-    since = timezone.now() - timezone.timedelta(days=days_since)
 
     episodes = (
         Episode.objects.subscribed(request.user)
-        .filter(pub_date__gte=since)
         .order_by("-pub_date", "-id")
         .select_related("podcast")
     )[: settings.DEFAULT_PAGE_SIZE]
