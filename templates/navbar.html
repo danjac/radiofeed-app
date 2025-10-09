@@ -126,7 +126,7 @@
              x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
              @click.outside="showSidebar=false">
-            {% include "navbar/menu.html" %}
+            {% include "sidebar.html" %}
         </nav>
     {% else %}
         <div class="p-3 font-bold text-center text-white bg-blue-600">
