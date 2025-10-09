@@ -25,7 +25,7 @@ class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
 
     def subscribed(self, user: User) -> models.QuerySet["Episode"]:
         """Returns episodes belonging to episodes subscribed by user."""
-        return self.filter(podcast__subscriptions__subscriber=user)
+        return self.filter(podcast__in=user.subscriptions.values("podcast"))
 
 
 class Episode(models.Model):

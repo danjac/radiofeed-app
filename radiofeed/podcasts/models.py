@@ -125,7 +125,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
 
     def subscribed(self, user: User) -> models.QuerySet["Podcast"]:
         """Returns podcasts subscribed by user."""
-        return self.filter(subscriptions__subscriber=user)
+        return self.filter(pk__in=user.subscriptions.values("podcast"))
 
     def published(self, *, published: bool = True) -> models.QuerySet["Podcast"]:
         """Returns only published podcasts (pub_date NOT NULL)."""
