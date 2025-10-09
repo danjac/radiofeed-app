@@ -20,6 +20,11 @@
                        name="{{ redirect_field_name }}"
                        value="{{ redirect_field_value }}" />
             {% endif %}
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+            {{ form.phone_number }}
+            {{ form.non_field_errors }}
             <div class="grid-cols-2 gap-3 space-y-3 sm:grid sm:space-y-0">
                 {{ form.username.as_field_group }}
                 {{ form.email.as_field_group }}

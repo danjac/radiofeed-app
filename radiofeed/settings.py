@@ -244,6 +244,7 @@ ACCOUNT_SIGNUP_FIELDS = [
     "password1*",
     "password2*",
 ]
+ACCOUNT_SIGNUP_FORM_HONEYPOT_FIELD = "phone_number"
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
