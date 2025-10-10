@@ -23,9 +23,9 @@
                 <meta name="theme-color" content="{% get_theme_color %}">
                 <meta name="htmx-config" content="{% get_htmx_config %}">
                 {% get_meta_config as meta %}
-                <meta name="copyright" content="{{ meta.copyright }}">
-                <meta name="description" content="{{ meta.description }}">
-                <meta name="keywords" content="{{ meta.keywords }}">
+                {% for name, value in meta.items %}
+                    <meta name="{{ name }}" content="{{ value }}">
+                {% endfor %}
                 <script defer src="{% static "vendor/alpine-3.15.0.min.js" %}"></script>
                 <script defer src="{% static "vendor/htmx-2.0.7.min.js" %}"></script>
             {% endpartialdef %}
