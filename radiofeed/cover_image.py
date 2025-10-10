@@ -200,7 +200,7 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
         reverse(
             "cover_image",
             kwargs={
-                "encoded_url": encode_url(cover_url),
+                "encoded_url": encode_cover_url(cover_url),
                 "size": size,
             },
         )
@@ -210,16 +210,16 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 
 
 @functools.cache
-def encode_url(cover_url: str) -> str:
+def encode_cover_url(cover_url: str) -> str:
     """Returns signed cover URL"""
     return urlsafe_base64_encode(get_cover_url_signer().sign(cover_url).encode())
 
 
 @functools.cache
-def decode_url(encrypted_url: str) -> str:
+def decode_cover_url(encoded_url: str) -> str:
     """Returns unsigned cover URL"""
     try:
-        signed_url = urlsafe_base64_decode(encrypted_url).decode()
+        signed_url = urlsafe_base64_decode(encoded_url).decode()
         return get_cover_url_signer().unsign(signed_url)
     except (BadSignature, ValueError, TypeError) as exc:
         raise CoverImageDecryptionError from exc

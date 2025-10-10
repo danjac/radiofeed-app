@@ -19,7 +19,7 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed import pwa
 from radiofeed.cover_image import (
     CoverImageError,
-    decode_url,
+    decode_cover_url,
     fetch_cover_image,
     get_placeholder_path,
     is_cover_image_size,
@@ -145,7 +145,7 @@ def cover_image(_, encoded_url: str, size: int) -> FileResponse:
         output = save_cover_image(
             fetch_cover_image(
                 get_client(),
-                decode_url(encoded_url),
+                decode_cover_url(encoded_url),
                 size,
             )
         )
