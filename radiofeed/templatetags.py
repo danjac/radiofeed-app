@@ -1,3 +1,4 @@
+import functools
 import json
 from typing import Final
 
@@ -24,6 +25,7 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
 @register.simple_tag
+@functools.cache
 def get_meta_config() -> dict:
     """Returns META name/value pairs."""
     return {
