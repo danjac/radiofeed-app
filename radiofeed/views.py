@@ -35,7 +35,7 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def index(request) -> TemplateResponse | HttpResponseRedirect:
+def index(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Landing page of site."""
 
     # if user logged in, redirect to their home page
