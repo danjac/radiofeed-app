@@ -25,20 +25,14 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 @register.simple_tag
 def get_meta_config() -> dict:
-    """Returns META config settings."""
-    return settings.META_CONFIG
-
-
-@register.simple_tag
-def get_htmx_config() -> str:
-    """Returns HTMX config in meta tag."""
-    return json.dumps(settings.HTMX_CONFIG, cls=DjangoJSONEncoder)
-
-
-@register.simple_tag
-def get_theme_color() -> str:
-    """Returns theme color in meta tag."""
-    return pwa.get_theme_color()
+    """Returns META name/value pairs."""
+    return {
+        "theme-color": pwa.get_theme_color(),
+        "htmx-config": json.dumps(
+            settings.HTMX_CONFIG,
+            cls=DjangoJSONEncoder,
+        ),
+    } | settings.META_CONFIG
 
 
 @register.simple_tag

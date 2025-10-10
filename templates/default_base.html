@@ -16,12 +16,6 @@
                 <link rel="canonical" href="{{ request.build_absolute_uri }}">
                 <meta charset="UTF-8" />
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport"
-                      content="width=device-width, initial-scale=1, viewport-fit=no">
-                <meta name="mobile-wep-app-capable" content="yes">
-                <meta name="apple-mobile-wep-app-capable" content="yes">
-                <meta name="theme-color" content="{% get_theme_color %}">
-                <meta name="htmx-config" content="{% get_htmx_config %}">
                 {% get_meta_config as meta %}
                 {% for name, value in meta.items %}
                     <meta name="{{ name }}" content="{{ value }}">
