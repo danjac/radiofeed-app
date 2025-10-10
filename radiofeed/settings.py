@@ -550,9 +550,6 @@ DEFAULT_PAGE_SIZE = 30
 # Site meta configuration
 
 META_CONFIG = {
-    "apple-mobile-web-app-capable": "yes",
-    "mobile-web-app-capable": "yes",
-    "viewport": "width=device-width, initial-scale=1, viewport-fit=no",
     "author": env("META_AUTHOR", default="Site owner"),
     "copyright": env("META_COPYRIGHT", default="Site owner"),
     "description": env("META_DESCRIPTION", default="Podcast aggregator site"),
