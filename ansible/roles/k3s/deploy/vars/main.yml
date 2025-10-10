@@ -63,6 +63,9 @@ configmap:
    - name: "mailgun_sender_domain"
      value: "{{ mailgun_sender_domain }}"
 
+   - name: "meta_author"
+     value: "{{ meta_author }}"
+
    - name: "meta_copyright"
      value: "{{ meta_copyright }}"
 
