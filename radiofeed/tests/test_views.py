@@ -125,16 +125,15 @@ class TestCoverImage:
         assert404(response)
 
     @pytest.mark.django_db
-    def test_missing_url(self, client, mocker):
-        response = client.get(
-            f"{reverse('cover_image', kwargs={'size': 96})}",
-        )
-        assert404(response)
-
-    @pytest.mark.django_db
     def test_unsigned_url(self, client, mocker):
         response = client.get(
-            f"{reverse('cover_image', kwargs={'size': 96})}",
+            reverse(
+                "cover_image",
+                kwargs={
+                    "size": 96,
+                    "encoded_url": "test.jpg",
+                },
+            ),
             {"url": "test.jpg"},
         )
-        assert404(response)
+        assert200(response)

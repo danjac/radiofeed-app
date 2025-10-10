@@ -3,16 +3,16 @@ import functools
 import io
 import itertools
 import pathlib
-import urllib.parse
 from collections.abc import Generator
 from typing import BinaryIO, Final, Literal
 
 import httpx
 from django.conf import settings
-from django.core.signing import Signer
+from django.core.signing import BadSignature, Signer
 from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from PIL import Image
 
 from radiofeed.http_client import Client
@@ -66,6 +66,10 @@ class CoverImageFetchError(CoverImageError):
 
 class CoverImageInvalidError(CoverImageError):
     """Raised when the cover image is invalid."""
+
+
+class CoverImageDecryptionError(CoverImageError):
+    """Raised when the cover image cannot be decrypted."""
 
 
 class CoverImageSaveError(CoverImageError):
@@ -193,25 +197,32 @@ def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
-        "".join(
-            (
-                reverse(
-                    "cover_image",
-                    kwargs={
-                        "size": size,
-                    },
-                ),
-                "?",
-                urllib.parse.urlencode(
-                    {
-                        "url": get_cover_url_signer().sign(cover_url),
-                    }
-                ),
-            )
+        reverse(
+            "cover_image",
+            kwargs={
+                "encoded_url": encode_url(cover_url),
+                "size": size,
+            },
         )
         if cover_url
         else get_placeholder_url(size)
     )
+
+
+@functools.cache
+def encode_url(cover_url: str) -> str:
+    """Returns signed cover URL"""
+    return urlsafe_base64_encode(get_cover_url_signer().sign(cover_url).encode())
+
+
+@functools.cache
+def decode_url(encrypted_url: str) -> str:
+    """Returns unsigned cover URL"""
+    try:
+        signed_url = urlsafe_base64_decode(encrypted_url).decode()
+        return get_cover_url_signer().unsign(signed_url)
+    except (BadSignature, ValueError, TypeError) as exc:
+        raise CoverImageDecryptionError from exc
 
 
 @functools.cache

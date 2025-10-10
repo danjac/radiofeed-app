@@ -2,7 +2,6 @@ import datetime
 from typing import Final
 
 from django.conf import settings
-from django.core.signing import BadSignature
 from django.http import (
     FileResponse,
     Http404,
@@ -20,8 +19,8 @@ from django.views.decorators.http import require_POST, require_safe
 from radiofeed import pwa
 from radiofeed.cover_image import (
     CoverImageError,
+    decode_url,
     fetch_cover_image,
-    get_cover_url_signer,
     get_placeholder_path,
     is_cover_image_size,
     save_cover_image,
@@ -134,25 +133,22 @@ def security(_) -> HttpResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(request: HttpRequest, size: int) -> FileResponse:
+def cover_image(_, encoded_url: str, size: int) -> FileResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
     If error in downloading the image, a placeholder is returned instead.
     """
-
-    signed_url = request.GET.get("url", None)
-
-    if not signed_url or not is_cover_image_size(size):
+    if not is_cover_image_size(size):
         raise Http404
-
     try:
-        cover_url = get_cover_url_signer().unsign(signed_url)
-    except BadSignature as exc:
-        raise Http404 from exc
-
-    try:
-        output = save_cover_image(fetch_cover_image(get_client(), cover_url, size))
+        output = save_cover_image(
+            fetch_cover_image(
+                get_client(),
+                decode_url(encoded_url),
+                size,
+            )
+        )
     except CoverImageError:
         output = get_placeholder_path(size).open("rb")
 
