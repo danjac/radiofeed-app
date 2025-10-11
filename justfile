@@ -43,6 +43,10 @@ test *args:
 typecheck *args:
    uv run pyright {{ args }}
 
+# Run all checks
+[group('development')]
+check: precommitall typecheck test
+
 # Download NLTK data
 [group('development')]
 nltkdownload:
