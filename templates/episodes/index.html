@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load cache %}
 
 {% block title %}
     {{ block.super }} | New Releases
@@ -13,20 +14,22 @@
             {% endfragment %}
         {% endfragment %}
     {% endfragment %}
-    {% fragment "browse.html" %}
-        {% for episode in episodes %}
-            {% fragment "browse.html#item" %}
-                {% include "episodes/cards.html#episode" %}
-            {% endfragment %}
-        {% empty %}
-            {% fragment "browse.html#empty" %}
-                <p>You're not following any podcasts yet.</p>
-                <p>
-                    Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
-                </p>
-                <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
-                <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
-            {% endfragment %}
-        {% endfor %}
-    {% endfragment %}
+    {% cache cache_timeout latest_episodes user.pk %}
+        {% fragment "browse.html" %}
+            {% for episode in episodes %}
+                {% fragment "browse.html#item" %}
+                    {% include "episodes/cards.html#episode" %}
+                {% endfragment %}
+            {% empty %}
+                {% fragment "browse.html#empty" %}
+                    <p>You're not following any podcasts yet.</p>
+                    <p>
+                        Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
+                    </p>
+                    <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
+                    <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
+                {% endfragment %}
+            {% endfor %}
+        {% endfragment %}
+    {% endcache %}
 {% endblock content %}
