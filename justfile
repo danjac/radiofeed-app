@@ -2,6 +2,8 @@
 ansible_dir := invocation_directory() / "ansible"
 script_dir := ansible_dir / "scripts"
 
+export DEBUG := "true"
+
 @_default:
     just --list
 

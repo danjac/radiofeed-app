@@ -76,7 +76,7 @@ configmap:
      value: "{{ meta_keywords }}"
 
    - name: "secure_ssl_redirect"
-     value: "false"
+     value: "{{ secure_ssl_redirect }}"
 
 
 secrets:

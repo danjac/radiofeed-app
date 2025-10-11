@@ -22,4 +22,5 @@ meta_keywords: "podcasts, feeds, rss"
 postgres_volume: "/home/ubuntu/pg_data"
 pwa_sha256_fingerprints: ""
 secret_key_fallbacks: ""
+secure_ssl_redirect: false
 sentry_url: ""

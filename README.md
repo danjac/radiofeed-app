@@ -43,12 +43,6 @@ The **Radiofeed** stack includes:
 * [Tailwind](https://tailwindcss.com)
 * [PostgreSQL](https://www.postgresql.org/)
 
-This stack was chosen for the following reasons:
-
-1. [Locality of behavior](https://htmx.org/essays/locality-of-behaviour/): the behavior of a unit of code should be obvious from looking at the code.
-2. **Performance**: reduce the burden on end-user devices and bandwidth rampant with heavy SPA frameworks
-3. **Batteries included**: using popular, well-supported open source tools such as Django and PostgreSQL with a large number of features to avoid reinventing the wheel
-
 ## Deployment
 
 The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
