@@ -20,9 +20,6 @@ from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
 
-# All cover image URLs will start with this when base64-encoded, so we can remove it to save space
-_ENCODED_PREFIX: Final[str] = "aHR0cHM6Ly9"
-
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "card": (96, 96),
     "detail": (144, 160),
@@ -215,15 +212,14 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
 def encode_cover_url(cover_url: str) -> str:
     """Returns signed cover URL"""
     signed_url = get_cover_url_signer().sign(cover_url)
-    encoded_url = urlsafe_base64_encode(signed_url.encode())
-    return encoded_url[len(_ENCODED_PREFIX) :]
+    return urlsafe_base64_encode(signed_url.encode())
 
 
 @functools.cache
 def decode_cover_url(encoded_url: str) -> str:
     """Returns unsigned cover URL"""
     try:
-        signed_url = urlsafe_base64_decode(_ENCODED_PREFIX + encoded_url).decode()
+        signed_url = urlsafe_base64_decode(encoded_url).decode()
         return get_cover_url_signer().unsign(signed_url)
     except (BadSignature, ValueError, TypeError) as exc:
         raise CoverImageDecryptionError from exc

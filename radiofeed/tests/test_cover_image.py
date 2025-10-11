@@ -7,6 +7,8 @@ from PIL.Image import UnidentifiedImageError
 from radiofeed.cover_image import (
     CoverImageError,
     CoverImageTooLargeError,
+    decode_cover_url,
+    encode_cover_url,
     fetch_cover_image,
     get_cover_image_attrs,
     get_cover_image_sizes,
@@ -17,6 +19,14 @@ from radiofeed.cover_image import (
     save_cover_image,
 )
 from radiofeed.http_client import Client
+
+
+class TestEncodeDecodeCoverUrl:
+    def test_url(self):
+        url = "https://example.com/test.jpg"
+        encoded = encode_cover_url(url)
+        decoded = decode_cover_url(encoded)
+        assert decoded == url
 
 
 class TestFetchCoverImage:
