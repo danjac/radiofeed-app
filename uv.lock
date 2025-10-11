@@ -382,6 +382,20 @@ wheels = [
 ]
 
 [[package]]
+name = "django-http-compression"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref" },
+    { name = "django" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4a/41/c3bb038751e51b937698a3d26cc02d7704e250fee6c8f7574b87401f1ec0/django_http_compression-1.0.0.tar.gz", hash = "sha256:3b0460e278385be36efef533822d4c9f3017447676bc8877874cdb6442116639", size = 14395 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/11/f710c52513f297245e7f19d9a4d82913ea4b601995bd46cb7b95963a7ecd/django_http_compression-1.0.0-py3-none-any.whl", hash = "sha256:cc9bd44d9c29ee03cd183638a874da5666a2386ce73631a2ea56e351fe8744cb", size = 8612 },
+]
+
+[[package]]
 name = "django-linear-migrations"
 version = "2.19.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1237,6 +1251,7 @@ dependencies = [
     { name = "django-fast-update" },
     { name = "django-health-check" },
     { name = "django-htmx" },
+    { name = "django-http-compression" },
     { name = "django-linear-migrations" },
     { name = "django-permissions-policy" },
     { name = "django-redis" },
@@ -1303,6 +1318,7 @@ requires-dist = [
     { name = "django-fast-update", specifier = ">=0.2.3" },
     { name = "django-health-check", specifier = ">=3.18.3" },
     { name = "django-htmx", specifier = ">=1.19.0" },
+    { name = "django-http-compression", specifier = ">=1.0.0" },
     { name = "django-linear-migrations", specifier = ">=2.13.0" },
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
