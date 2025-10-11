@@ -1,4 +1,5 @@
 import datetime
+import logging
 from typing import Final
 
 from django.conf import settings
@@ -32,6 +33,8 @@ _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
 _cache_control = cache_control(max_age=_CACHE_TIMEOUT, immutable=True, public=True)
 _cache_page = cache_page(_CACHE_TIMEOUT)
+
+_logger = logging.getLogger(__name__)
 
 
 @require_safe
@@ -149,7 +152,8 @@ def cover_image(_, encoded_url: str, size: int) -> FileResponse:
                 size,
             )
         )
-    except CoverImageError:
+    except CoverImageError as ex:
+        _logger.warning("Error fetching cover image: %s", ex)
         output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
