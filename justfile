@@ -1,6 +1,15 @@
-
 ansible_dir := invocation_directory() / "ansible"
 script_dir := ansible_dir / "scripts"
+
+# Set environment variables for development
+export DEBUG := "true"
+export USE_BROWSER_RELOAD := "true"
+export USE_COLLECTSTATIC := "false"
+export USE_CONNECTION_POOL := "false"
+export USE_DEBUG_TOOLBAR := "true"
+export USE_HTTPS := "false"
+export USE_WATCHFILES := "true"
+export USE_X_FORWARDED_HOST := "false"
 
 @_default:
     just --list
