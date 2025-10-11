@@ -33,6 +33,8 @@ The [justfile](https://github.com/casey/just) has some convenient shortcuts for 
 
 Run `just` to see all available commands.
 
+**NOTE**: Default settings provided should be suitable for local development, but if you are not using the Docker images you may need to adjust database connection and other settings by creating a `.env` file in the project root.
+
 ## Stack
 
 The **Radiofeed** stack includes:
@@ -42,12 +44,6 @@ The **Radiofeed** stack includes:
 * [AlpineJS](https://alpinejs.dev)
 * [Tailwind](https://tailwindcss.com)
 * [PostgreSQL](https://www.postgresql.org/)
-
-This stack was chosen for the following reasons:
-
-1. [Locality of behavior](https://htmx.org/essays/locality-of-behaviour/): the behavior of a unit of code should be obvious from looking at the code.
-2. **Performance**: reduce the burden on end-user devices and bandwidth rampant with heavy SPA frameworks
-3. **Batteries included**: using popular, well-supported open source tools such as Django and PostgreSQL with a large number of features to avoid reinventing the wheel
 
 ## Deployment
 
