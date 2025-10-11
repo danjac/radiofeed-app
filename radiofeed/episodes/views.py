@@ -9,6 +9,7 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
+    HttpResponseBadRequest,
     HttpResponseRedirect,
     JsonResponse,
 )
@@ -142,7 +143,13 @@ def close_player(request: HttpRequest) -> TemplateResponse | HttpResponseNoConte
 @require_POST
 def player_time_update(
     request: HttpRequest,
-) -> HttpResponseNoContent | HttpResponseUnauthorized | JsonResponse:
+) -> (
+    HttpResponseBadRequest
+    | HttpResponseConflict
+    | HttpResponseNoContent
+    | HttpResponseUnauthorized
+    | JsonResponse
+):
     """Update current play time of episode."""
     if request.user.is_authenticated:
         if episode_id := request.player.get():
@@ -156,19 +163,13 @@ def player_time_update(
                         "duration": update.duration,
                     },
                 )
-            except (
-                IntegrityError,
-                json.JSONDecodeError,
-                ValidationError,
-            ) as exc:
-                match exc:
-                    case ValidationError():
-                        errors = exc.errors()
-                    case _:
-                        errors = [str(exc)]
-
+            except IntegrityError:
+                return HttpResponseConflict()
+            except json.JSONDecodeError:
+                return HttpResponseBadRequest()
+            except ValidationError as exc:
                 return JsonResponse(
-                    {"errors": errors},
+                    {"errors": exc.errors()},
                     status=http.HTTPStatus.BAD_REQUEST,
                 )
         return HttpResponseNoContent(content_type="application/json")
