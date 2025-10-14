@@ -1,24 +1,26 @@
 {% if not cookies_accepted %}
     {% with target="cookie-banner" %}
-        <div class="flex fixed bottom-0 z-50 w-full text-white bg-black opacity-90"
+        <div class="flex fixed bottom-0 z-50 justify-center w-full text-white bg-black opacity-90"
              id="{{ target }}">
-            <div class="p-3 space-y-3 text-center">
-                <p class="font-semibold">
-                    This site uses <a href="https://www.internetcookies.com"
-                                      target="_blank"
-                                      rel="noopender"
-                                      class="underline">cookies</a> for essential features such as logins and security. We do not share cookies or any other user information with third parties such as advertising trackers or social media platforms.
-                </p>
-                <div>
-                    <button class="py-1 !px-6 text-base border border-white md:text-lg btn btn-primary"
-                            aria-label="OK, understood"
-                            hx-disabled-elt="this"
-                            hx-post="{% url 'accept_cookies' %}"
-                            hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'
-                            hx-target="#{{ target }}"
-                            hx-push-url="false"
-                            hx-swap="delete"
-                            hx-indicator="this">Accept and close</button>
+            <div class="flex justify-center p-3 w-full text-center md:w-3/4">
+                <div class="space-y-3">
+                    <p class="font-semibold">
+                        This site uses <a href="https://www.internetcookies.com"
+                                          target="_blank"
+                                          rel="noopender"
+                                          class="underline">cookies</a> for essential features such as logins and security. We do not share cookies or any other user information with third parties such as advertising trackers or social media platforms.
+                    </p>
+                    <div>
+                        <button class="py-1 !px-6 text-base border border-white md:text-lg btn btn-primary"
+                                aria-label="OK, understood"
+                                hx-disabled-elt="this"
+                                hx-post="{% url 'accept_cookies' %}"
+                                hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'
+                                hx-target="#{{ target }}"
+                                hx-push-url="false"
+                                hx-swap="delete"
+                                hx-indicator="this">Accept and close</button>
+                    </div>
                 </div>
             </div>
         </div>
