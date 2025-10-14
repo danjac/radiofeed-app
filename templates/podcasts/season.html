@@ -11,9 +11,9 @@
                 {% fragment "header/nav.html" %}
                     {% fragment "header/nav.html#item" %}
                         {% fragment "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
-                            {% include "header/nav/dropdown.html#item" with content="All Seasons" url=episodes_url %}
+                            {% include "header/nav/dropdown.html#item" with label="All Seasons" url=episodes_url %}
                             {% for season in podcast.seasons %}
-                                {% include "header/nav/dropdown.html#item" with content=season url=season.url %}
+                                {% include "header/nav/dropdown.html#item" with label=season url=season.url %}
                             {% endfor %}
                         {% endfragment %}
                     {% endfragment %}
