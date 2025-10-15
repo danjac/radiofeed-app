@@ -34,6 +34,44 @@ wheels = [
 ]
 
 [[package]]
+name = "backports-zstd"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/04/12/8080a1b7bce609eb250813519f550b36ad5950b64f0af2738c0fb53e7fb3/backports_zstd-1.0.0.tar.gz", hash = "sha256:8e99702fd4092c26624b914bcd140d03911a16445ba6a74435b29a190469cce3", size = 995991 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/19/36/0182161a23009d5439e125d4af7b13d2df0292663e7f87141d5cf76d3060/backports_zstd-1.0.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:6c522469a67fef66998fd9eff2195512ca54d78c6fecdf1c466d2b7752dd810b", size = 435481 },
+    { url = "https://files.pythonhosted.org/packages/79/ce/6c235828d54d0027838316d9ce284b52e7bc266154f5e57086a7c7796691/backports_zstd-1.0.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:c28546bcffb88ee38a742e3364338c49672d776ea2c73decc05fbf79f045797e", size = 361757 },
+    { url = "https://files.pythonhosted.org/packages/fd/ca/7cbc80512df9b89ae39ab3920afbaad733d4b64390b4439e52ef3673da7b/backports_zstd-1.0.0-cp313-cp313-manylinux2010_i686.manylinux_2_12_i686.manylinux_2_28_i686.whl", hash = "sha256:9719c14984ca99f5567a5974210d04c75aa02b0124653ee1b1d9a39bf0764fc6", size = 505673 },
+    { url = "https://files.pythonhosted.org/packages/f8/bc/ea32d4698fac21fe6cc08a124ae21daa41be03f788f244791c47e31a4360/backports_zstd-1.0.0-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a31220e8544c2194c4a7c3bd9f7fb0eee3c0ce5f8306e55df762428159ff0512", size = 475879 },
+    { url = "https://files.pythonhosted.org/packages/bf/42/68344db3586455983bdcdffe51253fa4415908e700d50287249ad6589bc9/backports_zstd-1.0.0-cp313-cp313-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:3571e35d6682119daf109678a68fa8a9e29f79487ee7ec2da63a7e97562acb8c", size = 581359 },
+    { url = "https://files.pythonhosted.org/packages/0f/d0/3d153d78a52a46ce4c363680da7fbc593eeb314150f005c4bf7c2bd5b51f/backports_zstd-1.0.0-cp313-cp313-manylinux2014_s390x.manylinux_2_17_s390x.manylinux_2_28_s390x.whl", hash = "sha256:26ccb82bbeb36fffeb3865abe7df9b9b82d6462a488cd2f3c10e91c41c3103cc", size = 642203 },
+    { url = "https://files.pythonhosted.org/packages/11/c3/e31b4e591daec3eab2446db971f275d349aad36041236d5f067ab20fa1a9/backports_zstd-1.0.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d90cfb475d6d08c596ae77a7009cdda7374ecd79354fd75185cf029bf2204620", size = 490828 },
+    { url = "https://files.pythonhosted.org/packages/2d/80/ef7d02d846f710fc95c6d7eb3298ef6504e51f8707f24e1624d139f791d5/backports_zstd-1.0.0-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:0b00c9c22cae8c1f87e2f23f9aeda7fee82ff671672b9f5a161a7ba094d9904b", size = 481638 },
+    { url = "https://files.pythonhosted.org/packages/5e/9b/f32500bf26ef588ce4f6284f453532d08789e412a5ecd60c501c77c88f8f/backports_zstd-1.0.0-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:a87c4491036954ae6d15edaf1e6d5b1941e13a9df14d6a9952899713fcfb0796", size = 509228 },
+    { url = "https://files.pythonhosted.org/packages/6d/67/f689055f90a2874578b2b3e7c84311c3007b2fa60c51454e8c432203f1c7/backports_zstd-1.0.0-cp313-cp313-musllinux_1_2_ppc64le.whl", hash = "sha256:8ea8c5d283211bc21c9782db7a8504a275a5b97e883b0bf67f6903a3af48f3d3", size = 585789 },
+    { url = "https://files.pythonhosted.org/packages/86/53/dea52bd76a3ba519a4937e6cab6cbdcdc36b618090eabeac998f69d1bb97/backports_zstd-1.0.0-cp313-cp313-musllinux_1_2_s390x.whl", hash = "sha256:e1d12f64d1bd535c782f30b33d1f60c060105d124f9ade22556fefbf36087776", size = 632571 },
+    { url = "https://files.pythonhosted.org/packages/43/c8/ce10a94132957f57860b9440fe726615a6a6e8c5fdfee565d8a1b3a573de/backports_zstd-1.0.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:df08eb2735363a11a9222203c3e9a478d7569511bdd9aa2cc64a39e0403cf09a", size = 495124 },
+    { url = "https://files.pythonhosted.org/packages/8a/c0/830ea473e3c6133758a9a421157c8d4d5c65408d565336a59403e6bb0b29/backports_zstd-1.0.0-cp313-cp313-win32.whl", hash = "sha256:0309f924ec026d2174297754aeb97fe5fa665cfe0f8bc70e7bb82808a7adcd08", size = 288467 },
+    { url = "https://files.pythonhosted.org/packages/75/5a/318d40e1589908a44532e2c850fedfaedbf4e7c75b6fa3cf4b532fcadc84/backports_zstd-1.0.0-cp313-cp313-win_amd64.whl", hash = "sha256:d68f7f72579070bfef7890ba5316701c001e90b4455bb5c2591558b9d53a7f6e", size = 313680 },
+    { url = "https://files.pythonhosted.org/packages/fa/c8/bb0067165e9b1066104a88536eac04cfac388abb5d500b3405cf783c96e8/backports_zstd-1.0.0-cp313-cp313-win_arm64.whl", hash = "sha256:911a099122ce7cebed9e1ec64c1fa54a6ab461d6c7cec8d460d8b3a09bbd439f", size = 288699 },
+    { url = "https://files.pythonhosted.org/packages/a8/0e/83badde9b389c198a9a45bccd38a9dc5baa7db92e531d4951b1c0686e29a/backports_zstd-1.0.0-cp313-cp313t-macosx_10_13_x86_64.whl", hash = "sha256:fad9af0c89048a50e67bfd9e3509d710b268d4ae0e47a2bc945dca273a17286d", size = 436173 },
+    { url = "https://files.pythonhosted.org/packages/a1/92/d1f5e9f7e1afbb730020e8c7060d6101cad4aa20eb13b7cb98dda9414726/backports_zstd-1.0.0-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:1d0459de16491399e6b6d151213964395ba092ba21b7739756f0507533c8e44f", size = 362456 },
+    { url = "https://files.pythonhosted.org/packages/fa/0c/165b04a4bd9b39455e5d051f504acab6c5af3583939336bd2c77a2dc6398/backports_zstd-1.0.0-cp313-cp313t-manylinux2010_i686.manylinux_2_12_i686.manylinux_2_28_i686.whl", hash = "sha256:2dcf4c080c0fe8f4ca8f1ff560756ae78e6fada721813c1506f8fd3399996646", size = 507618 },
+    { url = "https://files.pythonhosted.org/packages/72/45/868e6b66852b64766feb3a3ce28cc74dd86141120ac6740855f90239fb85/backports_zstd-1.0.0-cp313-cp313t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:e26b558e0f2413e9499949dd75985a03be008287598916eaa75a67efc52e4f1b", size = 475518 },
+    { url = "https://files.pythonhosted.org/packages/44/ff/71021dae5e024d7e12b5078719582b26eeae984f5718846c135134288330/backports_zstd-1.0.0-cp313-cp313t-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:f0a0c11aee04e0a10e9688ef8d9014af888763507bea85a0d7a7ba5220272996", size = 580942 },
+    { url = "https://files.pythonhosted.org/packages/7c/64/553009a1d449033fafba311d2e204b19ebb0dfdba069a639965fb6f0bc57/backports_zstd-1.0.0-cp313-cp313t-manylinux2014_s390x.manylinux_2_17_s390x.manylinux_2_28_s390x.whl", hash = "sha256:c8aa92bf9407ed1ba62234e085876b628ecd9d2636c0e1e23f2dacf3be21af2a", size = 639934 },
+    { url = "https://files.pythonhosted.org/packages/12/da/490a0b80144fb888ae9328f73d7bfa58fd5ccf8bdb81a6d20561ec5a0ff7/backports_zstd-1.0.0-cp313-cp313t-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c78c1eaf3fdea00514afe9636e01f94890f1e4c6e8e1dfede48015364b950705", size = 494822 },
+    { url = "https://files.pythonhosted.org/packages/ad/d2/0f7702000bd08ff6aa71114b377141f2d30154597dcd9459a08554122fa5/backports_zstd-1.0.0-cp313-cp313t-musllinux_1_2_aarch64.whl", hash = "sha256:4ff181018de5afb1b87edf9a88ec7e62b4b053e75b91ec8ac7819042126ca7cf", size = 482001 },
+    { url = "https://files.pythonhosted.org/packages/20/78/2cc5dc095b93841eb251d91cf4b3b4c1e5efc15db40f97f003603acaba3f/backports_zstd-1.0.0-cp313-cp313t-musllinux_1_2_i686.whl", hash = "sha256:eed0753c698a21f0d38464c2a6d4d5e770d2ea2e9c3a308f1712d674598a049f", size = 511380 },
+    { url = "https://files.pythonhosted.org/packages/eb/b3/328c4835b661b3a9f2c6f2eb6350a9d4bc673e7e5c7d1149ecb235abe774/backports_zstd-1.0.0-cp313-cp313t-musllinux_1_2_ppc64le.whl", hash = "sha256:18f5d3ed08afcd08b86b305bf167c0f2b582b906742e4bd3c7389050d5b59817", size = 585514 },
+    { url = "https://files.pythonhosted.org/packages/4f/31/3d347703f5d913d35edb58e9fbfbf8155dc63d1e6c0ed93eb5205e09d5f1/backports_zstd-1.0.0-cp313-cp313t-musllinux_1_2_s390x.whl", hash = "sha256:7a8c950abe629e5d8ea606e6600dd1d6cd6bddd7a4566cf34201d31244d10ab3", size = 630541 },
+    { url = "https://files.pythonhosted.org/packages/e7/ac/323abb5ba0e5da924dec83073464eb87223677c577e0969c90b279700c1f/backports_zstd-1.0.0-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:973e74f4e1f19f7879a6a7900e9a268522eb4297100a573ed69969df63f94674", size = 499450 },
+    { url = "https://files.pythonhosted.org/packages/81/cb/1d77d6cf3850e804f4994a8106db2830e58638ed0f2d0f92636adb38a38d/backports_zstd-1.0.0-cp313-cp313t-win32.whl", hash = "sha256:870effb06ffb7623af1c8dac35647a1c4b597d3bb0b3f9895c738bd5ad23666c", size = 289410 },
+    { url = "https://files.pythonhosted.org/packages/16/59/5ec914419b6db0516794f6f5214b1990e550971fe0867c60ea55262b5d68/backports_zstd-1.0.0-cp313-cp313t-win_amd64.whl", hash = "sha256:8bb6470186301e84aaa704c8eb339c97dcdec67445e7e197d44665e933807e4e", size = 314778 },
+    { url = "https://files.pythonhosted.org/packages/75/88/198e1726f65229f219bb2a72849c9424ba41f6de989c3a8c9bf58118a4a7/backports_zstd-1.0.0-cp313-cp313t-win_arm64.whl", hash = "sha256:b2d85810393b3be6e8e77d89a165fc67c2a08290a210dbd77e2fc148dbc4106f", size = 289333 },
+]
+
+[[package]]
 name = "bandit"
 version = "1.8.6"
 source = { registry = "https://pypi.org/simple" }
@@ -388,16 +426,17 @@ wheels = [
 
 [[package]]
 name = "django-http-compression"
-version = "1.0.0"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
+    { name = "backports-zstd" },
     { name = "django" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4a/41/c3bb038751e51b937698a3d26cc02d7704e250fee6c8f7574b87401f1ec0/django_http_compression-1.0.0.tar.gz", hash = "sha256:3b0460e278385be36efef533822d4c9f3017447676bc8877874cdb6442116639", size = 14395 }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/85/6f934a92e6ed8451eeec0bed2d815e03ebaf60ec227b068670540304b83f/django_http_compression-1.1.0.tar.gz", hash = "sha256:c146f3c3c6bb122f03914f2c4d3f6cd5db0b452c13f0d7314afc72a821b59d5b", size = 14669 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/11/f710c52513f297245e7f19d9a4d82913ea4b601995bd46cb7b95963a7ecd/django_http_compression-1.0.0-py3-none-any.whl", hash = "sha256:cc9bd44d9c29ee03cd183638a874da5666a2386ce73631a2ea56e351fe8744cb", size = 8612 },
+    { url = "https://files.pythonhosted.org/packages/76/c8/1748f0114d294cb8d5feaa5598eb340756d5aa56cb559129f8f1e842572f/django_http_compression-1.1.0-py3-none-any.whl", hash = "sha256:55cbad049cd847009fc46231ab56c58038e0cb0b8ac397c7a4ad6b6f61472c17", size = 8708 },
 ]
 
 [[package]]
