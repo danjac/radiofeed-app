@@ -61,6 +61,7 @@ class AudioLogAdmin(admin.ModelAdmin):
         "episode",
         "user",
         "current_time",
+        "duration",
         "listened",
     )
     ordering = ("-listened",)
