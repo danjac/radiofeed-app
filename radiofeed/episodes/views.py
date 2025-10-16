@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import OuterRef, Subquery
 from django.http import (
     Http404,
     HttpRequest,
@@ -44,16 +45,24 @@ class PlayerUpdate(BaseModel):
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions."""
 
-    podcast_ids = (
+    latest_episodes = (
         Podcast.objects.subscribed(request.user)
+        .annotate(
+            latest_episode=Subquery(
+                Episode.objects.filter(podcast_id=OuterRef("pk"))
+                .order_by("-pub_date", "-pk")
+                .values("pk")[:1]
+            )
+        )
+        .filter(latest_episode__isnull=False)
         .order_by("-pub_date")
-        .values_list("pk", flat=True)[: settings.DEFAULT_PAGE_SIZE]
+        .values_list("latest_episode", flat=True)[: settings.DEFAULT_PAGE_SIZE]
     )
 
     episodes = (
-        Episode.objects.filter(podcast__in=podcast_ids)
-        .order_by("-pub_date", "-id")
+        Episode.objects.filter(pk__in=latest_episodes)
         .select_related("podcast")
+        .order_by("-pub_date", "-pk")
     )[: settings.DEFAULT_PAGE_SIZE]
 
     return TemplateResponse(
