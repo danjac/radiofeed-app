@@ -11,10 +11,6 @@ cronjobs:
       schedule: "20 4 * * *" # 4:20 AM every day
       command: "{{ manage_cmd }} create_recommendations"
 
-    - name: "send-notifications"
-      schedule: "0 16 * * 1" # 4:00 PM on Mondays
-      command: "{{ manage_cmd }} send_notifications"
-
     - name: "send-recommendations"
       schedule: "0 16 * * 5" # 4:00 PM on Fridays
       command: "{{ manage_cmd }} send_recommendations"
