@@ -2,9 +2,12 @@ from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
+from django.db.models import QuerySet
 
 from radiofeed.podcasts.models import Podcast
+from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
+from radiofeed.users.models import User
 
 
 class Command(BaseCommand):
@@ -26,12 +29,8 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
-        for recipient in get_recipients():
-            if podcasts := (
-                Podcast.objects.published()
-                .recommended(recipient.user)
-                .order_by("-relevance", "promoted", "-pub_date")
-            )[:num_podcasts]:
+        def _send_recommendations(recipient):
+            if podcasts := self._get_podcasts(recipient.user, num_podcasts):
                 send_notification_email(
                     site,
                     recipient,
@@ -45,3 +44,12 @@ class Command(BaseCommand):
 
                 recipient.user.recommended_podcasts.add(*podcasts)
                 self.stdout.write(f"Recommendations sent to {recipient.email}")
+
+        execute_thread_pool(_send_recommendations, get_recipients())
+
+    def _get_podcasts(self, user: User, limit: int) -> QuerySet[Podcast]:
+        return (
+            Podcast.objects.published()
+            .recommended(user)
+            .order_by("-relevance", "promoted", "-pub_date")[:limit]
+        )

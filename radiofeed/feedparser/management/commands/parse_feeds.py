@@ -5,6 +5,7 @@ from django.db.models import Case, Count, IntegerField, QuerySet, When
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
+from radiofeed.thread_pool import execute_thread_pool
 
 
 class Command(BaseCommand):
@@ -25,9 +26,12 @@ class Command(BaseCommand):
 
         client = get_client()
 
-        for podcast in self._get_scheduled_podcasts(limit):
+        def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
             result = parse_feed(podcast, client)
             self.stdout.write(f"{podcast}: {result.label}")
+            return result
+
+        execute_thread_pool(_parse_feed, self._get_scheduled_podcasts(limit))
 
     def _get_scheduled_podcasts(self, limit: int) -> QuerySet[Podcast]:
         """Get scheduled podcasts with a limit."""
