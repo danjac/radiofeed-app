@@ -44,7 +44,7 @@ class PlayerUpdate(BaseModel):
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions."""
 
-    podcast_ids = set(
+    podcast_ids = (
         Podcast.objects.subscribed(request.user)
         .order_by("-pub_date")
         .values_list("pk", flat=True)[: settings.DEFAULT_PAGE_SIZE]
