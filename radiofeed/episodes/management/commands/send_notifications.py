@@ -8,6 +8,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
+from radiofeed.podcasts.models import Podcast
 from radiofeed.users.emails import get_recipients, send_notification_email
 from radiofeed.users.models import User
 
@@ -88,6 +89,14 @@ class Command(BaseCommand):
             p["episode__podcast"] for p in listened_podcasts if p["listened"] > since
         }
 
+        podcast_ids = set(
+            Podcast.objects.subscribed(user)
+            .filter(pub_date__gte=since)
+            .exclude(pk__in=is_listened)
+            .order_by("-pub_date")
+            .values_list("pk", flat=True)
+        )
+
         is_bookmarked = set(
             user.bookmarks.values_list(
                 "episode",
@@ -97,9 +106,7 @@ class Command(BaseCommand):
 
         # get the latest episode from each podcast
         episode_ids = (
-            Episode.objects.subscribed(user)
-            .filter(pub_date__gte=since)
-            .exclude(podcast__in=is_listened)
+            Episode.objects.filter(podcast__in=podcast_ids)
             .exclude(pk__in=is_bookmarked)
             .order_by("podcast", "-pub_date", "-id")
             .distinct("podcast")

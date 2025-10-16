@@ -17,15 +17,10 @@ from radiofeed.fields import URLField
 from radiofeed.html import strip_html
 from radiofeed.podcasts.models import Season
 from radiofeed.search import SearchQuerySetMixin
-from radiofeed.users.models import User
 
 
 class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
-
-    def subscribed(self, user: User) -> models.QuerySet["Episode"]:
-        """Returns episodes belonging to episodes subscribed by user."""
-        return self.filter(podcast__in=user.subscriptions.values("podcast"))
 
 
 class Episode(models.Model):

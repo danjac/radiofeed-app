@@ -29,6 +29,7 @@ from radiofeed.http import (
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
+from radiofeed.podcasts.models import Podcast
 
 
 class PlayerUpdate(BaseModel):
@@ -43,8 +44,14 @@ class PlayerUpdate(BaseModel):
 def index(request: HttpRequest) -> HttpResponse:
     """List latest episodes from subscriptions."""
 
+    podcast_ids = set(
+        Podcast.objects.subscribed(request.user)
+        .order_by("-pub_date")
+        .values_list("pk", flat=True)[: settings.DEFAULT_PAGE_SIZE]
+    )
+
     episodes = (
-        Episode.objects.subscribed(request.user)
+        Episode.objects.filter(podcast__in=podcast_ids)
         .order_by("-pub_date", "-id")
         .select_related("podcast")
     )[: settings.DEFAULT_PAGE_SIZE]
