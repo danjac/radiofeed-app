@@ -10,7 +10,7 @@
                   action="{% provider_login_url provider.id process=process %}"
                   hx-disable="true">
                 {% csrf_token %}
-                <button class="flex items-center btn btn-default btn-outline">
+                <button class="flex items-center btn btn-default">
                     {% heroicon_mini "link" class="mr-2" %}
                     {{ provider.name }}
                 </button>
