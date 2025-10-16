@@ -26,10 +26,9 @@ class Command(BaseCommand):
 
         client = get_client()
 
-        def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
+        def _parse_feed(podcast: Podcast) -> None:
             result = parse_feed(podcast, client)
             self.stdout.write(f"{podcast}: {result.label}")
-            return result
 
         execute_thread_pool(_parse_feed, self._get_scheduled_podcasts(limit))
 
