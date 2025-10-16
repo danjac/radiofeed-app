@@ -36,6 +36,7 @@ INSTALLED_APPS: list[str] = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.google",
     "csp",
     "django_htmx",
@@ -261,7 +262,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {
             "access_type": "online",
         },
-    }
+    },
 }
 
 # admin settings

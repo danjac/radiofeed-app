@@ -1,4 +1,4 @@
-{% load socialaccount %}
+{% load heroicons socialaccount %}
 {% get_providers as providers %}
 {% if providers %}
     <div class="flex items-center space-x-3">
@@ -11,7 +11,7 @@
                   hx-disable="true">
                 {% csrf_token %}
                 <button class="flex items-center btn btn-default btn-outline">
-                    {% include "socialaccount/icons/"|add:provider.id|add:".svg" with class="mr-2" %}
+                    {% heroicon_mini "link" class="mr-2" %}
                     {{ provider.name }}
                 </button>
             </form>
