@@ -1,3 +1,4 @@
+import json
 import pathlib
 from email.utils import getaddresses
 
@@ -549,14 +550,6 @@ USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 
 DEFAULT_PAGE_SIZE = 30
 
-# Site meta configuration
-
-META_CONFIG = {
-    "author": env("META_AUTHOR", default="Site owner"),
-    "copyright": env("META_COPYRIGHT", default="Site owner"),
-    "description": env("META_DESCRIPTION", default="Podcast aggregator site"),
-    "keywords": env("META_KEYWORDS", "podcasts, rss, feeds"),
-}
 
 # HTMX configuration
 # https://htmx.org/docs/#config
@@ -594,3 +587,51 @@ PWA_CONFIG = {
         "theme_color": env("PWA_THEME_COLOR", default="#26323C"),
     },
 }
+
+# Site meta configuration
+
+META_CONFIG = [
+    {
+        "charset": "utf-8",
+    },
+    {
+        "http-equiv": "X-UA-Compatible",
+        "content": "IE=edge",
+    },
+    {
+        "name": "mobile-web-app-capable",
+        "content": "yes",
+    },
+    {
+        "name": "apple-mobile-web-app-capable",
+        "content": "yes",
+    },
+    {
+        "name": "viewport",
+        "content": "width=device-width, initial-scale=1, viewport-fit=no",
+    },
+    {
+        "name": "author",
+        "content": env("META_AUTHOR", default="Site owner"),
+    },
+    {
+        "name": "copyright",
+        "content": env("META_COPYRIGHT", default="Site owner"),
+    },
+    {
+        "name": "description",
+        "content": env("META_DESCRIPTION", default="Podcast aggregator site"),
+    },
+    {
+        "name": "keywords",
+        "content": env("META_KEYWORDS", "podcasts, rss, feeds"),
+    },
+    {
+        "name": "htmx-config",
+        "content": json.dumps(HTMX_CONFIG),
+    },
+    {
+        "name": "theme-color",
+        "content": PWA_CONFIG["manifest"]["theme_color"],
+    },
+]

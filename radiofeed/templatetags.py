@@ -1,16 +1,12 @@
-import functools
-import json
 from typing import Final
 
 from django import forms, template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
 
-from radiofeed import pwa
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
 from radiofeed.html import render_markdown
 
@@ -25,16 +21,9 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
 @register.simple_tag
-@functools.cache
-def get_meta_config() -> dict:
+def get_meta_config() -> list[dict[str, str]]:
     """Returns META name/value pairs."""
-    return {
-        "theme-color": pwa.get_theme_color(),
-        "htmx-config": json.dumps(
-            settings.HTMX_CONFIG,
-            cls=DjangoJSONEncoder,
-        ),
-    } | settings.META_CONFIG
+    return settings.META_CONFIG
 
 
 @register.simple_tag
