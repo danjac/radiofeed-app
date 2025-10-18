@@ -20,7 +20,7 @@ class Command(BaseCommand):
             .distinct()
         )
 
-        def _process_language(language):
+        def _process_language(language) -> None:
             recommender.recommend(language)
             self.stdout.write(f"Recommendations created for language: {language}")
 
