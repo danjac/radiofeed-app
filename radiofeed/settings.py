@@ -590,7 +590,7 @@ PWA_CONFIG = {
 
 # Site meta configuration
 
-META_CONFIG = [
+META_TAGS = [
     {
         "charset": "utf-8",
     },

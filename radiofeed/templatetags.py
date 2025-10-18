@@ -1,3 +1,4 @@
+import functools
 from typing import Final
 
 from django import forms, template
@@ -6,6 +7,7 @@ from django.contrib.sites.models import Site
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.template.defaultfilters import pluralize
+from django.utils.html import format_html_join
 
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
 from radiofeed.html import render_markdown
@@ -21,9 +23,23 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
 @register.simple_tag
-def get_meta_config() -> list[dict[str, str]]:
-    """Returns META name/value pairs."""
-    return settings.META_CONFIG
+@functools.cache
+def meta_tags() -> str:
+    """Renders META tags from settings."""
+    return format_html_join(
+        "\n",
+        "<meta {}>",
+        (
+            (
+                format_html_join(
+                    " ",
+                    '{}="{}"',
+                    ((key, value) for key, value in meta.items()),
+                ),
+            )
+            for meta in settings.META_TAGS
+        ),
+    )
 
 
 @register.simple_tag
