@@ -22,6 +22,8 @@ class Command(BaseCommand):
 
         def _process_language(language) -> None:
             recommender.recommend(language)
-            self.stdout.write(f"Recommendations created for language: {language}")
+            self.stdout.write(
+                self.style.SUCCESS(f"Recommendations created for language: {language}")
+            )
 
         execute_thread_pool(_process_language, languages)

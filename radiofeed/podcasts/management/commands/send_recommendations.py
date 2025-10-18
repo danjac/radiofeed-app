@@ -43,7 +43,9 @@ class Command(BaseCommand):
                 )
 
                 recipient.user.recommended_podcasts.add(*podcasts)
-                self.stdout.write(f"Recommendations sent to {recipient.email}")
+                self.stdout.write(
+                    self.style.SUCCESS(f"Recommendations sent to {recipient.email}")
+                )
 
         execute_thread_pool(_send_recommendations, get_recipients())
 
