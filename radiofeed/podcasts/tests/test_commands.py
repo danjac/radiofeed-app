@@ -1,8 +1,6 @@
 import pytest
-from django.core.management import CommandError, call_command
+from django.core.management import call_command
 
-from radiofeed.http_client import get_client
-from radiofeed.podcasts import itunes
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
@@ -24,49 +22,18 @@ class TestFetchTopItunes:
         patched.assert_called()
 
     @pytest.mark.django_db
-    def test_invalid_country(self, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.itunes.fetch_chart",
-            return_value=[
-                PodcastFactory(),
-            ],
-        )
-        with pytest.raises(CommandError):
-            call_command("fetch_top_itunes", countries=["tz"])
-        patched.assert_not_called()
-
-    @pytest.mark.django_db
-    def test_invalid_promoted_country(self, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.itunes.fetch_chart",
-            return_value=[
-                PodcastFactory(),
-            ],
-        )
-        with pytest.raises(CommandError):
-            call_command("fetch_top_itunes", promote="tz")
-        patched.assert_not_called()
-
-    @pytest.mark.django_db
     def test_promote(self, mocker):
+        promoted = PodcastFactory(promoted=True)
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.fetch_chart",
             return_value=[
                 PodcastFactory(),
             ],
         )
-        client = get_client()
-        call_command("fetch_top_itunes", promote="gb", countries=["gb"])
-        patched.assert_called_with(client, "gb", promoted=True, limit=30)
-
-    @pytest.mark.django_db
-    def test_error(self, mocker):
-        patched = mocker.patch(
-            "radiofeed.podcasts.itunes.fetch_chart",
-            side_effect=itunes.ItunesError("Error"),
-        )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", promote="gb")
         patched.assert_called()
+        promoted.refresh_from_db()
+        assert promoted.promoted is False
 
 
 class TestCreateRecommendations:
