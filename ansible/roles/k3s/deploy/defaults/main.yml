@@ -2,6 +2,7 @@ admin_site_header: "Radiofeed Admin [Production]"
 admin_url: "admin/"
 admins: "admin@{{ domain }}"
 allowed_hosts: "*"
+clear_sessions_schedule: "20 5 * * *"
 conn_pool_max_idle: 120
 conn_pool_max_lifetime: 1800
 conn_pool_max_size: 100
@@ -9,8 +10,10 @@ conn_pool_max_waiting: 25
 conn_pool_min_size: 2
 conn_pool_timeout: 20
 contact_email: "contact@{{ domain }}"
+create_recommendations_schedule: "20 4 * * *"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
 docker_image: "ghcr.io/danjac/radiofeed-app:main"
+fetch_top_itunes_schedule: "15 3 * * *"
 itunes_chart_country: "gb"
 mailgun_api_key: ""
 mailgun_api_url: "https://api.eu.mailgun.net/v3"
@@ -19,8 +22,10 @@ meta_author: "Site owner"
 meta_copyright: "{{ meta_author }} {{ ansible_date_time.year }}"
 meta_description: "Podcast aggregator site"
 meta_keywords: "podcasts, feeds, rss"
+parse_feeds_schedule: "*/6 * * * *"
 postgres_volume: "/home/ubuntu/pg_data"
 pwa_sha256_fingerprints: ""
 secret_key_fallbacks: ""
 secure_ssl_redirect: false
+send_recommendations_schedule: "0 16 * * 5"
 sentry_url: ""
