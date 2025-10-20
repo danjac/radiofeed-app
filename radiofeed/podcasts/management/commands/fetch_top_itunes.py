@@ -68,7 +68,7 @@ class Command(BaseCommand):
             promoted = promote == country
 
             self.stdout.write(
-                f"Fetching top {limit} iTunes podcasts for country: {country} {'[PROMOTED]' if promoted else ''}",
+                f"Fetching top {limit} iTunes podcasts for country: {country}",
             )
 
             fields = {"promoted": True} if promoted else {}
@@ -79,6 +79,10 @@ class Command(BaseCommand):
                 limit=limit,
                 **fields,
             ):
-                self.stdout.write(self.style.SUCCESS(f"Fetched iTunes feed: {feed}"))
+                msg = f"Fetched iTunes feed {feed.title}"
+                if promoted:
+                    msg += " (promoted)"
+
+                self.stdout.write(self.style.SUCCESS(msg))
 
         execute_thread_pool(_fetch_country, COUNTRIES)
