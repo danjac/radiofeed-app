@@ -64,7 +64,7 @@ class Command(BaseCommand):
             # Clear existing promoted podcasts
             Podcast.objects.filter(promoted=True).update(promoted=False)
 
-        def _fetch_country(country: str):
+        def _fetch_country(country: str) -> None:
             promoted = promote == country
 
             self.stdout.write(

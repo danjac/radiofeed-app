@@ -29,7 +29,7 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
-        def _send_recommendations(recipient):
+        def _send_recommendations(recipient) -> None:
             if podcasts := self._get_podcasts(recipient.user, num_podcasts):
                 send_notification_email(
                     site,
