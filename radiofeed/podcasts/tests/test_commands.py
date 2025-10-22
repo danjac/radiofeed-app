@@ -49,7 +49,7 @@ class TestCreateRecommendations:
         patched.assert_called()
 
 
-class TestSendRecommendationsEmails:
+class TestSendRecommendations:
     @pytest.fixture
     def recipient(self):
         return EmailAddressFactory(
