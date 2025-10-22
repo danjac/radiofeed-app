@@ -1,12 +1,13 @@
+import random
+
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db.models import Exists, OuterRef, QuerySet, Subquery
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
 from radiofeed.users.models import User
@@ -63,34 +64,22 @@ class Command(BaseCommand):
 
     def _get_new_episodes(
         self, user: User, limit: int, days_since: int
-    ) -> QuerySet[Episode]:
-        # Fetch the latest episode from each subscribed podcast within the specified timeframe
-        since = timezone.now() - timezone.timedelta(days=days_since)
-        latest_episodes = (
-            Podcast.objects.subscribed(user)
-            .annotate(
-                latest_episode=Subquery(
-                    Episode.objects.filter(podcast=OuterRef("pk"))
-                    .order_by("-pub_date", "-pk")
-                    .values("pk")[:1]
+    ) -> list[Episode]:
+        # Fetch episodes from podcasts the user is subscribed to that were published within the last `days_since` days
+        # Order by the last pub date
+
+        episodes = list(
+            Episode.objects.annotate(
+                is_bookmarked=Exists(user.bookmarks.filter(episode=OuterRef("pk"))),
+                is_listened=Exists(user.audio_logs.filter(episode=OuterRef("pk"))),
+                is_subscribed=Exists(
+                    user.subscriptions.filter(podcast=OuterRef("podcast"))
                 ),
-                recently_listened=Exists(
-                    user.audio_logs.filter(
-                        episode__podcast=OuterRef("pk"),
-                        listened__gte=since,
-                    )
-                ),
+            ).filter(
+                is_bookmarked=False,
+                is_listened=False,
+                is_subscribed=True,
+                pub_date__gte=timezone.now() - timezone.timedelta(days=days_since),
             )
-            .filter(
-                latest_episode__isnull=False,
-                recently_listened=False,
-                pub_date__gte=since,
-            )
-            .order_by("-pub_date")
-            .values_list("latest_episode", flat=True)
         )
-        return (
-            Episode.objects.filter(pk__in=latest_episodes)
-            .select_related("podcast")
-            .order_by("-pub_date", "-pk")
-        )[:limit]
+        return random.sample(episodes, min(len(episodes), limit))
