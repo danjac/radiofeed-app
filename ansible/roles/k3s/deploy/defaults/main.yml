@@ -5,11 +5,12 @@ postgres_volume: "/home/ubuntu/pg_data"
 
 # Cron job schedules
 
-clear_sessions_schedule: "20 5 * * *"
-create_recommendations_schedule: "20 4 * * *"
-fetch_top_itunes_schedule: "15 3 * * *"
-parse_feeds_schedule: "*/6 * * * *"
-send_recommendations_schedule: "0 16 * * 5"
+cron_schedules_default:
+  clear_sessions: "20 5 * * *"
+  create_recommendations: "20 4 * * *"
+  fetch_top_itunes: "15 3 * * *"
+  parse_feeds: "*/6 * * * *"
+  send_recommendations: "0 16 * * 5"
 
 # Django settings
 
