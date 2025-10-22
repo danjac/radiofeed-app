@@ -1,8 +1,4 @@
 cronjobs:
-    - name: "parse-feeds"
-      schedule: "{{ cron_schedules.parse_feeds }}"
-      command: "{{ manage_cmd }} parse_feeds"
-
     - name: "clear-sessions"
       schedule: "{{ cron_schedules.clear_sessions }}"
       command: "{{ manage_cmd }} clearsessions"
@@ -11,13 +7,21 @@ cronjobs:
       schedule: "{{ cron_schedules.create_recommendations }}"
       command: "{{ manage_cmd }} create_recommendations"
 
-    - name: "send-recommendations"
-      schedule: "{{ cron_schedules.send_recommendations }}"
-      command: "{{ manage_cmd }} send_recommendations"
-
     - name: "fetch-top-itunes"
       schedule: "{{ cron_schedules.fetch_top_itunes }}"
       command: "{{ manage_cmd }} fetch_top_itunes -p {{ itunes_chart_country }}"
+
+    - name: "parse-feeds"
+      schedule: "{{ cron_schedules.parse_feeds }}"
+      command: "{{ manage_cmd }} parse_feeds"
+
+    - name: "send-notifications"
+      schedule: "{{ cron_schedules.send_notifications }}"
+      command: "{{ manage_cmd }} send_notifications"
+
+    - name: "send-recommendations"
+      schedule: "{{ cron_schedules.send_recommendations }}"
+      command: "{{ manage_cmd }} send_recommendations"
 
 configmap:
    - name: "admins"
