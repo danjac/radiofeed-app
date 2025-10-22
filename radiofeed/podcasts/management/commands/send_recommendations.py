@@ -19,6 +19,7 @@ class Command(BaseCommand):
         """Add command line arguments for the command"""
         parser.add_argument(
             "--num-podcasts",
+            "-n",
             type=int,
             default=6,
             help="Number of podcasts to recommend per user",
