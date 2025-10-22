@@ -4,7 +4,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management import CommandParser
 from django.core.management.base import BaseCommand
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -64,22 +64,25 @@ class Command(BaseCommand):
 
     def _get_new_episodes(
         self, user: User, limit: int, days_since: int
-    ) -> list[Episode]:
+    ) -> QuerySet[Episode]:
         # Fetch episodes from podcasts the user is subscribed to that were published within the last `days_since` days
         # Order by the last pub date
 
-        episodes = list(
+        episode_ids = list(
             Episode.objects.annotate(
                 is_bookmarked=Exists(user.bookmarks.filter(episode=OuterRef("pk"))),
                 is_listened=Exists(user.audio_logs.filter(episode=OuterRef("pk"))),
                 is_subscribed=Exists(
                     user.subscriptions.filter(podcast=OuterRef("podcast"))
                 ),
-            ).filter(
+            )
+            .filter(
                 is_bookmarked=False,
                 is_listened=False,
                 is_subscribed=True,
                 pub_date__gte=timezone.now() - timezone.timedelta(days=days_since),
             )
+            .values_list("pk", flat=True)
         )
-        return random.sample(episodes, min(len(episodes), limit))
+        episode_ids = random.sample(episode_ids, min(len(episode_ids), limit))
+        return Episode.objects.filter(pk__in=episode_ids).order_by("-pub_date", "-pk")
