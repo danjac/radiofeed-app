@@ -1,4 +1,4 @@
-ansible_dir := invocation_directory() / "ansible"
+ansible_dir := invocation_directory() / "deploy"
 script_dir := ansible_dir / "scripts"
 
 # Set environment variables for development
