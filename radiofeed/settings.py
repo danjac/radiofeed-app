@@ -555,7 +555,7 @@ DEFAULT_PAGE_SIZE = 30
 # https://htmx.org/docs/#config
 
 HTMX_CONFIG = {
-    "globalViewTransitions": True,
+    "globalViewTransitions": False,
     "scrollBehavior": "instant",
     "scrollIntoViewOnBoost": False,
     "useTemplateFragments": True,
