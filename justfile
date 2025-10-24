@@ -68,12 +68,12 @@ dc *args:
 
 # Start all Docker services
 [group('development')]
-dcup *args:
+start *args:
    @just dc up -d {{ args }}
 
 # Stop all Docker services
 [group('development')]
-dcdn *args:
+stop *args:
    @just dc down {{ args }}
 
 # Run Psql
