@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from django.contrib.sites.models import Site
@@ -39,11 +40,14 @@ class Command(BaseCommand):
     def handle(self, *, num_episodes: int, days_since: int, **options) -> None:
         """Handle the command execution"""
         site = Site.objects.get_current()
+        since = timezone.now() - timezone.timedelta(days=days_since)
         connection = get_connection()
 
         def _send_notifications(recipient) -> None:
             if episodes := self._get_new_episodes(
-                recipient.user, num_episodes, days_since
+                recipient.user,
+                num_episodes,
+                since,
             ):
                 send_notification_email(
                     site,
@@ -63,7 +67,7 @@ class Command(BaseCommand):
         execute_thread_pool(_send_notifications, get_recipients())
 
     def _get_new_episodes(
-        self, user: User, limit: int, days_since: int
+        self, user: User, limit: int, since: datetime.datetime
     ) -> QuerySet[Episode]:
         # Fetch latest episode IDs for each podcast the user is subscribed to
         # Exclude any that the user has bookmarked or listened to
@@ -80,7 +84,7 @@ class Command(BaseCommand):
                 is_bookmarked=False,
                 is_listened=False,
                 is_subscribed=True,
-                pub_date__gte=timezone.now() - timezone.timedelta(days=days_since),
+                pub_date__gte=since,
             )
             .order_by("-pub_date", "-pk")
             .values_list("podcast", "pk")
