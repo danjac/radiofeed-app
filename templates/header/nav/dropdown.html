@@ -22,12 +22,12 @@
          x-show="showDropdown"
          x-transition.scale.origin.top
          x-ref="dropdown"
-         x-init="$watch('showDropdown', () => $nextTick(() => checkSize()))"
+         x-init="$watch('showDropdown', () => $nextTick(() => adjustPositioning()))"
         {# fmt:off #}
          x-data="{
              isLeft: false,
              isRight: false,
-             checkSize() {
+             adjustPositioning() {
                  const windowWidth = document.body.getBoundingClientRect().width;
                  const boxRight = this.$refs.dropdown.getBoundingClientRect().right;
                  this.isLeft = windowWidth < boxRight;
@@ -35,7 +35,7 @@
              }
         }"
         {# fmt:on #}
-         @resize.window="checkSize()"
+         @resize.window="adjustPositioning()"
          @click.away="showDropdown = false"
          @keydown.escape.window="showDropdown = false"
          @keydown.tab.prevent="showDropdown = false"
