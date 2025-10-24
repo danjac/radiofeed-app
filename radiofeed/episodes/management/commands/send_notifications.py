@@ -65,10 +65,10 @@ class Command(BaseCommand):
     def _get_new_episodes(
         self, user: User, limit: int, days_since: int
     ) -> QuerySet[Episode]:
-        # Fetch episodes from podcasts the user is subscribed to that were published within the last `days_since` days
-        # Order by the last pub date
-
-        episode_ids = list(
+        # Fetch latest episode IDs for each podcast the user is subscribed to
+        # Exclude any that the user has bookmarked or listened to
+        # Include only those published within the last `days_since` days
+        episodes = dict(
             Episode.objects.annotate(
                 is_bookmarked=Exists(user.bookmarks.filter(episode=OuterRef("pk"))),
                 is_listened=Exists(user.audio_logs.filter(episode=OuterRef("pk"))),
@@ -82,7 +82,10 @@ class Command(BaseCommand):
                 is_subscribed=True,
                 pub_date__gte=timezone.now() - timezone.timedelta(days=days_since),
             )
-            .values_list("pk", flat=True)
+            .order_by("-pub_date", "-pk")
+            .values_list("podcast", "pk")
         )
-        episode_ids = random.sample(episode_ids, min(len(episode_ids), limit))
-        return Episode.objects.filter(pk__in=episode_ids).order_by("-pub_date", "-pk")
+        episode_ids = list(episodes.values())
+        # Randomly sample up to `limit` episode IDs
+        sample_ids = random.sample(episode_ids, min(len(episode_ids), limit))
+        return Episode.objects.filter(pk__in=sample_ids).order_by("-pub_date", "-pk")
