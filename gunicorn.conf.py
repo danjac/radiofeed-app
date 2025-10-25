@@ -35,3 +35,20 @@ timeout = max(30, 35 + (threads * 2))
 
 # Graceful timeout: allow extra time for clean shutdown
 graceful_timeout = timeout + 10
+
+
+def on_starting(server):
+    """Hook called just before the master process is initialized."""
+    for setting in (
+        "workers",
+        "threads",
+        "max_requests",
+        "max_requests_jitter",
+        "timeout",
+        "graceful_timeout",
+    ):
+        server.log.info(
+            "Setting %s: %s",
+            setting,
+            server.cfg.settings[setting].value,
+        )
