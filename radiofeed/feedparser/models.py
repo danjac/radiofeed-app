@@ -20,7 +20,7 @@ from radiofeed import tokenizer
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.podcasts.models import Podcast
-from radiofeed.validators import url_validator
+from radiofeed.validators import http_url_validator
 
 AudioMimetype = Literal[
     "audio/aac",
@@ -107,7 +107,7 @@ def _url(value: str | None) -> str:
             value = f"http://{value}"
 
         with contextlib.suppress(ValidationError):
-            url_validator(value)
+            http_url_validator(value)
             return value
     return ""
 

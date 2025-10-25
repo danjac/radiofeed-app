@@ -1,3 +1,3 @@
 from django.core.validators import URLValidator
 
-url_validator = URLValidator(schemes=["http", "https"])
+http_url_validator = URLValidator(schemes=["http", "https"])
