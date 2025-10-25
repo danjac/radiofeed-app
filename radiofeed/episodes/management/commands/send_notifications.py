@@ -92,4 +92,8 @@ class Command(BaseCommand):
         episode_ids = list(episodes.values())
         # Randomly sample up to `limit` episode IDs
         sample_ids = random.sample(episode_ids, min(len(episode_ids), limit))
-        return Episode.objects.filter(pk__in=sample_ids).order_by("-pub_date", "-pk")
+        return (
+            Episode.objects.filter(pk__in=sample_ids)
+            .select_related("podcast")
+            .order_by("-pub_date", "-pk")
+        )
