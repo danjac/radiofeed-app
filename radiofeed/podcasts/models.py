@@ -14,9 +14,9 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from slugify import slugify
 
-from radiofeed.fields import URLField
+from radiofeed.db.fields import URLField
+from radiofeed.db.search import SearchQuerySetMixin
 from radiofeed.html import strip_html
-from radiofeed.search import SearchQuerySetMixin
 from radiofeed.users.models import User
 
 
