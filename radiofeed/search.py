@@ -29,10 +29,10 @@ class SearchQuerySetMixin:
         search_type: PostgreSQL search type
     """
 
-    search_vectors: ClassVar = []
-    search_vector_field = "search_vector"
-    search_rank = "rank"
-    search_type = "websearch"
+    search_vectors: ClassVar[list[tuple[str, str]]] = []
+    search_vector_field: str = "search_vector"
+    search_rank: str = "rank"
+    search_type: str = "websearch"
 
     def search(self: Searchable, search_term: str) -> QuerySet:
         """Returns result of search."""
