@@ -113,7 +113,7 @@ if env.bool("USE_CONNECTION_POOL", default=True):
 
 # Caches
 
-DEFAULT_CACHE_TIMEOUT = env.int("DEFAULT_CACHE_TIMEOUT", 300)
+DEFAULT_CACHE_TIMEOUT = env.int("DEFAULT_CACHE_TIMEOUT", 360)
 
 CACHES = {
     "default": env.dj_cache_url("REDIS_URL", default="redis://127.0.0.1:6379/0")
