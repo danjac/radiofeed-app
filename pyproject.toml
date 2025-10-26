@@ -45,7 +45,7 @@ dependencies = [
     "scipy>=1.15.3",
     "pycountry>=24.6.1",
     "python-slugify>=8.0.4",
-    "django-http-compression>=1.0.0",
+    "django-http-compression[brotli]>=1.0.0",
 ]
 
 [tool.uv]
