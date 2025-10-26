@@ -6,7 +6,10 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" title=category.name %}
+    {% fragment "header.html" %}
+        {% fragment "header.html#title" %}
+            {{ category.name }} Podcasts
+        {% endfragment %}
         {% if request.search or page.has_other_pages %}
             {% fragment "header/nav.html" %}
                 {% fragment "header/nav.html#item" %}
