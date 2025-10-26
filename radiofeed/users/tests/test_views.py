@@ -318,3 +318,20 @@ class TestUnsubscribe:
         assert response.url == reverse("users:preferences")
         email_address.refresh_from_db()
         assert email_address.user.send_email_notifications is False
+
+    @pytest.mark.django_db
+    def test_is_different_user(self, client, auth_user):
+        email_address = EmailAddressFactory()
+        response = client.get(
+            reverse("users:unsubscribe"),
+            {
+                "email": get_unsubscribe_signer().sign(email_address.email),
+            },
+        )
+        assert response.url == reverse("users:preferences")
+
+        email_address.refresh_from_db()
+        auth_user.refresh_from_db()
+
+        assert email_address.user.send_email_notifications is True
+        assert auth_user.send_email_notifications is True

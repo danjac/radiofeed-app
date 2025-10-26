@@ -166,12 +166,10 @@ def unsubscribe(request: HttpRequest) -> HttpResponseRedirect:
         email = get_unsubscribe_signer().unsign(
             request.GET["email"], max_age=48 * 60 * 60
         )
-        user = (
-            EmailAddress.objects.filter(user__is_active=True)
-            .select_related("user")
-            .get(email=email)
-            .user
-        )
+        qs = EmailAddress.objects.filter(user__is_active=True).select_related("user")
+        if request.user.is_authenticated:
+            qs = qs.filter(user=request.user)
+        user = qs.get(email=email).user
     except (
         KeyError,
         ValueError,
