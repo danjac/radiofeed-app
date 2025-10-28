@@ -65,17 +65,7 @@ _tokenizer = RegexpTokenizer(r"\w+")
 
 def clean_text(text: str) -> str:
     """Scrub text of any HTML tags and entities, punctuation and numbers."""
-    return (
-        _re_punctuation()
-        .sub(
-            "",
-            _re_digits().sub(
-                "",
-                strip_html(text),
-            ),
-        )
-        .strip()
-    )
+    return _re_punctuation().sub("", _re_digits().sub("", strip_html(text))).strip()
 
 
 def tokenize(language: str, text: str) -> list[str]:
