@@ -25,6 +25,7 @@ from radiofeed.cover_image import (
     is_cover_image_size,
     save_cover_image,
 )
+from radiofeed.http import TextResponse
 from radiofeed.http_client import get_client
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
@@ -97,10 +98,10 @@ def manifest(request: HttpRequest) -> JsonResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def robots(_) -> HttpResponse:
+def robots(_) -> TextResponse:
     """Generates robots.txt file."""
 
-    return HttpResponse(
+    return TextResponse(
         "\n".join(
             [
                 "User-Agent: *",
@@ -115,19 +116,15 @@ def robots(_) -> HttpResponse:
                 "Disallow: /",
             ]
         ),
-        content_type="text/plain",
     )
 
 
 @require_safe
 @_cache_control
 @_cache_page
-def security(_) -> HttpResponse:
+def security(_) -> TextResponse:
     """Generates security.txt file containing contact details etc."""
-    return HttpResponse(
-        f"Contact: mailto:{settings.CONTACT_EMAIL}",
-        content_type="text/plain",
-    )
+    return TextResponse(f"Contact: mailto:{settings.CONTACT_EMAIL}")
 
 
 @require_safe

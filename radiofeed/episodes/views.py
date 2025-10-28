@@ -41,7 +41,7 @@ class PlayerUpdate(BaseModel):
 
 @require_safe
 @login_required
-def index(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> TemplateResponse:
     """List latest episodes from subscriptions."""
 
     latest_episodes = (

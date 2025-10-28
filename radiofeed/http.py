@@ -8,6 +8,15 @@ require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
 require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 
 
+class TextResponse(HttpResponse):
+    """Plain text response."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize a plain text HTTP response."""
+        kwargs.setdefault("content_type", "text/plain")
+        super().__init__(*args, **kwargs)
+
+
 class HttpResponseNoContent(HttpResponse):
     """204 No Content response."""
 
