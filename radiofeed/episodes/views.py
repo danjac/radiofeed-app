@@ -1,4 +1,3 @@
-import http
 import json
 
 from django.conf import settings
@@ -167,6 +166,7 @@ def player_time_update(
     | JsonResponse
 ):
     """Update current play time of episode."""
+    response_kwargs = {"content_type": "application/json"}
     if request.user.is_authenticated:
         if episode_id := request.player.get():
             try:
@@ -180,16 +180,11 @@ def player_time_update(
                     },
                 )
             except IntegrityError:
-                return HttpResponseConflict()
-            except json.JSONDecodeError:
-                return HttpResponseBadRequest()
-            except ValidationError as exc:
-                return JsonResponse(
-                    {"errors": exc.errors()},
-                    status=http.HTTPStatus.BAD_REQUEST,
-                )
-        return HttpResponseNoContent(content_type="application/json")
-    return HttpResponseUnauthorized()
+                return HttpResponseConflict(**response_kwargs)
+            except (json.JSONDecodeError, ValidationError):
+                return HttpResponseBadRequest(**response_kwargs)
+        return HttpResponseNoContent(**response_kwargs)
+    return HttpResponseUnauthorized(**response_kwargs)
 
 
 @require_safe
