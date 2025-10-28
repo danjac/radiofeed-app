@@ -58,14 +58,6 @@ class Category(models.Model):
     """iTunes category."""
 
     name = models.CharField(max_length=100, unique=True)
-    parent = models.ForeignKey(
-        "self",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="children",
-    )
-
     objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
 
     class Meta:

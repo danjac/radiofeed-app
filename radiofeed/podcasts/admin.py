@@ -21,7 +21,6 @@ class CategoryAdmin(admin.ModelAdmin):
     ordering = ("name",)
     list_display = (
         "name",
-        "parent",
         "num_podcasts",
     )
     search_fields = ("name",)
