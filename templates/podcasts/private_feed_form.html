@@ -20,7 +20,7 @@
                         class="btn btn-default"
                         role="link"
                         hx-get="{% url 'podcasts:private_feeds' %}"
-                        hx-swap="innerHTML"
+                        hx-swap="morphdom:innerHTML"
                         hx-target="#content"
                         hx-push-url="true"
                     >

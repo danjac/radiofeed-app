@@ -23,8 +23,9 @@
         </head>
         <body class="overflow-x-hidden mx-auto font-sans antialiased container-xl scroll-smooth"
               hx-boost="true"
+              hx-ext="morphdom-swap"
               hx-target="#content"
-              hx-swap="innerHTML show:window:top"
+              hx-swap="morphdom:innerHTML show:window:top"
               hx-indicator="#hx-indicator">
             <div id="hx-indicator"
                  x-data="{width: 0}"

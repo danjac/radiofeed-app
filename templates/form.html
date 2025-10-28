@@ -6,7 +6,7 @@
           id="{{ target }}"
           hx-{{ method }}="{{ action }}"
           hx-disabled-elt="this"
-          hx-swap="{{ hx_swap|default:'outerHTML' }}"
+          hx-swap="{{ hx_swap|default:'morphdom' }}"
           hx-target="{{ hx_target|default:'this' }}"
           hx-validate="true"
         {% elif hx_disable %}

@@ -73,7 +73,7 @@
                                  hx-push-url="false"
                                  hx-target="this"
                                  hx-indicator="this"
-                                 hx-swap="outerHTML"
+                                 hx-swap="morphdom"
                                  hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                                 {% if is_playing %}
                                     <button
@@ -113,7 +113,7 @@
                         <div id="bookmark-button"
                              hx-push-url="false"
                              hx-target="this"
-                             hx-swap="outerHTML"
+                             hx-swap="morphdom"
                              hx-indicator="this"
                              hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                             {% if is_bookmarked %}
@@ -192,7 +192,7 @@
             {% partialdef audio_log inline %}
                 <div id="audio-log"
                      hx-push-url="false"
-                     hx-swap="outerHTML"
+                     hx-swap="morphdom"
                      hx-target="this"
                      hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'
                      {% if hx_oob %} hx-swap-oob="true"{% endif %}
