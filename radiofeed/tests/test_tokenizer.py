@@ -30,7 +30,10 @@ class TestTokenize:
 
 class TestCleanText:
     def test_remove_html_tags(self):
-        assert clean_text("<p>test</p>") == "test"
+        assert (
+            clean_text("<p>Tuesday, September 1st, &nbsp;2020</p>")
+            == "Tuesday September st"
+        )
 
     def test_remove_numbers(self):
         assert clean_text("Tuesday, September 1st, 2020") == "Tuesday September st"
