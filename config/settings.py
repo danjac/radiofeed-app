@@ -592,25 +592,6 @@ PWA_CONFIG = {
 
 META_TAGS = [
     {
-        "charset": "utf-8",
-    },
-    {
-        "http-equiv": "X-UA-Compatible",
-        "content": "IE=edge",
-    },
-    {
-        "name": "mobile-web-app-capable",
-        "content": "yes",
-    },
-    {
-        "name": "apple-mobile-web-app-capable",
-        "content": "yes",
-    },
-    {
-        "name": "viewport",
-        "content": "width=device-width, initial-scale=1, viewport-fit=no",
-    },
-    {
         "name": "author",
         "content": env("META_AUTHOR", default="Site owner"),
     },
