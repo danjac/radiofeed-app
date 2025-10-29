@@ -11,7 +11,7 @@ require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
 class TextResponse(HttpResponse):
     """Plain text response."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initialize a plain text HTTP response."""
         kwargs.setdefault("content_type", "text/plain")
         super().__init__(*args, **kwargs)
