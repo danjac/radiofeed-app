@@ -7,7 +7,7 @@ from environs import Env
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
-BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = pathlib.Path(__file__).resolve(strict=True).parents[1]
 
 env = Env()
 env.read_env()
@@ -159,7 +159,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ROOT_URLCONF = "radiofeed.config.urls"
+ROOT_URLCONF = "config.urls"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
