@@ -1,4 +1,3 @@
-import json
 import pathlib
 from email.utils import getaddresses
 
@@ -606,13 +605,5 @@ META_TAGS = [
     {
         "name": "keywords",
         "content": env("META_KEYWORDS", "podcasts, rss, feeds"),
-    },
-    {
-        "name": "htmx-config",
-        "content": json.dumps(HTMX_CONFIG),
-    },
-    {
-        "name": "theme-color",
-        "content": PWA_CONFIG["manifest"]["theme_color"],
     },
 ]

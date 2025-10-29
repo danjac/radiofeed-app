@@ -1,4 +1,5 @@
 import functools
+import json
 from typing import Final
 
 from django import forms, template
@@ -11,6 +12,7 @@ from django.utils.html import format_html_join
 
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
 from radiofeed.html import render_markdown
+from radiofeed.pwa import get_theme_color
 
 _TIME_PARTS: Final = [
     ("hour", 60 * 60),
@@ -26,6 +28,17 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 @functools.cache
 def meta_tags() -> str:
     """Renders META tags from settings."""
+    meta_tags = [
+        *settings.META_TAGS,
+        {
+            "name": "htmx-config",
+            "content": json.dumps(settings.HTMX_CONFIG),
+        },
+        {
+            "name": "theme-color",
+            "content": get_theme_color(),
+        },
+    ]
     return format_html_join(
         "\n",
         "<meta {}>",
@@ -37,7 +50,7 @@ def meta_tags() -> str:
                     ((key, value) for key, value in meta.items()),
                 ),
             )
-            for meta in settings.META_TAGS
+            for meta in meta_tags
         ),
     )
 
