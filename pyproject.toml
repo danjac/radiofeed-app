@@ -47,9 +47,8 @@ dependencies = [
     "python-slugify>=8.0.4",
     "django-http-compression[brotli]>=1.0.0",
 ]
-
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "bandit>=1.7.9",
     "coverage>=7.6.1",
     "django-browser-reload>=1.15.0",
