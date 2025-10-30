@@ -8,7 +8,7 @@ import sys
 
 def main() -> None:
     """Django management entry point."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "radiofeed.config.settings")
     try:
         from django.core.management import execute_from_command_line  # noqa: PLC0415
     except ImportError as exc:
