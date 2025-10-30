@@ -1,12 +1,13 @@
 import datetime
 import random
+from typing import Annotated
 
+import typer
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
-from django.core.management import CommandParser
-from django.core.management.base import BaseCommand
 from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
+from django_typer.management import TyperCommand
 
 from radiofeed.episodes.models import Episode
 from radiofeed.thread_pool import execute_thread_pool
@@ -14,30 +15,23 @@ from radiofeed.users.emails import get_recipients, send_notification_email
 from radiofeed.users.models import User
 
 
-class Command(BaseCommand):
+class Command(TyperCommand):
     """Send notifications to users about new podcast episodes"""
 
     help = "Send notifications to users about new podcast episodes"
 
-    def add_arguments(self, parser: CommandParser) -> None:
-        """Add command line arguments for the command"""
-        parser.add_argument(
-            "--num-episodes",
-            "-n",
-            type=int,
-            default=6,
-            help="Number of new podcast episodes to notify per user",
-        )
-
-        parser.add_argument(
-            "--days-since",
-            "-d",
-            type=int,
-            default=7,
-            help="Number of days to look back for new episodes",
-        )
-
-    def handle(self, *, num_episodes: int, days_since: int, **options) -> None:
+    def handle(
+        self,
+        *,
+        num_episodes: Annotated[
+            int,
+            typer.Option(help="Number of new podcast episodes to notify per user"),
+        ] = 6,
+        days_since: Annotated[
+            int,
+            typer.Option(help="Number of days to look back for new episodes"),
+        ] = 7,
+    ) -> None:
         """Handle the command execution"""
         site = Site.objects.get_current()
         since = timezone.now() - timezone.timedelta(days=days_since)
@@ -60,8 +54,9 @@ class Command(BaseCommand):
                     connection=connection,
                 )
 
-                self.stdout.write(
-                    self.style.SUCCESS(f"Notifications sent to {recipient.email}")
+                typer.secho(
+                    f"Notifications sent to {recipient.email}",
+                    fg=typer.colors.GREEN,
                 )
 
         execute_thread_pool(_send_notifications, get_recipients())

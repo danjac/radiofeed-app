@@ -1,6 +1,8 @@
-from django.core.management import CommandParser
-from django.core.management.base import BaseCommand
+from typing import Annotated
+
+import typer
 from django.db.models import Case, Count, IntegerField, QuerySet, When
+from django_typer.management import TyperCommand
 
 from radiofeed.feedparser.feed_parser import parse_feed
 from radiofeed.http_client import get_client
@@ -8,32 +10,29 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
 
-class Command(BaseCommand):
+class Command(TyperCommand):
     """Parse feeds for all active podcasts."""
 
-    def add_arguments(self, parser: CommandParser) -> None:
-        """Add command line arguments for the parse_feeds command."""
-        parser.add_argument(
-            "--limit",
-            "-l",
-            type=int,
-            default=360,
-            help="Limit the number of podcasts to parse (default: 360)",
-        )
-
-    def handle(self, *, limit: int, **options) -> None:
+    def handle(
+        self,
+        *,
+        limit: Annotated[
+            int,
+            typer.Option(help="Number of podcasts to parse"),
+        ] = 360,
+    ) -> None:
         """Parse feeds for all active podcasts."""
 
         client = get_client()
 
         def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
             result = parse_feed(podcast, client)
-            style = (
-                self.style.SUCCESS
+            color = (
+                typer.colors.GREEN
                 if result is Podcast.ParserResult.SUCCESS
-                else self.style.ERROR
+                else typer.colors.RED
             )
-            self.stdout.write(style(f"{podcast}: {result.label}"))
+            self.secho(f"{podcast}: {result.label}", fg=color)
             return result
 
         execute_thread_pool(_parse_feed, self._get_scheduled_podcasts(limit))

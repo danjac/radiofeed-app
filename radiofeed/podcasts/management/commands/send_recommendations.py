@@ -1,8 +1,10 @@
+from typing import Annotated
+
+import typer
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
-from django.core.management import CommandParser
-from django.core.management.base import BaseCommand
 from django.db.models import QuerySet
+from django_typer.management import TyperCommand
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
@@ -10,22 +12,19 @@ from radiofeed.users.emails import get_recipients, send_notification_email
 from radiofeed.users.models import User
 
 
-class Command(BaseCommand):
+class Command(TyperCommand):
     """Send podcast recommendations to users"""
 
     help = "Send podcast recommendations to users"
 
-    def add_arguments(self, parser: CommandParser) -> None:
-        """Add command line arguments for the command"""
-        parser.add_argument(
-            "--num-podcasts",
-            "-n",
-            type=int,
-            default=6,
-            help="Number of podcasts to recommend per user",
-        )
-
-    def handle(self, *, num_podcasts: int, **options) -> None:
+    def handle(
+        self,
+        *,
+        num_podcasts: Annotated[
+            int,
+            typer.Option(help="Number of podcasts to recommend per user"),
+        ] = 6,
+    ) -> None:
         """Handle the command execution"""
         site = Site.objects.get_current()
         connection = get_connection()
@@ -44,8 +43,9 @@ class Command(BaseCommand):
                 )
 
                 recipient.user.recommended_podcasts.add(*podcasts)
-                self.stdout.write(
-                    self.style.SUCCESS(f"Recommendations sent to {recipient.email}")
+                typer.secho(
+                    f"Recommendations sent to {recipient.email}",
+                    fg=typer.colors.GREEN,
                 )
 
         execute_thread_pool(_send_recommendations, get_recipients())

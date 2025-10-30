@@ -1,7 +1,7 @@
-from typing import Final
+from typing import Annotated, Final
 
-from django.core.management import CommandParser
-from django.core.management.base import BaseCommand
+import typer
+from django_typer.management import TyperCommand
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
@@ -28,34 +28,26 @@ COUNTRIES: Final = (
 )
 
 
-class Command(BaseCommand):
+class Command(TyperCommand):
     """Command implementation for fetching top iTunes podcasts."""
 
     help = "Fetch the top iTunes podcasts for a given country."
 
-    def add_arguments(self, parser: CommandParser) -> None:
-        """Add command line arguments."""
-        parser.add_argument(
-            "--promote",
-            "-p",
-            type=str,
-            help="Country code for promoted iTunes podcasts",
-        )
-
-        parser.add_argument(
-            "--limit",
-            "-l",
-            type=int,
-            default=30,
-            help="Number of top podcasts to fetch (default: 30)",
-        )
-
     def handle(
         self,
         *,
-        promote: str,
-        limit: int,
-        **options,
+        promote: Annotated[
+            str,
+            typer.Option(
+                help="Country code for promoted iTunes podcasts",
+            ),
+        ] = "",
+        limit: Annotated[
+            int,
+            typer.Option(
+                help="Number of top podcasts to fetch (default: 30)",
+            ),
+        ] = 30,
     ) -> None:
         """Fetch the top iTunes podcasts for a given country."""
         client = get_client()
@@ -67,9 +59,7 @@ class Command(BaseCommand):
         def _fetch_country(country: str) -> None:
             promoted = promote == country
 
-            self.stdout.write(
-                f"Fetching top {limit} iTunes podcasts for country: {country}",
-            )
+            typer.echo(f"Fetching top {limit} iTunes podcasts for country: {country}")
 
             fields = {"promoted": True} if promoted else {}
 
@@ -83,6 +73,6 @@ class Command(BaseCommand):
                 if promoted:
                     msg += " (promoted)"
 
-                self.stdout.write(self.style.SUCCESS(msg))
+                typer.secho(msg, fg=typer.colors.GREEN)
 
         execute_thread_pool(_fetch_country, COUNTRIES)

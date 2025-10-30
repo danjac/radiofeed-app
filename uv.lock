@@ -551,6 +551,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/82/72/a1ec80974d9ce867ae5c3ded6e7f1697a606b39551a879c16f90e9ff4db8/django_typer-3.4.0-py3-none-any.whl", hash = "sha256:0555a505b53d753f5245f863855a7f3fbcda22eb7ed999b5941d23d01f651bf7", size = 295833, upload-time = "2025-10-20T22:06:29.739Z" },
 ]
 
+[package.optional-dependencies]
+rich = [
+    { name = "rich" },
+]
+
 [[package]]
 name = "django-version-checks"
 version = "1.16.0"
@@ -1302,6 +1307,7 @@ dependencies = [
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
     { name = "django-template-partials" },
+    { name = "django-typer", extra = ["rich"] },
     { name = "django-version-checks" },
     { name = "environs", extra = ["django"] },
     { name = "gunicorn" },
@@ -1369,6 +1375,7 @@ requires-dist = [
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
     { name = "django-template-partials", specifier = ">=24.4" },
+    { name = "django-typer", extras = ["rich"], specifier = ">=3.4.0" },
     { name = "django-version-checks", specifier = ">=1.12.0" },
     { name = "environs", extras = ["django"], specifier = ">=11.0.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },

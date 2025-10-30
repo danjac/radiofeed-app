@@ -46,7 +46,9 @@ dependencies = [
     "pycountry>=24.6.1",
     "python-slugify>=8.0.4",
     "django-http-compression[brotli]>=1.0.0",
+    "django-typer[rich]>=3.4.0",
 ]
+
 [dependency-groups]
 dev = [
     "bandit>=1.7.9",
@@ -72,7 +74,6 @@ dev = [
     "types-urllib3>=1.26.25.14",
     "django-watchfiles>=1.4.0",
 ]
-
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE="radiofeed.settings"
