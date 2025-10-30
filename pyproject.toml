@@ -76,7 +76,7 @@ dev-dependencies = [
 
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="radiofeed.config.settings"
+DJANGO_SETTINGS_MODULE="radiofeed.settings"
 addopts = [
     "-v",
     "-x",
@@ -111,9 +111,10 @@ patterns = ["*.py", "*.html"]
 [tool.coverage.run]
 source=["radiofeed"]
 omit=[
-    "**/config/*",
     "**/migrations/*",
     "*/tests/*",
+    "**/settings.py",
+    "**/wsgi.py",
 ]
 
 
