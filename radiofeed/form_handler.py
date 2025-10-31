@@ -36,9 +36,5 @@ def handle_form(
     """
     if request.method == "POST":
         form = form_class(data=request.POST, files=request.FILES, **form_kwargs)
-        return FormResult(
-            form=form,
-            is_submitted=True,
-            is_valid=form.is_valid(),
-        )
-    return FormResult(form=form_class(data=None, files=None, **form_kwargs))
+        return FormResult(form=form, is_submitted=True, is_valid=form.is_valid())
+    return FormResult(form=form_class(**form_kwargs))
