@@ -335,8 +335,8 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 @login_required
 def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
-    if result := handle_form(PrivateFeedForm, request, user=request.user):
-        podcast, is_new = result.form.save()
+    if result := handle_form(PrivateFeedForm, request):
+        podcast, is_new = result.form.save(request.user)
 
         if is_new:
             success_message = (
