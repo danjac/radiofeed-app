@@ -20,7 +20,6 @@ dependencies = [
     "django-permissions-policy>=4.21.0",
     "django-redis>=5.4.0",
     "django-tailwind-cli>=2.16.0",
-    "django-template-partials>=24.4",
     "django-version-checks>=1.12.0",
     "django>=5.1",
     "environs[django]>=11.0.0",
@@ -39,14 +38,15 @@ dependencies = [
     "redis>=5.0.8",
     "scikit-learn>=1.5.1",
     "sentry-sdk>=2.13.0",
-    "whitenoise[brotli]>=6.7.0",
     "typer>=0.16.0",
     "numpy>=2.2.6",
     "scipy>=1.15.3",
     "pycountry>=24.6.1",
     "python-slugify>=8.0.4",
-    "django-http-compression[brotli]>=1.0.0",
     "django-typer[rich]>=3.4.0",
+    "django-template-partials>=25.2",
+    "whitenoise>=6.11.0",
+    "django-http-compression>=1.2.0",
 ]
 
 [dependency-groups]
