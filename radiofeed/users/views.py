@@ -1,6 +1,7 @@
 from typing import TypedDict
 
 from allauth.account.models import EmailAddress
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -152,7 +153,8 @@ def unsubscribe(request: HttpRequest) -> HttpResponseRedirect:
 
     try:
         email = get_unsubscribe_signer().unsign(
-            request.GET["email"], max_age=48 * 60 * 60
+            request.GET["email"],
+            max_age=settings.EMAIL_UNSUBSCRIBE_TIMEOUT,
         )
         qs = EmailAddress.objects.filter(user__is_active=True).select_related("user")
         if request.user.is_authenticated:

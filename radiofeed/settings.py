@@ -550,6 +550,8 @@ USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 
 DEFAULT_PAGE_SIZE = 30
 
+# Timeout for email unsubscribe links
+EMAIL_UNSUBSCRIBE_TIMEOUT = env.int("EMAIL_UNSUBSCRIBE_TIMEOUT", default=24 * 60 * 60)
 
 # HTMX configuration
 # https://htmx.org/docs/#config
