@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypedDict, cast
+from typing import TypedDict
 
 from allauth.account.models import EmailAddress
 from django.contrib import messages
@@ -12,14 +12,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
+from radiofeed.form_handler import handle_form
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
-
-if TYPE_CHECKING:
-    from radiofeed.users.models import User  # pragma: no cover
 
 
 class UserStat(TypedDict):
@@ -37,20 +35,16 @@ def user_preferences(
     request: HttpRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Allow user to edit their preferences."""
-    if request.method == "POST":
-        form = UserPreferencesForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Your preferences have been saved")
-            return HttpResponseRedirect(reverse("users:preferences"))
-    else:
-        form = UserPreferencesForm(instance=request.user)
+    if result := handle_form(UserPreferencesForm, request, instance=request.user):
+        result.form.save()
+        messages.success(request, "Your preferences have been saved")
+        return HttpResponseRedirect(reverse("users:preferences"))
 
     return render_partial_response(
         request,
         "account/preferences.html",
         {
-            "form": form,
+            "form": result.form,
         },
         target="preferences-form",
         partial="form",
@@ -63,27 +57,21 @@ def import_podcast_feeds(
     request: HttpRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    if request.method == "POST":
-        form = OpmlUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            if num_new_feeds := len(
-                form.subscribe_to_feeds(cast("User", request.user))
-            ):
-                messages.success(
-                    request,
-                    f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
-                )
-            else:
-                messages.info(request, "No new podcasts found in uploaded file")
-            return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
-    else:
-        form = OpmlUploadForm()
+    if result := handle_form(OpmlUploadForm, request):
+        if num_new_feeds := len(result.form.subscribe_to_feeds(request.user)):
+            messages.success(
+                request,
+                f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
+            )
+        else:
+            messages.info(request, "No new podcasts found in uploaded file")
+        return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
 
     return render_partial_response(
         request,
         "account/podcast_feeds.html",
         {
-            "upload_form": form,
+            "upload_form": result.form,
         },
         target="import-feeds-form",
         partial="form",
