@@ -3,7 +3,7 @@
 docker_image: "ghcr.io/danjac/radiofeed-app:main"
 
 postgres:
-  image: "{{ postgres_image | default('postgres:16.6-bookworm', true) }}"
+  image: "{{ postgres_image | default('postgres:16.10-bookworm', true) }}"
   password: "{{ postgres_password }}"
   volume: "{{ postgres_volume | default('/home/ubuntu/pg_data', true) }}"
 
