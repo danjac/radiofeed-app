@@ -88,7 +88,7 @@ secrets:
     value: "{{ mailgun_api_key }}"
 
   - name: "postgres_password"
-    value: "{{ postgres_password }}"
+    value: "{{ postgres.password }}"
 
   - name: "pwa_sha256_fingerprints"
     value: "{{ pwa_sha256_fingerprints }}"
