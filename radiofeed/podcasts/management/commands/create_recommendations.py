@@ -7,7 +7,7 @@ from radiofeed.podcasts import recommender
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
-app = Typer(help="Create podcast recommendations.")
+app = Typer(help="Create podcast recommendations")
 
 
 @app.command()

@@ -27,7 +27,7 @@ COUNTRIES: Final = (
     "us",
 )
 
-app = Typer(help="Fetch top iTunes podcasts command.")
+app = Typer(help="Fetch top iTunes podcasts")
 
 
 @app.command()

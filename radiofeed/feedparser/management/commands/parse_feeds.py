@@ -9,7 +9,7 @@ from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 
-app = Typer(help="Parse feeds for all active podcasts.")
+app = Typer(help="Parse feeds for all active podcasts")
 
 
 @app.command()
