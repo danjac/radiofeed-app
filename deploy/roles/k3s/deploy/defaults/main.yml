@@ -1,7 +1,13 @@
 # Deployment settings
 
 docker_image: "ghcr.io/danjac/radiofeed-app:main"
-postgres_volume: "/home/ubuntu/pg_data"
+
+postgres:
+  image: "postgres:16.6-bookworm"
+  volume: "{{ postgres_volume | default('/home/ubuntu/pg_data', true) }}"
+
+redis:
+  image: "redis:8.2.2-bookworm"
 
 # Cron job schedules
 

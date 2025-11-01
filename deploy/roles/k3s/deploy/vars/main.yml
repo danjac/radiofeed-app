@@ -23,6 +23,7 @@ cronjobs:
       schedule: "{{ cron_schedules.send_recommendations }}"
       command: "{{ manage_cmd }} send_recommendations"
 
+
 configmap:
    - name: "admins"
      value: "{{ admins }}"

@@ -17,7 +17,7 @@ spec:
         role: database  # Ensures it runs on the correct node
       containers:
         - name: postgres
-          image: postgres:16.6-bookworm
+          image: {{ postgres.image }}
           args:
             - "postgres"
             - "-c"

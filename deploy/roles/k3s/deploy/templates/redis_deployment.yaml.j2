@@ -16,7 +16,7 @@ spec:
         role: database
       containers:
         - name: redis
-          image: redis:8.2.2-bookworm
+          image: {{ redis.image }}
           ports:
             - containerPort: 6379
           livenessProbe:
