@@ -114,6 +114,10 @@
             - postgres_pvc
             - postgres_statefulset
             - postgres_service
+            - postgres_upgrade_pv
+            - postgres_upgrade_pvc
+            - postgres_upgrade_statefulset
+            - postgres_upgrade_service
             - redis_deployment
             - redis_service
             - django_cronjobs
