@@ -3,6 +3,7 @@ from email.utils import getaddresses
 
 import sentry_sdk
 from django.urls import reverse_lazy
+from django.utils.csp import CSP  # type: ignore[reportMissingTypeStubs]
 from environs import Env
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
@@ -38,7 +39,6 @@ INSTALLED_APPS: list[str] = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
     "allauth.socialaccount.providers.google",
-    "csp",
     "django_htmx",
     "django_http_compression",
     "django_linear_migrations",
@@ -53,7 +53,6 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "template_partials",
     "radiofeed.episodes",
     "radiofeed.feedparser",
     "radiofeed.podcasts",
@@ -74,9 +73,9 @@ MIDDLEWARE: list[str] = [
     "django.middleware.common.CommonMiddleware",
     "django_http_compression.middleware.HttpCompressionMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "csp.middleware.CSPMiddleware",
     "radiofeed.middleware.HtmxCacheMiddleware",
     "radiofeed.middleware.HtmxMessagesMiddleware",
     "radiofeed.middleware.HtmxRedirectMiddleware",
@@ -135,7 +134,6 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "template_partials.templatetags.partials",
                 "radiofeed.templatetags",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
@@ -358,33 +356,27 @@ PERMISSIONS_POLICY: dict[str, list] = {
 }
 
 # Content-Security-Policy
-# https://django-csp.readthedocs.io/en/3.8/configuration.html
+# https://docs.djangoproject.com/en/dev/ref/csp/
 
-# Allow all audio files
-
-CSP_SELF = "'self'"
 CSP_DATA = f"data: {'https' if USE_HTTPS else 'http'}:;"
-CSP_UNSAFE_EVAL = "'unsafe-eval'"
-CSP_UNSAFE_INLINE = "'unsafe-inline'"
 
 CSP_SCRIPT_WHITELIST = env.list("CSP_SCRIPT_WHITELIST", default=[])
 
-CONTENT_SECURITY_POLICY = {
-    "DIRECTIVES": {
-        "default-src": [CSP_SELF],
-        "img-src": [f" * {CSP_SELF} {CSP_DATA}"],
-        "media-src": ["*"],
-        "style-src": [
-            CSP_SELF,
-            CSP_UNSAFE_INLINE,
-        ],
-        "script-src": [
-            CSP_SELF,
-            CSP_UNSAFE_EVAL,
-            CSP_UNSAFE_INLINE,
-            *CSP_SCRIPT_WHITELIST,
-        ],
-    }
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "img-src": [f" * {CSP.SELF} {CSP_DATA}"],
+    # Allow all audio files
+    "media-src": ["*"],
+    "style-src": [
+        CSP.SELF,
+        CSP.UNSAFE_INLINE,
+    ],
+    "script-src": [
+        CSP.SELF,
+        CSP.UNSAFE_EVAL,
+        CSP.UNSAFE_INLINE,
+        *CSP_SCRIPT_WHITELIST,
+    ],
 }
 # Logging
 # https://docs.djangoproject.com/en/5.0/howto/logging/
