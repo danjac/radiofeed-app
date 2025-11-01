@@ -3,12 +3,12 @@
 docker_image: "ghcr.io/danjac/radiofeed-app:main"
 
 postgres:
-  image: "postgres:16.6-bookworm"
+  image: "{{ postgres_image | default('postgres:16.6-bookworm', true) }}"
   password: "{{ postgres_password }}"
   volume: "{{ postgres_volume | default('/home/ubuntu/pg_data', true) }}"
 
 redis:
-  image: "redis:8.2.2-bookworm"
+  image: "{{ redis_image | default('redis:8.2.2-bookworm', true) }}"
 
 # Cron job schedules
 
