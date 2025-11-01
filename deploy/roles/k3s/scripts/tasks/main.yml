@@ -7,3 +7,4 @@
       - deploy.sh
       - manage.sh
       - psql.sh
+      - pg_upgrade.sh

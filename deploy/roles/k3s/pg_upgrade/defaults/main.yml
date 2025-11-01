@@ -1,0 +1,6 @@
+# Deployment settings
+
+postgres:
+  password: "{{ postgres_password }}"
+  new_image: "{{ postgres_new_image | default('postgres:17.6-bookworm', true) }}"
+  new_volume: "{{ postgres_new_volume | default('/home/ubuntu/pg_data_2', true) }}"

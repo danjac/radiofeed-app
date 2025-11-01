@@ -6,8 +6,6 @@ postgres:
   image: "{{ postgres_image | default('postgres:16.10-bookworm', true) }}"
   password: "{{ postgres_password }}"
   volume: "{{ postgres_volume | default('/home/ubuntu/pg_data', true) }}"
-  new_image: "{{ postgres_new_image | default('postgres:17.6-bookworm', true) }}"
-  new_volume: "{{ postgres_new_volume | default('/home/ubuntu/pg_data_2', true) }}"
 
 redis:
   image: "{{ redis_image | default('redis:8.2.2-bookworm', true) }}"

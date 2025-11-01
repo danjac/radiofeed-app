@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Upgrade PostgreSQL by dumping from source pod and restoring into target pod.
+# Usage:
+#   ./pg_upgrade.sh <source-pod> <target-pod> <db-name> [namespace]
+#
+# Example:
+#   ./pg_upgrade.sh postgres-16 postgres-17 mydb default
+
+set -euo pipefail
+
+SOURCE_POD="$1"
+TARGET_POD="$2"
+DB_NAME="postgres"
+NAMESPACE="default"
+
+DUMP_FILE="/tmp/${DB_NAME}_dump.sql.gz"
+
+echo "=== Step 1: Dumping database from source pod '$SOURCE_POD' ==="
+
+# Create dump directly to control-plane node, compressed
+kubectl exec -n "$NAMESPACE" "$SOURCE_POD" -- \
+  pg_dump -U postgres -d "$DB_NAME" -Fc | gzip > "$DUMP_FILE"
+
+echo "Dump completed: $DUMP_FILE ($(du -h $DUMP_FILE | awk '{print $1}'))"
+
+echo "=== Step 2: Restoring into target pod '$TARGET_POD' ==="
+
+# Stream restore directly from dump file
+echo "Restoring... (this may take several minutes for large databases)"
+gunzip -c "$DUMP_FILE" | kubectl exec -i -n "$NAMESPACE" "$TARGET_POD" -- \
+  psql -U postgres -d "$DB_NAME"
