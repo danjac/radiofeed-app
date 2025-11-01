@@ -43,7 +43,6 @@ dependencies = [
     "pycountry>=24.6.1",
     "python-slugify>=8.0.4",
     "django-typer[rich]>=3.4.0",
-    "django-template-partials>=25.2",
     "whitenoise>=6.11.0",
     "django-http-compression>=1.2.0",
 ]

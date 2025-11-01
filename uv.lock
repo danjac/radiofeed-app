@@ -490,18 +490,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-template-partials"
-version = "25.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c1/7f/9eca482fbfd42f2ae19fa77fa231c0d2ba6ec7caf0ced16926480e1d746b/django_template_partials-25.2.tar.gz", hash = "sha256:55044e4a12d5d3adbc02df0758eb08fcd4e3451203e02a819f9853451696aef6", size = 17787, upload-time = "2025-09-17T13:31:37.761Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/30/96a9d0e70efd00af9b9c011111b5eba48d17914e5b3d39516d4a7cc7e7fb/django_template_partials-25.2-py2.py3-none-any.whl", hash = "sha256:4c4f6569bd2d016281700a215c09ba4b7a4bbd2da95ce15d8c1ae76d36da44b4", size = 9621, upload-time = "2025-09-17T13:31:36.452Z" },
-]
-
-[[package]]
 name = "django-typer"
 version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1270,7 +1258,6 @@ dependencies = [
     { name = "django-permissions-policy" },
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
-    { name = "django-template-partials" },
     { name = "django-typer", extra = ["rich"] },
     { name = "django-version-checks" },
     { name = "environs", extra = ["django"] },
@@ -1337,7 +1324,6 @@ requires-dist = [
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
-    { name = "django-template-partials", specifier = ">=25.2" },
     { name = "django-typer", extras = ["rich"], specifier = ">=3.4.0" },
     { name = "django-version-checks", specifier = ">=1.12.0" },
     { name = "environs", extras = ["django"], specifier = ">=11.0.0" },
