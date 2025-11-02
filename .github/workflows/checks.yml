@@ -29,7 +29,7 @@ jobs:
                 cache-dependency-glob: |
                     **/uv.lock
                     **/pyproject.toml
-            - run: uv python install 3.13.2
+            - run: uv python install 3.14.0
             - run: uv sync --frozen --all-extras --no-install-project
             - run: uv run pyright
             - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
