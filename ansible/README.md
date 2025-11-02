@@ -32,6 +32,14 @@ To update server dependencies, run `just apb upgrade`.
 To upgrade PostgreSQL to a new **major** version, follow these steps:
 
 1. In the `hosts.yml` file, add the new postgres version as `postgres_new_image` and the new data volume as `postgres_new_volume`. **NOTE:** Do not change the existing `postgres_image` and `postgres_volume` values yet. If `postgres_new_image` and `postgres_new_volume` are not present, or either are the same as current values, the upgrade steps will be skipped.
+
+For example:
+
+```yaml
+    postgres_new_image: "postgres:17.6-bookworm"
+    postgres_new_volume: "/mnt/volumes/postgres_data_v17"
+```
+
 2. Ensure the new volume exists on the server.
 3. Run `just apb deploy`. This will create a new PostgreSQL container with the new version and new stateful set etc with label `postgres-upgrade-*`.
 3. SSH into the server node.
@@ -47,7 +55,15 @@ To upgrade PostgreSQL to a new **major** version, follow these steps:
    ```bash
    ./pg_upgrade.sh posgres-0 postgres-upgrade-0
    ```
-7. Once the upgrade is complete, update the `hosts.yml` file to set `postgres_image` to the new version and `postgres_volume` to the new volume. Remove references to `postgres_new_image` and `postgres_new_volume`.
+7. Once the upgrade is complete, update the `hosts.yml` file to set `postgres_image` to the new version and `postgres_volume` to the new volume e.g.:
+
+```yaml
+    postgres_image: "postgres:17.6-bookworm"
+    postgres_volume: "/mnt/volumes/postgres_data_v17"
+```
+
+Also remove or comment out the `postgres_new_image` and `postgres_new_volume` entries.
+
 8. Delete the stateful set, PV and service for the upgrade deployment:
 
    ```bash
@@ -56,5 +72,10 @@ To upgrade PostgreSQL to a new **major** version, follow these steps:
    kubectl delete pvc postgres-upgrade-pvc
    kubectl delete pv postgres-upgrade-pv
    ```
-9. Run `just apb deploy` again to redeploy the Django application and cronjobs with the upgraded PostgreSQL database.
+9. Run `just apb deploy` again to redeploy the Django application and cronjobs with the upgraded PostgreSQL database and verify everything is working:
+
+```bash
+    kubectl get pods
+    kubectl logs deployment/django-app
+```
 10. Verify that the application is functioning correctly with the new PostgreSQL version, and delete any old resources if necessary.
