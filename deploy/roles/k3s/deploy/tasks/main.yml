@@ -97,6 +97,41 @@
             cpu_request: "{{ (total_cpu_millicores | int  * cpu_request_percent) | int }}m"
             cpu_limit: "{{ (total_cpu_millicores | int  * cpu_limit_percent) | int }}m"
 
+      - name: Determine manifest list
+        vars:
+          base_manifests:
+            - configmap
+            - secrets
+            - postgres_pv
+            - postgres_pvc
+            - postgres_statefulset
+            - postgres_service
+            - redis_deployment
+            - redis_service
+            - django_cronjobs
+            - django_deployment
+            - django_service
+            - ingress_route
+          # Manifests needed for Postgres upgrade: only if both new_image and new_volume are defined and different from current ones
+          upgrade_manifests:
+            - postgres_upgrade_pv
+            - postgres_upgrade_pvc
+            - postgres_upgrade_statefulset
+            - postgres_upgrade_service
+        set_fact:
+          manifests_to_render: >-
+            {{
+              base_manifests +
+              (
+                upgrade_manifests
+                if (
+                  postgres.new_image is defined and postgres.new_image|length > 0 and postgres.new_image != postgres.image and
+                  postgres.new_volume is defined and postgres.new_volume|length > 0 and postgres.new_volume != postgres.volume
+                )
+                else []
+              )
+            }}
+
       - name: Render Kubernetes manifests
         vars:
             cron_schedules: "{{ cron_schedules_default | combine(cron_schedules_override | default({}), recursive=True) }}"
@@ -107,23 +142,7 @@
         ansible.builtin.template:
             src: "{{ item }}.yaml.j2"
             dest: "{{ manifests_dir.path + '/' + item + '.yaml' }}"
-        loop:
-            - configmap
-            - secrets
-            - postgres_pv
-            - postgres_pvc
-            - postgres_statefulset
-            - postgres_service
-            - postgres_upgrade_pv
-            - postgres_upgrade_pvc
-            - postgres_upgrade_statefulset
-            - postgres_upgrade_service
-            - redis_deployment
-            - redis_service
-            - django_cronjobs
-            - django_deployment
-            - django_service
-            - ingress_route
+        loop: "{{ manifests_to_render }}"
 
       - name: Delete all cronjobs
         ansible.builtin.shell: |
