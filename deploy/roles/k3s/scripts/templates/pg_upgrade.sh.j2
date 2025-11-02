@@ -13,13 +13,14 @@ TARGET_POD="$2"
 DB_NAME="postgres"
 NAMESPACE="default"
 
-DUMP_FILE="/tmp/${DB_NAME}_dump.sql.gz"
+TS=$(date +%Y%m%d_%H%M%S)
+DUMP_FILE="/tmp/${DB_NAME}_dump_${TS}.sql.gz"
 
 echo "=== Step 1: Dumping database from source pod '$SOURCE_POD' ==="
 
 # Create dump directly to control-plane node, compressed
 kubectl exec -n "$NAMESPACE" "$SOURCE_POD" -- \
-  pg_dump -U postgres -d "$DB_NAME" -Fc | gzip > "$DUMP_FILE"
+  pg_dump -U postgres -d "$DB_NAME" | gzip > "$DUMP_FILE"
 
 echo "Dump completed: $DUMP_FILE ($(du -h $DUMP_FILE | awk '{print $1}'))"
 
