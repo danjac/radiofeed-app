@@ -66,12 +66,12 @@ Also remove or comment out the `postgres_new_image` and `postgres_new_volume` en
 
 8. Delete the stateful set, PV and service for the upgrade deployment:
 
-   ```bash
-   kubectl delete statefulset postgres-upgrade
-   kubectl delete service postgres-upgrade
-   kubectl delete pvc postgres-upgrade-pvc
-   kubectl delete pv postgres-upgrade-pv
-   ```
+```bash
+    kubectl delete statefulset postgres-upgrade
+    kubectl delete service postgres-upgrade
+    kubectl delete pvc postgres-upgrade-pvc
+    kubectl delete pv postgres-upgrade-pv
+```
 9. Run `just apb deploy` again to redeploy the Django application and cronjobs with the upgraded PostgreSQL database and verify everything is working:
 
 ```bash
