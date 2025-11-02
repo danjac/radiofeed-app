@@ -15,7 +15,7 @@ jobs:
         runs-on: ubuntu-latest
         services:
             postgres:
-                image: postgres:16
+                image: postgres:17
                 env:
                     POSTGRES_PASSWORD: password
                 ports: ["5432:5432"]
