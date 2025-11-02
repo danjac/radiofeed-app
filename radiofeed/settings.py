@@ -474,7 +474,7 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
 # https://pypi.org/project/django-version-checks/
 
 VERSION_CHECKS = {
-    "postgresql": "~=16.10",
+    "postgresql": "~=17.6",
     "python": "==3.14.*",
 }
 
