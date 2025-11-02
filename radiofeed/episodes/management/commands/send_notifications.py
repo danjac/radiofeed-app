@@ -96,7 +96,7 @@ def _get_new_episodes(
             is_subscribed=True,
             pub_date__gte=since,
         )
-        .order_by("-pub_date", "-pk")
+        .order_by("pub_date", "pk")
         .values_list("podcast", "pk")
     )
     # Randomly sample up to `limit` episode IDs
