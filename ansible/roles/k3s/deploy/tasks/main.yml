@@ -97,9 +97,18 @@
             cpu_request: "{{ (total_cpu_millicores | int  * cpu_request_percent) | int }}m"
             cpu_limit: "{{ (total_cpu_millicores | int  * cpu_limit_percent) | int }}m"
 
-      - name: Determine base manifests
-        set_fact:
-          base_manifests:
+      - name: Render Kubernetes manifests
+        vars:
+            cron_schedules: "{{ cron_schedules_default | combine(cron_schedules_override | default({}), recursive=True) }}"
+            database_url: "postgresql://postgres:{{ postgres.password }}@postgres.default.svc.cluster.local:5432/postgres"
+            redis_url: "redis://redis.default.svc.cluster.local:6379/0"
+            manage_cmd: "python ./manage.py"
+            num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
+            postgres_major_version: "{{ postgres.image.split(':')[1].split('.')[0] }}"
+        ansible.builtin.template:
+            src: "{{ item }}.yaml.j2"
+            dest: "{{ manifests_dir.path + '/' + item + '.yaml' }}"
+        loop:
             - configmap
             - secrets
             - postgres_pv
@@ -112,36 +121,6 @@
             - django_deployment
             - django_service
             - ingress_route
-
-      - name: Determine pg_upgrade_manifests if upgrade conditions are met
-        set_fact:
-          pg_upgrade_manifests:
-            - postgres_upgrade_pv
-            - postgres_upgrade_pvc
-            - postgres_upgrade_statefulset
-            - postgres_upgrade_service
-        when:
-          - postgres.new_image
-          - postgres.new_volume
-          - postgres.new_image != postgres.image
-          - postgres.new_volume != postgres.volume
-
-      - name: Combine manifests
-        set_fact:
-          manifests_to_render: "{{ base_manifests + (pg_upgrade_manifests | default([])) }}"
-
-      - name: Render Kubernetes manifests
-        vars:
-            cron_schedules: "{{ cron_schedules_default | combine(cron_schedules_override | default({}), recursive=True) }}"
-            database_url: "postgresql://postgres:{{ postgres.password }}@postgres.default.svc.cluster.local:5432/postgres"
-            redis_url: "redis://redis.default.svc.cluster.local:6379/0"
-            manage_cmd: "python ./manage.py"
-            num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
-            postgres_major_version: "{{ postgres.image.split(':')[1].split('.')[0] }}"
-        ansible.builtin.template:
-            src: "{{ item }}.yaml.j2"
-            dest: "{{ manifests_dir.path + '/' + item + '.yaml' }}"
-        loop: "{{ manifests_to_render }}"
 
       - name: Delete all cronjobs
         ansible.builtin.shell: |

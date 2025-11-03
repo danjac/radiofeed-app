@@ -1,4 +1,4 @@
-- name: Deploy k3s application
+- name: Deploy k3s Postgres upgrade resources
   hosts: server
   become: false
   gather_facts: true

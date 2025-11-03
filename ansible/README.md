@@ -31,7 +31,7 @@ To update server dependencies, run `just apb upgrade`.
 
 To upgrade PostgreSQL to a new **major** version, follow these steps:
 
-1. In the `hosts.yml` file, add the new postgres version as `postgres_new_image` and the new data volume as `postgres_new_volume`. **NOTE:** Do not change the existing `postgres_image` and `postgres_volume` values yet. If `postgres_new_image` and `postgres_new_volume` are not present, or either are the same as current values, the upgrade steps will be skipped.
+1. In the `hosts.yml` file, add the new postgres version as `postgres_new_image` and the new data volume as `postgres_new_volume`.
 
 For example:
 
@@ -40,11 +40,11 @@ For example:
     postgres_new_volume: "/mnt/volumes/postgres_data_v17"
 ```
 
-2. Ensure the new volume exists on the server.
-3. Run `just apb deploy`. This will create a new PostgreSQL container with the new version and new stateful set etc with label `postgres-upgrade-*`.
+2. Ensure the new volume is accessible to the `database` node.
+3. Run `just apb pg_upgrade`. This will create a new PostgreSQL container with the new version and new stateful set etc with label `postgres-upgrade-*`.
 3. SSH into the server node.
 4. Verify that the new PostgreSQL container is running correctly.
-5. Delete the deployments and cronjobs:
+5. Delete the deployments and cronjobs, to ensure no connections to the database during the upgrade:
 
    ```bash
    kubectl delete deployment django-app

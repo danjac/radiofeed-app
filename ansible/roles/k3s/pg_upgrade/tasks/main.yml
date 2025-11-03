@@ -1,0 +1,37 @@
+- name: Deploy Kubernetes
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+  block:
+
+      - name: Assert postgres.new_image and postgres.new_volume are defined
+        ansible.builtin.assert:
+            that:
+                - postgres.new_image
+                - postgres.new_volume
+            fail_msg: "Both 'postgres.new_image' and 'postgres.new_volume' must be defined for the upgrade."
+
+      - name: Create a temporary directory
+        ansible.builtin.tempfile:
+            state: directory
+        register: manifests_dir
+
+      - name: Render Kubernetes manifests
+        ansible.builtin.template:
+            src: "{{ item }}.yaml.j2"
+            dest: "{{ manifests_dir.path + '/' + item + '.yaml' }}"
+        loop:
+            - postgres_upgrade_pv
+            - postgres_upgrade_pvc
+            - postgres_upgrade_statefulset
+            - postgres_upgrade_service
+
+      - name: Apply Kubernetes manifests using ApplySet
+        ansible.builtin.shell: |
+            kubectl apply -f {{ manifests_dir.path }} --applyset=app-deployment --namespace=default
+        environment:
+            KUBECTL_APPLYSET: "true"
+
+      - name: Delete manifests dir
+        ansible.builtin.file:
+            path: "{{ manifests_dir.path }}"
+            state: absent
