@@ -7,10 +7,10 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 Radiofeed requires the following basic dependencies to get started:
 
-* Python 3.13
+* Python 3.14
 * [uv](https://docs.astral.sh)
 
-**Note:** if you don't have the right version of Python you can use `uv python install 3.13.x`.
+**Note:** if you don't have the right version of Python you can use `uv python install 3.14.x`.
 
 For ease of local development a `docker-compose.yml` file is provided which includes Docker images:
 
@@ -20,7 +20,7 @@ For ease of local development a `docker-compose.yml` file is provided which incl
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
-Current tested versions are PostgreSQL 16 and Redis 7.
+Current tested versions are PostgreSQL 17 and Redis 8.
 
 The [justfile](https://github.com/casey/just) has some convenient shortcuts for local development, including:
 
