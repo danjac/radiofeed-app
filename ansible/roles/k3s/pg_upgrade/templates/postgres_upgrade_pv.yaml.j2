@@ -4,7 +4,7 @@ metadata:
   name: postgres-upgrade-pv
 spec:
   capacity:
-    storage: 30Gi
+    storage: {{ postgres.storage }}
   accessModes:
     - ReadWriteOnce
   storageClassName: manual

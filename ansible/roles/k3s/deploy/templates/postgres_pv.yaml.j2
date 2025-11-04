@@ -4,7 +4,7 @@ metadata:
   name: postgres-pv-{{ postgres_major_version }}
 spec:
   capacity:
-    storage: 30Gi
+    storage: {{ postgres.storage }}
   accessModes:
     - ReadWriteOnce
   storageClassName: manual
