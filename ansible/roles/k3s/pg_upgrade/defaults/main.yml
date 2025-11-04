@@ -1,5 +1,6 @@
 # Deployment settings
 
 postgres:
+  current_volume: "{{ postgres_volume | default(false) }}"
   new_image: "{{ postgres_new_image | default(false) }}"
   new_volume: "{{ postgres_new_volume | default(false) }}"
