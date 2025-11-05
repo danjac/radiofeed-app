@@ -25,7 +25,7 @@ kubectl delete cronjobs -l app=django-cronjob
 6. SSH into the server node and run the `./pg_upgrade.sh` script located in the home directory (assuming current postgres is `postgres-0` and new is `postgres-upgrade-0`: check and adjust as necessary):
 
 ```bash
-./pg_upgrade.sh posgres-0 postgres-upgrade-0
+./pg_upgrade.sh postgres-0 postgres-upgrade-0
 ```
 
 This script will make a dump of the old database and restore it to the new database.
