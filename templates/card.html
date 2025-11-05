@@ -1,10 +1,7 @@
 <a href="{{ url }}"
    title="{{ title }}"
    class="flex items-center space-x-3 cursor-pointer group"
-   {% if external %}
-       rel="noopener nofollow"
-       target="_blank"
-   {% endif %}
+   {% htmlattrs attrs %}
 >
     {% cover_image "card" cover_url title %}
     <div class="flex flex-col place-content-between h-16 leading-tight">

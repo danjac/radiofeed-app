@@ -2,7 +2,7 @@ import pytest
 from django.contrib.sites.models import Site
 from django.template import RequestContext, TemplateSyntaxError
 
-from radiofeed.templatetags import cookie_banner, format_duration, fragment
+from radiofeed.templatetags import cookie_banner, format_duration, fragment, htmlattrs
 
 
 @pytest.fixture
@@ -18,6 +18,34 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
+
+
+class TestHtmlAttrs:
+    def test_empty(self):
+        assert htmlattrs({}) == ""
+
+    def test_single(self):
+        assert htmlattrs({"class": "btn"}) == ' class="btn"'
+
+    def test_boolean(self):
+        assert htmlattrs({"required": True}) == " required"
+
+    def test_multiple(self):
+        attrs = {
+            "class": "btn",
+            "id": "submit-button",
+            "data_toggle": "modal",  # underscore converted to hyphen
+        }
+        result = htmlattrs(attrs)
+        assert 'class="btn"' in result
+        assert 'id="submit-button"' in result
+        assert 'data-toggle="modal"' in result
+
+    def test_false_value(self):
+        assert htmlattrs({"class": False}) == ""
+
+    def test_none_value(self):
+        assert htmlattrs({"class": None}) == ""
 
 
 class TestFragment:

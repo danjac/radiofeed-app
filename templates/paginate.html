@@ -1,5 +1,6 @@
 {% with has_other_pages=page.has_other_pages %}
-    {% fragment "browse.html" target=pagination_target %}
+    {% attrs id=pagination_target as attrs %}
+    {% fragment "browse.html" attrs=attrs %}
         {% if has_other_pages %}
             <li class="pb-3">
                 {% partial links %}

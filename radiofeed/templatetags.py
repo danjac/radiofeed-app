@@ -4,6 +4,7 @@ import json
 from django import forms, template
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.utils import timezone
@@ -56,6 +57,18 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     scheme = "https" if settings.USE_HTTPS else "http"
     url = resolve_url(path, *args, **kwargs)
     return f"{scheme}://{site.domain}{url}"
+
+
+@register.simple_tag
+def attrs(**attrs) -> dict:
+    """Creates a dictionary of HTML attributes from keyword arguments."""
+    return attrs
+
+
+@register.simple_tag
+def htmlattrs(attrs: dict | None) -> str:
+    """Renders HTML attributes from a dictionary. Underscores are replaced with hyphens."""
+    return flatatt({k.replace("_", "-"): v for k, v in (attrs or {}).items()})
 
 
 @register.simple_tag
