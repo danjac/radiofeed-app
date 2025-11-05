@@ -43,7 +43,7 @@ spec:
           ports:
             - containerPort: 5432
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql
               name: postgres-storage
           livenessProbe:
             exec:
@@ -62,4 +62,4 @@ spec:
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
-            claimName: postgres-pvc-17
+            claimName: postgres-pvc-{{ postgres_major_version }}
