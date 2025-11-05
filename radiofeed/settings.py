@@ -44,7 +44,6 @@ INSTALLED_APPS: list[str] = [
     "django_linear_migrations",
     "django_tailwind_cli",
     "django_typer",
-    "django_version_checks",
     "health_check",
     "health_check.db",
     "health_check.cache",
@@ -470,13 +469,6 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
     )
 
 # Health checks
-
-# https://pypi.org/project/django-version-checks/
-
-VERSION_CHECKS = {
-    "postgresql": "~=17.6",
-    "python": "==3.14.*",
-}
 
 # https://pypi.org/project/django-health-check/
 

@@ -20,7 +20,6 @@ dependencies = [
     "django-permissions-policy>=4.21.0",
     "django-redis>=5.4.0",
     "django-tailwind-cli>=2.16.0",
-    "django-version-checks>=1.12.0",
     "django>=5.1",
     "environs[django]>=11.0.0",
     "gunicorn>=23.0.0",
