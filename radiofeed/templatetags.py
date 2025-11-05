@@ -68,21 +68,13 @@ def attrs(**attrs) -> dict:
 @register.simple_tag
 def htmlattrs(attrs: dict | None) -> str:
     """Renders HTML attributes from a dictionary. Underscores are replaced with hyphens."""
-    return flatatt({k.replace("_", "-"): v for k, v in (attrs or {}).items()})
+    return flatatt(_clean_attrs(attrs or {}))
 
 
 @register.simple_tag
 def render_field(field: forms.Field, **attrs) -> str:
     """Returns rendered widget."""
-    attrs = {
-        k.replace(
-            "_",
-            "-",
-        ): v
-        for k, v in attrs.items()
-        if v not in (None, False)
-    }
-    return field.as_widget(attrs=attrs)
+    return field.as_widget(attrs=_clean_attrs(attrs))
 
 
 @register.inclusion_tag("markdown.html")
@@ -161,3 +153,7 @@ def format_duration(total_seconds: int, min_value: int = 60) -> str:
         if total_seconds >= min_value
         else ""
     )
+
+
+def _clean_attrs(attrs: dict) -> dict:
+    return {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
