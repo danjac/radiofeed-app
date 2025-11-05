@@ -426,6 +426,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/95/78/422fa3db2969ce7ad0789b5a0112187d9d5115f4c54bae14625a2ffb7e4d/django_http_compression-1.2.0-py3-none-any.whl", hash = "sha256:dcde57e7d0103e3859201e640b06108893407c06da021391fe77ffca2cf8bbd0", size = 9928, upload-time = "2025-10-26T15:14:13.51Z" },
 ]
 
+[package.optional-dependencies]
+brotli = [
+    { name = "brotli" },
+]
+
 [[package]]
 name = "django-linear-migrations"
 version = "2.19.0"
@@ -1315,7 +1320,7 @@ dependencies = [
     { name = "django-fast-update" },
     { name = "django-health-check" },
     { name = "django-htmx" },
-    { name = "django-http-compression" },
+    { name = "django-http-compression", extra = ["brotli"] },
     { name = "django-linear-migrations" },
     { name = "django-permissions-policy" },
     { name = "django-redis" },
@@ -1382,7 +1387,7 @@ requires-dist = [
     { name = "django-fast-update", specifier = ">=0.2.3" },
     { name = "django-health-check", specifier = ">=3.18.3" },
     { name = "django-htmx", specifier = ">=1.19.0" },
-    { name = "django-http-compression", specifier = ">=1.2.0" },
+    { name = "django-http-compression", extras = ["brotli"], specifier = ">=1.2.0" },
     { name = "django-linear-migrations", specifier = ">=2.13.0" },
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
