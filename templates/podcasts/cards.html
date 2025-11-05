@@ -12,7 +12,7 @@
 
 {% partialdef itunes_feed %}
     {% attrs rel="noopener nofollow" target="_blank" as attrs %}
-    {% fragment "card.html" url=feed.url title=feed.title cover_url=feed.image attrs=attrs %}
+    {% fragment "card.html" url=feed.url title=feed.title cover_url=feed.image %}
         View in iTunes
     {% endfragment %}
 {% endpartialdef %}

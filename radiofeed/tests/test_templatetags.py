@@ -32,6 +32,18 @@ class TestRenderAttrs:
     def test_single(self):
         assert render_attrs({"class": "btn"}) == ' class="btn"'
 
+    def test_default(self):
+        assert render_attrs(None, **{"class": "btn"}) == ' class="btn"'
+
+    def test_default_override(self):
+        assert (
+            render_attrs(
+                {"class": "btn-primary"},
+                **{"class": "btn"},
+            )
+            == ' class="btn-primary"'
+        )
+
     def test_boolean(self):
         assert render_attrs({"required": True}) == " required"
 
