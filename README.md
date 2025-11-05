@@ -20,7 +20,7 @@ For ease of local development a `docker-compose.yml` file is provided which incl
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
-Current tested versions are PostgreSQL 17 and Redis 8.
+Current tested versions are PostgreSQL 18 and Redis 8.
 
 The [justfile](https://github.com/casey/just) has some convenient shortcuts for local development, including:
 

@@ -7,8 +7,8 @@ To upgrade PostgreSQL to a new **major** version, follow these steps:
 For example:
 
 ```yaml
-    postgres_new_image: "postgres:17.6-bookworm"
-    postgres_new_volume: "/mnt/volumes/postgres_data_v17"
+    postgres_new_image: "postgres:18.0-bookworm"
+    postgres_new_volume: "/mnt/volumes/postgres_data_v18"
 ```
 
 2. Ensure the new volume is accessible to the `database` node.
