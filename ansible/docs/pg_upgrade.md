@@ -46,43 +46,6 @@ kubectl exec -it postgres-0 -- psql -U postgres -d postgres
 kubectl exec -it postgres-upgrade-0 -- psql -U postgres -d postgres
 ```
 
-```sql
-SELECT
-    schemaname AS schema,
-    relname AS table_name,
-    n_live_tup AS approx_row_count
-FROM pg_stat_user_tables
-ORDER BY n_live_tup DESC;
-```
-
-```sql
-SELECT
-    n.nspname AS schema,
-    t.relname AS table_name,
-    c.conname AS constraint_name,
-    c.contype AS constraint_type,  -- p=primary key, f=foreign key, u=unique, c=check, etc.
-    pg_get_constraintdef(c.oid) AS definition
-FROM pg_constraint c
-JOIN pg_class t ON c.conrelid = t.oid
-JOIN pg_namespace n ON n.oid = t.relnamespace
-WHERE n.nspname NOT IN ('pg_catalog', 'information_schema')
-ORDER BY n.nspname, t.relname, c.conname;
-```
-
-```sql
-SELECT
-    n.nspname AS schema,
-    t.relname AS table_name,
-    i.relname AS index_name,
-    pg_get_indexdef(i.oid) AS index_def
-FROM pg_index x
-JOIN pg_class t ON t.oid = x.indrelid
-JOIN pg_class i ON i.oid = x.indexrelid
-JOIN pg_namespace n ON n.oid = t.relnamespace
-WHERE n.nspname NOT IN ('pg_catalog', 'information_schema')
-ORDER BY n.nspname, t.relname, i.relname;
-```
-
 7. Once the upgrade is complete, update the `hosts.yml` file to set `postgres_image` to the new version and `postgres_volume` to the new volume e.g.:
 
 ```yaml
