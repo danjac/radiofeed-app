@@ -10,11 +10,11 @@ x-deploy: &default-deploy
 
 services:
     postgres:
-        image: postgres:17.6-bookworm
+        image: postgres:18.0-bookworm
         environment:
             - POSTGRES_PASSWORD=password
         volumes:
-            - pg_data:/var/lib/postgresql/data
+            - pg_data:/var/lib/postgresql
         stop_grace_period: "3s"
         deploy: *default-deploy
         logging: *default-logging
