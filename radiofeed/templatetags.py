@@ -1,23 +1,18 @@
 import functools
 import json
-from typing import Final
 
 from django import forms, template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
-from django.template.defaultfilters import pluralize
+from django.utils import timezone
 from django.utils.html import format_html_join
+from django.utils.timesince import timesince
 
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
 from radiofeed.html import render_markdown
 from radiofeed.pwa import get_theme_color
-
-_TIME_PARTS: Final = [
-    ("hour", 60 * 60),
-    ("minute", 60),
-]
 
 register = template.Library()
 
@@ -146,12 +141,10 @@ def widget_type(field: forms.Field) -> str:
 
 
 @register.filter
-def format_duration(total_seconds: int) -> str:
+def format_duration(total_seconds: int, min_value: int = 60) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
-    parts: list[str] = []
-    for label, seconds in _TIME_PARTS:
-        value = total_seconds // seconds
-        total_seconds -= value * seconds
-        if value:
-            parts.append(f"{value} {label}{pluralize(value)}")
-    return " ".join(parts)
+    return (
+        timesince(timezone.now() - timezone.timedelta(seconds=total_seconds))
+        if total_seconds >= min_value
+        else ""
+    )

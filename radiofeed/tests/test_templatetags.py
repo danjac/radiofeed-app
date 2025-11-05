@@ -48,17 +48,13 @@ class TestFormatDuration:
         [
             pytest.param(0, "", id="zero"),
             pytest.param(30, "", id="30 seconds"),
-            pytest.param(60, "1 minute", id="1 minute"),
-            pytest.param(61, "1 minute", id="just over 1 minute"),
-            pytest.param(90, "1 minute", id="1 minute 30 seconds"),
-            pytest.param(540, "9 minutes", id="9 minutes"),
-            pytest.param(2400, "40 minutes", id="40 minutes"),
-            pytest.param(3600, "1 hour", id="1 hour"),
-            pytest.param(
-                9000,
-                "2 hours 30 minutes",
-                id="2 hours 30 minutes",
-            ),
+            pytest.param(60, "1\xa0minute", id="1 minute"),
+            pytest.param(61, "1\xa0minute", id="just over 1 minute"),
+            pytest.param(90, "1\xa0minute", id="1 minute 30 seconds"),
+            pytest.param(540, "9\xa0minutes", id="9 minutes"),
+            pytest.param(2400, "40\xa0minutes", id="40 minutes"),
+            pytest.param(3600, "1\xa0hour", id="1 hour"),
+            pytest.param(9000, "2\xa0hours, 30\xa0minutes", id="2 hours 30 minutes"),
         ],
     )
     def test_format_duration(self, duration, expected):
