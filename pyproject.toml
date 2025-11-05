@@ -44,7 +44,7 @@ dependencies = [
     "python-slugify>=8.0.4",
     "django-typer[rich]>=3.4.0",
     "django-template-partials>=25.2",
-    "whitenoise>=6.11.0",
+    "whitenoise[brotli]>=6.11.0",
     "django-http-compression>=1.2.0",
 ]
 
