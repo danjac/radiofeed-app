@@ -66,7 +66,7 @@ def attrs(**attrs) -> dict:
 
 
 @register.simple_tag
-def htmlattrs(attrs: dict | None) -> str:
+def render_attrs(attrs: dict | None) -> str:
     """Renders HTML attributes from a dictionary. Underscores are replaced with hyphens."""
     return flatatt(_clean_attrs(attrs or {}))
 
