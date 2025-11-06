@@ -174,8 +174,8 @@ def player_time_update(
 
     try:
         update = PlayerUpdate.model_validate(json.loads(request.body))
-    except (json.JSONDecodeError, ValidationError) as exc:
-        return HttpResponseBadRequest(str(exc), **response_kwargs)
+    except (json.JSONDecodeError, ValidationError):
+        return HttpResponseBadRequest(**response_kwargs)
 
     try:
         request.user.audio_logs.update_or_create(
