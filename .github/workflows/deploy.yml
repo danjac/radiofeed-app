@@ -4,6 +4,12 @@ on:
     workflow_dispatch:
         branches:
             - main
+permissions:
+  attestations: write
+  contents: write
+  packages: write
+  id-token: write
+
 jobs:
     checks:
         uses: ./.github/workflows/checks.yml
@@ -14,6 +20,8 @@ jobs:
     deploy:
         runs-on: ubuntu-latest
         needs: build
+        permissions:
+          contents: read
         steps:
             - name: Deploy to Kubernetes
               uses: appleboy/ssh-action@master
