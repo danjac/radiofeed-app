@@ -8,7 +8,7 @@ wsgi_app = "radiofeed.wsgi"
 
 accesslog = "-"
 
-access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(L)s'
+access_log_format = '%(t)s %(h)s - "%(m)s %(U)s" %(s)s %(L)s'
 
 worker_class = "gthread"
 
@@ -35,20 +35,3 @@ timeout = max(30, 35 + (threads * 2))
 
 # Graceful timeout: allow extra time for clean shutdown
 graceful_timeout = timeout + 10
-
-
-def on_starting(server):
-    """Hook called just before the master process is initialized."""
-    for setting in (
-        "workers",
-        "threads",
-        "max_requests",
-        "max_requests_jitter",
-        "timeout",
-        "graceful_timeout",
-    ):
-        server.log.info(
-            "Setting %s: %s",
-            setting,
-            server.cfg.settings[setting].value,
-        )
