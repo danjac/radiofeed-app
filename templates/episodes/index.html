@@ -17,7 +17,7 @@
     {% fragment "browse.html" %}
         {% for episode in episodes %}
             {% fragment "browse.html#item" %}
-                {% include "episodes/cards.html#episode" %}
+                {% include "episodes/episode.html" %}
             {% endfragment %}
         {% empty %}
             {% fragment "browse.html#empty" %}

@@ -34,7 +34,7 @@
         {% fragment "paginate.html" %}
             {% for bookmark in page %}
                 {% fragment "browse.html#item" %}
-                    {% include "episodes/cards.html#episode" with episode=bookmark.episode %}
+                    {% include "episodes/episode.html" with episode=bookmark.episode %}
                 {% endfragment %}
             {% empty %}
                 {% fragment "browse.html#empty" %}

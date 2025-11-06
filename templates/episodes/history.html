@@ -34,7 +34,7 @@
         {% fragment "paginate.html" %}
             {% for audio_log in page %}
                 {% fragment "browse.html#item" %}
-                    {% include "episodes/cards.html#episode" with episode=audio_log.episode %}
+                    {% include "episodes/episode.html" with episode=audio_log.episode %}
                 {% endfragment %}
             {% empty %}
                 {% fragment "browse.html#empty" %}

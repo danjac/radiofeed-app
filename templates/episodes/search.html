@@ -22,7 +22,7 @@
             {% fragment "paginate.html" %}
                 {% for episode in page %}
                     {% fragment "browse.html#item" %}
-                        {% include "episodes/cards.html#episode" %}
+                        {% include "episodes/episode.html" %}
                     {% endfragment %}
                 {% empty %}
                     {% fragment "browse.html#empty" %}
