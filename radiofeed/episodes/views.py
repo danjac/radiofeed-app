@@ -11,7 +11,6 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseRedirect,
-    JsonResponse,
 )
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -163,28 +162,34 @@ def player_time_update(
     | HttpResponseConflict
     | HttpResponseNoContent
     | HttpResponseUnauthorized
-    | JsonResponse
 ):
     """Update current play time of episode."""
     response_kwargs = {"content_type": "application/json"}
-    if request.user.is_authenticated:
-        if episode_id := request.player.get():
-            try:
-                update = PlayerUpdate.model_validate(json.loads(request.body))
-                request.user.audio_logs.update_or_create(
-                    episode_id=episode_id,
-                    defaults={
-                        "listened": timezone.now(),
-                        "current_time": update.current_time,
-                        "duration": update.duration,
-                    },
-                )
-            except IntegrityError:
-                return HttpResponseConflict(**response_kwargs)
-            except (json.JSONDecodeError, ValidationError):
-                return HttpResponseBadRequest(**response_kwargs)
+
+    if not request.user.is_authenticated:
+        return HttpResponseUnauthorized(**response_kwargs)
+
+    if (episode_id := request.player.get()) is None:
         return HttpResponseNoContent(**response_kwargs)
-    return HttpResponseUnauthorized(**response_kwargs)
+
+    try:
+        update = PlayerUpdate.model_validate(json.loads(request.body))
+    except (json.JSONDecodeError, ValidationError) as exc:
+        return HttpResponseBadRequest(str(exc), **response_kwargs)
+
+    try:
+        request.user.audio_logs.update_or_create(
+            episode_id=episode_id,
+            defaults={
+                "listened": timezone.now(),
+                "current_time": update.current_time,
+                "duration": update.duration,
+            },
+        )
+    except IntegrityError:
+        return HttpResponseConflict(**response_kwargs)
+
+    return HttpResponseNoContent(**response_kwargs)
 
 
 @require_safe
