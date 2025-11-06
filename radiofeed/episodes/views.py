@@ -1,3 +1,4 @@
+import http
 import json
 
 from django.conf import settings
@@ -9,7 +10,6 @@ from django.http import (
     Http404,
     HttpRequest,
     HttpResponse,
-    HttpResponseBadRequest,
     HttpResponseRedirect,
 )
 from django.shortcuts import get_object_or_404
@@ -24,7 +24,6 @@ from radiofeed.episodes.templatetags.audio_player import Action
 from radiofeed.http import (
     HttpResponseConflict,
     HttpResponseNoContent,
-    HttpResponseUnauthorized,
     require_DELETE,
 )
 from radiofeed.paginator import render_paginated_response
@@ -155,27 +154,19 @@ def close_player(request: HttpRequest) -> TemplateResponse | HttpResponseNoConte
 
 
 @require_POST
-def player_time_update(
-    request: HttpRequest,
-) -> (
-    HttpResponseBadRequest
-    | HttpResponseConflict
-    | HttpResponseNoContent
-    | HttpResponseUnauthorized
-):
-    """Update current play time of episode."""
-    response_kwargs = {"content_type": "application/json"}
+def player_time_update(request: HttpRequest) -> HttpResponse:
+    """Handles player time update AJAX requests."""
 
-    if not request.user.is_authenticated:
-        return HttpResponseUnauthorized(**response_kwargs)
+    if request.user.is_anonymous:
+        return _render_player_update(http.HTTPStatus.UNAUTHORIZED)
 
     if (episode_id := request.player.get()) is None:
-        return HttpResponseNoContent(**response_kwargs)
+        return _render_player_update(http.HTTPStatus.BAD_REQUEST)
 
     try:
         update = PlayerUpdate.model_validate(json.loads(request.body))
     except (json.JSONDecodeError, ValidationError):
-        return HttpResponseBadRequest(**response_kwargs)
+        return _render_player_update(http.HTTPStatus.BAD_REQUEST)
 
     try:
         request.user.audio_logs.update_or_create(
@@ -187,9 +178,9 @@ def player_time_update(
             },
         )
     except IntegrityError:
-        return HttpResponseConflict(**response_kwargs)
+        return _render_player_update(http.HTTPStatus.CONFLICT)
 
-    return HttpResponseNoContent(**response_kwargs)
+    return _render_player_update(http.HTTPStatus.NO_CONTENT)
 
 
 @require_safe
@@ -353,3 +344,7 @@ def _render_audio_log_action(
         context["audio_log"] = audio_log
 
     return TemplateResponse(request, "episodes/detail.html#audio_log", context)
+
+
+def _render_player_update(status: http.HTTPStatus) -> HttpResponse:
+    return HttpResponse(status=status, content_type="application/json")

@@ -316,7 +316,7 @@ class TestPlayerTimeUpdate:
             content_type="application/json",
         )
 
-        assert204(response)
+        assert400(response)
 
         assert not AudioLog.objects.exists()
 
