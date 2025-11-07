@@ -48,7 +48,7 @@
                              hx-target="this"
                              hx-push-url="false"
                              hx-indicator="this"
-                             hx-swap="morphdom"
+                             hx-swap="outerHTML"
                              hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                             {% if is_subscribed %}
                                 <button
