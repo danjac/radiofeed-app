@@ -289,12 +289,17 @@ class TestPodcastModel:
 
     @pytest.mark.django_db
     def test_seasons(self, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast, season=-1)
         EpisodeFactory.create_batch(3, podcast=podcast, season=2)
         EpisodeFactory.create_batch(3, podcast=podcast, season=1)
         EpisodeFactory.create_batch(1, podcast=podcast, season=None)
-        assert len(podcast.seasons) == 2
-        assert podcast.seasons[0].season == 1
-        assert podcast.seasons[1].season == 2
+        assert len(podcast.seasons) == 3
+        assert podcast.seasons[0].season == -1
+        assert podcast.seasons[1].season == 1
+        assert podcast.seasons[2].season == 2
+        assert podcast.seasons[0].url
+        assert podcast.seasons[1].url
+        assert podcast.seasons[2].url
 
     def test_get_next_scheduled_update_pub_date_none(self):
         now = timezone.now()

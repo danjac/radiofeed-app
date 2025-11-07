@@ -1,8 +1,21 @@
-from django.urls import path
+from django.urls import path, register_converter
 
 from radiofeed.podcasts import views
 
 app_name = "podcasts"
+
+
+class _SignedIntConverter:
+    regex = r"-?\d+"  # allow optional leading '-'
+
+    def to_python(self, value: str) -> int:
+        return int(value)
+
+    def to_url(self, value: int) -> str:
+        return str(value)
+
+
+register_converter(_SignedIntConverter, "sint")
 
 urlpatterns = [
     path("subscriptions/", views.subscriptions, name="subscriptions"),
@@ -20,7 +33,7 @@ urlpatterns = [
         name="episodes",
     ),
     path(
-        "podcasts/<slug:slug>-<int:podcast_id>/season/<int:season>/",
+        "podcasts/<slug:slug>-<int:podcast_id>/season/<sint:season>/",
         views.season,
         name="season",
     ),
