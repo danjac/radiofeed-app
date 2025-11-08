@@ -67,9 +67,6 @@ configmap:
    - name: "meta_author"
      value: "{{ meta_author }}"
 
-   - name: "meta_copyright"
-     value: "{{ meta_copyright }}"
-
    - name: "meta_description"
      value: "{{ meta_description }}"
 

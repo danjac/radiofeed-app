@@ -25,7 +25,17 @@ get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 def meta_tags() -> str:
     """Renders META tags from settings."""
     meta_tags = [
-        *settings.META_TAGS,
+        *[
+            {
+                "name": key,
+                "content": value,
+            }
+            for key, value in settings.META_TAGS.items()
+        ],
+        {
+            "name": "copyright",
+            "content": f"© {settings.META_TAGS['author']} {timezone.now().year}",
+        },
         {
             "name": "htmx-config",
             "content": json.dumps(settings.HTMX_CONFIG),

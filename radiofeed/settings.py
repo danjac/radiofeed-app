@@ -584,21 +584,8 @@ PWA_CONFIG = {
 
 # Site meta configuration
 
-META_TAGS = [
-    {
-        "name": "author",
-        "content": env("META_AUTHOR", default="Site owner"),
-    },
-    {
-        "name": "copyright",
-        "content": env("META_COPYRIGHT", default="Site owner"),
-    },
-    {
-        "name": "description",
-        "content": env("META_DESCRIPTION", default="Podcast aggregator site"),
-    },
-    {
-        "name": "keywords",
-        "content": env("META_KEYWORDS", "podcasts, rss, feeds"),
-    },
-]
+META_TAGS = {
+    "author": env("META_AUTHOR", default="Site owner"),
+    "description": env("META_DESCRIPTION", default="Podcast aggregator site"),
+    "keywords": env("META_KEYWORDS", "podcasts, rss, feeds"),
+}
