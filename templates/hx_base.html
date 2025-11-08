@@ -1,8 +1,9 @@
-<title>
-    {% block title %}
-        {% title %}
-    {% endblock title %}
-</title>
-
-{% block content %}
-{% endblock content %}
+{% spaceless %}
+    <title>
+        {% block title %}
+            {% title %}
+        {% endblock title %}
+    </title>
+    {% block content %}
+    {% endblock content %}
+{% endspaceless %}
