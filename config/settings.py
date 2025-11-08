@@ -3,6 +3,7 @@ from email.utils import getaddresses
 
 import sentry_sdk
 from django.urls import reverse_lazy
+from django.utils.csp import CSP  # type: ignore[reportMissingTypeStubs]
 from environs import Env
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
@@ -362,38 +363,33 @@ PERMISSIONS_POLICY: dict[str, list] = {
 }
 
 # Content-Security-Policy
-# https://django-csp.readthedocs.io/en/3.8/configuration.html
+# https://docs.djangoproject.com/en/dev/ref/csp/
 
-# Allow all audio files
-
-CSP_SELF = "'self'"
-CSP_UNSAFE_EVAL = "'unsafe-eval'"
-CSP_UNSAFE_INLINE = "'unsafe-inline'"
 
 CSP_SCRIPT_WHITELIST = env.list("CSP_SCRIPT_WHITELIST", default=[])
 
 SCRIPT_SCP = [
-    CSP_SELF,
-    CSP_UNSAFE_EVAL,
-    CSP_UNSAFE_INLINE,
+    CSP.SELF,
+    CSP.UNSAFE_EVAL,
+    CSP.UNSAFE_INLINE,
     *CSP_SCRIPT_WHITELIST,
 ]
 
 CSP_DATA = f"data: {'https' if USE_HTTPS else 'http'}:"
 
-CONTENT_SECURITY_POLICY = {
-    "DIRECTIVES": {
-        "default-src": [CSP_SELF],
-        "script-src": SCRIPT_SCP,
-        "script-src-elem": SCRIPT_SCP,
-        "img-src": [CSP_SELF, CSP_DATA],
-        "media-src": ["*"],
-        "style-src": [
-            CSP_SELF,
-            CSP_UNSAFE_INLINE,
-        ],
-    }
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+    "style-src": [
+        CSP.SELF,
+        CSP.UNSAFE_INLINE,
+    ],
+    "script-src": SCRIPT_SCP,
+    "script-src-elem": SCRIPT_SCP,
+    "img-src": [CSP.SELF, CSP_DATA],
+    # Allow all audio files
+    "media-src": ["*"],
 }
+
 # Logging
 # https://docs.djangoproject.com/en/5.0/howto/logging/
 
