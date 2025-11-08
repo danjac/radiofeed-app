@@ -35,6 +35,20 @@ class TestFetchTopItunes:
         promoted.refresh_from_db()
         assert promoted.promoted is False
 
+    @pytest.mark.django_db
+    def test_promote_invalid_country(self, mocker):
+        promoted = PodcastFactory(promoted=True)
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[
+                PodcastFactory(),
+            ],
+        )
+        call_command("fetch_top_itunes", promote="xx")
+        patched.assert_not_called()
+        promoted.refresh_from_db()
+        assert promoted.promoted is True
+
 
 class TestCreateRecommendations:
     @pytest.mark.django_db
