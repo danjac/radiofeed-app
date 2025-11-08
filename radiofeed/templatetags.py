@@ -8,7 +8,6 @@ from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.utils import timezone
-from django.utils.encoding import force_str
 from django.utils.html import format_html_join
 from django.utils.timesince import timesince
 
@@ -30,12 +29,7 @@ def title(context: RequestContext, *elements: str, divider: str = "|") -> str:
     Results in:
         Radiofeed | About Us | Company
     """
-    return f" {divider} ".join(
-        [
-            context.request.site.name,
-            *(force_str(e) for e in elements),
-        ]
-    )
+    return f" {divider} ".join((context.request.site.name, *elements))
 
 
 @register.simple_tag

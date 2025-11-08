@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    {% title podcast.cleaned_title season %}
+    {% title podcast.cleaned_title season.label %}
 {% endblock title %}
 
 {% block content %}
@@ -13,7 +13,7 @@
                         {% fragment "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
                             {% include "header/nav/dropdown.html#item" with label="All Seasons" url=episodes_url %}
                             {% for season in podcast.seasons %}
-                                {% include "header/nav/dropdown.html#item" with label=season url=season.url %}
+                                {% include "header/nav/dropdown.html#item" with label=season.label url=season.url %}
                             {% endfor %}
                         {% endfragment %}
                     {% endfragment %}

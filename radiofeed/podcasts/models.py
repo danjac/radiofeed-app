@@ -28,7 +28,12 @@ class Season:
     season: int
 
     def __str__(self) -> str:
-        """Return season."""
+        """Return season label."""
+        return self.label
+
+    @cached_property
+    def label(self) -> str:
+        """Returns label for season."""
         return f"Season {self.season}"
 
     @cached_property
