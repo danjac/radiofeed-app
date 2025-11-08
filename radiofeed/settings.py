@@ -374,12 +374,14 @@ SCRIPT_SCP = [
     *CSP_SCRIPT_WHITELIST,
 ]
 
+CSP_DATA = f"data: {'https' if USE_HTTPS else 'http'}:"
+
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": [CSP_SELF],
         "script-src": SCRIPT_SCP,
         "script-src-elem": SCRIPT_SCP,
-        "img-src": [CSP_SELF],
+        "img-src": [CSP_SELF, CSP_DATA],
         "media-src": ["*"],
         "style-src": [
             CSP_SELF,
