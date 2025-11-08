@@ -21,9 +21,9 @@ register = template.Library()
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
-@register.simple_tag(takes_context=True, name="title")
-def page_title(context: RequestContext, *elements: str, divider: str = "|") -> str:
-    """Renders page title with site name.
+@register.simple_tag(takes_context=True)
+def title(context: RequestContext, *elements: str, divider: str = "|") -> str:
+    """Renders <title> content including the site name.
 
     Example:
         {% title "About Us" "Company" %}
