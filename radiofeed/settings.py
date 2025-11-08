@@ -362,26 +362,28 @@ PERMISSIONS_POLICY: dict[str, list] = {
 # Allow all audio files
 
 CSP_SELF = "'self'"
-CSP_DATA = f"data: {'https' if USE_HTTPS else 'http'}:;"
 CSP_UNSAFE_EVAL = "'unsafe-eval'"
 CSP_UNSAFE_INLINE = "'unsafe-inline'"
 
 CSP_SCRIPT_WHITELIST = env.list("CSP_SCRIPT_WHITELIST", default=[])
 
+SCRIPT_SCP = [
+    CSP_SELF,
+    CSP_UNSAFE_EVAL,
+    CSP_UNSAFE_INLINE,
+    *CSP_SCRIPT_WHITELIST,
+]
+
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": [CSP_SELF],
-        "img-src": [f" * {CSP_SELF} {CSP_DATA}"],
+        "script-src": SCRIPT_SCP,
+        "script-src-elem": SCRIPT_SCP,
+        "img-src": [CSP_SELF],
         "media-src": ["*"],
         "style-src": [
             CSP_SELF,
             CSP_UNSAFE_INLINE,
-        ],
-        "script-src": [
-            CSP_SELF,
-            CSP_UNSAFE_EVAL,
-            CSP_UNSAFE_INLINE,
-            *CSP_SCRIPT_WHITELIST,
         ],
     }
 }
