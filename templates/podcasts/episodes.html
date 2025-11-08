@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }} | Episodes
+    {% title podcast.cleaned_title "Episodes" %}
 {% endblock title %}
 
 {% block content %}

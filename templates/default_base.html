@@ -5,7 +5,7 @@
         <head>
             <title>
                 {% block title %}
-                    {{ request.site.name }}
+                    {% title %}
                 {% endblock title %}
             </title>
             {% partialdef head inline %}

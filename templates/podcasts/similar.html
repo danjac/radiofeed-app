@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    {{ block.super }} | {{ podcast.cleaned_title }} | Similar
+    {% title podcast.cleaned_title "Similar" %}
 {% endblock title %}
 
 {% block content %}

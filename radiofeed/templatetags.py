@@ -8,6 +8,7 @@ from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.utils import timezone
+from django.utils.encoding import force_str
 from django.utils.html import format_html_join
 from django.utils.timesince import timesince
 
@@ -18,6 +19,23 @@ from radiofeed.pwa import get_theme_color
 register = template.Library()
 
 get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
+
+
+@register.simple_tag(takes_context=True, name="title")
+def page_title(context: RequestContext, *elements: str, divider: str = "|") -> str:
+    """Renders page title with site name.
+
+    Example:
+        {% title "About Us" "Company" %}
+    Results in:
+        Radiofeed | About Us | Company
+    """
+    return f" {divider} ".join(
+        [
+            context.request.site.name,
+            *(force_str(e) for e in elements),
+        ]
+    )
 
 
 @register.simple_tag

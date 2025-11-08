@@ -42,9 +42,10 @@ class Test3rdPartyAuthTemplates:
         ],
     )
     @pytest.mark.django_db
-    def test_template(self, rf, mocker, user, template):
+    def test_template(self, rf, mocker, user, site, template):
         req = rf.get("/")
         req.user = user
+        req.site = site
         req.session = {}
         req.player = PlayerDetails(request=req)
 
