@@ -2,6 +2,7 @@ import pathlib
 from email.utils import getaddresses
 
 import sentry_sdk
+from django.csp.utils import CSP
 from django.urls import reverse_lazy
 from django.utils.csp import CSP  # type: ignore[reportMissingTypeStubs]
 from environs import Env
@@ -364,7 +365,6 @@ PERMISSIONS_POLICY: dict[str, list] = {
 
 # Content-Security-Policy
 # https://docs.djangoproject.com/en/dev/ref/csp/
-
 
 CSP_SCRIPT_WHITELIST = env.list("CSP_SCRIPT_WHITELIST", default=[])
 
