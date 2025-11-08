@@ -1,4 +1,4 @@
-from typing import Annotated, Final
+from typing import Annotated
 
 import typer
 from django_typer.management import Typer
@@ -7,25 +7,6 @@ from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
-
-COUNTRIES: Final = (
-    "br",
-    "ca",
-    "cn",
-    "de",
-    "dk",
-    "es",
-    "fi",
-    "fr",
-    "gb",
-    "it",
-    "jp",
-    "kr",
-    "no",
-    "pl",
-    "sv",
-    "us",
-)
 
 app = Typer(help="Fetch top iTunes podcasts")
 
@@ -75,4 +56,4 @@ def handle(
 
             typer.secho(msg, fg=typer.colors.GREEN)
 
-    execute_thread_pool(_fetch_country, COUNTRIES)
+    execute_thread_pool(_fetch_country, itunes.COUNTRIES)
