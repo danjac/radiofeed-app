@@ -20,6 +20,8 @@ from radiofeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
 
+_COVER_IMAGE_MAX_SIZE = 12 * 1024 * 1024  # 12 MB
+
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "card": (96, 96),
     "detail": (144, 160),
@@ -138,14 +140,14 @@ def fetch_cover_image(
         except ValueError:
             content_length = 0
 
-        if content_length > settings.COVER_IMAGE_MAX_SIZE:
+        if content_length > _COVER_IMAGE_MAX_SIZE:
             raise CoverImageTooLargeError
 
         with _handle_output_stream(io.BytesIO()) as output:
             with client.stream(cover_url) as response:
                 for chunk in response.iter_bytes():
                     output.write(chunk)
-                    if output.tell() > settings.COVER_IMAGE_MAX_SIZE:
+                    if output.tell() > _COVER_IMAGE_MAX_SIZE:
                         raise CoverImageTooLargeError
 
             image = Image.open(output)
@@ -231,7 +233,7 @@ def get_max_pixels(format: str, mode: str) -> int:
     compression_ratio = _COMPRESSION_RATIOS.get(format.lower(), 3.0)
     bytes_per_pixel = _BYTES_PER_PIXEL.get(mode.upper(), 3.0)
 
-    return int((settings.COVER_IMAGE_MAX_SIZE * compression_ratio) / bytes_per_pixel)
+    return int((_COVER_IMAGE_MAX_SIZE * compression_ratio) / bytes_per_pixel)
 
 
 @functools.cache

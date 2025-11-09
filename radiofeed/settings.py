@@ -522,21 +522,14 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
     INTERNAL_IPS = env.list("INTERNAL_IPS", default=["127.0.0.1"])
 
 # PROJECT-SPECIFIC SETTINGS
-#
-
-# Cookie used to check user accepts cookies
-
-GDPR_COOKIE_NAME = "accept-cookies"
-
-# Max permitted size of cover images in bytes
-
-COVER_IMAGE_MAX_SIZE = env.int(
-    "COVER_IMAGE_MAX_SIZE", default=12 * 1024 * 1024
-)  # 12 MB
 
 # User-Agent header for API calls from this site
 
 USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
+
+# Cookie used to check user accepts cookies
+
+GDPR_COOKIE_NAME = "accept-cookies"
 
 # Default page size for paginated views
 

@@ -67,9 +67,7 @@ class TestFetchCoverImage:
         client = Client(transport=httpx.MockTransport(_handler))
         assert fetch_cover_image(client, self.cover_url, 200)
 
-    def test_chunked_content_too_long(self, mocker, settings):
-        settings.COVER_IMAGE_MAX_SIZE = 100
-
+    def test_chunked_content_too_long(self, mocker):
         # mock entire fetch
         client = mocker.Mock()
 
@@ -86,18 +84,21 @@ class TestFetchCoverImage:
         client.stream = mock_stream
 
         mock_bytesio = mocker.Mock()
-        mock_bytesio.tell.return_value = 200
+        mock_bytesio.tell.return_value = 100_000_000_000
 
         mocker.patch("radiofeed.cover_image.io.BytesIO", return_value=mock_bytesio)
 
         with pytest.raises(CoverImageTooLargeError):
             fetch_cover_image(client, self.cover_url, 200)
 
-    def test_content_length_too_long(self, settings):
-        settings.COVER_IMAGE_MAX_SIZE = 100
-
+    def test_content_length_too_long(self):
         def _handler(request):
-            return httpx.Response(200, headers={"Content-Length": "200"})
+            return httpx.Response(
+                200,
+                headers={
+                    "Content-Length": str(100_000_000_000),
+                },
+            )
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverImageTooLargeError):
