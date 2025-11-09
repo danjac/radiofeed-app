@@ -18,8 +18,8 @@ class FormResult:
 
     form: FormProtocol
 
-    is_valid: bool = False
     is_submitted: bool = False
+    is_valid: bool = False
 
     def __bool__(self) -> bool:
         """Returns True if the form was submitted + valid, False otherwise."""
