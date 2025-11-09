@@ -534,10 +534,6 @@ COVER_IMAGE_MAX_SIZE = env.int(
     "COVER_IMAGE_MAX_SIZE", default=12 * 1024 * 1024
 )  # 12 MB
 
-# Max of retries for feed parser before podcast is marked as inactive
-
-FEED_PARSER_MAX_RETRIES = env.int("FEED_PARSER_MAX_RETRIES", default=30)
-
 # User-Agent header for API calls from this site
 
 USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
@@ -545,9 +541,6 @@ USER_AGENT = env("USER_AGENT", default="Radiofeed/0.0.0")
 # Default page size for paginated views
 
 DEFAULT_PAGE_SIZE = 30
-
-# Timeout for email unsubscribe links
-EMAIL_UNSUBSCRIBE_TIMEOUT = env.int("EMAIL_UNSUBSCRIBE_TIMEOUT", default=24 * 60 * 60)
 
 # HTMX configuration
 # https://htmx.org/docs/#config

@@ -2,8 +2,8 @@ import dataclasses
 import functools
 import itertools
 from collections.abc import Iterator
+from typing import Final
 
-from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.db.utils import DataError
@@ -21,6 +21,8 @@ from radiofeed.feedparser.exceptions import (
 from radiofeed.feedparser.models import Feed, Item
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
+
+_MAX_RETRIES: Final = 30
 
 
 def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
@@ -136,7 +138,7 @@ class _FeedParser:
                 active = False
             case _:
                 num_retries += 1
-                active = num_retries < settings.FEED_PARSER_MAX_RETRIES
+                active = num_retries < _MAX_RETRIES
 
         frequency = (
             scheduler.reschedule(

@@ -1,7 +1,6 @@
 from typing import TypedDict
 
 from allauth.account.models import EmailAddress
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -142,7 +141,9 @@ def user_stats(request: HttpRequest) -> TemplateResponse:
 
 
 @require_safe
-def unsubscribe(request: HttpRequest) -> HttpResponseRedirect:
+def unsubscribe(
+    request: HttpRequest, timeout: int = 24 * 60 * 60
+) -> HttpResponseRedirect:
     """Unsubscribe user from email notifications.
 
     The email address should be an encrypted token. Look up the EmailAddress instance and the user,
@@ -152,10 +153,7 @@ def unsubscribe(request: HttpRequest) -> HttpResponseRedirect:
     """
 
     try:
-        email = get_unsubscribe_signer().unsign(
-            request.GET["email"],
-            max_age=settings.EMAIL_UNSUBSCRIBE_TIMEOUT,
-        )
+        email = get_unsubscribe_signer().unsign(request.GET["email"], max_age=timeout)
         qs = EmailAddress.objects.filter(user__is_active=True).select_related("user")
         if request.user.is_authenticated:
             qs = qs.filter(user=request.user)
