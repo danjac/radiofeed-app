@@ -2,7 +2,6 @@ import dataclasses
 import functools
 import itertools
 from collections.abc import Iterator
-from typing import Final
 
 from django.db import IntegrityError, transaction
 from django.db.models import Q
@@ -22,8 +21,6 @@ from radiofeed.feedparser.models import Feed, Item
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 
-_MAX_RETRIES: Final = 30
-
 
 def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
     """Updates a Podcast instance with its RSS or Atom feed source."""
@@ -39,6 +36,7 @@ def get_categories_dict() -> dict[str, Category]:
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class _FeedParser:
     podcast: Podcast
+    max_retries: int = 30
 
     def parse(self, client: Client) -> Podcast.ParserResult:
         """Parse the podcast's RSS feed and update the Podcast instance."""
@@ -138,7 +136,7 @@ class _FeedParser:
                 active = False
             case _:
                 num_retries += 1
-                active = num_retries < _MAX_RETRIES
+                active = num_retries < self.max_retries
 
         frequency = (
             scheduler.reschedule(
