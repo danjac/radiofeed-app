@@ -1,4 +1,5 @@
 import contextlib
+import functools
 import hashlib
 import itertools
 from collections.abc import Iterator
@@ -338,6 +339,7 @@ def _get_podcasts_from_feeds(feeds: Iterator[Feed], **fields) -> Iterator[Podcas
         yield Podcast(rss=canonical_urls.get(url, url), **fields)
 
 
+@functools.cache
 def _get_cache_key(search_term: str, limit: int) -> str:
     value = search_term.strip().casefold()
     digest = hashlib.sha256(force_bytes(value)).digest()
