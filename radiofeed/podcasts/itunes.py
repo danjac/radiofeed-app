@@ -274,18 +274,17 @@ def fetch_chart(
         )
     )
 
-    if urls := _get_canonical_urls(feeds_for_update):
-        podcasts = (Podcast(rss=url, **fields) for url in urls)
+    podcasts = _get_podcasts_from_feeds(feeds_for_update, **fields)
 
-        if fields:
-            Podcast.objects.bulk_create(
-                podcasts,
-                unique_fields=["rss"],
-                update_conflicts=True,
-                update_fields=fields,
-            )
-        else:
-            Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+    if fields:
+        Podcast.objects.bulk_create(
+            podcasts,
+            unique_fields=["rss"],
+            update_conflicts=True,
+            update_fields=fields,
+        )
+    else:
+        Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
 
     return list(feeds)
 
@@ -322,8 +321,8 @@ def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
         raise ItunesError(str(exc)) from exc
 
 
-def _get_canonical_urls(feeds: Iterator[Feed]) -> set[str]:
-    """Returns a list of canonical URLs for the given feeds."""
+def _get_podcasts_from_feeds(feeds: Iterator[Feed], **fields) -> Iterator[Podcast]:
+    """Returns a list of podcasts with canonical URLs for the given feeds."""
 
     # make sure we fetch only unique feeds in the right order
     urls = dict.fromkeys(feed.rss for feed in feeds).keys()
@@ -335,7 +334,8 @@ def _get_canonical_urls(feeds: Iterator[Feed]) -> set[str]:
         ).values_list("rss", "canonical")
     )
 
-    return {canonical_urls.get(url, url) for url in urls}
+    for url in urls:
+        yield Podcast(rss=canonical_urls.get(url, url), **fields)
 
 
 def _get_cache_key(search_term: str, limit: int) -> str:
