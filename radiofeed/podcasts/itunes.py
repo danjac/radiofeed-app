@@ -1,4 +1,7 @@
+import contextlib
 import hashlib
+import itertools
+from collections.abc import Iterator
 from typing import Final
 
 import httpx
@@ -204,27 +207,30 @@ def search(
     limit: int = settings.DEFAULT_PAGE_SIZE,
 ) -> list[Feed]:
     """Search iTunes podcast API. New podcasts will be added to the database."""
-    if feeds := _fetch_feeds(
-        client,
-        "https://itunes.apple.com/search",
-        {
-            "term": search_term,
-            "limit": limit,
-            "media": "podcast",
-        },
-    ):
-        Podcast.objects.bulk_create(
-            (
-                Podcast(
-                    rss=feed.rss,
-                    title=feed.title,
-                )
-                for feed in feeds
-            ),
-            ignore_conflicts=True,
+    feeds_to_update, feeds = itertools.tee(
+        _fetch_feeds(
+            client,
+            "https://itunes.apple.com/search",
+            {
+                "term": search_term,
+                "limit": limit,
+                "media": "podcast",
+            },
         )
+    )
 
-    return feeds
+    Podcast.objects.bulk_create(
+        (
+            Podcast(
+                rss=feed.rss,
+                title=feed.title,
+            )
+            for feed in feeds_to_update
+        ),
+        ignore_conflicts=True,
+    )
+
+    return list(feeds)
 
 
 def search_cached(
@@ -258,14 +264,17 @@ def fetch_chart(
     if not itunes_ids:
         return []
 
-    if feeds := _fetch_feeds(
-        client,
-        "https://itunes.apple.com/lookup",
-        {
-            "id": ",".join(itunes_ids),
-        },
-    ):
-        urls = _get_canonical_urls(feeds)
+    feeds, feeds_for_update = itertools.tee(
+        _fetch_feeds(
+            client,
+            "https://itunes.apple.com/lookup",
+            {
+                "id": ",".join(itunes_ids),
+            },
+        )
+    )
+
+    if urls := _get_canonical_urls(feeds_for_update):
         podcasts = (Podcast(rss=url, **fields) for url in urls)
 
         if fields:
@@ -278,19 +287,15 @@ def fetch_chart(
         else:
             Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
 
-    return feeds
+    return list(feeds)
 
 
-def _fetch_feeds(client: Client, url: str, params: dict) -> list[Feed]:
+def _fetch_feeds(client: Client, url: str, params: dict) -> Iterator[Feed]:
     """Fetches and parses feeds from iTunes API."""
-    return [
-        feed
-        for feed in (
-            _parse_feed(result)
-            for result in _fetch_json(client, url, params).get("results", [])
-        )
-        if feed
-    ]
+
+    for result in _fetch_json(client, url, params).get("results", []):
+        with contextlib.suppress(ValidationError):
+            yield Feed(**result)
 
 
 def _fetch_itunes_ids(client: Client, url: str) -> set[str]:
@@ -317,15 +322,7 @@ def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
         raise ItunesError(str(exc)) from exc
 
 
-def _parse_feed(feed: dict) -> Feed | None:
-    """Parses a single feed entry."""
-    try:
-        return Feed(**feed)
-    except ValidationError:
-        return None
-
-
-def _get_canonical_urls(feeds: list[Feed]) -> set[str]:
+def _get_canonical_urls(feeds: Iterator[Feed]) -> set[str]:
     """Returns a list of canonical URLs for the given feeds."""
 
     # make sure we fetch only unique feeds in the right order
