@@ -105,14 +105,13 @@ def paginate(
     request: HttpRequest,
     object_list: ObjectList,
     *,
-    per_page: int | None = None,
     param: str = "page",
+    per_page: int = settings.DEFAULT_PAGE_SIZE,
 ) -> Page:
     """Paginate object list."""
-    return Paginator(
-        object_list,
-        per_page=per_page or settings.DEFAULT_PAGE_SIZE,
-    ).get_page(request.GET.get(param, ""))
+    return Paginator(object_list, per_page=per_page).get_page(
+        request.GET.get(param, "")
+    )
 
 
 def render_paginated_response(  # noqa: PLR0913
