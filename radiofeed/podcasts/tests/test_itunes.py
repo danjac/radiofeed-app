@@ -213,10 +213,10 @@ class TestItunesFeed:
         assert (
             str(
                 itunes.Feed(
-                    image="http://example.com/image.jpg",
-                    rss="https://feeds.fireside.fm/testandcode/rss",
-                    title="Test & Code",
-                    url="https://example.com",
+                    artworkUrl100="http://example.com/image.jpg",
+                    collectionName="Test & Code",
+                    collectionViewUrl="https://example.com",
+                    feedUrl="https://feeds.fireside.fm/testandcode/rss",
                 ),
             )
             == "Test & Code"

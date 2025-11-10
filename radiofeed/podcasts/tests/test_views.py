@@ -136,16 +136,16 @@ class TestSearchItunes:
     def test_search(self, client, auth_user, podcast, mocker):
         feeds = [
             itunes.Feed(
-                url="https://example.com/id123456",
-                rss="https://feeds.fireside.fm/testandcode/rss",
-                title="Test & Code : Python Testing",
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                artworkUrl100="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                collectionName="Test & Code : Python Testing",
+                collectionViewUrl="https://example.com/id123456",
+                feedUrl="https://feeds.fireside.fm/testandcode/rss",
             ),
             itunes.Feed(
-                url=podcast.website,
-                rss=podcast.rss,
-                title=podcast.title,
-                image="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                artworkUrl100="https://assets.fireside.fm/file/fireside-images/podcasts/images/b/bc7f1faf-8aad-4135-bb12-83a8af679756/cover.jpg?v=3",
+                collectionName=podcast.title,
+                collectionViewUrl=podcast.website,
+                feedUrl=podcast.rss,
             ),
         ]
         mock_search = mocker.patch(

@@ -1,4 +1,3 @@
-import dataclasses
 import hashlib
 from typing import Final
 
@@ -7,6 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from pydantic import BaseModel, Field, ValidationError
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
@@ -184,14 +184,13 @@ class ItunesError(Exception):
     """iTunes API error."""
 
 
-@dataclasses.dataclass(frozen=True)
-class Feed:
+class Feed(BaseModel):
     """Encapsulates iTunes API result."""
 
-    rss: str
-    url: str
-    title: str
-    image: str
+    rss: str = Field(..., alias="feedUrl")
+    url: str = Field(..., alias="collectionViewUrl")
+    title: str = Field(..., alias="collectionName")
+    image: str = Field(..., alias="artworkUrl100")
 
     def __str__(self) -> str:
         """Returns title of feed"""
@@ -321,13 +320,8 @@ def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
 def _parse_feed(feed: dict) -> Feed | None:
     """Parses a single feed entry."""
     try:
-        return Feed(
-            rss=feed["feedUrl"],
-            url=feed["collectionViewUrl"],
-            title=feed["collectionName"],
-            image=feed["artworkUrl100"],
-        )
-    except KeyError:
+        return Feed(**feed)
+    except ValidationError:
         return None
 
 
