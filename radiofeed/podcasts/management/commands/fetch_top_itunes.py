@@ -45,14 +45,15 @@ def handle(
         fields = {"promoted": True} if promoted else {}
         try:
             feeds = itunes.fetch_chart(client, country, limit=limit, **fields)
-            typer.secho(
-                f"Fetched {len(feeds)} iTunes feeds for country {country}",
-                fg=typer.colors.GREEN,
-            )
         except itunes.ItunesError as exc:
             typer.secho(
                 f"Error fetching iTunes feeds for country {country}: {exc}",
                 fg=typer.colors.RED,
+            )
+        else:
+            typer.secho(
+                f"Fetched {len(feeds)} iTunes feeds for country {country}",
+                fg=typer.colors.GREEN,
             )
 
     execute_thread_pool(_fetch_country, itunes.COUNTRIES)
