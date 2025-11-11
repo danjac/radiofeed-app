@@ -42,7 +42,7 @@
                             {% heroicon_outline "user-circle" size=30 x_show="!showUserDropdown" %}
                             {% heroicon_solid "user-circle" size=30 x_show="showUserDropdown" %}
                         </button>
-                        <div class="absolute right-1 z-20 w-64 bg-white rounded-lg border shadow-lg dark:bg-gray-800 dark:border"
+                        <div class="absolute right-1 z-20 w-64 bg-white rounded-lg border shadow-lg dark:bg-gray-900 dark:border"
                              x-cloak
                              x-show="showUserDropdown"
                              x-transition.scale.origin.top>
@@ -53,13 +53,13 @@
                                 <li>
                                     <a href="{% url "users:preferences" %}"
                                        accesskey="s"
-                                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700">
+                                       class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800">
                                         {% heroicon_mini "cog" class="mr-2" %}
                                         Settings
                                     </a>
                                 </li>
                                 <li>
-                                    <form class="items-center py-2 px-4 w-full hover:bg-gray-300 flex-inline dark:hover:bg-gray-700"
+                                    <form class="items-center py-2 px-4 w-full hover:bg-gray-200 flex-inline dark:hover:bg-gray-800"
                                           hx-disable="true"
                                           action="{% url "account_logout" %}"
                                           method="post">
@@ -116,7 +116,7 @@
         </ul>
     </nav>
     {% if user.is_authenticated %}
-        <nav class="absolute left-0 z-50 py-6 px-2 w-full bg-white shadow-xl xl:hidden dark:bg-gray-800"
+        <nav class="absolute left-0 z-50 py-6 px-2 w-full bg-white shadow-xl xl:hidden dark:bg-gray-900"
              x-cloak
              x-show.transition="showSidebar"
              x-transition:enter-start="transform opacity-0 scale-95 -translate-y-12 sm:-translate-y-6"
