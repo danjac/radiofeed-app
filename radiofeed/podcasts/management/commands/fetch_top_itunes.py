@@ -35,10 +35,7 @@ def handle(
 
     if promote:
         if promote not in itunes.COUNTRIES:
-            typer.secho(
-                f"Invalid country code: {promote}. Valid codes are: {', '.join(itunes.COUNTRIES)}",
-                fg=typer.colors.RED,
-            )
+            typer.secho(f"Invalid country code: {promote}", fg=typer.colors.RED)
             raise typer.Exit(code=1)
         # Clear existing promoted podcasts
         Podcast.objects.filter(promoted=True).update(promoted=False)
