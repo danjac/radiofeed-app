@@ -8,7 +8,7 @@ from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context, RequestContext
 from django.utils import timezone
-from django.utils.html import format_html_join
+from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
@@ -74,6 +74,18 @@ def meta_tags() -> str:
 
 
 @register.simple_tag
+@functools.cache
+def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> str:
+    """Renders a cover image."""
+    attrs = get_cover_image_attrs(variant, cover_url, title) | {
+        "aria_hidden": "true",
+        "decoding": "async",
+        "loading": "lazy",
+    }
+    return format_html("<img {attrs}>", attrs=render_attrs(attrs))
+
+
+@register.simple_tag
 def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     """Returns absolute URI for the given path."""
     scheme = "https" if settings.USE_HTTPS else "http"
@@ -104,12 +116,6 @@ def markdown(content: str | None) -> dict:
     """Render content as Markdown."""
     markdown = render_markdown(content) if content else ""
     return {"markdown": markdown}
-
-
-@register.inclusion_tag("cover_image.html")
-def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> dict:
-    """Renders a cover image."""
-    return {"attrs": get_cover_image_attrs(variant, cover_url, title)}
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)

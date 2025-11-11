@@ -1,0 +1,8 @@
+
+@layer images {
+    .cover {
+        object-fit: cover;
+        color: transparent;
+        background-color: transparent;
+    }
+}

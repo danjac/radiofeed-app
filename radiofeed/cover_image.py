@@ -87,7 +87,7 @@ def get_cover_image_attrs(
     title: str,
 ) -> dict:
     """Returns the HTML attributes for an image."""
-    classes = _COVER_IMAGE_CLASSES[variant]
+    classes = f"cover border {_COVER_IMAGE_CLASSES[variant]}"
     min_size, full_size = _COVER_IMAGE_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
