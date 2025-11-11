@@ -165,6 +165,12 @@ class _Recommender:
             neighbor_ids = subset_ids[filtered_neighbors[row_idxs, col_idxs]]
             sims = similarities[row_idxs, col_idxs]
 
+            # remove zero similarity and self-references
+            mask = (row_ids != neighbor_ids) & (sims > 0)
+            row_ids = row_ids[mask]
+            neighbor_ids = neighbor_ids[mask]
+            sims = sims[mask]
+
             yield from zip(
                 row_ids,
                 neighbor_ids,

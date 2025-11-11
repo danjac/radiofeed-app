@@ -17,6 +17,27 @@ class TestRecommend:
         assert Recommendation.objects.exists() is False
 
     @pytest.mark.django_db
+    def test_podcast_never_recommends_itself(self):
+        # set up a shared category
+        cat = CategoryFactory.create()
+
+        # create multiple podcasts in the same category
+        podcasts = PodcastFactory.create_batch(
+            3,
+            extracted_text="shared content about science and tech",
+            language="en",
+            categories=[cat],
+        )
+
+        recommend("en")
+
+        for podcast in podcasts:
+            recs = Recommendation.objects.filter(podcast=podcast)
+            assert recs.count() > 0
+            # The podcast itself should never appear in its recommendations
+            assert all(r.recommended != podcast for r in recs)
+
+    @pytest.mark.django_db
     def test_handle_empty_data_frame(self):
         PodcastFactory(
             title="Cool science podcast",
