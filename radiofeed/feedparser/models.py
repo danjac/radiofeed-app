@@ -257,6 +257,7 @@ class Feed(BaseModel):
     language: str = DEFAULT_LANGUAGE
     pub_date: datetime | None = None
 
+    canonical_url: OptionalUrl = ""
     website: OptionalUrl = ""
     cover_url: OptionalUrl = ""
 

@@ -177,6 +177,69 @@ class TestFeedParser:
         assert "Philosophy" in assigned_categories
 
     @pytest.mark.django_db
+    def test_parse_new_feed_url_same(self, categories):
+        podcast = PodcastFactory(rss="https://feeds.simplecast.com/bgeVtxQX")
+
+        client = _mock_client(
+            url=podcast.rss,
+            status_code=http.HTTPStatus.OK,
+            content=self.get_rss_content("rss_new_feed_url.xml"),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
+        )
+
+        assert parse_feed(podcast, client) is Podcast.ParserResult.SUCCESS
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
+
+    @pytest.mark.django_db
+    def test_parse_new_feed_url_changed(self, categories):
+        podcast = PodcastFactory()
+
+        client = _mock_client(
+            url=podcast.rss,
+            status_code=http.HTTPStatus.OK,
+            content=self.get_rss_content("rss_new_feed_url.xml"),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
+        )
+
+        assert parse_feed(podcast, client) is Podcast.ParserResult.SUCCESS
+
+        podcast.refresh_from_db()
+
+        assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
+
+    @pytest.mark.django_db
+    def test_parse_new_feed_url_other_podcast(self):
+        podcast = PodcastFactory()
+        other = PodcastFactory(rss="https://feeds.simplecast.com/bgeVtxQX")
+
+        client = _mock_client(
+            url=podcast.rss,
+            status_code=http.HTTPStatus.OK,
+            content=self.get_rss_content("rss_new_feed_url.xml"),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
+        )
+
+        assert parse_feed(podcast, client) is Podcast.ParserResult.DUPLICATE
+
+        podcast.refresh_from_db()
+
+        assert podcast.parser_result == Podcast.ParserResult.DUPLICATE
+        assert podcast.active is False
+        assert podcast.canonical == other
+
+    @pytest.mark.django_db
     def test_parse_serial(self):
         podcast = PodcastFactory(
             rss="https://feeds.acast.com/public/shows/867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5",

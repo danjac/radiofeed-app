@@ -1,6 +1,7 @@
 import dataclasses
 import functools
 import itertools
+import operator
 from collections.abc import Iterator
 
 from django.db import IntegrityError, transaction
@@ -70,14 +71,25 @@ class _FeedParser:
             if content_hash == self.podcast.content_hash:
                 raise NotModifiedError
 
-            if canonical_id := self._get_canonical_id(response.url, content_hash):
+            # check for duplicates based on content hash
+            if canonical_id := self._get_canonical_id(
+                content_hash=content_hash,
+                rss=response.url,
+            ):
                 raise DuplicateError
 
             feed = rss_parser.parse_rss(response.content)
+            rss = feed.canonical_url or response.url
+
+            # Check for feed redirection and duplicates
+            if rss != response.url and (
+                canonical_id := self._get_canonical_id(rss=rss)
+            ):
+                raise DuplicateError
 
             return self._handle_success(
                 feed=feed,
-                rss=response.url,
+                rss=rss,
                 content_hash=content_hash,
                 etag=etag,
                 modified=modified,
@@ -109,6 +121,7 @@ class _FeedParser:
                     keywords=keywords,
                     **feed.model_dump(
                         exclude={
+                            "canonical_url",
                             "categories",
                             "complete",
                             "items",
@@ -156,15 +169,25 @@ class _FeedParser:
         )
         return exc.result
 
-    def _get_canonical_id(self, url: str, content_hash: str) -> int | None:
+    def _get_canonical_id(self, **fields) -> int | None:
+        """Return the PK of a canonical podcast matching the given fields."""
+        q = functools.reduce(
+            operator.or_,
+            (
+                Q(**{k: v})
+                for k, v in fields.items()
+                if v and v != getattr(self.podcast, k)
+            ),
+        )
         return (
-            Podcast.objects.exclude(pk=self.podcast.pk)
-            .filter(
-                Q(rss=url) | Q(content_hash=content_hash),
-                canonical__isnull=True,
+            (
+                Podcast.objects.exclude(pk=self.podcast.pk)
+                .filter(q, canonical__isnull=True)
+                .values_list("pk", flat=True)
+                .first()
             )
-            .values_list("pk", flat=True)
-            .first()
+            if q
+            else None
         )
 
     def _parse_episodes(self, feed: Feed) -> None:

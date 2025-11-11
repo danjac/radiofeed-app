@@ -12,7 +12,6 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 >
 <channel>
 	<title>Mysterious Universe</title>
-	<atom:link href="https://mysteriousuniverse.org/feed/podcast/" rel="self" type="application/rss+xml" />
 	<link>https://mysteriousuniverse.org</link>
 	<description>Blog and Podcast specializing in offbeat news</description>
 	<lastBuildDate>Wed, 01 Jul 2020 15:25:26 +0000</lastBuildDate>

@@ -62,6 +62,11 @@ class _RSSParser:
                         "description/text()",
                         "itunes:summary/text()",
                     ),
+                    "canonical_url": self._parser.value(
+                        channel,
+                        "itunes:new-feed-url/text()",
+                        "atom:link[@rel='self']/@href",
+                    ),
                     "funding_text": self._parser.value(
                         channel,
                         "podcast:funding/text()",
