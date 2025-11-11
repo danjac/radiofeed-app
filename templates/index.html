@@ -7,7 +7,7 @@
                 <title>{{ site_name }}</title>
                 {% include "default_base.html#head" %}
             </head>
-            <body class="mx-auto font-sans antialiased text-white from-black to-purple-900 bg-linear-to-b container-xl scroll-smooth">
+            <body class="mx-auto font-sans antialiased container-xl scroll-smooth">
                 {% include "messages.html" %}
                 <div class="py-6 px-6 mx-auto space-y-3 min-h-screen lg:py-12 lg:space-y-12">
                     <div class="space-y-3 lg:space-y-6">
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="flex justify-center items-center">
                                     <a href="{% url "account_login" %}"
-                                       class="flex justify-center items-center !py-3 w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline text-white! hover:bg-inherit!">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
+                                       class="flex justify-center items-center !py-3 w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline hover:bg-inherit!">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
                                 </div>
                                 <p class="text-lg text-center lg:text-xl">
                                     Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ site_name }}</a>
