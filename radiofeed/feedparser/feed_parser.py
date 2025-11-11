@@ -178,6 +178,7 @@ class _FeedParser:
                 for k, v in fields.items()
                 if v and v != getattr(self.podcast, k)
             ),
+            Q(),
         )
         return (
             (
