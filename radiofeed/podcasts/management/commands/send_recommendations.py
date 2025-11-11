@@ -16,11 +16,11 @@ app = Typer(help="Send podcast recommendations to users")
 
 @app.command()
 def handle(
-    num_podcasts: Annotated[
+    limit: Annotated[
         int,
         typer.Option(
-            "--num-podcasts",
-            "-n",
+            "--limit",
+            "-l",
             help="Number of podcasts to recommend per user",
         ),
     ] = 6,
@@ -30,7 +30,7 @@ def handle(
     connection = get_connection()
 
     def _send_recommendations(recipient) -> None:
-        if podcasts := _get_podcasts(recipient.user, num_podcasts):
+        if podcasts := _get_podcasts(recipient.user, limit):
             send_notification_email(
                 site,
                 recipient,
@@ -43,8 +43,9 @@ def handle(
             )
 
             recipient.user.recommended_podcasts.add(*podcasts)
+
             typer.secho(
-                f"Recommendations sent to {recipient.email}",
+                f"{len(podcasts)} podcast recommendations sent to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
 

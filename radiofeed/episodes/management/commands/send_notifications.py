@@ -19,11 +19,11 @@ app = Typer(help="Send notifications to users about new podcast episodes")
 
 @app.command()
 def handle(
-    num_episodes: Annotated[
+    limit: Annotated[
         int,
         typer.Option(
-            "--num-episodes",
-            "-n",
+            "--limit",
+            "-l",
             help="Number of new podcast episodes to notify per user",
         ),
     ] = 6,
@@ -42,11 +42,7 @@ def handle(
     connection = get_connection()
 
     def _send_notifications(recipient) -> None:
-        if episodes := _get_new_episodes(
-            recipient.user,
-            num_episodes,
-            since,
-        ):
+        if episodes := _get_new_episodes(recipient.user, limit, since):
             send_notification_email(
                 site,
                 recipient,
@@ -59,7 +55,7 @@ def handle(
             )
 
             typer.secho(
-                f"Notifications sent to {recipient.email}",
+                f"{len(episodes)} episode notifications sent to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
 

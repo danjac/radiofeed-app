@@ -1,41 +1,29 @@
 import functools
-import logging
 from collections.abc import Callable, Iterable
-from concurrent.futures import Future, ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import TypeVar
 
 from django.db import close_old_connections, connections
 
-_logger = logging.getLogger(__name__)
+T = TypeVar("T")
+R = TypeVar("R")
 
 
 def execute_thread_pool(
-    fn: Callable,
-    iterable: Iterable,
-    *,
-    raise_exception: bool = False,
+    fn: Callable[[T], R],
+    iterable: Iterable[T],
     **kwargs,
-) -> list[Future]:
+) -> list[R]:
     """Execute a function in a thread pool and return the list of futures."""
-    results = []
-
     threadsafe_fn = db_thread_safe(fn)
 
     with ThreadPoolExecutor(**kwargs) as executor:
-        futures = {executor.submit(threadsafe_fn, item): item for item in iterable}
-
-        for future in as_completed(futures):
-            try:
-                result = future.result()
-                _logger.debug("Task %s completed: %s", futures[future], result)
-                results.append(result)
-            except Exception as exc:
-                _logger.exception(exc)
-                if raise_exception:
-                    raise
-
-    _logger.debug("Tasks completed: %d", len(results))
-
-    return results
+        return [
+            future.result()
+            for future in as_completed(
+                executor.submit(threadsafe_fn, item) for item in iterable
+            )
+        ]
 
 
 def db_thread_safe(fn: Callable) -> Callable:

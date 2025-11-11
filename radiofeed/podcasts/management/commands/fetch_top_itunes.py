@@ -45,21 +45,17 @@ def handle(
 
     def _fetch_country(country: str) -> None:
         promoted = promote == country
-
-        typer.echo(f"Fetching top {limit} iTunes podcasts for country: {country}")
-
         fields = {"promoted": True} if promoted else {}
-
-        for feed in itunes.fetch_chart(
-            client,
-            country,
-            limit=limit,
-            **fields,
-        ):
-            msg = f"Fetched iTunes feed {feed.title}"
-            if promoted:
-                msg += " (promoted)"
-
-            typer.secho(msg, fg=typer.colors.GREEN)
+        try:
+            feeds = itunes.fetch_chart(client, country, limit=limit, **fields)
+            typer.secho(
+                f"Fetched {len(feeds)} iTunes feeds for country {country}",
+                fg=typer.colors.GREEN,
+            )
+        except itunes.ItunesError as exc:
+            typer.secho(
+                f"Error fetching iTunes feeds for country {country}: {exc}",
+                fg=typer.colors.RED,
+            )
 
     execute_thread_pool(_fetch_country, itunes.COUNTRIES)

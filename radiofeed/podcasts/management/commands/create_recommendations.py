@@ -21,11 +21,11 @@ def handle() -> None:
         .distinct()
     )
 
-    def _process_language(language) -> None:
+    def _recommend(language) -> None:
         recommender.recommend(language)
         typer.secho(
             f"Recommendations created for language: {language}",
             fg=typer.colors.GREEN,
         )
 
-    execute_thread_pool(_process_language, languages)
+    execute_thread_pool(_recommend, languages)

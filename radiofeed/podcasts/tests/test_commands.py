@@ -1,6 +1,7 @@
 import pytest
 from django.core.management import call_command
 
+from radiofeed.podcasts.itunes import Feed, ItunesError
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
     RecommendationFactory,
@@ -10,25 +11,37 @@ from radiofeed.users.tests.factories import EmailAddressFactory
 
 
 class TestFetchTopItunes:
+    @pytest.fixture
+    def feed(self):
+        return Feed(
+            artworkUrl100="http://example.com/artwork.jpg",
+            collectionName="Example Podcast",
+            collectionViewUrl="http://example.com/podcast",
+            feedUrl="http://example.com/feed",
+        )
+
     @pytest.mark.django_db
-    def test_ok(self, mocker):
+    def test_ok(self, mocker, feed):
         patched = mocker.patch(
-            "radiofeed.podcasts.itunes.fetch_chart",
-            return_value=[
-                PodcastFactory(),
-            ],
+            "radiofeed.podcasts.itunes.fetch_chart", return_value=[feed]
         )
         call_command("fetch_top_itunes")
         patched.assert_called()
 
     @pytest.mark.django_db
-    def test_promote(self, mocker):
-        promoted = PodcastFactory(promoted=True)
+    def test_error(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.fetch_chart",
-            return_value=[
-                PodcastFactory(),
-            ],
+            side_effect=ItunesError("API error"),
+        )
+        call_command("fetch_top_itunes")
+        patched.assert_called()
+
+    @pytest.mark.django_db
+    def test_promote(self, mocker, feed):
+        promoted = PodcastFactory(promoted=True)
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart", return_value=[feed]
         )
         call_command("fetch_top_itunes", promote="gb")
         patched.assert_called()
@@ -36,13 +49,11 @@ class TestFetchTopItunes:
         assert promoted.promoted is False
 
     @pytest.mark.django_db
-    def test_promote_invalid_country(self, mocker):
+    def test_promote_invalid_country(self, mocker, feed):
         promoted = PodcastFactory(promoted=True)
         patched = mocker.patch(
             "radiofeed.podcasts.itunes.fetch_chart",
-            return_value=[
-                PodcastFactory(),
-            ],
+            return_value=[feed],
         )
         call_command("fetch_top_itunes", promote="xx")
         patched.assert_not_called()
