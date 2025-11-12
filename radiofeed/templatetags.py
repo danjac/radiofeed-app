@@ -77,11 +77,7 @@ def meta_tags() -> str:
 @functools.cache
 def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> str:
     """Renders a cover image."""
-    attrs = get_cover_image_attrs(variant, cover_url, title) | {
-        "aria_hidden": "true",
-        "decoding": "async",
-        "loading": "lazy",
-    }
+    attrs = get_cover_image_attrs(variant, cover_url, title)
     return format_html("<img {attrs}>", attrs=render_attrs(attrs))
 
 
