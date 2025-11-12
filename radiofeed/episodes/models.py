@@ -13,10 +13,10 @@ from django.utils.functional import cached_property
 from fast_update.query import FastUpdateQuerySet
 from slugify import slugify
 
-from radiofeed.db.fields import URLField
-from radiofeed.db.search import SearchQuerySetMixin
+from radiofeed.fields import URLField
 from radiofeed.html import strip_html
 from radiofeed.podcasts.models import Season
+from radiofeed.search import SearchQuerySetMixin
 
 
 class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
