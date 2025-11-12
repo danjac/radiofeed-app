@@ -272,13 +272,13 @@ def get_placeholder(size: int) -> str:
 @functools.cache
 def get_placeholder_url(size: int) -> str:
     """Return URL to cover image placeholder"""
-    return static(f"{get_placeholder(size)}")
+    return static(f"img/placeholders/{get_placeholder(size)}")
 
 
 @functools.cache
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
-    return settings.PLACEHOLDERS_DIR / get_placeholder(size)
+    return settings.STATIC_DIR / "img" / "placeholders" / get_placeholder(size)
 
 
 @functools.cache
