@@ -28,8 +28,8 @@
                         <source src="{{ episode.media_url }}"
                                 type="{{ episode.media_type }}" />
                     </audio>
-                    <div class="fixed bottom-0 p-2 w-full font-semibold text-white opacity-100 duration-1000 ease-in-out transform translate-y-0 bg-zinc-900 htmx-added:opacity-0 htmx-added:translate-y-24 dark:bg-zinc-800">
-                        <div class="items-center w-full divide-y divide-gray-300 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x dark:divide-gray-600">
+                    <div class="fixed bottom-0 p-2 w-full font-semibold opacity-100 duration-1000 ease-in-out transform translate-y-0 htmx-added:opacity-0 htmx-added:translate-y-24 bg-zinc-200 dark:bg-zinc-800">
+                        <div class="items-center w-full divide-y divide-gray-600 divide-solid sm:flex sm:space-y-0 sm:divide-y-0 sm:divide-x dark:divide-gray-600">
                             <div class="pb-3 sm:pb-0 sm:w-1/2">
                                 <div class="flex items-center space-x-3 cursor-pointer sm:pr-2 group"
                                      role="link"
@@ -38,10 +38,10 @@
                                      hx-push-url="true">
                                     {% cover_image "card" episode.get_cover_url episode.cleaned_title %}
                                     <div class="flex flex-col place-content-between h-16">
-                                        <h2 class="font-bold leading-tight break-words group-hover:text-blue-300 line-clamp-2"
+                                        <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300"
                                             aria-label="{{ episode.cleaned_title }}"
                                             title="{{ episode.cleaned_title }}">{{ episode.cleaned_title }}</h2>
-                                        <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-300 line-clamp-1"
+                                        <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300"
                                             aria-label="{{ podcast.cleaned_title }}"
                                             title="{{ podcast.cleaned_title }}">{{ podcast.cleaned_title }}</h3>
                                     </div>
@@ -54,12 +54,12 @@
                                          aria-label="Current Time"
                                          title="Current Time"
                                          class="flex justify-start items-center font-mono text-sm"
-                                         :class="{'text-gray-300': !isPlaying}"></div>
+                                         :class="{'text-gray-900 dark:text-gray-300': !isPlaying}"></div>
                                     {% with BUTTON_CSS="focus:outline-hidden inline-block" %}
                                         <div class="flex justify-center items-center space-x-6"
                                             {# fmt:off #}
                                              x-data="{
-                                                 activeCss: 'hover:text-blue-300 cursor-pointer',
+                                                 activeCss: 'hover:text-blue-600 dark:hover:text-blue-300 cursor-pointer',
                                                  inactiveCss: 'opacity-75 cursor-not-allowed'
                                             }"{# fmt:on #}>
                                                 <button aria-label="Skip Back 10 Seconds"
@@ -110,7 +110,7 @@
                                          aria-label="Time Remaining"
                                          title="Time Remaining"
                                          class="flex justify-end items-center font-mono text-sm"
-                                         :class="{'text-gray-300': !isPlaying}"></div>
+                                         :class="{'text-gray-900 dark:text-gray-300': !isPlaying}"></div>
                                 </div>
                                 <div class="w-full h-4">
                                     <input type="range"

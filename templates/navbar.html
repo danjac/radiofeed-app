@@ -1,5 +1,5 @@
 {% load heroicons static %}
-<header class="sticky top-0 z-10 w-full text-white transition-shadow duration-300 bg-zinc-900 dark:bg-zinc-800"
+<header class="sticky top-0 z-10 w-full transition-shadow duration-300 bg-zinc-200 dark:bg-zinc-800"
         :class="scrolling ? 'drop-shadow-xl': ''"
         x-data="{showSidebar: false, showUserDropdown: false, scrolling: false}"
         {# fmt:off #}
@@ -12,16 +12,9 @@
     <nav class="flex justify-between items-center p-2">
         {% with site_name=request.site.name %}
             <div class="flex items-center shrink-0">
-                <a class="inline-flex items-center text-xl font-bold lg:text-2xl"
+                <a class="inline-flex items-center text-xl lg:text-2xl link text-bold"
                    {% if user.is_authenticated %} href="{% url 'podcasts:subscriptions' %}" {% else %} href="{% url 'index' %}" hx-disable="true" {% endif %}
                    title="{{ site_name }}">
-                    <img src="{% static 'img/wave-white-36.webp' %}"
-                         height="32"
-                         width="32"
-                         alt="{{ site_name }}"
-                         class="mr-3 w-6 h-6 lg:w-8 lg:h-8"
-                         title="{{ site_name }}"
-                         aria-hidden="true">
                     {{ site_name }}
                 </a>
             </div>
@@ -38,7 +31,7 @@
                                 @click="showUserDropdown = !showUserDropdown"
                                 @click.outside="showUserDropdown=false"
                                 @keyup.escape.window="showUserDropdown=false"
-                                class="flex items-center rounded-lg sm:justify-end hover:text-gray-300 hover:cursor-pointer md:hover:bg-transparent">
+                                class="flex items-center rounded-lg sm:justify-end hover:text-gray-900 hover:cursor-pointer md:hover:bg-transparent dark:hover:text-gray-300">
                             {% heroicon_outline "user-circle" size=30 x_show="!showUserDropdown" %}
                             {% heroicon_solid "user-circle" size=30 x_show="showUserDropdown" %}
                         </button>
@@ -107,7 +100,7 @@
                     <a href="{% url 'about' %}"
                        aria-label="About this Site"
                        title="About this Site"
-                       class="flex items-center space-x-2 font-bold hover:text-blue-300">
+                       class="flex items-center space-x-2 link text-bold">
                         {% heroicon_outline "information-circle" size=30 %}
                         <span class="hidden md:inline-block">About</span>
                     </a>
