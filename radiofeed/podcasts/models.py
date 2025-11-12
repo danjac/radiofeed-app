@@ -95,7 +95,7 @@ class Category(models.Model):
 class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    def search(self, search_term) -> models.QuerySet["Podcast"]:
+    def search(self, search_term: str, **kwargs) -> models.QuerySet["Podcast"]:
         """Does standard full text search, prioritizing exact search results.
 
         Annotates `exact_match` to indicate such results.
@@ -103,7 +103,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         if not search_term:
             return self.none()
 
-        qs = super().search(search_term)
+        qs = super().search(search_term, **kwargs)
 
         exact_matches_qs = (
             self.alias(title_lower=Lower("title"))

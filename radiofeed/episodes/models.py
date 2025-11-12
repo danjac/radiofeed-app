@@ -195,9 +195,9 @@ class Episode(models.Model):
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
-    search_vectors: ClassVar[list] = [
-        ("episode__search_vector", "episode_rank"),
-        ("episode__podcast__search_vector", "podcast_rank"),
+    search_vectors: ClassVar = [
+        "episode__search_vector",
+        "episode__podcast__search_vector",
     ]
 
 
@@ -244,9 +244,9 @@ class Bookmark(models.Model):
 class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
-    search_vectors: ClassVar[list] = [
-        ("episode__search_vector", "episode_rank"),
-        ("episode__podcast__search_vector", "podcast_rank"),
+    search_vectors: ClassVar = [
+        "episode__search_vector",
+        "episode__podcast__search_vector",
     ]
 
 

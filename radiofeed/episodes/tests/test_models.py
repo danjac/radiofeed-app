@@ -150,11 +150,20 @@ class TestBookmarkModel:
 
 
 class TestAudioLogManager:
+    @pytest.mark.parametrize(
+        ("search", "count"),
+        [
+            pytest.param("testing", 1, id="episode search"),
+            pytest.param("podcast", 1, id="podcast search"),
+            pytest.param("nomatch", 0, id="no match"),
+            pytest.param("", 0, id="empty search"),
+        ],
+    )
     @pytest.mark.django_db
-    def test_search(self):
-        episode = EpisodeFactory(title="testing")
+    def test_search(self, search, count):
+        episode = EpisodeFactory(title="testing", podcast__title="podcast")
         AudioLogFactory(episode=episode)
-        assert AudioLog.objects.search("testing").count() == 1
+        assert AudioLog.objects.search(search).count() == count
 
 
 class TestAudioLogModel:

@@ -1,18 +1,14 @@
 import functools
-import operator
 from typing import ClassVar, Protocol
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, QuerySet
 
 
 class Searchable(Protocol):
     """Provide search mixin protocol."""
 
-    search_vectors: list[tuple[str, str]]
-    search_vector_field: str
-    search_rank: str
-    search_type: str
+    search_vectors: list[str]
 
 
 class SearchQuerySetMixin:
@@ -21,51 +17,31 @@ class SearchQuerySetMixin:
 
     Adds a `search` method to automatically resolve simple PostgreSQL
     search vector queries.
-
-    Attributes:
-        search_vectors: SearchVector fields and ranks (if multiple)
-        search_vector_field: single SearchVectorField
-        search_rank: SearchRank field for ordering
-        search_type: PostgreSQL search type
     """
 
-    search_vectors: ClassVar[list[tuple[str, str]]] = []
-    search_vector_field: str = "search_vector"
-    search_rank: str = "rank"
-    search_type: str = "websearch"
+    search_vectors: ClassVar = ["search_vector"]
 
-    def search(self: Searchable, search_term: str) -> QuerySet:
+    def search(
+        self: Searchable,
+        search_term: str,
+        *,
+        search_rank: str = "rank",
+        search_type: str = "websearch",
+    ) -> QuerySet:
         """Returns result of search."""
 
         if not search_term:
             return self.none()
 
-        query = SearchQuery(search_term, search_type=self.search_type)
+        query = SearchQuery(search_term, search_type=search_type)
 
-        if self.search_vectors:
-            return self.annotate(
+        querysets = (
+            self.annotate(
                 **{
-                    **{
-                        rank: SearchRank(F(field), query=query)
-                        for field, rank in self.search_vectors
-                    },
-                    self.search_rank: functools.reduce(
-                        operator.add,
-                        [F(rank) for _, rank in self.search_vectors],
-                    ),
+                    search_rank: SearchRank(F(vector), query=query),
                 }
-            ).filter(
-                functools.reduce(
-                    operator.or_,
-                    [Q(**{field: query}) for field, _ in self.search_vectors],
-                )
-            )
+            ).filter(**{vector: query})
+            for vector in self.search_vectors
+        )
 
-        return self.annotate(
-            **{
-                self.search_rank: SearchRank(
-                    F(self.search_vector_field),
-                    query=query,
-                ),
-            }
-        ).filter(**{self.search_vector_field: query})
+        return functools.reduce(lambda qs1, qs2: qs1.union(qs2), querysets)
