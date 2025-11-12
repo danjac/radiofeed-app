@@ -30,7 +30,7 @@ def recommend(
     timeframe: timezone.timedelta | None = None,
     num_matches: int = 12,
     batch_size: int = 100,
-) -> None:
+) -> Iterator[Recommendation]:
     """Generates Recommendation instances based on podcast similarity, grouped by
     language and category. Existing recommendations are first deleted."""
 
@@ -48,6 +48,7 @@ def recommend(
         strict=False,
     ):
         Recommendation.objects.bulk_create(batch)
+        yield from batch
 
 
 class _Recommender:

@@ -235,6 +235,7 @@ class Podcast(models.Model):
     pub_date = models.DateTimeField(null=True, blank=True)
 
     num_episodes = models.PositiveIntegerField(default=0)
+    has_similar_podcasts = models.BooleanField(default=False)
 
     parsed = models.DateTimeField(null=True, blank=True)
 
@@ -374,11 +375,6 @@ class Podcast(models.Model):
     def slug(self) -> str:
         """Returns slugified title."""
         return slugify(self.title) or "podcast"
-
-    @cached_property
-    def has_similar(self) -> bool:
-        """Returns true if any recommendations."""
-        return False if self.private else self.recommendations.exists()
 
     @cached_property
     def seasons(self) -> list[Season]:

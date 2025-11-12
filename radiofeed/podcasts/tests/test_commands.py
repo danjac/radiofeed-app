@@ -66,9 +66,7 @@ class TestCreateRecommendations:
     def test_create_recommendations(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",
-            return_value=[
-                ("en", RecommendationFactory.create_batch(3)),
-            ],
+            return_value=RecommendationFactory.create_batch(3),
         )
         call_command("create_recommendations")
         patched.assert_called()

@@ -13,7 +13,7 @@ class TestRecommend:
     @pytest.mark.django_db
     def test_recommend_with_no_podcasts(self):
         # No podcasts inserted, corpus is empty
-        recommend("en")  # Should handle empty corpus without exception
+        list(recommend("en"))  # Should handle empty corpus without exception
         assert Recommendation.objects.exists() is False
 
     @pytest.mark.django_db
@@ -29,7 +29,7 @@ class TestRecommend:
             categories=[cat],
         )
 
-        recommend("en")
+        list(recommend("en"))
 
         for podcast in podcasts:
             recs = Recommendation.objects.filter(podcast=podcast)
@@ -45,7 +45,7 @@ class TestRecommend:
             language="en",
         )
 
-        recommend("en")
+        list(recommend("en"))
         assert Recommendation.objects.count() == 0
 
     @pytest.mark.django_db
@@ -66,7 +66,7 @@ class TestRecommend:
             language="en",
         )
 
-        recommend("en")
+        list(recommend("en"))
         # no common category, so still zero recommendations
         assert Recommendation.objects.filter(podcast=podcast_1).count() == 0
 
@@ -111,17 +111,17 @@ class TestRecommend:
             categories=[cat_2, cat_3],
         )
 
-        recommend("en")
+        list(recommend("en"))
 
         # podcast_1 should recommend podcast_2 (only shared category = Science)
         recs_1 = Recommendation.objects.filter(podcast=podcast_1)
         assert recs_1.count() == 1
-        assert recs_1.first().recommended == podcast_2
+        assert recs_1.get().recommended == podcast_2
 
         # podcast_2 should recommend podcast_1 as well
         recs_2 = Recommendation.objects.filter(podcast=podcast_2)
         assert recs_2.count() == 1
-        assert recs_2.first().recommended == podcast_1
+        assert recs_2.get().recommended == podcast_1
 
     @pytest.mark.django_db
     def test_one_podcast(self):
@@ -136,7 +136,7 @@ class TestRecommend:
             categories=[cat],
         )
 
-        recommend("en")
+        list(recommend("en"))
 
         assert Recommendation.objects.exists() is False
 
@@ -152,6 +152,6 @@ class TestRecommend:
             language="en",
         )
 
-        recommend("en")
+        list(recommend("en"))
 
         assert Recommendation.objects.exists() is False

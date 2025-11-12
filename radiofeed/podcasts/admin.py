@@ -231,6 +231,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "num_episodes",
+        "has_similar_podcasts",
         "parsed",
         "parser_result",
         "frequency",

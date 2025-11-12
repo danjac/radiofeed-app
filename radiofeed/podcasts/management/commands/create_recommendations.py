@@ -1,3 +1,5 @@
+import itertools
+
 import typer
 from django.db.models.functions import Lower
 from django_typer.management import Typer
@@ -21,11 +23,20 @@ def handle() -> None:
         .distinct()
     )
 
-    def _recommend(language) -> None:
-        recommender.recommend(language)
-        typer.secho(
-            f"Recommendations created for language: {language}",
-            fg=typer.colors.GREEN,
-        )
+    Podcast.objects.filter(has_similar_podcasts=True).update(has_similar_podcasts=False)
 
     execute_thread_pool(_recommend, languages)
+
+
+def _recommend(language: str) -> None:
+    podcast_ids = {
+        recommendation.podcast_id for recommendation in recommender.recommend(language)
+    }
+
+    for batch in itertools.batched(podcast_ids, 1000, strict=False):
+        Podcast.objects.filter(id__in=batch).update(has_similar_podcasts=True)
+
+    typer.secho(
+        f"Recommendations created for language: {language}",
+        fg=typer.colors.GREEN,
+    )

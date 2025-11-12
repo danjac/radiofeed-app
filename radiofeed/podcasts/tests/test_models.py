@@ -266,19 +266,6 @@ class TestPodcastModel:
         assert podcast.cleaned_owner == "Test & Code"
 
     @pytest.mark.django_db
-    def test_has_similar_none(self, podcast):
-        assert podcast.has_similar is False
-
-    @pytest.mark.django_db
-    def test_has_similar_has_recommendations(self, podcast):
-        RecommendationFactory.create_batch(3, podcast=podcast)
-        assert podcast.has_similar is True
-
-    @pytest.mark.django_db
-    def test_has_similar_is_private(self):
-        assert Podcast(private=True).has_similar is False
-
-    @pytest.mark.django_db
     def test_seasons(self, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast, season=-1)
         EpisodeFactory.create_batch(3, podcast=podcast, season=2)
