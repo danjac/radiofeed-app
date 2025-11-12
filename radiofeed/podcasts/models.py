@@ -234,6 +234,8 @@ class Podcast(models.Model):
 
     pub_date = models.DateTimeField(null=True, blank=True)
 
+    num_episodes = models.PositiveIntegerField(default=0)
+
     parsed = models.DateTimeField(null=True, blank=True)
 
     parser_result = models.CharField(
@@ -372,11 +374,6 @@ class Podcast(models.Model):
     def slug(self) -> str:
         """Returns slugified title."""
         return slugify(self.title) or "podcast"
-
-    @cached_property
-    def num_episodes(self) -> int:
-        """Returns number of episodes."""
-        return self.episodes.count()
 
     @cached_property
     def has_similar(self) -> bool:

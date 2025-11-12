@@ -116,6 +116,7 @@ class _FeedParser:
                     num_retries=0,
                     parser_result=result,
                     active=not feed.complete,
+                    num_episodes=len(feed.items),
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),
                     keywords=keywords,

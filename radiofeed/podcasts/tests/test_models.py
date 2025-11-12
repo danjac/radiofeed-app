@@ -279,15 +279,6 @@ class TestPodcastModel:
         assert Podcast(private=True).has_similar is False
 
     @pytest.mark.django_db
-    def test_num_episodes_none(self, podcast):
-        assert podcast.num_episodes == 0
-
-    @pytest.mark.django_db
-    def test_num_episodes(self, podcast):
-        EpisodeFactory.create_batch(3, podcast=podcast)
-        assert podcast.num_episodes == 3
-
-    @pytest.mark.django_db
     def test_seasons(self, podcast):
         EpisodeFactory.create_batch(3, podcast=podcast, season=-1)
         EpisodeFactory.create_batch(3, podcast=podcast, season=2)

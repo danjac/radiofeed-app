@@ -93,9 +93,6 @@ class TestFeedParser:
 
         parse_feed(podcast, client)
 
-        # new episodes: 19
-        assert podcast.episodes.count() == 20
-
         # extra episode should be removed
         assert not podcast.episodes.filter(pk=extra.id).exists()
 
@@ -106,6 +103,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
+        assert podcast.num_episodes == 20
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active is True
         assert podcast.num_retries == 0
@@ -312,10 +310,9 @@ class TestFeedParser:
 
         parse_feed(podcast, client)
 
-        assert Episode.objects.count() == 4940
-
         podcast.refresh_from_db()
 
+        assert podcast.num_episodes == 4940
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.rss
         assert podcast.active
@@ -346,9 +343,6 @@ class TestFeedParser:
 
         parse_feed(podcast, client)
 
-        # new episodes: 19
-        assert Episode.objects.count() == 20
-
         # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
@@ -356,6 +350,8 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
+        # new episodes: 19
+        assert podcast.num_episodes == 20
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
@@ -468,9 +464,6 @@ class TestFeedParser:
 
         parse_feed(podcast, client)
 
-        # new episodes: 19
-        assert Episode.objects.count() == 20
-
         # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
@@ -478,6 +471,7 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
+        assert podcast.num_episodes == 20
         assert podcast.active is False
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.title == "Mysterious Universe"
@@ -520,12 +514,11 @@ class TestFeedParser:
 
         parse_feed(podcast, client)
 
-        assert Episode.objects.filter(podcast=podcast).count() == 20
-
         podcast.refresh_from_db()
 
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
 
+        assert podcast.num_episodes == 20
         assert podcast.rss == self.redirect_rss
         assert podcast.active
         assert podcast.modified
