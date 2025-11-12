@@ -14,7 +14,7 @@ WORKDIR /app
 
 # Install uv
 
-COPY --from=ghcr.io/astral-sh/uv:0.9.0 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.9.8 /uv /usr/local/bin/uv
 
 # Install Python dependencies
 
