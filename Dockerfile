@@ -20,8 +20,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.9.0 /uv /usr/local/bin/uv
 
 COPY ./pyproject.toml ./uv.lock /app/
 
-RUN uv sync --frozen --no-dev --no-install-project && \
-    rm /app/pyproject.toml /app/uv.lock
+RUN uv sync --frozen --no-dev --no-install-project
 
 ENV PATH="/app/.venv/bin:$PATH"
 
@@ -31,8 +30,7 @@ FROM python-base AS nltk-corpora
 
 COPY ./nltk.txt /app/
 
-RUN xargs -I{} uv run python -c "import nltk; nltk.download('{}')" < /app/nltk.txt && \
-    rm /app/nltk.txt
+RUN xargs -I{} uv run python -c "import nltk; nltk.download('{}')" < /app/nltk.txt
 
 # Build static assets
 
@@ -50,3 +48,11 @@ COPY --from=nltk-corpora /root/nltk_data /root/nltk_data
 COPY --from=staticfiles /app/staticfiles /app/staticfiles
 
 COPY . /app
+
+# Remove any build dependencies to reduce image size
+
+RUN rm -rf \
+    /app/ntkl.txt \
+    /app/pyproject.toml \
+    /app/tailwind \
+    /app/uv.lock
