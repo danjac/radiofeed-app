@@ -4,5 +4,31 @@
         object-fit: cover;
         color: transparent;
         background-color: transparent;
+
+        &.card {
+            width: calc(var(--spacing) * 16);
+            height: calc(var(--spacing) * 16);
+        }
+
+        &.detail {
+            width: calc(var(--spacing) * 36);
+            height: calc(var(--spacing) * 36);
+
+            @variant lg {
+                width: calc(var(--spacing) * 40);
+                height: calc(var(--spacing) * 40);
+            }
+        }
+
+        &.tile {
+            width: calc(var(--spacing) * 40);
+            height: calc(var(--spacing) * 40);
+
+            @variant lg {
+                width: calc(var(--spacing) * 56);
+                height: calc(var(--spacing) * 56);
+            }
+        }
+
     }
 }

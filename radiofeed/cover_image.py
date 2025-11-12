@@ -28,21 +28,6 @@ _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
     "tile": (160, 224),
 }
 
-_COVER_IMAGE_DEFAULT_ATTRS: Final[dict[str, str]] = {
-    "aria_hidden": "true",
-    "decoding": "async",
-    "loading": "lazy",
-}
-
-_COVER_IMAGE_DEFAULT_CLASSES: Final[str] = "cover border"
-
-_COVER_IMAGE_CLASSES: Final[dict[CoverImageVariant, str]] = {
-    "card": "size-16 group-hover:opacity-75",
-    "detail": "size-36 lg:size-40",
-    "tile": "size-40 lg:size-56",
-}
-
-
 _COMPRESSION_RATIOS: Final[dict[str, float]] = {
     "jpeg": 16.0,
     "jpg": 16.0,
@@ -96,23 +81,20 @@ def get_cover_image_attrs(
 ) -> dict:
     """Returns the HTML attributes for an image."""
 
-    classes = " ".join(
-        (
-            _COVER_IMAGE_DEFAULT_CLASSES,
-            _COVER_IMAGE_CLASSES[variant],
-        )
-    )
-
+    classes = " ".join(("cover", "border", variant))
     min_size, full_size = _COVER_IMAGE_SIZES[variant]
     full_src = get_cover_image_url(cover_url, full_size)
 
-    attrs = _COVER_IMAGE_DEFAULT_ATTRS | {
+    attrs = {
         "alt": title,
-        "title": title,
+        "aria_hidden": "true",
         "class": classes,
-        "src": full_src,
-        "width": full_size,
+        "decoding": "async",
         "height": full_size,
+        "loading": "lazy",
+        "src": full_src,
+        "title": title,
+        "width": full_size,
     }
 
     # no size variations
@@ -278,7 +260,7 @@ def get_placeholder_url(size: int) -> str:
 @functools.cache
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
-    return settings.STATIC_DIR / "img" / "placeholders" / get_placeholder(size)
+    return settings.STATIC_SRC / "img" / "placeholders" / get_placeholder(size)
 
 
 @functools.cache
