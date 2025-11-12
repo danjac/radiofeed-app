@@ -52,7 +52,7 @@ COPY . /app
 # Remove any build dependencies to reduce image size
 
 RUN rm -rf \
-    /app/ntkl.txt \
+    /app/nltk.txt \
     /app/pyproject.toml \
     /app/static \
     /app/tailwind \
