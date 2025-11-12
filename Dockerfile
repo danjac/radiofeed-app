@@ -54,5 +54,6 @@ COPY . /app
 RUN rm -rf \
     /app/ntkl.txt \
     /app/pyproject.toml \
+    /app/static \
     /app/tailwind \
     /app/uv.lock

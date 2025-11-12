@@ -284,10 +284,13 @@ FORMAT_MODULE_PATH = ["radiofeed.formats"]
 
 # Static files
 
+# Placeholder images for cover images
+PLACEHOLDERS_DIR = BASE_DIR / "placeholders"
+
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATIC_SRC = BASE_DIR / "static"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [STATIC_SRC]
+STATICFILES_DIRS = [STATIC_SRC, PLACEHOLDERS_DIR]
 
 # Tailwind CLI
 # https://django-tailwind-cli.andrich.me/settings/#settings
