@@ -28,7 +28,7 @@
                         {% endif %}
                         {% if request.search or num_episodes > page_size %}
                             {% fragment "header/nav.html#item" %}
-                                {% include "header/nav/search.html#form" with placeholder="Search: Podcast" clearable=True %}
+                                {% include "header/nav/search.html#form" with clearable=True %}
                             {% endfragment %}
                         {% endif %}
                     {% endfragment %}

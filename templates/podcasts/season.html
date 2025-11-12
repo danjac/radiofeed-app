@@ -19,7 +19,7 @@
                     {% endfragment %}
                     {% if num_episodes > page_size %}
                         {% fragment "header/nav.html#item" %}
-                            {% include "header/nav/search.html#form" with placeholder="Search: Podcast" search_url=episodes_url %}
+                            {% include "header/nav/search.html#form" with search_url=episodes_url %}
                         {% endfragment %}
                     {% endif %}
                 {% endfragment %}

@@ -19,7 +19,7 @@
                     {% endfragment %}
                 {% endif %}
                 {% fragment "header/nav.html#item" %}
-                    {% include "header/nav/search.html#form" with placeholder="Search: "|add:category.name clearable=True %}
+                    {% include "header/nav/search.html#form" with clearable=True %}
                 {% endfragment %}
             {% endfragment %}
         {% endif %}
