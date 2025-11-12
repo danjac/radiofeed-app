@@ -6,25 +6,27 @@
 
 {% block content %}
     {% fragment "podcasts/header.html" active="episodes" %}
-        {% cache cache_timeout podcast-season-nav request.get_full_path %}
-            {% with num_episodes=podcast.num_episodes page_size=page.page_size episodes_url=podcast.get_episodes_url %}
-                {% fragment "header/nav.html" %}
-                    {% fragment "header/nav.html#item" %}
-                        {% fragment "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
-                            {% include "header/nav/dropdown.html#item" with label="All Seasons" url=episodes_url %}
+        {% with episodes_url=podcast.get_episodes_url %}
+            {% fragment "header/nav.html" %}
+                {% fragment "header/nav.html#item" %}
+                    {% fragment "header/nav/dropdown.html" label=season dropdown_id="seasons-dropdown" %}
+                        {% include "header/nav/dropdown.html#item" with label="All Seasons" url=episodes_url %}
+
+                        {% cache cache_timeout podcast-seasons podcast.pk %}
                             {% for season in podcast.seasons %}
                                 {% include "header/nav/dropdown.html#item" with label=season.label url=season.url %}
                             {% endfor %}
-                        {% endfragment %}
+                        {% endcache %}
+
                     {% endfragment %}
-                    {% if num_episodes > page_size %}
-                        {% fragment "header/nav.html#item" %}
-                            {% include "header/nav/search.html#form" with search_url=episodes_url %}
-                        {% endfragment %}
-                    {% endif %}
                 {% endfragment %}
-            {% endwith %}
-        {% endcache %}
+                {% if podcast.num_episodes > page.page_size %}
+                    {% fragment "header/nav.html#item" %}
+                        {% include "header/nav/search.html#form" with search_url=episodes_url %}
+                    {% endfragment %}
+                {% endif %}
+            {% endfragment %}
+        {% endwith %}
     {% endfragment %}
     {% partialdef pagination inline %}
         {% cache cache_timeout podcast-season-episodes request.get_full_path %}
