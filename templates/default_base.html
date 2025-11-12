@@ -47,13 +47,15 @@
                 <div class="grow">
                     {% include "navbar.html" %}
                     <div class="flex relative py-6 px-2 mx-auto min-h-screen">
-                        {% if user.is_authenticated %}
-                            <aside class="hidden w-full xl:block xl:sticky xl:top-24 xl:w-1/6 xl:h-full">
-                                <nav>
-                                    {% include "sidebar.html" %}
-                                </nav>
-                            </aside>
-                        {% endif %}
+                        {% partialdef sidebar inline %}
+                            {% if user.is_authenticated %}
+                                <aside class="hidden w-full xl:block xl:sticky xl:top-24 xl:w-1/6 xl:h-full">
+                                    <nav>
+                                        {% include "sidebar.html" %}
+                                    </nav>
+                                </aside>
+                            {% endif %}
+                        {% endpartialdef %}
                         <main class="mx-auto w-full xl:pt-3 xl:w-5/6" id="content" hx-history-elt>
                             {% block content %}
                             {% endblock content %}
