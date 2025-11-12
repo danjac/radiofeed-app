@@ -214,6 +214,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "active",
         "pub_date",
         "parsed",
+        "parser_result",
     )
 
     list_editable = ("active",)
