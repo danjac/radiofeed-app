@@ -96,4 +96,6 @@ def build_http_headers(
 
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
-    return hashlib.sha256(content).hexdigest()
+    if value := content.strip():
+        return hashlib.sha256(value).hexdigest()
+    return ""
