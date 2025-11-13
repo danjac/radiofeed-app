@@ -10,13 +10,25 @@
         @htmx:before-request.window="showSidebar=false; showUserDropdown=false">
     <nav class="flex justify-between items-center p-2">
         {% with site_name=request.site.name %}
-            <div class="flex items-center shrink-0">
-                <a class="inline-flex items-center text-xl lg:text-2xl link text-bold"
-                   {% if user.is_authenticated %} href="{% url 'podcasts:subscriptions' %}" {% else %} href="{% url 'index' %}" hx-disable="true" {% endif %}
-                   title="{{ site_name }}">
+            <a class="flex items-center shrink-0"
+               {% if user.is_authenticated %}
+                   href="{% url 'podcasts:subscriptions' %}"
+               {% else %}
+                   href="{% url 'index' %}"
+                   hx-disable="true"
+               {% endif %}
+               href="{% url user.is_authenticated|yesno:'podcasts:subscriptions,index' %}"
+            >
+                <img src="{% static 'img/logo.png' %}"
+                     alt="{{ site_name }}"
+                     height="32"
+                     width="32"
+                     class="mr-3 w-8 h-8 rounded-full">
+                <span class="inline-flex items-center text-xl font-bold lg:text-2xl"
+                      title="{{ site_name }}">
                     {{ site_name }}
-                </a>
-            </div>
+                </span>
+            </a>
         {% endwith %}
         <ul class="flex items-center space-x-3 xl:space-x-0">
             {% if user.is_authenticated %}
