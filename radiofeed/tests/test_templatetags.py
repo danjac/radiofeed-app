@@ -7,6 +7,7 @@ from radiofeed.templatetags import (
     format_duration,
     fragment,
     render_attrs,
+    websearch_clean,
 )
 
 
@@ -104,3 +105,26 @@ class TestFormatDuration:
     )
     def test_format_duration(self, duration, expected):
         assert format_duration(duration) == expected
+
+
+class TestWebsearchClean:
+    @pytest.mark.parametrize(
+        ("input_text", "expected"),
+        [
+            ("hello world", "hello world"),
+            ("hello+world", "hello world"),
+            ("hello-world", "hello world"),
+            ("hello~world", "hello world"),
+            ('"hello world"', "hello world"),
+            ("'hello world'", "hello world"),
+            ("(hello world)", "hello world"),
+            ("<hello world>", "hello world"),
+            ("hello AND world", "hello world"),
+            ("hello OR world", "hello world"),
+            ("hello NOT world", "hello world"),
+            ("  hello   world  ", "hello world"),
+            ("hello+world AND test-(example)", "hello world test example"),
+        ],
+    )
+    def test_websearch_clean(self, input_text, expected):
+        assert websearch_clean(input_text) == expected

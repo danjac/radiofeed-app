@@ -7,7 +7,7 @@
 {% block content %}
     {% include "podcasts/header.html" with active="detail" %}
     <article class="space-y-3">
-        {% with owner=podcast.cleaned_owner %}
+        {% with owner=podcast.cleaned_owner|websearch_clean %}
             {% if owner %}
                 <h2 class="text-lg font-semibold">
                     <a class="link" href="{% url 'podcasts:search_podcasts' %}?{{ request.search.param }}={{ owner|urlencode }}">{{ owner }}</a>

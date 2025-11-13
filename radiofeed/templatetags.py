@@ -1,5 +1,6 @@
 import functools
 import json
+import re
 
 from django import forms, template
 from django.conf import settings
@@ -177,6 +178,18 @@ def format_duration(total_seconds: int, min_value: int = 60) -> str:
         if total_seconds >= min_value
         else ""
     )
+
+
+@register.filter
+def websearch_clean(text: str) -> str:
+    """Cleans a search query for websearch usage by removing special characters."""
+    # Remove special characters commonly used in search queries
+    text = re.sub(r'[+\-~"\'()<>]', " ", text)
+    # Remove syntax keywords
+    text = re.sub("\\b(AND|OR|NOT)\\b", " ", text, flags=re.IGNORECASE)
+    # Remove extra whitespace
+    text = re.sub(r"\s+", " ", text).strip()
+    return text.strip()
 
 
 def _clean_attrs(attrs: dict) -> dict:
