@@ -1,6 +1,7 @@
 import itertools
 
 import typer
+from django.db import transaction
 from django.db.models.functions import Lower
 from django_typer.management import Typer
 
@@ -33,9 +34,12 @@ def _recommend(language: str) -> None:
         recommendation.podcast_id for recommendation in recommender.recommend(language)
     }
 
-    for batch in itertools.batched(podcast_ids, 1000, strict=False):
-        Podcast.objects.filter(id__in=batch).update(has_similar_podcasts=True)
-
+    for batch in itertools.batched(podcast_ids, 500, strict=False):
+        with transaction.atomic():
+            Podcast.objects.select_for_update(skip_locked=True).filter(
+                has_similar_podcasts=False,
+                id__in=batch,
+            ).update(has_similar_podcasts=True)
     typer.secho(
         f"Recommendations created for language: {language}",
         fg=typer.colors.GREEN,
