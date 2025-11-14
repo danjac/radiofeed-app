@@ -184,7 +184,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                     output_field=models.DecimalField(),
                 ),
             )
-            .filter(models.Q(relevance__gt=0) | models.Q(score__gt=0))
+            .filter(models.Q(relevance__gt=0) | models.Q(promoted=True))
             .exclude(pk__in=exclude)
         )
 
