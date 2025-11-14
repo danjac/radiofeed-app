@@ -159,6 +159,7 @@ def fetch_cover_image(
     except (
         Image.UnidentifiedImageError,
         Image.DecompressionBombError,
+        OSError,
     ) as exc:
         raise CoverImageInvalidError from exc
 
