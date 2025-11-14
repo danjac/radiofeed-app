@@ -2,185 +2,34 @@ import contextlib
 import functools
 import hashlib
 import itertools
+import re
 from collections.abc import Iterator
 from typing import Final
 
 import httpx
+import lxml.etree
 from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from lxml import html
 from pydantic import BaseModel, Field, ValidationError
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 
 COUNTRIES: Final = (
-    "ae",
-    "ag",
-    "ai",
-    "am",
-    "ao",
-    "ar",
-    "at",
-    "au",
-    "az",
-    "ba",
-    "bb",
-    "be",
-    "bg",
-    "bh",
-    "bj",
-    "bm",
-    "bo",
     "br",
-    "bs",
-    "bt",
-    "bw",
-    "by",
-    "bz",
     "ca",
-    "cd",
-    "cg",
-    "ch",
-    "ci",
-    "cl",
-    "cm",
-    "cn",
-    "co",
-    "cr",
-    "cv",
-    "cy",
-    "cz",
     "de",
-    "dk",
-    "dm",
-    "do",
-    "ec",
-    "ee",
-    "eg",
-    "es",
     "fi",
-    "fj",
-    "fm",
     "fr",
-    "ga",
     "gb",
-    "gd",
-    "ge",
-    "gh",
-    "gm",
-    "gr",
-    "gt",
-    "gw",
-    "gy",
-    "hk",
-    "hn",
-    "hr",
-    "hu",
-    "id",
-    "ie",
-    "il",
-    "in",
-    "iq",
-    "is",
     "it",
-    "jm",
-    "jo",
-    "jp",
-    "ke",
-    "kg",
-    "kh",
-    "kn",
+    "ja",
     "kr",
-    "kw",
-    "ky",
-    "kz",
-    "la",
-    "lb",
-    "lc",
-    "lk",
-    "lr",
-    "lt",
-    "lu",
-    "lv",
-    "ly",
-    "ma",
-    "md",
-    "me",
-    "mg",
-    "mk",
-    "ml",
-    "mm",
-    "mn",
-    "mo",
-    "mr",
-    "ms",
-    "mt",
-    "mu",
-    "mv",
-    "mw",
-    "mx",
-    "my",
-    "mz",
-    "na",
-    "ne",
-    "ng",
-    "ni",
-    "nl",
-    "no",
-    "np",
-    "nz",
-    "om",
-    "pa",
-    "pe",
-    "pg",
-    "ph",
     "pl",
-    "pt",
-    "py",
-    "qa",
-    "ro",
-    "rs",
-    "ru",
-    "rw",
-    "sa",
-    "sb",
-    "sc",
-    "se",
-    "sg",
-    "si",
-    "sk",
-    "sl",
-    "sn",
-    "sr",
-    "sv",
-    "sz",
-    "tc",
-    "td",
-    "th",
-    "tj",
-    "tm",
-    "tn",
-    "to",
-    "tr",
-    "tt",
-    "tw",
-    "tz",
-    "ua",
-    "ug",
-    "uy",
-    "uz",
-    "vc",
-    "ve",
-    "vg",
-    "vn",
-    "vu",
-    "xk",
-    "ye",
-    "za",
-    "zm",
-    "zw",
+    "us",
 )
 
 
@@ -257,10 +106,9 @@ def fetch_chart(
     limit: int,
     **fields,
 ) -> list[Feed]:
-    """Fetch top chart from iTunes podcast API. Any new podcasts will be added."""
+    """Fetch top chart from iTunes podcast chart page. Any new podcasts will be added."""
 
-    url = f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json"
-    itunes_ids = _fetch_itunes_ids(client, url)
+    itunes_ids = _fetch_itunes_ids_from_chart(client, country, limit=limit)
 
     if not itunes_ids:
         return []
@@ -298,18 +146,6 @@ def _fetch_feeds(client: Client, url: str, params: dict) -> Iterator[Feed]:
             yield Feed(**result)
 
 
-def _fetch_itunes_ids(client: Client, url: str) -> set[str]:
-    """Fetches podcast IDs from results."""
-    return {
-        itunes_id
-        for itunes_id in (
-            result.get("id")
-            for result in _fetch_json(client, url).get("feed", {}).get("results", [])
-        )
-        if itunes_id
-    }
-
-
 def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
     """Fetches JSON response from the given URL."""
     try:
@@ -337,6 +173,29 @@ def _get_podcasts_from_feeds(feeds: Iterator[Feed], **fields) -> Iterator[Podcas
 
     for url in urls:
         yield Podcast(rss=canonical_urls.get(url, url), **fields)
+
+
+def _fetch_itunes_ids_from_chart(
+    client: Client, country: str, *, limit: int
+) -> set[str]:
+    try:
+        response = client.get(f"https://podcasts.apple.com/{country}/charts")
+    except httpx.HTTPError as exc:
+        raise ItunesError from exc
+
+    try:
+        tree = html.fromstring(response.content)
+    except lxml.etree.ParserError as exc:
+        raise ItunesError("Failed to parse iTunes chart page") from exc
+
+    itunes_ids = set()
+
+    for link in tree.xpath('//a[contains(@href, "/podcast/")]/@href'):
+        if len(itunes_ids) >= limit:
+            break
+        if match := re.search(r"/id(\d+)", link):
+            itunes_ids.add(match.group(1))
+    return itunes_ids
 
 
 @functools.cache

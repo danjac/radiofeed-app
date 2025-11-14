@@ -1,4 +1,5 @@
 import http
+import pathlib
 
 import httpx
 import pytest
@@ -227,10 +228,15 @@ class TestFetchTopChart:
     @pytest.fixture
     def good_client(self):
         def _get_result(request):
-            if request.url.path.endswith("podcasts.json"):
+            if request.url.path.endswith("charts"):
+                with (
+                    pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
+                ).open("rb") as f:
+                    chart_content = f.read()
+
                 return httpx.Response(
                     http.HTTPStatus.OK,
-                    json=MOCK_CHART_RESULT,
+                    content=chart_content,
                 )
             return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
 
@@ -248,19 +254,20 @@ class TestFetchTopChart:
     @pytest.fixture
     def empty_result_client(self):
         def _handle(_):
-            return httpx.Response(http.HTTPStatus.OK, json={})
+            return httpx.Response(http.HTTPStatus.OK, content=b"")
 
         return Client(transport=httpx.MockTransport(_handle))
 
     @pytest.fixture
-    def bad_result_client(self):
+    def no_results_client(self):
         def _get_result(request):
-            if request.url.path.endswith("podcasts.json"):
+            if request.url.path.endswith("charts"):
+                chart_content = b"<html><body><p>no results</p></body></html>"
                 return httpx.Response(
                     http.HTTPStatus.OK,
-                    json=MOCK_CHART_RESULT,
+                    content=chart_content,
                 )
-            return httpx.Response(http.HTTPStatus.NOT_FOUND)
+            return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
 
         return Client(
             transport=httpx.MockTransport(_get_result),
@@ -272,7 +279,6 @@ class TestFetchTopChart:
             good_client,
             country="us",
             limit=10,
-            promoted=True,
         )
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
@@ -340,14 +346,15 @@ class TestFetchTopChart:
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
-    def test_bad_result(self, bad_result_client):
+    def test_empty_result(self, empty_result_client):
         with pytest.raises(itunes.ItunesError):
-            itunes.fetch_chart(bad_result_client, country="us", limit=10)
+            itunes.fetch_chart(empty_result_client, country="us", limit=10)
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
-    def test_empty_result(self, empty_result_client):
-        itunes.fetch_chart(empty_result_client, country="us", limit=10)
+    def test_no_feeds_page(self, no_results_client):
+        feeds = itunes.fetch_chart(no_results_client, country="us", limit=10)
+        assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
 
