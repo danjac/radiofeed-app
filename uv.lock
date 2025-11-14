@@ -513,14 +513,14 @@ wheels = [
 
 [[package]]
 name = "django-template-partials"
-version = "25.2"
+version = "25.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c1/7f/9eca482fbfd42f2ae19fa77fa231c0d2ba6ec7caf0ced16926480e1d746b/django_template_partials-25.2.tar.gz", hash = "sha256:55044e4a12d5d3adbc02df0758eb08fcd4e3451203e02a819f9853451696aef6", size = 17787, upload-time = "2025-09-17T13:31:37.761Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b0/2e/957ee4a6ee0a7d46a18676ba8b01d762ef89d00b7769cc532853f9f989e1/django_template_partials-25.3.tar.gz", hash = "sha256:6d11f7bb049ce3032e6fe3331137b771e34239ce1af18c55ef6a9b667cf2ef36", size = 18052, upload-time = "2025-11-14T08:27:21.917Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/30/96a9d0e70efd00af9b9c011111b5eba48d17914e5b3d39516d4a7cc7e7fb/django_template_partials-25.2-py2.py3-none-any.whl", hash = "sha256:4c4f6569bd2d016281700a215c09ba4b7a4bbd2da95ce15d8c1ae76d36da44b4", size = 9621, upload-time = "2025-09-17T13:31:36.452Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/9d/48f8721e48b938ca2e2dde577986624543be6ff9bdccac20ccb747be4287/django_template_partials-25.3-py2.py3-none-any.whl", hash = "sha256:a19334934cf40e4e1218802a4ddfdf22b8f78cc5a0b8c75a18b97e6ea4f3c108", size = 9702, upload-time = "2025-11-14T08:27:20.243Z" },
 ]
 
 [[package]]
