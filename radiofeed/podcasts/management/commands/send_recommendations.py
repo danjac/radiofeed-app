@@ -58,7 +58,7 @@ def _get_podcasts(user: User, num_podcasts: int) -> QuerySet[Podcast]:
         .recommended(user)
         .order_by(
             "-relevance",
-            "promoted",
+            "-score",
             "-pub_date",
         )[:num_podcasts]
     )
