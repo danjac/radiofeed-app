@@ -1,6 +1,7 @@
 import pytest
 from django.core.management import call_command
 
+from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
 from radiofeed.podcasts.itunes import Feed, ItunesError
 from radiofeed.podcasts.tests.factories import (
     PodcastFactory,
@@ -59,6 +60,39 @@ class TestFetchTopItunes:
         patched.assert_not_called()
         promoted.refresh_from_db()
         assert promoted.promoted is True
+
+
+class TestScorePodcasts:
+    @pytest.mark.django_db
+    def test_score_no_criteria_match(self):
+        podcast = PodcastFactory()
+        call_command("score_podcasts")
+        podcast.refresh_from_db()
+        assert podcast.score == 0
+
+    @pytest.mark.django_db
+    def test_score_promoted(self):
+        podcast = PodcastFactory(promoted=True)
+        call_command("score_podcasts")
+        podcast.refresh_from_db()
+        assert podcast.score == 100
+
+    @pytest.mark.django_db
+    def test_score_subscribed(self):
+        podcast = PodcastFactory()
+        SubscriptionFactory.create_batch(3, podcast=podcast)
+        call_command("score_podcasts")
+        podcast.refresh_from_db()
+        assert podcast.score == 30
+
+    @pytest.mark.django_db
+    def test_score_listened(self):
+        podcast = PodcastFactory()
+        episode = EpisodeFactory(podcast=podcast)
+        AudioLogFactory.create_batch(3, episode=episode)
+        call_command("score_podcasts")
+        podcast.refresh_from_db()
+        assert podcast.score == 3
 
 
 class TestCreateRecommendations:

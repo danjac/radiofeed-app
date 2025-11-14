@@ -43,8 +43,11 @@ def discover(request: HttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     podcasts = (
         _get_podcasts()
-        .filter(promoted=True)
-        .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+        .filter(score__gt=0)
+        .order_by(
+            "-score",
+            "-pub_date",
+        )[: settings.DEFAULT_PAGE_SIZE]
     )
 
     return TemplateResponse(

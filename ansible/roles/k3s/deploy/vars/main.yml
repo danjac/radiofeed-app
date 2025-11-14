@@ -11,6 +11,10 @@ cronjobs:
       schedule: "{{ cron_schedules.fetch_top_itunes }}"
       command: "{{ manage_cmd }} fetch_top_itunes -p {{ itunes_chart_country }}"
 
+    - name: "score-podcasts"
+      schedule: "{{ cron_schedules.score_podcasts }}"
+      command: "{{ manage_cmd }} score_podcasts"
+
     - name: "parse-feeds"
       schedule: "{{ cron_schedules.parse_feeds }}"
       command: "{{ manage_cmd }} parse_feeds"
