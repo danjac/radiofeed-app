@@ -117,14 +117,9 @@
             - postgres_service
             - redis_deployment
             - redis_service
-            - django_cronjobs
             - django_deployment
             - django_service
             - ingress_route
-
-      - name: Delete all cronjobs
-        ansible.builtin.shell: |
-            kubectl delete cronjob -l app=django-cronjob -n default
 
       - name: Apply Kubernetes manifests using ApplySet
         ansible.builtin.shell: |

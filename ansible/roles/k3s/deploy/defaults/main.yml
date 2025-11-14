@@ -1,6 +1,6 @@
 # Deployment settings
-
-docker_image: "ghcr.io/danjac/radiofeed-app:main"
+#
+docker_image: "{{ docker_image }}"
 
 postgres:
   image: "{{ postgres_image | default('postgres:18.0-bookworm', true) }}"
@@ -10,16 +10,6 @@ postgres:
 
 redis:
   image: "{{ redis_image | default('redis:8.2.2-bookworm', true) }}"
-
-# Cron job schedules
-
-cron_schedules_default:
-  clear_sessions: "20 5 * * *" # 5:20 AM every day
-  create_recommendations: "20 4 * * *" # 4:20 AM every day
-  fetch_top_itunes: "15 3 * * *" # 3:15 AM every day
-  parse_feeds: "*/6 * * * *" # Every 6 minutes
-  send_notifications: "0 13 * * 1" # 1:00 PM every Monday
-  send_recommendations: "0 13 * * 5" # 1:00 PM every Friday
 
 # Django settings
 
