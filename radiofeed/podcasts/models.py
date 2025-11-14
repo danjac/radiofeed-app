@@ -274,7 +274,6 @@ class Podcast(models.Model):
     owner = models.TextField(blank=True)
 
     promoted = models.BooleanField(default=False)
-    score = models.PositiveIntegerField(default=0)
 
     podcast_type = models.CharField(
         max_length=10,
@@ -309,7 +308,7 @@ class Podcast(models.Model):
             models.Index(fields=["active"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
-            models.Index(fields=["-score", "-pub_date"]),
+            models.Index(fields=["promoted"]),
             models.Index(fields=["content_hash"]),
             models.Index(fields=["parser_result"]),
             models.Index(
