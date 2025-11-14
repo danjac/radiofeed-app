@@ -152,9 +152,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         )
 
     def recommended(self, user: User) -> models.QuerySet["Podcast"]:
-        """Returns recommended podcasts for user based on subscriptions. Includes `relevance` annotation.
-        Backfills results with promoted podcasts if no recommendations are found.
-        """
+        """Returns recommended podcasts for user based on subscriptions. Includes `relevance` annotation."""
 
         # pick highest matches
         # we want the sum of the relevance of the recommendations, grouped by recommended
@@ -184,7 +182,7 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
                     output_field=models.DecimalField(),
                 ),
             )
-            .filter(models.Q(relevance__gt=0) | models.Q(promoted=True))
+            .filter(models.Q(relevance__gt=0))
             .exclude(pk__in=exclude)
         )
 

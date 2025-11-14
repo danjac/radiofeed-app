@@ -3,13 +3,11 @@ from typing import Annotated
 import typer
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
-from django.db.models import QuerySet
 from django_typer.management import Typer
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 from radiofeed.users.emails import get_recipients, send_notification_email
-from radiofeed.users.models import User
 
 app = Typer(help="Send podcast recommendations to users")
 
@@ -30,7 +28,11 @@ def handle(
     connection = get_connection()
 
     def _send_recommendations(recipient) -> None:
-        if podcasts := _get_podcasts(recipient.user, limit):
+        if (
+            podcasts := Podcast.objects.published()
+            .recommended(recipient.user)
+            .order_by("-relevance", "-pub_date")[:limit]
+        ):
             send_notification_email(
                 site,
                 recipient,
@@ -50,15 +52,3 @@ def handle(
             )
 
     execute_thread_pool(_send_recommendations, get_recipients())
-
-
-def _get_podcasts(user: User, num_podcasts: int) -> QuerySet[Podcast]:
-    return (
-        Podcast.objects.published()
-        .recommended(user)
-        .order_by(
-            "-relevance",
-            "-promoted",
-            "-pub_date",
-        )[:num_podcasts]
-    )
