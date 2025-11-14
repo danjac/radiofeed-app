@@ -50,7 +50,7 @@ def get_account_settings(context: RequestContext, active: str) -> Settings:
         ),
     }
 
-    if context.request.user.has_usable_password:
+    if context.request.user.has_usable_password():
         items["password"] = SettingsItem(
             label="Change Password",
             icon="key",
