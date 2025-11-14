@@ -165,10 +165,12 @@ def _get_podcasts_from_feeds(feeds: Iterator[Feed], **fields) -> Iterator[Podcas
     urls = dict.fromkeys(feed.rss for feed in feeds).keys()
 
     # in certain cases, we may have duplicates in the database
+    # find the canonical URLs for the given URLs
     canonical_urls = dict(
         Podcast.objects.filter(
-            duplicates__rss__in=urls,
-        ).values_list("rss", "canonical")
+            rss__in=urls,
+            canonical__isnull=False,
+        ).values_list("rss", "canonical__rss")
     )
 
     for url in urls:
