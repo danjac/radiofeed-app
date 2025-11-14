@@ -36,7 +36,6 @@ conn_pool_max_waiting: 25
 conn_pool_min_size: 2
 conn_pool_timeout: 20
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
-itunes_chart_country: "gb"
 mailgun_api_key: ""
 mailgun_api_url: "https://api.eu.mailgun.net/v3"
 mailgun_sender_domain: "mg.{{ domain }}"

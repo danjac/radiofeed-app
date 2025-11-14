@@ -9,7 +9,7 @@ cronjobs:
 
     - name: "fetch-top-itunes"
       schedule: "{{ cron_schedules.fetch_top_itunes }}"
-      command: "{{ manage_cmd }} fetch_top_itunes -p {{ itunes_chart_country }}"
+      command: "{{ manage_cmd }} fetch_top_itunes"
 
     - name: "score-podcasts"
       schedule: "{{ cron_schedules.score_podcasts }}"
