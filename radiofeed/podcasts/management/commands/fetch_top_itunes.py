@@ -1,5 +1,3 @@
-from typing import Annotated
-
 import typer
 from django_typer.management import Typer
 
@@ -12,16 +10,7 @@ app = Typer(help="Fetch top iTunes podcasts")
 
 
 @app.command()
-def handle(
-    limit: Annotated[
-        int,
-        typer.Option(
-            "--limit",
-            "-l",
-            help="Number of top podcasts to fetch (default: 30)",
-        ),
-    ] = 30,
-) -> None:
+def handle() -> None:
     """Fetch the top iTunes podcasts for a given country."""
     client = get_client()
 
@@ -30,7 +19,7 @@ def handle(
 
     def _fetch_country(country: str) -> None:
         try:
-            feeds = itunes.fetch_chart(client, country, limit=limit, promoted=True)
+            feeds = itunes.fetch_chart(client, country, promoted=True)
         except itunes.ItunesError as exc:
             typer.secho(
                 f"Error fetching iTunes feeds for country {country}: {exc}",

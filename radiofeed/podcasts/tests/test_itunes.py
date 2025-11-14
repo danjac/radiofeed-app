@@ -278,7 +278,6 @@ class TestFetchTopChart:
         feeds = itunes.fetch_chart(
             good_client,
             country="us",
-            limit=10,
         )
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
@@ -288,7 +287,6 @@ class TestFetchTopChart:
         feeds = itunes.fetch_chart(
             good_client,
             country="us",
-            limit=10,
             promoted=True,
         )
         assert len(feeds) == 1
@@ -299,7 +297,7 @@ class TestFetchTopChart:
         PodcastFactory(
             rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
         )
-        feeds = itunes.fetch_chart(good_client, country="us", limit=10)
+        feeds = itunes.fetch_chart(good_client, country="us")
         assert len(feeds) == 1
 
     @pytest.mark.django_db
@@ -310,7 +308,6 @@ class TestFetchTopChart:
         feeds = itunes.fetch_chart(
             good_client,
             country="us",
-            limit=10,
             promoted=True,
         )
         assert len(feeds) == 1
@@ -324,7 +321,7 @@ class TestFetchTopChart:
             canonical=podcast,
             rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
         )
-        feeds = itunes.fetch_chart(good_client, country="us", limit=10)
+        feeds = itunes.fetch_chart(good_client, country="us")
         assert len(feeds) == 1
 
     @pytest.mark.django_db
@@ -332,7 +329,7 @@ class TestFetchTopChart:
         podcast = PodcastFactory(rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"])
 
         PodcastFactory()
-        feeds = itunes.fetch_chart(good_client, country="us", limit=10)
+        feeds = itunes.fetch_chart(good_client, country="us")
 
         assert len(feeds) == 1
         assert feeds[0].rss == podcast.rss
@@ -342,18 +339,18 @@ class TestFetchTopChart:
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         with pytest.raises(itunes.ItunesError):
-            itunes.fetch_chart(bad_client, country="us", limit=10)
+            itunes.fetch_chart(bad_client, country="us")
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_empty_result(self, empty_result_client):
         with pytest.raises(itunes.ItunesError):
-            itunes.fetch_chart(empty_result_client, country="us", limit=10)
+            itunes.fetch_chart(empty_result_client, country="us")
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_no_feeds_page(self, no_results_client):
-        feeds = itunes.fetch_chart(no_results_client, country="us", limit=10)
+        feeds = itunes.fetch_chart(no_results_client, country="us")
         assert len(feeds) == 0
         assert not Podcast.objects.exists()
 
