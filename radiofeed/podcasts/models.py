@@ -63,6 +63,8 @@ class Category(models.Model):
     """iTunes category."""
 
     name = models.CharField(max_length=100, unique=True)
+    itunes_genre_id = models.PositiveIntegerField(null=True, blank=True)
+
     objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
 
     class Meta:
