@@ -16,6 +16,9 @@ app = Typer(help="Score podcasts based on various metrics")
 def handle() -> None:
     """Score podcasts based on various metrics."""
 
+    # Reset all scores to zero before recalculating
+    Podcast.objects.filter(score__gt=0).update(score=0)
+
     # Prefetch subscription counts and listen counts
 
     sub_counts = collections.Counter(
@@ -26,14 +29,23 @@ def handle() -> None:
         AudioLog.objects.values_list("episode__podcast", flat=True)
     )
 
-    # Reset all scores to zero before recalculating
-    Podcast.objects.filter(score__gt=0).update(score=0)
-
     podcast_ids = Podcast.objects.filter(
         active=True,
         private=False,
         pub_date__isnull=False,
     ).values_list("pk", flat=True)
+
+    def _get_podcasts_for_update(podcast_ids: tuple[int]) -> Iterator[Podcast]:
+        """Get podcasts for update."""
+        for podcast in Podcast.objects.filter(pk__in=podcast_ids).select_for_update():
+            score = 100 if podcast.promoted else 0
+
+            score += sub_counts.get(podcast.pk, 0) * 10
+            score += listen_counts.get(podcast.pk, 0) * 1
+
+            if score:
+                podcast.score = score
+                yield podcast
 
     with Progress() as progress:
         task = progress.add_task(
@@ -43,33 +55,6 @@ def handle() -> None:
 
         for batch in itertools.batched(podcast_ids, 500, strict=False):
             with transaction.atomic():
-                for_update = _get_podcasts_for_update(
-                    batch,
-                    sub_counts=sub_counts,
-                    listen_counts=listen_counts,
-                )
+                for_update = _get_podcasts_for_update(batch)
                 Podcast.objects.bulk_update(for_update, ["score"])
             progress.update(task, advance=len(batch))
-
-
-def _get_podcasts_for_update(
-    podcast_ids: tuple[int],
-    *,
-    sub_counts: dict[int, int],
-    listen_counts: dict[int, int],
-) -> Iterator[Podcast]:
-    """Get podcasts for update."""
-    podcasts = Podcast.objects.filter(pk__in=podcast_ids).select_for_update()
-    for podcast in podcasts:
-        score = 0
-
-        if podcast.promoted:
-            score += 100
-
-        score += sub_counts.get(podcast.pk, 0) * 10
-        score += listen_counts.get(podcast.pk, 0) * 1
-
-        podcast.score = score
-
-        if podcast.score:
-            yield podcast
