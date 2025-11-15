@@ -17,7 +17,6 @@
                    href="{% url 'index' %}"
                    hx-disable="true"
                {% endif %}
-               href="{% url user.is_authenticated|yesno:'podcasts:subscriptions,index' %}"
             >
                 <img src="{% static 'img/logo.png' %}"
                      alt="{{ site_name }}"
