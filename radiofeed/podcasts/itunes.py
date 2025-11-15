@@ -113,6 +113,17 @@ def fetch_chart(client: Client, country: str, **fields) -> list[Feed]:
     )
 
 
+def fetch_genre(client: Client, country: str, genre_id: int, **fields) -> list[Feed]:
+    """Fetch top podcasts for the given genre from iTunes podcast chart page.
+    Any new podcasts will be added.
+    """
+    return _fetch_feeds_from_page(
+        client,
+        f"https://podcasts.apple.com/{country}/genre/{genre_id}",
+        **fields,
+    )
+
+
 def _fetch_feeds_from_page(client: Client, url: str, **fields) -> list[Feed]:
     itunes_ids = _fetch_itunes_ids_from_page(client, url)
 
