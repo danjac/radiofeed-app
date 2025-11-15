@@ -58,4 +58,5 @@ def handle() -> None:
 
 
 def _jitter() -> None:
+    # add some pauses to avoid rate limiting
     time.sleep(random.uniform(1.5, 4.8))  # noqa: S311
