@@ -101,8 +101,15 @@ def search_cached(
 
 def fetch_chart(client: Client, country: str, **fields) -> list[Feed]:
     """Fetch top chart from iTunes podcast chart page. Any new podcasts will be added."""
+    return _fetch_feeds_from_page(
+        client,
+        f"https://podcasts.apple.com/{country}/charts",
+        **fields,
+    )
 
-    itunes_ids = _fetch_itunes_ids_from_chart(client, country)
+
+def _fetch_feeds_from_page(client: Client, url: str, **fields) -> list[Feed]:
+    itunes_ids = _fetch_itunes_ids_from_page(client, url)
 
     if not itunes_ids:
         return []
@@ -171,9 +178,9 @@ def _get_podcasts_from_feeds(feeds: Iterator[Feed], **fields) -> Iterator[Podcas
         yield Podcast(rss=canonical_urls.get(url, url), **fields)
 
 
-def _fetch_itunes_ids_from_chart(client: Client, country: str) -> set[str]:
+def _fetch_itunes_ids_from_page(client: Client, url: str) -> set[str]:
     try:
-        response = client.get(f"https://podcasts.apple.com/{country}/charts")
+        response = client.get(url)
     except httpx.HTTPError as exc:
         raise ItunesError from exc
 
