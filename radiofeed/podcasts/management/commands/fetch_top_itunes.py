@@ -16,19 +16,15 @@ def handle() -> None:
 
     # Clear existing promoted podcasts
     Podcast.objects.filter(promoted=True).update(promoted=False)
+    feeds = set()
 
     def _fetch_country(country: str) -> None:
         try:
-            feeds = itunes.fetch_chart(client, country, promoted=True)
+            for feed in itunes.fetch_chart(client, country, promoted=True):
+                typer.secho(feed.title, fg=typer.colors.BLUE)
+                feeds.add(feed)
         except itunes.ItunesError as exc:
-            typer.secho(
-                f"Error fetching iTunes feeds for country {country}: {exc}",
-                fg=typer.colors.RED,
-            )
-        else:
-            typer.secho(
-                f"Fetched {len(feeds)} iTunes feeds for country {country}",
-                fg=typer.colors.GREEN,
-            )
+            typer.secho(exc, fg=typer.colors.RED)
 
     execute_thread_pool(_fetch_country, itunes.COUNTRIES)
+    typer.secho(f"Fetched total {len(feeds)} feeds from iTunes", fg=typer.colors.GREEN)
