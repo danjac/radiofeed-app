@@ -3,6 +3,7 @@ from django.core.management import call_command
 
 from radiofeed.podcasts.itunes import Feed, ItunesError
 from radiofeed.podcasts.tests.factories import (
+    CategoryFactory,
     RecommendationFactory,
     SubscriptionFactory,
 )
@@ -19,22 +20,48 @@ class TestFetchTopItunes:
             feedUrl="http://example.com/feed",
         )
 
-    @pytest.mark.django_db
-    def test_ok(self, mocker, feed):
-        patched = mocker.patch(
-            "radiofeed.podcasts.itunes.fetch_chart", return_value=[feed]
-        )
-        call_command("fetch_top_itunes")
-        patched.assert_called()
+    @pytest.fixture
+    def category(self):
+        return CategoryFactory(itunes_genre_id=1301)
 
     @pytest.mark.django_db
-    def test_error(self, mocker):
-        patched = mocker.patch(
+    def test_ok(self, mocker, feed, category):
+        patched_chart = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart", return_value=[feed]
+        )
+        patched_genre = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_genre", return_value=[feed]
+        )
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        patched_chart.assert_called()
+        patched_genre.assert_called()
+
+    @pytest.mark.django_db
+    def test_chart_error(self, mocker, category, feed):
+        patched_chart = mocker.patch(
             "radiofeed.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("API error"),
         )
-        call_command("fetch_top_itunes")
-        patched.assert_called()
+        patched_genre = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_genre", return_value=[feed]
+        )
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        patched_chart.assert_called()
+        patched_genre.assert_called()
+
+    @pytest.mark.django_db
+    def test_genre_error(self, mocker, category, feed):
+        patched_chart = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[feed],
+        )
+        patched_genre = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_genre",
+            side_effect=ItunesError("API error"),
+        )
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        patched_chart.assert_called()
+        patched_genre.assert_called()
 
 
 class TestCreateRecommendations:

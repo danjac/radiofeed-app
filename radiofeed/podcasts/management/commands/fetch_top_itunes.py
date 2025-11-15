@@ -1,5 +1,6 @@
 import random
 import time
+from typing import Annotated
 
 import typer
 from django_typer.management import Typer
@@ -13,16 +14,34 @@ app = Typer(help="Fetch top iTunes podcasts")
 
 
 @app.command()
-def handle() -> None:
+def handle(
+    jitter_min: Annotated[
+        float,
+        typer.Option(
+            "--jitter-min",
+            help="Minimum jitter time (secs)",
+        ),
+    ] = 1.5,
+    jitter_max: Annotated[
+        float,
+        typer.Option(
+            "--jitter-max",
+            help="Maxium jitter time(secs)",
+        ),
+    ] = 5.0,
+) -> None:
     """Fetch the top iTunes podcasts for a given country."""
     client = get_client()
 
     # Clear existing promoted podcasts
     Podcast.objects.filter(promoted=True).update(promoted=False)
 
-    categories = Category.objects.filter(itunes_genre_id__isnull=False)
+    categories = list(Category.objects.filter(itunes_genre_id__isnull=False))
 
     feeds = set()
+
+    def _jitter() -> None:
+        time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
 
     def _fetch_country(country: str) -> None:
         typer.secho(
@@ -55,8 +74,3 @@ def handle() -> None:
 
     execute_thread_pool(_fetch_country, itunes.COUNTRIES)
     typer.secho(f"Fetched total {len(feeds)} feeds from iTunes", fg=typer.colors.GREEN)
-
-
-def _jitter() -> None:
-    # add some pauses to avoid rate limiting
-    time.sleep(random.uniform(1.5, 4.8))  # noqa: S311

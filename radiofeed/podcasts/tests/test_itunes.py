@@ -224,6 +224,54 @@ class TestItunesFeed:
         )
 
 
+class TestFetchGenre:
+    @pytest.fixture
+    def good_client(self):
+        def _get_result(request):
+            if "genre" in request.url.path:
+                with (
+                    pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
+                ).open("rb") as f:
+                    chart_content = f.read()
+
+                return httpx.Response(
+                    http.HTTPStatus.OK,
+                    content=chart_content,
+                )
+            return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
+
+        return Client(
+            transport=httpx.MockTransport(_get_result),
+        )
+
+    @pytest.fixture
+    def bad_client(self):
+        def _handle(_):
+            raise httpx.HTTPError("fail")
+
+        return Client(transport=httpx.MockTransport(_handle))
+
+    @pytest.mark.django_db
+    def test_get_genre(self, good_client):
+        feeds = itunes.fetch_genre(
+            good_client,
+            country="us",
+            genre_id=1303,
+        )
+        assert len(feeds) == 1
+        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
+
+    @pytest.mark.django_db
+    def test_fail(self, bad_client):
+        with pytest.raises(itunes.ItunesError):
+            itunes.fetch_genre(
+                bad_client,
+                country="us",
+                genre_id=1303,
+            )
+        assert Podcast.objects.exists() is False
+
+
 class TestFetchTopChart:
     @pytest.fixture
     def good_client(self):
