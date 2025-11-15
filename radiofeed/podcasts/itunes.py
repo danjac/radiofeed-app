@@ -22,6 +22,7 @@ COUNTRIES: Final = (
     "br",
     "ca",
     "de",
+    "es",
     "fi",
     "fr",
     "gb",
