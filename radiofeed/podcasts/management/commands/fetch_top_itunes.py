@@ -1,3 +1,4 @@
+import itertools
 import random
 import time
 from typing import Annotated
@@ -33,44 +34,29 @@ def handle(
     """Fetch the top iTunes podcasts for a given country."""
     client = get_client()
 
-    # Clear existing promoted podcasts
-    Podcast.objects.filter(promoted=True).update(promoted=False)
-
-    categories = list(Category.objects.filter(itunes_genre_id__isnull=False))
-
-    feeds = set()
-
-    def _jitter() -> None:
-        time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
-
-    def _fetch_country(country: str) -> None:
-        typer.secho(
-            f"Fetching top podcasts for country: {country}", fg=typer.colors.YELLOW
+    def _fetch_itunes_feeds(country: str, category: Category | None) -> None:
+        msg = (
+            f"Fetching {category.name} podcasts for country: {country}"
+            if category
+            else f"Fetching top podcasts for country: {country}"
         )
+        typer.secho(msg, fg=typer.colors.YELLOW)
         try:
-            for feed in itunes.fetch_chart(client, country, promoted=True):
+            if category:
+                feeds = itunes.fetch_genre(client, country, category.itunes_genre_id)
+            else:
+                feeds = itunes.fetch_chart(client, country, promoted=True)
+            for feed in feeds:
                 typer.secho(feed.title, fg=typer.colors.BLUE)
-                feeds.add(feed)
         except itunes.ItunesError as exc:
             typer.secho(f"ERROR: {exc}", fg=typer.colors.RED)
 
-        _jitter()
+        # Jitter to avoid hitting rate limits
+        time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
 
-        for category in categories:
-            typer.secho(
-                f"Fetching {category.name} podcasts for country: {country}",
-                fg=typer.colors.YELLOW,
-            )
-            try:
-                for feed in itunes.fetch_genre(
-                    client, country, category.itunes_genre_id
-                ):
-                    typer.secho(feed.title, fg=typer.colors.BLUE)
-                    feeds.add(feed)
-            except itunes.ItunesError as exc:
-                typer.secho(f"ERROR: {exc}", fg=typer.colors.RED)
+    # Clear existing promoted podcasts
+    Podcast.objects.filter(promoted=True).update(promoted=False)
+    categories = Category.objects.filter(itunes_genre_id__isnull=False)
 
-            _jitter()
-
-    execute_thread_pool(_fetch_country, itunes.COUNTRIES)
-    typer.secho(f"Fetched total {len(feeds)} feeds from iTunes", fg=typer.colors.GREEN)
+    permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
+    execute_thread_pool(lambda t: _fetch_itunes_feeds(*t), permutations)
