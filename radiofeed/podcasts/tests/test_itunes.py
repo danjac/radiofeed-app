@@ -261,7 +261,6 @@ class TestFetchGenre:
             )
         )
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db
     def test_fail(self, bad_client):
@@ -271,7 +270,52 @@ class TestFetchGenre:
                 country="us",
                 genre_id=1303,
             )
-        assert Podcast.objects.exists() is False
+
+
+class TestSaveFeedsToDb:
+    @pytest.fixture
+    def feed(self):
+        return itunes.Feed(
+            artworkUrl100="http://example.com/image.jpg",
+            collectionName="Test & Code",
+            collectionViewUrl="https://example.com",
+            feedUrl="https://feeds.fireside.fm/testandcode/rss",
+        )
+
+    @pytest.mark.django_db
+    def test_save_new_feed(self, feed):
+        podcasts = itunes.save_feeds_to_db([feed])
+        assert len(podcasts) == 1
+        assert podcasts[0].rss == feed.rss
+
+    @pytest.mark.django_db
+    def test_existing_feed(self, feed):
+        PodcastFactory(rss=feed.rss)
+        podcasts = itunes.save_feeds_to_db([feed])
+        assert len(podcasts) == 1
+        assert podcasts[0].rss == feed.rss
+
+    @pytest.mark.django_db
+    def test_save_new_feed_with_fields(self, feed):
+        podcasts = itunes.save_feeds_to_db([feed], promoted=True)
+        assert len(podcasts) == 1
+        assert podcasts[0].rss == feed.rss
+        assert podcasts[0].promoted is True
+
+    @pytest.mark.django_db
+    def test_existing_feed_with_fields(self, feed):
+        podcast = PodcastFactory(rss=feed.rss)
+        itunes.save_feeds_to_db([feed], promoted=True)
+        podcast.refresh_from_db()
+        assert podcast.promoted is True
+
+    @pytest.mark.django_db
+    def test_save_canonical_feed(self, feed):
+        canonical = PodcastFactory()
+        PodcastFactory(rss=feed.rss, canonical=canonical)
+        itunes.save_feeds_to_db([feed], promoted=True)
+        canonical.refresh_from_db()
+        assert canonical.promoted is True
 
 
 class TestFetchTopChart:
@@ -332,83 +376,21 @@ class TestFetchTopChart:
             )
         )
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
-
-    @pytest.mark.django_db
-    def test_get_top_chart_promote(self, good_client):
-        feeds = list(
-            itunes.fetch_chart(
-                good_client,
-                country="us",
-                promoted=True,
-            )
-        )
-        assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].rss, promoted=True).exists()
-
-    @pytest.mark.django_db
-    def test_already_exists(self, good_client):
-        PodcastFactory(
-            rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
-        )
-        feeds = list(itunes.fetch_chart(good_client, country="us"))
-        assert len(feeds) == 1
-
-    @pytest.mark.django_db
-    def test_already_exists_promote(self, good_client):
-        podcast = PodcastFactory(
-            rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
-        )
-        feeds = list(
-            itunes.fetch_chart(
-                good_client,
-                country="us",
-                promoted=True,
-            )
-        )
-        assert len(feeds) == 1
-        podcast.refresh_from_db()
-        assert podcast.promoted is True
-
-    @pytest.mark.django_db
-    def test_canonical_already_exists(self, good_client):
-        podcast = PodcastFactory()
-        PodcastFactory(
-            canonical=podcast,
-            rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"],
-        )
-        feeds = list(itunes.fetch_chart(good_client, country="us"))
-        assert len(feeds) == 1
-
-    @pytest.mark.django_db
-    def test_no_fields(self, good_client):
-        podcast = PodcastFactory(rss=MOCK_SEARCH_RESULT["results"][0]["feedUrl"])
-
-        PodcastFactory()
-        feeds = list(itunes.fetch_chart(good_client, country="us"))
-
-        assert len(feeds) == 1
-        assert feeds[0].rss == podcast.rss
-        podcast.refresh_from_db()
-        assert podcast.promoted is False
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         with pytest.raises(itunes.ItunesError):
             itunes.fetch_chart(bad_client, country="us")
-        assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_empty_result(self, empty_result_client):
         with pytest.raises(itunes.ItunesError):
             itunes.fetch_chart(empty_result_client, country="us")
-        assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_no_feeds_page(self, no_results_client):
         feeds = list(itunes.fetch_chart(no_results_client, country="us"))
         assert len(feeds) == 0
-        assert not Podcast.objects.exists()
 
 
 class TestSearch:

@@ -1,9 +1,8 @@
 import contextlib
 import functools
 import hashlib
-import itertools
 import re
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from typing import Final
 
 import httpx
@@ -50,23 +49,31 @@ class Feed(BaseModel):
         """Returns title of feed"""
         return self.title
 
+    def __hash__(self) -> int:
+        """Returns hash of feed based on RSS URL"""
+        return hash(self.rss)
+
 
 def search(
     client: Client,
     search_term: str,
     *,
     limit: int = settings.DEFAULT_PAGE_SIZE,
-) -> Iterator[Feed]:
+) -> list[Feed]:
     """Search iTunes podcast API. New podcasts will be added to the database."""
-    return _fetch_and_save_feeds(
-        client,
-        "https://itunes.apple.com/search",
-        {
-            "term": search_term,
-            "limit": limit,
-            "media": "podcast",
-        },
+    feeds = list(
+        _fetch_feeds_from_api(
+            client,
+            "https://itunes.apple.com/search",
+            {
+                "term": search_term,
+                "limit": limit,
+                "media": "podcast",
+            },
+        )
     )
+    save_feeds_to_db(feeds)
+    return feeds
 
 
 def search_cached(
@@ -80,34 +87,41 @@ def search_cached(
     cache_key = _get_cache_key(search_term, limit)
     feeds = cache.get(cache_key, None)
     if feeds is None:
-        feeds = list(search(client, search_term, limit=limit))
+        feeds = search(client, search_term, limit=limit)
         cache.set(cache_key, feeds, timeout=cache_timeout)
     return feeds
 
 
-def fetch_chart(client: Client, country: str, **fields) -> Iterator[Feed]:
+def fetch_chart(client: Client, country: str) -> Iterator[Feed]:
     """Fetch top chart from iTunes podcast chart page. Any new podcasts will be added."""
     return _fetch_feeds_from_page(
-        client,
-        f"https://podcasts.apple.com/{country}/charts",
-        **fields,
+        client, f"https://podcasts.apple.com/{country}/charts"
     )
 
 
-def fetch_genre(
-    client: Client, country: str, genre_id: int, **fields
-) -> Iterator[Feed]:
+def fetch_genre(client: Client, country: str, genre_id: int) -> Iterator[Feed]:
     """Fetch top podcasts for the given genre from iTunes podcast chart page.
     Any new podcasts will be added.
     """
     return _fetch_feeds_from_page(
-        client,
-        f"https://podcasts.apple.com/{country}/genre/{genre_id}",
-        **fields,
+        client, f"https://podcasts.apple.com/{country}/genre/{genre_id}"
     )
 
 
-def _fetch_feeds_from_page(client: Client, url: str, **fields) -> Iterator[Feed]:
+def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
+    """Saves the given feeds to the database."""
+    podcasts = _build_podcasts_from_feeds(feeds, **fields)
+    if fields:
+        return Podcast.objects.bulk_create(
+            podcasts,
+            unique_fields=["rss"],
+            update_conflicts=True,
+            update_fields=fields,
+        )
+    return Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+
+
+def _fetch_feeds_from_page(client: Client, url: str) -> Iterator[Feed]:
     try:
         response = client.get(url)
     except httpx.HTTPError as exc:
@@ -127,40 +141,20 @@ def _fetch_feeds_from_page(client: Client, url: str, **fields) -> Iterator[Feed]
     if not itunes_ids:
         return iter(())
 
-    return _fetch_and_save_feeds(
+    return _fetch_feeds_from_api(
         client,
         "https://itunes.apple.com/lookup",
         {
             "id": ",".join(itunes_ids),
         },
-        **fields,
     )
 
 
-def _fetch_and_save_feeds(
+def _fetch_feeds_from_api(
     client: Client,
     url: str,
     params: dict | None = None,
-    **fields,
 ) -> Iterator[Feed]:
-    feeds = _fetch_feeds_from_api(client, url, params or {})
-
-    feeds, feeds_for_update = itertools.tee(feeds)
-    podcasts = _build_podcasts_from_feeds(feeds_for_update, **fields)
-
-    if fields:
-        Podcast.objects.bulk_create(
-            podcasts,
-            unique_fields=["rss"],
-            update_conflicts=True,
-            update_fields=fields,
-        )
-    else:
-        Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
-    return feeds
-
-
-def _fetch_feeds_from_api(client: Client, url: str, params: dict) -> Iterator[Feed]:
     """Fetches and parses feeds from iTunes API."""
 
     try:
@@ -177,7 +171,7 @@ def _fetch_feeds_from_api(client: Client, url: str, params: dict) -> Iterator[Fe
             yield Feed(**result)
 
 
-def _build_podcasts_from_feeds(feeds: Iterator[Feed], **fields) -> Iterator[Podcast]:
+def _build_podcasts_from_feeds(feeds: Iterable[Feed], **fields) -> Iterator[Podcast]:
     """Returns a list of podcasts with canonical URLs for the given feeds."""
 
     # make sure we fetch only unique feeds in the right order

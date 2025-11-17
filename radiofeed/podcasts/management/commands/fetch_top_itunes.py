@@ -4,6 +4,7 @@ import time
 from typing import Annotated
 
 import typer
+from django.db import transaction
 from django_typer.management import Typer
 
 from radiofeed.http_client import get_client
@@ -34,29 +35,40 @@ def handle(
     """Fetch the top iTunes podcasts for a given country."""
     client = get_client()
 
+    promoted_feeds: set[itunes.ItunesFeed] = set()
+    other_feeds: set[itunes.ItunesFeed] = set()
+
     def _fetch_itunes_feeds(country: str, category: Category | None) -> None:
-        msg = (
-            f"Fetching {category.name} podcasts for country: {country}"
-            if category
-            else f"Fetching top podcasts for country: {country}"
-        )
-        typer.secho(msg, fg=typer.colors.YELLOW)
+        label = f"{category.name if category else 'Top'} feeds [{country}]"
         try:
-            if category:
-                feeds = itunes.fetch_genre(client, country, category.itunes_genre_id)
+            typer.secho(f"Fetching {label}...", fg=typer.colors.YELLOW)
+            if category is None:
+                feeds = itunes.fetch_chart(client, country)
+                promoted_feeds.update(feeds)
             else:
-                feeds = itunes.fetch_chart(client, country, promoted=True)
-            for feed in feeds:
-                typer.secho(feed.title, fg=typer.colors.BLUE)
+                feeds = itunes.fetch_genre(client, country, category.itunes_genre_id)
+                other_feeds.update(feeds)
+            typer.secho(f"Fetched {label}", fg=typer.colors.GREEN)
         except itunes.ItunesError as exc:
-            typer.secho(f"ERROR: {exc}", fg=typer.colors.RED)
+            typer.secho(f"Error {label}: {exc}", fg=typer.colors.RED)
 
         # Jitter to avoid hitting rate limits
         time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
 
-    # Clear existing promoted podcasts
-    Podcast.objects.filter(promoted=True).update(promoted=False)
     categories = Category.objects.filter(itunes_genre_id__isnull=False)
 
     permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
     execute_thread_pool(lambda t: _fetch_itunes_feeds(*t), permutations)
+
+    # Clear existing promoted podcasts
+    typer.secho("Saving feeds to the database...", fg=typer.colors.YELLOW)
+
+    # Save promoted feeds to the database
+    with transaction.atomic():
+        Podcast.objects.filter(promoted=True).update(promoted=False)
+        itunes.save_feeds_to_db(promoted_feeds, promoted=True)
+
+    # Save other feeds to the database
+    itunes.save_feeds_to_db(other_feeds)
+
+    typer.secho("Saved feeds to the database", fg=typer.colors.GREEN)
