@@ -8,6 +8,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.db.utils import DataError
 from django.utils import timezone
+from django.utils.text import slugify
 
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_fetcher, rss_parser, scheduler
@@ -30,8 +31,8 @@ def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
 
 @functools.cache
 def get_categories_dict() -> dict[str, Category]:
-    """Return dict of categories with name as key."""
-    return {category.name.casefold(): category for category in Category.objects.all()}
+    """Return dict of categories with slug as key."""
+    return {category.slug: category for category in Category.objects.all()}
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -109,7 +110,7 @@ class _FeedParser:
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
         result = Podcast.ParserResult.SUCCESS
-        keywords, categories = _parse_categories(feed)
+        categories, keywords = _parse_categories(feed)
         try:
             with transaction.atomic():
                 Podcast.objects.filter(pk=self.podcast.pk).update(
@@ -119,7 +120,7 @@ class _FeedParser:
                     num_episodes=len(feed.items),
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),
-                    keywords=keywords,
+                    keywords=" ".join(keywords),
                     **feed.model_dump(
                         exclude={
                             "canonical_url",
@@ -259,18 +260,18 @@ class _FeedParser:
         )
 
 
-def _parse_categories(feed: Feed) -> tuple[str, set[Category]]:
+def _parse_categories(feed: Feed) -> tuple[set[Category], set[str]]:
     # Parse categories from the feed: return keywords and Category instances
     categories_dct = get_categories_dict()
 
-    # Get the categories that are in the database
-    categories = {
-        categories_dct[category]
-        for category in feed.categories
-        if category in categories_dct
-    }
+    categories: set[Category] = set()
+    keywords: set[str] = set()
 
-    # Get the keywords that are not in the database
-    keywords = " ".join(feed.categories - set(categories_dct.keys()))
+    for keyword in feed.categories:
+        slug = slugify(keyword, allow_unicode=False)
+        if category := categories_dct.get(slug):
+            categories.add(category)
+        else:
+            keywords.add(keyword)
 
-    return keywords, categories
+    return categories, keywords

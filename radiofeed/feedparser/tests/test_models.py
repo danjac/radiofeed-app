@@ -50,6 +50,7 @@ class TestItem:
 
     def test_default_keywords_from_categories(self):
         item = Item(**ItemFactory(categories=["Gaming", "Hobbies", "Video Games"]))
+        assert item.categories == {"gaming", "hobbies", "video games"}
         assert set(item.keywords.split()) == {"gaming", "hobbies", "video", "games"}
 
     def test_defaults(self):
@@ -113,6 +114,25 @@ class TestFeed:
     def test_podcast_type_is_none(self, item):
         feed = Feed(**FeedFactory(items=[item]))
         assert feed.podcast_type == "episodic"
+
+    def test_categories(self, item):
+        feed = Feed(
+            **FeedFactory(
+                items=[item],
+                categories=[
+                    "Technology",
+                    "Podcasting",
+                    "Software Development",
+                    "Hobbies and Crafts",
+                ],
+            )
+        )
+        assert feed.categories == {
+            "technology",
+            "podcasting",
+            "software development",
+            "hobbies & crafts",
+        }
 
     def test_defaults(self, item):
         feed = Feed(**FeedFactory(items=[item]))

@@ -81,7 +81,7 @@ class Category(models.Model):
 
     def save(self, **kwargs) -> None:
         """Overrides save to auto-generate slug."""
-        self.slug = slugify(self.name)
+        self.slug = slugify(self.name, allow_unicode=False)
         super().save(**kwargs)
 
     def get_absolute_url(self) -> str:

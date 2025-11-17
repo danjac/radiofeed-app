@@ -112,6 +112,19 @@ def _url(value: str | None) -> str:
     return ""
 
 
+def _normalize_categories(value: Iterable[str]) -> set[str]:
+    categories = set()
+    for category in value:
+        if (
+            normalized := category.strip()
+            .casefold()
+            .replace(" &amp; ", " &")
+            .replace(" and ", " & ")
+        ):
+            categories.add(normalized)
+    return categories
+
+
 OptionalUrl = Annotated[str | None, AfterValidator(_url)]
 
 PgInteger = Annotated[int | None, BeforeValidator(_pg_integer)]
@@ -149,6 +162,8 @@ PodcastType = Annotated[
     ),
 ]
 
+Categories = Annotated[set[str], AfterValidator(_normalize_categories)]
+
 
 class Item(BaseModel):
     """Individual item or episode in RSS or Atom podcast feed."""
@@ -156,7 +171,7 @@ class Item(BaseModel):
     guid: str = Field(..., min_length=1)
     title: str = Field(..., min_length=1)
 
-    categories: set[str] = Field(default_factory=set)
+    categories: Categories = Field(default_factory=set)
 
     description: EmptyIfNone = ""
     keywords: EmptyIfNone = ""
@@ -179,12 +194,6 @@ class Item(BaseModel):
     episode: PgInteger = None
 
     episode_type: EpisodeType = Episode.EpisodeType.FULL
-
-    @field_validator("categories", mode="after")
-    @classmethod
-    def validate_categories(cls, value: Any) -> set[str]:
-        """Ensure categories are unique and not empty."""
-        return {c.casefold() for c in set(filter(None, value))}
 
     @field_validator("pub_date", mode="before")
     @classmethod
@@ -269,7 +278,7 @@ class Feed(BaseModel):
 
     items: list[Item]
 
-    categories: set[str] = Field(default_factory=set)
+    categories: Categories = Field(default_factory=set)
 
     podcast_type: PodcastType = Podcast.PodcastType.EPISODIC
 
@@ -282,12 +291,6 @@ class Feed(BaseModel):
             if value in tokenizer.get_language_codes():
                 return value
         return cls.DEFAULT_LANGUAGE
-
-    @field_validator("categories", mode="after")
-    @classmethod
-    def validate_categories(cls, value: Any) -> set[str]:
-        """Ensure categories are unique and not empty."""
-        return {c.casefold() for c in set(filter(None, value))}
 
     @field_validator("complete", mode="before")
     @classmethod
