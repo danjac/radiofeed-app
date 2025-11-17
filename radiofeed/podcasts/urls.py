@@ -63,7 +63,7 @@ urlpatterns = [
         name="category_list",
     ),
     path(
-        "categories/<slug:slug>-<int:category_id>/",
+        "categories/<slug:slug>/",
         views.category_detail,
         name="category_detail",
     ),

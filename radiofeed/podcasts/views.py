@@ -253,16 +253,12 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def category_detail(
-    request: HttpRequest,
-    category_id: int,
-    slug: str | None = None,
-) -> TemplateResponse:
+def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
     """
-    category = get_object_or_404(Category, pk=category_id)
+    category = get_object_or_404(Category, slug=slug)
 
     podcasts = category.podcasts.published().filter(private=False).distinct()
 

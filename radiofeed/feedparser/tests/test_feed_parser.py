@@ -4,6 +4,7 @@ from datetime import datetime
 
 import httpx
 import pytest
+from django.utils.text import slugify
 
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
@@ -20,7 +21,7 @@ def categories():
     get_categories_dict.cache_clear()
     return Category.objects.bulk_create(
         [
-            Category(name=name)
+            Category(name=name, slug=slugify(name))
             for name in (
                 "Science",
                 "Religion & Spirituality",

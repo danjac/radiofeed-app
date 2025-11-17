@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
@@ -21,8 +21,11 @@ class CategoryAdmin(admin.ModelAdmin):
     ordering = ("name",)
     list_display = (
         "name",
+        "slug",
+        "itunes_genre_id",
         "num_podcasts",
     )
+    prepopulated_fields: ClassVar = {"slug": ("name",)}
     search_fields = ("name",)
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Category]:
