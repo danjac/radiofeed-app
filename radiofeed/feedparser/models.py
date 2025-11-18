@@ -113,23 +113,6 @@ def _url(value: str | None) -> str:
     return ""
 
 
-def _normalize_categories(value: Iterable[str]) -> set[str]:
-    categories = set()
-    for category in value:
-        if (
-            normalized := category.strip()
-            .casefold()
-            .replace(" &amp; ", " & ")
-            .replace(" and ", " & ")
-        ):
-            categories.add(normalized)
-
-            for sep in (" ", "/", "&", ",", "+"):
-                categories.update(normalized.split(sep))
-    # Slugify keywords to ensure consistent format
-    return {c for c in (slugify(c, allow_unicode=False) for c in categories) if c}
-
-
 OptionalUrl = Annotated[str | None, AfterValidator(_url)]
 
 PgInteger = Annotated[int | None, BeforeValidator(_pg_integer)]
@@ -166,8 +149,6 @@ PodcastType = Annotated[
         )
     ),
 ]
-
-Categories = Annotated[set[str], AfterValidator(_normalize_categories)]
 
 
 class Item(BaseModel):
@@ -272,11 +253,11 @@ class Feed(BaseModel):
     explicit: Explicit = False
     complete: bool = False
 
-    items: list[Item]
-
-    categories: Categories = Field(default_factory=set)
-
     podcast_type: PodcastType = Podcast.PodcastType.EPISODIC
+
+    categories: set[str] = Field(default_factory=set)
+
+    items: list[Item]
 
     @field_validator("language", mode="before")
     @classmethod
@@ -293,6 +274,30 @@ class Feed(BaseModel):
     def validate_complete(cls, value: Any) -> bool:
         """Validate complete."""
         return _one_of(value, values=("yes", "true"))
+
+    @field_validator("categories", mode="before")
+    @classmethod
+    def validate_categories(cls, value: Any) -> set[str]:
+        """Ensure categories are sorted.
+
+        1. Normalize categories by stripping whitespace and casefolding.
+        2. Replace "&amp;/and" and with " & "
+        3. Split categories on common separators and add to set.
+        4. Slugify categories to ensure consistent format.
+        """
+        categories = set()
+        for category in value:
+            if (
+                normalized := category.strip()
+                .casefold()
+                .replace(" &amp; ", " & ")
+                .replace(" and ", " & ")
+            ):
+                categories.add(normalized)
+                for sep in (" ", "/", "&", ",", "+"):
+                    categories.update(normalized.split(sep))
+        # Slugify keywords to ensure consistent format
+        return {c for c in (slugify(c, allow_unicode=False) for c in categories) if c}
 
     @model_validator(mode="after")
     def validate_pub_date(self) -> "Feed":
