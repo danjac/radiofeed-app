@@ -48,22 +48,9 @@ class TestItem:
         item = Item(**ItemFactory(episode_type=Episode.EpisodeType.BONUS))
         assert item.episode_type == "bonus"
 
-    def test_default_keywords_from_categories(self):
-        item = Item(**ItemFactory(categories=["Gaming", "Hobbies", "Video Games"]))
-        assert item.categories == {"gaming", "hobbies", "video-games", "video", "games"}
-        assert set(item.keywords.split()) == {
-            "gaming",
-            "hobbies",
-            "video",
-            "games",
-            "video-games",
-        }
-
     def test_defaults(self):
         item = Item(**ItemFactory())
         assert item.explicit is False
-        assert item.categories == set()
-        assert item.keywords == ""
         assert item.episode_type == "full"
 
     @pytest.mark.parametrize(

@@ -43,7 +43,6 @@ class Episode(models.Model):
 
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
-    keywords = models.TextField(blank=True)
 
     cover_url = URLField(blank=True)
 

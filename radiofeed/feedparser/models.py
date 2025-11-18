@@ -176,10 +176,7 @@ class Item(BaseModel):
     guid: str = Field(..., min_length=1)
     title: str = Field(..., min_length=1)
 
-    categories: Categories = Field(default_factory=set)
-
     description: EmptyIfNone = ""
-    keywords: EmptyIfNone = ""
 
     pub_date: datetime
 
@@ -250,12 +247,6 @@ class Item(BaseModel):
 
         except ValueError:
             return ""
-
-    @model_validator(mode="after")
-    def validate_keywords(self) -> "Item":
-        """Set default keywords."""
-        self.keywords = " ".join(filter(None, self.categories))
-        return self
 
 
 class Feed(BaseModel):

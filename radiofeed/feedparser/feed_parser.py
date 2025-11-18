@@ -220,7 +220,6 @@ class _FeedParser:
                     "episode",
                     "episode_type",
                     "explicit",
-                    "keywords",
                     "file_size",
                     "media_type",
                     "media_url",

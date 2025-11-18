@@ -70,7 +70,7 @@ class TestSearchEpisodes:
 
     @pytest.mark.django_db
     def test_search(self, auth_user, client, faker):
-        EpisodeFactory.create_batch(3, title="zzzz", keywords="zzzz")
+        EpisodeFactory.create_batch(3, title="zzzz")
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"search": episode.title})
         assert200(response)
@@ -406,7 +406,7 @@ class TestBookmarks:
         for _ in range(3):
             BookmarkFactory(
                 user=auth_user,
-                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
+                episode=EpisodeFactory(title="zzzz", podcast=podcast),
             )
 
         BookmarkFactory(user=auth_user, episode=EpisodeFactory(title="testing"))
@@ -487,7 +487,7 @@ class TestHistory:
         for _ in range(3):
             AudioLogFactory(
                 user=auth_user,
-                episode=EpisodeFactory(title="zzzz", keywords="zzzzz", podcast=podcast),
+                episode=EpisodeFactory(title="zzzz", podcast=podcast),
             )
 
         AudioLogFactory(user=auth_user, episode=EpisodeFactory(title="testing"))

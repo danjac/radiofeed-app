@@ -109,10 +109,6 @@ class _RSSParser:
     def _parse_item(self, item: OptionalXmlElement) -> Item:
         return Item.model_validate(
             {
-                "categories": self._parser.itervalues(
-                    item,
-                    "//itunes:category/@text",
-                ),
                 "description": self._parser.value(
                     item,
                     "content:encoded/text()",
