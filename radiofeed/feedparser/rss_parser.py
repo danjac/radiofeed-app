@@ -116,6 +116,7 @@ class _RSSParser:
                     "description/text()",
                     "itunes:summary/text()",
                 ),
+                "keywords": self._parser.value(item, "itunes:keywords/text()"),
                 "cover_url": self._parser.value(item, "itunes:image/@href"),
                 "duration": self._parser.value(item, "itunes:duration/text()"),
                 "episode": self._parser.value(item, "itunes:episode/text()"),

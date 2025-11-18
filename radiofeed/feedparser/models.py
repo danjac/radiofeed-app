@@ -158,6 +158,7 @@ class Item(BaseModel):
     title: str = Field(..., min_length=1)
 
     description: EmptyIfNone = ""
+    keywords: EmptyIfNone = ""
 
     pub_date: datetime
 

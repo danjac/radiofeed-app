@@ -25,7 +25,7 @@ EXECUTE PROCEDURE tsvector_update_trigger(search_vector, 'pg_catalog.english', t
             reverse_sql="""
 DROP TRIGGER IF EXISTS episode_update_search_trigger ON episodes_episode;
 CREATE TRIGGER episode_update_search_trigger
-BEFORE INSERT OR UPDATE OF title, search_vector
+BEFORE INSERT OR UPDATE OF title, keywords, search_vector
 ON episodes_episode
 FOR EACH ROW
 EXECUTE PROCEDURE tsvector_update_trigger(search_vector, 'pg_catalog.english', title, keywords);
