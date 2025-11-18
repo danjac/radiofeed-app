@@ -12,6 +12,7 @@
                        name="{{ request.search.param }}"
                        class="form-input"
                        autocomplete="off"
+                       maxlength="{{ request.search.max_length }}"
                        placeholder="Type '/' to search"
                        aria-label="Type '/' to search"
                        hx-validate="true"

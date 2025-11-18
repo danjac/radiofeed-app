@@ -96,6 +96,7 @@ class SearchDetails:
 
     request: HttpRequest
     param: str = "search"
+    max_length: int = 200
 
     def __str__(self) -> str:
         """Returns search query value."""
@@ -108,7 +109,9 @@ class SearchDetails:
     @cached_property
     def value(self) -> str:
         """Returns the search query value, if any."""
-        return force_str(self.request.GET.get(self.param, "")).strip()
+        return force_str(self.request.GET.get(self.param, "")).strip()[
+            : self.max_length
+        ]
 
     @cached_property
     def qs(self) -> str:
