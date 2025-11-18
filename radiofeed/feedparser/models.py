@@ -250,6 +250,8 @@ class Feed(BaseModel):
     funding_text: EmptyIfNone = ""
     funding_url: OptionalUrl = ""
 
+    keywords: EmptyIfNone = ""
+
     explicit: Explicit = False
     complete: bool = False
 
@@ -320,6 +322,7 @@ class Feed(BaseModel):
                     self.description,
                     self.owner,
                     *self.categories,
+                    *self.keywords.split(","),
                     *[item.title for item in self.items][:6],
                 ]
                 if value

@@ -146,7 +146,11 @@ class TestFeed:
             **FeedFactory(
                 title="The Title",
                 description="description",
+                keywords="sci fi,technology,futurism,scifi,space,science,engineering,future",
                 items=[ItemFactory(title="item")],
             )
         )
-        assert feed.tokenize() == "title description item"
+        assert (
+            feed.tokenize()
+            == "title description sci fi technology futurism scifi space science engineering future item"
+        )

@@ -264,6 +264,7 @@ class Podcast(models.Model):
 
     description = models.TextField(blank=True)
     website = URLField(blank=True)
+    keywords = models.TextField(blank=True)
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 

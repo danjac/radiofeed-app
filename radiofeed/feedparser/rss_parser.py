@@ -82,6 +82,7 @@ class _RSSParser:
                     ),
                     "podcast_type": self._parser.value(channel, "itunes:type/text()"),
                     "website": self._parser.value(channel, "link/text()"),
+                    "keywords": self._parser.value(channel, "itunes:keywords/text()"),
                     "title": self._parser.value(channel, "title/text()"),
                     "categories": self._parser.itervalues(
                         channel,
