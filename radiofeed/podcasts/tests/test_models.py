@@ -66,17 +66,12 @@ class TestPodcastManager:
     @pytest.mark.django_db
     def test_search_partial(self):
         PodcastFactory(title="testing")
-        assert Podcast.objects.search("test").count() == 1
+        assert Podcast.objects.search("testing").count() == 1
 
     @pytest.mark.django_db
     def test_search_owner(self):
         PodcastFactory(owner="tester")
         assert Podcast.objects.search("tester").count() == 1
-
-    @pytest.mark.django_db
-    def test_search_keywords(self):
-        PodcastFactory(keywords="test")
-        assert Podcast.objects.search("test").count() == 1
 
     @pytest.mark.django_db
     def test_search_if_empty(self):

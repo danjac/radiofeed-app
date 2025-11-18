@@ -109,20 +109,6 @@ class _FeedParser:
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
         result = Podcast.ParserResult.SUCCESS
-
-        # Parse categories and keywords
-
-        categories: set[Category] = set()
-        keywords: set[str] = set()
-
-        categories_dct = get_categories_dict()
-
-        for value in feed.categories:
-            if category := categories_dct.get(value):
-                categories.add(category)
-            else:
-                keywords.add(value)
-
         try:
             with transaction.atomic():
                 Podcast.objects.filter(pk=self.podcast.pk).update(
@@ -132,7 +118,6 @@ class _FeedParser:
                     num_episodes=len(feed.items),
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),
-                    keywords=" ".join(keywords),
                     **feed.model_dump(
                         exclude={
                             "canonical_url",
@@ -143,7 +128,7 @@ class _FeedParser:
                     ),
                     **fields,
                 )
-                self.podcast.categories.set(categories)
+                self._parse_categories(feed)
                 self._parse_episodes(feed)
         except (DataError, IntegrityError) as exc:
             raise InvalidDataError from exc
@@ -204,6 +189,13 @@ class _FeedParser:
             if q
             else None
         )
+
+    def _parse_categories(self, feed: Feed) -> None:
+        categories_dct = get_categories_dict()
+        categories = {
+            categories_dct[cat] for cat in feed.categories if cat in categories_dct
+        }
+        self.podcast.categories.set(categories)
 
     def _parse_episodes(self, feed: Feed) -> None:
         """Parse the podcast's RSS feed and update the episodes."""

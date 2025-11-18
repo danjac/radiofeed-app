@@ -100,7 +100,6 @@ class TestEpisodeDetail:
                 website=faker.url(),
                 funding_url=faker.url(),
                 funding_text=faker.text(),
-                keywords=faker.text(),
                 explicit=True,
             ),
             episode_type="full",
@@ -402,7 +401,7 @@ class TestBookmarks:
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user):
-        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+        podcast = PodcastFactory(title="zzzz")
 
         for _ in range(3):
             BookmarkFactory(
@@ -483,7 +482,7 @@ class TestHistory:
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user):
-        podcast = PodcastFactory(title="zzzz", keywords="zzzzz")
+        podcast = PodcastFactory(title="zzzz")
 
         for _ in range(3):
             AudioLogFactory(

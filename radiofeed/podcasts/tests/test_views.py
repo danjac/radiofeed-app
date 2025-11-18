@@ -94,7 +94,7 @@ class TestSearchPodcasts:
     @pytest.mark.django_db
     def test_search(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text())
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        PodcastFactory.create_batch(3, title="zzz")
         response = client.get(self.url, {"search": podcast.title})
 
         assert200(response)
@@ -110,7 +110,7 @@ class TestSearchPodcasts:
     @pytest.mark.django_db
     def test_search_filter_private(self, client, auth_user, faker):
         podcast = PodcastFactory(title=faker.unique.text(), private=True)
-        PodcastFactory.create_batch(3, title="zzz", keywords="zzzz")
+        PodcastFactory.create_batch(3, title="zzz")
         response = client.get(self.url, {"search": podcast.title})
 
         assert200(response)
@@ -194,7 +194,6 @@ class TestPodcastDetail:
             website=faker.url(),
             funding_url=faker.url(),
             funding_text=faker.text(),
-            keywords=faker.text(),
             categories=CategoryFactory.create_batch(3),
         )
 
@@ -431,9 +430,7 @@ class TestCategoryDetail:
 
     @pytest.mark.django_db
     def test_search(self, client, auth_user, category, faker):
-        PodcastFactory.create_batch(
-            12, title="zzzz", keywords="zzzz", categories=[category]
-        )
+        PodcastFactory.create_batch(12, title="zzzz", categories=[category])
         podcast = PodcastFactory(title=faker.unique.text(), categories=[category])
 
         response = client.get(category.get_absolute_url(), {"search": podcast.title})
@@ -583,7 +580,7 @@ class TestPrivateFeeds:
 
         SubscriptionFactory(
             subscriber=auth_user,
-            podcast=PodcastFactory(title="zzz", keywords="zzzz", private=True),
+            podcast=PodcastFactory(title="zzz", private=True),
         )
 
         response = client.get(self.url, {"search": podcast.title})
