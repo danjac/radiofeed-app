@@ -50,8 +50,14 @@ class TestItem:
 
     def test_default_keywords_from_categories(self):
         item = Item(**ItemFactory(categories=["Gaming", "Hobbies", "Video Games"]))
-        assert item.categories == {"gaming", "hobbies", "video games"}
-        assert set(item.keywords.split()) == {"gaming", "hobbies", "video", "games"}
+        assert item.categories == {"gaming", "hobbies", "video-games", "video", "games"}
+        assert set(item.keywords.split()) == {
+            "gaming",
+            "hobbies",
+            "video",
+            "games",
+            "video-games",
+        }
 
     def test_defaults(self):
         item = Item(**ItemFactory())
@@ -128,10 +134,14 @@ class TestFeed:
             )
         )
         assert feed.categories == {
-            "technology",
+            "crafts",
+            "development",
+            "hobbies",
+            "hobbies-crafts",
             "podcasting",
-            "software development",
-            "hobbies & crafts",
+            "software-development",
+            "software",
+            "technology",
         }
 
     def test_defaults(self, item):

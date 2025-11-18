@@ -8,7 +8,6 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.db.utils import DataError
 from django.utils import timezone
-from django.utils.text import slugify
 
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_fetcher, rss_parser, scheduler
@@ -32,7 +31,7 @@ def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
 @functools.cache
 def get_categories_dict() -> dict[str, Category]:
     """Return dict of categories with slug as key."""
-    return {category.slug: category for category in Category.objects.all()}
+    return Category.objects.in_bulk(field_name="slug")
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -110,7 +109,20 @@ class _FeedParser:
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
         result = Podcast.ParserResult.SUCCESS
-        categories, keywords = _parse_categories(feed)
+
+        # Parse categories and keywords
+
+        categories: set[Category] = set()
+        keywords: set[str] = set()
+
+        categories_dct = get_categories_dict()
+
+        for value in feed.categories:
+            if category := categories_dct.get(value):
+                categories.add(category)
+            else:
+                keywords.add(value)
+
         try:
             with transaction.atomic():
                 Podcast.objects.filter(pk=self.podcast.pk).update(
@@ -258,20 +270,3 @@ class _FeedParser:
             **item.model_dump(exclude={"categories"}),
             **fields,
         )
-
-
-def _parse_categories(feed: Feed) -> tuple[set[Category], set[str]]:
-    # Parse categories from the feed: return keywords and Category instances
-    categories_dct = get_categories_dict()
-
-    categories: set[Category] = set()
-    keywords: set[str] = set()
-
-    for keyword in feed.categories:
-        slug = slugify(keyword, allow_unicode=False)
-        if category := categories_dct.get(slug):
-            categories.add(category)
-        else:
-            keywords.add(keyword)
-
-    return categories, keywords

@@ -23,10 +23,11 @@ def categories():
         [
             Category(name=name, slug=slugify(name))
             for name in (
-                "Science",
-                "Religion & Spirituality",
-                "Society & Culture",
+                "Medicine",
                 "Philosophy",
+                "Religion & Spirituality",
+                "Science",
+                "Society & Culture",
             )
         ],
         ignore_conflicts=True,
@@ -117,40 +118,43 @@ class TestFeedParser:
         tokens = set(podcast.extracted_text.split())
 
         assert tokens == {
-            "mysterious",
-            "universe",
+            "socialsciences",
             "blog",
-            "specializing",
-            "offbeat",
             "th",
-            "kind",
-            "science",
-            "spirituality",
-            "medicine",
             "society",
-            "culture",
-            "philosophy",
-            "social",
-            "religion",
             "mu",
+            "universe",
+            "renner",
+            "philosophy",
+            "religionspirituality",
+            "joshua",
+            "science",
+            "religion",
+            "culture",
+            "tooth",
+            "kgb",
+            "saber",
+            "cop",
+            "kind",
+            "medicine",
+            "timothy",
+            "bruton",
+            "tiger",
+            "mysterious",
+            "router",
+            "king",
+            "jim",
+            "cutchin",
+            "specializing",
+            "societyculture",
+            "sciencemedicine",
+            "social",
+            "spirituality",
+            "offbeat",
             "tibetan",
             "zombie",
-            "saber",
-            "tooth",
-            "tiger",
-            "king",
-            "kgb",
-            "cop",
-            "joshua",
-            "cutchin",
-            "timothy",
-            "renner",
             "squid",
-            "router",
-            "jim",
-            "bruton",
         }
-
         assert podcast.modified
         assert podcast.modified.day == 1
         assert podcast.modified.month == 7
@@ -166,14 +170,19 @@ class TestFeedParser:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assert "science & medicine" in podcast.keywords
+        assert "science-medicine" in podcast.keywords
+
+        assert podcast.categories.count() == 5
 
         assigned_categories = [c.name for c in podcast.categories.all()]
-
-        assert "Science" in assigned_categories
-        assert "Religion & Spirituality" in assigned_categories
-        assert "Society & Culture" in assigned_categories
-        assert "Philosophy" in assigned_categories
+        for name in (
+            "Medicine",
+            "Science",
+            "Religion & Spirituality",
+            "Society & Culture",
+            "Philosophy",
+        ):
+            assert name in assigned_categories, f"Category {name} not assigned"
 
     @pytest.mark.django_db
     def test_parse_new_feed_url_same(self, categories):

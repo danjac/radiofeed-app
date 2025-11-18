@@ -7,6 +7,7 @@ from typing import Annotated, Any, ClassVar, Final, Literal, TypeVar
 from django.core.exceptions import ValidationError
 from django.db.models import TextChoices
 from django.utils import timezone
+from django.utils.text import slugify
 from pydantic import (
     AfterValidator,
     BaseModel,
@@ -118,11 +119,15 @@ def _normalize_categories(value: Iterable[str]) -> set[str]:
         if (
             normalized := category.strip()
             .casefold()
-            .replace(" &amp; ", " &")
+            .replace(" &amp; ", " & ")
             .replace(" and ", " & ")
         ):
             categories.add(normalized)
-    return categories
+
+            for sep in (" ", "/", "&", ",", "+"):
+                categories.update(normalized.split(sep))
+    # Slugify keywords to ensure consistent format
+    return {c for c in (slugify(c, allow_unicode=False) for c in categories) if c}
 
 
 OptionalUrl = Annotated[str | None, AfterValidator(_url)]
