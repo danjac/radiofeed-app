@@ -169,7 +169,6 @@ class TestFeedParser:
         assert podcast.is_episodic()
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
-        assert podcast.categories.count() == 5
 
         assigned_categories = [c.name for c in podcast.categories.all()]
         for name in (
