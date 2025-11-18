@@ -205,30 +205,14 @@ class _FeedParser:
 
         # Create a dictionary of guids to episode pks
         guids = dict(qs.values_list("guid", "pk"))
+        fields_to_update = _item_fields("guid", "categories")
 
         for batch in itertools.batched(
             self._episodes_for_update(feed, guids),
             1000,
             strict=False,
         ):
-            Episode.objects.fast_update(
-                batch,
-                fields=(
-                    "cover_url",
-                    "description",
-                    "duration",
-                    "episode",
-                    "episode_type",
-                    "explicit",
-                    "file_size",
-                    "keywords",
-                    "media_type",
-                    "media_url",
-                    "pub_date",
-                    "season",
-                    "title",
-                ),
-            )
+            Episode.objects.fast_update(batch, fields=fields_to_update)
 
         for batch in itertools.batched(
             self._episodes_for_insert(feed, guids),
@@ -262,3 +246,8 @@ class _FeedParser:
             **item.model_dump(exclude={"categories"}),
             **fields,
         )
+
+
+@functools.cache
+def _item_fields(*exclude: str) -> set[str]:
+    return set(Item.model_fields.keys()) - set(exclude)
