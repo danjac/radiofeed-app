@@ -139,13 +139,13 @@ def cover_image(_, encoded_url: str, size: int) -> FileResponse:
     if not is_cover_image_size(size):
         raise Http404
     try:
-        output = save_cover_image(
-            fetch_cover_image(
-                get_client(),
+        with get_client() as client:
+            image = fetch_cover_image(
+                client,
                 decode_cover_url(encoded_url),
                 size,
             )
-        )
+        output = save_cover_image(image)
     except CoverImageError:
         # Return placeholder image on error to prevent multiple requests
         output = get_placeholder_path(size).open("rb")

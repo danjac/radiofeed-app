@@ -25,19 +25,19 @@ def handle(
 ) -> None:
     """Parse feeds for all active podcasts."""
 
-    client = get_client()
+    with get_client() as client:
 
-    def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
-        result = parse_feed(podcast, client)
-        color = (
-            typer.colors.GREEN
-            if result is Podcast.ParserResult.SUCCESS
-            else typer.colors.RED
-        )
-        typer.secho(f"{podcast}: {result.label}", fg=color)
-        return result
+        def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
+            result = parse_feed(podcast, client)
+            color = (
+                typer.colors.GREEN
+                if result is Podcast.ParserResult.SUCCESS
+                else typer.colors.RED
+            )
+            typer.secho(f"{podcast}: {result.label}", fg=color)
+            return result
 
-    execute_thread_pool(_parse_feed, _get_podcasts(limit))
+        execute_thread_pool(_parse_feed, _get_podcasts(limit))
 
 
 def _get_podcasts(limit: int) -> QuerySet[Podcast]:

@@ -30,6 +30,14 @@ class TestMakeContentHash:
         content = b"this is a test   "
         assert make_content_hash(b"this is a test") == make_content_hash(content)
 
+    def test_leading_spaces(self):
+        content = b"   this is a test"
+        assert make_content_hash(b"this is a test") == make_content_hash(content)
+
+    def test_only_spaces(self):
+        content = b"   \t  "
+        assert make_content_hash(content) == ""
+
     def test_different(self):
         content_a = b"this is a test"
         content_b = b"this is another test"

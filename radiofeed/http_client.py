@@ -1,5 +1,4 @@
 import contextlib
-import functools
 from collections.abc import Generator
 
 import httpx
@@ -53,8 +52,16 @@ class Client:
             response.raise_for_status()
             yield response
 
+    def close(self) -> None:
+        """Close the underlying httpx client."""
+        self._client.close()
 
-@functools.cache
-def get_client(**kwargs) -> Client:
-    """Returns Client instance"""
-    return Client(**kwargs)
+
+@contextlib.contextmanager
+def get_client(**kwargs) -> Generator[Client]:
+    """Context manager that yields a Client and closes it afterwards."""
+    client = Client(**kwargs)
+    try:
+        yield client
+    finally:
+        client.close()

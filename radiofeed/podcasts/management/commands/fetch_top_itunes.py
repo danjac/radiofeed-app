@@ -33,42 +33,40 @@ def handle(
     ] = 5.0,
 ) -> None:
     """Fetch the top iTunes podcasts for a given country."""
-    client = get_client()
-
     promoted_feeds: set[itunes.ItunesFeed] = set()
     other_feeds: set[itunes.ItunesFeed] = set()
 
-    def _fetch_itunes_feeds(country: str, category: Category | None) -> None:
-        label = f"{category.name if category else 'Top'} feeds [{country}]"
-        try:
-            typer.secho(f"Fetching {label}...", fg=typer.colors.YELLOW)
-            if category is None:
-                feeds = itunes.fetch_chart(client, country)
-                promoted_feeds.update(feeds)
-            else:
-                feeds = itunes.fetch_genre(client, country, category.itunes_genre_id)
-                other_feeds.update(feeds)
-            typer.secho(f"Fetched {label}", fg=typer.colors.GREEN)
-        except itunes.ItunesError as exc:
-            typer.secho(f"Error {label}: {exc}", fg=typer.colors.RED)
+    with get_client() as client:
 
-        # Jitter to avoid hitting rate limits
-        time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
+        def _fetch_itunes_feeds(country: str, category: Category | None) -> None:
+            label = f"{category.name if category else 'Top'} feeds [{country}]"
+            try:
+                typer.secho(f"Fetching {label}...", fg=typer.colors.YELLOW)
+                if category is None:
+                    feeds = itunes.fetch_chart(client, country)
+                    promoted_feeds.update(feeds)
+                else:
+                    feeds = itunes.fetch_genre(
+                        client, country, category.itunes_genre_id
+                    )
+                    other_feeds.update(feeds)
+                typer.secho(f"Fetched {label}", fg=typer.colors.GREEN)
+            except itunes.ItunesError as exc:
+                typer.secho(f"Error {label}: {exc}", fg=typer.colors.RED)
 
-    categories = Category.objects.filter(itunes_genre_id__isnull=False)
+            # Jitter to avoid hitting rate limits
+            time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
 
-    permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
-    execute_thread_pool(lambda t: _fetch_itunes_feeds(*t), permutations)
+        categories = Category.objects.filter(itunes_genre_id__isnull=False)
+        permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
+        execute_thread_pool(lambda t: _fetch_itunes_feeds(*t), permutations)
 
     # Clear existing promoted podcasts
     typer.secho("Saving feeds to the database...", fg=typer.colors.YELLOW)
 
-    # Save promoted feeds to the database
     with transaction.atomic():
         Podcast.objects.filter(promoted=True).update(promoted=False)
         itunes.save_feeds_to_db(promoted_feeds, promoted=True)
 
-    # Save other feeds to the database
     itunes.save_feeds_to_db(other_feeds)
-
     typer.secho("Saved feeds to the database", fg=typer.colors.GREEN)

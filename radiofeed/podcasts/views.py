@@ -89,7 +89,8 @@ def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedire
 
     if request.search:
         try:
-            feeds = itunes.search_cached(get_client(), request.search.value)
+            with get_client() as client:
+                feeds = itunes.search_cached(client, request.search.value)
             return TemplateResponse(
                 request,
                 "podcasts/search_itunes.html",
