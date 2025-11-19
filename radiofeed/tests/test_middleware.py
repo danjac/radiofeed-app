@@ -137,3 +137,27 @@ class TestHtmxMessagesMiddleware:
         req._messages = messages
         resp = mw(req)
         assert b"OK" not in resp.content
+
+    def test_streaming_response(self, rf, messages):
+        def _get_response(_):
+            resp = HttpResponse()
+            resp.streaming = True
+            return resp
+
+        mw = HtmxMessagesMiddleware(_get_response)
+        req = rf.get("/", headers={"Hx-Request": "true"})
+        req.htmx = HtmxDetails(req)
+        req._messages = messages
+        resp = mw(req)
+        assert b"OK" not in resp.content
+
+    def test_non_html_response(self, rf, messages):
+        def _get_response(_):
+            return HttpResponse(content_type="application/json")
+
+        mw = HtmxMessagesMiddleware(_get_response)
+        req = rf.get("/", headers={"Hx-Request": "true"})
+        req.htmx = HtmxDetails(req)
+        req._messages = messages
+        resp = mw(req)
+        assert b"OK" not in resp.content

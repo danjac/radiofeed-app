@@ -1,5 +1,7 @@
 import pytest
+from bs4.element import NavigableString
 
+from radiofeed import html
 from radiofeed.html import linkify, render_markdown, strip_extra_spaces, strip_html
 
 
@@ -18,6 +20,86 @@ class TestLinkify:
             linkify("<p>https://example.com</p>")
             == '<p><a href="https://example.com" rel="nofollow">https://example.com</a></p>'
         )
+
+    def test_trailing_punctuation(self):
+        result = linkify("<p>https://example.com?!</p>")
+        assert (
+            '<a href="https://example.com" rel="nofollow">https://example.com</a>?!'
+            in result
+        )
+
+    def test_www_normalized(self):
+        result = linkify("<p>www.example.com</p>")
+        assert 'href="https://www.example.com"' in result
+
+
+class TestLinkifyHelpers:
+    def test_linkify_node_no_replacements(self):
+        soup = html._make_soup("plain text")
+        node = soup.string
+        assert isinstance(node, NavigableString)
+        html._linkify_node(soup, node)
+        assert str(soup) == "plain text"
+
+    def test_linkify_node_with_replacements(self):
+        soup = html._make_soup("visit https://example.com now")
+        node = soup.string
+        assert isinstance(node, NavigableString)
+        html._linkify_node(soup, node)
+        assert '<a href="https://example.com"' in str(soup)
+
+    def test_build_replacements(self):
+        soup = html._make_soup("")
+        replacements = html._build_replacements(soup, "https://example.com end")
+        assert len(replacements) == 2
+        anchor = replacements[0]
+        assert getattr(anchor, "name", None) == "a"
+
+    def test_has_link_replacement(self):
+        soup = html._make_soup("")
+        replacements = html._build_replacements(soup, "no links here")
+        assert not html._has_link_replacement(replacements)
+
+        replacements = html._build_replacements(soup, "https://example.com")
+        assert html._has_link_replacement(replacements)
+
+    def test_iter_url_matches_skip_overlap_and_empty(self, monkeypatch):
+        class FakeMatch:
+            def __init__(self, span, url):
+                self._span = span
+                self._url = url
+
+            def span(self):
+                return self._span
+
+            def group(self, name):
+                assert name == "url"
+                return self._url
+
+        class FakePattern:
+            def __init__(self, matches):
+                self._matches = matches
+
+            def finditer(self, _):
+                return iter(self._matches)
+
+        fake_matches = [
+            FakeMatch((0, 5), "https://example.com"),
+            FakeMatch((2, 4), "...)"),  # overlapping, should be skipped
+            FakeMatch((6, 8), "...)"),  # becomes empty after stripping
+        ]
+        monkeypatch.setattr(
+            html, "_LINKIFY_PATTERN", FakePattern(fake_matches), raising=False
+        )
+        assert html._iter_url_matches("ignored") == [(0, 5, "https://example.com", "")]
+
+    def test_strip_trailing_punctuation(self):
+        url, trailing = html._strip_trailing_punctuation("https://a.com?!")
+        assert url == "https://a.com"
+        assert trailing == "?!"
+
+    def test_normalize_href(self):
+        assert html._normalize_href("www.example.com") == "https://www.example.com"
 
 
 class TestRenderMarkdown:
@@ -48,6 +130,12 @@ class TestRenderMarkdown:
 
     def test_unsafe(self):
         assert render_markdown("<script>alert('xss ahoy!')</script>") == ""
+
+
+class TestCleanHtml:
+    def test_clean_html(self):
+        result = html._clean_html("<script>bad()</script><p>ok</p>")
+        assert result == "<p>ok</p>"
 
 
 class TestStripHtml:

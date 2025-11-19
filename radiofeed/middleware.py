@@ -55,6 +55,13 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         if set(response.headers) & self._hx_redirect_headers:
             return response
 
+        if response.streaming:
+            return response
+
+        content_type = response.get("Content-Type", "")
+        if content_type and "html" not in content_type.lower():
+            return response
+
         if messages := get_messages(request):
             response.write(
                 render_to_string(
