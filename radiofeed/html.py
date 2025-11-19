@@ -1,7 +1,9 @@
+import dataclasses
 import functools
 import html
 import io
 import re
+from collections.abc import Iterator
 from typing import Final
 
 import bs4
@@ -77,6 +79,16 @@ _LINKIFY_PATTERN: Final = re.compile(
 _TRAILING_PUNCTUATION: Final = ",.;:!?)]}"
 
 
+@dataclasses.dataclass(frozen=True, slots=True, kw_only=True)
+class UrlMatch:
+    """Data class representing a URL match in text."""
+
+    start: int
+    end: int
+    url: str
+    trailing: str
+
+
 @mark_safe  # noqa: S308
 def render_markdown(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
@@ -87,16 +99,6 @@ def render_markdown(content: str) -> str:
 
         return _clean_html(linkify(content))
     return ""
-
-
-def _clean_html(content: str) -> str:
-    return nh3.clean(
-        content,
-        clean_content_tags=_CLEAN_TAGS,
-        link_rel=_LINK_REL,
-        set_tag_attribute_values=_TAG_ATTRIBUTES,
-        tags=_ALLOWED_TAGS,
-    )
 
 
 def strip_html(content: str) -> str:
@@ -126,74 +128,78 @@ def strip_extra_spaces(value: str) -> str:
     return "\n".join(lines)
 
 
+def make_soup(content: str) -> bs4.BeautifulSoup:
+    """Makes a BeautifulSoup object from the given HTML content."""
+    with io.StringIO(content) as fp:
+        return bs4.BeautifulSoup(fp, "html.parser")
+
+
 def linkify(content: str) -> str:
     """Converts URLs to links, if not already in <a> tags."""
-    soup = _make_soup(content)
-    for node in list(soup.find_all(string=True)):
-        _linkify_node(soup, node)
+    soup = make_soup(content)
+    for node in soup.find_all(string=True):
+        linkify_node(soup, node)
     return str(soup)
 
 
-def _linkify_node(soup: bs4.BeautifulSoup, node: NavigableString) -> None:
-    parent = node.parent
-    if not parent or parent.name == "a":
+def linkify_node(soup: bs4.BeautifulSoup, node: NavigableString) -> None:
+    """Converts URLs in the given NavigableString node to links, if not already in <a> tags."""
+    if not node.parent or node.parent.name == "a":
         return
 
-    text = str(node)
-    replacements = list(_build_replacements(soup, text))
-    if not _has_link_replacement(replacements):
-        return
+    extract: bool = False
 
-    for replacement in replacements:
+    for replacement in insert_links(soup, str(node)):
         node.insert_before(replacement)
-    node.extract()
+        extract = True
+
+    if extract:
+        node.extract()
 
 
-def _build_replacements(soup: bs4.BeautifulSoup, text: str) -> list[str | Tag]:
-    replacements: list[str | Tag] = []
+def insert_links(soup: bs4.BeautifulSoup, text: str) -> Iterator[str | Tag]:
+    """Yields text and link tags for the given text, replacing URLs with <a> tags."""
     last_index = 0
+    for match in find_url_matches(text):
+        if match.start > last_index:
+            yield text[last_index : match.start]
 
-    for start, end, url, trailing in _iter_url_matches(text):
-        if start > last_index:
-            replacements.append(text[last_index:start])
+        anchor = soup.new_tag("a", href=_normalize_href(match.url))
+        anchor["rel"] = "nofollow noopener noreferrer"
+        anchor.string = match.url
+        yield anchor
 
-        anchor = soup.new_tag("a", href=_normalize_href(url))
-        anchor["rel"] = "nofollow"
-        anchor.string = url
-        replacements.append(anchor)
+        if match.trailing:
+            yield match.trailing
 
-        if trailing:
-            replacements.append(trailing)
-
-        last_index = end
+        last_index = match.end
 
     if last_index < len(text):
-        replacements.append(text[last_index:])
-
-    return replacements
+        yield text[last_index:]
 
 
-def _has_link_replacement(replacements: list[str | Tag]) -> bool:
-    return any(isinstance(item, Tag) for item in replacements)
-
-
-def _iter_url_matches(text: str) -> list[tuple[int, int, str, str]]:
-    matches: list[tuple[int, int, str, str]] = []
+def find_url_matches(text: str) -> Iterator[UrlMatch]:
+    """Finds URLs in the given text and yields UrlMatch objects."""
     last_index = 0
     for match in _LINKIFY_PATTERN.finditer(text):
         start, end = match.span()
         if start < last_index:
             continue
 
-        url = match.group("url")
-        url, trailing = _strip_trailing_punctuation(url)
+        group = match.group("url")
+        url, trailing = _strip_trailing_punctuation(group)
 
         if not url:
             continue
 
-        matches.append((start, end, url, trailing))
+        yield UrlMatch(
+            start=start,
+            end=end,
+            url=url,
+            trailing=trailing,
+        )
+
         last_index = end
-    return matches
 
 
 def _strip_trailing_punctuation(url: str) -> tuple[str, str]:
@@ -208,9 +214,14 @@ def _normalize_href(url: str) -> str:
     return url if not url.lower().startswith("www.") else f"https://{url}"
 
 
-def _make_soup(content: str) -> bs4.BeautifulSoup:
-    with io.StringIO(content) as fp:
-        return bs4.BeautifulSoup(fp, "html.parser")
+def _clean_html(content: str) -> str:
+    return nh3.clean(
+        content,
+        clean_content_tags=_CLEAN_TAGS,
+        link_rel=_LINK_REL,
+        set_tag_attribute_values=_TAG_ATTRIBUTES,
+        tags=_ALLOWED_TAGS,
+    )
 
 
 @functools.cache
