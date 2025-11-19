@@ -33,6 +33,10 @@ def handle(
     ] = 5.0,
 ) -> None:
     """Fetch the top iTunes podcasts for a given country."""
+
+    categories = Category.objects.filter(itunes_genre_id__isnull=False)
+    permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
+
     promoted_feeds: set[itunes.ItunesFeed] = set()
     other_feeds: set[itunes.ItunesFeed] = set()
 
@@ -57,8 +61,6 @@ def handle(
             # Jitter to avoid hitting rate limits
             time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
 
-        categories = Category.objects.filter(itunes_genre_id__isnull=False)
-        permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
         execute_thread_pool(lambda t: _fetch_itunes_feeds(*t), permutations)
 
     # Clear existing promoted podcasts
