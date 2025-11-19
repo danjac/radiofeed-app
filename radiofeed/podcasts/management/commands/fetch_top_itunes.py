@@ -7,7 +7,7 @@ import typer
 from django.db import transaction
 from django_typer.management import Typer
 
-from radiofeed.http_client import get_client
+from radiofeed.client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.thread_pool import execute_thread_pool

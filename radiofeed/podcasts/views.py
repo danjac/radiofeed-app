@@ -9,9 +9,9 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.client import get_client
 from radiofeed.form_handler import handle_form
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
-from radiofeed.http_client import get_client
 from radiofeed.paginator import render_paginated_response
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts import itunes

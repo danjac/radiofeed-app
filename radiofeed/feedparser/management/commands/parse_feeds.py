@@ -4,8 +4,8 @@ import typer
 from django.db.models import Case, Count, IntegerField, QuerySet, When
 from django_typer.management import Typer
 
+from radiofeed.client import get_client
 from radiofeed.feedparser.feed_parser import parse_feed
-from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import execute_thread_pool
 

@@ -4,6 +4,7 @@ import httpx
 import pytest
 from PIL.Image import UnidentifiedImageError
 
+from radiofeed.client import Client
 from radiofeed.cover_image import (
     CoverImageError,
     CoverImageTooLargeError,
@@ -18,7 +19,6 @@ from radiofeed.cover_image import (
     get_placeholder_url,
     save_cover_image,
 )
-from radiofeed.http_client import Client
 
 
 class TestEncodeDecodeCoverUrl:

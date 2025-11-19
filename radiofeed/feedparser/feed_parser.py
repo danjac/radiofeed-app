@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.db.utils import DataError
 from django.utils import timezone
 
+from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.feedparser import rss_fetcher, rss_parser, scheduler
 from radiofeed.feedparser.exceptions import (
@@ -19,7 +20,6 @@ from radiofeed.feedparser.exceptions import (
     NotModifiedError,
 )
 from radiofeed.feedparser.models import Feed, Item
-from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 
 

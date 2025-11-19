@@ -6,12 +6,12 @@ import httpx
 import pytest
 from django.utils.text import slugify
 
+from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.feed_parser import get_categories_dict, parse_feed
 from radiofeed.feedparser.rss_fetcher import make_content_hash
-from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 

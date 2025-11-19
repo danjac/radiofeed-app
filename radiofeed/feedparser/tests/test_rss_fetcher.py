@@ -4,6 +4,7 @@ import http
 import httpx
 import pytest
 
+from radiofeed.client import Client
 from radiofeed.feedparser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
@@ -14,7 +15,6 @@ from radiofeed.feedparser.rss_fetcher import (
     fetch_rss,
     make_content_hash,
 )
-from radiofeed.http_client import Client
 
 
 class TestMakeContentHash:

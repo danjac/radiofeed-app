@@ -17,6 +17,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed import pwa
+from radiofeed.client import get_client
 from radiofeed.cover_image import (
     CoverImageError,
     decode_cover_url,
@@ -26,7 +27,6 @@ from radiofeed.cover_image import (
     save_cover_image,
 )
 from radiofeed.http import TextResponse
-from radiofeed.http_client import get_client
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 

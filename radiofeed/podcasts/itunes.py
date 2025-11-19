@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode
 from lxml import html
 from pydantic import BaseModel, Field, ValidationError
 
-from radiofeed.http_client import Client
+from radiofeed.client import Client
 from radiofeed.podcasts.models import Podcast
 
 _ITUNES_LOOKUP_BATCH_SIZE: Final = 200

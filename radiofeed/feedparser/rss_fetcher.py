@@ -8,13 +8,13 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
+from radiofeed.client import Client
 from radiofeed.feedparser.date_parser import parse_date
 from radiofeed.feedparser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
-from radiofeed.http_client import Client
 
 _ACCEPT: Final = (
     "application/atom+xml,"
