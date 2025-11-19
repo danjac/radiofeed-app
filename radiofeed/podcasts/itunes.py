@@ -1,8 +1,10 @@
 import contextlib
 import functools
 import hashlib
+import itertools
+import json
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from typing import Final
 
 import httpx
@@ -16,6 +18,9 @@ from pydantic import BaseModel, Field, ValidationError
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
+
+_ITUNES_LOOKUP_BATCH_SIZE: Final = 200
+
 
 COUNTRIES: Final = (
     "br",
@@ -141,12 +146,25 @@ def _fetch_feeds_from_page(client: Client, url: str) -> Iterator[Feed]:
     if not itunes_ids:
         return iter(())
 
-    return _fetch_feeds_from_api(
-        client,
-        "https://itunes.apple.com/lookup",
-        {
-            "id": ",".join(itunes_ids),
-        },
+    return _lookup_feeds(client, sorted(itunes_ids))
+
+
+def _lookup_feeds(client: Client, itunes_ids: Sequence[str]) -> Iterator[Feed]:
+    def _fetch_batch(batch: Sequence[str]) -> Iterator[Feed]:
+        return _fetch_feeds_from_api(
+            client,
+            "https://itunes.apple.com/lookup",
+            {
+                "id": ",".join(batch),
+            },
+        )
+
+    return iter(
+        feed
+        for chunk in itertools.batched(
+            itunes_ids, _ITUNES_LOOKUP_BATCH_SIZE, strict=False
+        )
+        for feed in _fetch_batch(chunk)
     )
 
 
@@ -166,7 +184,12 @@ def _fetch_feeds_from_api(
     except httpx.HTTPError as exc:
         raise ItunesError(str(exc)) from exc
 
-    for result in response.json().get("results", []):
+    try:
+        payload = response.json()
+    except (ValueError, json.JSONDecodeError) as exc:
+        raise ItunesError("Invalid response from iTunes") from exc
+
+    for result in payload.get("results", []):
         with contextlib.suppress(ValidationError):
             yield Feed(**result)
 

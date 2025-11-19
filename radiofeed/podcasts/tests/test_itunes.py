@@ -430,6 +430,17 @@ class TestSearch:
 
         return Client(transport=httpx.MockTransport(_handle))
 
+    @pytest.fixture
+    def bad_json_client(self):
+        return Client(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(
+                    http.HTTPStatus.OK,
+                    content=b"not json",
+                )
+            ),
+        )
+
     @pytest.mark.django_db
     def test_ok(self, good_client):
         feeds = list(itunes.search(good_client, "test"))
@@ -449,6 +460,11 @@ class TestSearch:
         assert feeds == []
 
     @pytest.mark.django_db
+    def test_invalid_json(self, bad_json_client):
+        with pytest.raises(itunes.ItunesError):
+            list(itunes.search(bad_json_client, "test"))
+
+    @pytest.mark.django_db
     def test_podcast_exists(self, good_client):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
 
@@ -466,3 +482,21 @@ class TestSearch:
         itunes.search_cached(client, "test")
         itunes.search_cached(client, "test")
         mock_search.assert_called_once()
+
+
+class TestLookupFeeds:
+    def test_chunking(self, mocker):
+        client = Client()
+        mock_fetch = mocker.patch(
+            "radiofeed.podcasts.itunes._fetch_feeds_from_api",
+            return_value=iter(()),
+        )
+
+        ids = [str(i) for i in range(205)]
+        list(itunes._lookup_feeds(client, ids))
+
+        assert mock_fetch.call_count == 2
+        first_call = mock_fetch.call_args_list[0]
+        assert len(first_call.args[2]["id"].split(",")) == 200
+        second_call = mock_fetch.call_args_list[1]
+        assert len(second_call.args[2]["id"].split(",")) == 5

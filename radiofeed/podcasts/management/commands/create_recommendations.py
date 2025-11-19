@@ -30,17 +30,20 @@ def handle() -> None:
 
 
 def _recommend(language: str) -> None:
-    podcast_ids = {
-        recommendation.podcast_id for recommendation in recommender.recommend(language)
-    }
+    podcast_ids = (rec.podcast_id for rec in recommender.recommend(language))
 
     for batch in itertools.batched(podcast_ids, 500, strict=False):
-        with transaction.atomic():
-            Podcast.objects.select_for_update(skip_locked=True).filter(
-                has_similar_podcasts=False,
-                id__in=batch,
-            ).update(has_similar_podcasts=True)
+        _update_recommendations_batch(batch)
+
     typer.secho(
         f"Recommendations created for language: {language}",
         fg=typer.colors.GREEN,
     )
+
+
+def _update_recommendations_batch(podcast_ids: tuple[int, ...]) -> None:
+    with transaction.atomic():
+        Podcast.objects.select_for_update(skip_locked=True).filter(
+            has_similar_podcasts=False,
+            id__in=podcast_ids,
+        ).update(has_similar_podcasts=True)
