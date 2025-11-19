@@ -8,9 +8,8 @@ from typing import Final
 
 import bs4
 import nh3
-from bs4.element import NavigableString, Tag
+from bs4.element import Tag
 from django.template.defaultfilters import striptags
-from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 
 _RE_EXTRA_SPACES: Final = r" +"
@@ -81,15 +80,20 @@ _TRAILING_PUNCTUATION: Final = ",.;:!?)]}"
 
 @dataclasses.dataclass(frozen=True, slots=True, kw_only=True)
 class UrlMatch:
-    """Data class representing a URL match in text."""
+    """Data class representing recommend match in text."""
 
     start: int
     end: int
     url: str
     trailing: str
 
+    def normalize_url(self) -> str:
+        """Returns the normalized URL, adding https:// if needed."""
+        if self.url.lower().startswith("www."):
+            return f"https://{self.url}"
+        return self.url
 
-@mark_safe  # noqa: S308
+
 def render_markdown(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if content := content.strip():
@@ -137,35 +141,27 @@ def make_soup(content: str) -> bs4.BeautifulSoup:
 def linkify(content: str) -> str:
     """Converts URLs to links, if not already in <a> tags."""
     soup = make_soup(content)
-    for node in soup.find_all(string=True):
-        linkify_node(soup, node)
+    for node in list(soup.find_all(string=True)):
+        if not node.parent or node.parent.name == "a":
+            continue
+
+        if replacements := list(insert_links(soup, str(node))):
+            for replacement in replacements:
+                node.insert_before(replacement)
+            node.extract()
+
     return str(soup)
-
-
-def linkify_node(soup: bs4.BeautifulSoup, node: NavigableString) -> None:
-    """Converts URLs in the given NavigableString node to links, if not already in <a> tags."""
-    if not node.parent or node.parent.name == "a":
-        return
-
-    extract: bool = False
-
-    for replacement in insert_links(soup, str(node)):
-        node.insert_before(replacement)
-        extract = True
-
-    if extract:
-        node.extract()
 
 
 def insert_links(soup: bs4.BeautifulSoup, text: str) -> Iterator[str | Tag]:
     """Yields text and link tags for the given text, replacing URLs with <a> tags."""
     last_index = 0
     for match in find_url_matches(text):
-        if match.start > last_index:
-            yield text[last_index : match.start]
+        if match.start > last_index and (head := text[last_index : match.start]):
+            yield head
 
-        anchor = soup.new_tag("a", href=_normalize_href(match.url))
-        anchor["rel"] = "nofollow noopener noreferrer"
+        anchor = soup.new_tag("a", href=match.normalize_url())
+        anchor["rel"] = _LINK_REL
         anchor.string = match.url
         yield anchor
 
@@ -174,32 +170,25 @@ def insert_links(soup: bs4.BeautifulSoup, text: str) -> Iterator[str | Tag]:
 
         last_index = match.end
 
-    if last_index < len(text):
-        yield text[last_index:]
+    if last_index < len(text) and (tail := text[last_index:]):
+        yield tail
 
 
 def find_url_matches(text: str) -> Iterator[UrlMatch]:
     """Finds URLs in the given text and yields UrlMatch objects."""
-    last_index = 0
     for match in _LINKIFY_PATTERN.finditer(text):
         start, end = match.span()
-        if start < last_index:
-            continue
 
         group = match.group("url")
         url, trailing = _strip_trailing_punctuation(group)
 
-        if not url:
-            continue
-
-        yield UrlMatch(
-            start=start,
-            end=end,
-            url=url,
-            trailing=trailing,
-        )
-
-        last_index = end
+        if url:
+            yield UrlMatch(
+                start=start,
+                end=end,
+                url=url,
+                trailing=trailing,
+            )
 
 
 def _strip_trailing_punctuation(url: str) -> tuple[str, str]:
@@ -208,10 +197,6 @@ def _strip_trailing_punctuation(url: str) -> tuple[str, str]:
         trailing = url[-1] + trailing
         url = url[:-1]
     return url, trailing
-
-
-def _normalize_href(url: str) -> str:
-    return url if not url.lower().startswith("www.") else f"https://{url}"
 
 
 def _clean_html(content: str) -> str:
