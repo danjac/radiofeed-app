@@ -12,7 +12,10 @@ from bs4.element import Tag
 from django.template.defaultfilters import striptags
 from markdown_it import MarkdownIt
 
+_TRAILING_PUNCTUATION: Final = ",.;:!?)]}"
+
 _RE_EXTRA_SPACES: Final = r" +"
+
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -71,12 +74,6 @@ _TAG_ATTRIBUTES: Final = {
     },
 }
 
-_LINKIFY_PATTERN: Final = re.compile(
-    r"(?P<url>(?:(?:https?|ftp)://|www\.)[^\s<]+)",
-    re.IGNORECASE,
-)
-_TRAILING_PUNCTUATION: Final = ",.;:!?)]}"
-
 
 @dataclasses.dataclass(frozen=True, slots=True, kw_only=True)
 class UrlMatch:
@@ -94,7 +91,7 @@ class UrlMatch:
         return self.url
 
 
-def render_markdown(content: str) -> str:
+def markdownify(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if content := content.strip():
         # render Markdown if not already HTML
@@ -111,13 +108,7 @@ def strip_html(content: str) -> str:
 
     If content is Markdown, will attempt to render to HTML first.
     """
-    return strip_extra_spaces(
-        html.unescape(
-            striptags(
-                render_markdown(content),
-            )
-        )
-    )
+    return strip_extra_spaces(html.unescape(striptags(markdownify(content))))
 
 
 def strip_extra_spaces(value: str) -> str:
@@ -130,12 +121,6 @@ def strip_extra_spaces(value: str) -> str:
         if line
     ]
     return "\n".join(lines)
-
-
-def make_soup(content: str) -> bs4.BeautifulSoup:
-    """Makes a BeautifulSoup object from the given HTML content."""
-    with io.StringIO(content) as fp:
-        return bs4.BeautifulSoup(fp, "html.parser")
 
 
 def linkify(content: str) -> str:
@@ -151,6 +136,12 @@ def linkify(content: str) -> str:
             node.extract()
 
     return str(soup)
+
+
+def make_soup(content: str) -> bs4.BeautifulSoup:
+    """Makes a BeautifulSoup object from the given HTML content."""
+    with io.StringIO(content) as fp:
+        return bs4.BeautifulSoup(fp, "html.parser")
 
 
 def insert_links(soup: bs4.BeautifulSoup, text: str) -> Iterator[str | Tag]:
@@ -176,7 +167,7 @@ def insert_links(soup: bs4.BeautifulSoup, text: str) -> Iterator[str | Tag]:
 
 def find_url_matches(text: str) -> Iterator[UrlMatch]:
     """Finds URLs in the given text and yields UrlMatch objects."""
-    for match in _LINKIFY_PATTERN.finditer(text):
+    for match in _re_linkify_pattern().finditer(text):
         start, end = match.span()
 
         group = match.group("url")
@@ -192,11 +183,9 @@ def find_url_matches(text: str) -> Iterator[UrlMatch]:
 
 
 def _strip_trailing_punctuation(url: str) -> tuple[str, str]:
-    trailing = ""
-    while url and url[-1] in _TRAILING_PUNCTUATION:
-        trailing = url[-1] + trailing
-        url = url[:-1]
-    return url, trailing
+    stripped = url.rstrip(_TRAILING_PUNCTUATION)
+    trailing = url[len(stripped) :]
+    return stripped, trailing
 
 
 def _clean_html(content: str) -> str:
@@ -206,6 +195,14 @@ def _clean_html(content: str) -> str:
         link_rel=_LINK_REL,
         set_tag_attribute_values=_TAG_ATTRIBUTES,
         tags=_ALLOWED_TAGS,
+    )
+
+
+@functools.cache
+def _re_linkify_pattern() -> re.Pattern:
+    return re.compile(
+        r"(?P<url>(?:(?:https?|ftp)://|www\.)[^\s<]+)",
+        re.IGNORECASE,
     )
 
 

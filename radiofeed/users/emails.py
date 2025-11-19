@@ -8,7 +8,7 @@ from django.db.models import QuerySet
 from django.template import loader
 from django.urls import reverse
 
-from radiofeed.html import strip_html
+from radiofeed.html_sanitizer import strip_html
 from radiofeed.templatetags import absolute_uri
 
 

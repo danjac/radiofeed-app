@@ -13,7 +13,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
-from radiofeed.html import render_markdown
+from radiofeed.html_sanitizer import markdownify
 from radiofeed.pwa import get_theme_color
 
 register = template.Library()
@@ -111,7 +111,7 @@ def render_field(field: forms.Field, **attrs) -> str:
 @register.inclusion_tag("markdown.html")
 def markdown(content: str | None) -> dict:
     """Render content as Markdown."""
-    markdown = render_markdown(content) if content else ""
+    markdown = markdownify(content) if content else ""
     return {"markdown": markdown}
 
 
