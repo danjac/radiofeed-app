@@ -14,8 +14,8 @@ from fast_update.query import FastUpdateQuerySet
 from slugify import slugify
 
 from radiofeed.fields import URLField
-from radiofeed.html_sanitizer import strip_html
 from radiofeed.podcasts.models import Season
+from radiofeed.sanitizer import strip_html
 from radiofeed.search import SearchQuerySetMixin
 
 

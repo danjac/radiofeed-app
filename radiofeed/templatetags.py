@@ -13,7 +13,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
 from radiofeed.cover_image import CoverImageVariant, get_cover_image_attrs
-from radiofeed.html_sanitizer import markdownify
+from radiofeed.markdown import markdownify
 from radiofeed.pwa import get_theme_color
 
 register = template.Library()

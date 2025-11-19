@@ -1,4 +1,4 @@
-from radiofeed.html_linkifier import insert_links, linkify, make_soup
+from radiofeed.linkifier import insert_links, linkify, make_soup
 
 
 class TestLinkify:

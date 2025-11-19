@@ -1,6 +1,4 @@
-import pytest
-
-from radiofeed.html_sanitizer import markdownify, strip_extra_spaces, strip_html
+from radiofeed.markdown import markdownify
 
 
 class TestMarkdownify:
@@ -31,34 +29,3 @@ class TestMarkdownify:
 
     def test_unsafe(self):
         assert markdownify("<script>alert('xss ahoy!')</script>") == ""
-
-
-class TestStripHtml:
-    @pytest.mark.parametrize(
-        (
-            "value",
-            "expected",
-        ),
-        [
-            pytest.param("", "", id="empty"),
-            pytest.param("  ", "", id="spaces"),
-            pytest.param("<p>this &amp; that</p>", "this & that", id="html"),
-        ],
-    )
-    def test_strip_html(self, value, expected):
-        assert strip_html(value) == expected
-
-
-class TestStripExtraSpaces:
-    def test_strip_extra_spaces(self):
-        value = """
-        This is some text
-        with  a line    break
-
-
-        and some extra line breaks!
-
-
-        """
-        expected = "This is some text\nwith a line break\nand some extra line breaks!"
-        assert strip_extra_spaces(value) == expected
