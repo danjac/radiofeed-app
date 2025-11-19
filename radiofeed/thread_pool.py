@@ -3,7 +3,7 @@ from collections.abc import Callable, Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import TypeVar
 
-from django.db import close_old_connections, connections
+from django.db import close_old_connections
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -35,6 +35,6 @@ def db_thread_safe(fn: Callable) -> Callable:
         try:
             return fn(*args, **kwargs)
         finally:
-            connections.close_all()
+            close_old_connections()
 
     return _inner

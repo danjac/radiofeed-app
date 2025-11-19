@@ -192,7 +192,7 @@ def get_metadata_info(request: HttpRequest, cover_url: str) -> list[ImageInfo]:
     ]
 
 
-@functools.cache
+@functools.lru_cache(maxsize=512)
 def get_cover_image_url(cover_url: str | None, size: int) -> str:
     """Return the cover image URL"""
     return (
@@ -208,14 +208,14 @@ def get_cover_image_url(cover_url: str | None, size: int) -> str:
     )
 
 
-@functools.cache
+@functools.lru_cache(maxsize=2048)
 def encode_cover_url(cover_url: str) -> str:
     """Returns signed cover URL"""
     signed_url = get_cover_url_signer().sign(cover_url)
     return urlsafe_base64_encode(signed_url.encode())
 
 
-@functools.cache
+@functools.lru_cache(maxsize=2048)
 def decode_cover_url(encoded_url: str) -> str:
     """Returns unsigned cover URL"""
     try:
@@ -240,31 +240,31 @@ def is_cover_image_size(size: int) -> bool:
     return size in get_cover_image_sizes()
 
 
-@functools.cache
+@functools.lru_cache(maxsize=64)
 def get_cover_image_sizes() -> set[int]:
     """Returns set of allowed sizes."""
     return set(itertools.chain.from_iterable(_COVER_IMAGE_SIZES.values()))
 
 
-@functools.cache
+@functools.lru_cache(maxsize=16)
 def get_placeholder(size: int) -> str:
     """Return placeholder image name"""
     return f"placeholder-{size}.webp"
 
 
-@functools.cache
+@functools.lru_cache(maxsize=16)
 def get_placeholder_url(size: int) -> str:
     """Return URL to cover image placeholder"""
     return static(f"img/placeholders/{get_placeholder(size)}")
 
 
-@functools.cache
+@functools.lru_cache(maxsize=16)
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
     return settings.STATIC_SRC / "img" / "placeholders" / get_placeholder(size)
 
 
-@functools.cache
+@functools.lru_cache(maxsize=1)
 def get_cover_url_signer() -> Signer:
     """Return URL signer"""
     return Signer(salt="cover_url")

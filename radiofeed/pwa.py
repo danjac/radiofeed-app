@@ -129,4 +129,5 @@ def _generate_icons(dir: str) -> Iterator[ImageInfo]:
 
 @functools.cache
 def _icon_size(path: pathlib.Path) -> str:
-    return "{}x{}".format(*Image.open(path).size)
+    with Image.open(path) as image:
+        return "{}x{}".format(*image.size)

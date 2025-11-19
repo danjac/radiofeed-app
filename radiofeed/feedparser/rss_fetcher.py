@@ -25,6 +25,8 @@ _ACCEPT: Final = (
     "text/xml;q=0.2,"
 )
 
+_WHITESPACE: Final = b" \t\r\n"
+
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class Response:
@@ -96,6 +98,20 @@ def build_http_headers(
 
 def make_content_hash(content: bytes) -> str:
     """Hashes RSS content."""
-    if value := content.strip():
-        return hashlib.sha256(value).hexdigest()
-    return ""
+    if not content:
+        return ""
+
+    mv = memoryview(content)
+    start = 0
+    end = len(mv)
+
+    while start < end and mv[start] in _WHITESPACE:
+        start += 1
+
+    while end > start and mv[end - 1] in _WHITESPACE:
+        end -= 1
+
+    if start == end:
+        return ""
+
+    return hashlib.sha256(mv[start:end]).hexdigest()
