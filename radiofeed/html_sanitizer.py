@@ -5,6 +5,7 @@ from typing import Final
 
 import nh3
 from django.template.defaultfilters import striptags
+from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 
 from radiofeed.html_linkifier import linkify
@@ -70,6 +71,7 @@ _TAG_ATTRIBUTES: Final = {
 }
 
 
+@mark_safe  # noqa: S308
 def markdownify(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
     if content := content.strip():
