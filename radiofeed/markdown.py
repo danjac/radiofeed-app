@@ -72,18 +72,16 @@ def markdownify(content: str) -> str:
         # render Markdown if not already HTML
         if not nh3.is_html(content):
             content = _markdown().render(content)
-        return _clean_html(linkify(content))
+
+        return nh3.clean(
+            linkify(content),
+            clean_content_tags=_CLEAN_TAGS,
+            link_rel=_LINK_REL,
+            set_tag_attribute_values=_TAG_ATTRIBUTES,
+            tags=_ALLOWED_TAGS,
+        )
+
     return ""
-
-
-def _clean_html(content: str) -> str:
-    return nh3.clean(
-        content,
-        clean_content_tags=_CLEAN_TAGS,
-        link_rel=_LINK_REL,
-        set_tag_attribute_values=_TAG_ATTRIBUTES,
-        tags=_ALLOWED_TAGS,
-    )
 
 
 @functools.cache
