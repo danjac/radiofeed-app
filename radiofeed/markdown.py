@@ -5,8 +5,6 @@ import nh3
 from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 
-from radiofeed.linkifier import linkify
-
 _ALLOWED_TAGS: Final = {
     "a",
     "abbr",
@@ -68,20 +66,13 @@ _TAG_ATTRIBUTES: Final = {
 @mark_safe  # noqa: S308
 def markdownify(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
-    if content := content.strip():
-        # render Markdown if not already HTML
-        if not nh3.is_html(content):
-            content = _markdown().render(content)
-
-        return nh3.clean(
-            linkify(content),
-            clean_content_tags=_CLEAN_TAGS,
-            link_rel=_LINK_REL,
-            set_tag_attribute_values=_TAG_ATTRIBUTES,
-            tags=_ALLOWED_TAGS,
-        )
-
-    return ""
+    return nh3.clean(
+        _markdown().render(content),
+        clean_content_tags=_CLEAN_TAGS,
+        link_rel=_LINK_REL,
+        set_tag_attribute_values=_TAG_ATTRIBUTES,
+        tags=_ALLOWED_TAGS,
+    )
 
 
 @functools.cache

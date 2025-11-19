@@ -18,14 +18,5 @@ class TestMarkdownify:
         assert 'rel="noopener noreferrer nofollow"' in cleaned
         assert 'target="_blank"' in cleaned
 
-    def test_is_unlinked(self):
-        cleaned = str(
-            markdownify(
-                '<div><a href="https://reddit.com">Reddit</a> https://example.com</div>'
-            )
-        )
-        assert cleaned.count('href="https://example.com"') == 1
-        assert cleaned.count('href="https://reddit.com"') == 1
-
     def test_unsafe(self):
         assert markdownify("<script>alert('xss ahoy!')</script>") == ""
