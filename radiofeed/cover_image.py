@@ -74,6 +74,11 @@ class CoverImageTooLargeError(CoverImageError):
     """Raised when the cover image exceeds the maximum allowed size."""
 
 
+def get_cover_url_signer() -> Signer:
+    """Return URL signer"""
+    return Signer(salt="cover_url")
+
+
 def get_cover_image_attrs(
     variant: CoverImageVariant,
     cover_url: str | None,
@@ -262,12 +267,6 @@ def get_placeholder_url(size: int) -> str:
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
     return settings.STATIC_SRC / "img" / "placeholders" / get_placeholder(size)
-
-
-@functools.lru_cache(maxsize=1)
-def get_cover_url_signer() -> Signer:
-    """Return URL signer"""
-    return Signer(salt="cover_url")
 
 
 @contextlib.contextmanager

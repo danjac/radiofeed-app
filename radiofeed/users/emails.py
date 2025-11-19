@@ -1,4 +1,3 @@
-import functools
 import urllib.parse
 
 from allauth.account.models import EmailAddress
@@ -66,7 +65,6 @@ def get_recipients() -> QuerySet[EmailAddress]:
     ).select_related("user")
 
 
-@functools.cache
 def get_unsubscribe_signer() -> TimestampSigner:
     """Get the signer for unsubscribe links."""
     return TimestampSigner(salt="unsubscribe")
