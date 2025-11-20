@@ -5,6 +5,9 @@ class TestMarkdownify:
     def test_empty(self):
         assert markdownify("") == ""
 
+    def test_whitespace(self):
+        assert markdownify("  \t\n") == ""
+
     def test_include_allowed_tag(self):
         text = "<p>testing with paras</p>"
         assert markdownify(text) == text

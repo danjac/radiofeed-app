@@ -64,14 +64,18 @@ _TAG_ATTRIBUTES: Final = {
 
 
 @mark_safe  # noqa: S308
-def markdownify(content: str) -> str:
+def markdownify(text: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
-    return nh3.clean(
-        _markdown().render(content),
-        clean_content_tags=_CLEAN_TAGS,
-        link_rel=_LINK_REL,
-        set_tag_attribute_values=_TAG_ATTRIBUTES,
-        tags=_ALLOWED_TAGS,
+    return (
+        nh3.clean(
+            _markdown().render(text),
+            clean_content_tags=_CLEAN_TAGS,
+            link_rel=_LINK_REL,
+            set_tag_attribute_values=_TAG_ATTRIBUTES,
+            tags=_ALLOWED_TAGS,
+        )
+        if (text := text.strip())
+        else ""
     )
 
 

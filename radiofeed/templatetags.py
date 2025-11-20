@@ -109,10 +109,9 @@ def render_field(field: forms.Field, **attrs) -> str:
 
 
 @register.inclusion_tag("markdown.html")
-def markdown(content: str | None) -> dict:
+def markdown(text: str | None) -> dict:
     """Render content as Markdown."""
-    markdown = markdownify(content) if content else ""
-    return {"markdown": markdown}
+    return {"markdown": markdownify(text or "")}
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
