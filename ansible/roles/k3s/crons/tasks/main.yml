@@ -22,13 +22,10 @@
 
       - name: Render Kubernetes manifests
         vars:
-            cron_schedules: "{{ cron_schedules_default | combine(cron_schedules_override | default({}), recursive=True) }}"
             manage_cmd: "python ./manage.py"
         ansible.builtin.template:
-            src: "{{ item }}.yaml.j2"
-            dest: "{{ manifests_dir.path + '/' + item + '.yaml' }}"
-        loop:
-            - django_cronjobs
+            src: "django_cronjobs.yaml.j2"
+            dest: "{{ manifests_dir.path + '/' + 'django_cronjobs.yaml' }}"
 
       - name: Delete all cronjobs
         ansible.builtin.shell: |
