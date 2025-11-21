@@ -36,39 +36,37 @@ def handle(
 
     categories = Category.objects.filter(itunes_genre_id__isnull=False)
     permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
-
     promoted_feeds: set[itunes.ItunesFeed] = set()
-    other_feeds: set[itunes.ItunesFeed] = set()
 
     with get_client() as client:
 
-        def _fetch_itunes_feeds(country: str, category: Category | None) -> None:
-            label = f"{category.name if category else 'Top'} feeds [{country}]"
+        def _fetch_feeds(country: str, category: Category | None) -> None:
             try:
-                typer.secho(f"Fetching {label}...", fg=typer.colors.YELLOW)
                 if category is None:
+                    typer.secho(f"Most popular feeds [{country}]", fg=typer.colors.BLUE)
                     feeds = itunes.fetch_chart(client, country)
+                    # Save promoted feeds separately in one batch
                     promoted_feeds.update(feeds)
+
                 else:
+                    typer.secho(
+                        f"{category.name} feeds [{country}]",
+                        fg=typer.colors.BLUE,
+                    )
                     feeds = itunes.fetch_genre(
                         client, country, category.itunes_genre_id
                     )
-                    other_feeds.update(feeds)
-                typer.secho(f"Fetched {label}", fg=typer.colors.GREEN)
+                    # Save regular feeds immediately
+                    itunes.save_feeds_to_db(feeds)
             except itunes.ItunesError as exc:
-                typer.secho(f"Error {label}: {exc}", fg=typer.colors.RED)
-
+                typer.secho(f"Error: {exc}", fg=typer.colors.RED)
             # Jitter to avoid hitting rate limits
             time.sleep(random.uniform(jitter_min, jitter_max))  # noqa: S311
 
-        execute_thread_pool(lambda t: _fetch_itunes_feeds(*t), permutations)
+        execute_thread_pool(lambda t: _fetch_feeds(*t), permutations)
 
-    # Clear existing promoted podcasts
-    typer.secho("Saving feeds to the database...", fg=typer.colors.YELLOW)
-
-    with transaction.atomic():
-        Podcast.objects.filter(promoted=True).update(promoted=False)
-        itunes.save_feeds_to_db(promoted_feeds, promoted=True)
-
-    itunes.save_feeds_to_db(other_feeds)
-    typer.secho("Saved feeds to the database", fg=typer.colors.GREEN)
+    if promoted_feeds:
+        with transaction.atomic():
+            # Demote existing promoted feeds first
+            Podcast.objects.filter(promoted=True).update(promoted=False)
+            itunes.save_feeds_to_db(promoted_feeds, promoted=True)

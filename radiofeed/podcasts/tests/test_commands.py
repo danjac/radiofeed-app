@@ -2,8 +2,10 @@ import pytest
 from django.core.management import call_command
 
 from radiofeed.podcasts.itunes import Feed, ItunesError
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
+    PodcastFactory,
     RecommendationFactory,
     SubscriptionFactory,
 )
@@ -35,6 +37,38 @@ class TestFetchTopItunes:
         call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
         patched_chart.assert_called()
         patched_genre.assert_called()
+
+    @pytest.mark.django_db
+    def test_fetch_top_feeds(self, mocker, feed):
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[feed],
+        )
+        promoted = PodcastFactory(promoted=True)
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        patched.assert_called()
+
+        # promoted podcast should be demoted
+        promoted.refresh_from_db()
+        assert promoted.promoted is False
+
+        # only one podcast should be promoted, from new feed
+        assert Podcast.objects.filter(promoted=True).count() == 1
+
+    @pytest.mark.django_db
+    def fetch_top_feeds_none_found(self, mocker, feed):
+        patched = mocker.patch(
+            "radiofeed.podcasts.itunes.fetch_chart",
+            return_value=[feed],
+        )
+        promoted = PodcastFactory(promoted=True)
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        patched.assert_called()
+
+        # no promoted feeds found, so existing promoted podcast remains
+
+        promoted.refresh_from_db()
+        assert promoted.promoted is False
 
     @pytest.mark.django_db
     def test_chart_error(self, mocker, category, feed):
