@@ -1,5 +1,6 @@
 import functools
-from typing import ClassVar, Protocol
+from collections.abc import Sequence
+from typing import Protocol
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, QuerySet
@@ -8,7 +9,7 @@ from django.db.models import F, QuerySet
 class Searchable(Protocol):
     """Provide search mixin protocol."""
 
-    search_vectors: list[str]
+    search_vectors: Sequence[str]
 
 
 class SearchQuerySetMixin:
@@ -19,7 +20,7 @@ class SearchQuerySetMixin:
     search vector queries.
     """
 
-    search_vectors: ClassVar = ["search_vector"]
+    search_vectors = ("search_vector",)
 
     def search(
         self: Searchable,
