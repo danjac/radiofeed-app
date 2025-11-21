@@ -99,7 +99,6 @@
 
       - name: Render Kubernetes manifests
         vars:
-            cron_schedules: "{{ cron_schedules_default | combine(cron_schedules_override | default({}), recursive=True) }}"
             database_url: "postgresql://postgres:{{ postgres.password }}@postgres.default.svc.cluster.local:5432/postgres"
             redis_url: "redis://redis.default.svc.cluster.local:6379/0"
             manage_cmd: "python ./manage.py"
