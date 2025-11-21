@@ -419,7 +419,7 @@ class Podcast(models.Model):
         return self.podcast_type == self.PodcastType.SERIAL
 
 
-class Subscription(models.Model):
+class Subscription(models.Model):  # noqa: DJ008
     """Subscribed podcast belonging to a user's collection."""
 
     subscriber = models.ForeignKey(
@@ -445,15 +445,6 @@ class Subscription(models.Model):
         ]
         indexes: ClassVar[list] = [models.Index(fields=["-created"])]
 
-    def __str__(self) -> str:
-        """Required __str__ method"""
-        return " | ".join(
-            [
-                f"subscriber {self.subscriber_id}",
-                f"podcast {self.podcast_id}",
-            ]
-        )
-
 
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
@@ -467,7 +458,7 @@ class RecommendationQuerySet(models.QuerySet):
         return self._raw_delete(self.db)
 
 
-class Recommendation(models.Model):
+class Recommendation(models.Model):  # noqa: DJ008
     """Recommendation based on similarity between two podcasts."""
 
     podcast = models.ForeignKey(
@@ -501,12 +492,3 @@ class Recommendation(models.Model):
                 fields=["podcast", "recommended"],
             ),
         ]
-
-    def __str__(self) -> str:
-        """Required __str__ method"""
-        return " | ".join(
-            [
-                f"podcast {self.podcast_id}",
-                f"recommended {self.recommended_id}",
-            ]
-        )

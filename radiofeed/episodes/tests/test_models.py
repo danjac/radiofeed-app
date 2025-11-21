@@ -153,11 +153,6 @@ class TestBookmarkManager:
         assert Bookmark.objects.search(search).count() == count
 
 
-class TestBookmarkModel:
-    def test_str(self):
-        assert str(Bookmark(episode_id=1, user_id=1)) == "user 1 | episode 1"
-
-
 class TestAudioLogManager:
     @pytest.mark.parametrize(
         ("search", "count"),
@@ -176,13 +171,6 @@ class TestAudioLogManager:
 
 
 class TestAudioLogModel:
-    def test_str(self):
-        audio_log = AudioLog(
-            episode_id=2,
-            user_id=1,
-        )
-        assert str(audio_log) == "user 1 | episode 2"
-
     @pytest.mark.parametrize(
         ("current_time", "duration", "expected"),
         [

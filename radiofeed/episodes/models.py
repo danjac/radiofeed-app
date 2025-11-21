@@ -210,7 +210,7 @@ class BookmarkQuerySet(models.QuerySet):
         )
 
 
-class Bookmark(models.Model):
+class Bookmark(models.Model):  # noqa: DJ008
     """Bookmarked episodes."""
 
     user = models.ForeignKey(
@@ -240,15 +240,6 @@ class Bookmark(models.Model):
             models.Index(fields=["-created"]),
         ]
 
-    def __str__(self) -> str:
-        """Required __str__ method"""
-        return " | ".join(
-            [
-                f"user {self.user_id}",
-                f"episode {self.episode_id}",
-            ]
-        )
-
 
 class AudioLogQuerySet(models.QuerySet):
     """QuerySet for AudioLog."""
@@ -264,7 +255,7 @@ class AudioLogQuerySet(models.QuerySet):
         )
 
 
-class AudioLog(models.Model):
+class AudioLog(models.Model):  # noqa: DJ008
     """Record of user listening history."""
 
     user = models.ForeignKey(
@@ -295,15 +286,6 @@ class AudioLog(models.Model):
             models.Index(fields=["-listened"]),
             models.Index(fields=["listened"]),
         ]
-
-    def __str__(self) -> str:
-        """Required __str__ method"""
-        return " | ".join(
-            [
-                f"user {self.user_id}",
-                f"episode {self.episode_id}",
-            ]
-        )
 
     @cached_property
     def percent_complete(self) -> int:

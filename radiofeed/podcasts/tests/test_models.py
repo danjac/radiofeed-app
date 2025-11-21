@@ -2,7 +2,7 @@ import pytest
 from django.utils import timezone
 
 from radiofeed.episodes.tests.factories import EpisodeFactory
-from radiofeed.podcasts.models import Category, Podcast, Recommendation, Subscription
+from radiofeed.podcasts.models import Category, Podcast, Recommendation
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -17,14 +17,6 @@ class TestRecommendationManager:
         RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
         assert Recommendation.objects.count() == 0
-
-
-class TestRecommendationModel:
-    def test_str(self):
-        assert (
-            str(Recommendation(podcast_id=1, recommended_id=2))
-            == "podcast 1 | recommended 2"
-        )
 
 
 class TestCategoryManager:
@@ -365,11 +357,3 @@ class TestPodcastModel:
 
     def assert_hours_diff(self, delta, hours):
         assert delta.total_seconds() / 3600 == pytest.approx(hours)
-
-
-class TestSubscriptionModel:
-    def test_str(self):
-        assert (
-            str(Subscription(podcast_id=1, subscriber_id=2))
-            == "subscriber 2 | podcast 1"
-        )
