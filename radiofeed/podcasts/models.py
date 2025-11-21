@@ -16,7 +16,7 @@ from slugify import slugify
 
 from radiofeed.fields import URLField
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import SearchQuerySetMixin
+from radiofeed.search import search_queryset
 from radiofeed.users.models import User
 
 
@@ -89,7 +89,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
+class PodcastQuerySet(models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
     def search(self, search_term: str, **kwargs) -> models.QuerySet["Podcast"]:
@@ -100,11 +100,11 @@ class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
         if not search_term:
             return self.none()
 
-        qs = super().search(search_term, **kwargs)
+        qs = search_queryset(self, search_term, "search_vector", **kwargs)
 
         exact_matches_qs = (
             self.alias(title_lower=Lower("title"))
-            .filter(title_lower=force_str(search_term).casefold())
+            .filter(title_lower=search_term.casefold())
             .values_list("pk", flat=True)
         )
 

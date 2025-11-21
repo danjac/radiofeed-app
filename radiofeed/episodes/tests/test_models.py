@@ -137,11 +137,20 @@ class TestEpisodeModel:
 
 
 class TestBookmarkManager:
+    @pytest.mark.parametrize(
+        ("search", "count"),
+        [
+            pytest.param("testing", 1, id="episode search"),
+            pytest.param("podcast", 1, id="podcast search"),
+            pytest.param("nomatch", 0, id="no match"),
+            pytest.param("", 0, id="empty search"),
+        ],
+    )
     @pytest.mark.django_db
-    def test_search(self):
-        episode = EpisodeFactory(title="testing")
+    def test_search(self, search, count):
+        episode = EpisodeFactory(title="testing", podcast__title="podcast")
         BookmarkFactory(episode=episode)
-        assert Bookmark.objects.search("testing").count() == 1
+        assert Bookmark.objects.search(search).count() == count
 
 
 class TestBookmarkModel:
