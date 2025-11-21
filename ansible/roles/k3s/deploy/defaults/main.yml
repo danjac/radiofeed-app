@@ -3,7 +3,7 @@
 docker_image: "{{ docker_image }}"
 
 postgres:
-  image: "{{ postgres_image | default('postgres:18.0-bookworm', true) }}"
+  image: "{{ postgres_image | default('postgres:18.1-bookworm', true) }}"
   password: "{{ postgres_password }}"
   storage: "{{ postgres_storage | default('30Gi', true) }}"
   volume: "{{ postgres_volume | default('/home/ubuntu/pg_data', true) }}"

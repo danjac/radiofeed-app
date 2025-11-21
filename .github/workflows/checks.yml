@@ -19,7 +19,7 @@ jobs:
           contents: read
         services:
             postgres:
-                image: postgres:18
+                image: postgres:18.1-bookworm
                 env:
                     POSTGRES_PASSWORD: password
                 ports: ["5432:5432"]
