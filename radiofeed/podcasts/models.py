@@ -419,7 +419,7 @@ class Podcast(models.Model):
         return self.podcast_type == self.PodcastType.SERIAL
 
 
-class Subscription(models.Model):  # noqa: DJ008
+class Subscription(models.Model):
     """Subscribed podcast belonging to a user's collection."""
 
     subscriber = models.ForeignKey(
@@ -458,7 +458,7 @@ class RecommendationQuerySet(models.QuerySet):
         return self._raw_delete(self.db)
 
 
-class Recommendation(models.Model):  # noqa: DJ008
+class Recommendation(models.Model):
     """Recommendation based on similarity between two podcasts."""
 
     podcast = models.ForeignKey(

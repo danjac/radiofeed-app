@@ -210,7 +210,7 @@ class BookmarkQuerySet(models.QuerySet):
         )
 
 
-class Bookmark(models.Model):  # noqa: DJ008
+class Bookmark(models.Model):
     """Bookmarked episodes."""
 
     user = models.ForeignKey(
@@ -255,7 +255,7 @@ class AudioLogQuerySet(models.QuerySet):
         )
 
 
-class AudioLog(models.Model):  # noqa: DJ008
+class AudioLog(models.Model):
     """Record of user listening history."""
 
     user = models.ForeignKey(
