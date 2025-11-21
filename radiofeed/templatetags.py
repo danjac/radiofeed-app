@@ -182,14 +182,26 @@ def format_duration(total_seconds: int, min_value: int = 60) -> str:
 @register.filter
 def websearch_clean(text: str) -> str:
     """Cleans a search query for websearch usage by removing special characters."""
-    # Remove special characters commonly used in search queries
-    text = re.sub(r'[+\-~"\'()<>]', " ", text)
-    # Remove syntax keywords
-    text = re.sub("\\b(AND|OR|NOT)\\b", " ", text, flags=re.IGNORECASE)
-    # Remove extra whitespace
-    text = re.sub(r"\s+", " ", text).strip()
+    text = _re_websearch_syntax().sub(" ", text)
+    text = _re_websearch_keywords().sub(" ", text)
+    text = _re_whitespace().sub(" ", text)
     return text.strip()
 
 
 def _clean_attrs(attrs: dict) -> dict:
     return {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
+
+
+@functools.cache
+def _re_websearch_syntax() -> re.Pattern:
+    return re.compile(r'[+\-~"\'()<>]')
+
+
+@functools.cache
+def _re_websearch_keywords() -> re.Pattern:
+    return re.compile(r"\b(AND|OR|NOT)\b", re.IGNORECASE)
+
+
+@functools.cache
+def _re_whitespace() -> re.Pattern:
+    return re.compile(r"\s+")
