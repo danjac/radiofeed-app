@@ -19,7 +19,7 @@
                        x-model="search"
                        x-ref="input"
                        @keydown.slash.window.prevent="$el.focus()"
-                       :class="{ 'w-60 lg:w-80': !search, 'w-80 lg:w-96': search }">
+                       :class="{ 'w-60 lg:w-80': !search, 'w-60 lg:w-96': search }">
                 <div class="flex absolute inset-y-0 right-0 items-center pr-2">
                     {% if clearable and request.search %}
                         <a href="{{ search_url }}"
