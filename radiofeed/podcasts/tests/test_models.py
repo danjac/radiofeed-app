@@ -51,6 +51,11 @@ class TestPodcastManager:
         assert Podcast.objects.search("testing").count() == 1
 
     @pytest.mark.django_db
+    def test_simple_word(self):
+        PodcastFactory(title="Down")
+        assert Podcast.objects.search("down").count() == 1
+
+    @pytest.mark.django_db
     def test_search_no_results(self):
         PodcastFactory(title="testing")
         assert Podcast.objects.search("random").count() == 0

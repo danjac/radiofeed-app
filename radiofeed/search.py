@@ -24,7 +24,11 @@ class SearchQuerySetMixin(QuerySet[T_Model]):
         if not search_term:
             return self.none()
 
-        query = SearchQuery(search_term, search_type=search_type)
+        query = SearchQuery(
+            search_term,
+            search_type=search_type,
+            config="simple",
+        )
 
         search_vectors = (
             (self.search_vectors,)
