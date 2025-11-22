@@ -1,4 +1,5 @@
 import functools
+from collections.abc import Sequence
 from typing import TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -7,29 +8,36 @@ from django.db.models import F, Model, QuerySet
 T_Model = TypeVar("T_Model", bound=Model)
 
 
-def search_queryset(
-    queryset: QuerySet[T_Model],
-    search_term: str,
-    *search_vectors: str,
-    search_rank: str = "rank",
-    search_type: str = "websearch",
-) -> QuerySet[T_Model]:
-    """
-    Perform a full-text search on the given queryset using multiple search vectors.
-    """
+class SearchQuerySetMixin(QuerySet[T_Model]):
+    """Mixin to add full-text search capabilities to a QuerySet."""
 
-    if not search_term:
-        return queryset.none()
+    search_vectors: Sequence[str] | str = "search_vector"
 
-    query = SearchQuery(search_term, search_type=search_type)
+    def search(
+        self,
+        search_term: str,
+        search_rank: str = "rank",
+        search_type: str = "websearch",
+    ) -> QuerySet[T_Model]:
+        """Perform a full-text search on the QuerySet using multiple search vectors."""
 
-    querysets = (
-        queryset.annotate(
-            **{
-                search_rank: SearchRank(F(vector), query=query),
-            }
-        ).filter(**{vector: query})
-        for vector in search_vectors
-    )
+        if not search_term:
+            return self.none()
 
-    return functools.reduce(lambda qs1, qs2: qs1.union(qs2), querysets)
+        query = SearchQuery(search_term, search_type=search_type)
+
+        search_vectors = (
+            (self.search_vectors,)
+            if isinstance(self.search_vectors, str)
+            else self.search_vectors
+        )
+
+        querysets = (
+            self.annotate(
+                **{
+                    search_rank: SearchRank(F(vector), query=query),
+                }
+            ).filter(**{vector: query})
+            for vector in search_vectors
+        )
+        return functools.reduce(lambda qs1, qs2: qs1.union(qs2), querysets)

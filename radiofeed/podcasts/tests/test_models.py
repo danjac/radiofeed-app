@@ -76,32 +76,6 @@ class TestPodcastManager:
         assert Podcast.objects.search("").count() == 0
 
     @pytest.mark.django_db
-    def test_search_title_fallback(self):
-        # usually "the" would be removed by stemmer
-        PodcastFactory(title="the")
-        podcasts = Podcast.objects.search("the")
-        assert podcasts.count() == 1
-        assert podcasts.first().exact_match == 1
-
-    @pytest.mark.django_db
-    def test_compare_exact_and_partial_matches_in_search(self):
-        PodcastFactory(title="the testing")
-        PodcastFactory(title="testing")
-
-        podcasts = Podcast.objects.search("testing").order_by("-exact_match")
-
-        assert podcasts.count() == 2
-
-        first = podcasts[0]
-        second = podcasts[1]
-
-        assert first.title == "testing"
-        assert first.exact_match == 1
-
-        assert second.title == "the testing"
-        assert second.exact_match == 0
-
-    @pytest.mark.django_db
     def test_subscribed_true(self, user):
         SubscriptionFactory(subscriber=user)
         assert Podcast.objects.subscribed(user).exists() is True

@@ -26,11 +26,7 @@ def subscriptions(request: HttpRequest) -> TemplateResponse:
     podcasts = _get_podcasts().subscribed(request.user).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by(
-            "-exact_match",
-            "-rank",
-            "-pub_date",
-        )
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 
@@ -47,13 +43,7 @@ def discover(request: HttpRequest) -> TemplateResponse:
         .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
     )
 
-    return TemplateResponse(
-        request,
-        "podcasts/discover.html",
-        {
-            "podcasts": podcasts,
-        },
-    )
+    return TemplateResponse(request, "podcasts/discover.html", {"podcasts": podcasts})
 
 
 @require_safe
@@ -68,11 +58,7 @@ def search_podcasts(
             _get_podcasts()
             .filter(private=False)
             .search(request.search.value)
-            .order_by(
-                "-exact_match",
-                "-rank",
-                "-pub_date",
-            )
+            .order_by("-rank", "-pub_date")
         )
 
         return render_paginated_response(
@@ -148,10 +134,7 @@ def episodes(
     ordering = request.GET.get("order", None)
 
     if request.search:
-        episodes = episodes.search(request.search.value).order_by(
-            "-rank",
-            "-pub_date",
-        )
+        episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         default_ordering = "asc" if podcast.is_serial() else "desc"
         ordering = ordering or default_ordering
@@ -264,11 +247,7 @@ def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
     podcasts = category.podcasts.published().filter(private=False).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by(
-            "-exact_match",
-            "-rank",
-            "-pub_date",
-        )
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 
@@ -317,11 +296,7 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
     podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by(
-            "-exact_match",
-            "-rank",
-            "-pub_date",
-        )
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 

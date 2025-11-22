@@ -16,15 +16,11 @@ from slugify import slugify
 from radiofeed.fields import URLField
 from radiofeed.podcasts.models import Season
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import search_queryset
+from radiofeed.search import SearchQuerySetMixin
 
 
-class EpisodeQuerySet(FastUpdateQuerySet):
+class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
-
-    def search(self, search_term: str, **kwargs) -> models.QuerySet["Episode"]:
-        """Search episodes."""
-        return search_queryset(self, search_term, "search_vector", **kwargs)
 
 
 class Episode(models.Model):
@@ -196,18 +192,13 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
-class BookmarkQuerySet(models.QuerySet):
+class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
-    def search(self, search_term: str, **kwargs) -> models.QuerySet["Bookmark"]:
-        """Search bookmarks."""
-        return search_queryset(
-            self,
-            search_term,
-            "episode__search_vector",
-            "episode__podcast__search_vector",
-            **kwargs,
-        )
+    search_vectors = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
 
 
 class Bookmark(models.Model):
@@ -241,18 +232,13 @@ class Bookmark(models.Model):
         ]
 
 
-class AudioLogQuerySet(models.QuerySet):
+class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
-    def search(self, search_term: str, **kwargs) -> models.QuerySet["AudioLog"]:
-        """Search audio logs."""
-        return search_queryset(
-            self,
-            search_term,
-            "episode__search_vector",
-            "episode__podcast__search_vector",
-            **kwargs,
-        )
+    search_vectors = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
 
 
 class AudioLog(models.Model):
