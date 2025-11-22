@@ -3,5 +3,5 @@
 
 {% block extrahead %}
     {{ block.super }}
-    <link rel="icon" type="image/x-icon" href="{% static "img/favicon.ico" %}">
+    {% include "default_base.html#icons" %}
 {% endblock extrahead %}
