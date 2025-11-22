@@ -2,19 +2,21 @@ import functools
 from typing import TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, QuerySet
+from django.db.models import F, Model, QuerySet
 
-T_QuerySet = TypeVar("T_QuerySet", bound=QuerySet)
+T_Model = TypeVar("T_Model", bound=Model)
 
 
 def search_queryset(
-    queryset: T_QuerySet,
+    queryset: QuerySet[T_Model],
     search_term: str,
     *search_vectors: str,
     search_rank: str = "rank",
     search_type: str = "websearch",
-) -> T_QuerySet:
-    """Returns result of search, annotated with search rank."""
+) -> QuerySet[T_Model]:
+    """
+    Perform a full-text search on the given queryset using multiple search vectors.
+    """
 
     if not search_term:
         return queryset.none()
