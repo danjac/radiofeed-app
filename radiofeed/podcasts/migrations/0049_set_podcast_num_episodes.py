@@ -3,28 +3,20 @@
 import itertools
 
 from django.db import migrations
-from django.db.models import Count, OuterRef, Subquery
 
 
 def set_podcast_num_episodes(apps, schema_editor):
     Podcast = apps.get_model("podcasts", "Podcast")
-    Episode = apps.get_model("episodes", "Episode")
 
-    episodes_count = (
-        Episode.objects.filter(podcast_id=OuterRef("pk"))
-        .values("podcast_id")
-        .annotate(count=Count("id"))
-        .values("count")
-    )
-    podcast_ids = Podcast.objects.filter(
-        pub_date__isnull=False,
-        num_episodes=0,
-    ).values_list("id", flat=True)
+    podcast_ids = Podcast.objects.values_list("id", flat=True)
 
     for batch in itertools.batched(podcast_ids, 1000, strict=False):
-        Podcast.objects.filter(id__in=batch).update(
-            num_episodes=Subquery(episodes_count)
-        )
+        podcasts = Podcast.objects.filter(id__in=batch)
+        to_update = []
+        for podcast in podcasts:
+            podcast.num_episodes = podcast.episodes.count()
+            to_update.append(podcast)
+        Podcast.objects.bulk_update(to_update, ["num_episodes"])
 
 
 def reverse_set_podcast_num_episodes(apps, schema_editor):
