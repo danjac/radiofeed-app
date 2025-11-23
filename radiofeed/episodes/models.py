@@ -227,7 +227,8 @@ class Bookmark(models.Model):
             )
         ]
         indexes: ClassVar[list] = [
-            models.Index(fields=["-created"]),
+            models.Index(fields=["user", "episode"]),
+            models.Index(fields=["user", "episode", "created"]),
         ]
 
 
