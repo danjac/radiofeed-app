@@ -275,13 +275,31 @@ class Podcast(models.Model):
 
     class Meta:
         indexes: ClassVar[list] = [
-            models.Index(fields=["active"]),
+            # Recent podcasts index
             models.Index(fields=["-pub_date"]),
-            models.Index(fields=["pub_date"]),
+            # Feed parser deduplication index
             models.Index(fields=["content_hash"]),
-            models.Index(fields=["parser_result"]),
+            # Discover feed index
             models.Index(fields=["promoted", "language", "-pub_date"]),
-            models.Index(fields=["-promoted", "parsed", "updated"]),
+            # Feed parser scheduling index
+            models.Index(
+                fields=[
+                    "active",
+                    "-promoted",
+                    "parsed",
+                    "updated",
+                ]
+            ),
+            # Common lookup index for public feeds
+            models.Index(
+                fields=["-pub_date"],
+                condition=models.Q(
+                    private=False,
+                    pub_date__isnull=False,
+                ),
+                name="%(app_label)s_%(class)s_public_idx",
+            ),
+            # Search index
             GinIndex(fields=["search_vector"]),
         ]
 
