@@ -268,8 +268,8 @@ class AudioLog(models.Model):
             ),
         ]
         indexes: ClassVar[list] = [
-            models.Index(fields=["-listened"]),
-            models.Index(fields=["listened"]),
+            models.Index(fields=["user", "episode"]),
+            models.Index(fields=["user", "episode", "listened"]),
         ]
 
     @cached_property
