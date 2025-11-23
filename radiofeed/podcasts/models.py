@@ -278,9 +278,10 @@ class Podcast(models.Model):
             models.Index(fields=["active"]),
             models.Index(fields=["-pub_date"]),
             models.Index(fields=["pub_date"]),
-            models.Index(fields=["promoted"]),
             models.Index(fields=["content_hash"]),
             models.Index(fields=["parser_result"]),
+            models.Index(fields=["promoted", "language", "-pub_date"]),
+            models.Index(fields=["-promoted", "parsed", "updated"]),
             GinIndex(fields=["search_vector"]),
         ]
 

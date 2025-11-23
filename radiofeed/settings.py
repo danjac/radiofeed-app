@@ -535,6 +535,10 @@ GDPR_COOKIE_NAME = "accept-cookies"
 
 DEFAULT_PAGE_SIZE = 30
 
+# Default language for Discover feed
+
+DISCOVER_FEED_LANGUAGE = env("DISCOVER_FEED_LANGUAGE", default="en")
+
 # HTMX configuration
 # https://htmx.org/docs/#config
 
