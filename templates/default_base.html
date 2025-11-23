@@ -11,10 +11,10 @@
             {% partialdef head inline %}
                 {% tailwind_css %}
                 {% partialdef icons inline %}
+                    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="{% static "img/apple-touch-icon.png" %}">
                     <link rel="icon" type="image/png" sizes="16x16" href="{% static "img/favicon-16x16.png" %}">
                     <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/favicon-32x32.png" %}">
                     <link rel="icon" type="image/png" sizes="48x48" href="{% static "img/favicon-48x48.png" %}">
-                    <link rel="apple-touch-icon" href="{% static "img/apple-touch-icon.png" %}">
                 {% endpartialdef %}
                 <link rel="manifest" href="{% url "manifest" %}">
                 <link rel="canonical" href="{{ request.build_absolute_uri }}">
