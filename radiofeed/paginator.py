@@ -130,16 +130,14 @@ def render_paginated_response(  # noqa: PLR0913
 
     It renders a partial template with paginated data. The `Page` object is passed to the template context as `page`.
     """
+    page = paginate(request, object_list, **pagination_kwargs)
 
     return render_partial_response(
         request,
         template_name,
         {
-            "page": paginate(
-                request,
-                object_list,
-                **pagination_kwargs,
-            ),
+            "page": page,
+            "page_size": page.page_size,
             "pagination_target": target,
         }
         | (extra_context or {}),

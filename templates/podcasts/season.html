@@ -20,7 +20,7 @@
 
                     {% endfragment %}
                 {% endfragment %}
-                {% if podcast.num_episodes > page.page_size %}
+                {% if podcast.num_episodes > page_size %}
                     {% fragment "header/nav.html#item" %}
                         {% include "header/nav/search.html#form" with search_url=episodes_url %}
                     {% endfragment %}

@@ -6,7 +6,7 @@
 
 {% block content %}
     {% fragment "podcasts/header.html" active="episodes" %}
-        {% with num_episodes=podcast.num_episodes page_size=page.page_size %}
+        {% with num_episodes=podcast.num_episodes %}
             {% if request.search or num_episodes > page_size %}
                 {% fragment "header/nav.html" %}
                     {% if request.search %}
