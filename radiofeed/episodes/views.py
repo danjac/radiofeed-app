@@ -192,7 +192,8 @@ def history(request: HttpRequest) -> TemplateResponse:
 
     if request.search:
         audio_logs = audio_logs.search(request.search.value).order_by(
-            "-rank", "-listened"
+            "-rank",
+            "-listened",
         )
     else:
         audio_logs = audio_logs.order_by(

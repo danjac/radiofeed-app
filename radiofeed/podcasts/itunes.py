@@ -24,8 +24,8 @@ _ITUNES_LOOKUP_BATCH_SIZE: Final = 200
 
 COUNTRIES: Final = (
     "br",
-    "ca",
     "de",
+    "dk",
     "es",
     "fi",
     "fr",
@@ -34,6 +34,7 @@ COUNTRIES: Final = (
     "ja",
     "kr",
     "pl",
+    "se",
     "us",
 )
 
