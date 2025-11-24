@@ -186,7 +186,7 @@
                     <div title="Duration">{{ episode.duration_in_seconds|format_duration }}</div>
                 {% endif %}
                 {% if episode.file_size %}
-                    <div title="File Size">{{ episode.file_size|filesizeformat }}</div>
+                    <div title="Download Size">{{ episode.file_size|filesizeformat }}</div>
                 {% endif %}
             </div>
             {% partialdef audio_log inline %}
