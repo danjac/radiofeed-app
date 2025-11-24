@@ -16,7 +16,7 @@ from slugify import slugify
 
 from radiofeed.fields import URLField
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import SearchQuerySetMixin
+from radiofeed.search import SearchableMixin
 from radiofeed.users.models import User
 
 
@@ -89,7 +89,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
+class PodcastQuerySet(SearchableMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
     def subscribed(self, user: User) -> models.QuerySet["Podcast"]:

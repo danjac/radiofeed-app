@@ -16,10 +16,10 @@ from slugify import slugify
 from radiofeed.fields import URLField
 from radiofeed.podcasts.models import Season
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import SearchQuerySetMixin
+from radiofeed.search import SearchableMixin
 
 
-class EpisodeQuerySet(SearchQuerySetMixin, FastUpdateQuerySet):
+class EpisodeQuerySet(SearchableMixin, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
 
@@ -191,10 +191,10 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
-class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
+class BookmarkQuerySet(SearchableMixin, models.QuerySet):
     """QuerySet for Bookmark model."""
 
-    search_vectors = (
+    search_fields = (
         "episode__search_vector",
         "episode__podcast__search_vector",
     )
@@ -241,10 +241,10 @@ class Bookmark(models.Model):
         ]
 
 
-class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
+class AudioLogQuerySet(SearchableMixin, models.QuerySet):
     """QuerySet for AudioLog."""
 
-    search_vectors = (
+    search_fields = (
         "episode__search_vector",
         "episode__podcast__search_vector",
     )

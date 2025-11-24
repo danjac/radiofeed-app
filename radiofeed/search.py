@@ -1,47 +1,58 @@
 import functools
-from collections.abc import Sequence
-from typing import TypeVar
+import operator
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Model, QuerySet
-
-T_Model = TypeVar("T_Model", bound=Model)
+from django.db.models import F, Q, QuerySet
 
 
-class SearchQuerySetMixin(QuerySet[T_Model]):
-    """Mixin to add full-text search capabilities to a QuerySet."""
+class SearchableMixin:
+    """A QuerySet mixin that adds full-text search capabilities to Django models."""
 
-    search_vectors: Sequence[str] | str = "search_vector"
+    # Default assumption: the model has a 'search_vector' field.
+    search_fields: tuple[str, ...] = ("search_vector",)
 
     def search(
         self,
-        search_term: str,
-        search_rank: str = "rank",
+        value: str,
+        *search_fields: str,
+        annotation: str = "rank",
+        config: str = "simple",
         search_type: str = "websearch",
-    ) -> QuerySet[T_Model]:
-        """Perform a full-text search on the QuerySet using multiple search vectors."""
+    ) -> QuerySet:
+        """Perform a full-text search on the given QuerySet using one or more search vectors.
+        Results are annotated with a rank based on relevance to the search query.
+        """
 
-        if not search_term:
+        if not value:
             return self.none()
 
         query = SearchQuery(
-            search_term,
+            value,
             search_type=search_type,
-            config="simple",
+            config=config,
         )
 
-        search_vectors = (
-            (self.search_vectors,)
-            if isinstance(self.search_vectors, str)
-            else self.search_vectors
+        search_fields = search_fields or self.search_fields
+
+        rank = functools.reduce(
+            operator.add,
+            (
+                SearchRank(
+                    F(field),
+                    query=query,
+                )
+                for field in search_fields
+            ),
         )
 
-        querysets = (
-            self.annotate(
-                **{
-                    search_rank: SearchRank(F(vector), query=query),
-                }
-            ).filter(**{vector: query})
-            for vector in search_vectors
+        q = functools.reduce(
+            operator.or_,
+            (
+                Q(
+                    **{field: query},
+                )
+                for field in search_fields
+            ),
         )
-        return functools.reduce(lambda qs1, qs2: qs1.union(qs2), querysets)
+
+        return self.annotate(**{annotation: rank}).filter(q)

@@ -159,6 +159,11 @@ class TestAudioLogManager:
         [
             pytest.param("testing", 1, id="episode search"),
             pytest.param("podcast", 1, id="podcast search"),
+            pytest.param(
+                "podcast or testing",
+                1,
+                id="podcast and episode search",
+            ),
             pytest.param("nomatch", 0, id="no match"),
             pytest.param("", 0, id="empty search"),
         ],
