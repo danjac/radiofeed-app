@@ -2,6 +2,7 @@ ansible_dir := invocation_directory() / "ansible"
 script_dir := ansible_dir / "scripts"
 
 # Set environment variables for development
+export ADMIN_SITE_HEADER := "Radiofeed [Local]"
 export DEBUG := "true"
 export USE_BROWSER_RELOAD := "true"
 export USE_COLLECTSTATIC := "false"
