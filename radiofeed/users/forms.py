@@ -20,7 +20,7 @@ class UserPreferencesForm(forms.ModelForm):
         }
 
         help_texts: ClassVar[dict[str, str]] = {
-            "send_email_notifications": "I'd like to receive notications of new content."
+            "send_email_notifications": "I'd like to receive notifications of new content to my primary email address."
         }
 
 
