@@ -13,7 +13,7 @@
                     <p>The following e-mail addresses are associated with your account:</p>
                     {% fragment "form.html" %}
                         {% for emailaddress in emailaddresses|dictsortreversed:"primary" %}
-                            <div class="flex items-center space-x-3">
+                            <div class="flex flex-wrap items-center space-x-3">
                                 <input type="radio"
                                        name="email"
                                        id="email_radio_{{ forloop.counter }}"
@@ -23,10 +23,14 @@
                                 <label for="email_radio_{{ forloop.counter }}"
                                        class="flex items-center space-x-3">
                                     <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
-                                    {% if emailaddress.verified %}
-                                        {% heroicon_mini "check" class="text-green-600" title="Verified" %}
-                                    {% endif %}
                                 </label>
+                                {% if emailaddress.primary %}
+                                    <div class="px-1 text-sm font-semibold text-white bg-blue-600 border border-white">Primary</div>
+                                {% endif %}
+                                {% if emailaddress.verified %}
+                                    <div class="px-1 text-sm font-semibold text-white bg-green-600 border border-white">Verified</div>
+                                {% endif %}
+
                             </div>
                         {% endfor %}
                         {% fragment "form.html#buttons" %}
