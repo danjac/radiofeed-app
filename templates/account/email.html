@@ -12,7 +12,7 @@
                 {% if num_addresses %}
                     <p>The following e-mail addresses are associated with your account:</p>
                     {% fragment "form.html" %}
-                        {% for emailaddress in emailaddresses %}
+                        {% for emailaddress in emailaddresses|dictsortreversed:"primary" %}
                             <div class="flex items-center space-x-3">
                                 <input type="radio"
                                        name="email"
@@ -74,6 +74,9 @@
                             </button>
                         {% endfragment %}
                     {% endfragment %}
+                    <p>
+                        Email notifications will be sent to your primary email address.
+                    </p>
                 {% else %}
                     <p>
                         <strong>Warning:</strong>
