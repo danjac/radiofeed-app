@@ -265,8 +265,8 @@ class AudioLog(models.Model):
     )
 
     listened = models.DateTimeField()
-    current_time = models.IntegerField(default=0)
-    duration = models.IntegerField(default=0)
+    current_time = models.PositiveIntegerField(default=0)
+    duration = models.PositiveIntegerField(default=0)
 
     objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
 
