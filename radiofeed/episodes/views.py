@@ -60,7 +60,7 @@ def index(request: HttpRequest) -> TemplateResponse:
         Episode.objects.filter(pk__in=latest_episodes)
         .select_related("podcast")
         .order_by("-pub_date", "-pk")
-    )[: settings.DEFAULT_PAGE_SIZE]
+    )
 
     return TemplateResponse(
         request,
