@@ -25,10 +25,10 @@
                                     <span {% if emailaddress.primary or num_addresses == 1 %}class="font-bold"{% endif %}>{{ emailaddress.email }}</span>
                                 </label>
                                 {% if emailaddress.primary %}
-                                    <div class="px-1 text-sm font-semibold text-white bg-blue-600 border border-white">Primary</div>
+                                    <div class="px-1 text-xs font-semibold text-blue-500 rounded-sm border border-blue-600 lg:text-sm">Primary</div>
                                 {% endif %}
                                 {% if emailaddress.verified %}
-                                    <div class="px-1 text-sm font-semibold text-white bg-green-600 border border-white">Verified</div>
+                                    <div class="px-1 text-xs font-semibold text-green-500 rounded-sm border border-green-600 lg:text-sm">Verified</div>
                                 {% endif %}
 
                             </div>
