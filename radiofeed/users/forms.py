@@ -1,9 +1,9 @@
+from collections.abc import Iterator
 from typing import ClassVar
 
 from django import forms
 
 from radiofeed.feedparser.opml_parser import parse_opml
-from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.models import User
 
 
@@ -57,33 +57,7 @@ class OpmlUploadForm(forms.Form):
         ),
     )
 
-    def subscribe_to_feeds(self, user: User, limit: int = 360) -> list[Subscription]:
-        """Subscribes user to feeds in uploaded OPML.
-
-        Only active public feeds that already exist in the database will be included.
-
-        Returns:
-            number of subscribed feeds
-        """
+    def parse_feeds(self) -> Iterator[str]:
+        """Parses uploaded OPML and returns set of feed URLs."""
         self.cleaned_data["opml"].seek(0)
-
-        if urls := set(parse_opml(self.cleaned_data["opml"].read())) - set(
-            Subscription.objects.filter(subscriber=user)
-            .select_related("podcast")
-            .values_list("podcast__rss", flat=True)
-        ):
-            podcasts = Podcast.objects.filter(
-                active=True,
-                private=False,
-                rss__in=urls,
-            )[:limit]
-
-            return Subscription.objects.bulk_create(
-                [
-                    Subscription(podcast=podcast, subscriber=user)
-                    for podcast in podcasts.iterator()
-                ],
-                ignore_conflicts=True,
-            )
-
-        return []
+        return parse_opml(self.cleaned_data["opml"].read())

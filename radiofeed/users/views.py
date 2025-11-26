@@ -1,3 +1,4 @@
+import itertools
 from typing import TypedDict
 
 from allauth.account.models import EmailAddress
@@ -6,16 +7,14 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.signing import BadSignature
 from django.http import HttpRequest, HttpResponseRedirect
-from django.template.defaultfilters import pluralize
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
-from radiofeed.form_handler import handle_form
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_response
-from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.forms import DeleteAccountForm, OpmlUploadForm, UserPreferencesForm
 
@@ -35,17 +34,19 @@ def user_preferences(
     request: HttpRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Allow user to edit their preferences."""
-    if result := handle_form(UserPreferencesForm, request, instance=request.user):
-        result.form.save()
-        messages.success(request, "Your preferences have been saved")
-        return HttpResponseRedirect(reverse("users:preferences"))
+    if request.method == "POST":
+        form = UserPreferencesForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your preferences have been saved")
+            return HttpResponseRedirect(reverse("users:preferences"))
+    else:
+        form = UserPreferencesForm(instance=request.user)
 
     return render_partial_response(
         request,
         "account/preferences.html",
-        {
-            "form": result.form,
-        },
+        {"form": form},
         target="preferences-form",
         partial="form",
     )
@@ -54,24 +55,33 @@ def user_preferences(
 @require_form_methods
 @login_required
 def import_podcast_feeds(
-    request: HttpRequest,
+    request: HttpRequest, limit: int = 360
 ) -> TemplateResponse | HttpResponseRedirect:
     """Imports an OPML document and subscribes user to any discovered feeds."""
-    if result := handle_form(OpmlUploadForm, request):
-        if num_new_feeds := len(result.form.subscribe_to_feeds(request.user)):
-            messages.success(
-                request,
-                f"{num_new_feeds} podcast feed{pluralize(num_new_feeds)} added to your collection",
+    if request.method == "POST":
+        form = OpmlUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            feeds = itertools.islice(form.parse_feeds(), limit)
+            podcasts = Podcast.objects.filter(active=True, private=False, rss__in=feeds)
+
+            Subscription.objects.bulk_create(
+                (
+                    Subscription(subscriber=request.user, podcast=podcast)
+                    for podcast in podcasts
+                ),
+                ignore_conflicts=True,
             )
-        else:
-            messages.info(request, "No new podcasts found in uploaded file")
-        return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
+
+            messages.success(request, "You have been subscribed to new podcast feeds.")
+            return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
+    else:
+        form = OpmlUploadForm()
 
     return render_partial_response(
         request,
         "account/podcast_feeds.html",
         {
-            "upload_form": result.form,
+            "upload_form": form,
         },
         target="import-feeds-form",
         partial="form",
@@ -184,12 +194,15 @@ def unsubscribe(
 def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Delete account on confirmation."""
     if request.user.is_authenticated:
-        if result := handle_form(DeleteAccountForm, request):
-            request.user.delete()
-            logout(request)
-            messages.info(request, "Your account has been deleted")
-            return HttpResponseRedirect(reverse("index"))
-        form = result.form
+        if request.method == "POST":
+            form = DeleteAccountForm(request.POST)
+            if form.is_valid():
+                request.user.delete()
+                logout(request)
+                messages.info(request, "Your account has been deleted")
+                return HttpResponseRedirect(reverse("index"))
+        else:
+            form = DeleteAccountForm()
     else:
         form = None
 

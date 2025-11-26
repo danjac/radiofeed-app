@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed.client import get_client
-from radiofeed.form_handler import handle_form
 from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_methods
 from radiofeed.paginator import render_paginated_response
 from radiofeed.partials import render_partial_response
@@ -310,27 +309,28 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 @login_required
 def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
-    if result := handle_form(PrivateFeedForm, request):
-        podcast, is_new = result.form.save(request.user)
+    if request.method == "POST":
+        form = PrivateFeedForm(request.POST)
+        if form.is_valid():
+            podcast, is_new = form.save(request.user)  # type: ignore[arg-type]
+            if is_new:
+                success_message = (
+                    "Podcast added to your Private Feeds and will appear here soon"
+                )
+                redirect_url = reverse("podcasts:private_feeds")
+            else:
+                success_message = "Podcast added to your Private Feeds"
+                redirect_url = podcast.get_absolute_url()
 
-        if is_new:
-            success_message = (
-                "Podcast added to your Private Feeds and will appear here soon"
-            )
-            redirect_url = reverse("podcasts:private_feeds")
-        else:
-            success_message = "Podcast added to your Private Feeds"
-            redirect_url = podcast.get_absolute_url()
-
-        messages.success(request, success_message)
-        return HttpResponseRedirect(redirect_url)
+            messages.success(request, success_message)
+            return HttpResponseRedirect(redirect_url)
+    else:
+        form = PrivateFeedForm()
 
     return render_partial_response(
         request,
         "podcasts/private_feed_form.html",
-        {
-            "form": result.form,
-        },
+        {"form": form},
         target="private-feed-form",
         partial="form",
     )
