@@ -17,7 +17,7 @@ from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts.models import Podcast
 from radiofeed.users.emails import get_unsubscribe_signer
-from radiofeed.users.forms import OpmlUploadForm, UserPreferencesForm
+from radiofeed.users.forms import DeleteAccountForm, OpmlUploadForm, UserPreferencesForm
 
 
 class UserStat(TypedDict):
@@ -183,13 +183,14 @@ def unsubscribe(
 @require_form_methods
 def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Delete account on confirmation."""
-    if (
-        request.user.is_authenticated
-        and request.method == "POST"
-        and "confirm-delete" in request.POST
-    ):
-        request.user.delete()
-        logout(request)
-        messages.info(request, "Your account has been deleted")
-        return HttpResponseRedirect(reverse("index"))
-    return TemplateResponse(request, "account/delete_account.html")
+    if request.user.is_authenticated:
+        if result := handle_form(DeleteAccountForm, request):
+            request.user.delete()
+            logout(request)
+            messages.info(request, "Your account has been deleted")
+            return HttpResponseRedirect(reverse("index"))
+        form = result.form
+    else:
+        form = None
+
+    return TemplateResponse(request, "account/delete_account.html", {"form": form})

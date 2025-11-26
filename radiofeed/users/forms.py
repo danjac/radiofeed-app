@@ -24,6 +24,27 @@ class UserPreferencesForm(forms.ModelForm):
         }
 
 
+class DeleteAccountForm(forms.Form):
+    """Form for deleting user account."""
+
+    required_value: str = "delete me"
+
+    confirm_delete = forms.CharField(
+        required=True,
+        label=f'To confirm deletion, type "{required_value}"',
+        widget=forms.TextInput(attrs={"autocomplete": "off"}),
+    )
+
+    def clean_confirm_delete(self) -> str:
+        """Validates confirmation input."""
+        value = self.cleaned_data["confirm_delete"]
+        if value != self.required_value:
+            raise forms.ValidationError(
+                f'You must type "{self.required_value}" to confirm account deletion.'
+            )
+        return value
+
+
 class OpmlUploadForm(forms.Form):
     """Form for uploading OPML into user collection."""
 
