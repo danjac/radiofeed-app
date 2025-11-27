@@ -1,9 +1,7 @@
-from collections.abc import Iterator
 from typing import ClassVar
 
 from django import forms
 
-from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.users.models import User
 
 
@@ -56,8 +54,3 @@ class OpmlUploadForm(forms.Form):
             }
         ),
     )
-
-    def parse_feeds(self) -> Iterator[str]:
-        """Parses uploaded OPML and returns set of feed URLs."""
-        self.cleaned_data["opml"].seek(0)
-        return parse_opml(self.cleaned_data["opml"].read())

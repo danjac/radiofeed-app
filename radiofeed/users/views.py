@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
+from radiofeed.feedparser.opml_parser import parse_opml
 from radiofeed.http import require_form_methods
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -55,13 +56,16 @@ def user_preferences(
 @require_form_methods
 @login_required
 def import_podcast_feeds(
-    request: HttpRequest, limit: int = 360
+    request: HttpRequest, feed_limit: int = 360
 ) -> TemplateResponse | HttpResponseRedirect:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            feeds = itertools.islice(form.parse_feeds(), limit)
+            opml = form.cleaned_data["opml"]
+            opml.seek(0)
+
+            feeds = itertools.islice(parse_opml(opml.read()), feed_limit)
             podcasts = Podcast.objects.filter(active=True, private=False, rss__in=feeds)
 
             Subscription.objects.bulk_create(
