@@ -312,18 +312,15 @@ def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseRed
     if request.method == "POST":
         form = PrivateFeedForm(request.POST)
         if form.is_valid():
-            podcast, is_new = form.save(request.user)  # type: ignore[arg-type]
-            if is_new:
-                success_message = (
-                    "Podcast added to your Private Feeds and will appear here soon"
-                )
-                redirect_url = reverse("podcasts:private_feeds")
-            else:
-                success_message = "Podcast added to your Private Feeds"
-                redirect_url = podcast.get_absolute_url()
+            podcast = form.save(commit=False)
+            podcast.private = True
+            podcast.save()
 
-            messages.success(request, success_message)
-            return HttpResponseRedirect(redirect_url)
+            request.user.subscriptions.create(podcast=podcast)
+            messages.success(
+                request, "Podcast added to your Private Feeds and will appear here soon"
+            )
+            return HttpResponseRedirect(reverse("podcasts:private_feeds"))
     else:
         form = PrivateFeedForm()
 

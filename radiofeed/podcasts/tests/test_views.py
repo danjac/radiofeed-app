@@ -662,9 +662,9 @@ class TestAddPrivateFeed:
         podcast = PodcastFactory(private=True)
 
         response = client.post(self.url, {"rss": podcast.rss})
-        assert response.url == podcast.get_absolute_url()
+        assert200(response)
 
-        assert Subscription.objects.filter(
+        assert not Subscription.objects.filter(
             subscriber=auth_user, podcast=podcast
         ).exists()
 
