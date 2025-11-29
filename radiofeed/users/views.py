@@ -106,7 +106,9 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
         .order_by("-pub_date")
     )
 
-    response = TemplateResponse(
+    filename = f"podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
+
+    return TemplateResponse(
         request,
         "feedparser/podcasts.opml",
         {
@@ -114,11 +116,10 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
             "podcasts": podcasts,
         },
         content_type="text/x-opml",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+        },
     )
-    response["Content-Disposition"] = (
-        f"attachment; filename=podcasts-{timezone.now().strftime('%Y-%m-%d')}.opml"
-    )
-    return response
 
 
 @require_safe
