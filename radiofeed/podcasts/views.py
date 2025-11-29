@@ -14,7 +14,7 @@ from radiofeed.http import HttpResponseConflict, require_DELETE, require_form_me
 from radiofeed.paginator import render_paginated_response
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts import itunes
-from radiofeed.podcasts.forms import PrivateFeedForm
+from radiofeed.podcasts.forms import PodcastForm
 from radiofeed.podcasts.models import Category, Podcast
 
 
@@ -310,19 +310,21 @@ def private_feeds(request: HttpRequest) -> TemplateResponse:
 def add_private_feed(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
     if request.method == "POST":
-        form = PrivateFeedForm(request.POST)
+        form = PodcastForm(request.POST)
         if form.is_valid():
             podcast = form.save(commit=False)
             podcast.private = True
             podcast.save()
 
             request.user.subscriptions.create(podcast=podcast)
+
             messages.success(
-                request, "Podcast added to your Private Feeds and will appear here soon"
+                request,
+                "Podcast added to your Private Feeds and will appear here soon",
             )
             return HttpResponseRedirect(reverse("podcasts:private_feeds"))
     else:
-        form = PrivateFeedForm()
+        form = PodcastForm()
 
     return render_partial_response(
         request,
