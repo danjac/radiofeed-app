@@ -1,7 +1,14 @@
 {% extends "admin/base_site.html" %}
-{% load static %}
+
+{% block title %}
+    {{ request.site.name }} Admin
+{% endblock title %}
 
 {% block extrahead %}
     {{ block.super }}
     {% include "default_base.html#icons" %}
 {% endblock extrahead %}
+
+{% block branding %}
+    <h1 id="site-name">{{ request.site.name }} Admin</h1>
+{% endblock branding %}

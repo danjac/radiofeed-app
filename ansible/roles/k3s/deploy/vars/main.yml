@@ -2,9 +2,6 @@ configmap:
    - name: "admins"
      value: "{{ admins }}"
 
-   - name: "admin_site_header"
-     value: "{{ admin_site_header }}"
-
    - name: "admin_url"
      value: "{{ admin_url }}"
 

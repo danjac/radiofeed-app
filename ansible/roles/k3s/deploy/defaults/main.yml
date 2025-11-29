@@ -13,7 +13,6 @@ redis:
 
 # Django settings
 
-admin_site_header: "Radiofeed Admin [Production]"
 admin_url: "admin/"
 admins: "admin@{{ domain }}"
 allowed_hosts: "*"

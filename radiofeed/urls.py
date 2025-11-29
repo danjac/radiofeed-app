@@ -4,9 +4,6 @@ from django.urls import include, path
 
 from radiofeed import views
 
-admin.site.site_header = admin.site.site_title = settings.ADMIN_SITE_HEADER
-
-
 urlpatterns = [
     path("", views.index, name="index"),
     path("", include("radiofeed.episodes.urls")),

@@ -268,7 +268,6 @@ SOCIALACCOUNT_PROVIDERS = {
 # admin settings
 
 ADMIN_URL = env("ADMIN_URL", default="admin/")
-ADMIN_SITE_HEADER = env("ADMIN_SITE_HEADER", default="Radiofeed Admin")
 
 # Internationalization/Localization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
