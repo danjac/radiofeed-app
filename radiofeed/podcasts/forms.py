@@ -5,8 +5,8 @@ from django import forms
 from radiofeed.podcasts.models import Podcast
 
 
-class PrivateFeedForm(forms.ModelForm):
-    """Form to add a private feed."""
+class PodcastForm(forms.ModelForm):
+    """Form to add a new podcast feed."""
 
     class Meta:
         model = Podcast
