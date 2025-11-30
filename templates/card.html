@@ -1,15 +1,14 @@
-<a href="{{ url }}"
-   title="{{ title }}"
-   class="flex items-center space-x-3 cursor-pointer group"
-   {% render_attrs attrs %}
->
-    {% cover_image "card" cover_url title %}
-    <div class="flex flex-col place-content-between h-16 leading-tight">
-        <h2 class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
-            {{ title }}
-        </h2>
-        <h3 class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
-            {{ content }}
-        </h3>
-    </div>
-</a>
+<a href="{{ url }}" title="{{ title }}" class="flex items-center space-x-3 cursor-pointer group" {% if external %}
+       target="_blank" rel="noopener noreferrer" {% endif %}>
+        {% cover_image "card" cover_url title %}
+        <div class="flex flex-col place-content-between h-16 leading-tight">
+            <h2
+                class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
+                {{ title }}
+            </h2>
+            <h3
+                class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
+                {{ content }}
+            </h3>
+        </div>
+    </a>

@@ -79,7 +79,7 @@ def meta_tags() -> str:
 def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> str:
     """Renders a cover image."""
     attrs = get_cover_image_attrs(variant, cover_url, title)
-    return format_html("<img {attrs}>", attrs=render_attrs(attrs))
+    return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
 
 
 @register.simple_tag
@@ -88,18 +88,6 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     scheme = "https" if settings.USE_HTTPS else "http"
     url = resolve_url(path, *args, **kwargs)
     return f"{scheme}://{site.domain}{url}"
-
-
-@register.simple_tag
-def attrs(**attrs) -> dict:
-    """Creates a dictionary of HTML attributes from keyword arguments."""
-    return attrs
-
-
-@register.simple_tag
-def render_attrs(attrs: dict | None, **defaults) -> str:
-    """Renders HTML attributes from a dictionary. Underscores are replaced with hyphens."""
-    return flatatt(_clean_attrs(defaults | (attrs or {})))
 
 
 @register.simple_tag

@@ -6,7 +6,6 @@ from listenfeed.templatetags import (
     cookie_banner,
     format_duration,
     fragment,
-    render_attrs,
     websearch_clean,
 )
 
@@ -24,46 +23,6 @@ def req(rf, anonymous_user):
 def auth_req(req, user):
     req.user = user
     return req
-
-
-class TestRenderAttrs:
-    def test_empty(self):
-        assert render_attrs({}) == ""
-
-    def test_single(self):
-        assert render_attrs({"class": "btn"}) == ' class="btn"'
-
-    def test_default(self):
-        assert render_attrs(None, **{"class": "btn"}) == ' class="btn"'
-
-    def test_default_override(self):
-        assert (
-            render_attrs(
-                {"class": "btn-primary"},
-                **{"class": "btn"},
-            )
-            == ' class="btn-primary"'
-        )
-
-    def test_boolean(self):
-        assert render_attrs({"required": True}) == " required"
-
-    def test_multiple(self):
-        attrs = {
-            "class": "btn",
-            "id": "submit-button",
-            "data_toggle": "modal",  # underscore converted to hyphen
-        }
-        result = render_attrs(attrs)
-        assert 'class="btn"' in result
-        assert 'id="submit-button"' in result
-        assert 'data-toggle="modal"' in result
-
-    def test_false_value(self):
-        assert render_attrs({"class": False}) == ""
-
-    def test_none_value(self):
-        assert render_attrs({"class": None}) == ""
 
 
 class TestFragment:
