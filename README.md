@@ -1,5 +1,5 @@
 
-![coverage](/screenshots/coverage.svg?raw=True)
+![coverage](/static/img/coverage.svg?raw=True)
 
 This is the source code for a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself. A Dockerfile is provided for production deployments.
 
