@@ -1,4 +1,4 @@
 ansible_user: "ubuntu"
 home_dir: "/home/{{ ansible_user }}"
 kubeconfig: "{{ home_dir }}/.kube/config"
-docker_image: "ghcr.io/danjac/radiofeed-app:main"
+docker_image: "ghcr.io/danjac/listenfeed-app:main"

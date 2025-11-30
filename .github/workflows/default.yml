@@ -1,4 +1,4 @@
-name: radiofeed:default
+name: listenfeed:default
 on:
     pull_request:
     push:

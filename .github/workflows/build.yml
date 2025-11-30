@@ -1,4 +1,4 @@
-name: radiofeed:build
+name: listenfeed:build
 run-name: ${{ github.actor }} is building Docker image
 on:
     workflow_dispatch:

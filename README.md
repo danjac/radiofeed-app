@@ -5,7 +5,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Development
 
-Radiofeed requires the following basic dependencies to get started:
+Listenfeed requires the following basic dependencies to get started:
 
 * Python 3.14
 * [uv](https://docs.astral.sh)
@@ -38,7 +38,7 @@ Run `just` to see all available commands.
 
 ## Stack
 
-The **Radiofeed** stack includes:
+The **Listenfeed** stack includes:
 
 * [Django](https://djangoproject.com)
 * [HTMX](https://htmx.org)
@@ -48,15 +48,15 @@ The **Radiofeed** stack includes:
 
 ## Deployment
 
-The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
+The following environment variables should be set in your production installation (changing _listenfeed.app_ for your domain).
 
 ```
-ALLOWED_HOSTS=radiofeed.app
+ALLOWED_HOSTS=listenfeed.app
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
-ADMINS=me@radiofeed.app
-EMAIL_HOST=mg.radiofeed.app
+ADMINS=me@listenfeed.app
+EMAIL_HOST=mg.listenfeed.app
 MAILGUN_API_KEY=<mailgun_api_key>
 SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>
