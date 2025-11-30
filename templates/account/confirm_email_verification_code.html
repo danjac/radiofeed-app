@@ -19,14 +19,16 @@
                     {% heroicon_mini "check" class="mr-2" %}
                     Confirm
                 </button>
-                <button class="btn btn-default"
-                        name="action"
-                        value="resend"
-                        formnovalidate
-                >
-                    {% heroicon_mini "envelope" class="mr-2" %}
-                    Resend
-                </button>
+                {% if can_resend %}
+                    <button class="btn btn-default"
+                            name="action"
+                            value="resend"
+                            formnovalidate
+                    >
+                        {% heroicon_mini "envelope" class="mr-2" %}
+                        Resend
+                    </button>
+                {% endif %}
                 {% if user.is_authenticated %}
                     <a href="{% url 'account_email' %}" class="btn btn-default btn-outline"
                     >
