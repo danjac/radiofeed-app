@@ -9,7 +9,6 @@ requires-python = "==3.14.*"
 readme = "README.md"
 license = {text = "MIT"}
 dependencies = [
-    "beautifulsoup4>=4.12.3",
     "django-allauth[socialaccount]>=64.2.0",
     "django-anymail>=11.1",
     "django-csp>=3.8",
