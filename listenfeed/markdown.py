@@ -4,6 +4,7 @@ from typing import Final
 import nh3
 from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
+from markdownify import markdownify
 
 _ALLOWED_TAGS: Final = {
     "a",
@@ -64,14 +65,14 @@ _TAG_ATTRIBUTES: Final = {
 
 
 @mark_safe  # noqa: S308
-def markdownify(content: str) -> str:
+def markdown(content: str) -> str:
     """Scrubs any unwanted HTML tags and attributes and renders Markdown to HTML."""
 
-    # Skip Markdown rendering if content is already HTML
-    content = content if nh3.is_html(content) else _markdown().render(content)
+    # Convert HTML to Markdown first if needed
+    content = markdownify(content) if nh3.is_html(content) else content
 
     return nh3.clean(
-        content,
+        _markdown().render(content),
         clean_content_tags=_CLEAN_TAGS,
         link_rel=_LINK_REL,
         set_tag_attribute_values=_TAG_ATTRIBUTES,

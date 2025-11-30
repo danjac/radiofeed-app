@@ -13,7 +13,7 @@ from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
 from listenfeed.cover_image import CoverImageVariant, get_cover_image_attrs
-from listenfeed.markdown import markdownify
+from listenfeed.markdown import markdown
 from listenfeed.pwa import get_theme_color
 
 register = template.Library()
@@ -96,10 +96,10 @@ def render_field(field: forms.Field, **attrs) -> str:
     return field.as_widget(attrs=_clean_attrs(attrs))
 
 
-@register.inclusion_tag("markdown.html")
-def markdown(text: str) -> dict:
+@register.inclusion_tag("markdown.html", name="markdown")
+def markdown_(text: str) -> dict:
     """Render content as Markdown."""
-    return {"markdown": markdownify(text)}
+    return {"markdown": markdown(text)}
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)

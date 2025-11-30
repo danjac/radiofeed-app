@@ -5,7 +5,7 @@ from typing import Final
 
 from django.template.defaultfilters import striptags
 
-from listenfeed.markdown import markdownify
+from listenfeed.markdown import markdown
 
 _RE_EXTRA_SPACES: Final = r" +"
 
@@ -16,7 +16,7 @@ def strip_html(content: str) -> str:
 
     If content is Markdown, will attempt to render to HTML first.
     """
-    return strip_extra_spaces(html.unescape(striptags(markdownify(content))))
+    return strip_extra_spaces(html.unescape(striptags(markdown(content))))
 
 
 def strip_extra_spaces(value: str) -> str:
