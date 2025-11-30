@@ -34,24 +34,7 @@
                             </div>
                         {% endfor %}
                         {% fragment "form.html#buttons" %}
-                            {% if num_addresses == 1 %}
-                                <button
-                                    class="btn btn-default"
-                                    disabled
-                                    title="You cannot set the only e-mail address associated with your account as primary."
-                                >
-                                    {% heroicon_mini "hand-thumb-up" class="mr-2" %}
-                                    Primary
-                                </button>
-                                <button
-                                    class="btn btn-default"
-                                    disabled
-                                    title="You cannot remove the only e-mail address associated with your account."
-                                >
-                                    {% heroicon_mini "trash" class="mr-2" %}
-                                    Remove
-                                </button>
-                            {% else %}
+                            {% if num_addresses > 1 %}
                                 <button
                                     class="btn btn-primary"
                                     name="action_primary"
@@ -59,14 +42,6 @@
                                 >
                                     {% heroicon_mini "hand-thumb-up" class="mr-2" %}
                                     Primary
-                                </button>
-                                <button
-                                    class="btn btn-danger"
-                                    name="action_remove"
-                                    value="1"
-                                >
-                                    {% heroicon_mini "trash" class="mr-2" %}
-                                    Remove
                                 </button>
                             {% endif %}
                             <button
@@ -76,6 +51,16 @@
                                 {% heroicon_mini "envelope" class="mr-2" %}
                                 Re-Verify
                             </button>
+                            {% if num_addresses > 1 %}
+                                <button
+                                    class="btn btn-danger"
+                                    name="action_remove"
+                                    value="1"
+                                >
+                                    {% heroicon_mini "trash" class="mr-2" %}
+                                    Remove
+                                </button>
+                            {% endif %}
                         {% endfragment %}
                     {% endfragment %}
                     <p>
