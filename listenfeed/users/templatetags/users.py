@@ -25,7 +25,7 @@ class Settings(TypedDict):
 
 @register.simple_tag(takes_context=True)
 def get_account_settings(context: RequestContext, active: str) -> Settings:
-    """ "Returns a dictionary of settings items."""
+    """Returns a dictionary of settings items."""
 
     items = {
         "preferences": SettingsItem(
@@ -57,9 +57,9 @@ def get_account_settings(context: RequestContext, active: str) -> Settings:
             url=reverse("account_change_password"),
         )
     if get_adapter().list_providers(context.request):
-        items["social_logins"] = SettingsItem(
-            label="Social Logins",
-            icon="user-group",
+        items["connections"] = SettingsItem(
+            label="3rd Party Accounts",
+            icon="cloud",
             url=reverse("socialaccount_connections"),
         )
 

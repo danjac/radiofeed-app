@@ -52,8 +52,8 @@ class TestGetAccountSettings:
     def test_connections(self, rf, google_adapter, user):
         req = rf.get("/")
         req.user = user
-        settings = get_account_settings(RequestContext(req), "social_logins")
-        assert settings["active"]["label"] == "Social Logins"
+        settings = get_account_settings(RequestContext(req), "connections")
+        assert settings["active"]["label"] == "3rd Party Accounts"
         assert len(settings["items"]) == 7
 
     @pytest.mark.django_db
