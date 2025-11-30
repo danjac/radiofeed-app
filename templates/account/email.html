@@ -10,7 +10,7 @@
         {% with emailaddresses=user.emailaddress_set.all %}
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
-                    <p>The following e-mail addresses are associated with your account:</p>
+                    <p>The following email addresses are associated with your account:</p>
                     {% fragment "form.html" %}
                         {% for emailaddress in emailaddresses|dictsortreversed:"primary" %}
                             <div class="flex flex-wrap items-center space-x-3">
