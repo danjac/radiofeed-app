@@ -1,5 +1,5 @@
 [project]
-name = "listenfeed-app"
+name = "listenwave-app"
 version = "0.1.0"
 description = "Podcast aggregator app"
 authors = [
@@ -75,7 +75,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="listenfeed.settings"
+DJANGO_SETTINGS_MODULE="listenwave.settings"
 addopts = [
     "-v",
     "-x",
@@ -89,7 +89,7 @@ addopts = [
     "--tb=short",
 ]
 
-testpaths = ["listenfeed", "templates"]
+testpaths = ["listenwave", "templates"]
 env = [
     "COVERAGE_CORE=sysmon",
     "USE_CONNECTION_POOL=false",
@@ -108,7 +108,7 @@ runner = "pytest"
 patterns = ["*.py", "*.html"]
 
 [tool.coverage.run]
-source=["listenfeed"]
+source=["listenwave"]
 omit=[
     "**/migrations/*",
     "*/tests/*",
@@ -188,13 +188,13 @@ lint.ignore = [
 "**/tests/**.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["listenfeed"]
+known-first-party = ["listenwave"]
 
 [tool.isort]
 profile = "black"
 
 [tool.pyright]
-include=["listenfeed"]
+include=["listenwave"]
 exclude=[
   "**/migrations/*.py",
   "**/tests/*.py",

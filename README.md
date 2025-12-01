@@ -5,7 +5,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Development
 
-Listenfeed requires the following basic dependencies to get started:
+Listenwave requires the following basic dependencies to get started:
 
 * Python 3.14
 * [uv](https://docs.astral.sh)
@@ -38,7 +38,7 @@ Run `just` to see all available commands.
 
 ## Stack
 
-The **Listenfeed** stack includes:
+The **Listenwave** stack includes:
 
 * [Django](https://djangoproject.com)
 * [HTMX](https://htmx.org)
@@ -48,15 +48,15 @@ The **Listenfeed** stack includes:
 
 ## Deployment
 
-The following environment variables should be set in your production installation (changing _listenfeed.app_ for your domain).
+The following environment variables should be set in your production installation (changing _listenwave.app_ for your domain).
 
 ```
-ALLOWED_HOSTS=listenfeed.app
+ALLOWED_HOSTS=listenwave.app
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
-ADMINS=me@listenfeed.app
-EMAIL_HOST=mg.listenfeed.app
+ADMINS=me@listenwave.app
+EMAIL_HOST=mg.listenwave.app
 MAILGUN_API_KEY=<mailgun_api_key>
 SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>
