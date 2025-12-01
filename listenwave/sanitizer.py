@@ -1,13 +1,10 @@
 import functools
 import html
 import re
-from typing import Final
 
 from django.template.defaultfilters import striptags
 
 from listenwave.markdown import markdown
-
-_RE_EXTRA_SPACES: Final = r" +"
 
 
 def strip_html(content: str) -> str:
@@ -33,4 +30,4 @@ def strip_extra_spaces(value: str) -> str:
 
 @functools.cache
 def _re_extra_spaces() -> re.Pattern:
-    return re.compile(_RE_EXTRA_SPACES)
+    return re.compile(r" +")
