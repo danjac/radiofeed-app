@@ -20,6 +20,7 @@ from listenfeed.pwa import ImageInfo
 
 CoverImageVariant = Literal["card", "detail", "tile"]
 
+
 _COVER_IMAGE_MAX_SIZE = 12 * 1024 * 1024  # 12 MB
 
 _COVER_IMAGE_SIZES: Final[dict[CoverImageVariant, tuple[int, int]]] = {
@@ -50,6 +51,17 @@ _BYTES_PER_PIXEL: Final[dict[str, float]] = {
 }
 
 
+class URLSigner(Signer):
+    """Custom URL signer with shortened signature."""
+
+    max_length: int = 6
+
+    def signature(self, value: str, *args, **kwargs) -> str:
+        """Truncate signature to max_length."""
+        full_signature = super().signature(value, *args, **kwargs)
+        return full_signature[-self.max_length :]
+
+
 class CoverImageError(Exception):
     """Base class for cover image fetching errors."""
 
@@ -76,7 +88,7 @@ class CoverImageTooLargeError(CoverImageError):
 
 def get_cover_url_signer() -> Signer:
     """Return URL signer"""
-    return Signer(salt="cover_url")
+    return URLSigner(salt="cover_url")
 
 
 def get_cover_image_attrs(
