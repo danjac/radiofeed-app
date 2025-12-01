@@ -56,9 +56,9 @@ class URLSigner(Signer):
 
     max_length: int = 6
 
-    def signature(self, value: str, *args, **kwargs) -> str:
+    def signature(self, value: str | bytes, key: str | bytes | None = None) -> str:
         """Truncate signature to max_length."""
-        full_signature = super().signature(value, *args, **kwargs)
+        full_signature = super().signature(value, key)
         return full_signature[-self.max_length :]
 
 

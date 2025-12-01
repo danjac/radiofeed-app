@@ -9,12 +9,7 @@ from django.utils.cache import patch_vary_headers
 from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
-
-<<<<<<< HEAD
 from listenwave.request import Request
-=======
-from listenwave.request import HttpRequest
->>>>>>> 1cf2a6a26 (refactor: typing fixes)
 
 
 @dataclasses.dataclass(frozen=True, kw_only=False)

@@ -11,7 +11,6 @@ license = {text = "MIT"}
 dependencies = [
     "django-allauth[socialaccount]>=64.2.0",
     "django-anymail>=11.1",
-    "django-csp>=3.8",
     "django-fast-update>=0.2.3",
     "django-health-check>=3.18.3",
     "django-htmx>=1.19.0",
@@ -19,7 +18,7 @@ dependencies = [
     "django-permissions-policy>=4.21.0",
     "django-redis>=5.4.0",
     "django-tailwind-cli>=2.16.0",
-    "django>=5.1",
+    "django>=6.0rc",
     "environs[django]>=11.0.0",
     "gunicorn>=23.0.0",
     "heroicons[django]>=2.8.0",
@@ -42,7 +41,6 @@ dependencies = [
     "pycountry>=24.6.1",
     "python-slugify>=8.0.4",
     "django-typer[rich]>=3.4.0",
-    "django-template-partials>=25.2",
     "whitenoise[brotli]>=6.11.0",
     "django-http-compression[brotli]>=1.2.0",
     "markdownify>=1.2.2",
@@ -202,3 +200,4 @@ exclude=[
 ]
 
 typeCheckingMode = "basic"
+
