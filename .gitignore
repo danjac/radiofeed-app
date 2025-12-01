@@ -44,7 +44,7 @@ logs
 media/
 node_modules/
 npm-debug.log*
-static/app.css
+static/build/app.css
 staticfiles
 terraform/.terraform/
 terraform/terraform.tfstate*

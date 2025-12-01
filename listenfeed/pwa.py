@@ -119,7 +119,7 @@ def _app_icons() -> Iterator[dict]:
 
 def _generate_icons(dir: str) -> Iterator[ImageInfo]:
     path = pathlib.Path("img") / "icons" / dir
-    for filename in (settings.STATIC_SRC / path).glob("*.png"):
+    for filename in (settings.STATIC_PERSIST_DIR / path).glob("*.png"):
         yield ImageInfo(
             src=static(f"{path}/{filename.name}"),
             sizes=_icon_size(filename),
