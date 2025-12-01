@@ -1,5 +1,5 @@
 [project]
-name = "listenwave-app"
+name = "listenwave"
 version = "0.1.0"
 description = "Podcast aggregator app"
 authors = [
