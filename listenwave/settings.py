@@ -288,14 +288,11 @@ FORMAT_MODULE_PATH = ["listenwave.formats"]
 # Static files
 
 # Ephemeral static files required for build only
-STATIC_BUILD_DIR = BASE_DIR / "static" / "build"
-
-# Permanent static files also required at runtime
-STATIC_PERSIST_DIR = BASE_DIR / "static" / "persist"
+STATIC_SRC = BASE_DIR / "static"
 
 STATIC_URL = env("STATIC_URL", default="/static/")
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [STATIC_BUILD_DIR, STATIC_PERSIST_DIR]
+STATICFILES_DIRS = [STATIC_SRC]
 
 # Tailwind CLI
 # https://django-tailwind-cli.andrich.me/settings/#settings

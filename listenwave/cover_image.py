@@ -278,7 +278,7 @@ def get_placeholder_url(size: int) -> str:
 @functools.lru_cache(maxsize=16)
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""
-    return settings.STATIC_PERSIST_DIR / "img" / "placeholders" / get_placeholder(size)
+    return settings.STATIC_SRC / "img" / "placeholders" / get_placeholder(size)
 
 
 @contextlib.contextmanager

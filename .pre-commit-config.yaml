@@ -46,11 +46,11 @@ repos:
       rev: 3.0.10
       hooks:
           - id: djhtml
-            exclude: (^static/build/vendor|(^|.*/)mocks/.*)
+            exclude: (^static/vendor|(^|.*/)mocks/.*)
           - id: djcss
-            exclude: (^static/build/vendor|(^|.*/)mocks/.*)
+            exclude: (^static/vendor|(^|.*/)mocks/.*)
           - id: djjs
-            exclude: (^static/build/vendor|(^|.*/)mocks/.*)
+            exclude: (^static/vendor|(^|.*/)mocks/.*)
     - repo: https://github.com/adamchainz/djade-pre-commit
       rev: 1.6.0
       hooks:
@@ -61,7 +61,7 @@ repos:
       hooks:
           - id: djlint-django
             args: ["--lint"]
-            exclude: (^static/build/vendor|(^|.*/)mocks/.*)
+            exclude: (^static/vendor|(^|.*/)mocks/.*)
     - repo: https://github.com/hadolint/hadolint
       rev: v2.14.0
       hooks:
