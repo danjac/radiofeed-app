@@ -130,16 +130,17 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 @login_required
 def user_stats(request: HttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
+    subscriptions = request.user.subscriptions.filter(podcast__pub_date__isnull=False)
     stats = [
         UserStat(
             label="Subscribed",
-            value=request.user.subscriptions.count(),
+            value=subscriptions.count(),
             unit="podcast",
             url=reverse("podcasts:subscriptions"),
         ),
         UserStat(
             label="Private Feeds",
-            value=request.user.subscriptions.filter(podcast__private=True).count(),
+            value=subscriptions.filter(podcast__private=True).count(),
             unit="podcast",
             url=reverse("podcasts:private_feeds"),
         ),
