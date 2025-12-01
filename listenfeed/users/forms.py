@@ -22,7 +22,7 @@ class UserPreferencesForm(forms.ModelForm):
         }
 
 
-class DeleteAccountForm(forms.Form):
+class AccountDeletionConfirmationForm(forms.Form):
     """Form for deleting user account."""
 
     required_value: str = "delete me"

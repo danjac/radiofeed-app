@@ -18,7 +18,7 @@ from listenfeed.partials import render_partial_response
 from listenfeed.podcasts.models import Podcast, Subscription
 from listenfeed.users.emails import get_unsubscribe_signer
 from listenfeed.users.forms import (
-    DeleteAccountForm,
+    AccountDeletionConfirmationForm,
     OpmlUploadForm,
     UserPreferencesForm,
 )
@@ -204,14 +204,14 @@ def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedir
     """Delete account on confirmation."""
     if request.user.is_authenticated:
         if request.method == "POST":
-            form = DeleteAccountForm(request.POST)
+            form = AccountDeletionConfirmationForm(request.POST)
             if form.is_valid():
                 request.user.delete()
                 logout(request)
                 messages.info(request, "Your account has been deleted")
                 return HttpResponseRedirect(reverse("index"))
         else:
-            form = DeleteAccountForm()
+            form = AccountDeletionConfirmationForm()
     else:
         form = None
 
