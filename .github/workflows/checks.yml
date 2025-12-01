@@ -35,6 +35,6 @@ jobs:
                     **/pyproject.toml
             - run: uv python install 3.14.0
             - run: uv sync --frozen --all-extras --no-install-project
-            - run: uv run pyright
+            - run: uv run basedpyright
             - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
             - run: uv run pytest

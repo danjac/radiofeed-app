@@ -50,7 +50,7 @@ test *args:
 # Run type checks
 [group('development')]
 typecheck *args:
-   uv run pyright {{ args }}
+   uv run basedpyright {{ args }}
 
 # Run all checks
 [group('development')]
