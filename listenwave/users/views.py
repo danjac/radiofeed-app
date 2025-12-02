@@ -16,7 +16,11 @@ from listenwave.decorators import require_form_methods
 from listenwave.feedparser.opml_parser import parse_opml
 from listenwave.partials import render_partial_response
 from listenwave.podcasts.models import Podcast, Subscription
-from listenwave.request import AuthenticatedHttpRequest, HttpRequest
+from listenwave.request import (
+    AuthenticatedHttpRequest,
+    HttpRequest,
+    is_authenticated_request,
+)
 from listenwave.users.emails import get_unsubscribe_signer
 from listenwave.users.forms import (
     AccountDeletionConfirmationForm,
@@ -204,7 +208,7 @@ def unsubscribe(
 @require_form_methods
 def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Delete account on confirmation."""
-    if request.user.is_authenticated:
+    if is_authenticated_request(request):
         if request.method == "POST":
             form = AccountDeletionConfirmationForm(request.POST)
             if form.is_valid():
