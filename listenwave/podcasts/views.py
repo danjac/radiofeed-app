@@ -10,17 +10,14 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
 from listenwave.client import get_client
-from listenwave.http import (
-    AuthenticatedHttpRequest,
-    HttpResponseConflict,
-    require_DELETE,
-    require_form_methods,
-)
+from listenwave.decorators import require_DELETE, require_form_methods
 from listenwave.paginator import render_paginated_response
 from listenwave.partials import render_partial_response
 from listenwave.podcasts import itunes
 from listenwave.podcasts.forms import PodcastForm
 from listenwave.podcasts.models import Category, Podcast, PodcastQuerySet
+from listenwave.request import AuthenticatedHttpRequest, HttpRequest
+from listenwave.response import HttpResponseConflict
 
 
 @require_safe
@@ -56,7 +53,7 @@ def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
 @require_safe
 @login_required
 def search_podcasts(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Search all public podcasts in database."""
 
@@ -77,9 +74,7 @@ def search_podcasts(
 
 @require_safe
 @login_required
-def search_itunes(
-    request: AuthenticatedHttpRequest,
-) -> TemplateResponse | HttpResponseRedirect:
+def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
@@ -135,7 +130,7 @@ def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
 @require_safe
 @login_required
 def episodes(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
 ) -> TemplateResponse:
@@ -166,7 +161,7 @@ def episodes(
 @require_safe
 @login_required
 def season(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
     podcast_id: int,
     season: int,
     slug: str | None = None,
@@ -195,7 +190,7 @@ def season(
 @require_safe
 @login_required
 def similar(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
     podcast_id: int,
     slug: str | None = None,
 ) -> TemplateResponse:
@@ -219,7 +214,7 @@ def similar(
 
 @require_safe
 @login_required
-def category_list(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.alias(
@@ -248,7 +243,7 @@ def category_list(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def category_detail(request: AuthenticatedHttpRequest, slug: str) -> TemplateResponse:
+def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -373,7 +368,7 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 
 
 def _render_subscribe_action(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
     podcast: Podcast,
     *,
     is_subscribed: bool,

@@ -8,11 +8,12 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
-from django.template.context import Context, RequestContext
+from django.template.context import Context
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
+from listenwave.context import RequestContext
 from listenwave.cover_image import CoverImageVariant, get_cover_image_attrs
 from listenwave.markdown import markdown
 from listenwave.pwa import get_theme_color

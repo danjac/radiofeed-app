@@ -7,8 +7,8 @@ from django.db.models import Model, QuerySet
 from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
-from listenwave.http import HttpRequest
 from listenwave.partials import render_partial_response
+from listenwave.request import HttpRequest
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)

@@ -18,16 +18,17 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 from pydantic import BaseModel, ValidationError
 
+from listenwave.decorators import require_DELETE
 from listenwave.episodes.models import AudioLog, Episode
 from listenwave.episodes.templatetags.audio_player import Action
-from listenwave.http import (
-    AuthenticatedHttpRequest,
-    HttpResponseConflict,
-    HttpResponseNoContent,
-    require_DELETE,
-)
 from listenwave.paginator import render_paginated_response
 from listenwave.podcasts.models import Podcast
+from listenwave.request import (
+    AuthenticatedHttpRequest,
+    HttpRequest,
+    is_authenticated_request,
+)
+from listenwave.response import HttpResponseConflict, HttpResponseNoContent
 
 
 class PlayerUpdate(BaseModel):
@@ -73,9 +74,7 @@ def index(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def search_episodes(
-    request: AuthenticatedHttpRequest,
-) -> TemplateResponse | HttpResponseRedirect:
+def search_episodes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
     """Search any episodes in the database."""
 
     if request.search:
@@ -160,10 +159,10 @@ def close_player(
 
 
 @require_POST
-def player_time_update(request: AuthenticatedHttpRequest) -> HttpResponse:
+def player_time_update(request: HttpRequest) -> HttpResponse:
     """Handles player time update AJAX requests."""
 
-    if request.user.is_anonymous:
+    if not is_authenticated_request(request):
         return _render_player_update(http.HTTPStatus.UNAUTHORIZED)
 
     if (episode_id := request.player.get()) is None:
@@ -317,7 +316,7 @@ def remove_bookmark(
 
 
 def _render_player_action(
-    request: AuthenticatedHttpRequest,
+    request: HttpRequest,
     audio_log: AudioLog,
     *,
     action: Action,

@@ -1,6 +1,6 @@
 from django.template.response import TemplateResponse
 
-from listenwave.http import HttpRequest
+from listenwave.request import HttpRequest
 
 
 def render_partial_response(

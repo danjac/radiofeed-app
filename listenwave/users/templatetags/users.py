@@ -4,7 +4,8 @@ from allauth.socialaccount.adapter import get_adapter
 from django import template
 from django.urls import reverse
 
-from listenwave.template import AuthenticatedRequestContext
+from listenwave.context import RequestContext
+from listenwave.request import is_authenticated_request
 
 register = template.Library()
 
@@ -25,7 +26,7 @@ class Settings(TypedDict):
 
 
 @register.simple_tag(takes_context=True)
-def get_account_settings(context: AuthenticatedRequestContext, active: str) -> Settings:
+def get_account_settings(context: RequestContext, active: str) -> Settings:
     """Returns a dictionary of settings items."""
 
     items = {
@@ -51,7 +52,10 @@ def get_account_settings(context: AuthenticatedRequestContext, active: str) -> S
         ),
     }
 
-    if context.request.user.has_usable_password():
+    if (
+        is_authenticated_request(context.request)
+        and context.request.user.has_usable_password()
+    ):
         items["password"] = SettingsItem(
             label="Change Password",
             icon="key",

@@ -2,8 +2,8 @@ import dataclasses
 
 from django.http import HttpResponse
 
-from listenwave.http import HttpRequest
 from listenwave.middleware import BaseMiddleware
+from listenwave.request import HttpRequest
 
 
 class PlayerMiddleware(BaseMiddleware):
