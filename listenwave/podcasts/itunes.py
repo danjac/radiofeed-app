@@ -4,7 +4,7 @@ import hashlib
 import itertools
 import json
 import re
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Iterable, Iterator
 from typing import Final
 
 import httpx
@@ -18,9 +18,6 @@ from pydantic import BaseModel, Field, ValidationError
 
 from listenwave.client import Client
 from listenwave.podcasts.models import Podcast
-
-_ITUNES_LOOKUP_BATCH_SIZE: Final = 200
-
 
 COUNTRIES: Final = (
     "br",
@@ -65,6 +62,7 @@ def search(
     search_term: str,
     *,
     limit: int = settings.DEFAULT_PAGE_SIZE,
+    **fields,
 ) -> list[Feed]:
     """Search iTunes podcast API. New podcasts will be added to the database."""
     feeds = list(
@@ -78,7 +76,7 @@ def search(
             },
         )
     )
-    save_feeds_to_db(feeds)
+    save_feeds_to_db(feeds, **fields)
     return feeds
 
 
@@ -117,14 +115,16 @@ def fetch_genre(client: Client, country: str, genre_id: int) -> Iterator[Feed]:
 def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
     """Saves the given feeds to the database."""
     podcasts = _build_podcasts_from_feeds(feeds, **fields)
-    if fields:
-        return Podcast.objects.bulk_create(
+    return (
+        Podcast.objects.bulk_create(
             podcasts,
             unique_fields=["rss"],
             update_conflicts=True,
             update_fields=fields,
         )
-    return Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+        if fields
+        else Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+    )
 
 
 def _fetch_feeds_from_page(client: Client, url: str) -> Iterator[Feed]:
@@ -144,29 +144,14 @@ def _fetch_feeds_from_page(client: Client, url: str) -> Iterator[Feed]:
         if match := re.search(r"/id(\d+)", link):
             itunes_ids.add(match.group(1))
 
-    if not itunes_ids:
-        return iter(())
-
-    return _lookup_feeds(client, sorted(itunes_ids))
-
-
-def _lookup_feeds(client: Client, itunes_ids: Sequence[str]) -> Iterator[Feed]:
-    def _fetch_batch(batch: Sequence[str]) -> Iterator[Feed]:
-        return _fetch_feeds_from_api(
+    for batch in itertools.batched(itunes_ids, 200, strict=False):
+        yield from _fetch_feeds_from_api(
             client,
             "https://itunes.apple.com/lookup",
             {
                 "id": ",".join(batch),
             },
         )
-
-    return iter(
-        feed
-        for chunk in itertools.batched(
-            itunes_ids, _ITUNES_LOOKUP_BATCH_SIZE, strict=False
-        )
-        for feed in _fetch_batch(chunk)
-    )
 
 
 def _fetch_feeds_from_api(
