@@ -3,7 +3,11 @@ import dataclasses
 from django.http import HttpResponse
 
 from listenwave.middleware import BaseMiddleware
+<<<<<<< HEAD
 from listenwave.request import Request
+=======
+from listenwave.request import HttpRequest
+>>>>>>> 1cf2a6a26 (refactor: typing fixes)
 
 
 class PlayerMiddleware(BaseMiddleware):

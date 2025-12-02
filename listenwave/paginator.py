@@ -8,7 +8,11 @@ from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
 from listenwave.partials import render_partial_response
+<<<<<<< HEAD
 from listenwave.request import Request
+=======
+from listenwave.request import HttpRequest
+>>>>>>> 1cf2a6a26 (refactor: typing fixes)
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)
