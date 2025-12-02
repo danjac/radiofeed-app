@@ -8,7 +8,7 @@ from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
 from listenwave.partials import render_partial_response
-from listenwave.request import HttpRequest
+from listenwave.request import Request
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)
@@ -102,7 +102,7 @@ class Paginator:
 
 
 def paginate(
-    request: HttpRequest,
+    request: Request,
     object_list: ObjectList,
     *,
     param: str = "page",
@@ -115,7 +115,7 @@ def paginate(
 
 
 def render_paginated_response(  # noqa: PLR0913
-    request: HttpRequest,
+    request: Request,
     template_name: str,
     object_list: ObjectList,
     extra_context: dict | None = None,

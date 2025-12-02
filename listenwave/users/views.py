@@ -17,8 +17,8 @@ from listenwave.feedparser.opml_parser import parse_opml
 from listenwave.partials import render_partial_response
 from listenwave.podcasts.models import Podcast, Subscription
 from listenwave.request import (
-    AuthenticatedHttpRequest,
-    HttpRequest,
+    AuthenticatedRequest,
+    Request,
     is_authenticated_request,
 )
 from listenwave.users.emails import get_unsubscribe_signer
@@ -41,7 +41,7 @@ class UserStat(TypedDict):
 @require_form_methods
 @login_required
 def user_preferences(
-    request: AuthenticatedHttpRequest,
+    request: AuthenticatedRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Allow user to edit their preferences."""
     if request.method == "POST":
@@ -65,7 +65,7 @@ def user_preferences(
 @require_form_methods
 @login_required
 def import_podcast_feeds(
-    request: AuthenticatedHttpRequest, feed_limit: int = 360
+    request: AuthenticatedRequest, feed_limit: int = 360
 ) -> TemplateResponse | HttpResponseRedirect:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
@@ -103,7 +103,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def export_podcast_feeds(request: AuthenticatedRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
@@ -133,7 +133,7 @@ def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def user_stats(request: AuthenticatedRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     subscriptions = request.user.subscriptions.filter(podcast__pub_date__isnull=False)
     stats = [
@@ -166,9 +166,7 @@ def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 
 @require_safe
-def unsubscribe(
-    request: HttpRequest, timeout: int = 24 * 60 * 60
-) -> HttpResponseRedirect:
+def unsubscribe(request: Request, timeout: int = 24 * 60 * 60) -> HttpResponseRedirect:
     """Unsubscribe user from email notifications.
 
     The email address should be an encrypted token. Look up the EmailAddress instance and the user,
@@ -206,7 +204,7 @@ def unsubscribe(
 
 
 @require_form_methods
-def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def delete_account(request: Request) -> TemplateResponse | HttpResponseRedirect:
     """Delete account on confirmation."""
     if is_authenticated_request(request):
         if request.method == "POST":

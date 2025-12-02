@@ -17,16 +17,12 @@ from listenwave.podcasts.models import (
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover
 
-else:
-    StrOrPromise = str
-
-if TYPE_CHECKING:
-
     class CategoryWithNumPodcasts(Category):
         """Category with annotated number of podcasts."""
 
         num_podcasts: int
 else:
+    StrOrPromise = str
     CategoryWithNumPodcasts = Category
 
 

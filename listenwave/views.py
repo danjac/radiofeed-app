@@ -25,7 +25,7 @@ from listenwave.cover_image import (
     is_cover_image_size,
     save_cover_image,
 )
-from listenwave.request import HttpRequest
+from listenwave.request import Request
 from listenwave.response import TextResponse
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
@@ -36,7 +36,7 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def index(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def index(request: Request) -> TemplateResponse | HttpResponseRedirect:
     """Landing page of site."""
 
     # if user logged in, redirect to their home page
@@ -46,7 +46,7 @@ def index(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
 
 
 @require_safe
-def about(request: HttpRequest) -> TemplateResponse:
+def about(request: Request) -> TemplateResponse:
     """Renders About page."""
     return TemplateResponse(
         request,
@@ -58,7 +58,7 @@ def about(request: HttpRequest) -> TemplateResponse:
 
 
 @require_safe
-def privacy(request: HttpRequest) -> TemplateResponse:
+def privacy(request: Request) -> TemplateResponse:
     """Renders Privacy page."""
     return TemplateResponse(request, "privacy.html")
 
@@ -90,7 +90,7 @@ def assetlinks(_) -> JsonResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def manifest(request: HttpRequest) -> JsonResponse:
+def manifest(request: Request) -> JsonResponse:
     """PWA manifest.json file."""
     return JsonResponse(pwa.get_manifest(request))
 

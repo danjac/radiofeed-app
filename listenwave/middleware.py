@@ -10,14 +10,14 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
-from listenwave.request import HttpRequest
+from listenwave.request import Request
 
 
 @dataclasses.dataclass(frozen=True, kw_only=False)
 class BaseMiddleware:
     """Base middleware class."""
 
-    get_response: Callable[[HttpRequest], HttpResponse]
+    get_response: Callable[[Request], HttpResponse]
 
 
 class HtmxCacheMiddleware(BaseMiddleware):
@@ -28,7 +28,7 @@ class HtmxCacheMiddleware(BaseMiddleware):
     Place after HtmxMiddleware.
     """
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request: Request) -> HttpResponse:
         """Middleware implementation."""
         response = self.get_response(request)
         if request.htmx:
@@ -47,7 +47,7 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         }
     )
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request: Request) -> HttpResponse:
         """Middleware implementation"""
         response = self.get_response(request)
 
@@ -82,7 +82,7 @@ class HtmxMessagesMiddleware(BaseMiddleware):
 class HtmxRedirectMiddleware(BaseMiddleware):
     """If HTMX request will send HX-Location response header if HTTP redirect."""
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request: Request) -> HttpResponse:
         """Middleware implementation"""
         response = self.get_response(request)
         if request.htmx and "Location" in response:
@@ -93,7 +93,7 @@ class HtmxRedirectMiddleware(BaseMiddleware):
 class SearchMiddleware(BaseMiddleware):
     """Adds `SearchDetails` instance as `request.search`."""
 
-    def __call__(self, request: HttpRequest) -> HttpResponse:
+    def __call__(self, request: Request) -> HttpResponse:
         """Middleware implementation."""
         request.search = SearchDetails(request=request)
         return self.get_response(request)
@@ -103,7 +103,7 @@ class SearchMiddleware(BaseMiddleware):
 class SearchDetails:
     """Handles search parameters in request."""
 
-    request: HttpRequest
+    request: Request
     param: str = "search"
     max_length: int = 200
 

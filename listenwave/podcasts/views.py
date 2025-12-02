@@ -16,13 +16,13 @@ from listenwave.partials import render_partial_response
 from listenwave.podcasts import itunes
 from listenwave.podcasts.forms import PodcastForm
 from listenwave.podcasts.models import Category, Podcast, PodcastQuerySet
-from listenwave.request import AuthenticatedHttpRequest, HttpRequest
+from listenwave.request import AuthenticatedRequest, Request
 from listenwave.response import HttpResponseConflict
 
 
 @require_safe
 @login_required
-def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def subscriptions(request: AuthenticatedRequest) -> TemplateResponse:
     """Render podcast index page."""
     podcasts = _get_podcasts().subscribed(request.user).distinct()
 
@@ -36,7 +36,7 @@ def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def discover(request: AuthenticatedRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     podcasts = (
         _get_podcasts()
@@ -53,7 +53,7 @@ def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
 @require_safe
 @login_required
 def search_podcasts(
-    request: HttpRequest,
+    request: Request,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Search all public podcasts in database."""
 
@@ -74,7 +74,7 @@ def search_podcasts(
 
 @require_safe
 @login_required
-def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def search_itunes(request: Request) -> TemplateResponse | HttpResponseRedirect:
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
@@ -97,7 +97,7 @@ def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedire
 @require_safe
 @login_required
 def podcast_detail(
-    request: AuthenticatedHttpRequest,
+    request: AuthenticatedRequest,
     podcast_id: int,
     slug: str,
 ) -> TemplateResponse:
@@ -130,7 +130,7 @@ def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
 @require_safe
 @login_required
 def episodes(
-    request: HttpRequest,
+    request: Request,
     podcast_id: int,
     slug: str | None = None,
 ) -> TemplateResponse:
@@ -161,7 +161,7 @@ def episodes(
 @require_safe
 @login_required
 def season(
-    request: HttpRequest,
+    request: Request,
     podcast_id: int,
     season: int,
     slug: str | None = None,
@@ -190,7 +190,7 @@ def season(
 @require_safe
 @login_required
 def similar(
-    request: HttpRequest,
+    request: Request,
     podcast_id: int,
     slug: str | None = None,
 ) -> TemplateResponse:
@@ -214,7 +214,7 @@ def similar(
 
 @require_safe
 @login_required
-def category_list(request: HttpRequest) -> TemplateResponse:
+def category_list(request: Request) -> TemplateResponse:
     """List all categories containing podcasts."""
     categories = (
         Category.objects.alias(
@@ -243,7 +243,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
+def category_detail(request: Request, slug: str) -> TemplateResponse:
     """Render individual podcast category along with its podcasts.
 
     Podcasts can also be searched.
@@ -270,7 +270,7 @@ def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
 @require_POST
 @login_required
 def subscribe(
-    request: AuthenticatedHttpRequest, podcast_id: int
+    request: AuthenticatedRequest, podcast_id: int
 ) -> TemplateResponse | HttpResponseConflict:
     """Subscribe a user to a podcast. Podcast must be active and public."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
@@ -287,7 +287,7 @@ def subscribe(
 
 @require_DELETE
 @login_required
-def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateResponse:
+def unsubscribe(request: AuthenticatedRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
     podcast = _get_podcast_or_404(podcast_id, private=False)
     request.user.subscriptions.filter(podcast=podcast).delete()
@@ -297,7 +297,7 @@ def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateR
 
 @require_safe
 @login_required
-def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
+def private_feeds(request: AuthenticatedRequest) -> TemplateResponse:
     """Lists user's private feeds."""
     podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
 
@@ -312,7 +312,7 @@ def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
 @require_form_methods
 @login_required
 def add_private_feed(
-    request: AuthenticatedHttpRequest,
+    request: AuthenticatedRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Add new private feed to collection."""
     if request.method == "POST":
@@ -344,7 +344,7 @@ def add_private_feed(
 @require_DELETE
 @login_required
 def remove_private_feed(
-    request: AuthenticatedHttpRequest,
+    request: AuthenticatedRequest,
     podcast_id: int,
 ) -> HttpResponseRedirect:
     """Delete private feed."""
@@ -368,7 +368,7 @@ def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
 
 
 def _render_subscribe_action(
-    request: HttpRequest,
+    request: Request,
     podcast: Podcast,
     *,
     is_subscribed: bool,
