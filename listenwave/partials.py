@@ -1,6 +1,10 @@
 from django.template.response import TemplateResponse
 
+<<<<<<< HEAD
 from listenwave.request import Request
+=======
+from listenwave.request import HttpRequest
+>>>>>>> 1cf2a6a26 (refactor: typing fixes)
 
 
 def render_partial_response(
