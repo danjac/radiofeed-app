@@ -72,6 +72,30 @@ class TestPaginator:
         assert page.has_next is False
         assert page.has_previous is True
 
+    def test_get_page_str(self):
+        paginator = Paginator([1, 2, 3], 2)
+        page = paginator.get_page("2")
+        assert len(page) == 1
+        assert page.number == 2
+        assert page.has_next is False
+        assert page.has_previous is True
+
+    def test_get_page_empty_str(self):
+        paginator = Paginator([1, 2, 3], 2)
+        page = paginator.get_page("")
+        assert len(page) == 2
+        assert page.number == 1
+        assert page.has_next is True
+        assert page.has_previous is False
+
+    def test_get_page_bad_str(self):
+        paginator = Paginator([1, 2, 3], 2)
+        page = paginator.get_page("bad")
+        assert len(page) == 2
+        assert page.number == 1
+        assert page.has_next is True
+        assert page.has_previous is False
+
     def test_get_page_empty(self):
         paginator = Paginator([], 2)
         page = paginator.get_page(1)

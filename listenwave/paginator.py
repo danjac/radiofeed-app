@@ -16,6 +16,40 @@ T_Model = TypeVar("T_Model", bound=Model)
 ObjectList: TypeAlias = Sequence[T | T_Model] | QuerySet[T_Model]
 
 
+def render_paginated_response(  # noqa: PLR0913
+    request: Request,
+    template_name: str,
+    object_list: ObjectList,
+    extra_context: dict | None = None,
+    *,
+    param: str = "page",
+    target: str = "pagination",
+    partial: str = "pagination",
+    per_page: int = settings.DEFAULT_PAGE_SIZE,
+) -> TemplateResponse:
+    """Render pagination response.
+
+    This function is a wrapper around `render_partial_response` function.
+
+    It renders a partial template with paginated data. The `Page` object is passed to the template context as `page`.
+    """
+
+    page = Paginator(object_list, per_page).get_page(request.GET.get(param, 1))
+
+    return render_partial_response(
+        request,
+        template_name,
+        {
+            "page": page,
+            "page_size": page.page_size,
+            "pagination_target": target,
+        }
+        | (extra_context or {}),
+        target=target,
+        partial=partial,
+    )
+
+
 class Page:
     """Pagination without COUNT(*) queries.
 
@@ -99,51 +133,6 @@ class Paginator:
             number = 1
 
         return Page(paginator=self, number=number)
-
-
-def paginate(
-    request: Request,
-    object_list: ObjectList,
-    *,
-    param: str = "page",
-    per_page: int = settings.DEFAULT_PAGE_SIZE,
-) -> Page:
-    """Paginate object list."""
-    return Paginator(object_list, per_page=per_page).get_page(
-        request.GET.get(param, "")
-    )
-
-
-def render_paginated_response(  # noqa: PLR0913
-    request: Request,
-    template_name: str,
-    object_list: ObjectList,
-    extra_context: dict | None = None,
-    *,
-    target: str = "pagination",
-    partial: str = "pagination",
-    **pagination_kwargs,
-) -> TemplateResponse:
-    """Render pagination response.
-
-    This function is a wrapper around `render_partial_response` function.
-
-    It renders a partial template with paginated data. The `Page` object is passed to the template context as `page`.
-    """
-    page = paginate(request, object_list, **pagination_kwargs)
-
-    return render_partial_response(
-        request,
-        template_name,
-        {
-            "page": page,
-            "page_size": page.page_size,
-            "pagination_target": target,
-        }
-        | (extra_context or {}),
-        target=target,
-        partial=partial,
-    )
 
 
 def validate_page_number(number: int | str) -> int:
