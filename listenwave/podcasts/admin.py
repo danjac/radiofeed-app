@@ -6,12 +6,28 @@ from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
-from listenwave.podcasts.models import Category, Podcast, Recommendation, Subscription
+from listenwave.podcasts.models import (
+    Category,
+    Podcast,
+    PodcastQuerySet,
+    Recommendation,
+    Subscription,
+)
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover
+
 else:
     StrOrPromise = str
+
+if TYPE_CHECKING:
+
+    class CategoryWithNumPodcasts(Category):
+        """Category with annotated number of podcasts."""
+
+        num_podcasts: int
+else:
+    CategoryWithNumPodcasts = Category
 
 
 @admin.register(Category)
@@ -32,7 +48,7 @@ class CategoryAdmin(admin.ModelAdmin):
         """Returns queryset with number of podcasts."""
         return super().get_queryset(request).annotate(num_podcasts=Count("podcasts"))
 
-    def num_podcasts(self, obj: Category) -> int:
+    def num_podcasts(self, obj: CategoryWithNumPodcasts) -> int:
         """Returns number of podcasts in this category."""
         return obj.num_podcasts or 0
 
@@ -52,7 +68,7 @@ class ActiveFilter(admin.SimpleListFilter):
             ("no", "Inactive"),
         )
 
-    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
+    def queryset(self, request: HttpRequest, queryset: PodcastQuerySet):
         """Returns filtered queryset."""
         match self.value():
             case "yes":
@@ -190,7 +206,7 @@ class ScheduledFilter(admin.SimpleListFilter):
         return (("yes", "Scheduled"),)
 
     def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
+        self, request: HttpRequest, queryset: PodcastQuerySet
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
         return queryset.scheduled() if self.value() == "yes" else queryset

@@ -71,7 +71,7 @@ class Episode(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager["Episode"] = EpisodeQuerySet.as_manager()
+    objects: EpisodeQuerySet = EpisodeQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [

@@ -93,7 +93,7 @@ def tokenize(language: str, text: str) -> list[str]:
 def get_language_codes() -> set[str]:
     """Return ISO 639 2-char language codes ."""
     return {
-        language.alpha_2
+        language.alpha_2  # type: ignore[attr-defined]
         for language in pycountry.languages
         if hasattr(language, "alpha_2")
     }
@@ -156,7 +156,7 @@ def _get_date_stopwords(language: str) -> set[str]:
             words.add(date_format(dt, "F"))
 
         for day in range(7):
-            dt = now + timezone.timedelta(days=day)
+            dt = now + datetime.timedelta(days=day)
             words.add(date_format(dt, "D"))
             words.add(date_format(dt, "l"))
     return words

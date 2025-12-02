@@ -5,7 +5,6 @@ from django.conf import settings
 from django.http import (
     FileResponse,
     Http404,
-    HttpRequest,
     HttpResponse,
     HttpResponseRedirect,
     JsonResponse,
@@ -26,7 +25,7 @@ from listenwave.cover_image import (
     is_cover_image_size,
     save_cover_image,
 )
-from listenwave.http import TextResponse
+from listenwave.http import HttpRequest, TextResponse
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 

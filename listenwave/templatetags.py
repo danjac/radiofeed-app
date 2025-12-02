@@ -1,6 +1,7 @@
 import functools
 import json
 import re
+from datetime import timedelta
 
 from django import forms, template
 from django.conf import settings
@@ -93,7 +94,7 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
 @register.simple_tag
 def render_field(field: forms.Field, **attrs) -> str:
     """Returns rendered widget."""
-    return field.as_widget(attrs=_clean_attrs(attrs))
+    return field.as_widget(attrs=_clean_attrs(attrs))  # type: ignore[attr-defined]
 
 
 @register.inclusion_tag("markdown.html", name="markdown")
@@ -148,7 +149,7 @@ def fragment(
 @register.filter
 def widget(field: forms.Field) -> forms.Widget:
     """Returns widget for field."""
-    return field.field.widget
+    return field.field.widget  # # type: ignore[attr-defined]
 
 
 @register.filter
@@ -161,7 +162,7 @@ def widget_type(field: forms.Field) -> str:
 def format_duration(total_seconds: int, min_value: int = 60) -> str:
     """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
     return (
-        timesince(timezone.now() - timezone.timedelta(seconds=total_seconds))
+        timesince(timezone.now() - timedelta(seconds=total_seconds))
         if total_seconds >= min_value
         else ""
     )

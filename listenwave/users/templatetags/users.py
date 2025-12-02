@@ -2,8 +2,9 @@ from typing import TypedDict
 
 from allauth.socialaccount.adapter import get_adapter
 from django import template
-from django.template.context import RequestContext
 from django.urls import reverse
+
+from listenwave.template import AuthenticatedRequestContext
 
 register = template.Library()
 
@@ -24,7 +25,7 @@ class Settings(TypedDict):
 
 
 @register.simple_tag(takes_context=True)
-def get_account_settings(context: RequestContext, active: str) -> Settings:
+def get_account_settings(context: AuthenticatedRequestContext, active: str) -> Settings:
     """Returns a dictionary of settings items."""
 
     items = {

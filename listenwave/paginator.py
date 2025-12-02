@@ -4,10 +4,10 @@ from typing import TypeAlias, TypeVar
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db.models import Model, QuerySet
-from django.http import HttpRequest
 from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
+from listenwave.http import HttpRequest
 from listenwave.partials import render_partial_response
 
 T = TypeVar("T")

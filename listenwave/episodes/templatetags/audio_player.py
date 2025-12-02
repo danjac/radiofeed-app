@@ -1,11 +1,12 @@
 from typing import Literal
 
 from django import template
-from django.http import HttpRequest
 from django.template.context import RequestContext
 
 from listenwave import cover_image
 from listenwave.episodes.models import AudioLog, Episode
+from listenwave.http import AuthenticatedHttpRequest
+from listenwave.template import AuthenticatedRequestContext
 
 register = template.Library()
 
@@ -14,7 +15,7 @@ Action = Literal["load", "play", "close"]
 
 @register.inclusion_tag("episodes/audio_player.html", takes_context=True)
 def audio_player(
-    context: RequestContext,
+    context: AuthenticatedRequestContext,
     audio_log: AudioLog | None = None,
     action: Action = "load",
     *,
@@ -60,7 +61,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
     }
 
 
-def _get_audio_log(request: HttpRequest) -> AudioLog | None:
+def _get_audio_log(request: AuthenticatedHttpRequest) -> AudioLog | None:
     if request.user.is_authenticated and (episode_id := request.player.get()):
         return (
             request.user.audio_logs.select_related(

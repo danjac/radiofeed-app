@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
-from listenwave.episodes.models import AudioLog, Episode
+from listenwave.episodes.models import AudioLog, Episode, EpisodeQuerySet
 
 
 @admin.register(Episode)
@@ -26,7 +26,10 @@ class EpisodeAdmin(admin.ModelAdmin):
         return truncatechars(obj.podcast.title, 30)
 
     def get_search_results(
-        self, request: HttpRequest, queryset: QuerySet, search_term: str
+        self,
+        request: HttpRequest,
+        queryset: EpisodeQuerySet,
+        search_term: str,
     ) -> tuple[QuerySet[Episode], bool]:
         """Search episodes."""
         return (

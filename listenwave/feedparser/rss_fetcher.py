@@ -1,10 +1,10 @@
 import dataclasses
 import hashlib
 import http
+from datetime import datetime
 from typing import Final
 
 import httpx
-from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
@@ -42,7 +42,7 @@ class Response:
         return self.headers.get("ETag", "")
 
     @cached_property
-    def modified(self) -> timezone.datetime | None:
+    def modified(self) -> datetime | None:
         """Returns the Last-Modified header as a parsed datetime, or None if unavailable."""
         return parse_date(self.headers.get("Last-Modified"))
 
@@ -57,7 +57,7 @@ def fetch_rss(
     url: str,
     *,
     etag: str = "",
-    modified: timezone.datetime | None = None,
+    modified: datetime | None = None,
 ) -> Response:
     """Fetches RSS or Atom feed."""
     try:
@@ -85,7 +85,7 @@ def fetch_rss(
 def build_http_headers(
     *,
     etag: str,
-    modified: timezone.datetime | None,
+    modified: datetime | None,
 ) -> dict[str, str]:
     """Returns headers to send with the HTTP request."""
     headers = {"Accept": _ACCEPT}

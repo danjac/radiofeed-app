@@ -3,6 +3,7 @@ import itertools
 import math
 import statistics
 from collections.abc import Iterator
+from datetime import timedelta
 from typing import Final
 
 import numpy as np
@@ -18,7 +19,7 @@ from sklearn.neighbors import NearestNeighbors
 
 from listenwave.podcasts.models import Podcast, Recommendation
 
-_default_timeframe: Final = timezone.timedelta(days=90)
+_default_timeframe: Final = timedelta(days=90)
 
 _transformer = TfidfTransformer()
 _hasher = HashingVectorizer(n_features=30000, alternate_sign=False)
@@ -27,7 +28,7 @@ _hasher = HashingVectorizer(n_features=30000, alternate_sign=False)
 def recommend(
     language: str,
     *,
-    timeframe: timezone.timedelta | None = None,
+    timeframe: timedelta | None = None,
     num_matches: int = 12,
     batch_size: int = 100,
 ) -> Iterator[Recommendation]:
@@ -56,7 +57,7 @@ class _Recommender:
         self,
         *,
         language: str,
-        timeframe: timezone.timedelta,
+        timeframe: timedelta,
         num_matches: int,
     ) -> None:
         self._language = language

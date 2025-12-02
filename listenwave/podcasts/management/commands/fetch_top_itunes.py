@@ -36,7 +36,7 @@ def handle(
 
     categories = Category.objects.filter(itunes_genre_id__isnull=False)
     permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
-    promoted_feeds: set[itunes.ItunesFeed] = set()
+    promoted_feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
 

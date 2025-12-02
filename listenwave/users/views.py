@@ -6,14 +6,14 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.signing import BadSignature
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
 from listenwave.feedparser.opml_parser import parse_opml
-from listenwave.http import require_form_methods
+from listenwave.http import AuthenticatedHttpRequest, HttpRequest, require_form_methods
 from listenwave.partials import render_partial_response
 from listenwave.podcasts.models import Podcast, Subscription
 from listenwave.users.emails import get_unsubscribe_signer
@@ -36,7 +36,7 @@ class UserStat(TypedDict):
 @require_form_methods
 @login_required
 def user_preferences(
-    request: HttpRequest,
+    request: AuthenticatedHttpRequest,
 ) -> TemplateResponse | HttpResponseRedirect:
     """Allow user to edit their preferences."""
     if request.method == "POST":
@@ -60,7 +60,7 @@ def user_preferences(
 @require_form_methods
 @login_required
 def import_podcast_feeds(
-    request: HttpRequest, feed_limit: int = 360
+    request: AuthenticatedHttpRequest, feed_limit: int = 360
 ) -> TemplateResponse | HttpResponseRedirect:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
@@ -98,7 +98,7 @@ def import_podcast_feeds(
 
 @require_safe
 @login_required
-def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
+def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Download OPML document containing public feeds from user's subscriptions."""
 
     podcasts = (
@@ -128,7 +128,7 @@ def export_podcast_feeds(request: HttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def user_stats(request: HttpRequest) -> TemplateResponse:
+def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Render user statistics including listening history, subscriptions, etc."""
     subscriptions = request.user.subscriptions.filter(podcast__pub_date__isnull=False)
     stats = [

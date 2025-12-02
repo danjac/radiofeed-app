@@ -1,7 +1,8 @@
 import dataclasses
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 
+from listenwave.http import HttpRequest
 from listenwave.middleware import BaseMiddleware
 
 

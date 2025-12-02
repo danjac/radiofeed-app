@@ -10,7 +10,7 @@ from listenwave.podcasts import recommender
 from listenwave.podcasts.models import Podcast
 from listenwave.thread_pool import execute_thread_pool
 
-app = Typer(help="Create podcast recommendations")
+app: Typer = Typer(help="Create podcast recommendations")
 
 
 @app.command()
@@ -30,7 +30,7 @@ def handle() -> None:
 
 
 def _recommend(language: str) -> None:
-    podcast_ids = (rec.podcast_id for rec in recommender.recommend(language))
+    podcast_ids = (rec.podcast_id for rec in recommender.recommend(language))  # type: ignore[attr-defined]
 
     for batch in itertools.batched(podcast_ids, 500, strict=False):
         _update_recommendations_batch(batch)

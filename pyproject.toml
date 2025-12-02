@@ -193,6 +193,9 @@ known-first-party = ["listenwave"]
 [tool.isort]
 profile = "black"
 
+[tool.django-stubs]
+django_settings_module = "listenwave.settings"
+
 [tool.pyright]
 include=["listenwave"]
 exclude=[
@@ -201,6 +204,3 @@ exclude=[
 ]
 
 typeCheckingMode = "basic"
-
-reportAttributeAccessIssue = false
-reportIncompatibleVariableOverride = false

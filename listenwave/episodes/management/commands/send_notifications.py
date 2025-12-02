@@ -1,5 +1,6 @@
 import datetime
 import random
+from datetime import timedelta
 from typing import Annotated
 
 import typer
@@ -38,7 +39,7 @@ def handle(
 ) -> None:
     """Handle the command execution"""
     site = Site.objects.get_current()
-    since = timezone.now() - timezone.timedelta(days=days_since)
+    since = timezone.now() - timedelta(days=days_since)
     connection = get_connection()
 
     def _send_notifications(recipient) -> None:

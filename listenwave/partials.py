@@ -1,5 +1,6 @@
-from django.http import HttpRequest
 from django.template.response import TemplateResponse
+
+from listenwave.http import HttpRequest
 
 
 def render_partial_response(

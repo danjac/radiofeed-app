@@ -1,6 +1,6 @@
 import dataclasses
 from datetime import datetime, timedelta
-from typing import ClassVar, Final
+from typing import TYPE_CHECKING, ClassVar, Final, Self
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -18,6 +18,9 @@ from listenwave.fields import URLField
 from listenwave.sanitizer import strip_html
 from listenwave.search import SearchableMixin
 from listenwave.users.models import User
+
+if TYPE_CHECKING:
+    from listenwave.episodes.models import EpisodeQuerySet
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -52,7 +55,7 @@ class Season:
 class CategoryQuerySet(models.QuerySet):
     """Custom QuerySet for Category model."""
 
-    def search(self, search_term) -> models.QuerySet["Category"]:
+    def search(self, search_term) -> Self:
         """Does a simple search for categories."""
         if value := force_str(search_term):
             return self.filter(name__icontains=value)
@@ -66,7 +69,10 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
     itunes_genre_id = models.PositiveIntegerField(null=True, blank=True)
 
-    objects: models.Manager["Category"] = CategoryQuerySet.as_manager()
+    objects: CategoryQuerySet = CategoryQuerySet.as_manager()  # type: ignore[assignment]
+
+    if TYPE_CHECKING:
+        podcasts: "PodcastQuerySet"
 
     class Meta:
         verbose_name_plural = "categories"
@@ -92,15 +98,15 @@ class Category(models.Model):
 class PodcastQuerySet(SearchableMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    def subscribed(self, user: User) -> models.QuerySet["Podcast"]:
+    def subscribed(self, user: User) -> Self:
         """Returns podcasts subscribed by user."""
         return self.filter(pk__in=user.subscriptions.values("podcast"))
 
-    def published(self, *, published: bool = True) -> models.QuerySet["Podcast"]:
+    def published(self, *, published: bool = True) -> Self:
         """Returns only published podcasts (pub_date NOT NULL)."""
         return self.filter(pub_date__isnull=not published)
 
-    def scheduled(self) -> models.QuerySet["Podcast"]:
+    def scheduled(self) -> Self:
         """Returns all podcasts scheduled for feed parser update.
 
         1. If parsed is NULL, should be ASAP.
@@ -123,7 +129,7 @@ class PodcastQuerySet(SearchableMixin, models.QuerySet):
             )
         )
 
-    def recommended(self, user: User) -> models.QuerySet["Podcast"]:
+    def recommended(self, user: User) -> Self:
         """Returns recommended podcasts for user based on subscriptions. Includes `relevance` annotation."""
 
         # pick highest matches
@@ -271,7 +277,13 @@ class Podcast(models.Model):
 
     search_vector = SearchVectorField(null=True, editable=False)
 
-    objects: models.Manager["Podcast"] = PodcastQuerySet.as_manager()
+    objects: PodcastQuerySet = PodcastQuerySet.as_manager()  # type: ignore[assignment]
+
+    if TYPE_CHECKING:
+        episodes: EpisodeQuerySet
+        subscriptions: models.Manager["Subscription"]
+        recommendations: models.Manager["Recommendation"]
+        similar: models.Manager["Recommendation"]
 
     class Meta:
         indexes: ClassVar[list] = [
@@ -470,7 +482,7 @@ class Recommendation(models.Model):
         blank=True,
     )
 
-    objects: models.Manager["Recommendation"] = RecommendationQuerySet.as_manager()
+    objects: RecommendationQuerySet = RecommendationQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         indexes: ClassVar[list] = [
