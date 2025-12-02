@@ -159,7 +159,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
-ROOT_URLCONF = "listenwave.urls"
+ROOT_URLCONF = "config.urls"
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
@@ -283,7 +283,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-FORMAT_MODULE_PATH = ["listenwave.formats"]
+FORMAT_MODULE_PATH = ["config.formats"]
 
 # Static files
 
