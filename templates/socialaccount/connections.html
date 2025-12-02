@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% load heroicons socialaccount %}
-
 {% block title %}
     {% title "Settings" "Social Logins" %}
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with active="connections" %}
+    {% include "account/header.html" with icon="cloud" label="3rd Party Accounts" %}
     <div class="space-y-6">
         {% if form.accounts %}
             <p>You can sign in to your account using any of the following third party accounts:</p>
@@ -34,8 +33,7 @@
                             type="submit"
                             name="action_remove"
                             value="1"
-                            title="Remove this connection"
-                    >
+                            title="Remove this connection">
                         {% heroicon_mini "trash" class="mr-2" %}
                         Remove
                     </button>

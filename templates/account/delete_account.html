@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 {% load heroicons %}
-
 {% block title %}
     {% title "Settings" "Delete Account" %}
 {% endblock title %}
 
 {% block content %}
     {% if user.is_authenticated %}
-        {% include "account/header.html" with active="delete_account" %}
+        {% include "account/header.html" with icon="trash" label="Delete Account" %}
         <div class="space-y-6">
             <div class="space-y-3">
                 <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>

@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with active="feeds" %}
+    {% include "account/header.html" with icon="rss" label="Import/Export Feeds" %}
     <div class="space-y-3">
         {% if user.subscriptions.exists %}
             <div class="space-y-3">
@@ -21,7 +21,7 @@
                 <p>
                     <strong>Note:</strong> private feeds will not be included. You can add a private feed <a href="{% url "podcasts:private_feeds" %}" class="underline link">here</a>.
                 </p>
-                <hr class="border"/>
+                <hr class="border" />
             </div>
         {% endif %}
         <div class="space-y-3">

@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with active="preferences" %}
+    {% include "account/header.html" with icon="adjustments-horizontal" label="Preferences" %}
     {% partialdef form inline %}
         {% fragment "form.html" htmx=True target="preferences-form" %}
             {{ form }}

@@ -1,16 +1,42 @@
-{% load get_account_settings from users %}
-{% get_account_settings active as settings %}
+{% load socialaccount %}
 {% fragment "header.html" %}
     {% fragment "header.html#title" %}
         Settings for {{ user.username }}
     {% endfragment %}
     {% fragment "header/nav.html" %}
         {% fragment "header/nav.html#item" %}
-            {% fragment "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=settings.active.icon label=settings.active.label %}
-                {% for item in settings.items %}
-                    {% include "header/nav/dropdown.html#item" with url=item.url icon=item.icon label=item.label %}
-                {% endfor %}
+            {% fragment "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=icon label=label %}
+                {% with url_name="users:preferences" icon="adjustments-horizontal" label="Preferences" %}
+                    {% partial item %}
+                {% endwith %}
+                {% with url_name="users:stats" icon="chart-bar" label="Statistics" %}
+                    {% partial item %}
+                {% endwith %}
+                {% with url_name="users:import_podcast_feeds" icon="rss" label="Import/Export Feeds" %}
+                    {% partial item %}
+                {% endwith %}
+                {% with url_name="account_email" icon="envelope" label="Email Addresses" %}
+                    {% partial item %}
+                {% endwith %}
+                {% if request.user.has_usable_password %}
+                    {% with url_name="account_change_password" icon="key" label="Change Password" %}
+                        {% partial item %}
+                    {% endwith %}
+                {% endif %}
+                {% get_providers as providers %}
+                {% if providers %}
+                    {% with url_name="socialaccount_connections" icon="cloud" label="3rd Party Accounts" %}
+                        {% partial item %}
+                    {% endwith %}
+                {% endif %}
+                {% with url_name="users:delete_account" icon="trash" label="Delete Account" %}
+                    {% partial item %}
+                {% endwith %}
             {% endfragment %}
         {% endfragment %}
     {% endfragment %}
 {% endfragment %}
+{% partialdef item %}
+    {% url url_name as url %}
+    {% include "header/nav/dropdown.html#item" %}
+{% endpartialdef %}

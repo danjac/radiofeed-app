@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "account/header.html" with active="email" %}
+    {% include "account/header.html" with icon="envelope" label="Email Addresses" %}
     <div class="space-y-6">
         {% with emailaddresses=user.emailaddress_set.all %}
             {% with num_addresses=emailaddresses|length %}
@@ -30,42 +30,28 @@
                                 {% if emailaddress.verified %}
                                     <div class="px-1 text-xs font-semibold text-green-500 rounded-sm border border-green-600 lg:text-sm">Verified</div>
                                 {% endif %}
-
                             </div>
                         {% endfor %}
                         {% fragment "form.html#buttons" %}
                             {% if num_addresses > 1 %}
-                                <button
-                                    class="btn btn-primary"
-                                    name="action_primary"
-                                    value="1"
-                                >
+                                <button class="btn btn-primary" name="action_primary" value="1">
                                     {% heroicon_mini "hand-thumb-up" class="mr-2" %}
                                     Primary
                                 </button>
                             {% endif %}
-                            <button
-                                class="btn btn-default"
-                                name="action_send"
-                                value="1">
+                            <button class="btn btn-default" name="action_send" value="1">
                                 {% heroicon_mini "envelope" class="mr-2" %}
                                 Re-Verify
                             </button>
                             {% if num_addresses > 1 %}
-                                <button
-                                    class="btn btn-danger"
-                                    name="action_remove"
-                                    value="1"
-                                >
+                                <button class="btn btn-danger" name="action_remove" value="1">
                                     {% heroicon_mini "trash" class="mr-2" %}
                                     Remove
                                 </button>
                             {% endif %}
                         {% endfragment %}
                     {% endfragment %}
-                    <p>
-                        Email notifications will be sent to your primary email address.
-                    </p>
+                    <p>Email notifications will be sent to your primary email address.</p>
                 {% else %}
                     <p>
                         <strong>Warning:</strong>
@@ -75,19 +61,15 @@
             {% endwith %}
         {% endwith %}
         {% if can_add_email %}
-            <hr class="border"/>
+            <hr class="border" />
             <h2 class="text-base font-semibold lg:text-lg">Add New Email Address</h2>
             {% fragment "form.html" %}
                 {{ form }}
                 {% fragment "form.html#buttons" %}
-                    <button
-                        class="btn btn-primary"
-                        name="action_add"
-                        value="1">
+                    <button class="btn btn-primary" name="action_add" value="1">
                         {% heroicon_mini "plus" class="mr-2" %}
                         Add Email
                     </button>
-
                 {% endfragment %}
             {% endfragment %}
         {% endif %}

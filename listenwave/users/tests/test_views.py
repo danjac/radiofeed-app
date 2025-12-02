@@ -49,10 +49,6 @@ class Test3rdPartyAuthTemplates:
         req.session = {}
         req.player = PlayerDetails(request=req)
 
-        mocker.patch(
-            "listenwave.users.templatetags.users.get_adapter",
-            return_value=MockGoogleAdapter(),
-        )
         response = TemplateResponse(req, template)
         response.render()
         assert response.template_name == template
