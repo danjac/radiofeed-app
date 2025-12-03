@@ -270,12 +270,6 @@ def get_placeholder_url(size: int) -> str:
     return static(f"img/placeholders/{get_placeholder(size)}")
 
 
-@functools.cache
-def get_placeholder_bytes(size: int) -> bytes:
-    """Return bytes of placeholder image"""
-    return get_placeholder_path(size).read_bytes()
-
-
 @functools.lru_cache(maxsize=16)
 def get_placeholder_path(size: int) -> pathlib.Path:
     """Returns path to placeholder image"""

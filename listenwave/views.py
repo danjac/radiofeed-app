@@ -21,7 +21,7 @@ from listenwave.cover_image import (
     CoverImageError,
     decode_cover_url,
     fetch_cover_image,
-    get_placeholder_bytes,
+    get_placeholder_path,
     is_cover_image_size,
     save_cover_image,
 )
@@ -148,6 +148,6 @@ def cover_image(_, encoded_url: str, size: int) -> FileResponse:
         output = save_cover_image(image)
     except CoverImageError:
         # Return placeholder image on error to prevent multiple requests
-        output = get_placeholder_bytes(size)
+        output = get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
