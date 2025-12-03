@@ -134,14 +134,14 @@ def fragment(
     If `only` is passed it will not include outer context.
     """
 
-    if not context.template:
+    context = context.new() if only else context
+
+    if context.template is None:
         raise template.TemplateSyntaxError(
             "Can only be used inside a template context."
         )
 
     tmpl = context.template.engine.get_template(template_name)
-
-    context = context.new() if only else context
 
     with context.push(content=content, **extra_context):
         return tmpl.render(context)
