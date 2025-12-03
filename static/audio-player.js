@@ -193,7 +193,7 @@ document.addEventListener("alpine:init", () => {
             skipTo(position) {
                 if (this.isPlaying) {
                     // ensure seconds within bounds of audio duration
-                    newTime = Math.max(
+                    const newTime = Math.max(
                         0,
                         Math.min(this.$refs.audio.duration, position),
                     );
