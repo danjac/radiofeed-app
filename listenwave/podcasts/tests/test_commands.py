@@ -26,27 +26,41 @@ class TestFetchTopItunes:
     def category(self):
         return CategoryFactory(itunes_genre_id=1301)
 
-    @pytest.mark.django_db
-    def test_ok(self, mocker, feed, category):
-        patched_chart = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
-        )
-        patched_genre = mocker.patch(
+    @pytest.fixture
+    def mock_fetch_genre(self, mocker, feed):
+        return mocker.patch(
             "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
         )
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
-        patched_chart.assert_called()
-        patched_genre.assert_called()
+
+    @pytest.fixture
+    def mock_fetch_chart(self, mocker, feed):
+        return mocker.patch(
+            "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
+        )
 
     @pytest.mark.django_db
-    def test_fetch_top_feeds(self, mocker, feed):
-        patched = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_chart",
-            return_value=[feed],
-        )
+    def test_ok(
+        self,
+        category,
+        mock_fetch_chart,
+        mock_fetch_genre,
+    ):
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        mock_fetch_chart.assert_called()
+        mock_fetch_genre.assert_called()
+
+    @pytest.mark.django_db
+    def test_fetch_top_feeds(
+        self,
+        category,
+        mock_fetch_chart,
+        mock_fetch_genre,
+    ):
         promoted = PodcastFactory(promoted=True)
         call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
-        patched.assert_called()
+
+        mock_fetch_chart.assert_called()
+        mock_fetch_genre.assert_called()
 
         # promoted podcast should be demoted
         promoted.refresh_from_db()
@@ -56,10 +70,15 @@ class TestFetchTopItunes:
         assert Podcast.objects.filter(promoted=True).count() == 1
 
     @pytest.mark.django_db
-    def fetch_top_feeds_none_found(self, mocker, feed):
+    def fetch_top_feeds_none_found(
+        self,
+        mocker,
+        category,
+        mock_fetch_genre,
+    ):
         patched = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart",
-            return_value=[feed],
+            return_value=[],
         )
         promoted = PodcastFactory(promoted=True)
         call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
@@ -71,31 +90,24 @@ class TestFetchTopItunes:
         assert promoted.promoted is False
 
     @pytest.mark.django_db
-    def test_chart_error(self, mocker, category, feed):
-        patched_chart = mocker.patch(
+    def test_chart_error(self, mocker, category, mock_fetch_genre):
+        mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("API error"),
         )
-        patched_genre = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
-        )
         call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
-        patched_chart.assert_called()
-        patched_genre.assert_called()
+        mock_fetch_chart.assert_called()
+        mock_fetch_chart.assert_called()
 
     @pytest.mark.django_db
-    def test_genre_error(self, mocker, category, feed):
-        patched_chart = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_chart",
-            return_value=[feed],
-        )
-        patched_genre = mocker.patch(
+    def test_genre_error(self, mocker, category, mock_fetch_chart):
+        mock_fetch_genre = mocker.patch(
             "listenwave.podcasts.itunes.fetch_genre",
             side_effect=ItunesError("API error"),
         )
         call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
-        patched_chart.assert_called()
-        patched_genre.assert_called()
+        mock_fetch_chart.assert_called()
+        mock_fetch_genre.assert_called()
 
 
 class TestCreateRecommendations:
