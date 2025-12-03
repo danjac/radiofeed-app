@@ -1,4 +1,4 @@
-name: listenfeed:checks
+name: listenwave:checks
 on: workflow_call
 jobs:
     precommit:

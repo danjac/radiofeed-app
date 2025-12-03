@@ -1,4 +1,4 @@
-name: listenfeed:build
+name: listenwave:build
 run-name: ${{ github.actor }} is building Docker image
 on:
     workflow_dispatch:
