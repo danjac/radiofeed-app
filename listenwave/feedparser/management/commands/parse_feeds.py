@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import typer
-from django.db.models import Case, Count, IntegerField, QuerySet, When
+from django.db.models import Case, Count, IntegerField, When
 from django_typer.management import Typer
 
 from listenwave.client import get_client
@@ -24,24 +24,7 @@ def handle(
     ] = 360,
 ) -> None:
     """Parse feeds for all active podcasts."""
-
-    with get_client() as client:
-
-        def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
-            result = parse_feed(podcast, client)
-            color = (
-                typer.colors.GREEN
-                if result is Podcast.ParserResult.SUCCESS
-                else typer.colors.RED
-            )
-            typer.secho(f"{podcast}: {result.label}", fg=color)
-            return result
-
-        execute_thread_pool(_parse_feed, _get_podcasts(limit))
-
-
-def _get_podcasts(limit: int) -> QuerySet[Podcast]:
-    return (
+    podcasts = (
         Podcast.objects.scheduled()
         .annotate(
             subscribers=Count("subscriptions"),
@@ -60,3 +43,17 @@ def _get_podcasts(limit: int) -> QuerySet[Podcast]:
             "updated",
         )[:limit]
     )
+
+    with get_client() as client:
+
+        def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
+            result = parse_feed(podcast, client)
+            color = (
+                typer.colors.GREEN
+                if result is Podcast.ParserResult.SUCCESS
+                else typer.colors.RED
+            )
+            typer.secho(f"{podcast}: {result.label}", fg=color)
+            return result
+
+        execute_thread_pool(_parse_feed, podcasts)
