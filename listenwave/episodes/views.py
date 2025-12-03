@@ -1,5 +1,4 @@
 import http
-import json
 
 from django.conf import settings
 from django.contrib import messages
@@ -169,8 +168,8 @@ def player_time_update(request: Request) -> JsonResponse:
             return http.HTTPStatus.NOT_FOUND
 
         try:
-            update = PlayerUpdate.model_validate(json.loads(request.body))
-        except (json.JSONDecodeError, ValidationError):
+            update = PlayerUpdate.model_validate_json(request.body)
+        except ValidationError:
             return http.HTTPStatus.BAD_REQUEST
 
         try:
