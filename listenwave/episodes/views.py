@@ -10,6 +10,7 @@ from django.http import (
     Http404,
     HttpResponse,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -157,33 +158,36 @@ def close_player(
 
 
 @require_POST
-def player_time_update(request: Request) -> HttpResponse:
+def player_time_update(request: Request) -> JsonResponse:
     """Handles player time update AJAX requests."""
 
-    if not is_authenticated_request(request):
-        return _render_player_update(http.HTTPStatus.UNAUTHORIZED)
+    def _handle_update() -> http.HTTPStatus:
+        if not is_authenticated_request(request):
+            return http.HTTPStatus.UNAUTHORIZED
 
-    if (episode_id := request.player.get()) is None:
-        return _render_player_update(http.HTTPStatus.BAD_REQUEST)
+        if (episode_id := request.player.get()) is None:
+            return http.HTTPStatus.NOT_FOUND
 
-    try:
-        update = PlayerUpdate.model_validate(json.loads(request.body))
-    except (json.JSONDecodeError, ValidationError):
-        return _render_player_update(http.HTTPStatus.BAD_REQUEST)
+        try:
+            update = PlayerUpdate.model_validate(json.loads(request.body))
+        except (json.JSONDecodeError, ValidationError):
+            return http.HTTPStatus.BAD_REQUEST
 
-    try:
-        request.user.audio_logs.update_or_create(
-            episode_id=episode_id,
-            defaults={
-                "listened": timezone.now(),
-                "current_time": update.current_time,
-                "duration": update.duration,
-            },
-        )
-    except IntegrityError:
-        return _render_player_update(http.HTTPStatus.CONFLICT)
+        try:
+            _, created = request.user.audio_logs.update_or_create(
+                episode_id=episode_id,
+                defaults={
+                    "listened": timezone.now(),
+                    "current_time": update.current_time,
+                    "duration": update.duration,
+                },
+            )
+            return http.HTTPStatus.CREATED if created else http.HTTPStatus.OK
+        except IntegrityError:
+            return http.HTTPStatus.CONFLICT
 
-    return _render_player_update(http.HTTPStatus.NO_CONTENT)
+    status = _handle_update()
+    return JsonResponse({"status": status.phrase}, status=status.value)
 
 
 @require_safe
@@ -357,7 +361,3 @@ def _render_audio_log_action(
         context["audio_log"] = audio_log
 
     return TemplateResponse(request, "episodes/detail.html#audio_log", context)
-
-
-def _render_player_update(status: http.HTTPStatus) -> HttpResponse:
-    return HttpResponse(status=status, content_type="application/json")

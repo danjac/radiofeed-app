@@ -15,6 +15,7 @@ from listenwave.episodes.tests.factories import (
 from listenwave.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from listenwave.tests.asserts import (
     assert200,
+    assert201,
     assert204,
     assert400,
     assert401,
@@ -270,7 +271,7 @@ class TestPlayerTimeUpdate:
             content_type="application/json",
         )
 
-        assert204(response)
+        assert200(response)
 
         log = AudioLog.objects.first()
         assert log is not None
@@ -294,10 +295,9 @@ class TestPlayerTimeUpdate:
             content_type="application/json",
         )
 
-        assert204(response)
+        assert201(response)
 
-        log = AudioLog.objects.first()
-        assert log is not None
+        log = AudioLog.objects.get()
 
         assert log.current_time == 1030
         assert log.episode == episode
@@ -315,7 +315,7 @@ class TestPlayerTimeUpdate:
             content_type="application/json",
         )
 
-        assert400(response)
+        assert404(response)
 
         assert not AudioLog.objects.exists()
 
