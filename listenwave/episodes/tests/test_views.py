@@ -15,7 +15,6 @@ from listenwave.episodes.tests.factories import (
 from listenwave.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from listenwave.tests.asserts import (
     assert200,
-    assert201,
     assert204,
     assert400,
     assert401,
@@ -295,7 +294,7 @@ class TestPlayerTimeUpdate:
             content_type="application/json",
         )
 
-        assert201(response)
+        assert200(response)
 
         log = AudioLog.objects.get()
 
@@ -315,7 +314,7 @@ class TestPlayerTimeUpdate:
             content_type="application/json",
         )
 
-        assert404(response)
+        assert400(response)
 
         assert not AudioLog.objects.exists()
 
@@ -354,7 +353,7 @@ class TestPlayerTimeUpdate:
             ),
             content_type="application/json",
         )
-        assert409(response)
+        assert400(response)
 
     @pytest.mark.django_db
     def test_user_not_authenticated(self, client):

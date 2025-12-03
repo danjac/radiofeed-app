@@ -1,3 +1,4 @@
+import contextlib
 import http
 
 from django.conf import settings
@@ -164,29 +165,23 @@ def player_time_update(request: Request) -> JsonResponse:
         if not is_authenticated_request(request):
             return http.HTTPStatus.UNAUTHORIZED
 
-        if (episode_id := request.player.get()) is None:
-            return http.HTTPStatus.NOT_FOUND
+        with contextlib.suppress(ValidationError, IntegrityError):
+            if episode_id := request.player.get():
+                update = PlayerUpdate.model_validate_json(request.body)
+                request.user.audio_logs.update_or_create(
+                    episode_id=episode_id,
+                    defaults={
+                        "listened": timezone.now(),
+                        "current_time": update.current_time,
+                        "duration": update.duration,
+                    },
+                )
+                return http.HTTPStatus.OK
 
-        try:
-            update = PlayerUpdate.model_validate_json(request.body)
-        except ValidationError:
-            return http.HTTPStatus.BAD_REQUEST
-
-        try:
-            _, created = request.user.audio_logs.update_or_create(
-                episode_id=episode_id,
-                defaults={
-                    "listened": timezone.now(),
-                    "current_time": update.current_time,
-                    "duration": update.duration,
-                },
-            )
-            return http.HTTPStatus.CREATED if created else http.HTTPStatus.OK
-        except IntegrityError:
-            return http.HTTPStatus.CONFLICT
+        return http.HTTPStatus.BAD_REQUEST
 
     status = _handle_update()
-    return JsonResponse({"status": status.phrase}, status=status.value)
+    return JsonResponse({"status": status.phrase}, status=status)
 
 
 @require_safe
