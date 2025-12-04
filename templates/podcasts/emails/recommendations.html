@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,52 +15,68 @@
                 padding: 20px;
                 border-radius: 8px;
             }
-            .container h1, .container h2 {
+
+            .container h1,
+            .container h2 {
                 text-align: center;
             }
+
             .podcast {
                 background-color: #512DA8;
                 padding: 15px;
                 border-radius: 8px;
                 margin-bottom: 20px;
             }
+
             .podcast h3 {
                 margin: 0 0 20px;
                 text-align: center;
             }
+
             .podcast img {
                 display: block;
                 margin: 0 auto;
                 border-radius: 8px;
                 flex-shrink: 0;
             }
+
             .podcast-content {
                 display: flex;
                 align-items: center;
                 gap: 15px;
             }
+
             .description {
                 margin-top: 5px;
-                word-wrap: break-word; /* Break long words */
-                overflow-wrap: break-word; /* Ensures long URLs wrap */
-                max-width: 100%; /* Prevents overflow */
+                word-wrap: break-word;
+            /* Break long words */
+                overflow-wrap: break-word;
+            /* Ensures long URLs wrap */
+                max-width: 100%;
+            /* Prevents overflow */
             }
+
             .footer {
                 text-align: center;
                 margin-top: 20px;
                 font-size: 14px;
             }
-            .container a, .footer a {
+
+            .container a,
+            .footer a {
                 color: #FFD54F !important;
             }
+
             @media only screen and (max-width:479px) {
                 .podcast-content {
                     display: block;
                     text-align: center;
                 }
+
                 .description {
                     margin-top: 10px;
                 }
+
                 .podcast img {
                     width: 160px;
                     height: 160px;
@@ -75,6 +92,7 @@
             }
         </style>
     </head>
+
     <body style="margin:0; padding: 0;">
 
         <div class="container">
@@ -85,12 +103,9 @@
                 <div class="podcast">
                     <h3><a href="{% absolute_uri site podcast.get_absolute_url %}">{{ podcast.cleaned_title }}</a></h3>
                     <div class="podcast-content">
-                        {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_image_attrs %}
-                        <img src="{% absolute_uri site cover_image_attrs.src %}"
-                             width="{{ cover_image_attrs.width }}"
-                             height="{{ cover_image_attrs.height }}"
-                             alt="{{ cover_image_attrs.alt }}"
-                        >
+                        {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_attrs %}
+                        <img src="{% absolute_uri site cover_attrs.src %}" width="{{ cover_attrs.width }}"
+                             height="{{ cover_attrs.height }}" alt="{{ cover_attrs.alt }}">
                         <p class="description">
                             {{ podcast.cleaned_description|urlize|truncatewords:60 }}
                         </p>
@@ -105,4 +120,5 @@
             </div>
         </div>
     </body>
+
 </html>

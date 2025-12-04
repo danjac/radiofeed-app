@@ -13,14 +13,12 @@ from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
+from listenwave import covers
 from listenwave.context import RequestContext
-from listenwave.cover_image import CoverImageVariant, get_cover_image_attrs
 from listenwave.markdown import markdown
 from listenwave.pwa import get_theme_color
 
 register = template.Library()
-
-get_cover_image_attrs = register.simple_tag(get_cover_image_attrs)
 
 
 @register.simple_tag(takes_context=True)
@@ -78,9 +76,18 @@ def meta_tags() -> str:
 
 @register.simple_tag
 @functools.cache
-def cover_image(variant: CoverImageVariant, cover_url: str, title: str) -> str:
+def get_cover_image_attrs(
+    variant: covers.CoverVariant, cover_url: str, title: str
+) -> dict:
+    """Returns cover image attributes."""
+    return covers.get_image_attrs(variant, cover_url, title)
+
+
+@register.simple_tag
+@functools.cache
+def cover_image(variant: covers.CoverVariant, cover_url: str, title: str) -> str:
     """Renders a cover image."""
-    attrs = get_cover_image_attrs(variant, cover_url, title)
+    attrs = covers.get_image_attrs(variant, cover_url, title)
     return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
 
 

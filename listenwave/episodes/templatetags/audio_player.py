@@ -2,7 +2,7 @@ from typing import Literal
 
 from django import template
 
-from listenwave import cover_image
+from listenwave import covers
 from listenwave.context import RequestContext
 from listenwave.episodes.models import AudioLog, Episode
 from listenwave.request import HttpRequest, is_authenticated_request
@@ -52,10 +52,7 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
         "title": episode.cleaned_title,
         "album": episode.podcast.cleaned_title,
         "artist": episode.podcast.cleaned_title,
-        "artwork": cover_image.get_metadata_info(
-            context.request,
-            episode.get_cover_url(),
-        ),
+        "artwork": covers.get_metadata_info(context.request, episode.get_cover_url()),
     }
 
 

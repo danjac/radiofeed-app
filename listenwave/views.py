@@ -15,16 +15,8 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
-from listenwave import pwa
+from listenwave import covers, pwa
 from listenwave.client import get_client
-from listenwave.cover_image import (
-    CoverImageError,
-    decode_cover_url,
-    fetch_cover_image,
-    get_placeholder_path,
-    is_cover_image_size,
-    save_cover_image,
-)
 from listenwave.request import HttpRequest
 from listenwave.response import RenderOrRedirectResponse, TextResponse
 
@@ -136,18 +128,19 @@ def cover_image(_, encoded_url: str, size: int) -> FileResponse:
     URL should be signed, so we can verify the request comes from this site.
     If error in downloading the image, a placeholder is returned instead.
     """
-    if not is_cover_image_size(size):
+    if not covers.is_allowed_size(size):
         raise Http404
     try:
+        cover_url = covers.decode_url(encoded_url)
+
         with get_client() as client:
-            image = fetch_cover_image(
-                client,
-                decode_cover_url(encoded_url),
-                size,
-            )
-        output = save_cover_image(image)
-    except CoverImageError:
+            data = covers.fetch_image(client, cover_url)
+
+        image = covers.process_image(data, size)
+        output = covers.save_image(image)
+
+    except covers.CoverError:
         # Return placeholder image on error to prevent multiple requests
-        output = get_placeholder_path(size).open("rb")
+        output = covers.get_placeholder_path(size).open("rb")
 
     return FileResponse(output, content_type="image/webp")
