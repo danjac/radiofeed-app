@@ -26,7 +26,7 @@ from listenwave.cover_image import (
     save_cover_image,
 )
 from listenwave.request import HttpRequest
-from listenwave.response import TextResponse
+from listenwave.response import RenderOrRedirectResponse, TextResponse
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 
@@ -36,7 +36,7 @@ _cache_page = cache_page(_CACHE_TIMEOUT)
 
 
 @require_safe
-def index(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def index(request: HttpRequest) -> RenderOrRedirectResponse:
     """Landing page of site."""
 
     # if user logged in, redirect to their home page

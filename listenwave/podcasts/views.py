@@ -17,7 +17,7 @@ from listenwave.podcasts import itunes
 from listenwave.podcasts.forms import PodcastForm
 from listenwave.podcasts.models import Category, Podcast, PodcastQuerySet
 from listenwave.request import AuthenticatedHttpRequest, HttpRequest
-from listenwave.response import HttpResponseConflict
+from listenwave.response import HttpResponseConflict, RenderOrRedirectResponse
 
 
 @require_safe
@@ -52,7 +52,7 @@ def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def search_podcasts(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
     """Search all public podcasts in database."""
 
     if request.search:
@@ -72,7 +72,7 @@ def search_podcasts(request: HttpRequest) -> TemplateResponse | HttpResponseRedi
 
 @require_safe
 @login_required
-def search_itunes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def search_itunes(request: HttpRequest) -> RenderOrRedirectResponse:
     """Render iTunes search page. Redirects to discover page if search is empty."""
 
     if request.search:
@@ -311,7 +311,7 @@ def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
 @login_required
 def add_private_feed(
     request: AuthenticatedHttpRequest,
-) -> TemplateResponse | HttpResponseRedirect:
+) -> RenderOrRedirectResponse:
     """Add new private feed to collection."""
     if request.method == "POST":
         form = PodcastForm(request.POST)

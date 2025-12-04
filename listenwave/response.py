@@ -1,11 +1,10 @@
 import http
+from typing import TypeAlias
 
-from django.http import HttpResponse
-from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template.response import TemplateResponse
 
-require_form_methods = require_http_methods(["GET", "HEAD", "POST"])
-
-require_DELETE = require_http_methods(["DELETE"])  # noqa: N816
+RenderOrRedirectResponse: TypeAlias = TemplateResponse | HttpResponseRedirect
 
 
 class TextResponse(HttpResponse):

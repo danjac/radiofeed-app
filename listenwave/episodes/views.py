@@ -8,7 +8,6 @@ from django.db import IntegrityError
 from django.db.models import OuterRef, Subquery
 from django.http import (
     Http404,
-    HttpResponse,
     HttpResponseRedirect,
     JsonResponse,
 )
@@ -29,7 +28,11 @@ from listenwave.request import (
     HttpRequest,
     is_authenticated_request,
 )
-from listenwave.response import HttpResponseConflict, HttpResponseNoContent
+from listenwave.response import (
+    HttpResponseConflict,
+    HttpResponseNoContent,
+    RenderOrRedirectResponse,
+)
 
 
 class PlayerUpdate(BaseModel):
@@ -75,7 +78,7 @@ def index(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def search_episodes(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
     """Search any episodes in the database."""
 
     if request.search:
@@ -97,7 +100,7 @@ def episode_detail(
     request: AuthenticatedHttpRequest,
     episode_id: int,
     slug: str | None = None,
-) -> HttpResponse:
+) -> TemplateResponse:
     """Renders episode detail."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),

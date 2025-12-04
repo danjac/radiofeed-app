@@ -21,6 +21,7 @@ from listenwave.request import (
     HttpRequest,
     is_authenticated_request,
 )
+from listenwave.response import RenderOrRedirectResponse
 from listenwave.users.emails import get_unsubscribe_signer
 from listenwave.users.forms import (
     AccountDeletionConfirmationForm,
@@ -40,9 +41,7 @@ class UserStat(TypedDict):
 
 @require_form_methods
 @login_required
-def user_preferences(
-    request: AuthenticatedHttpRequest,
-) -> TemplateResponse | HttpResponseRedirect:
+def user_preferences(request: AuthenticatedHttpRequest) -> RenderOrRedirectResponse:
     """Allow user to edit their preferences."""
     if request.method == "POST":
         form = UserPreferencesForm(request.POST, instance=request.user)
@@ -66,7 +65,7 @@ def user_preferences(
 @login_required
 def import_podcast_feeds(
     request: AuthenticatedHttpRequest, feed_limit: int = 360
-) -> TemplateResponse | HttpResponseRedirect:
+) -> RenderOrRedirectResponse:
     """Imports an OPML document and subscribes user to any discovered feeds."""
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
@@ -206,7 +205,7 @@ def unsubscribe(
 
 
 @require_form_methods
-def delete_account(request: HttpRequest) -> TemplateResponse | HttpResponseRedirect:
+def delete_account(request: HttpRequest) -> RenderOrRedirectResponse:
     """Delete account on confirmation."""
     if is_authenticated_request(request):
         if request.method == "POST":
