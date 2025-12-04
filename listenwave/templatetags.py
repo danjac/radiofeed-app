@@ -14,9 +14,9 @@ from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
 from listenwave import covers
-from listenwave.context import RequestContext
 from listenwave.markdown import markdown
 from listenwave.pwa import get_theme_color
+from listenwave.request import RequestContext
 
 register = template.Library()
 

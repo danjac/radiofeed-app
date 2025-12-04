@@ -3,9 +3,8 @@ from typing import Literal
 from django import template
 
 from listenwave import covers
-from listenwave.context import RequestContext
 from listenwave.episodes.models import AudioLog, Episode
-from listenwave.request import HttpRequest, is_authenticated_request
+from listenwave.request import HttpRequest, RequestContext, is_authenticated_request
 
 register = template.Library()
 

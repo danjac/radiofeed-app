@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, TypeGuard
 
 from django.http import HttpRequest as DjangoHttpRequest
+from django.template.context import RequestContext as DjangoRequestContext
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AnonymousUser
@@ -26,6 +27,13 @@ class AuthenticatedHttpRequest(HttpRequest):
 
     if TYPE_CHECKING:
         user: User
+
+
+class RequestContext(DjangoRequestContext):
+    """Extended RequestContext with typed request."""
+
+    if TYPE_CHECKING:
+        request: HttpRequest
 
 
 def is_authenticated_request(
