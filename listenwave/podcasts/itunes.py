@@ -16,7 +16,7 @@ from django.utils.http import urlsafe_base64_encode
 from lxml import html
 from pydantic import BaseModel, Field, ValidationError
 
-from listenwave.client import Client
+from listenwave.http_client import Client
 from listenwave.podcasts.models import Podcast
 
 COUNTRIES: Final = (

@@ -9,7 +9,6 @@ from django.db.models import Q
 from django.db.utils import DataError
 from django.utils import timezone
 
-from listenwave.client import Client
 from listenwave.episodes.models import Episode
 from listenwave.feedparser import rss_fetcher, rss_parser, scheduler
 from listenwave.feedparser.exceptions import (
@@ -20,6 +19,7 @@ from listenwave.feedparser.exceptions import (
     NotModifiedError,
 )
 from listenwave.feedparser.models import Feed, Item
+from listenwave.http_client import Client
 from listenwave.podcasts.models import Category, Podcast
 
 

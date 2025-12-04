@@ -4,7 +4,6 @@ import http
 import httpx
 import pytest
 
-from listenwave.client import Client
 from listenwave.feedparser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
@@ -15,6 +14,7 @@ from listenwave.feedparser.rss_fetcher import (
     fetch_rss,
     make_content_hash,
 )
+from listenwave.http_client import Client
 
 
 class TestMakeContentHash:

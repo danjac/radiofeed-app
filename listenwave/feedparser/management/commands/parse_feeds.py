@@ -4,8 +4,8 @@ import typer
 from django.db.models import Case, Count, IntegerField, When
 from django_typer.management import Typer
 
-from listenwave.client import get_client
 from listenwave.feedparser.feed_parser import parse_feed
+from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
 from listenwave.thread_pool import execute_thread_pool
 

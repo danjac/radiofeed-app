@@ -6,12 +6,12 @@ import httpx
 import pytest
 from django.utils.text import slugify
 
-from listenwave.client import Client
 from listenwave.episodes.models import Episode
 from listenwave.episodes.tests.factories import EpisodeFactory
 from listenwave.feedparser.date_parser import parse_date
 from listenwave.feedparser.feed_parser import get_categories_dict, parse_feed
 from listenwave.feedparser.rss_fetcher import make_content_hash
+from listenwave.http_client import Client
 from listenwave.podcasts.models import Category, Podcast
 from listenwave.podcasts.tests.factories import PodcastFactory
 

@@ -5,7 +5,6 @@ import httpx
 import pytest
 from PIL import Image
 
-from listenwave.client import Client
 from listenwave.covers import (
     CoverFetchError,
     CoverProcessError,
@@ -22,6 +21,7 @@ from listenwave.covers import (
     process_image,
     save_image,
 )
+from listenwave.http_client import Client
 
 
 class TestEncodeDecodeCoverUrl:

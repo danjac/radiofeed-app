@@ -16,7 +16,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
 from listenwave import covers, pwa
-from listenwave.client import get_client
+from listenwave.http_client import get_client
 from listenwave.request import HttpRequest
 from listenwave.response import RenderOrRedirectResponse, TextResponse
 

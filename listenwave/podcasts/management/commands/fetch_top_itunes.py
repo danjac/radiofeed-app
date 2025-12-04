@@ -5,7 +5,7 @@ import typer
 from django.db import transaction
 from django_typer.management import Typer
 
-from listenwave.client import get_client, jitter
+from listenwave.http_client import get_client, jitter
 from listenwave.podcasts import itunes
 from listenwave.podcasts.models import Category, Podcast
 from listenwave.thread_pool import execute_thread_pool

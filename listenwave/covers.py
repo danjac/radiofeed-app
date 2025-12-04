@@ -15,7 +15,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from PIL import Image
 
-from listenwave.client import Client
+from listenwave.http_client import Client
 from listenwave.pwa import ImageInfo
 
 CoverVariant = Literal["card", "detail", "tile"]

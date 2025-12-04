@@ -4,7 +4,7 @@ import pathlib
 import httpx
 import pytest
 
-from listenwave.client import Client
+from listenwave.http_client import Client
 from listenwave.podcasts import itunes
 from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.tests.factories import PodcastFactory
