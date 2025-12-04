@@ -1,11 +1,13 @@
 import itertools
+import random
+import time
 from typing import Annotated
 
 import typer
 from django.db import transaction
 from django_typer.management import Typer
 
-from listenwave.http_client import get_client, jitter
+from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
 from listenwave.podcasts.models import Category, Podcast
 from listenwave.thread_pool import execute_thread_pool
@@ -59,7 +61,7 @@ def handle(
             except itunes.ItunesError as exc:
                 typer.secho(f"Error: {exc}", fg=typer.colors.RED)
 
-            jitter(jitter_min, jitter_max)
+            _jitter(jitter_min, jitter_max)
 
         execute_thread_pool(lambda t: _fetch_feeds(*t), permutations)
 
@@ -68,3 +70,11 @@ def handle(
             # Demote existing promoted feeds first
             Podcast.objects.filter(promoted=True).update(promoted=False)
             itunes.save_feeds_to_db(promoted_feeds, promoted=True)
+
+
+def _jitter(min_seconds: float, max_seconds: float) -> None:
+    """Jitter by sleeping for a random amount of time.
+    This is useful to avoid rate limiting.
+    """
+    sleep_time = random.uniform(min_seconds, max_seconds)  # noqa: S311
+    time.sleep(sleep_time)
