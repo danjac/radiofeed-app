@@ -51,17 +51,6 @@ _BYTES_PER_PIXEL: Final[dict[str, float]] = {
 }
 
 
-class URLSigner(Signer):
-    """Custom URL signer with shortened signature."""
-
-    max_length: int = 6
-
-    def signature(self, value: str | bytes, key: str | bytes | None = None) -> str:
-        """Truncate signature to max_length."""
-        full_signature = super().signature(value, key)
-        return full_signature[-self.max_length :]
-
-
 class CoverImageError(Exception):
     """Base class for cover image fetching errors."""
 
@@ -279,7 +268,7 @@ def get_placeholder_path(size: int) -> pathlib.Path:
 @functools.cache
 def get_cover_url_signer() -> Signer:
     """Return URL signer"""
-    return URLSigner(salt="cover_url")
+    return Signer(salt="cover_url")
 
 
 @contextlib.contextmanager
