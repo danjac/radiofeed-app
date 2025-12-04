@@ -135,14 +135,14 @@ def episodes(
     """Render episodes for a single podcast."""
     podcast = _get_podcast_or_404(podcast_id)
     episodes = podcast.episodes.select_related("podcast")
-    ordering = request.GET.get("order", None)
+
+    default_ordering = "asc" if podcast.is_serial() else "desc"
+    ordering = request.GET.get("order", default_ordering)
+    order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
 
     if request.search:
-        episodes = episodes.search(request.search.value).order_by("-rank", "-pub_date")
+        episodes = episodes.search(request.search.value).order_by("-rank", *order_by)
     else:
-        default_ordering = "asc" if podcast.is_serial() else "desc"
-        ordering = ordering or default_ordering
-        order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
         episodes = episodes.order_by(*order_by)
 
     return render_paginated_response(
