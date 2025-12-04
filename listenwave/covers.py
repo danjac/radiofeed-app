@@ -144,7 +144,7 @@ def fetch_image(client: Client, cover_url: str) -> BinaryIO:
 
 
 def process_image(input: BinaryIO, size: int) -> Image.Image:
-    """Processes the image by resizing and converting to wepb."""
+    """Processes and resizes the image."""
 
     try:
         image = Image.open(input)

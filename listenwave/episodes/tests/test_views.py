@@ -353,7 +353,7 @@ class TestPlayerTimeUpdate:
             ),
             content_type="application/json",
         )
-        assert400(response)
+        assert409(response)
 
     @pytest.mark.django_db
     def test_user_not_authenticated(self, client):

@@ -1,5 +1,5 @@
-import contextlib
 import http
+from typing import TypedDict
 
 from django.conf import settings
 from django.contrib import messages
@@ -40,6 +40,12 @@ class PlayerUpdate(BaseModel):
 
     current_time: int
     duration: int
+
+
+class PlayerUpdateError(TypedDict):
+    """Data model for player error response."""
+
+    error: str
 
 
 @require_safe
@@ -166,27 +172,45 @@ def close_player(
 def player_time_update(request: HttpRequest) -> JsonResponse:
     """Handles player time update AJAX requests."""
 
-    def _handle_update() -> http.HTTPStatus:
-        if not is_authenticated_request(request):
-            return http.HTTPStatus.UNAUTHORIZED
+    if not is_authenticated_request(request):
+        return JsonResponse(
+            PlayerUpdateError(error="Authentication required"),
+            status=http.HTTPStatus.UNAUTHORIZED,
+        )
 
-        with contextlib.suppress(ValidationError, IntegrityError):
-            if episode_id := request.player.get():
-                update = PlayerUpdate.model_validate_json(request.body)
-                request.user.audio_logs.update_or_create(
-                    episode_id=episode_id,
-                    defaults={
-                        "listened": timezone.now(),
-                        "current_time": update.current_time,
-                        "duration": update.duration,
-                    },
-                )
-                return http.HTTPStatus.OK
+    episode_id = request.player.get()
 
-        return http.HTTPStatus.BAD_REQUEST
+    if episode_id is None:
+        return JsonResponse(
+            PlayerUpdateError(error="No episode in player"),
+            status=http.HTTPStatus.BAD_REQUEST,
+        )
 
-    status = _handle_update()
-    return JsonResponse({"status": status.phrase}, status=status)
+    try:
+        update = PlayerUpdate.model_validate_json(request.body)
+    except ValidationError as exc:
+        return JsonResponse(
+            PlayerUpdateError(error=exc.json()),
+            status=http.HTTPStatus.BAD_REQUEST,
+        )
+
+    try:
+        request.user.audio_logs.update_or_create(
+            episode_id=episode_id,
+            defaults={
+                "listened": timezone.now(),
+                "current_time": update.current_time,
+                "duration": update.duration,
+            },
+        )
+
+    except IntegrityError:
+        return JsonResponse(
+            PlayerUpdateError(error="Update cannot be saved"),
+            status=http.HTTPStatus.CONFLICT,
+        )
+
+    return JsonResponse(update.model_dump())
 
 
 @require_safe
