@@ -8,7 +8,7 @@ from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
 from listenwave.partials import render_partial_response
-from listenwave.request import Request
+from listenwave.request import HttpRequest
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)
@@ -17,7 +17,7 @@ ObjectList: TypeAlias = Sequence[T | T_Model] | QuerySet[T_Model]
 
 
 def render_paginated_response(  # noqa: PLR0913
-    request: Request,
+    request: HttpRequest,
     template_name: str,
     object_list: ObjectList,
     extra_context: dict | None = None,

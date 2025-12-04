@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, TypeGuard
 
-from django.http import HttpRequest
+from django.http import HttpRequest as DjangoHttpRequest
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import AnonymousUser
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from listenwave.users.models import User
 
 
-class Request(HttpRequest):
+class HttpRequest(DjangoHttpRequest):
     """Extended HttpRequest with user, player, and search details."""
 
     if TYPE_CHECKING:
@@ -21,13 +21,15 @@ class Request(HttpRequest):
         search: SearchDetails
 
 
-class AuthenticatedRequest(Request):
+class AuthenticatedHttpRequest(HttpRequest):
     """HttpRequest guaranteed to have an authenticated user."""
 
     if TYPE_CHECKING:
         user: User
 
 
-def is_authenticated_request(request: Request) -> TypeGuard[AuthenticatedRequest]:
+def is_authenticated_request(
+    request: HttpRequest,
+) -> TypeGuard[AuthenticatedHttpRequest]:
     """Check if the request has an authenticated user."""
     return request.user.is_authenticated

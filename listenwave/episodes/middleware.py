@@ -3,13 +3,13 @@ import dataclasses
 from django.http import HttpResponse
 
 from listenwave.middleware import BaseMiddleware
-from listenwave.request import Request
+from listenwave.request import HttpRequest
 
 
 class PlayerMiddleware(BaseMiddleware):
     """Adds `PlayerDetails` instance to request as `request.player`."""
 
-    def __call__(self, request: Request) -> HttpResponse:
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         """Middleware implementation."""
         request.player = PlayerDetails(request=request)
         return self.get_response(request)
@@ -19,7 +19,7 @@ class PlayerMiddleware(BaseMiddleware):
 class PlayerDetails:
     """Tracks current player episode in session."""
 
-    request: Request
+    request: HttpRequest
     session_id: str = "audio-player"
 
     def get(self) -> int | None:
