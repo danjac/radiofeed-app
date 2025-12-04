@@ -1,4 +1,6 @@
 import contextlib
+import random
+import time
 from collections.abc import Generator
 
 import httpx
@@ -55,6 +57,14 @@ class Client:
     def close(self) -> None:
         """Close the underlying httpx client."""
         self._client.close()
+
+
+def jitter(min_seconds: float, max_seconds: float) -> None:
+    """Jitter by sleeping for a random amount of time.
+    This is useful to avoid rate limiting.
+    """
+    sleep_time = random.uniform(min_seconds, max_seconds)  # noqa: S311
+    time.sleep(sleep_time)
 
 
 @contextlib.contextmanager
