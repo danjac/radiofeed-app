@@ -119,7 +119,7 @@ def get_image_attrs(
 
 def fetch_image(client: Client, cover_url: str) -> BinaryIO:
     """Fetches the cover image, resizing to the specified size.
-    Raises CoverProcessingError if the image is too large or cannot be fetched or processed.
+    Raises CoverFetchError if the image is too large or cannot be fetched or processed.
     """
 
     try:
