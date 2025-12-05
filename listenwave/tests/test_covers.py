@@ -9,17 +9,17 @@ from listenwave.covers import (
     CoverFetchError,
     CoverProcessError,
     CoverSaveError,
-    decode_url,
-    encode_url,
-    fetch_image,
+    decode_cover_url,
+    encode_cover_url,
+    fetch_cover_image,
+    get_cover_image_attrs,
     get_cover_sizes,
     get_cover_url,
-    get_image_attrs,
     get_metadata_info,
     get_placeholder_path,
     get_placeholder_url,
-    process_image,
-    save_image,
+    process_cover_image,
+    save_cover_image,
 )
 from listenwave.http_client import Client
 
@@ -27,8 +27,8 @@ from listenwave.http_client import Client
 class TestEncodeDecodeCoverUrl:
     def test_url(self):
         url = "https://example.com/test.jpg"
-        encoded = encode_url(url)
-        decoded = decode_url(encoded)
+        encoded = encode_cover_url(url)
+        decoded = decode_cover_url(encoded)
         assert decoded == url
 
 
@@ -40,21 +40,21 @@ class TestFetchImage:
             return httpx.Response(200)
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_image(client, self.cover_url)
+        assert fetch_cover_image(client, self.cover_url)
 
     def test_content_length_ok(self):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "123"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_image(client, self.cover_url)
+        assert fetch_cover_image(client, self.cover_url)
 
     def test_content_length_invalid(self):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "invalid"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_image(client, self.cover_url)
+        assert fetch_cover_image(client, self.cover_url)
 
     def test_chunked_content_too_long(self, mocker):
         # mock entire fetch
@@ -77,7 +77,7 @@ class TestFetchImage:
         mocker.patch("listenwave.covers.io.BytesIO", return_value=mock_bytesio)
 
         with pytest.raises(CoverFetchError):
-            fetch_image(client, self.cover_url)
+            fetch_cover_image(client, self.cover_url)
 
     def test_content_length_too_long(self):
         def _handler(request):
@@ -90,7 +90,7 @@ class TestFetchImage:
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverFetchError):
-            fetch_image(client, self.cover_url)
+            fetch_cover_image(client, self.cover_url)
 
     def test_http_error(self):
         def _handler(request):
@@ -98,7 +98,7 @@ class TestFetchImage:
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverFetchError):
-            fetch_image(client, self.cover_url)
+            fetch_cover_image(client, self.cover_url)
 
 
 class TestProcessImage:
@@ -124,13 +124,13 @@ class TestProcessImage:
         mock_image.size = (100000, 100000)  # 10 billion pixels
 
         with pytest.raises(CoverProcessError):
-            process_image(io.BytesIO(b"fake data"), 200)
+            process_cover_image(io.BytesIO(b"fake data"), 200)
 
     def test_successful_resize(self, mock_image, resized_mock_image):
         """Test successful image resize."""
         mock_image.resize.return_value = resized_mock_image
 
-        result = process_image(io.BytesIO(b"fake data"), 300)
+        result = process_cover_image(io.BytesIO(b"fake data"), 300)
 
         assert result == resized_mock_image
         mock_image.resize.assert_called_once_with((300, 300), Image.Resampling.LANCZOS)
@@ -143,35 +143,35 @@ class TestProcessImage:
         )
 
         with pytest.raises(CoverProcessError):
-            process_image(io.BytesIO(b"invalid"), 200)
+            process_cover_image(io.BytesIO(b"invalid"), 200)
 
     def test_corrupted_image_data(self, mocker):
         """Test that corrupted images raise error."""
         mocker.patch("PIL.Image.open", side_effect=OSError("image file is truncated"))
 
         with pytest.raises(CoverProcessError):
-            process_image(io.BytesIO(b"corrupted"), 200)
+            process_cover_image(io.BytesIO(b"corrupted"), 200)
 
     def test_resize_with_invalid_size_type(self, mock_image):
         """Test that invalid size type raises error."""
         mock_image.resize.side_effect = TypeError("size must be tuple")
 
         with pytest.raises(CoverProcessError):
-            process_image(io.BytesIO(b"data"), 200)
+            process_cover_image(io.BytesIO(b"data"), 200)
 
     def test_resize_with_invalid_resampling(self, mock_image):
         """Test that invalid resampling filter raises error."""
         mock_image.resize.side_effect = ValueError("invalid resampling filter")
 
         with pytest.raises(CoverProcessError):
-            process_image(io.BytesIO(b"data"), 200)
+            process_cover_image(io.BytesIO(b"data"), 200)
 
     def test_small_image_upscaling(self, mock_image, resized_mock_image):
         """Test that small images can be upscaled."""
         mock_image.size = (50, 50)
         mock_image.resize.return_value = resized_mock_image
 
-        result = process_image(io.BytesIO(b"data"), 300)
+        result = process_cover_image(io.BytesIO(b"data"), 300)
 
         assert result == resized_mock_image
         mock_image.resize.assert_called_once_with((300, 300), Image.Resampling.LANCZOS)
@@ -181,7 +181,7 @@ class TestProcessImage:
         mock_image.size = (1000, 1000)
         mock_image.resize.return_value = resized_mock_image
 
-        result = process_image(io.BytesIO(b"data"), 200)
+        result = process_cover_image(io.BytesIO(b"data"), 200)
 
         assert result == resized_mock_image
         mock_image.resize.assert_called_once_with((200, 200), Image.Resampling.LANCZOS)
@@ -191,7 +191,7 @@ class TestProcessImage:
         mock_image.size = (200, 200)
         mock_image.resize.return_value = resized_mock_image
 
-        result = process_image(io.BytesIO(b"data"), 200)
+        result = process_cover_image(io.BytesIO(b"data"), 200)
 
         assert result == resized_mock_image
         mock_image.resize.assert_called_once_with((200, 200), Image.Resampling.LANCZOS)
@@ -203,7 +203,7 @@ class TestProcessImage:
         for format_type in ["PNG", "JPEG", "BMP"]:
             mock_image.format = format_type
 
-            result = process_image(io.BytesIO(b"data"), 250)
+            result = process_cover_image(io.BytesIO(b"data"), 250)
 
             assert result == resized_mock_image
             mock_image.resize.assert_called_with((250, 250), Image.Resampling.LANCZOS)
@@ -214,7 +214,7 @@ class TestProcessImage:
         mock_image.size = (500, 500)
         mock_image.resize.return_value = resized_mock_image
 
-        result = process_image(io.BytesIO(b"data"), 300)
+        result = process_cover_image(io.BytesIO(b"data"), 300)
 
         assert result == resized_mock_image
         mock_image.resize.assert_called_once_with((300, 300), Image.Resampling.LANCZOS)
@@ -225,7 +225,7 @@ class TestProcessImage:
         mock_image.size = (600, 600)
         mock_image.resize.return_value = resized_mock_image
 
-        result = process_image(io.BytesIO(b"data"), 400)
+        result = process_cover_image(io.BytesIO(b"data"), 400)
 
         assert result == resized_mock_image
         mock_image.resize.assert_called_once_with((400, 400), Image.Resampling.LANCZOS)
@@ -237,7 +237,7 @@ class TestSaveImage:
 
         mock_image = mocker.Mock()
 
-        save_image(mock_image)
+        save_cover_image(mock_image)
         mock_image.save.assert_called()
 
     def test_error(self, mocker):
@@ -245,7 +245,7 @@ class TestSaveImage:
         mock_image.save.side_effect = OSError("invalid")
 
         with pytest.raises(CoverSaveError):
-            save_image(mock_image)
+            save_cover_image(mock_image)
 
 
 class TestGetMetadataInfo:
@@ -298,8 +298,8 @@ class TestGetCoverImageAttrs:
             ),
         ],
     )
-    def test_get_image_attrs(self, variant, expected):
-        attrs = get_image_attrs(variant, "test.jpg", "test pic")
+    def test_get_cover_image_attrs(self, variant, expected):
+        attrs = get_cover_image_attrs(variant, "test.jpg", "test pic")
         assert attrs["height"] == expected["height"]
         assert attrs["width"] == expected["width"]
         assert attrs["alt"] == "test pic"

@@ -97,16 +97,18 @@ class TestCoverImage:
 
     @pytest.mark.django_db
     def test_ok(self, client, mocker):
-        mocker.patch("listenwave.covers.fetch_image", return_value=b"ok")
-        mocker.patch("listenwave.covers.process_image", return_value=mocker.MagicMock())
-        mocker.patch("listenwave.covers.save_image")
+        mocker.patch("listenwave.covers.fetch_cover_image", return_value=b"ok")
+        mocker.patch(
+            "listenwave.covers.process_cover_image", return_value=mocker.MagicMock()
+        )
+        mocker.patch("listenwave.covers.save_cover_image")
         response = client.get(covers.get_cover_url(self.cover_url, 96))
         assert200(response)
 
     @pytest.mark.django_db
     def test_invalid_fetch(self, client, mocker):
         mocker.patch(
-            "listenwave.covers.fetch_image",
+            "listenwave.covers.fetch_cover_image",
             return_value=b"ok",
             side_effect=covers.CoverError(),
         )
@@ -115,9 +117,9 @@ class TestCoverImage:
 
     @pytest.mark.django_db
     def test_invalid_image(self, client, mocker):
-        mocker.patch("listenwave.covers.fetch_image", return_value=b"ok")
+        mocker.patch("listenwave.covers.fetch_cover_image", return_value=b"ok")
         mocker.patch(
-            "listenwave.covers.save_image", side_effect=covers.CoverSaveError()
+            "listenwave.covers.save_cover_image", side_effect=covers.CoverSaveError()
         )
         response = client.get(covers.get_cover_url(self.cover_url, 96))
         assert200(response)

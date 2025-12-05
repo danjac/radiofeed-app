@@ -71,7 +71,7 @@ class CoverSaveError(CoverError):
     """Raised when there is an error saving the cover image."""
 
 
-def get_image_attrs(
+def get_cover_image_attrs(
     variant: CoverVariant,
     cover_url: str | None,
     title: str,
@@ -117,7 +117,7 @@ def get_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
-def fetch_image(client: Client, cover_url: str) -> BinaryIO:
+def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
     """Fetches the cover image from a remote URL.
     Raises CoverFetchError if the image is too large or cannot be fetched or processed.
     """
@@ -143,7 +143,7 @@ def fetch_image(client: Client, cover_url: str) -> BinaryIO:
         raise CoverFetchError from exc
 
 
-def process_image(input: BinaryIO, size: int) -> Image.Image:
+def process_cover_image(input: BinaryIO, size: int) -> Image.Image:
     """Processes and resizes the image."""
 
     try:
@@ -164,7 +164,7 @@ def process_image(input: BinaryIO, size: int) -> Image.Image:
         raise CoverProcessError from exc
 
 
-def save_image(
+def save_cover_image(
     image: Image.Image,
     *,
     output: BinaryIO | None = None,
@@ -199,7 +199,7 @@ def get_cover_url(cover_url: str | None, size: int) -> str:
         reverse(
             "cover_image",
             kwargs={
-                "encoded_url": encode_url(cover_url),
+                "encoded_url": encode_cover_url(cover_url),
                 "size": size,
             },
         )
@@ -209,14 +209,14 @@ def get_cover_url(cover_url: str | None, size: int) -> str:
 
 
 @functools.cache
-def encode_url(cover_url: str) -> str:
+def encode_cover_url(cover_url: str) -> str:
     """Returns signed cover URL"""
     signed_url = _get_url_signer().sign(cover_url)
     return urlsafe_base64_encode(signed_url.encode())
 
 
 @functools.cache
-def decode_url(encoded_url: str) -> str:
+def decode_cover_url(encoded_url: str) -> str:
     """Returns unsigned cover URL"""
     try:
         signed_url = urlsafe_base64_decode(encoded_url).decode()
@@ -226,7 +226,7 @@ def decode_url(encoded_url: str) -> str:
 
 
 @functools.cache
-def is_allowed_size(size: int) -> bool:
+def is_allowed_cover_size(size: int) -> bool:
     """Check image has correct size."""
     return size in get_cover_sizes()
 

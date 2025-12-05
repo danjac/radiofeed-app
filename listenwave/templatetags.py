@@ -77,17 +77,23 @@ def meta_tags() -> str:
 @register.simple_tag
 @functools.cache
 def get_cover_image_attrs(
-    variant: covers.CoverVariant, cover_url: str, title: str
+    variant: covers.CoverVariant,
+    cover_url: str,
+    title: str,
 ) -> dict:
     """Returns cover image attributes."""
-    return covers.get_image_attrs(variant, cover_url, title)
+    return covers.get_cover_image_attrs(variant, cover_url, title)
 
 
 @register.simple_tag
 @functools.cache
-def cover_image(variant: covers.CoverVariant, cover_url: str, title: str) -> str:
+def cover_image(
+    variant: covers.CoverVariant,
+    cover_url: str,
+    title: str,
+) -> str:
     """Renders a cover image."""
-    attrs = covers.get_image_attrs(variant, cover_url, title)
+    attrs = covers.get_cover_image_attrs(variant, cover_url, title)
     return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
 
 
