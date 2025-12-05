@@ -24,19 +24,19 @@
          x-ref="dropdown"
          x-init="$watch('showDropdown', () => $nextTick(() => adjustPositioning()))"
         {# fmt:off #}
-         x-data="{
-             isLeft: false,
-             isRight: false,
-             adjustPositioning() {
-                 const windowWidth = document.body.getBoundingClientRect().width;
-                 const boxRight = this.$refs.dropdown.getBoundingClientRect().right;
-                 this.isLeft = windowWidth < boxRight;
-                 this.isRight = !this.isLeft;
-             }
+        x-data="{
+        isLeft: false,
+        isRight: false,
+        adjustPositioning() {
+        const windowWidth = document.body.getBoundingClientRect().width;
+        const boxRight = this.$refs.dropdown.getBoundingClientRect().right;
+        this.isLeft = windowWidth < boxRight;
+        this.isRight = !this.isLeft;
+        }
         }"
         {# fmt:on #}
          @resize.window="adjustPositioning()"
-         @click.away="showDropdown = false"
+         @click.outside="showDropdown = false"
          @keydown.escape.window="showDropdown = false"
          @keydown.tab.prevent="showDropdown = false"
          @keydown.shift.tab.prevent="showDropdown = false"
@@ -48,7 +48,6 @@
         </ul>
     </div>
 </nav>
-
 {% partialdef item %}
     <li>
         <a href="{{ url }}"
