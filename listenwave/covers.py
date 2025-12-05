@@ -117,6 +117,19 @@ def get_cover_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
+def generate_cover_image(
+    client: Client,
+    cover_url: str,
+    size: int,
+) -> BinaryIO:
+    """Fetches, processes, and resaves the cover image from a remote URL.
+    Raises CoverError on failure.
+    """
+    data = fetch_cover_image(client, cover_url)
+    image = process_cover_image(data, size)
+    return save_cover_image(image)
+
+
 def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
     """Fetches the cover image from a remote URL.
     Raises CoverFetchError if the image is too large or cannot be fetched or processed.
@@ -167,15 +180,14 @@ def process_cover_image(input: BinaryIO, size: int) -> Image.Image:
 def save_cover_image(
     image: Image.Image,
     *,
-    output: BinaryIO | None = None,
     format: str = "webp",
     quality: float = 90,
 ) -> BinaryIO:
     """Saves image to the output stream."""
     try:
-        with _handle_output_stream(output or io.BytesIO()) as rv:
-            image.save(rv, format=format, quality=quality, optimize=True)
-            return rv
+        with _handle_output_stream(io.BytesIO()) as output:
+            image.save(output, format=format, quality=quality, optimize=True)
+            return output
     except OSError as exc:
         raise CoverSaveError from exc
 
