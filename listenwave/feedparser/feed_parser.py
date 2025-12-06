@@ -4,9 +4,9 @@ import itertools
 import operator
 from collections.abc import Iterator
 
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Q
-from django.db.utils import DataError
+from django.db.utils import DatabaseError
 from django.utils import timezone
 
 from listenwave.episodes.models import Episode
@@ -130,7 +130,7 @@ class _FeedParser:
                 )
                 self._parse_categories(feed)
                 self._parse_episodes(feed)
-        except (DataError, IntegrityError) as exc:
+        except DatabaseError as exc:
             raise InvalidDataError from exc
         return result
 
