@@ -78,13 +78,11 @@ def get_manifest(request: HttpRequest) -> dict:
     }
 
 
-@functools.cache
 def get_theme_color() -> str:
     """Returns theme color."""
     return settings.PWA_CONFIG["manifest"]["theme_color"]
 
 
-@functools.cache
 def get_assetlinks() -> list[dict]:
     """Return asset links."""
 
@@ -127,7 +125,6 @@ def _generate_icons(dir: str) -> Iterator[ImageInfo]:
         )
 
 
-@functools.cache
 def _icon_size(path: pathlib.Path) -> str:
     with Image.open(path) as image:
         return "{}x{}".format(*image.size)
