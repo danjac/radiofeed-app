@@ -1,13 +1,12 @@
 import functools
 import operator
-from typing import TypeVar
+from typing import TypeAlias, TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Model, Q, QuerySet
 
-T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)
-T_QuerySet = TypeVar("T_QuerySet", bound=QuerySet)
+T_QuerySet: TypeAlias = QuerySet[T_Model]
 
 
 def search_queryset(
