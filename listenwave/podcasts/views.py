@@ -329,7 +329,7 @@ def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateR
 @login_required
 def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
-    podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
+    podcasts = _get_podcasts().subscribed(request.user).filter(private=True)
 
     if request.search:
         podcasts = search_queryset(
