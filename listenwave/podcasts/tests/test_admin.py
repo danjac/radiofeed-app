@@ -1,3 +1,4 @@
+from datetime import timedelta
 from unittest import mock
 
 import pytest
@@ -93,7 +94,7 @@ class TestPodcastAdmin:
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
         mocker.patch(
             "listenwave.podcasts.admin.Podcast.get_next_scheduled_update",
-            return_value=timezone.now() + timezone.timedelta(hours=3),
+            return_value=timezone.now() + timedelta(hours=3),
         )
         assert (
             podcast_admin.next_scheduled_update(podcast) == "2\xa0hours, 59\xa0minutes"

@@ -14,7 +14,7 @@ class EpisodeAdmin(admin.ModelAdmin):
     list_display = ("episode_title", "podcast_title", "pub_date")
     list_select_related = ("podcast",)
     raw_id_fields = ("podcast",)
-    search_fields = ("search_vector",)
+    search_fields = ("search",)
 
     @admin.display(description="Title")
     def episode_title(self, obj: Episode) -> str:
@@ -38,6 +38,7 @@ class EpisodeAdmin(admin.ModelAdmin):
                 search_queryset(queryset, search_term, "search_vector").order_by(
                     "-rank",
                     "-pub_date",
+                    "-id",
                 ),
                 False,
             )

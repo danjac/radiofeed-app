@@ -13,6 +13,7 @@ from listenwave.podcasts.models import (
     Recommendation,
     Subscription,
 )
+from listenwave.search import search_queryset
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover
@@ -234,8 +235,6 @@ class PodcastAdmin(admin.ModelAdmin):
 
     list_editable = ("active",)
 
-    search_fields = ("title", "rss")
-
     raw_id_fields = (
         "canonical",
         "recipients",
@@ -256,6 +255,8 @@ class PodcastAdmin(admin.ModelAdmin):
         "content_hash",
     )
 
+    search_fields = ("search",)
+
     @admin.display(description="Estimated Next Update")
     def next_scheduled_update(self, obj: Podcast) -> str:
         """Return estimated next update time."""
@@ -267,6 +268,25 @@ class PodcastAdmin(admin.ModelAdmin):
                 else timeuntil(scheduled)
             )
         return "-"
+
+    def get_search_results(
+        self,
+        request: HttpRequest,
+        queryset: PodcastQuerySet,
+        search_term: str,
+    ) -> tuple[QuerySet[Podcast], bool]:
+        """Search episodes."""
+        return (
+            (
+                search_queryset(queryset, search_term, "search_vector").order_by(
+                    "-rank",
+                    "-pub_date",
+                ),
+                False,
+            )
+            if search_term
+            else super().get_search_results(request, queryset, search_term)
+        )
 
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
