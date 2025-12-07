@@ -11,7 +11,6 @@ from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
 from listenwave.request import HttpRequest
-from listenwave.search import T_QuerySet, search_queryset
 
 
 @dataclasses.dataclass(frozen=True, kw_only=False)
@@ -131,9 +130,3 @@ class SearchDetails:
             if self
             else ""
         )
-
-    def search_queryset(
-        self, queryset: T_QuerySet, *search_fields: str, **kwargs
-    ) -> T_QuerySet:
-        """Search a given QuerySet using full-text search."""
-        return search_queryset(queryset, self.value, *search_fields, **kwargs)

@@ -33,6 +33,7 @@ from listenwave.response import (
     HttpResponseNoContent,
     RenderOrRedirectResponse,
 )
+from listenwave.search import search_queryset
 
 
 class PlayerUpdate(BaseModel):
@@ -89,8 +90,9 @@ def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
 
     if request.search:
         episodes = (
-            request.search.search_queryset(
+            search_queryset(
                 Episode.objects.filter(podcast__private=False),
+                request.search.value,
                 "search_vector",
             )
             .select_related("podcast")
@@ -225,8 +227,9 @@ def history(request: AuthenticatedHttpRequest) -> TemplateResponse:
     order_by = "listened" if ordering == "asc" else "-listened"
 
     if request.search:
-        audio_logs = request.search.search_queryset(
+        audio_logs = search_queryset(
             audio_logs,
+            request.search.value,
             "episode__search_vector",
             "episode__podcast__search_vector",
         ).order_by("-rank", order_by)
@@ -298,8 +301,9 @@ def bookmarks(request: AuthenticatedHttpRequest) -> TemplateResponse:
     order_by = "created" if ordering == "asc" else "-created"
 
     if request.search:
-        bookmarks = request.search.search_queryset(
+        bookmarks = search_queryset(
             bookmarks,
+            request.search.value,
             "episode__search_vector",
             "episode__podcast__search_vector",
         ).order_by("-rank", order_by)
