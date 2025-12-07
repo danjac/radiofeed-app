@@ -220,21 +220,18 @@ def player_time_update(request: HttpRequest) -> JsonResponse:
 def history(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Renders user's listening history. User can also search history."""
     audio_logs = request.user.audio_logs.select_related("episode", "episode__podcast")
+
     ordering = request.GET.get("order", "desc")
+    order_by = "listened" if ordering == "asc" else "-listened"
 
     if request.search:
         audio_logs = request.search.search_queryset(
             audio_logs,
             "episode__search_vector",
             "episode__podcast__search_vector",
-        ).order_by(
-            "-rank",
-            "-listened",
-        )
+        ).order_by("-rank", order_by)
     else:
-        audio_logs = audio_logs.order_by(
-            "listened" if ordering == "asc" else "-listened"
-        )
+        audio_logs = audio_logs.order_by(order_by)
 
     return render_paginated_response(
         request,
@@ -298,19 +295,17 @@ def bookmarks(request: AuthenticatedHttpRequest) -> TemplateResponse:
     bookmarks = request.user.bookmarks.select_related("episode", "episode__podcast")
 
     ordering = request.GET.get("order", "desc")
+    order_by = "created" if ordering == "asc" else "-created"
 
     if request.search:
         bookmarks = request.search.search_queryset(
             bookmarks,
             "episode__search_vector",
             "episode__podcast__search_vector",
-        ).order_by(
-            "-rank",
-            "-created",
-        )
+        ).order_by("-rank", order_by)
 
     else:
-        bookmarks = bookmarks.order_by("created" if ordering == "asc" else "-created")
+        bookmarks = bookmarks.order_by(order_by)
 
     return render_paginated_response(
         request,
