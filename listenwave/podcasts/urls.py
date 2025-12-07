@@ -20,9 +20,9 @@ register_converter(_SignedIntConverter, "sint")
 urlpatterns = [
     path("subscriptions/", views.subscriptions, name="subscriptions"),
     path("discover/", views.discover, name="discover"),
-    path("owner/", views.owner, name="owner"),
     path("search/", views.search_podcasts, name="search_podcasts"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
+    path("search/owner/", views.search_owner, name="search_owner"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
         views.podcast_detail,

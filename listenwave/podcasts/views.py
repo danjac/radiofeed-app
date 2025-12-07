@@ -54,28 +54,6 @@ def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def owner(request: HttpRequest) -> RenderOrRedirectResponse:
-    """Shows all podcasts by a specific owner. Redirects to discover page if no owner is given."""
-
-    if request.search:
-        podcasts = request.search.search_queryset(
-            _get_podcasts().filter(private=False),
-            "owner_search_vector",
-        ).order_by("-rank", "-pub_date")
-        return render_paginated_response(
-            request,
-            "podcasts/owner.html",
-            podcasts,
-            {
-                "owner": owner,
-            },
-        )
-
-    return HttpResponseRedirect(reverse("podcasts:discover"))
-
-
-@require_safe
-@login_required
 def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
     """Search all public podcasts in database. Redirects to discover page if search is empty."""
 
@@ -89,7 +67,7 @@ def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
             request, "podcasts/search_podcasts.html", podcasts
         )
 
-    return HttpResponseRedirect(reverse("podcasts:discover"))
+    return _redirect_to_discover_page()
 
 
 @require_safe
@@ -111,7 +89,22 @@ def search_itunes(request: HttpRequest) -> RenderOrRedirectResponse:
         except itunes.ItunesError as exc:
             messages.error(request, f"Failed to search iTunes: {exc}")
 
-    return HttpResponseRedirect(reverse("podcasts:discover"))
+    return _redirect_to_discover_page()
+
+
+@require_safe
+@login_required
+def search_owner(request: HttpRequest) -> RenderOrRedirectResponse:
+    """Search all podcasts by a specific owner. Redirects to discover page if no owner is given."""
+
+    if request.search:
+        podcasts = request.search.search_queryset(
+            _get_podcasts().filter(private=False),
+            "owner_search_vector",
+        ).order_by("-rank", "-pub_date")
+        return render_paginated_response(request, "podcasts/owner.html", podcasts)
+
+    return _redirect_to_discover_page()
 
 
 @require_safe
@@ -396,6 +389,10 @@ def _get_podcasts() -> PodcastQuerySet:
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
+
+
+def _redirect_to_discover_page() -> HttpResponseRedirect:
+    return HttpResponseRedirect(reverse("podcasts:discover"))
 
 
 def _render_subscribe_action(
