@@ -10,7 +10,7 @@
                 <input type="search"
                        name="{{ request.search.param }}"
                        id="{{ search_id|default:'search' }}"
-                       class="w-60 form-input"
+                       class="w-60 lg:w-80 form-input"
                        :class="search ? 'lg:w-96': 'lg:w-80'"
                        autocomplete="off"
                        maxlength="{{ request.search.max_length }}"
@@ -57,15 +57,15 @@
             role="link"
         {# fmt:off #}
         x-data="{
-        url: '{{ search_button_url|escapejs }}',
-        search: '{{ request.search.value|escapejs }}',
-        process () {
-        window.htmx?.process($el);
+		url: '{{ search_button_url|escapejs }}',
+		search: '{{ request.search.value|escapejs }}',
+		process () {
+		window.htmx?.process($el);
         },
-        get searchUrl() {
-        const params = new URLSearchParams();
-        params.append('{{ request.search.param }}', this.search);
-        return `${this.url}?${params.toString()}`;
+		get searchUrl() {
+		const params = new URLSearchParams();
+		params.append('{{ request.search.param }}', this.search);
+		return `${this.url}?${params.toString()}`;
         },
         }"{# fmt:on #}
             x-init="process()"
