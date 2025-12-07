@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-    {% include "header.html" with title=owner %}
+    {% include "header.html" with title=request.search.value %}
     {% partialdef pagination inline %}
         {% cache cache_timeout owner-podcasts request.get_full_path %}
             {% fragment "paginate.html" %}
@@ -16,7 +16,7 @@
                 {% empty %}
                     {% fragment "browse.html#empty" %}
                         <p>
-                            No podcasts found for &quot;<strong>{{ owner }}</strong>&quot;.
+                            No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         </p>
                     {% endfragment %}
                 {% endfor %}

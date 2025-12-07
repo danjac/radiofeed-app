@@ -11,7 +11,7 @@
             {% if owner %}
                 <h2 class="text-lg font-semibold">
                     <a class="link"
-                       href="{% url 'podcasts:owner' %}?owner={{ owner|urlencode }}">{{ owner }}</a>
+                       href="{% url 'podcasts:owner' %}?{{ request.search.param }}={{ owner|urlencode }}">{{ owner }}</a>
                 </h2>
             {% endif %}
         {% endwith %}

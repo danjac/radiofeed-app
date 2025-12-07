@@ -7,7 +7,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models.functions import Coalesce, Lower
+from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_str
@@ -276,6 +276,7 @@ class Podcast(models.Model):
     )
 
     search_vector = SearchVectorField(null=True, editable=False)
+    owner_search_vector = SearchVectorField(null=True, editable=False)
 
     objects: PodcastQuerySet = PodcastQuerySet.as_manager()  # type: ignore[assignment]
 
@@ -293,8 +294,6 @@ class Podcast(models.Model):
             models.Index(fields=["content_hash"]),
             # Discover feed index
             models.Index(fields=["promoted", "language", "-pub_date"]),
-            # Owner lookup index: store Lower in DB for case-insensitive search
-            models.Index(Lower("owner"), name="%(app_label)s_%(class)s_owner_idx"),
             # Feed parser scheduling index
             models.Index(
                 fields=[
@@ -313,8 +312,9 @@ class Podcast(models.Model):
                 ),
                 name="%(app_label)s_%(class)s_public_idx",
             ),
-            # Search index
+            # Search indexes
             GinIndex(fields=["search_vector"]),
+            GinIndex(fields=["owner_search_vector"]),
         ]
 
     def __str__(self) -> str:
