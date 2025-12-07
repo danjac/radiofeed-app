@@ -21,7 +21,7 @@ urlpatterns = [
     path("subscriptions/", views.subscriptions, name="subscriptions"),
     path("discover/", views.discover, name="discover"),
     path("search/podcasts/", views.search_podcasts, name="search_podcasts"),
-    path("search/owner/", views.search_owner, name="search_owner"),
+    path("search/people/", views.search_people, name="search_people"),
     path("search/itunes/", views.search_itunes, name="search_itunes"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",

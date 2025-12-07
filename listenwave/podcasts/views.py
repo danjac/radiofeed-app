@@ -94,15 +94,19 @@ def search_itunes(request: HttpRequest) -> RenderOrRedirectResponse:
 
 @require_safe
 @login_required
-def search_owner(request: HttpRequest) -> RenderOrRedirectResponse:
-    """Search all podcasts by a specific owner. Redirects to discover page if no owner is given."""
+def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
+    """Search all podcasts by owner(s). Redirects to discover page if no owner is given."""
 
     if request.search:
         podcasts = request.search.search_queryset(
             _get_podcasts().filter(private=False),
             "owner_search_vector",
         ).order_by("-rank", "-pub_date")
-        return render_paginated_response(request, "podcasts/owner.html", podcasts)
+        return render_paginated_response(
+            request,
+            "podcasts/search_people.html",
+            podcasts,
+        )
 
     return _redirect_to_discover_page()
 

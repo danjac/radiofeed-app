@@ -88,22 +88,22 @@ class TestDiscover:
         assert len(response.context["podcasts"]) == 0
 
 
-class TestSearchOwner:
+class TestSearchPeople:
     @pytest.mark.django_db
     def test_get(self, client, auth_user, faker):
         podcast = PodcastFactory(owner=faker.name())
         response = client.get(
-            reverse("podcasts:search_owner"),
+            reverse("podcasts:search_people"),
             {
                 "search": podcast.cleaned_owner,
             },
         )
         assert200(response)
-        assertTemplateUsed(response, "podcasts/owner.html")
+        assertTemplateUsed(response, "podcasts/search_people.html")
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
-        response = client.get(reverse("podcasts:search_owner"), {"search": ""})
+        response = client.get(reverse("podcasts:search_people"), {"search": ""})
         assert response.url == _discover_url
 
 
