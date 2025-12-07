@@ -3,6 +3,7 @@ from collections.abc import Callable
 from typing import Final
 
 from django.contrib.messages import get_messages
+from django.db.models import QuerySet
 from django.http import HttpResponse, QueryDict
 from django.template.loader import render_to_string
 from django.utils.cache import patch_vary_headers
@@ -11,6 +12,7 @@ from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
 from listenwave.request import HttpRequest
+from listenwave.search import search_queryset
 
 
 @dataclasses.dataclass(frozen=True, kw_only=False)
@@ -130,3 +132,7 @@ class SearchDetails:
             if self
             else ""
         )
+
+    def search_queryset(self, queryset: QuerySet, *search_fields: str, **search_kwargs):
+        """Search a given QuerySet using full-text search."""
+        return search_queryset(queryset, self.value, *search_fields, **search_kwargs)

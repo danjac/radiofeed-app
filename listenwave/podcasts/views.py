@@ -27,7 +27,9 @@ def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
     podcasts = _get_podcasts().subscribed(request.user).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
+        podcasts = request.search.search_queryset(podcasts, "search_vector").order_by(
+            "-rank", "-pub_date"
+        )
     else:
         podcasts = podcasts.order_by("-pub_date")
 
@@ -56,12 +58,10 @@ def owner(request: HttpRequest) -> RenderOrRedirectResponse:
     """Shows all podcasts by a specific owner. Redirects to discover page if no owner is given."""
 
     if request.search:
-        podcasts = (
-            _get_podcasts()
-            .filter(private=False)
-            .search(request.search.value, "owner_search_vector")
-            .order_by("-rank", "-pub_date")
-        )
+        podcasts = request.search.search_queryset(
+            _get_podcasts().filter(private=False),
+            "owner_search_vector",
+        ).order_by("-rank", "-pub_date")
         return render_paginated_response(
             request,
             "podcasts/owner.html",
@@ -80,12 +80,10 @@ def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
     """Search all public podcasts in database. Redirects to discover page if search is empty."""
 
     if request.search:
-        podcasts = (
-            _get_podcasts()
-            .filter(private=False)
-            .search(request.search.value)
-            .order_by("-rank", "-pub_date")
-        )
+        podcasts = request.search.search_queryset(
+            _get_podcasts().filter(private=False),
+            "search_vector",
+        ).order_by("-rank", "-pub_date")
 
         return render_paginated_response(
             request, "podcasts/search_podcasts.html", podcasts
@@ -165,7 +163,9 @@ def episodes(
     order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
 
     if request.search:
-        episodes = episodes.search(request.search.value).order_by("-rank", *order_by)
+        episodes = request.search.search_queryset(episodes, "search_vector").order_by(
+            "-rank", *order_by
+        )
     else:
         episodes = episodes.order_by(*order_by)
 
@@ -238,21 +238,25 @@ def similar(
 @login_required
 def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
-    categories = (
-        Category.objects.alias(
-            has_podcasts=Exists(
-                _get_podcasts().filter(
-                    categories=OuterRef("pk"),
-                    private=False,
-                )
+    categories = Category.objects.alias(
+        has_podcasts=Exists(
+            _get_podcasts().filter(
+                categories=OuterRef("pk"),
+                private=False,
             )
         )
-        .filter(has_podcasts=True)
-        .order_by("name")
-    )
+    ).filter(has_podcasts=True)
 
     if request.search:
-        categories = categories.search(request.search.value)
+        categories = request.search.search_queryset(
+            categories,
+            "search_vector",
+        ).order_by(
+            "-rank",
+            "name",
+        )
+    else:
+        categories = categories.order_by("name")
 
     return TemplateResponse(
         request,
@@ -275,7 +279,10 @@ def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
     podcasts = category.podcasts.published().filter(private=False).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
+        podcasts = request.search.search_queryset(podcasts, "search_vector").order_by(
+            "-rank",
+            "-pub_date",
+        )
     else:
         podcasts = podcasts.order_by("-pub_date")
 
@@ -324,7 +331,9 @@ def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
     podcasts = _get_podcasts().subscribed(request.user).filter(private=True).distinct()
 
     if request.search:
-        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
+        podcasts = request.search.search_queryset(podcasts, "search_vector").order_by(
+            "-rank", "-pub_date"
+        )
     else:
         podcasts = podcasts.order_by("-pub_date")
 

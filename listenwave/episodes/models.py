@@ -16,10 +16,9 @@ from slugify import slugify
 from listenwave.fields import URLField
 from listenwave.podcasts.models import Season
 from listenwave.sanitizer import strip_html
-from listenwave.search import SearchableMixin
 
 
-class EpisodeQuerySet(SearchableMixin, FastUpdateQuerySet):
+class EpisodeQuerySet(FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
 
@@ -191,15 +190,6 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
-class BookmarkQuerySet(SearchableMixin, models.QuerySet):
-    """QuerySet for Bookmark model."""
-
-    search_fields = (
-        "episode__search_vector",
-        "episode__podcast__search_vector",
-    )
-
-
 class Bookmark(models.Model):
     """Bookmarked episodes."""
 
@@ -216,8 +206,6 @@ class Bookmark(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
-
-    objects = BookmarkQuerySet.as_manager()
 
     class Meta:
         constraints: ClassVar[list] = [
@@ -241,15 +229,6 @@ class Bookmark(models.Model):
         ]
 
 
-class AudioLogQuerySet(SearchableMixin, models.QuerySet):
-    """QuerySet for AudioLog."""
-
-    search_fields = (
-        "episode__search_vector",
-        "episode__podcast__search_vector",
-    )
-
-
 class AudioLog(models.Model):
     """Record of user listening history."""
 
@@ -267,8 +246,6 @@ class AudioLog(models.Model):
     listened = models.DateTimeField()
     current_time = models.PositiveIntegerField(default=0)
     duration = models.PositiveIntegerField(default=0)
-
-    objects: models.Manager["AudioLog"] = AudioLogQuerySet.as_manager()
 
     class Meta:
         constraints: ClassVar[list] = [

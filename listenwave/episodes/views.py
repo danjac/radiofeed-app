@@ -89,8 +89,10 @@ def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
 
     if request.search:
         episodes = (
-            Episode.objects.search(request.search.value)
-            .filter(podcast__private=False)
+            request.search.search_queryset(
+                Episode.objects.filter(podcast__private=False),
+                "search_vector",
+            )
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
@@ -221,7 +223,11 @@ def history(request: AuthenticatedHttpRequest) -> TemplateResponse:
     ordering = request.GET.get("order", "desc")
 
     if request.search:
-        audio_logs = audio_logs.search(request.search.value).order_by(
+        audio_logs = request.search.search_queryset(
+            audio_logs,
+            "episode__search_vector",
+            "episode__podcast__search_vector",
+        ).order_by(
             "-rank",
             "-listened",
         )
@@ -294,7 +300,15 @@ def bookmarks(request: AuthenticatedHttpRequest) -> TemplateResponse:
     ordering = request.GET.get("order", "desc")
 
     if request.search:
-        bookmarks = bookmarks.search(request.search.value).order_by("-rank", "-created")
+        bookmarks = request.search.search_queryset(
+            bookmarks,
+            "episode__search_vector",
+            "episode__podcast__search_vector",
+        ).order_by(
+            "-rank",
+            "-created",
+        )
+
     else:
         bookmarks = bookmarks.order_by("created" if ordering == "asc" else "-created")
 

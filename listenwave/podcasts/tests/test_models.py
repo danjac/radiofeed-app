@@ -19,20 +19,6 @@ class TestRecommendationManager:
         assert Recommendation.objects.count() == 0
 
 
-class TestCategoryManager:
-    @pytest.fixture
-    def category(self):
-        return CategoryFactory(name="testing")
-
-    @pytest.mark.django_db
-    def test_search_empty(self, category):
-        assert Category.objects.search("").count() == 0
-
-    @pytest.mark.django_db
-    def test_search(self, category):
-        assert Category.objects.search("testing").count() == 1
-
-
 class TestCategoryModel:
     def test_str(self):
         category = Category(name="Testing")
@@ -45,41 +31,6 @@ class TestCategoryModel:
 
 
 class TestPodcastManager:
-    @pytest.mark.django_db
-    def test_search(self):
-        PodcastFactory(title="testing")
-        assert Podcast.objects.search("testing").count() == 1
-
-    @pytest.mark.django_db
-    def test_simple_word(self):
-        PodcastFactory(title="Down")
-        assert Podcast.objects.search("down").count() == 1
-
-    @pytest.mark.django_db
-    def test_search_no_results(self):
-        PodcastFactory(title="testing")
-        assert Podcast.objects.search("random").count() == 0
-
-    @pytest.mark.django_db
-    def test_search_partial(self):
-        PodcastFactory(title="testing")
-        assert Podcast.objects.search("testing").count() == 1
-
-    @pytest.mark.django_db
-    def test_search_owner(self):
-        PodcastFactory(owner="tester")
-        assert Podcast.objects.search("tester").count() == 1
-
-    @pytest.mark.django_db
-    def test_search_keywords(self):
-        PodcastFactory(keywords="tester, example")
-        assert Podcast.objects.search("tester").count() == 1
-
-    @pytest.mark.django_db
-    def test_search_if_empty(self):
-        PodcastFactory(title="testing")
-        assert Podcast.objects.search("").count() == 0
-
     @pytest.mark.django_db
     def test_subscribed_true(self, user):
         SubscriptionFactory(subscriber=user)

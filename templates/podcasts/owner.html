@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load cache %}
 {% block title %}
-    {% title owner %}
+    {% title request.search.value %}
 {% endblock title %}
 
 {% block content %}

@@ -1,26 +1,12 @@
 import pytest
 from django.utils import timezone
 
-from listenwave.episodes.models import AudioLog, Bookmark, Episode
+from listenwave.episodes.models import AudioLog, Episode
 from listenwave.episodes.tests.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
     EpisodeFactory,
 )
 from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.tests.factories import PodcastFactory
-
-
-class TestEpisodeManager:
-    @pytest.mark.django_db
-    def test_search(self):
-        EpisodeFactory(title="testing")
-        assert Episode.objects.search("testing").count() == 1
-
-    @pytest.mark.django_db
-    def test_search_empty(self):
-        EpisodeFactory(title="testing")
-        assert Episode.objects.search("").count() == 0
 
 
 class TestEpisodeModel:
@@ -134,45 +120,6 @@ class TestEpisodeModel:
     )
     def test_duration_in_seconds(self, duration, expected):
         assert Episode(duration=duration).duration_in_seconds == expected
-
-
-class TestBookmarkManager:
-    @pytest.mark.parametrize(
-        ("search", "count"),
-        [
-            pytest.param("testing", 1, id="episode search"),
-            pytest.param("podcast", 1, id="podcast search"),
-            pytest.param("nomatch", 0, id="no match"),
-            pytest.param("", 0, id="empty search"),
-        ],
-    )
-    @pytest.mark.django_db
-    def test_search(self, search, count):
-        episode = EpisodeFactory(title="testing", podcast__title="podcast")
-        BookmarkFactory(episode=episode)
-        assert Bookmark.objects.search(search).count() == count
-
-
-class TestAudioLogManager:
-    @pytest.mark.parametrize(
-        ("search", "count"),
-        [
-            pytest.param("testing", 1, id="episode search"),
-            pytest.param("podcast", 1, id="podcast search"),
-            pytest.param(
-                "podcast or testing",
-                1,
-                id="podcast and episode search",
-            ),
-            pytest.param("nomatch", 0, id="no match"),
-            pytest.param("", 0, id="empty search"),
-        ],
-    )
-    @pytest.mark.django_db
-    def test_search(self, search, count):
-        episode = EpisodeFactory(title="testing", podcast__title="podcast")
-        AudioLogFactory(episode=episode)
-        assert AudioLog.objects.search(search).count() == count
 
 
 class TestAudioLogModel:

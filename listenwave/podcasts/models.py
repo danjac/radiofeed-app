@@ -10,13 +10,11 @@ from django.db import models
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from slugify import slugify
 
 from listenwave.fields import URLField
 from listenwave.sanitizer import strip_html
-from listenwave.search import SearchableMixin
 from listenwave.users.models import User
 
 if TYPE_CHECKING:
@@ -52,16 +50,6 @@ class Season:
         )
 
 
-class CategoryQuerySet(models.QuerySet):
-    """Custom QuerySet for Category model."""
-
-    def search(self, search_term) -> Self:
-        """Does a simple search for categories."""
-        if value := force_str(search_term):
-            return self.filter(name__icontains=value)
-        return self.none()
-
-
 class Category(models.Model):
     """iTunes category."""
 
@@ -69,7 +57,7 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
     itunes_genre_id = models.PositiveIntegerField(null=True, blank=True)
 
-    objects: CategoryQuerySet = CategoryQuerySet.as_manager()  # type: ignore[assignment]
+    search_vector = SearchVectorField(null=True, editable=False)
 
     if TYPE_CHECKING:
         podcasts: "PodcastQuerySet"
@@ -79,6 +67,7 @@ class Category(models.Model):
         ordering = ("name",)
         indexes: ClassVar[list] = [
             models.Index(fields=["name"]),
+            GinIndex(fields=["search_vector"]),
         ]
 
     def __str__(self) -> str:
@@ -95,7 +84,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(SearchableMixin, models.QuerySet):
+class PodcastQuerySet(models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
     def subscribed(self, user: User) -> Self:
