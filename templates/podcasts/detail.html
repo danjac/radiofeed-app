@@ -7,10 +7,11 @@
 {% block content %}
     {% include "podcasts/header.html" with active="detail" %}
     <article class="space-y-3">
-        {% with owner=podcast.cleaned_owner|websearch_clean %}
+        {% with owner=podcast.cleaned_owner %}
             {% if owner %}
                 <h2 class="text-lg font-semibold">
-                    <a class="link" href="{% url 'podcasts:search_podcasts' %}?{{ request.search.param }}={{ owner|urlencode }}">{{ owner }}</a>
+                    <a class="link"
+                       href="{% url 'podcasts:owner' %}?owner={{ owner|urlencode }}">{{ owner }}</a>
                 </h2>
             {% endif %}
         {% endwith %}
@@ -26,17 +27,14 @@
                                     hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
                                     hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'
                                     hx-push-url="true"
-                                    hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!"
-                            >
+                                    hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!">
                                 {% heroicon_mini "trash" class="mr-2" size=24 %}
                                 Remove
                             </button>
                         {% else %}
-                            <button
-                                class="text-lg btn btn-primary"
-                                disabled
-                                aria-label="This is a private feed, you cannot subscribe to it."
-                            >
+                            <button class="text-lg btn btn-primary"
+                                    disabled
+                                    aria-label="This is a private feed, you cannot subscribe to it.">
                                 {% heroicon_mini "eye" class="mr-2" size=24 %}
                                 Subscribe
                             </button>
@@ -51,24 +49,22 @@
                              hx-swap="outerHTML"
                              hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'>
                             {% if is_subscribed %}
-                                <button
-                                    class="text-lg btn btn-primary btn-outline"
-                                    aria-label="Unsubscribe from this Podcast"
-                                    title="Unsubscribe from this Podcast"
-                                    hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
-                                    hx-disabled-elt="this"
-                                    hx-trigger="click once">
+                                <button class="text-lg btn btn-primary btn-outline"
+                                        aria-label="Unsubscribe from this Podcast"
+                                        title="Unsubscribe from this Podcast"
+                                        hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
+                                        hx-disabled-elt="this"
+                                        hx-trigger="click once">
                                     {% heroicon_mini "eye-slash" class="mr-2" size=24 %}
                                     Unsubscribe
                                 </button>
                             {% else %}
-                                <button
-                                    class="text-lg btn btn-primary"
-                                    aria-label="Subscribe to this Podcast"
-                                    title="Subscribe to this Podcast"
-                                    hx-post="{% url "podcasts:subscribe" podcast.pk %}"
-                                    hx-disabled-elt="this"
-                                    hx-trigger="click once">
+                                <button class="text-lg btn btn-primary"
+                                        aria-label="Subscribe to this Podcast"
+                                        title="Subscribe to this Podcast"
+                                        hx-post="{% url "podcasts:subscribe" podcast.pk %}"
+                                        hx-disabled-elt="this"
+                                        hx-trigger="click once">
                                     {% heroicon_mini "eye" class="mr-2" size=24 %}
                                     Subscribe
                                 </button>

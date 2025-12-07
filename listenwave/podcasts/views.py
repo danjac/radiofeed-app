@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
+from django.db.models.functions import Lower
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
@@ -36,6 +37,30 @@ def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
+def owner(request: HttpRequest) -> RenderOrRedirectResponse:
+    """Shows all podcasts by a specific owner. Redirects to discover page if no owner is given."""
+
+    if owner := request.GET.get("owner", "").strip():
+        podcasts = (
+            _get_podcasts()
+            .annotate(owner_lowercase=Lower("owner"))
+            .filter(owner_lowercase=owner.casefold(), private=False)
+            .order_by("-pub_date")
+        )
+        return render_paginated_response(
+            request,
+            "podcasts/owner.html",
+            podcasts,
+            {
+                "owner": owner,
+            },
+        )
+
+    return HttpResponseRedirect(reverse("podcasts:discover"))
+
+
+@require_safe
+@login_required
 def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     podcasts = (
@@ -53,7 +78,7 @@ def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
 @require_safe
 @login_required
 def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
-    """Search all public podcasts in database."""
+    """Search all public podcasts in database. Redirects to discover page if search is empty."""
 
     if request.search:
         podcasts = (

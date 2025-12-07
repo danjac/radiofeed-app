@@ -72,6 +72,25 @@ class TestSubscriptions:
         assert response.context["page"].object_list[0] == sub.podcast
 
 
+class TestOwner:
+    @pytest.mark.django_db
+    def test_get(self, client, auth_user, faker):
+        podcast = PodcastFactory(owner=faker.name())
+        response = client.get(
+            reverse("podcasts:owner"),
+            {
+                "owner": podcast.cleaned_owner,
+            },
+        )
+        assert200(response)
+        assertTemplateUsed(response, "podcasts/owner.html")
+
+    @pytest.mark.django_db
+    def test_empty(self, client, auth_user, podcast):
+        response = client.get(reverse("podcasts:owner"), {"owner": ""})
+        assert response.url == _discover_url
+
+
 class TestDiscover:
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
