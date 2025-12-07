@@ -1,6 +1,5 @@
 import functools
 import json
-import re
 from datetime import timedelta
 
 from django import forms, template
@@ -182,29 +181,5 @@ def format_duration(total_seconds: int, min_value: int = 60) -> str:
     )
 
 
-@register.filter
-def websearch_clean(text: str) -> str:
-    """Cleans a search query for websearch usage by removing special characters."""
-    text = _re_websearch_syntax().sub(" ", text)
-    text = _re_websearch_keywords().sub(" ", text)
-    text = _re_whitespace().sub(" ", text)
-    return text.strip()
-
-
 def _clean_attrs(attrs: dict) -> dict:
     return {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
-
-
-@functools.cache
-def _re_websearch_syntax() -> re.Pattern:
-    return re.compile(r'[+\-~"\'()<>]')
-
-
-@functools.cache
-def _re_websearch_keywords() -> re.Pattern:
-    return re.compile(r"\b(AND|OR|NOT)\b", re.IGNORECASE)
-
-
-@functools.cache
-def _re_whitespace() -> re.Pattern:
-    return re.compile(r"\s+")
