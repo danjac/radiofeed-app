@@ -2,6 +2,7 @@ from typing import Annotated
 
 import typer
 from django.db.models import Case, Count, IntegerField, When
+from django.utils import timezone
 from django_typer.management import Typer
 
 from listenwave.feedparser.tasks import parse_feed
@@ -33,7 +34,7 @@ def handle(
                 output_field=IntegerField(),
             ),
         )
-        .filter(active=True)  # queued__isnull=True
+        .filter(active=True, queued__isnull=True)
         .order_by(
             "-is_new",
             "-subscribers",
@@ -43,7 +44,8 @@ def handle(
         )
         .values_list("pk", flat=True)[:limit]
     )
-    # Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now()) # noqa: ERA001
+
+    Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now())
 
     for podcast_id in podcast_ids:
-        parse_feed.enqueue(podcast_id=podcast_id)  # queued= None
+        parse_feed.enqueue(podcast_id=podcast_id, queued=None)

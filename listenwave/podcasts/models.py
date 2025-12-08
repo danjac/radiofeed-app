@@ -212,6 +212,8 @@ class Podcast(models.Model):
 
     frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
 
+    queued = models.DateTimeField(null=True, blank=True)
+
     modified = models.DateTimeField(
         null=True,
         blank=True,
