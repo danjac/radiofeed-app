@@ -1,7 +1,4 @@
 import itertools
-import random
-import time
-from typing import Annotated
 
 import typer
 from django.db import transaction
@@ -15,22 +12,7 @@ app = Typer(help="Fetch top iTunes podcasts")
 
 
 @app.command()
-def handle(
-    jitter_min: Annotated[
-        float,
-        typer.Option(
-            "--jitter-min",
-            help="Minimum jitter time (secs)",
-        ),
-    ] = 1.5,
-    jitter_max: Annotated[
-        float,
-        typer.Option(
-            "--jitter-max",
-            help="Maxium jitter time(secs)",
-        ),
-    ] = 5.0,
-) -> None:
+def handle() -> None:
     """Fetch the top iTunes podcasts for a given country."""
 
     categories = Category.objects.filter(itunes_genre_id__isnull=False)
@@ -60,18 +42,8 @@ def handle(
             except itunes.ItunesError as exc:
                 typer.secho(f"Error: {exc}", fg=typer.colors.RED)
 
-            _jitter(jitter_min, jitter_max)
-
     if promoted_feeds:
         with transaction.atomic():
             # Demote existing promoted feeds first
             Podcast.objects.filter(promoted=True).update(promoted=False)
             itunes.save_feeds_to_db(promoted_feeds, promoted=True)
-
-
-def _jitter(min_seconds: float, max_seconds: float) -> None:
-    """Jitter by sleeping for a random amount of time.
-    This is useful to avoid rate limiting.
-    """
-    sleep_time = random.uniform(min_seconds, max_seconds)  # noqa: S311
-    time.sleep(sleep_time)

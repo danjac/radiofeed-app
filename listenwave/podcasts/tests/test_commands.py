@@ -45,7 +45,7 @@ class TestFetchTopItunes:
         mock_fetch_chart,
         mock_fetch_genre,
     ):
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
 
@@ -57,7 +57,7 @@ class TestFetchTopItunes:
         mock_fetch_genre,
     ):
         promoted = PodcastFactory(promoted=True)
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
 
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
@@ -81,7 +81,7 @@ class TestFetchTopItunes:
             return_value=[],
         )
         promoted = PodcastFactory(promoted=True)
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         patched.assert_called()
 
         # no promoted feeds found, so existing promoted podcast remains
@@ -95,7 +95,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("API error"),
         )
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
         mock_fetch_chart.assert_called()
 
@@ -105,7 +105,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_genre",
             side_effect=ItunesError("API error"),
         )
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
 
