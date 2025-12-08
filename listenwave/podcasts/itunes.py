@@ -52,10 +52,6 @@ class Feed(BaseModel):
         """Returns title of feed"""
         return self.title
 
-    def __hash__(self) -> int:
-        """Returns hash of feed based on RSS URL"""
-        return hash(self.rss)
-
 
 def search(
     client: Client,
