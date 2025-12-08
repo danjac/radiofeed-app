@@ -1,13 +1,12 @@
 {% spaceless %}
     {% load audio_player django_htmx static tailwind_cli %}
     <!DOCTYPE html>
+    <!-- djlint:off H016 -->
     <html lang="en">
         <head>
-            <title>
-                {% block title %}
-                    {% title %}
-                {% endblock title %}
-            </title>
+            {% block title %}
+                {% title_tag %}
+            {% endblock title %}
             {% partialdef head inline %}
                 {% tailwind_css %}
                 {% partialdef icons inline %}

@@ -21,15 +21,16 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def title(context: RequestContext, *elements: str, divider: str = "|") -> str:
+def title_tag(context: RequestContext, *elements: str, divider: str = " | ") -> str:
     """Renders <title> content including the site name.
 
     Example:
-        {% title "About Us" "Company" %}
+        {% title_tag "About Us" "Company" %}
     Results in:
-        Listenwave | About Us | Company
+        <title>Listenwave | About Us | Company</title>
     """
-    return f" {divider} ".join((context.request.site.name, *elements))
+    content = divider.join((context.request.site.name, *elements))
+    return format_html("<title>{}</title>", content)
 
 
 @register.simple_tag
@@ -45,16 +46,16 @@ def meta_tags() -> str:
             for key, value in settings.META_TAGS.items()
         ],
         {
+            "name": "theme-color",
+            "content": get_theme_color(),
+        },
+        {
             "name": "copyright",
             "content": f"© {settings.META_TAGS['author']} {timezone.now().year}",
         },
         {
             "name": "htmx-config",
             "content": json.dumps(settings.HTMX_CONFIG),
-        },
-        {
-            "name": "theme-color",
-            "content": get_theme_color(),
         },
     ]
     return format_html_join(
@@ -92,7 +93,7 @@ def cover_image(
     title: str,
 ) -> str:
     """Renders a cover image."""
-    attrs = covers.get_cover_image_attrs(variant, cover_url, title)
+    attrs = get_cover_image_attrs(variant, cover_url, title)
     return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
 
 

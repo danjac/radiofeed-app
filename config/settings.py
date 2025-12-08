@@ -546,6 +546,15 @@ HTMX_CONFIG = {
     "useTemplateFragments": True,
 }
 
+
+# Site meta configuration
+
+META_TAGS = {
+    "author": env("META_AUTHOR", default="Site owner"),
+    "description": env("META_DESCRIPTION", default="Podcast aggregator site"),
+    "keywords": env("META_KEYWORDS", "podcasts, rss, feeds"),
+}
+
 # PWA configuration
 # https://docs.pwabuilder.com/#/builder/manifest
 # https://developer.chrome.com/docs/android/trusted-web-activity/android-for-web-devs#digital-asset-links
@@ -571,12 +580,4 @@ PWA_CONFIG = {
         "background_color": env("PWA_BACKGROUND_COLOR", default="#FFFFFF"),
         "theme_color": env("PWA_THEME_COLOR", default="#26323C"),
     },
-}
-
-# Site meta configuration
-
-META_TAGS = {
-    "author": env("META_AUTHOR", default="Site owner"),
-    "description": env("META_DESCRIPTION", default="Podcast aggregator site"),
-    "keywords": env("META_KEYWORDS", "podcasts, rss, feeds"),
 }
