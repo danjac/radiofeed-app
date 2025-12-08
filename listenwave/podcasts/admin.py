@@ -163,6 +163,27 @@ class PrivateFilter(admin.SimpleListFilter):
         return queryset.filter(private=True) if self.value() == "yes" else queryset
 
 
+class QueuedFilter(admin.SimpleListFilter):
+    """Filters queued podcasts."""
+
+    title = "Queued"
+    parameter_name = "queued"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> tuple[tuple[str, str], ...]:
+        """Returns lookup values/labels."""
+        return (("yes", "Queued"),)
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        return (
+            queryset.filter(queued__isnull=False) if self.value() == "yes" else queryset
+        )
+
+
 class SubscribedFilter(admin.SimpleListFilter):
     """Filters podcasts based on subscription status."""
 
@@ -220,6 +241,7 @@ class PodcastAdmin(admin.ModelAdmin):
         ParserResultFilter,
         PodcastTypeFilter,
         PrivateFilter,
+        QueuedFilter,
         PromotedFilter,
         ScheduledFilter,
         SubscribedFilter,
