@@ -15,6 +15,10 @@ cronjobs:
       schedule: "*/6 * * * *" # Every 6 minutes
       command: "{{ manage_cmd }} parse_feeds"
 
+    - name: "prune-db-task-results"
+      schedule: "25 6 * * *" # 6:25 AM every day
+      command: "{{ manage_cmd }} prune_db_task_results --min-age-days=1"
+
     - name: "send-notifications"
       schedule: "0 13 * * 1" # 1:00 PM every Monday
       command: "{{ manage_cmd }} send_notifications"
