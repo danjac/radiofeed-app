@@ -270,6 +270,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "has_similar_podcasts",
         "parsed",
         "parser_result",
+        "queued",
         "frequency",
         "next_scheduled_update",
         "modified",
