@@ -7,7 +7,6 @@ from django_typer.management import Typer
 from listenwave.feedparser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import execute_thread_pool
 
 app = Typer(help="Parse feeds for all active podcasts")
 
@@ -24,6 +23,7 @@ def handle(
     ] = 360,
 ) -> None:
     """Parse feeds for all active podcasts."""
+
     podcasts = (
         Podcast.objects.scheduled()
         .annotate(
@@ -45,8 +45,7 @@ def handle(
     )
 
     with get_client() as client:
-
-        def _parse_feed(podcast: Podcast) -> Podcast.ParserResult:
+        for podcast in podcasts:
             result = parse_feed(podcast, client)
             color = (
                 typer.colors.GREEN
@@ -54,6 +53,3 @@ def handle(
                 else typer.colors.RED
             )
             typer.secho(f"{podcast}: {result.label}", fg=color)
-            return result
-
-        execute_thread_pool(_parse_feed, podcasts)

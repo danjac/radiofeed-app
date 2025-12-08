@@ -10,7 +10,6 @@ from django_typer.management import Typer
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
 from listenwave.podcasts.models import Category, Podcast
-from listenwave.thread_pool import execute_thread_pool
 
 app = Typer(help="Fetch top iTunes podcasts")
 
@@ -36,11 +35,11 @@ def handle(
 
     categories = Category.objects.filter(itunes_genre_id__isnull=False)
     permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
+
     promoted_feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
-
-        def _fetch_feeds(country: str, category: Category | None) -> None:
+        for country, category in permutations:
             try:
                 if category is None:
                     typer.secho(f"Most popular feeds [{country}]", fg=typer.colors.BLUE)
@@ -62,8 +61,6 @@ def handle(
                 typer.secho(f"Error: {exc}", fg=typer.colors.RED)
 
             _jitter(jitter_min, jitter_max)
-
-        execute_thread_pool(lambda t: _fetch_feeds(*t), permutations)
 
     if promoted_feeds:
         with transaction.atomic():

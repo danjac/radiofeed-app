@@ -11,7 +11,6 @@ from django.utils import timezone
 from django_typer.management import Typer
 
 from listenwave.episodes.models import Episode
-from listenwave.thread_pool import execute_thread_pool
 from listenwave.users.emails import get_recipients, send_notification_email
 from listenwave.users.models import User
 
@@ -42,7 +41,7 @@ def handle(
     since = timezone.now() - timedelta(days=days_since)
     connection = get_connection()
 
-    def _send_notifications(recipient) -> None:
+    for recipient in get_recipients():
         if episodes := _get_new_episodes(recipient.user, limit, since):
             send_notification_email(
                 site,
@@ -59,8 +58,6 @@ def handle(
                 f"{len(episodes)} episode notifications sent to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
-
-    execute_thread_pool(_send_notifications, get_recipients())
 
 
 def _get_new_episodes(

@@ -6,7 +6,6 @@ from django.core.mail import get_connection
 from django_typer.management import Typer
 
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import execute_thread_pool
 from listenwave.users.emails import get_recipients, send_notification_email
 
 app = Typer(help="Send podcast recommendations to users")
@@ -27,7 +26,7 @@ def handle(
     site = Site.objects.get_current()
     connection = get_connection()
 
-    def _send_recommendations(recipient) -> None:
+    for recipient in get_recipients():
         if (
             podcasts := Podcast.objects.published()
             .recommended(recipient.user)
@@ -50,5 +49,3 @@ def handle(
                 f"{len(podcasts)} podcast recommendations sent to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
-
-    execute_thread_pool(_send_recommendations, get_recipients())

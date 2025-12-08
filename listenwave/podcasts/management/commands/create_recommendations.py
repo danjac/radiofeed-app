@@ -8,7 +8,6 @@ from django_typer.management import Typer
 from listenwave import tokenizer
 from listenwave.podcasts import recommender
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import execute_thread_pool
 
 app: Typer = Typer(help="Create podcast recommendations")
 
@@ -26,19 +25,16 @@ def handle() -> None:
 
     Podcast.objects.filter(has_similar_podcasts=True).update(has_similar_podcasts=False)
 
-    execute_thread_pool(_recommend, languages)
+    for language in languages:
+        podcast_ids = (rec.podcast_id for rec in recommender.recommend(language))  # type: ignore[attr-defined]
 
+        for batch in itertools.batched(podcast_ids, 500, strict=False):
+            _update_recommendations_batch(batch)
 
-def _recommend(language: str) -> None:
-    podcast_ids = (rec.podcast_id for rec in recommender.recommend(language))  # type: ignore[attr-defined]
-
-    for batch in itertools.batched(podcast_ids, 500, strict=False):
-        _update_recommendations_batch(batch)
-
-    typer.secho(
-        f"Recommendations created for language: {language}",
-        fg=typer.colors.GREEN,
-    )
+        typer.secho(
+            f"Recommendations created for language: {language}",
+            fg=typer.colors.GREEN,
+        )
 
 
 def _update_recommendations_batch(podcast_ids: tuple[int, ...]) -> None:
