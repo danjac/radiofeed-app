@@ -23,9 +23,9 @@ from listenwave.http_client import Client
 from listenwave.podcasts.models import Category, Podcast
 
 
-def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:
+def parse_feed(podcast: Podcast, client: Client, **fields) -> Podcast.ParserResult:
     """Updates a Podcast instance with its RSS or Atom feed source."""
-    return _FeedParser(podcast=podcast).parse(client)
+    return _FeedParser(podcast=podcast).parse(client, **fields)
 
 
 @functools.cache
@@ -39,8 +39,10 @@ class _FeedParser:
     podcast: Podcast
     max_retries: int = 30
 
-    def parse(self, client: Client) -> Podcast.ParserResult:
-        """Parse the podcast's RSS feed and update the Podcast instance."""
+    def parse(self, client: Client, **fields) -> Podcast.ParserResult:
+        """Parse the podcast's RSS feed and update the Podcast instance.
+        Additional fields passed will update the podcast.
+        """
 
         canonical_id: int | None = None
 
@@ -95,6 +97,7 @@ class _FeedParser:
                 modified=modified,
                 parsed=parsed,
                 updated=updated,
+                **fields,
             )
         except FeedParserError as exc:
             return self._handle_error(
@@ -105,6 +108,7 @@ class _FeedParser:
                 modified=modified,
                 parsed=parsed,
                 updated=updated,
+                **fields,
             )
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:

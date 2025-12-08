@@ -43,6 +43,7 @@ INSTALLED_APPS: list[str] = [
     "django_http_compression",
     "django_linear_migrations",
     "django_tailwind_cli",
+    "django_tasks.backends.database",
     "django_typer",
     "health_check",
     "health_check.db",
@@ -123,6 +124,10 @@ CACHES = {
 
 # Required for health check
 REDIS_URL = CACHES["default"]["LOCATION"]
+
+# Tasks
+# https://pypi.org/project/django-tasks/
+TASKS = {"default": {"BACKEND": "django_tasks.backends.database.DatabaseBackend"}}
 
 # Templates
 

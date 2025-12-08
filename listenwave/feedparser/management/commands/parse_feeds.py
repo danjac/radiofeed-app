@@ -4,8 +4,7 @@ import typer
 from django.db.models import Case, Count, IntegerField, When
 from django_typer.management import Typer
 
-from listenwave.feedparser.feed_parser import parse_feed
-from listenwave.http_client import get_client
+from listenwave.feedparser.tasks import parse_feed
 from listenwave.podcasts.models import Podcast
 
 app = Typer(help="Parse feeds for all active podcasts")
@@ -24,7 +23,7 @@ def handle(
 ) -> None:
     """Parse feeds for all active podcasts."""
 
-    podcasts = (
+    podcast_ids = list(
         Podcast.objects.scheduled()
         .annotate(
             subscribers=Count("subscriptions"),
@@ -34,22 +33,17 @@ def handle(
                 output_field=IntegerField(),
             ),
         )
-        .filter(active=True)
+        .filter(active=True)  # queued__isnull=True
         .order_by(
             "-is_new",
             "-subscribers",
             "-promoted",
             "parsed",
             "updated",
-        )[:limit]
+        )
+        .values_list("pk", flat=True)[:limit]
     )
+    # Podcast.objects.filter(pk__in=podcast_ids).update(queued=timezone.now()) # noqa: ERA001
 
-    with get_client() as client:
-        for podcast in podcasts:
-            result = parse_feed(podcast, client)
-            color = (
-                typer.colors.GREEN
-                if result is Podcast.ParserResult.SUCCESS
-                else typer.colors.RED
-            )
-            typer.secho(f"{podcast}: {result.label}", fg=color)
+    for podcast_id in podcast_ids:
+        parse_feed.enqueue(podcast_id=podcast_id)  # queued= None
