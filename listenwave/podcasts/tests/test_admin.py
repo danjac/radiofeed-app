@@ -13,7 +13,6 @@ from listenwave.podcasts.admin import (
     PodcastTypeFilter,
     PrivateFilter,
     PromotedFilter,
-    QueuedFilter,
     RecommendationAdmin,
     ScheduledFilter,
     SubscribedFilter,
@@ -129,22 +128,6 @@ class TestPromotedFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert qs.first() == promoted
-
-
-class TestQueuedFilter:
-    @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req):
-        f = QueuedFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-
-    @pytest.mark.django_db
-    def test_queued(self, podcasts, podcast_admin, req):
-        queued = PodcastFactory(queued=timezone.now())
-        f = QueuedFilter(req, {"queued": ["yes"]}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert qs.first() == queued
 
 
 class TestPrivateFilter:

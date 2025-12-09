@@ -4,7 +4,6 @@ from datetime import datetime
 
 import httpx
 import pytest
-from django.utils import timezone
 from django.utils.text import slugify
 
 from listenwave.episodes.models import Episode
@@ -71,7 +70,6 @@ class TestFeedParser:
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
             num_retries=3,
-            queued=timezone.now(),
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -95,7 +93,7 @@ class TestFeedParser:
             },
         )
 
-        parse_feed(podcast, client, queued=None)
+        parse_feed(podcast, client)
 
         # extra episode should be removed
         assert not podcast.episodes.filter(pk=extra.id).exists()
@@ -110,7 +108,6 @@ class TestFeedParser:
         assert podcast.num_episodes == 20
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active is True
-        assert podcast.queued is None
         assert podcast.num_retries == 0
         assert podcast.content_hash
         assert podcast.title == "Mysterious Universe"
