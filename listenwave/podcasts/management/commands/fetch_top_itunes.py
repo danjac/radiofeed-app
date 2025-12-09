@@ -2,7 +2,6 @@ import itertools
 
 import typer
 from django.db import transaction
-from django.utils import timezone
 from django_typer.management import Typer
 
 from listenwave.http_client import get_client
@@ -45,5 +44,5 @@ def handle() -> None:
     if promoted_feeds:
         with transaction.atomic():
             # Demote existing podcasts
-            Podcast.objects.filter(promoted__isnull=False).update(promoted=None)
-            itunes.save_feeds_to_db(promoted_feeds, promoted=timezone.now().today())
+            Podcast.objects.filter(promoted=True).update(promoted=False)
+            itunes.save_feeds_to_db(promoted_feeds, promoted=True)

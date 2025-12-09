@@ -238,7 +238,7 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
-    promoted = models.DateField(null=True, blank=True)
+    promoted = models.BooleanField(default=False)
 
     podcast_type = models.CharField(
         max_length=10,

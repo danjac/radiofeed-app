@@ -3,7 +3,6 @@ import pathlib
 
 import httpx
 import pytest
-from django.utils import timezone
 
 from listenwave.http_client import Client
 from listenwave.podcasts import itunes
@@ -300,25 +299,25 @@ class TestSaveFeedsToDb:
 
     @pytest.mark.django_db
     def test_save_new_feed_with_fields(self, feed):
-        podcasts = itunes.save_feeds_to_db([feed], promoted=timezone.now().today())
+        podcasts = itunes.save_feeds_to_db([feed], promoted=True)
         assert len(podcasts) == 1
         assert podcasts[0].rss == feed.rss
-        assert podcasts[0].promoted is not None
+        assert podcasts[0].promoted is True
 
     @pytest.mark.django_db
     def test_existing_feed_with_fields(self, feed):
         podcast = PodcastFactory(rss=feed.rss)
-        itunes.save_feeds_to_db([feed], promoted=timezone.now().today())
+        itunes.save_feeds_to_db([feed], promoted=True)
         podcast.refresh_from_db()
-        assert podcast.promoted is not None
+        assert podcast.promoted is True
 
     @pytest.mark.django_db
     def test_save_canonical_feed(self, feed):
         canonical = PodcastFactory()
         PodcastFactory(rss=feed.rss, canonical=canonical)
-        itunes.save_feeds_to_db([feed], promoted=timezone.now().today())
+        itunes.save_feeds_to_db([feed], promoted=True)
         canonical.refresh_from_db()
-        assert canonical.promoted is not None
+        assert canonical.promoted is True
 
 
 class TestFetchChart:
