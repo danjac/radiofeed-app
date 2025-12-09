@@ -1,7 +1,8 @@
+from datetime import timedelta
 from typing import Annotated
 
 import typer
-from django.db.models import Case, Count, IntegerField, When
+from django.db.models import Case, Count, IntegerField, Q, When
 from django.utils import timezone
 from django_typer.management import Typer
 
@@ -21,6 +22,14 @@ def handle(
             help="Number of podcasts to parse",
         ),
     ] = 360,
+    requeue_after_hours: Annotated[
+        int,
+        typer.Option(
+            "--requeue-after-hours",
+            "-r",
+            help="Requeue podcast if queued more than {n} hours",
+        ),
+    ] = 3,
 ) -> None:
     """Parse feeds for all active podcasts."""
 
@@ -33,9 +42,21 @@ def handle(
                 default=0,
                 output_field=IntegerField(),
             ),
+            is_queued=Case(
+                When(queued__isnull=False, then=1),
+                default=0,
+                output_field=IntegerField(),
+            ),
         )
-        .filter(active=True, queued__isnull=True)
+        .filter(
+            Q(queued__isnull=True)
+            | Q(
+                queued__lt=timezone.now() - timedelta(hours=requeue_after_hours),
+            ),
+            active=True,
+        )
         .order_by(
+            "-is_queued",
             "-is_new",
             "-subscribers",
             "-promoted",
