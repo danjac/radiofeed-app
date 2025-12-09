@@ -1,11 +1,7 @@
 import pytest
 from django.core.management import call_command
 
-from listenwave.podcasts.tests.factories import (
-    CategoryFactory,
-    RecommendationFactory,
-    SubscriptionFactory,
-)
+from listenwave.podcasts.tests.factories import CategoryFactory, RecommendationFactory
 from listenwave.users.tests.factories import EmailAddressFactory
 
 
@@ -41,22 +37,16 @@ class TestCreateRecommendations:
 class TestSendRecommendations:
     @pytest.fixture
     def recipient(self):
-        return EmailAddressFactory(
-            verified=True,
-            primary=True,
+        return EmailAddressFactory(verified=True, primary=True)
+
+    @pytest.fixture
+    def mock_send_recommendations(self, mocker):
+        return mocker.patch(
+            "listenwave.podcasts.tasks.send_recommendations",
+            return_value=mocker.MagicMock,
         )
 
     @pytest.mark.django_db(transaction=True)
-    def test_has_recommendations(self, mailoutbox, recipient):
-        subscription = SubscriptionFactory(subscriber=recipient.user)
-        RecommendationFactory.create_batch(3, podcast=subscription.podcast)
+    def test_ok(self, recipient, mock_send_recommendations):
         call_command("send_recommendations")
-        assert len(mailoutbox) == 1
-        assert mailoutbox[0].to == [recipient.email]
-        assert recipient.user.recommended_podcasts.count() == 3
-
-    @pytest.mark.django_db(transaction=True)
-    def test_has_no_recommendations(self, mailoutbox, recipient):
-        call_command("send_recommendations")
-        assert len(mailoutbox) == 0
-        assert recipient.user.recommended_podcasts.count() == 0
+        mock_send_recommendations.enqueue.assert_called()

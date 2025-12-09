@@ -1,7 +1,34 @@
 import pytest
 
 from listenwave.podcasts.itunes import Feed
-from listenwave.podcasts.tasks import fetch_itunes_feeds
+from listenwave.podcasts.tasks import fetch_itunes_feeds, send_recommendations
+from listenwave.podcasts.tests.factories import (
+    RecommendationFactory,
+    SubscriptionFactory,
+)
+from listenwave.users.tests.factories import EmailAddressFactory
+
+
+class TestSendRecommendations:
+    @pytest.fixture
+    def recipient(self):
+        return EmailAddressFactory(verified=True, primary=True)
+
+    @pytest.mark.django_db(transaction=True)
+    def test_has_recommendations(self, mailoutbox, recipient):
+        subscription = SubscriptionFactory(subscriber=recipient.user)
+        RecommendationFactory.create_batch(3, podcast=subscription.podcast)
+        send_recommendations.enqueue(recipient_id=recipient.pk, limit=6)
+        assert len(mailoutbox) == 1
+        assert mailoutbox[0].to == [recipient.email]
+        assert recipient.user.recommended_podcasts.count() == 3
+
+    @pytest.mark.django_db(transaction=True)
+    def test_has_no_recommendations(self, mailoutbox, recipient):
+        send_recommendations.enqueue(recipient_id=recipient.pk, limit=6)
+
+        assert len(mailoutbox) == 0
+        assert recipient.user.recommended_podcasts.count() == 0
 
 
 class TestFetchTopItunes:

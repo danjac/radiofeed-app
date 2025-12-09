@@ -63,7 +63,7 @@ def get_recipients() -> QuerySet[EmailAddress]:
         user__send_email_notifications=True,
         primary=True,
         verified=True,
-    ).select_related("user")
+    )
 
 
 def get_unsubscribe_url(email: str) -> str:
