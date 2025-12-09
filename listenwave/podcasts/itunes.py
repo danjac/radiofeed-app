@@ -52,6 +52,10 @@ class Feed(BaseModel):
         """Returns title of feed"""
         return self.title
 
+    def __hash__(self) -> int:
+        """Determines uniqueness of Feed"""
+        return hash(self.rss)
+
 
 def search(
     client: Client,
