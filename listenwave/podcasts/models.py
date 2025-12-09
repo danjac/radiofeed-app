@@ -15,6 +15,7 @@ from slugify import slugify
 
 from listenwave.fields import URLField
 from listenwave.sanitizer import strip_html
+from listenwave.search import search_queryset
 from listenwave.users.models import User
 
 if TYPE_CHECKING:
@@ -80,6 +81,16 @@ class Category(models.Model):
 
 class PodcastQuerySet(models.QuerySet):
     """Custom QuerySet of Podcast model."""
+
+    def search(self, search_term: str, **search_options) -> Self:
+        """Search podcasts."""
+        return search_queryset(self, search_term, "search_vector", **search_options)
+
+    def search_owner(self, search_term: str, **search_options) -> Self:
+        """Search podcast owners."""
+        return search_queryset(
+            self, search_term, "owner_search_vector", **search_options
+        )
 
     def subscribed(self, user: User) -> Self:
         """Returns podcasts subscribed by user."""

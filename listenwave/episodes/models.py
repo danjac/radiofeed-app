@@ -1,4 +1,4 @@
-from typing import ClassVar, Optional
+from typing import ClassVar, Optional, Self
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -16,10 +16,15 @@ from slugify import slugify
 from listenwave.fields import URLField
 from listenwave.podcasts.models import Season
 from listenwave.sanitizer import strip_html
+from listenwave.search import search_queryset
 
 
 class EpisodeQuerySet(FastUpdateQuerySet):
     """QuerySet for Episode model."""
+
+    def search(self, search_term: str, **search_options) -> Self:
+        """Search episodes."""
+        return search_queryset(self, search_term, "search_vector", **search_options)
 
 
 class Episode(models.Model):
@@ -190,6 +195,20 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
+class BookmarkQuerySet(models.QuerySet):
+    """QuerySet for Bookmark model."""
+
+    def search(self, search_term: str, **search_options) -> Self:
+        """Search bookmarks."""
+        return search_queryset(
+            self,
+            search_term,
+            "episode__search_vector",
+            "episode__podcast__search_vector",
+            **search_options,
+        )
+
+
 class Bookmark(models.Model):
     """Bookmarked episodes."""
 
@@ -206,6 +225,8 @@ class Bookmark(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
+
+    objects: BookmarkQuerySet = BookmarkQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [
@@ -229,6 +250,20 @@ class Bookmark(models.Model):
         ]
 
 
+class AudioLogQuerySet(models.QuerySet):
+    """QuerySet for AudioLog model."""
+
+    def search(self, search_term: str, **search_options) -> Self:
+        """Search audio logs."""
+        return search_queryset(
+            self,
+            search_term,
+            "episode__search_vector",
+            "episode__podcast__search_vector",
+            **search_options,
+        )
+
+
 class AudioLog(models.Model):
     """Record of user listening history."""
 
@@ -246,6 +281,8 @@ class AudioLog(models.Model):
     listened = models.DateTimeField()
     current_time = models.PositiveIntegerField(default=0)
     duration = models.PositiveIntegerField(default=0)
+
+    objects: AudioLogQuerySet = AudioLogQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [

@@ -4,7 +4,6 @@ from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
 from listenwave.episodes.models import AudioLog, Episode, EpisodeQuerySet
-from listenwave.search import search_queryset
 
 
 @admin.register(Episode)
@@ -35,7 +34,7 @@ class EpisodeAdmin(admin.ModelAdmin):
         """Search episodes."""
         return (
             (
-                search_queryset(queryset, search_term, "search_vector").order_by(
+                queryset.search(search_term).order_by(
                     "-rank",
                     "-pub_date",
                     "-id",
