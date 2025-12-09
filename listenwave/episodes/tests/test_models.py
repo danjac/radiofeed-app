@@ -1,12 +1,22 @@
-import pytest
-from django.utils import timezone
+from datetime import timedelta
 
-from listenwave.episodes.models import AudioLog, Episode
+import pytest
+
+from listenwave.episodes.models import AudioLog, Bookmark, Episode
 from listenwave.episodes.tests.factories import (
+    AudioLogFactory,
+    BookmarkFactory,
     EpisodeFactory,
 )
 from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.tests.factories import PodcastFactory
+
+
+class TestEpisodeManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        EpisodeFactory(title="testing")
+        assert Episode.objects.search("testing").exists()
 
 
 class TestEpisodeModel:
@@ -23,7 +33,7 @@ class TestEpisodeModel:
     @pytest.mark.django_db
     def test_next_episode_not_same_podcast(self, episode):
         EpisodeFactory(
-            pub_date=episode.pub_date + timezone.timedelta(days=2),
+            pub_date=episode.pub_date + timedelta(days=2),
         )
 
         assert episode.next_episode is None
@@ -31,7 +41,7 @@ class TestEpisodeModel:
     @pytest.mark.django_db
     def test_previous_episode_not_same_podcast(self, episode):
         EpisodeFactory(
-            pub_date=episode.pub_date - timezone.timedelta(days=2),
+            pub_date=episode.pub_date - timedelta(days=2),
         )
 
         assert episode.previous_episode is None
@@ -40,7 +50,7 @@ class TestEpisodeModel:
     def test_next_episode(self, episode):
         next_episode = EpisodeFactory(
             podcast=episode.podcast,
-            pub_date=episode.pub_date + timezone.timedelta(days=2),
+            pub_date=episode.pub_date + timedelta(days=2),
         )
 
         assert episode.next_episode == next_episode
@@ -49,7 +59,7 @@ class TestEpisodeModel:
     def test_previous_episode(self, episode):
         previous_episode = EpisodeFactory(
             podcast=episode.podcast,
-            pub_date=episode.pub_date - timezone.timedelta(days=2),
+            pub_date=episode.pub_date - timedelta(days=2),
         )
 
         assert episode.previous_episode == previous_episode
@@ -120,6 +130,24 @@ class TestEpisodeModel:
     )
     def test_duration_in_seconds(self, duration, expected):
         assert Episode(duration=duration).duration_in_seconds == expected
+
+
+class TestBookmarkManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        BookmarkFactory(episode__title="episode", episode__podcast__title="podcast")
+        assert Bookmark.objects.search("episode").exists()
+        assert Bookmark.objects.search("podcast").exists()
+        assert Bookmark.objects.search("episode OR podcast").exists()
+
+
+class TestAudioLogManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        AudioLogFactory(episode__title="episode", episode__podcast__title="podcast")
+        assert AudioLog.objects.search("episode").exists()
+        assert AudioLog.objects.search("podcast").exists()
+        assert AudioLog.objects.search("episode OR podcast").exists()
 
 
 class TestAudioLogModel:
