@@ -62,8 +62,5 @@ kubectl delete job "$release_job_name" -n default
 kubectl get cronjob -l app=django-cronjob -o name | xargs -I {} kubectl set image {} django="${IMAGE}" -n default
 
 # Rollout deployments
-kubectl set image deployment/django-worker django="${IMAGE}" -n default
-kubectl rollout status deployment/django-worker -n default
-
 kubectl set image deployment/django-app django="${IMAGE}" -n default
 kubectl rollout status deployment/django-app -n default

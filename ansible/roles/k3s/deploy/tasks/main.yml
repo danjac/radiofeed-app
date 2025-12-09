@@ -117,7 +117,6 @@
             - redis_deployment
             - redis_service
             - django_deployment
-            - django_worker_deployment
             - django_service
             - ingress_route
 
