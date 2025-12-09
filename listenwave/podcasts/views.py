@@ -46,10 +46,10 @@ def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
     podcasts = (
         _get_podcasts()
         .filter(
-            promoted=True,
+            promoted__isnull=False,
             language=settings.DISCOVER_FEED_LANGUAGE,
         )
-        .order_by("-pub_date")[: settings.DEFAULT_PAGE_SIZE]
+        .order_by("-promoted", "-pub_date")[: settings.DEFAULT_PAGE_SIZE]
     )
 
     return TemplateResponse(request, "podcasts/discover.html", {"podcasts": podcasts})

@@ -3,6 +3,7 @@ import logging
 from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.tasks import task  # type: ignore[reportMissingTypeStubs]
+from django.utils import timezone
 
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
@@ -19,7 +20,7 @@ def fetch_itunes_feeds(*, country: str, itunes_genre_id: int | None = None) -> N
         if itunes_genre_id is None:
             logger.debug("Fetching most popular iTunes feed [%s]", country)
             feeds = itunes.fetch_chart(client, country)
-            itunes.save_feeds_to_db(feeds, promoted=True)
+            itunes.save_feeds_to_db(feeds, promoted=timezone.now().today())
         else:
             logger.debug(
                 "Fetching iTunes feed for genre %s [%s]", itunes_genre_id, country

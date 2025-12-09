@@ -240,7 +240,7 @@ class Podcast(models.Model):
     extracted_text = models.TextField(blank=True)
     owner = models.TextField(blank=True)
 
-    promoted = models.BooleanField(default=False)
+    promoted = models.DateField(null=True, blank=True)
 
     podcast_type = models.CharField(
         max_length=10,
@@ -284,7 +284,7 @@ class Podcast(models.Model):
             # Feed parser deduplication index
             models.Index(fields=["content_hash"]),
             # Discover feed index
-            models.Index(fields=["promoted", "language", "-pub_date"]),
+            models.Index(fields=["-promoted", "language", "-pub_date"]),
             # Feed parser scheduling index
             models.Index(
                 fields=[
