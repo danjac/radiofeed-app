@@ -6,7 +6,7 @@ from django.utils import timezone
 
 def set_default_promoted_at(apps, schema_editor) -> None:
     Podcast = apps.get_model("podcasts", "Podcast")
-    Podcast.objects.filter(promoted=False, promoted_at__isnull=True).update(
+    Podcast.objects.filter(promoted=True, promoted_at__isnull=True).update(
         promoted_at=timezone.now().today()
     )
 
