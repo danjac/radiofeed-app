@@ -1,7 +1,13 @@
 import pytest
 from django.core.management import call_command
 
-from listenwave.podcasts.tests.factories import CategoryFactory, RecommendationFactory
+from listenwave.podcasts.itunes import Feed, ItunesError
+from listenwave.podcasts.tests.factories import (
+    CategoryFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
 from listenwave.users.tests.factories import EmailAddressFactory
 
 
@@ -11,16 +17,35 @@ class TestFetchTopItunes:
         return CategoryFactory(itunes_genre_id=1301)
 
     @pytest.fixture
-    def mock_fetch_itunes_feeds(self, mocker):
-        return mocker.patch(
-            "listenwave.podcasts.tasks.fetch_itunes_feeds",
-            return_value=mocker.MagicMock,
+    def feed(self):
+        return Feed(
+            artworkUrl100="https://example.com/test.jpg",
+            collectionName="example",
+            collectionViewUrl="https://example.com/",
+            feedUrl="https://example.com/rss/",
         )
 
     @pytest.mark.django_db
-    def test_ok(self, category, mock_fetch_itunes_feeds):
+    def test_ok(self, category, mocker, feed):
+        mock_fetch_chart = mocker.patch(
+            "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
+        )
+        mock_fetch_genre = mocker.patch(
+            "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
+        )
+
         call_command("fetch_top_itunes")
-        mock_fetch_itunes_feeds.enqueue.assert_called()
+        mock_fetch_chart.assert_called()
+        mock_fetch_genre.assert_called()
+
+    @pytest.mark.django_db
+    def test_itunes_error(self, mocker):
+        mock_fetch_chart = mocker.patch(
+            "listenwave.podcasts.itunes.fetch_chart",
+            side_effect=ItunesError("Error fetching iTunes"),
+        )
+        call_command("fetch_top_itunes")
+        mock_fetch_chart.assert_called()
 
 
 class TestCreateRecommendations:
@@ -39,14 +64,15 @@ class TestSendRecommendations:
     def recipient(self):
         return EmailAddressFactory(verified=True, primary=True)
 
-    @pytest.fixture
-    def mock_send_recommendations(self, mocker):
-        return mocker.patch(
-            "listenwave.podcasts.tasks.send_recommendations",
-            return_value=mocker.MagicMock,
-        )
+    @pytest.mark.django_db(transaction=True)
+    def test_ok(self, recipient, mailoutbox):
+        podcast = SubscriptionFactory(subscriber=recipient.user).podcast
+        RecommendationFactory(podcast=podcast)
+        call_command("send_recommendations")
+        assert len(mailoutbox) == 1
 
     @pytest.mark.django_db(transaction=True)
-    def test_ok(self, recipient, mock_send_recommendations):
+    def test_no_recommendations(self, recipient, mailoutbox):
+        PodcastFactory()
         call_command("send_recommendations")
-        mock_send_recommendations.enqueue.assert_called()
+        assert len(mailoutbox) == 0

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from django.core.management import call_command
 from django.utils import timezone
@@ -29,7 +31,7 @@ class TestSendNotifications:
         EpisodeFactory.create_batch(
             3,
             podcast=subscription.podcast,
-            pub_date=timezone.now() - timezone.timedelta(days=1),
+            pub_date=timezone.now() - timedelta(days=1),
         )
         call_command("send_notifications")
         assert len(mailoutbox) == 1
@@ -42,7 +44,7 @@ class TestSendNotifications:
         )
         episode = EpisodeFactory(
             podcast=subscription.podcast,
-            pub_date=timezone.now() - timezone.timedelta(days=1),
+            pub_date=timezone.now() - timedelta(days=1),
         )
         BookmarkFactory(episode=episode, user=recipient.user)
         call_command("send_notifications")
@@ -56,7 +58,7 @@ class TestSendNotifications:
         EpisodeFactory.create_batch(
             3,
             podcast=subscription.podcast,
-            pub_date=timezone.now() - timezone.timedelta(days=10),
+            pub_date=timezone.now() - timedelta(days=10),
         )
         call_command("send_notifications")
         assert len(mailoutbox) == 0
@@ -68,7 +70,7 @@ class TestSendNotifications:
         )
         episode = EpisodeFactory(
             podcast=subscription.podcast,
-            pub_date=timezone.now() - timezone.timedelta(days=1),
+            pub_date=timezone.now() - timedelta(days=1),
         )
         AudioLogFactory(
             episode=episode,

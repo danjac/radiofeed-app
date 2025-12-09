@@ -1,10 +1,11 @@
 from typing import Annotated
 
 import typer
+from django.contrib.sites.models import Site
 from django_typer.management import Typer
 
-from listenwave.podcasts.tasks import send_recommendations
-from listenwave.users.emails import get_recipients
+from listenwave.podcasts.models import Podcast
+from listenwave.users.emails import get_recipients, send_notification_email
 
 app = Typer(help="Send podcast recommendations to users")
 
@@ -22,5 +23,26 @@ def handle(
 ) -> None:
     """Handle the command execution"""
 
-    for recipient_id in get_recipients().values_list("pk", flat=True):
-        send_recommendations.enqueue(recipient_id=recipient_id, limit=limit)
+    site = Site.objects.get_current()
+
+    for recipient in get_recipients().select_related("user"):
+        if (
+            podcasts := Podcast.objects.published()
+            .recommended(recipient.user)
+            .order_by("-relevance", "-pub_date")[:limit]
+        ):
+            send_notification_email(
+                site,
+                recipient,
+                f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+                "podcasts/emails/recommendations.html",
+                {
+                    "podcasts": podcasts,
+                },
+            )
+
+            recipient.user.recommended_podcasts.add(*podcasts)
+            typer.secho(
+                f"Sent podcast recommendations to {recipient.email}",
+                fg=typer.colors.GREEN,
+            )
