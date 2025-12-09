@@ -19,11 +19,6 @@ def _settings_overrides(settings: Settings) -> None:
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
     }
-    settings.TASKS = {
-        "default": {
-            "BACKEND": "django.tasks.backends.immediate.ImmediateBackend",
-        }
-    }
     settings.ALLOWED_HOSTS = ["example.com", "testserver", "localhost"]
     settings.LOGGING = None
     settings.PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
