@@ -43,6 +43,6 @@ def handle(
 
             recipient.user.recommended_podcasts.add(*podcasts)
             typer.secho(
-                f"Sent podcast recommendations to {recipient.email}",
+                f"Podcast recommendations sent to to {recipient.email}",
                 fg=typer.colors.GREEN,
             )

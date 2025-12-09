@@ -47,6 +47,4 @@ def handle(
     with get_client() as client:
         for podcast in podcasts:
             result = parse_feed(podcast, client)
-            typer.secho(
-                f"Parsed feed for podcast {podcast}:{result}", fg=typer.colors.GREEN
-            )
+            typer.secho(f"Parsed feed for {podcast}: {result}", fg=typer.colors.GREEN)

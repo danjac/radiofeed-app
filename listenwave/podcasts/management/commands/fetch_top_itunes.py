@@ -15,26 +15,21 @@ app = Typer(help="Fetch top iTunes podcasts")
 def handle() -> None:
     """Fetch the top iTunes podcasts for a given country."""
 
-    genres = list(
-        Category.objects.filter(itunes_genre_id__isnull=False).values_list(
-            "itunes_genre_id", flat=True
-        )
-    )
-    permutations = itertools.product(itunes.COUNTRIES, (None, *genres))
+    categories = list(Category.objects.filter(itunes_genre_id__isnull=False))
+    permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
     promoted_feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
         try:
-            for country, itunes_genre_id in permutations:
-                if itunes_genre_id:
-                    typer.echo(
-                        f"Fetching iTunes feed for genre {itunes_genre_id} [{country}]"
+            for country, category in permutations:
+                if category:
+                    typer.echo(f"Fetching {category.name} iTunes feeds [{country}]")
+                    feeds = itunes.fetch_genre(
+                        client, country, category.itunes_genre_id
                     )
-                    feeds = itunes.fetch_genre(client, country, itunes_genre_id)
                     itunes.save_feeds_to_db(feeds)
-
                 else:
-                    typer.echo(f"Fetching most popular iTunes feed [{country}]")
+                    typer.echo(f"Fetching most popular iTunes feeds [{country}]")
                     feeds = itunes.fetch_chart(client, country)
                     # Save promoted feeds until last
                     promoted_feeds.update(feeds)

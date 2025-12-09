@@ -51,7 +51,7 @@ def handle(
             )
 
             typer.secho(
-                f"Sent episode notifications to {recipient.email}",
+                f"Episode notifications sent to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
 
