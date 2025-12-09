@@ -57,18 +57,12 @@ class Category(models.Model):
     slug = models.SlugField(unique=True)
     itunes_genre_id = models.PositiveIntegerField(null=True, blank=True)
 
-    search_vector = SearchVectorField(null=True, editable=False)
-
     if TYPE_CHECKING:
         podcasts: "PodcastQuerySet"
 
     class Meta:
         verbose_name_plural = "categories"
         ordering = ("name",)
-        indexes: ClassVar[list] = [
-            models.Index(fields=["name"]),
-            GinIndex(fields=["search_vector"]),
-        ]
 
     def __str__(self) -> str:
         """Returns category name."""

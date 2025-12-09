@@ -415,29 +415,6 @@ class TestCategoryList:
         assert200(response)
         assert len(response.context["categories"]) == 0
 
-    @pytest.mark.django_db
-    def test_search(self, client, auth_user, category, faker):
-        CategoryFactory.create_batch(3)
-
-        category = CategoryFactory(name="testing")
-        category.podcasts.add(PodcastFactory())
-
-        response = client.get(self.url, {"search": "testing"})
-
-        assert200(response)
-        assert len(response.context["categories"]) == 1
-
-    @pytest.mark.django_db
-    def test_search_no_matching_podcasts(self, client, auth_user, category, faker):
-        CategoryFactory.create_batch(3)
-
-        CategoryFactory(name="testing")
-
-        response = client.get(self.url, {"search": "testing"})
-
-        assert200(response)
-        assert len(response.context["categories"]) == 0
-
 
 class TestCategoryDetail:
     @pytest.mark.django_db

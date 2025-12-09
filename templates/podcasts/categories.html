@@ -6,31 +6,14 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" title="Categories" %}
-        {% fragment "header/nav.html" %}
-            {% fragment "header/nav.html#item" %}
-                {% include "header/nav/search.html#form" with clearable=True %}
-            {% endfragment %}
-        {% endfragment %}
-    {% endfragment %}
-
+    {% include "header.html" with title="Categories" %}
     {% cache cache_timeout categories request.get_full_path %}
-        {% if categories %}
-            <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
-                {% for category in categories %}
-                    <li class="py-3 sm:py-1 first:pt-1 first:pb-3 sm:first:pb-0">
-                        <a href="{{ category.get_absolute_url }}" class="inline-block w-full link">{{ category.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p class="text-center sm:text-start">
-                {% if request.search %}
-                    No categories found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
-                {% else %}
-                    Nothing to see here.
-                {% endif %}
-            </p>
-        {% endif %}
+        <ul class="divide-y divide-solid sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0 sm:divide-none md:grid-cols-3 sm:grid-flow-cols">
+            {% for category in categories %}
+                <li class="py-3 sm:py-1 first:pt-1 first:pb-3 sm:first:pb-0">
+                    <a href="{{ category.get_absolute_url }}" class="inline-block w-full link">{{ category.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     {% endcache %}
 {% endblock content %}

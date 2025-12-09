@@ -240,23 +240,18 @@ def similar(
 @login_required
 def category_list(request: HttpRequest) -> TemplateResponse:
     """List all categories containing podcasts."""
-    categories = Category.objects.alias(
-        has_podcasts=Exists(
-            _get_podcasts().filter(
-                categories=OuterRef("pk"),
-                private=False,
+    categories = (
+        Category.objects.alias(
+            has_podcasts=Exists(
+                _get_podcasts().filter(
+                    categories=OuterRef("pk"),
+                    private=False,
+                )
             )
         )
-    ).filter(has_podcasts=True)
-
-    if request.search:
-        categories = search_queryset(
-            categories,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "name")
-    else:
-        categories = categories.order_by("name")
+        .filter(has_podcasts=True)
+        .order_by("-name")
+    )
 
     return TemplateResponse(
         request,
