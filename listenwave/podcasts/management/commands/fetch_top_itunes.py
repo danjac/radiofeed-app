@@ -4,7 +4,6 @@ import time
 from typing import Annotated
 
 import typer
-from django.db import transaction
 from django_typer.management import Typer
 
 from listenwave.http_client import get_client
@@ -37,7 +36,6 @@ def handle(
     categories = list(Category.objects.filter(itunes_genre_id__isnull=False))
     permutations = itertools.product(itunes.COUNTRIES, (None, *categories))
     promoted_feeds: set[itunes.Feed] = set()
-    other_feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
 
@@ -48,7 +46,7 @@ def handle(
                     feeds = itunes.fetch_genre(
                         client, country, category.itunes_genre_id
                     )
-                    other_feeds.update(feeds)
+                    itunes.save_feeds_to_db(feeds)
                 else:
                     typer.echo(f"Fetching most popular iTunes feeds [{country}]")
                     feeds = itunes.fetch_chart(client, country)
@@ -61,15 +59,8 @@ def handle(
 
         execute_thread_pool(lambda t: _fetch_feeds(*t), permutations)
 
-    # remove promoted feeds from other feeds
-    other_feeds -= promoted_feeds
-
-    # save feeds to DB
-    with transaction.atomic():
-        typer.echo(f"Saving {len(other_feeds)} feeds to database...")
-        itunes.save_feeds_to_db(other_feeds)
-        typer.echo(f"Saving {len(promoted_feeds)} promoted feeds to database...")
-        itunes.save_feeds_to_db(promoted_feeds, promoted=True)
+    typer.echo("Saving promoted feeds to database")
+    itunes.save_feeds_to_db(promoted_feeds, promoted=True)
 
 
 def _jitter(min_seconds: float, max_seconds: float) -> None:
