@@ -1,4 +1,7 @@
 import itertools
+import random
+import time
+from typing import Annotated
 
 import typer
 from django.db import transaction
@@ -7,12 +10,28 @@ from django_typer.management import Typer
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
 from listenwave.podcasts.models import Category
+from listenwave.thread_pool import execute_thread_pool
 
 app = Typer(help="Fetch top iTunes podcasts")
 
 
 @app.command()
-def handle() -> None:
+def handle(
+    jitter_min: Annotated[
+        float,
+        typer.Option(
+            "--jitter-min",
+            help="Minimum jitter time (secs)",
+        ),
+    ] = 1.5,
+    jitter_max: Annotated[
+        float,
+        typer.Option(
+            "--jitter-max",
+            help="Maxium jitter time(secs)",
+        ),
+    ] = 5.0,
+) -> None:
     """Fetch the top iTunes podcasts for a given country."""
 
     categories = list(Category.objects.filter(itunes_genre_id__isnull=False))
@@ -21,7 +40,8 @@ def handle() -> None:
     other_feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
-        for country, category in permutations:
+
+        def _fetch_feeds(country: str, category: Category | None) -> None:
             try:
                 if category:
                     typer.echo(f"Fetching {category.name} iTunes feeds [{country}]")
@@ -37,6 +57,10 @@ def handle() -> None:
             except itunes.ItunesError as exc:
                 typer.secho(f"Error fetching iTunes feed: {exc}", fg=typer.colors.RED)
 
+            _jitter(jitter_min, jitter_max)
+
+        execute_thread_pool(lambda t: _fetch_feeds(*t), permutations)
+
     # remove promoted feeds from other feeds
     other_feeds -= promoted_feeds
 
@@ -44,3 +68,11 @@ def handle() -> None:
     with transaction.atomic():
         itunes.save_feeds_to_db(other_feeds)
         itunes.save_feeds_to_db(promoted_feeds, promoted=True)
+
+
+def _jitter(min_seconds: float, max_seconds: float) -> None:
+    """Jitter by sleeping for a random amount of time.
+    This is useful to avoid rate limiting.
+    """
+    sleep_time = random.uniform(min_seconds, max_seconds)  # noqa: S311
+    time.sleep(sleep_time)

@@ -35,7 +35,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
         )
 
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
 
@@ -51,7 +51,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
         )
 
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
 
@@ -63,7 +63,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("Error fetching iTunes"),
         )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
         mock_fetch_chart.assert_called()
 
 
