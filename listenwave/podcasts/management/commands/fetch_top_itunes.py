@@ -20,8 +20,8 @@ def handle() -> None:
     promoted_feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
-        try:
-            for country, category in permutations:
+        for country, category in permutations:
+            try:
                 if category:
                     typer.echo(f"Fetching {category.name} iTunes feeds [{country}]")
                     feeds = itunes.fetch_genre(
@@ -33,8 +33,8 @@ def handle() -> None:
                     feeds = itunes.fetch_chart(client, country)
                     # Save promoted feeds until last
                     promoted_feeds.update(feeds)
-        except itunes.ItunesError as exc:
-            typer.secho(f"Error fetching iTunes feed: {exc}", fg=typer.colors.RED)
+            except itunes.ItunesError as exc:
+                typer.secho(f"Error fetching iTunes feed: {exc}", fg=typer.colors.RED)
 
     if promoted_feeds:
         with transaction.atomic():
