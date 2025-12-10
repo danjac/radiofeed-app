@@ -12,8 +12,7 @@ from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.timesince import timesince
 
-from listenwave import covers
-from listenwave.markdown import markdown
+from listenwave import covers, sanitizer
 from listenwave.pwa import get_theme_color
 from listenwave.request import RequestContext
 
@@ -111,10 +110,10 @@ def render_field(field: forms.Field, **attrs) -> str:
     return field.as_widget(attrs=_clean_attrs(attrs))  # type: ignore[attr-defined]
 
 
-@register.inclusion_tag("markdown.html", name="markdown")
-def markdown_(text: str) -> dict:
+@register.inclusion_tag("markdown.html")
+def markdown(text: str) -> dict:
     """Render content as Markdown."""
-    return {"markdown": markdown(text)}
+    return {"markdown": sanitizer.markdown(text)}
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
