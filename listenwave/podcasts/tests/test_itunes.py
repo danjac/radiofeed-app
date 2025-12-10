@@ -286,20 +286,23 @@ class TestSaveFeedsToDb:
 
     @pytest.mark.django_db
     def test_save_new_feed(self, feed):
-        podcasts = itunes.save_feeds_to_db([feed])
+        itunes.save_feeds_to_db([feed])
+        podcasts = Podcast.objects.all()
         assert len(podcasts) == 1
         assert podcasts[0].rss == feed.rss
 
     @pytest.mark.django_db
     def test_existing_feed(self, feed):
         PodcastFactory(rss=feed.rss)
-        podcasts = itunes.save_feeds_to_db([feed])
+        itunes.save_feeds_to_db([feed])
+        podcasts = Podcast.objects.all()
         assert len(podcasts) == 1
         assert podcasts[0].rss == feed.rss
 
     @pytest.mark.django_db
     def test_save_new_feed_with_fields(self, feed):
-        podcasts = itunes.save_feeds_to_db([feed], promoted=True)
+        itunes.save_feeds_to_db([feed], promoted=True)
+        podcasts = Podcast.objects.all()
         assert len(podcasts) == 1
         assert podcasts[0].rss == feed.rss
         assert podcasts[0].promoted is True

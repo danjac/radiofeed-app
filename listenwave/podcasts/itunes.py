@@ -112,19 +112,19 @@ def fetch_genre(client: Client, country: str, genre_id: int) -> Iterator[Feed]:
     )
 
 
-def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
+def save_feeds_to_db(feeds: Iterable[Feed], batch_size: int = 500, **fields) -> None:
     """Saves the given feeds to the database."""
     podcasts = _build_podcasts_from_feeds(feeds, **fields)
-    return (
-        Podcast.objects.bulk_create(
-            podcasts,
-            unique_fields=["rss"],
-            update_conflicts=True,
-            update_fields=fields,
-        )
-        if fields
-        else Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
-    )
+    for batch in itertools.batched(podcasts, batch_size, strict=False):
+        if fields:
+            Podcast.objects.bulk_create(
+                batch,
+                unique_fields=["rss"],
+                update_conflicts=True,
+                update_fields=fields,
+            )
+        else:
+            Podcast.objects.bulk_create(batch, ignore_conflicts=True)
 
 
 def _fetch_feeds_from_page(client: Client, url: str) -> Iterator[Feed]:
