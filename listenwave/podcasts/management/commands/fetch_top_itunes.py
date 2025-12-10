@@ -66,7 +66,9 @@ def handle(
 
     # save feeds to DB
     with transaction.atomic():
+        typer.echo(f"Saving {len(other_feeds)} feeds to database...")
         itunes.save_feeds_to_db(other_feeds)
+        typer.echo(f"Saving {len(promoted_feeds)} promoted feeds to database...")
         itunes.save_feeds_to_db(promoted_feeds, promoted=True)
 
 
