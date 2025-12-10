@@ -6,19 +6,21 @@
     <div class="space-y-3 sm:flex sm:flex-wrap sm:justify-between sm:items-center sm:space-y-0">
         <nav class="flex justify-center items-center sm:justify-start">
             <ul class="flex items-center space-x-4 lg:space-x-6">
-                {% with name="detail" url=podcast.get_detail_url label="About" %}
-                    {% partial item %}
-                {% endwith %}
-                {% with num_episodes=podcast.num_episodes|stringformat:"s" %}
-                    {% with name="episodes" url=podcast.get_episodes_url label="Episodes ("|add:num_episodes|add:")" %}
+                {% cache cache_timeout podcast-header-nav request.path %}
+                    {% with name="detail" url=podcast.get_detail_url label="About" %}
                         {% partial item %}
                     {% endwith %}
-                {% endwith %}
-                {% if podcast.has_similar_podcasts %}
-                    {% with name="similar" url=podcast.get_similar_url label="Similar" %}
-                        {% partial item %}
+                    {% with num_episodes=podcast.num_episodes|stringformat:"s" %}
+                        {% with name="episodes" url=podcast.get_episodes_url label="Episodes ("|add:num_episodes|add:")" %}
+                            {% partial item %}
+                        {% endwith %}
                     {% endwith %}
-                {% endif %}
+                    {% if podcast.has_similar_podcasts %}
+                        {% with name="similar" url=podcast.get_similar_url label="Similar" %}
+                            {% partial item %}
+                        {% endwith %}
+                    {% endif %}
+                {% endcache %}
             </ul>
         </nav>
         {{ content }}

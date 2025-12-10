@@ -13,7 +13,7 @@ class TestRecommend:
     @pytest.mark.django_db
     def test_recommend_with_no_podcasts(self):
         # No podcasts inserted, corpus is empty
-        list(recommend("en"))  # Should handle empty corpus without exception
+        recommend("en")  # Should handle empty corpus without exception
         assert Recommendation.objects.exists() is False
 
     @pytest.mark.django_db
@@ -29,7 +29,7 @@ class TestRecommend:
             categories=[cat],
         )
 
-        list(recommend("en"))
+        recommend("en")
 
         for podcast in podcasts:
             recs = Recommendation.objects.filter(podcast=podcast)
@@ -45,7 +45,7 @@ class TestRecommend:
             language="en",
         )
 
-        list(recommend("en"))
+        recommend("en")
         assert Recommendation.objects.count() == 0
 
     @pytest.mark.django_db
@@ -66,7 +66,7 @@ class TestRecommend:
             language="en",
         )
 
-        list(recommend("en"))
+        recommend("en")
         # no common category, so still zero recommendations
         assert Recommendation.objects.filter(podcast=podcast_1).count() == 0
 
@@ -111,7 +111,7 @@ class TestRecommend:
             categories=[cat_2, cat_3],
         )
 
-        list(recommend("en"))
+        recommend("en")
 
         # podcast_1 should recommend podcast_2 (only shared category = Science)
         recs_1 = Recommendation.objects.filter(podcast=podcast_1)
@@ -136,7 +136,7 @@ class TestRecommend:
             categories=[cat],
         )
 
-        list(recommend("en"))
+        recommend("en")
 
         assert Recommendation.objects.exists() is False
 
@@ -152,6 +152,6 @@ class TestRecommend:
             language="en",
         )
 
-        list(recommend("en"))
+        recommend("en")
 
         assert Recommendation.objects.exists() is False
