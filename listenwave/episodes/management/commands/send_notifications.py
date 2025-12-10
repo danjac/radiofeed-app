@@ -3,12 +3,15 @@ import random
 from typing import Annotated
 
 import typer
+from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
+from django.core.mail import get_connection
 from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
 from django_typer.management import Typer
 
 from listenwave.episodes.models import Episode
+from listenwave.thread_pool import execute_thread_pool
 from listenwave.users.emails import get_recipients, send_notification_email
 from listenwave.users.models import User
 
@@ -37,8 +40,9 @@ def handle(
     """Handle the command execution"""
     since = timezone.now() - datetime.timedelta(days=days_since)
     site = Site.objects.get_current()
+    connection = get_connection()
 
-    for recipient in get_recipients().select_related("user"):
+    def _send_notifications(recipient: EmailAddress) -> None:
         if episodes := _get_new_episodes(recipient.user, since=since, limit=limit):
             send_notification_email(
                 site,
@@ -48,12 +52,16 @@ def handle(
                 {
                     "episodes": episodes,
                 },
+                connection=connection,
             )
 
             typer.secho(
                 f"Episode notifications sent to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
+
+    recipients = get_recipients().select_related("user")
+    execute_thread_pool(_send_notifications, recipients)
 
 
 def _get_new_episodes(
