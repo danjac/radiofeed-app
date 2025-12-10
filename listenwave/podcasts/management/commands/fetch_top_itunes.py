@@ -6,7 +6,7 @@ from django_typer.management import Typer
 
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
-from listenwave.podcasts.models import Category, Podcast
+from listenwave.podcasts.models import Category
 
 app = Typer(help="Fetch top iTunes podcasts")
 
@@ -38,6 +38,4 @@ def handle() -> None:
 
     if promoted_feeds:
         with transaction.atomic():
-            # Demote existing podcasts
-            Podcast.objects.filter(promoted=True).update(promoted=False)
             itunes.save_feeds_to_db(promoted_feeds, promoted=True)

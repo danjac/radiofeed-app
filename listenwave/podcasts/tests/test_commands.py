@@ -28,7 +28,6 @@ class TestFetchTopItunes:
 
     @pytest.mark.django_db
     def test_ok(self, category, mocker, feed):
-        promoted = PodcastFactory(promoted=True)
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
         )
@@ -40,15 +39,11 @@ class TestFetchTopItunes:
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
 
-        assert Podcast.objects.count() == 2
+        assert Podcast.objects.count() == 1
         assert Podcast.objects.filter(promoted=True).count() == 1
-
-        promoted.refresh_from_db()
-        assert promoted.promoted is False
 
     @pytest.mark.django_db
     def test_no_chart_feeds(self, category, mocker, feed):
-        promoted = PodcastFactory(promoted=True)
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[]
         )
@@ -60,10 +55,7 @@ class TestFetchTopItunes:
         mock_fetch_chart.assert_called()
         mock_fetch_genre.assert_called()
 
-        assert Podcast.objects.count() == 2
-
-        promoted.refresh_from_db()
-        assert promoted.promoted is True
+        assert Podcast.objects.count() == 1
 
     @pytest.mark.django_db
     def test_itunes_error(self, mocker):
