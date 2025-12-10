@@ -100,7 +100,7 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
     if request.search:
         podcasts = (
             _get_podcasts()
-            .search_owner(request.search.value)
+            .search(request.search.value, "owner_search_vector")
             .filter(private=False)
             .order_by("-rank", "-pub_date")
         )

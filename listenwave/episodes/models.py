@@ -1,4 +1,4 @@
-from typing import ClassVar, Optional, Self
+from typing import ClassVar, Optional
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -16,15 +16,13 @@ from slugify import slugify
 from listenwave.fields import URLField
 from listenwave.podcasts.models import Season
 from listenwave.sanitizer import strip_html
-from listenwave.search import search_queryset
+from listenwave.search import SearchQuerySet
 
 
-class EpisodeQuerySet(FastUpdateQuerySet):
+class EpisodeQuerySet(SearchQuerySet, FastUpdateQuerySet):
     """QuerySet for Episode model."""
 
-    def search(self, search_term: str, **search_options) -> Self:
-        """Search episodes."""
-        return search_queryset(self, search_term, "search_vector", **search_options)
+    search_fields = ("search_vector",)
 
 
 class Episode(models.Model):
@@ -195,18 +193,13 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
-class BookmarkQuerySet(models.QuerySet):
+class BookmarkQuerySet(SearchQuerySet, models.QuerySet):
     """QuerySet for Bookmark model."""
 
-    def search(self, search_term: str, **search_options) -> Self:
-        """Search bookmarks."""
-        return search_queryset(
-            self,
-            search_term,
-            "episode__search_vector",
-            "episode__podcast__search_vector",
-            **search_options,
-        )
+    search_fields = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
 
 
 class Bookmark(models.Model):
@@ -250,18 +243,13 @@ class Bookmark(models.Model):
         ]
 
 
-class AudioLogQuerySet(models.QuerySet):
+class AudioLogQuerySet(SearchQuerySet, models.QuerySet):
     """QuerySet for AudioLog model."""
 
-    def search(self, search_term: str, **search_options) -> Self:
-        """Search audio logs."""
-        return search_queryset(
-            self,
-            search_term,
-            "episode__search_vector",
-            "episode__podcast__search_vector",
-            **search_options,
-        )
+    search_fields = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
 
 
 class AudioLog(models.Model):

@@ -169,10 +169,9 @@ class TestPodcastManager:
         assert Podcast.objects.search("testing").exists()
 
     @pytest.mark.django_db
-    def test_owner(self):
-        PodcastFactory(title="testing", owner="owner")
-        assert Podcast.objects.search_owner("owner").exists()
-        assert not Podcast.objects.search_owner("testing").exists()
+    def test_search_empty(self):
+        PodcastFactory(title="testing")
+        assert not Podcast.objects.search("").exists()
 
 
 class TestPodcastModel:
