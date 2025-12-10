@@ -117,7 +117,7 @@ def markdown(text: str) -> dict:
 
 
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
-def cookie_banner(context: RequestContext):
+def cookie_banner(context: RequestContext) -> dict:
     """Renders GDPR cookie banner"""
     cookies_accepted = settings.GDPR_COOKIE_NAME in context.request.COOKIES
     return context.flatten() | {"cookies_accepted": cookies_accepted}
