@@ -39,7 +39,7 @@ def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
 def discover(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Shows all promoted podcasts."""
     podcasts = (
-        _get_podcasts()
+        _get_public_podcasts()
         .filter(
             promoted=True,
             language=settings.DISCOVER_FEED_LANGUAGE,
@@ -57,9 +57,8 @@ def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
 
     if request.search:
         podcasts = (
-            _get_podcasts()
+            _get_public_podcasts()
             .search(request.search.value)
-            .filter(private=False)
             .order_by("-rank", "-pub_date")
         )
 
@@ -99,9 +98,8 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
 
     if request.search:
         podcasts = (
-            _get_podcasts()
+            _get_public_podcasts()
             .search(request.search.value, "owner_search_vector")
-            .filter(private=False)
             .order_by("-rank", "-pub_date")
         )
         return render_paginated_response(
@@ -236,10 +234,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
     categories = (
         Category.objects.alias(
             has_podcasts=Exists(
-                _get_podcasts().filter(
-                    categories=OuterRef("pk"),
-                    private=False,
-                )
+                _get_public_podcasts().filter(categories=OuterRef("pk"))
             )
         )
         .filter(has_podcasts=True)
@@ -375,6 +370,10 @@ def remove_private_feed(
 
 def _get_podcasts() -> PodcastQuerySet:
     return Podcast.objects.published()
+
+
+def _get_public_podcasts() -> PodcastQuerySet:
+    return _get_podcasts().filter(private=False)
 
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
