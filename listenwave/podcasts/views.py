@@ -243,7 +243,7 @@ def category_list(request: HttpRequest) -> TemplateResponse:
             )
         )
         .filter(has_podcasts=True)
-        .order_by("-name")
+        .order_by("name")
     )
 
     return TemplateResponse(
