@@ -21,16 +21,26 @@ T_Model = TypeVar("T_Model", bound=BaseModel)
 
 COUNTRIES: Final = (
     "br",
+    "cn",
+    "cz",
     "de",
     "dk",
+    "eg",
     "es",
     "fi",
     "fr",
     "gb",
+    "hr",
+    "hu",
     "it",
+    "jp",
     "kr",
+    "nl",
     "pl",
+    "ro",
     "se",
+    "tr",
+    "ua",
     "us",
 )
 
@@ -149,7 +159,7 @@ def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
         )
         return response.json()
     except (httpx.HTTPError, ValueError, json.JSONDecodeError) as exc:
-        raise ItunesError("Failed to fetch JSON data from iTunes") from exc
+        raise ItunesError(f"Failed to fetch JSON data from iTunes: {url}") from exc
 
 
 def _parse_json(model: type[T_Model], data: list[dict]) -> Iterator[T_Model]:
