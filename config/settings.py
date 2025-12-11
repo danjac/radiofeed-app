@@ -43,7 +43,6 @@ INSTALLED_APPS: list[str] = [
     "django_http_compression",
     "django_linear_migrations",
     "django_tailwind_cli",
-    "django_typer",
     "health_check",
     "health_check.db",
     "health_check.cache",

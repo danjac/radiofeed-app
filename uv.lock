@@ -524,11 +524,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/67/88/ed897a5d38be8b0dd6f9d9d482e86f7eeb48a5503250cbd217461c37e04d/django_typer-3.5.0-py3-none-any.whl", hash = "sha256:ffb0222f915bbdcfb24ef179aa374a3d7ab61454a4043dd4c7f97cb6a1b79950", size = 295611, upload-time = "2025-11-22T17:26:05.488Z" },
 ]
 
-[package.optional-dependencies]
-rich = [
-    { name = "rich" },
-]
-
 [[package]]
 name = "django-watchfiles"
 version = "1.4.0"
@@ -722,7 +717,6 @@ dependencies = [
     { name = "django-permissions-policy" },
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
-    { name = "django-typer", extra = ["rich"] },
     { name = "environs", extra = ["django"] },
     { name = "gunicorn" },
     { name = "heroicons", extra = ["django"] },
@@ -787,7 +781,6 @@ requires-dist = [
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
-    { name = "django-typer", extras = ["rich"], specifier = ">=3.4.0" },
     { name = "environs", extras = ["django"], specifier = ">=11.0.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "heroicons", extras = ["django"], specifier = ">=2.8.0" },

@@ -1,65 +1,61 @@
 import datetime
 import random
-from typing import Annotated
 
-import typer
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
+from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
-from django_typer.management import Typer
 
 from listenwave.episodes.models import Episode
 from listenwave.users.emails import get_recipients, send_notification_email
 from listenwave.users.models import User
 
-app = Typer(help="Send notifications to users about new podcast episodes")
 
+class Command(BaseCommand):
+    """Send notifications to users about new podcast episodes."""
 
-@app.command()
-def handle(
-    days_since: Annotated[
-        int,
-        typer.Option(
+    help = "Send notifications to users about new podcast episodes"
+
+    def add_arguments(self, parser: CommandParser) -> None:
+        """Add command arguments."""
+        parser.add_argument(
             "--days-since",
             "-d",
+            type=int,
+            default=7,
             help="Number of days to look back for new episodes",
-        ),
-    ] = 7,
-    limit: Annotated[
-        int,
-        typer.Option(
+        )
+        parser.add_argument(
             "--limit",
             "-l",
+            type=int,
+            default=6,
             help="Number of new podcast episodes to notify per user",
-        ),
-    ] = 6,
-) -> None:
-    """Handle the command execution"""
+        )
 
-    recipients = get_recipients().select_related("user")
-    since = timezone.now() - datetime.timedelta(days=days_since)
+    def handle(self, *, days_since: int, limit: int, **options) -> None:
+        """Handler implementation."""
 
-    site = Site.objects.get_current()
-    connection = get_connection()
+        since = timezone.now() - datetime.timedelta(days=days_since)
 
-    for recipient in recipients:
-        if episodes := _get_new_episodes(recipient.user, since=since, limit=limit):
-            send_notification_email(
-                site,
-                recipient,
-                f"Hi, {recipient.user.name}, check out these new podcast episodes!",
-                "episodes/emails/notifications.html",
-                {
-                    "episodes": episodes,
-                },
-                connection=connection,
-            )
+        site = Site.objects.get_current()
+        connection = get_connection()
 
-            typer.secho(
-                f"Episode notifications sent to {recipient.email}",
-                fg=typer.colors.GREEN,
-            )
+        for recipient in get_recipients().select_related("user"):
+            if episodes := _get_new_episodes(recipient.user, since=since, limit=limit):
+                send_notification_email(
+                    site,
+                    recipient,
+                    f"Hi, {recipient.user.name}, check out these new podcast episodes!",
+                    "episodes/emails/notifications.html",
+                    {
+                        "episodes": episodes,
+                    },
+                    connection=connection,
+                )
+
+                self.stdout.write(f"Episode notifications sent to {recipient.email}")
 
 
 def _get_new_episodes(
