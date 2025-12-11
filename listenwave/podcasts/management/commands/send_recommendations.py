@@ -1,13 +1,11 @@
 from typing import Annotated
 
 import typer
-from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django_typer.management import Typer
 
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import execute_thread_pool
 from listenwave.users.emails import get_recipients, send_notification_email
 
 app = Typer(help="Send podcast recommendations to users")
@@ -29,7 +27,8 @@ def handle(
     site = Site.objects.get_current()
     connection = get_connection()
 
-    def _send_recommendations(recipient: EmailAddress) -> None:
+    recipients = get_recipients().select_related("user")
+    for recipient in recipients:
         if (
             podcasts := Podcast.objects.published()
             .recommended(recipient.user)
@@ -52,6 +51,3 @@ def handle(
                 f"Podcast recommendations sent to to {recipient.email}",
                 fg=typer.colors.GREEN,
             )
-
-    recipients = get_recipients().select_related("user")
-    execute_thread_pool(_send_recommendations, recipients)

@@ -5,7 +5,6 @@ from django_typer.management import Typer
 
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
-from listenwave.thread_pool import execute_thread_pool
 
 app = Typer(help="Fetch top iTunes podcasts")
 
@@ -26,17 +25,15 @@ def handle(
     feeds: set[itunes.Feed] = set()
 
     with get_client() as client:
-
-        def _fetch_feeds(country: str) -> None:
+        for country in itunes.COUNTRIES:
             try:
                 typer.echo(f"Fetching most popular iTunes feeds [{country}]")
-                for feed in itunes.fetch_chart(client, country, limit):
-                    feeds.add(feed)
-                    typer.secho(feed.title, fg=typer.colors.GREEN)
-            except itunes.ItunesError as exc:
-                typer.secho(f"Error fetching iTunes feed: {exc}", fg=typer.colors.RED)
-
-        execute_thread_pool(_fetch_feeds, itunes.COUNTRIES)
+                feeds.update(itunes.fetch_chart(client, country, limit))
+            except itunes.ItunesError:
+                typer.secho(
+                    f"Error fetching iTunes feed [{country}]",
+                    fg=typer.colors.RED,
+                )
 
     typer.echo("Saving feeds to database...")
     itunes.save_feeds_to_db(feeds, promoted=True)

@@ -7,7 +7,6 @@ from django_typer.management import Typer
 from listenwave.feedparser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import execute_thread_pool
 
 app = Typer(help="Parse feeds for all active podcasts")
 
@@ -46,9 +45,6 @@ def handle(
     )
 
     with get_client() as client:
-
-        def _parse_feed(podcast):
+        for podcast in podcasts:
             result = parse_feed(podcast, client)
             typer.secho(f"Parsed feed for {podcast}: {result}", fg=typer.colors.GREEN)
-
-        execute_thread_pool(_parse_feed, podcasts)
