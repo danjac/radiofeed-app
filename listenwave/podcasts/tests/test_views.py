@@ -169,7 +169,7 @@ class TestSearchItunes:
         ]
         mock_search = mocker.patch(
             "listenwave.podcasts.itunes.search_cached",
-            return_value=iter(feeds),
+            return_value=(feeds, True),
         )
 
         response = client.get(self.url, {"search": "test"})
@@ -411,6 +411,29 @@ class TestCategoryList:
     ):
         CategoryFactory.create_batch(3)
         response = client.get(self.url)
+
+        assert200(response)
+        assert len(response.context["categories"]) == 0
+
+    @pytest.mark.django_db
+    def test_search(self, client, auth_user, category, faker):
+        CategoryFactory.create_batch(3)
+
+        category = CategoryFactory(name="testing")
+        category.podcasts.add(PodcastFactory())
+
+        response = client.get(self.url, {"search": "testing"})
+
+        assert200(response)
+        assert len(response.context["categories"]) == 1
+
+    @pytest.mark.django_db
+    def test_search_no_matching_podcasts(self, client, auth_user, category, faker):
+        CategoryFactory.create_batch(3)
+
+        CategoryFactory(name="testing")
+
+        response = client.get(self.url, {"search": "testing"})
 
         assert200(response)
         assert len(response.context["categories"]) == 0

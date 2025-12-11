@@ -224,6 +224,39 @@ class TestItunesFeed:
         )
 
 
+class TestSaveFeedsToDB:
+    @pytest.mark.django_db
+    def test_save_feeds_to_db(self):
+        feeds = [
+            itunes.Feed(
+                artworkUrl100="http://example.com/image.jpg",
+                collectionName="Test & Code",
+                collectionViewUrl="https://example.com",
+                feedUrl="https://feeds.fireside.fm/testandcode/rss",
+            )
+        ]
+        itunes.save_feeds_to_db(feeds)
+
+        assert Podcast.objects.filter(
+            rss="https://feeds.fireside.fm/testandcode/rss"
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_save_with_extra_fields(self):
+        feeds = [
+            itunes.Feed(
+                artworkUrl100="http://example.com/image.jpg",
+                collectionName="Test & Code",
+                collectionViewUrl="https://example.com",
+                feedUrl="https://feeds.fireside.fm/testandcode/rss",
+            )
+        ]
+        itunes.save_feeds_to_db(feeds, promoted=True)
+
+        podcast = Podcast.objects.get(rss="https://feeds.fireside.fm/testandcode/rss")
+        assert podcast.promoted is True
+
+
 class TestFetchChart:
     @pytest.fixture
     def good_client(self):
@@ -261,25 +294,16 @@ class TestFetchChart:
     def test_ok(self, good_client):
         feeds = list(itunes.fetch_chart(good_client, country="us", limit=30))
         assert len(feeds) == 1
-        assert Podcast.objects.exists()
-
-    @pytest.mark.django_db
-    def test_promote(self, good_client):
-        feeds = list(
-            itunes.fetch_chart(good_client, country="us", limit=30, promoted=True)
-        )
-        assert len(feeds) == 1
-        assert Podcast.objects.filter(promoted=True).exists()
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.fetch_chart(bad_client, country="us", limit=30))
+            itunes.fetch_chart(bad_client, country="us", limit=30)
 
     @pytest.mark.django_db
     def test_empty_result(self, empty_result_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.fetch_chart(empty_result_client, country="us", limit=30))
+            itunes.fetch_chart(empty_result_client, country="us", limit=30)
 
     @pytest.mark.django_db
     def test_no_feeds_page(self, no_results_client):
@@ -337,34 +361,31 @@ class TestSearch:
 
     @pytest.mark.django_db
     def test_ok(self, good_client):
-        feeds = list(itunes.search(good_client, "test", limit=30))
+        feeds = itunes.search(good_client, "test", limit=30)
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db
     def test_not_ok(self, bad_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.search(bad_client, "test", limit=30))
-        assert not Podcast.objects.exists()
+            itunes.search(bad_client, "test", limit=30)
 
     @pytest.mark.django_db
     def test_bad_data(self, invalid_client):
-        feeds = list(itunes.search(invalid_client, "test", limit=30))
+        feeds = itunes.search(invalid_client, "test", limit=30)
         assert len(feeds) == 0
         assert feeds == []
 
     @pytest.mark.django_db
     def test_invalid_json(self, bad_json_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.search(bad_json_client, "test", limit=30))
+            itunes.search(bad_json_client, "test", limit=30)
 
     @pytest.mark.django_db
     def test_podcast_exists(self, good_client):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
 
-        feeds = list(itunes.search(good_client, "test", limit=30))
+        feeds = itunes.search(good_client, "test", limit=30)
         assert len(feeds) == 1
-        assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db
     def test_cached(self, mocker, _locmem_cache):
@@ -373,6 +394,11 @@ class TestSearch:
             "listenwave.podcasts.itunes.search",
             return_value=MOCK_SEARCH_RESULT,
         )
-        itunes.search_cached(client, "test", limit=30)
-        itunes.search_cached(client, "test", limit=30)
+        feeds, is_new = itunes.search_cached(client, "test", limit=30)
+        assert is_new is True
+        assert len(feeds) == 2
+
+        feeds, is_new = itunes.search_cached(client, "test", limit=30)
+        assert is_new is False
+        assert len(feeds) == 2
         mock_search.assert_called_once()

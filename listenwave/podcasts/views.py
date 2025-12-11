@@ -77,11 +77,13 @@ def search_itunes(request: HttpRequest) -> RenderOrRedirectResponse:
     if request.search:
         try:
             with get_client() as client:
-                feeds = itunes.search_cached(
+                feeds, is_new = itunes.search_cached(
                     client,
                     request.search.value,
                     limit=settings.DEFAULT_PAGE_SIZE,
                 )
+                if is_new:
+                    itunes.save_feeds_to_db(feeds)
             return TemplateResponse(
                 request,
                 "podcasts/search_itunes.html",

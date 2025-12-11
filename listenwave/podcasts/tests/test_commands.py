@@ -2,6 +2,7 @@ import pytest
 from django.core.management import call_command
 
 from listenwave.podcasts.itunes import Feed, ItunesError
+from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -32,6 +33,7 @@ class TestFetchTopItunes:
         )
         call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
+        assert Podcast.objects.filter(promoted=True).exists() is True
 
     @pytest.mark.django_db
     def test_no_chart_feeds(self, category, mocker, feed):
@@ -40,6 +42,7 @@ class TestFetchTopItunes:
         )
         call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
+        assert Podcast.objects.exists() is False
 
     @pytest.mark.django_db
     def test_itunes_error(self, mocker):
@@ -49,6 +52,7 @@ class TestFetchTopItunes:
         )
         call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
+        assert Podcast.objects.exists() is False
 
 
 class TestCreateRecommendations:

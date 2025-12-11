@@ -23,14 +23,20 @@ def handle(
 ) -> None:
     """Fetch the top iTunes podcasts for a given country."""
 
+    feeds: set[itunes.Feed] = set()
+
     with get_client() as client:
 
         def _fetch_feeds(country: str) -> None:
             try:
                 typer.echo(f"Fetching most popular iTunes feeds [{country}]")
-                for feed in itunes.fetch_chart(client, country, limit, promoted=True):
+                for feed in itunes.fetch_chart(client, country, limit):
+                    feeds.add(feed)
                     typer.secho(feed.title, fg=typer.colors.GREEN)
             except itunes.ItunesError as exc:
                 typer.secho(f"Error fetching iTunes feed: {exc}", fg=typer.colors.RED)
 
         execute_thread_pool(_fetch_feeds, itunes.COUNTRIES)
+
+    typer.echo("Saving feeds to database...")
+    itunes.save_feeds_to_db(feeds, promoted=True)
