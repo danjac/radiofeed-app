@@ -2,7 +2,6 @@ import pytest
 from django.core.management import call_command
 
 from listenwave.podcasts.itunes import Feed, ItunesError
-from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -31,31 +30,16 @@ class TestFetchTopItunes:
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
         )
-        mock_fetch_genre = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
-        )
-
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
-        mock_fetch_genre.assert_called()
-
-        assert Podcast.objects.count() == 1
-        assert Podcast.objects.filter(promoted=True).count() == 1
 
     @pytest.mark.django_db
     def test_no_chart_feeds(self, category, mocker, feed):
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[]
         )
-        mock_fetch_genre = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_genre", return_value=[feed]
-        )
-
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
-        mock_fetch_genre.assert_called()
-
-        assert Podcast.objects.count() == 1
 
     @pytest.mark.django_db
     def test_itunes_error(self, mocker):
@@ -63,7 +47,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("Error fetching iTunes"),
         )
-        call_command("fetch_top_itunes", jitter_min=0, jitter_max=0)
+        call_command("fetch_top_itunes")
         mock_fetch_chart.assert_called()
 
 

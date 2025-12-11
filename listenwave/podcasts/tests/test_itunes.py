@@ -1,5 +1,4 @@
 import http
-import pathlib
 
 import httpx
 import pytest
@@ -167,7 +166,8 @@ MOCK_CHART_RESULT = {
                         "url": "https://itunes.apple.com/us/genre/id1324",
                     }
                 ],
-                "url": "https://podcasts.apple.com/us/podcast/shawn-ryan-show/id1492492083",
+                # invalid URL
+                "url": "https://podcasts.apple.com/us/podcast/shawn-ryan-show/1492492083",
             },
             {
                 "artistName": "NBC News",
@@ -224,119 +224,12 @@ class TestItunesFeed:
         )
 
 
-class TestFetchGenre:
-    @pytest.fixture
-    def good_client(self):
-        def _get_result(request):
-            if "genre" in request.url.path:
-                with (
-                    pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
-                ).open("rb") as f:
-                    chart_content = f.read()
-
-                return httpx.Response(
-                    http.HTTPStatus.OK,
-                    content=chart_content,
-                )
-            return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
-
-        return Client(
-            transport=httpx.MockTransport(_get_result),
-        )
-
-    @pytest.fixture
-    def bad_client(self):
-        def _handle(_):
-            raise httpx.HTTPError("fail")
-
-        return Client(transport=httpx.MockTransport(_handle))
-
-    @pytest.mark.django_db
-    def test_get_genre(self, good_client):
-        feeds = list(
-            itunes.fetch_genre(
-                good_client,
-                country="us",
-                genre_id=1303,
-            )
-        )
-        assert len(feeds) == 1
-
-    @pytest.mark.django_db
-    def test_fail(self, bad_client):
-        with pytest.raises(itunes.ItunesError):
-            list(
-                itunes.fetch_genre(
-                    bad_client,
-                    country="us",
-                    genre_id=1303,
-                )
-            )
-
-
-class TestSaveFeedsToDb:
-    @pytest.fixture
-    def feed(self):
-        return itunes.Feed(
-            artworkUrl100="http://example.com/image.jpg",
-            collectionName="Test & Code",
-            collectionViewUrl="https://example.com",
-            feedUrl="https://feeds.fireside.fm/testandcode/rss",
-        )
-
-    @pytest.mark.django_db
-    def test_save_new_feed(self, feed):
-        itunes.save_feeds_to_db([feed])
-        podcasts = Podcast.objects.all()
-        assert len(podcasts) == 1
-        assert podcasts[0].rss == feed.rss
-
-    @pytest.mark.django_db
-    def test_existing_feed(self, feed):
-        PodcastFactory(rss=feed.rss)
-        itunes.save_feeds_to_db([feed])
-        podcasts = Podcast.objects.all()
-        assert len(podcasts) == 1
-        assert podcasts[0].rss == feed.rss
-
-    @pytest.mark.django_db
-    def test_save_new_feed_with_fields(self, feed):
-        itunes.save_feeds_to_db([feed], promoted=True)
-        podcasts = Podcast.objects.all()
-        assert len(podcasts) == 1
-        assert podcasts[0].rss == feed.rss
-        assert podcasts[0].promoted is True
-
-    @pytest.mark.django_db
-    def test_existing_feed_with_fields(self, feed):
-        podcast = PodcastFactory(rss=feed.rss)
-        itunes.save_feeds_to_db([feed], promoted=True)
-        podcast.refresh_from_db()
-        assert podcast.promoted is True
-
-    @pytest.mark.django_db
-    def test_save_canonical_feed(self, feed):
-        canonical = PodcastFactory()
-        PodcastFactory(rss=feed.rss, canonical=canonical)
-        itunes.save_feeds_to_db([feed], promoted=True)
-        canonical.refresh_from_db()
-        assert canonical.promoted is True
-
-
 class TestFetchChart:
     @pytest.fixture
     def good_client(self):
         def _get_result(request):
-            if request.url.path.endswith("charts"):
-                with (
-                    pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
-                ).open("rb") as f:
-                    chart_content = f.read()
-
-                return httpx.Response(
-                    http.HTTPStatus.OK,
-                    content=chart_content,
-                )
+            if request.url.path.endswith("podcasts.json"):
+                return httpx.Response(http.HTTPStatus.OK, json=MOCK_CHART_RESULT)
             return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
 
         return Client(
@@ -360,41 +253,37 @@ class TestFetchChart:
     @pytest.fixture
     def no_results_client(self):
         def _get_result(request):
-            if request.url.path.endswith("charts"):
-                chart_content = b"<html><body><p>no results</p></body></html>"
-                return httpx.Response(
-                    http.HTTPStatus.OK,
-                    content=chart_content,
-                )
-            return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
+            return httpx.Response(http.HTTPStatus.OK, json={})
 
-        return Client(
-            transport=httpx.MockTransport(_get_result),
-        )
+        return Client(transport=httpx.MockTransport(_get_result))
 
     @pytest.mark.django_db
     def test_ok(self, good_client):
+        feeds = list(itunes.fetch_chart(good_client, country="us", limit=30))
+        assert len(feeds) == 1
+        assert Podcast.objects.exists()
+
+    @pytest.mark.django_db
+    def test_promote(self, good_client):
         feeds = list(
-            itunes.fetch_chart(
-                good_client,
-                country="us",
-            )
+            itunes.fetch_chart(good_client, country="us", limit=30, promoted=True)
         )
         assert len(feeds) == 1
+        assert Podcast.objects.filter(promoted=True).exists()
 
     @pytest.mark.django_db
     def test_bad_client(self, bad_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.fetch_chart(bad_client, country="us"))
+            list(itunes.fetch_chart(bad_client, country="us", limit=30))
 
     @pytest.mark.django_db
     def test_empty_result(self, empty_result_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.fetch_chart(empty_result_client, country="us"))
+            list(itunes.fetch_chart(empty_result_client, country="us", limit=30))
 
     @pytest.mark.django_db
     def test_no_feeds_page(self, no_results_client):
-        feeds = list(itunes.fetch_chart(no_results_client, country="us"))
+        feeds = list(itunes.fetch_chart(no_results_client, country="us", limit=30))
         assert len(feeds) == 0
 
 
@@ -448,32 +337,32 @@ class TestSearch:
 
     @pytest.mark.django_db
     def test_ok(self, good_client):
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = list(itunes.search(good_client, "test", limit=30))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
     @pytest.mark.django_db
     def test_not_ok(self, bad_client):
         with pytest.raises(itunes.ItunesError):
-            itunes.search(bad_client, "test")
+            list(itunes.search(bad_client, "test", limit=30))
         assert not Podcast.objects.exists()
 
     @pytest.mark.django_db
     def test_bad_data(self, invalid_client):
-        feeds = list(itunes.search(invalid_client, "test"))
+        feeds = list(itunes.search(invalid_client, "test", limit=30))
         assert len(feeds) == 0
         assert feeds == []
 
     @pytest.mark.django_db
     def test_invalid_json(self, bad_json_client):
         with pytest.raises(itunes.ItunesError):
-            list(itunes.search(bad_json_client, "test"))
+            list(itunes.search(bad_json_client, "test", limit=30))
 
     @pytest.mark.django_db
     def test_podcast_exists(self, good_client):
         PodcastFactory(rss="https://feeds.fireside.fm/testandcode/rss")
 
-        feeds = list(itunes.search(good_client, "test"))
+        feeds = list(itunes.search(good_client, "test", limit=30))
         assert len(feeds) == 1
         assert Podcast.objects.filter(rss=feeds[0].rss).exists()
 
@@ -484,6 +373,6 @@ class TestSearch:
             "listenwave.podcasts.itunes.search",
             return_value=MOCK_SEARCH_RESULT,
         )
-        itunes.search_cached(client, "test")
-        itunes.search_cached(client, "test")
+        itunes.search_cached(client, "test", limit=30)
+        itunes.search_cached(client, "test", limit=30)
         mock_search.assert_called_once()

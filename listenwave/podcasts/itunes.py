@@ -5,19 +5,19 @@ import itertools
 import json
 import re
 from collections.abc import Iterable, Iterator
-from typing import Final
+from typing import Final, TypeVar
 
 import httpx
-import lxml.etree
 from django.conf import settings
 from django.core.cache import cache
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from lxml import html
 from pydantic import BaseModel, Field, ValidationError
 
 from listenwave.http_client import Client
 from listenwave.podcasts.models import Podcast
+
+T_Model = TypeVar("T_Model", bound=BaseModel)
 
 COUNTRIES: Final = (
     "br",
@@ -28,7 +28,6 @@ COUNTRIES: Final = (
     "fr",
     "gb",
     "it",
-    "ja",
     "kr",
     "pl",
     "se",
@@ -52,130 +51,118 @@ class Feed(BaseModel):
         """Returns title of feed"""
         return self.title
 
-    def __hash__(self) -> int:
-        """Determines uniqueness of Feed"""
-        return hash(self.rss)
+
+class ChartItem(BaseModel):
+    """Encapsulates iTunes chart item."""
+
+    url: str
 
 
-def search(
-    client: Client,
-    search_term: str,
-    *,
-    limit: int = settings.DEFAULT_PAGE_SIZE,
-    **fields,
-) -> list[Feed]:
+def search(client: Client, search_term: str, limit: int) -> Iterator[Feed]:
     """Search iTunes podcast API. New podcasts will be added to the database."""
-    feeds = list(
-        _fetch_feeds_from_api(
-            client,
-            "https://itunes.apple.com/search",
-            {
-                "term": search_term,
-                "limit": limit,
-                "media": "podcast",
-            },
-        )
+    yield from _fetch_and_save_feeds(
+        client,
+        "https://itunes.apple.com/search",
+        {
+            "term": search_term,
+            "limit": limit,
+            "media": "podcast",
+        },
     )
-    save_feeds_to_db(feeds, **fields)
-    return feeds
 
 
 def search_cached(
     client: Client,
     search_term: str,
-    *,
-    limit: int = settings.DEFAULT_PAGE_SIZE,
+    limit: int,
     cache_timeout: int = settings.DEFAULT_CACHE_TIMEOUT,
 ) -> list[Feed]:
     """Search iTunes podcast API. Results are cached."""
     cache_key = _get_cache_key(search_term, limit)
     feeds = cache.get(cache_key, None)
     if feeds is None:
-        feeds = search(client, search_term, limit=limit)
+        feeds = list(search(client, search_term, limit=limit))
         cache.set(cache_key, feeds, timeout=cache_timeout)
     return feeds
 
 
-def fetch_chart(client: Client, country: str) -> Iterator[Feed]:
+def fetch_chart(
+    client: Client,
+    country: str,
+    limit: int,
+    **fields,
+) -> Iterator[Feed]:
     """Fetch top chart from iTunes podcast chart page. Any new podcasts will be added."""
-    return _fetch_feeds_from_page(
-        client, f"https://podcasts.apple.com/{country}/charts"
+    data = _fetch_json(
+        client,
+        f"https://rss.marketingtools.apple.com/api/v2/{country}/podcasts/top/{limit}/podcasts.json",
     )
 
+    if feed_ids := {
+        feed_id
+        for feed_id in (
+            _parse_feed_id_from_url(item.url)
+            for item in _parse_json(
+                ChartItem,
+                data.get("feed", {}).get("results", []),
+            )
+        )
+        if feed_id
+    }:
+        yield from _fetch_and_save_feeds(
+            client,
+            "https://itunes.apple.com/lookup",
+            {"id": ",".join(feed_ids)},
+            **fields,
+        )
 
-def fetch_genre(client: Client, country: str, genre_id: int) -> Iterator[Feed]:
-    """Fetch top podcasts for the given genre from iTunes podcast chart page.
-    Any new podcasts will be added.
-    """
-    return _fetch_feeds_from_page(
-        client, f"https://podcasts.apple.com/{country}/genre/{genre_id}"
-    )
 
-
-def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
-    """Saves the given feeds to the database."""
-    podcasts = _build_podcasts_from_feeds(feeds, **fields)
+def _fetch_and_save_feeds(
+    client: Client,
+    url: str,
+    params: dict | None = None,
+    **fields,
+) -> Iterator[Feed]:
+    data = _fetch_json(client, url, params)
+    feeds, feeds_to_save = itertools.tee(_parse_json(Feed, data.get("results", [])))
+    podcasts = _build_podcasts_from_feeds(feeds_to_save, **fields)
     if fields:
-        return Podcast.objects.bulk_create(
+        Podcast.objects.bulk_create(
             podcasts,
             unique_fields=["rss"],
             update_conflicts=True,
             update_fields=fields,
         )
-    return Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+    else:
+        Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+
+    return feeds
 
 
-def _fetch_feeds_from_page(client: Client, url: str) -> Iterator[Feed]:
-    try:
-        response = client.get(url)
-    except httpx.HTTPError as exc:
-        raise ItunesError from exc
-
-    try:
-        tree = html.fromstring(response.content)
-    except lxml.etree.ParserError as exc:
-        raise ItunesError("Failed to parse iTunes chart page") from exc
-
-    itunes_ids = set()
-
-    for link in tree.xpath('//a[contains(@href, "/podcast/")]/@href'):
-        if match := re.search(r"/id(\d+)", link):
-            itunes_ids.add(match.group(1))
-
-    for batch in itertools.batched(itunes_ids, 200, strict=False):
-        yield from _fetch_feeds_from_api(
-            client,
-            "https://itunes.apple.com/lookup",
-            {
-                "id": ",".join(batch),
-            },
-        )
-
-
-def _fetch_feeds_from_api(
-    client: Client,
-    url: str,
-    params: dict | None = None,
-) -> Iterator[Feed]:
-    """Fetches and parses feeds from iTunes API."""
-
+def _fetch_json(client: Client, url: str, params: dict | None = None) -> dict:
+    """Fetches JSON data from the given URL."""
     try:
         response = client.get(
             url,
             params=params or {},
             headers={"Accept": "application/json"},
         )
-    except httpx.HTTPError as exc:
-        raise ItunesError(str(exc)) from exc
+        return response.json()
+    except (httpx.HTTPError, ValueError, json.JSONDecodeError) as exc:
+        raise ItunesError("Failed to fetch JSON data from iTunes") from exc
 
-    try:
-        payload = response.json()
-    except (ValueError, json.JSONDecodeError) as exc:
-        raise ItunesError("Invalid response from iTunes") from exc
 
-    for result in payload.get("results", []):
+def _parse_json(model: type[T_Model], data: list[dict]) -> Iterator[T_Model]:
+    """Parses data into model objects."""
+    for item in data:
         with contextlib.suppress(ValidationError):
-            yield Feed(**result)
+            yield model(**item)
+
+
+def _parse_feed_id_from_url(url: str) -> str | None:
+    if match := re.search(r"/id(\d+)", url):
+        return match.group(1)
+    return None
 
 
 def _build_podcasts_from_feeds(feeds: Iterable[Feed], **fields) -> Iterator[Podcast]:
