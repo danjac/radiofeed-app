@@ -43,7 +43,9 @@ class Command(BaseCommand):
         connection = get_connection()
 
         for recipient in get_recipients().select_related("user"):
-            if episodes := _get_new_episodes(recipient.user, since=since, limit=limit):
+            if episodes := self._get_new_episodes(
+                recipient.user, since=since, limit=limit
+            ):
                 send_notification_email(
                     site,
                     recipient,
@@ -57,51 +59,49 @@ class Command(BaseCommand):
 
                 self.stdout.write(f"Episode notifications sent to {recipient.email}")
 
+    def _get_new_episodes(
+        self,
+        user: User,
+        *,
+        since: datetime.datetime,
+        limit: int,
+    ) -> QuerySet[Episode]:
+        # Fetch latest episode IDs for each podcast the user is subscribed to
+        # Exclude any that the user has bookmarked or listened to
+        # Include only those published within the last `days_since` days
+        episodes = dict(
+            Episode.objects.annotate(
+                is_bookmarked=Exists(
+                    user.bookmarks.filter(
+                        episode=OuterRef("pk"),
+                    )
+                ),
+                is_listened=Exists(
+                    user.audio_logs.filter(
+                        episode=OuterRef("pk"),
+                    )
+                ),
+                is_subscribed=Exists(
+                    user.subscriptions.filter(
+                        podcast=OuterRef("podcast"),
+                    )
+                ),
+            )
+            .filter(
+                is_bookmarked=False,
+                is_listened=False,
+                is_subscribed=True,
+                pub_date__gte=since,
+            )
+            .order_by("pub_date", "pk")
+            .values_list("podcast", "pk")
+        )
+        # Randomly sample up to `limit` episode IDs
+        episode_ids = list(episodes.values())
+        sample_ids = random.sample(episode_ids, min(len(episode_ids), limit))
 
-def _get_new_episodes(
-    user: User,
-    *,
-    since: datetime.datetime,
-    limit: int,
-) -> QuerySet[Episode]:
-    # Fetch latest episode IDs for each podcast the user is subscribed to
-    # Exclude any that the user has bookmarked or listened to
-    # Include only those published within the last `days_since` days
-    episodes = dict(
-        Episode.objects.annotate(
-            is_bookmarked=Exists(
-                user.bookmarks.filter(
-                    episode=OuterRef("pk"),
-                )
-            ),
-            is_listened=Exists(
-                user.audio_logs.filter(
-                    episode=OuterRef("pk"),
-                )
-            ),
-            is_subscribed=Exists(
-                user.subscriptions.filter(
-                    podcast=OuterRef("podcast"),
-                )
-            ),
+        return (
+            Episode.objects.filter(pk__in=sample_ids)
+            .select_related("podcast")
+            .order_by("-pub_date", "-pk")
         )
-        .filter(
-            is_bookmarked=False,
-            is_listened=False,
-            is_subscribed=True,
-            pub_date__gte=since,
-        )
-        .order_by("pub_date", "pk")
-        .values_list("podcast", "pk")
-    )
-    # Randomly sample up to `limit` episode IDs
-    episode_ids = list(episodes.values())
-    sample_ids = random.sample(
-        episode_ids,
-        min(len(episode_ids), limit),
-    )
-    return (
-        Episode.objects.filter(pk__in=sample_ids)
-        .select_related("podcast")
-        .order_by("-pub_date", "-pk")
-    )

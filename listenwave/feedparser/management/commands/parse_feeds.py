@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand, CommandParser
 from django.db import close_old_connections
-from django.db.models import Case, Count, IntegerField, When
+from django.db.models import Case, Count, IntegerField, QuerySet, When
 
 from listenwave.feedparser.feed_parser import parse_feed
 from listenwave.http_client import get_client
@@ -26,25 +26,8 @@ class Command(BaseCommand):
 
     def handle(self, *, limit: int, **options) -> None:
         """Handle the command execution."""
-        podcasts = (
-            Podcast.objects.scheduled()
-            .annotate(
-                subscribers=Count("subscriptions"),
-                is_new=Case(
-                    When(parsed__isnull=True, then=1),
-                    default=0,
-                    output_field=IntegerField(),
-                ),
-            )
-            .filter(active=True)
-            .order_by(
-                "-is_new",
-                "-subscribers",
-                "-promoted",
-                "parsed",
-                "updated",
-            )[:limit]
-        )
+
+        podcasts = self._get_podcasts(limit)
 
         with get_client() as client:
 
@@ -63,3 +46,25 @@ class Command(BaseCommand):
             with ThreadPoolExecutor() as executor:
                 for podcast, result in executor.map(_worker, list(podcasts)):
                     self.stdout.write(f"Parsed feed for {podcast}: {result}")
+
+    def _get_podcasts(self, limit: int) -> QuerySet[Podcast]:
+        """Retrieve podcasts to be parsed."""
+        return (
+            Podcast.objects.scheduled()
+            .annotate(
+                subscribers=Count("subscriptions"),
+                is_new=Case(
+                    When(parsed__isnull=True, then=1),
+                    default=0,
+                    output_field=IntegerField(),
+                ),
+            )
+            .filter(active=True)
+            .order_by(
+                "-is_new",
+                "-subscribers",
+                "-promoted",
+                "parsed",
+                "updated",
+            )[:limit]
+        )
