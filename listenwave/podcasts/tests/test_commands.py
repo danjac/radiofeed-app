@@ -31,7 +31,7 @@ class TestFetchTopItunes:
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
         )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", min_jitter=0, max_jitter=0)
         mock_fetch_chart.assert_called()
         assert Podcast.objects.filter(promoted=True).exists() is True
 
@@ -40,7 +40,7 @@ class TestFetchTopItunes:
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[]
         )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", min_jitter=0, max_jitter=0)
         mock_fetch_chart.assert_called()
         assert Podcast.objects.exists() is False
 
@@ -50,7 +50,7 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("Error fetching iTunes"),
         )
-        call_command("fetch_top_itunes")
+        call_command("fetch_top_itunes", min_jitter=0, max_jitter=0)
         mock_fetch_chart.assert_called()
         assert Podcast.objects.exists() is False
 

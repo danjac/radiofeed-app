@@ -1,12 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand, CommandParser
-from django.db import close_old_connections
 from django.db.models import Case, Count, IntegerField, QuerySet, When
 
 from listenwave.feedparser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
+from listenwave.threadsafe import db_threadsafe
 
 
 class Command(BaseCommand):
@@ -27,31 +27,23 @@ class Command(BaseCommand):
     def handle(self, *, limit: int, **options) -> None:
         """Handle the command execution."""
 
-        podcasts = self._get_podcasts(limit)
+        podcasts = self._get_podcasts()[:limit]
 
         with get_client() as client:
 
+            @db_threadsafe
             def _worker(podcast: Podcast) -> tuple[Podcast, str]:
-                """
-                Worker executed in each thread.
-                Ensures database connections are closed/safe.
-                """
-                close_old_connections()  # required at thread start
-                try:
-                    result = parse_feed(podcast, client)
-                    return podcast, result
-                finally:
-                    close_old_connections()  # cleanup after thread work
+                result = parse_feed(podcast, client)
+                return podcast, result
 
             with ThreadPoolExecutor() as executor:
                 for podcast, result in executor.map(_worker, list(podcasts)):
                     self.stdout.write(f"Parsed feed for {podcast}: {result}")
 
-    def _get_podcasts(self, limit: int) -> QuerySet[Podcast]:
+    def _get_podcasts(self) -> QuerySet[Podcast]:
         """Retrieve podcasts to be parsed."""
         return (
-            Podcast.objects.scheduled()
-            .annotate(
+            Podcast.objects.annotate(
                 subscribers=Count("subscriptions"),
                 is_new=Case(
                     When(parsed__isnull=True, then=1),
@@ -59,6 +51,7 @@ class Command(BaseCommand):
                     output_field=IntegerField(),
                 ),
             )
+            .scheduled()
             .filter(active=True)
             .order_by(
                 "-is_new",
@@ -66,5 +59,5 @@ class Command(BaseCommand):
                 "-promoted",
                 "parsed",
                 "updated",
-            )[:limit]
+            )
         )
