@@ -72,7 +72,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE="config.settings"
+DJANGO_SETTINGS_MODULE="listenwave.settings"
 addopts = [
     "-v",
     "-x",
@@ -107,6 +107,8 @@ patterns = ["*.py", "*.html"]
 [tool.coverage.run]
 source=["listenwave"]
 omit=[
+    "**/settings.py",
+    "**/wsgi.py",
     "**/migrations/*",
     "*/tests/*",
 ]
@@ -189,7 +191,7 @@ known-first-party = ["listenwave"]
 profile = "black"
 
 [tool.django-stubs]
-django_settings_module = "config.settings"
+django_settings_module = "listenwave.settings"
 
 [tool.pyright]
 include=["listenwave"]
