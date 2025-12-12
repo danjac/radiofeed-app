@@ -9,7 +9,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
-from listenwave.decorators import require_DELETE, require_form_methods
+from listenwave.http import require_DELETE, require_form_methods
 from listenwave.http_client import get_client
 from listenwave.paginator import render_paginated_response
 from listenwave.partials import render_partial_response

@@ -18,9 +18,9 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 from pydantic import BaseModel, ValidationError
 
-from listenwave.decorators import require_DELETE
 from listenwave.episodes.models import AudioLog, Episode
 from listenwave.episodes.templatetags.audio_player import Action
+from listenwave.http import require_DELETE
 from listenwave.paginator import render_paginated_response
 from listenwave.podcasts.models import Podcast
 from listenwave.request import (
