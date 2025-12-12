@@ -6,8 +6,6 @@ from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
 
 
-# Copilot: rewrite as plain Django command
-#
 class Command(BaseCommand):
     """Parse feeds for all active podcasts."""
 
