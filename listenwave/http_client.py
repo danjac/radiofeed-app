@@ -35,13 +35,6 @@ class Client:
 
         return response
 
-    def head(self, url: str, headers: dict | None = None, **kwargs) -> httpx.Response:
-        """Does an HTTP HEAD request."""
-        response = self._client.head(url, headers=headers, **kwargs)
-        response.raise_for_status()
-
-        return response
-
     @contextlib.contextmanager
     def stream(
         self, url: str, headers: dict | None = None, **kwargs

@@ -63,7 +63,6 @@ def fetch_rss(
     try:
         try:
             headers = build_http_headers(etag=etag, modified=modified)
-            client.head(url, headers=headers)
             response = client.get(url, headers=headers)
             return Response(
                 content=response.content,
