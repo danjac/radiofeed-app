@@ -1,4 +1,7 @@
+from concurrent.futures import ThreadPoolExecutor
+
 from django.core.management.base import BaseCommand, CommandParser
+from django.db import close_old_connections
 from django.db.models import Case, Count, IntegerField, When
 
 from listenwave.feedparser.feed_parser import parse_feed
@@ -12,7 +15,7 @@ class Command(BaseCommand):
     help = "Parse feeds for all active podcasts."
 
     def add_arguments(self, parser: CommandParser) -> None:
-        """Add command line arguments to the management command."""
+        """Add command line arguments."""
         parser.add_argument(
             "--limit",
             "-l",
@@ -22,7 +25,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *, limit: int, **options) -> None:
-        """Handle the management command."""
+        """Handle the command execution."""
         podcasts = (
             Podcast.objects.scheduled()
             .annotate(
@@ -44,6 +47,19 @@ class Command(BaseCommand):
         )
 
         with get_client() as client:
-            for podcast in podcasts:
-                result = parse_feed(podcast, client)
-                self.stdout.write(f"Parsed feed for {podcast}: {result}")
+
+            def _worker(podcast: Podcast) -> tuple[Podcast, str]:
+                """
+                Worker executed in each thread.
+                Ensures database connections are closed/safe.
+                """
+                close_old_connections()  # required at thread start
+                try:
+                    result = parse_feed(podcast, client)
+                    return podcast, result
+                finally:
+                    close_old_connections()  # cleanup after thread work
+
+            with ThreadPoolExecutor() as executor:
+                for podcast, result in executor.map(_worker, list(podcasts)):
+                    self.stdout.write(f"Parsed feed for {podcast}: {result}")
