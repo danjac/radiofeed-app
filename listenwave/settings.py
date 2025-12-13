@@ -75,11 +75,11 @@ MIDDLEWARE: list[str] = [
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "listenwave.audio_player.middleware.PlayerMiddleware",
     "listenwave.middleware.HtmxCacheMiddleware",
     "listenwave.middleware.HtmxMessagesMiddleware",
     "listenwave.middleware.HtmxRedirectMiddleware",
     "listenwave.middleware.SearchMiddleware",
+    "listenwave.audio_player.middleware.PlayerMiddleware",
 ]
 
 # Databases
