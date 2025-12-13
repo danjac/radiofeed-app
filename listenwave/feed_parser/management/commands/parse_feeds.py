@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Case, Count, IntegerField, QuerySet, When
 
-from listenwave.feedparser.feed_parser import parse_feed
+from listenwave.feed_parser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
 from listenwave.thread_pool import db_threadsafe

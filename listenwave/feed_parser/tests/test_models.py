@@ -3,8 +3,8 @@ from django.utils import timezone
 from pydantic import ValidationError
 
 from listenwave.episodes.models import Episode
-from listenwave.feedparser.models import Feed, Item
-from listenwave.feedparser.tests.factories import FeedFactory, ItemFactory
+from listenwave.feed_parser.models import Feed, Item
+from listenwave.feed_parser.tests.factories import FeedFactory, ItemFactory
 
 
 class TestItem:

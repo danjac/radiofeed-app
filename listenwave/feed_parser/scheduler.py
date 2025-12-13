@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.utils import timezone
 
-from listenwave.feedparser.models import Feed
+from listenwave.feed_parser.models import Feed
 from listenwave.podcasts.models import Podcast
 
 

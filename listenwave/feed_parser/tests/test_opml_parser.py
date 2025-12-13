@@ -1,6 +1,6 @@
 import pathlib
 
-from listenwave.feedparser.opml_parser import parse_opml
+from listenwave.feed_parser.opml_parser import parse_opml
 
 
 class TestParseOpml:

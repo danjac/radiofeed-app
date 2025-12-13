@@ -5,9 +5,9 @@ from typing import Final
 
 from pydantic import ValidationError
 
-from listenwave.feedparser.exceptions import InvalidRSSError
-from listenwave.feedparser.models import Feed, Item
-from listenwave.feedparser.xpath_parser import OptionalXmlElement, XPathParser
+from listenwave.feed_parser.exceptions import InvalidRSSError
+from listenwave.feed_parser.models import Feed, Item
+from listenwave.feed_parser.xpath_parser import OptionalXmlElement, XPathParser
 
 
 def parse_rss(content: bytes) -> Feed:

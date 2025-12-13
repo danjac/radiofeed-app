@@ -2,8 +2,8 @@ import pathlib
 
 import pytest
 
-from listenwave.feedparser.exceptions import InvalidRSSError
-from listenwave.feedparser.rss_parser import parse_rss
+from listenwave.feed_parser.exceptions import InvalidRSSError
+from listenwave.feed_parser.rss_parser import parse_rss
 
 
 class TestParseRss:

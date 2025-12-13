@@ -8,7 +8,7 @@ class TestParseFeeds:
     @pytest.fixture
     def mock_parse(self, mocker):
         return mocker.patch(
-            "listenwave.feedparser.management.commands.parse_feeds.parse_feed"
+            "listenwave.feed_parser.management.commands.parse_feeds.parse_feed"
         )
 
     @pytest.mark.django_db

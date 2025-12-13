@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
-from listenwave.feedparser.opml_parser import parse_opml
+from listenwave.feed_parser.opml_parser import parse_opml
 from listenwave.http import require_form_methods
 from listenwave.partials import render_partial_response
 from listenwave.podcasts.models import Podcast, Subscription

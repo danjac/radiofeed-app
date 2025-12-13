@@ -52,7 +52,7 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.redis",
     "heroicons",
     "listenwave.episodes",
-    "listenwave.feedparser",
+    "listenwave.feed_parser",
     "listenwave.podcasts",
     "listenwave.users",
 ]

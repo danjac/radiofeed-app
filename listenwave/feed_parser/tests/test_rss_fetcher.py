@@ -4,12 +4,12 @@ import http
 import httpx
 import pytest
 
-from listenwave.feedparser.exceptions import (
+from listenwave.feed_parser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
-from listenwave.feedparser.rss_fetcher import (
+from listenwave.feed_parser.rss_fetcher import (
     build_http_headers,
     fetch_rss,
     make_content_hash,
