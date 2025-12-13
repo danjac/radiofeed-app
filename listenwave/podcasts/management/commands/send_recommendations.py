@@ -6,7 +6,7 @@ from django.core.mail import get_connection
 from django.core.management.base import BaseCommand, CommandParser
 
 from listenwave.podcasts.models import Podcast
-from listenwave.threadsafe import db_threadsafe
+from listenwave.thread_pool import db_threadsafe
 from listenwave.users.emails import get_recipients, send_notification_email
 
 

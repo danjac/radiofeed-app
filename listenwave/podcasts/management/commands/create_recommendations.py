@@ -6,7 +6,7 @@ from django.db.models.functions import Lower
 from listenwave import tokenizer
 from listenwave.podcasts import recommender
 from listenwave.podcasts.models import Podcast
-from listenwave.threadsafe import db_threadsafe
+from listenwave.thread_pool import db_threadsafe
 
 
 class Command(BaseCommand):

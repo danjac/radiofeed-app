@@ -10,7 +10,7 @@ from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
 
 from listenwave.episodes.models import Episode
-from listenwave.threadsafe import db_threadsafe
+from listenwave.thread_pool import db_threadsafe
 from listenwave.users.emails import get_recipients, send_notification_email
 from listenwave.users.models import User
 

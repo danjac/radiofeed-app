@@ -6,7 +6,7 @@ from django.db.models import Case, Count, IntegerField, QuerySet, When
 from listenwave.feedparser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
-from listenwave.threadsafe import db_threadsafe
+from listenwave.thread_pool import db_threadsafe
 
 
 class Command(BaseCommand):
