@@ -18,6 +18,7 @@ urlpatterns = [
     path("manifest.json", views.manifest, name="manifest"),
     path(".well-known/assetlinks.json", views.assetlinks, name="assetlinks"),
     path(".well-known/security.txt", views.security, name="security"),
+    path("", include("listenwave.audio_player.urls")),
     path("", include("listenwave.episodes.urls")),
     path("", include("listenwave.podcasts.urls")),
     path("", include("listenwave.users.urls")),

@@ -1,6 +1,6 @@
 import pytest
 
-from listenwave.episodes.middleware import PlayerDetails, PlayerMiddleware
+from listenwave.audio_player.middleware import PlayerDetails, PlayerMiddleware
 
 
 class TestPlayerMiddleware:

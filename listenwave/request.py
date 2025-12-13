@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AnonymousUser
     from django_htmx.middleware import HtmxDetails
 
-    from listenwave.episodes.middleware import PlayerDetails
+    from listenwave.audio_player.middleware import PlayerDetails
     from listenwave.middleware import SearchDetails
     from listenwave.users.models import User
 

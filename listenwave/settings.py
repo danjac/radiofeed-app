@@ -51,6 +51,7 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
+    "listenwave.audio_player",
     "listenwave.episodes",
     "listenwave.feed_parser",
     "listenwave.podcasts",
@@ -74,11 +75,11 @@ MIDDLEWARE: list[str] = [
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "listenwave.audio_player.middleware.PlayerMiddleware",
     "listenwave.middleware.HtmxCacheMiddleware",
     "listenwave.middleware.HtmxMessagesMiddleware",
     "listenwave.middleware.HtmxRedirectMiddleware",
     "listenwave.middleware.SearchMiddleware",
-    "listenwave.episodes.middleware.PlayerMiddleware",
 ]
 
 # Databases

@@ -1,8 +1,8 @@
 import pytest
-from django.template import RequestContext
+from listenwave.request import RequestContext
 
-from listenwave.episodes.middleware import PlayerDetails
-from listenwave.episodes.templatetags.audio_player import (
+from listenwave.audio_player.middleware import PlayerDetails
+from listenwave.audio_player.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )

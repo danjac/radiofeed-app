@@ -1,17 +1,14 @@
-from typing import Literal
-
 from django import template
 
 from listenwave import covers
+from listenwave.audio_player import Action
 from listenwave.episodes.models import AudioLog, Episode
 from listenwave.request import HttpRequest, RequestContext, is_authenticated_request
 
 register = template.Library()
 
-Action = Literal["load", "play", "close"]
 
-
-@register.inclusion_tag("episodes/audio_player.html", takes_context=True)
+@register.inclusion_tag("audio_player.html", takes_context=True)
 def audio_player(
     context: RequestContext,
     audio_log: AudioLog | None = None,
