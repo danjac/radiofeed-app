@@ -1,11 +1,11 @@
 import pytest
-from listenwave.request import RequestContext
 
 from listenwave.audio_player.middleware import PlayerDetails
 from listenwave.audio_player.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )
+from listenwave.request import RequestContext
 
 
 class TestGetMediaMetadata:
