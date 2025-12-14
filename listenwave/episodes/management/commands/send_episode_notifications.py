@@ -46,11 +46,10 @@ class Command(BaseCommand):
         connection = get_connection()
 
         @db_threadsafe
-        def _worker(recipient: EmailAddress) -> None:
+        def _worker(recipient: EmailAddress) -> tuple[EmailAddress, bool]:
             if episodes := self._get_new_episodes(
                 recipient.user, since=since, limit=limit
             ):
-                self.stdout.write(f"Sending notifications to {recipient.email}")
                 send_notification_email(
                     site,
                     recipient,
@@ -61,10 +60,17 @@ class Command(BaseCommand):
                     },
                     connection=connection,
                 )
+                return recipient, True
+            return recipient, False
+
+        recipients = get_recipients().select_related("user")
 
         with ThreadPoolExecutor() as executor:
-            for recipient in get_recipients().select_related("user"):
-                executor.submit(_worker, recipient)
+            for recipient, sent in executor.map(_worker, recipients):
+                if sent:
+                    self.stdout.write(
+                        f"Sent episode notifications to {recipient.email}"
+                    )
 
     def _get_new_episodes(
         self,

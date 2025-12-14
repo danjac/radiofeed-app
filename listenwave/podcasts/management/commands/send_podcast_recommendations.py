@@ -32,13 +32,12 @@ class Command(BaseCommand):
         connection = get_connection()
 
         @db_threadsafe
-        def _worker(recipient: EmailAddress) -> None:
+        def _worker(recipient: EmailAddress) -> tuple[EmailAddress, bool]:
             if (
                 podcasts := Podcast.objects.published()
                 .recommended(recipient.user)
                 .order_by("-relevance", "-pub_date")[:limit]
             ):
-                self.stdout.write(f"Sending recommendations to {recipient.email}")
                 send_notification_email(
                     site,
                     recipient,
@@ -50,7 +49,14 @@ class Command(BaseCommand):
                     connection=connection,
                 )
                 recipient.user.recommended_podcasts.add(*podcasts)
+                return recipient, True
+            return recipient, False
+
+        recipients = get_recipients().select_related("user")
 
         with ThreadPoolExecutor() as executor:
-            for recipient in get_recipients().select_related("user"):
-                executor.submit(_worker, recipient)
+            for recipient, sent in executor.map(_worker, recipients):
+                if sent:
+                    self.stdout.write(
+                        f"Podcast recommendations sent to {recipient.email}"
+                    )
