@@ -1,6 +1,5 @@
 import functools
 import json
-from datetime import timedelta
 
 from django import forms, template
 from django.conf import settings
@@ -10,7 +9,6 @@ from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
-from django.utils.timesince import timesince
 
 from listenwave import covers, sanitizer
 from listenwave.pwa import get_theme_color
@@ -169,16 +167,6 @@ def widget(field: forms.Field) -> forms.Widget:
 def widget_type(field: forms.Field) -> str:
     """Returns the widget class name for the bound field."""
     return widget(field).__class__.__name__.lower()
-
-
-@register.filter
-def format_duration(total_seconds: int, min_value: int = 60) -> str:
-    """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
-    return (
-        timesince(timezone.now() - timedelta(seconds=total_seconds))
-        if total_seconds >= min_value
-        else ""
-    )
 
 
 def _clean_attrs(attrs: dict) -> dict:

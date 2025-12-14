@@ -1,4 +1,8 @@
+from datetime import timedelta
+
 from django import template
+from django.utils import timezone
+from django.utils.timesince import timesince
 
 from listenwave import covers
 from listenwave.episodes.models import AudioLog, Episode
@@ -50,6 +54,16 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
         "artist": episode.podcast.cleaned_title,
         "artwork": covers.get_metadata_info(context.request, episode.get_cover_url()),
     }
+
+
+@register.filter
+def format_duration(total_seconds: int, min_value: int = 60) -> str:
+    """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
+    return (
+        timesince(timezone.now() - timedelta(seconds=total_seconds))
+        if total_seconds >= min_value
+        else ""
+    )
 
 
 def _get_audio_log(request: HttpRequest) -> AudioLog | None:
