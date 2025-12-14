@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% load audio_player cache heroicons %}
+{% load cache heroicons %}
+{% load audio_player from episodes %}
 {% block title %}
     {% title_tag episode.podcast.cleaned_title episode.cleaned_title %}
 {% endblock title %}

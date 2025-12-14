@@ -1,12 +1,9 @@
-from typing import Literal
-
 from django import template
 
 from listenwave import covers
 from listenwave.episodes.models import AudioLog, Episode
+from listenwave.episodes.views import PlayerAction
 from listenwave.request import HttpRequest, RequestContext, is_authenticated_request
-
-Action = Literal["load", "play", "close"]
 
 register = template.Library()
 
@@ -15,7 +12,7 @@ register = template.Library()
 def audio_player(
     context: RequestContext,
     audio_log: AudioLog | None = None,
-    action: Action = "load",
+    action: PlayerAction = "load",
     *,
     hx_oob: bool = False,
 ) -> dict:

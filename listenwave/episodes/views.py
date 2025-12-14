@@ -1,5 +1,5 @@
 import http
-from typing import TypedDict
+from typing import Literal, TypedDict
 
 from django.conf import settings
 from django.contrib import messages
@@ -19,7 +19,6 @@ from django.views.decorators.http import require_POST, require_safe
 from pydantic import BaseModel, ValidationError
 
 from listenwave.episodes.models import AudioLog, Episode
-from listenwave.episodes.templatetags.audio_player import Action
 from listenwave.http import require_DELETE
 from listenwave.paginator import render_paginated_response
 from listenwave.podcasts.models import Podcast
@@ -33,6 +32,8 @@ from listenwave.response import (
     HttpResponseNoContent,
     RenderOrRedirectResponse,
 )
+
+PlayerAction = Literal["load", "play", "close"]
 
 
 class PlayerUpdate(BaseModel):
@@ -343,7 +344,7 @@ def _render_player_action(
     request: HttpRequest,
     audio_log: AudioLog,
     *,
-    action: Action,
+    action: PlayerAction,
 ) -> TemplateResponse:
     return TemplateResponse(
         request,

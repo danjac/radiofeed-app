@@ -1,10 +1,7 @@
 import pytest
 
 from listenwave.episodes.middleware import PlayerDetails
-from listenwave.episodes.templatetags.audio_player import (
-    audio_player,
-    get_media_metadata,
-)
+from listenwave.episodes.templatetags.episodes import audio_player, get_media_metadata
 from listenwave.request import RequestContext
 
 
