@@ -15,7 +15,7 @@ from listenwave.podcasts.tests.factories import (
 from listenwave.users.tests.factories import EmailAddressFactory
 
 
-class TestSendNotifications:
+class TestSendEpisodeNotifications:
     @pytest.fixture
     def recipient(self):
         return EmailAddressFactory(
@@ -33,7 +33,7 @@ class TestSendNotifications:
             podcast=subscription.podcast,
             pub_date=timezone.now() - timedelta(days=1),
         )
-        call_command("send_notifications")
+        call_command("send_episode_notifications")
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [recipient.email]
 
@@ -47,7 +47,7 @@ class TestSendNotifications:
             pub_date=timezone.now() - timedelta(days=1),
         )
         BookmarkFactory(episode=episode, user=recipient.user)
-        call_command("send_notifications")
+        call_command("send_episode_notifications")
         assert len(mailoutbox) == 0
 
     @pytest.mark.django_db(transaction=True)
@@ -60,7 +60,7 @@ class TestSendNotifications:
             podcast=subscription.podcast,
             pub_date=timezone.now() - timedelta(days=10),
         )
-        call_command("send_notifications")
+        call_command("send_episode_notifications")
         assert len(mailoutbox) == 0
 
     @pytest.mark.django_db(transaction=True)
@@ -76,5 +76,5 @@ class TestSendNotifications:
             episode=episode,
             user=recipient.user,
         )
-        call_command("send_notifications")
+        call_command("send_episode_notifications")
         assert len(mailoutbox) == 0

@@ -12,27 +12,27 @@ from listenwave.podcasts.tests.factories import (
 from listenwave.users.tests.factories import EmailAddressFactory
 
 
-class TestParseFeeds:
+class TestParsePodcastFeeds:
     @pytest.fixture
     def mock_parse(self, mocker):
         return mocker.patch(
-            "listenwave.podcasts.management.commands.parse_feeds.parse_feed"
+            "listenwave.podcasts.management.commands.parse_podcast_feeds.parse_feed"
         )
 
     @pytest.mark.django_db
     def test_ok(self, mock_parse):
         PodcastFactory(pub_date=None)
-        call_command("parse_feeds")
+        call_command("parse_podcast_feeds")
         mock_parse.assert_called()
 
     @pytest.mark.django_db
     def test_not_scheduled(self, mock_parse):
         PodcastFactory(active=False)
-        call_command("parse_feeds")
+        call_command("parse_podcast_feeds")
         mock_parse.assert_not_called()
 
 
-class TestFetchTopItunes:
+class TestFetchItunesFeeds:
     @pytest.fixture
     def category(self):
         return CategoryFactory(itunes_genre_id=1301)
@@ -51,7 +51,7 @@ class TestFetchTopItunes:
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
         )
-        call_command("fetch_top_itunes", min_jitter=0, max_jitter=0)
+        call_command("fetch_itunes_feeds", min_jitter=0, max_jitter=0)
         mock_fetch_chart.assert_called()
         assert Podcast.objects.filter(promoted=True).exists() is True
 
@@ -60,7 +60,7 @@ class TestFetchTopItunes:
         mock_fetch_chart = mocker.patch(
             "listenwave.podcasts.itunes.fetch_chart", return_value=[]
         )
-        call_command("fetch_top_itunes", min_jitter=0, max_jitter=0)
+        call_command("fetch_itunes_feeds", min_jitter=0, max_jitter=0)
         mock_fetch_chart.assert_called()
         assert Podcast.objects.exists() is False
 
@@ -70,23 +70,23 @@ class TestFetchTopItunes:
             "listenwave.podcasts.itunes.fetch_chart",
             side_effect=ItunesError("Error fetching iTunes"),
         )
-        call_command("fetch_top_itunes", min_jitter=0, max_jitter=0)
+        call_command("fetch_itunes_feeds", min_jitter=0, max_jitter=0)
         mock_fetch_chart.assert_called()
         assert Podcast.objects.exists() is False
 
 
-class TestCreateRecommendations:
+class TestCreatePodcastRecommendations:
     @pytest.mark.django_db
     def test_create_recommendations(self, mocker):
         patched = mocker.patch(
             "listenwave.podcasts.recommender.recommend",
             return_value=RecommendationFactory.create_batch(3),
         )
-        call_command("create_recommendations")
+        call_command("create_podcast_recommendations")
         patched.assert_called()
 
 
-class TestSendRecommendations:
+class TestSendPodcastRecommendations:
     @pytest.fixture
     def recipient(self):
         return EmailAddressFactory(verified=True, primary=True)
@@ -95,11 +95,11 @@ class TestSendRecommendations:
     def test_ok(self, recipient, mailoutbox):
         podcast = SubscriptionFactory(subscriber=recipient.user).podcast
         RecommendationFactory(podcast=podcast)
-        call_command("send_recommendations")
+        call_command("send_podcast_recommendations")
         assert len(mailoutbox) == 1
 
     @pytest.mark.django_db(transaction=True)
     def test_no_recommendations(self, recipient, mailoutbox):
         PodcastFactory()
-        call_command("send_recommendations")
+        call_command("send_podcast_recommendations")
         assert len(mailoutbox) == 0
