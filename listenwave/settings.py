@@ -51,7 +51,6 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "listenwave.audio_player",
     "listenwave.episodes",
     "listenwave.podcasts",
     "listenwave.users",
@@ -78,7 +77,7 @@ MIDDLEWARE: list[str] = [
     "listenwave.middleware.HtmxMessagesMiddleware",
     "listenwave.middleware.HtmxRedirectMiddleware",
     "listenwave.middleware.SearchMiddleware",
-    "listenwave.audio_player.middleware.PlayerMiddleware",
+    "listenwave.episodes.middleware.PlayerMiddleware",
 ]
 
 # Databases

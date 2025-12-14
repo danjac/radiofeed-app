@@ -1,3 +1,6 @@
+import http
+from typing import TypedDict
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -6,27 +9,43 @@ from django.db.models import OuterRef, Subquery
 from django.http import (
     Http404,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
+from pydantic import BaseModel, ValidationError
 
-from listenwave.audio_player import Action
 from listenwave.episodes.models import AudioLog, Episode
+from listenwave.episodes.templatetags.audio_player import Action
 from listenwave.http import require_DELETE
 from listenwave.paginator import render_paginated_response
 from listenwave.podcasts.models import Podcast
 from listenwave.request import (
     AuthenticatedHttpRequest,
     HttpRequest,
+    is_authenticated_request,
 )
 from listenwave.response import (
     HttpResponseConflict,
     HttpResponseNoContent,
     RenderOrRedirectResponse,
 )
+
+
+class PlayerUpdate(BaseModel):
+    """Data model for player time update."""
+
+    current_time: int
+    duration: int
+
+
+class PlayerUpdateError(TypedDict):
+    """Data model for player error response."""
+
+    error: str
 
 
 @require_safe
@@ -147,6 +166,51 @@ def close_player(
         )
         return _render_player_action(request, audio_log, action="close")
     return HttpResponseNoContent()
+
+
+@require_POST
+def player_time_update(request: HttpRequest) -> JsonResponse:
+    """Handles player time update AJAX requests."""
+
+    if not is_authenticated_request(request):
+        return JsonResponse(
+            PlayerUpdateError(error="Authentication required"),
+            status=http.HTTPStatus.UNAUTHORIZED,
+        )
+
+    episode_id = request.player.get()
+
+    if episode_id is None:
+        return JsonResponse(
+            PlayerUpdateError(error="No episode in player"),
+            status=http.HTTPStatus.BAD_REQUEST,
+        )
+
+    try:
+        update = PlayerUpdate.model_validate_json(request.body)
+    except ValidationError as exc:
+        return JsonResponse(
+            PlayerUpdateError(error=exc.json()),
+            status=http.HTTPStatus.BAD_REQUEST,
+        )
+
+    try:
+        request.user.audio_logs.update_or_create(
+            episode_id=episode_id,
+            defaults={
+                "listened": timezone.now(),
+                "current_time": update.current_time,
+                "duration": update.duration,
+            },
+        )
+
+    except IntegrityError:
+        return JsonResponse(
+            PlayerUpdateError(error="Update cannot be saved"),
+            status=http.HTTPStatus.CONFLICT,
+        )
+
+    return JsonResponse(update.model_dump())
 
 
 @require_safe

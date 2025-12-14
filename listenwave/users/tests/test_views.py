@@ -6,7 +6,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
-from listenwave.audio_player.middleware import PlayerDetails
+from listenwave.episodes.middleware import PlayerDetails
 from listenwave.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from listenwave.podcasts.models import Subscription
 from listenwave.podcasts.tests.factories import PodcastFactory, SubscriptionFactory

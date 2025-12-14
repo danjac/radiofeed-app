@@ -14,14 +14,19 @@ urlpatterns = [
         name="episode_detail",
     ),
     path(
-        "start-player/<int:episode_id>/",
+        "player/start/<int:episode_id>/",
         views.start_player,
         name="start_player",
     ),
     path(
-        "close-player/",
+        "player/close/",
         views.close_player,
         name="close_player",
+    ),
+    path(
+        "player/time-update/",
+        views.player_time_update,
+        name="player_time_update",
     ),
     path("history/", views.history, name="history"),
     path(
