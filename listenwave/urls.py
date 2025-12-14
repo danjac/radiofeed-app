@@ -19,7 +19,6 @@ urlpatterns = [
     path(".well-known/assetlinks.json", views.assetlinks, name="assetlinks"),
     path(".well-known/security.txt", views.security, name="security"),
     path("", include("listenwave.episodes.urls")),
-    path("", include("listenwave.episodes.urls")),
     path("", include("listenwave.podcasts.urls")),
     path("", include("listenwave.users.urls")),
     path("account/", include("allauth.urls")),
