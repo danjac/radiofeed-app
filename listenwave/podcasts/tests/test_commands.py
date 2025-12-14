@@ -12,6 +12,26 @@ from listenwave.podcasts.tests.factories import (
 from listenwave.users.tests.factories import EmailAddressFactory
 
 
+class TestParseFeeds:
+    @pytest.fixture
+    def mock_parse(self, mocker):
+        return mocker.patch(
+            "listenwave.podcasts.management.commands.parse_feeds.parse_feed"
+        )
+
+    @pytest.mark.django_db
+    def test_ok(self, mock_parse):
+        PodcastFactory(pub_date=None)
+        call_command("parse_feeds")
+        mock_parse.assert_called()
+
+    @pytest.mark.django_db
+    def test_not_scheduled(self, mock_parse):
+        PodcastFactory(active=False)
+        call_command("parse_feeds")
+        mock_parse.assert_not_called()
+
+
 class TestFetchTopItunes:
     @pytest.fixture
     def category(self):

@@ -53,7 +53,6 @@ INSTALLED_APPS: list[str] = [
     "heroicons",
     "listenwave.audio_player",
     "listenwave.episodes",
-    "listenwave.feed_parser",
     "listenwave.podcasts",
     "listenwave.users",
 ]
