@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from django.utils import timezone
 from pydantic import ValidationError
@@ -16,7 +18,7 @@ class TestItem:
         with pytest.raises(ValidationError):
             Item(
                 **ItemFactory(
-                    pub_date=timezone.now() + timezone.timedelta(days=1),
+                    pub_date=timezone.now() + datetime.timedelta(days=1),
                 ),
             )
 

@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 
 import pytest
 from django.urls import reverse, reverse_lazy
@@ -134,7 +135,7 @@ class TestEpisodeDetail:
     def test_no_next_episode(self, client, auth_user, episode):
         EpisodeFactory(
             podcast=episode.podcast,
-            pub_date=episode.pub_date - timezone.timedelta(days=30),
+            pub_date=episode.pub_date - timedelta(days=30),
         )
         response = client.get(episode.get_absolute_url())
         assert200(response)
@@ -146,7 +147,7 @@ class TestEpisodeDetail:
     def test_no_previous_episode(self, client, auth_user, episode):
         EpisodeFactory(
             podcast=episode.podcast,
-            pub_date=episode.pub_date + timezone.timedelta(days=30),
+            pub_date=episode.pub_date + timedelta(days=30),
         )
         response = client.get(episode.get_absolute_url())
         assert200(response)

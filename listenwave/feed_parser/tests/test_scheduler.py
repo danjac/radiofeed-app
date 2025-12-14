@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from django.utils import timezone
 
@@ -9,7 +11,7 @@ from listenwave.feed_parser.tests.factories import FeedFactory, ItemFactory
 class TestReschedule:
     def test_pub_date_none(self):
         self.assert_hours_diff(
-            scheduler.reschedule(None, timezone.timedelta(hours=24)), 24
+            scheduler.reschedule(None, datetime.timedelta(hours=24)), 24
         )
 
     def test_frequency_none(self):
@@ -17,14 +19,14 @@ class TestReschedule:
 
     def test_reschedule_no_change(self):
         assert (
-            scheduler.reschedule(timezone.now(), timezone.timedelta(days=10)).days == 10
+            scheduler.reschedule(timezone.now(), datetime.timedelta(days=10)).days == 10
         )
 
     def test_increment(self):
         self.assert_hours_diff(
             scheduler.reschedule(
-                timezone.now() - timezone.timedelta(days=1),
-                timezone.timedelta(hours=24),
+                timezone.now() - datetime.timedelta(days=1),
+                datetime.timedelta(hours=24),
             ),
             24.24,
         )
@@ -40,7 +42,7 @@ class TestSchedule:
                 items=[
                     Item(
                         **ItemFactory(
-                            pub_date=timezone.now() - timezone.timedelta(days=3),
+                            pub_date=timezone.now() - datetime.timedelta(days=3),
                         )
                     )
                 ],
@@ -55,7 +57,7 @@ class TestSchedule:
                 items=[
                     Item(
                         **ItemFactory(
-                            pub_date=timezone.now() - timezone.timedelta(days=33),
+                            pub_date=timezone.now() - datetime.timedelta(days=33),
                         )
                     )
                 ],
@@ -65,7 +67,7 @@ class TestSchedule:
         assert scheduler.schedule(feed).days == 33
 
     def test_median_empty(self):
-        pub_date = timezone.now() - timezone.timedelta(days=3)
+        pub_date = timezone.now() - datetime.timedelta(days=3)
 
         items = [Item(**ItemFactory(pub_date=pub_date)) for _ in range(12)]
 
@@ -78,7 +80,7 @@ class TestSchedule:
         last = timezone.now()
 
         for day in [7] * 12:
-            pub_date = last - timezone.timedelta(days=day)
+            pub_date = last - datetime.timedelta(days=day)
             items.append(Item(**ItemFactory(pub_date=pub_date)))
             last = pub_date
 
@@ -91,7 +93,7 @@ class TestSchedule:
         last = timezone.now()
 
         for day in [4, 3, 4, 2, 5, 2, 4, 4, 3, 4, 4, 4, 6, 5, 7, 7, 7, 7, 3]:
-            pub_date = last - timezone.timedelta(days=day)
+            pub_date = last - datetime.timedelta(days=day)
             items.append(Item(**ItemFactory(pub_date=pub_date)))
             last = pub_date
 
@@ -104,7 +106,7 @@ class TestSchedule:
         last = timezone.now()
 
         for day in [3, 4] * 12:
-            pub_date = last - timezone.timedelta(days=day)
+            pub_date = last - datetime.timedelta(days=day)
             items.append(Item(**ItemFactory(pub_date=pub_date)))
             last = pub_date
 
@@ -123,7 +125,7 @@ class TestSchedule:
                         )
                     )
                     for pub_date in [
-                        now - timezone.timedelta(seconds=1200 * i) for i in range(1, 12)
+                        now - datetime.timedelta(seconds=1200 * i) for i in range(1, 12)
                     ]
                 ],
             )
@@ -142,7 +144,7 @@ class TestSchedule:
                         )
                     )
                     for pub_date in [
-                        now - timezone.timedelta(days=33 * i) for i in range(1, 12)
+                        now - datetime.timedelta(days=33 * i) for i in range(1, 12)
                     ]
                 ],
             )
