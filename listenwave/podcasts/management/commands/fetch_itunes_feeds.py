@@ -1,11 +1,11 @@
 import random
 import time
-from concurrent.futures import ThreadPoolExecutor
 
 from django.core.management.base import BaseCommand, CommandParser
 
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
+from listenwave.thread_pool import map_thread_pool
 
 
 class Command(BaseCommand):
@@ -62,9 +62,8 @@ class Command(BaseCommand):
                     time.sleep(jitter)
                 return feeds
 
-            with ThreadPoolExecutor(max_workers=10) as executor:
-                for result in executor.map(_worker, itunes.COUNTRIES):
-                    feeds.update(result)
+            for result in map_thread_pool(_worker, itunes.COUNTRIES):
+                feeds.update(result)
 
         self.stdout.write(f"Saving {len(feeds)} iTunes feeds to database...")
         itunes.save_feeds_to_db(feeds, promoted=True)

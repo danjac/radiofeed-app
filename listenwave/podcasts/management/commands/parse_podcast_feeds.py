@@ -1,12 +1,10 @@
-from concurrent.futures import ThreadPoolExecutor
-
 from django.core.management.base import BaseCommand, CommandParser
-from django.db.models import Case, Count, IntegerField, QuerySet, When
+from django.db.models import Case, Count, IntegerField, When
 
 from listenwave.feed_parser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import db_threadsafe
+from listenwave.thread_pool import map_thread_pool
 
 
 class Command(BaseCommand):
@@ -27,22 +25,7 @@ class Command(BaseCommand):
     def handle(self, *, limit: int, **options) -> None:
         """Handle the command execution."""
 
-        podcasts = self._get_podcasts()[:limit]
-
-        with get_client() as client:
-
-            @db_threadsafe
-            def _worker(podcast: Podcast) -> tuple[Podcast, str]:
-                result = parse_feed(podcast, client)
-                return podcast, result
-
-            with ThreadPoolExecutor() as executor:
-                for podcast, result in executor.map(_worker, list(podcasts)):
-                    self.stdout.write(f"Parsed feed for {podcast}: {result}")
-
-    def _get_podcasts(self) -> QuerySet[Podcast]:
-        """Retrieve podcasts to be parsed."""
-        return (
+        podcasts = (
             Podcast.objects.annotate(
                 subscribers=Count("subscriptions"),
                 is_new=Case(
@@ -60,4 +43,13 @@ class Command(BaseCommand):
                 "parsed",
                 "updated",
             )
-        )
+        )[:limit]
+
+        with get_client() as client:
+
+            def _worker(podcast: Podcast) -> tuple[Podcast, str]:
+                result = parse_feed(podcast, client)
+                return podcast, result
+
+            for podcast, result in map_thread_pool(_worker, podcasts):
+                self.stdout.write(f"Parsed feed for {podcast}: {result}")

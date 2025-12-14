@@ -1,12 +1,10 @@
-from concurrent.futures import ThreadPoolExecutor
-
 from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management.base import BaseCommand, CommandParser
 
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import db_threadsafe
+from listenwave.thread_pool import map_thread_pool
 from listenwave.users.emails import get_recipients, send_notification_email
 
 
@@ -31,7 +29,6 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
-        @db_threadsafe
         def _worker(recipient: EmailAddress) -> tuple[EmailAddress, bool]:
             if (
                 podcasts := Podcast.objects.published()
@@ -54,9 +51,6 @@ class Command(BaseCommand):
 
         recipients = get_recipients().select_related("user")
 
-        with ThreadPoolExecutor() as executor:
-            for recipient, sent in executor.map(_worker, recipients):
-                if sent:
-                    self.stdout.write(
-                        f"Podcast recommendations sent to {recipient.email}"
-                    )
+        for recipient, sent in map_thread_pool(_worker, recipients):
+            if sent:
+                self.stdout.write(f"Podcast recommendations sent to {recipient.email}")

@@ -1,6 +1,5 @@
 import datetime
 import random
-from concurrent.futures import ThreadPoolExecutor
 
 from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
@@ -10,7 +9,7 @@ from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
 
 from listenwave.episodes.models import Episode
-from listenwave.thread_pool import db_threadsafe
+from listenwave.thread_pool import map_thread_pool
 from listenwave.users.emails import get_recipients, send_notification_email
 from listenwave.users.models import User
 
@@ -45,7 +44,6 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
-        @db_threadsafe
         def _worker(recipient: EmailAddress) -> tuple[EmailAddress, bool]:
             if episodes := self._get_new_episodes(
                 recipient.user, since=since, limit=limit
@@ -65,12 +63,9 @@ class Command(BaseCommand):
 
         recipients = get_recipients().select_related("user")
 
-        with ThreadPoolExecutor() as executor:
-            for recipient, sent in executor.map(_worker, recipients):
-                if sent:
-                    self.stdout.write(
-                        f"Sent episode notifications to {recipient.email}"
-                    )
+        for recipient, sent in map_thread_pool(_worker, recipients):
+            if sent:
+                self.stdout.write(f"Sent episode notifications to {recipient.email}")
 
     def _get_new_episodes(
         self,
