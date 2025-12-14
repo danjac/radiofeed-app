@@ -28,17 +28,16 @@ def db_threadsafe(fn: Callable[[T], R]) -> Callable[[T], R]:
     return _fn
 
 
-def map_thread_pool(
+def thread_pool_map(
     fn: Callable[[T], R],
     iterable: Iterable[T],
+    *,
     batch_size: int = 500,
 ) -> Iterator[R]:
     """
     Map a single-argument function over an iterable using a thread pool.
     Exceptions in the worker are propagated immediately via future.result().
-    The worker is made thread-safe for Django DB connections.
     """
-    fn = db_threadsafe(fn)
 
     # if QuerySet, evaluate as iterator() to avoid caching all results in memory
     if isinstance(iterable, QuerySet):

@@ -4,7 +4,7 @@ from django.db.models.functions import Lower
 from listenwave import tokenizer
 from listenwave.podcasts import recommender
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import map_thread_pool
+from listenwave.thread_pool import db_threadsafe, thread_pool_map
 
 
 class Command(BaseCommand):
@@ -15,6 +15,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         """Create recommendations for all podcasts"""
 
+        @db_threadsafe
         def _worker(language: str) -> str:
             recommender.recommend(language)
             return language
@@ -27,5 +28,5 @@ class Command(BaseCommand):
             .distinct()
         )
 
-        for language in map_thread_pool(_worker, languages):
+        for language in thread_pool_map(_worker, languages):
             self.stdout.write(f"Recommendations created for language: {language}")

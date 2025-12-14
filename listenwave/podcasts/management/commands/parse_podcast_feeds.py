@@ -4,7 +4,7 @@ from django.db.models import Case, Count, IntegerField, When
 from listenwave.feed_parser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
-from listenwave.thread_pool import map_thread_pool
+from listenwave.thread_pool import db_threadsafe, thread_pool_map
 
 
 class Command(BaseCommand):
@@ -47,9 +47,10 @@ class Command(BaseCommand):
 
         with get_client() as client:
 
+            @db_threadsafe
             def _worker(podcast: Podcast) -> tuple[Podcast, str]:
                 result = parse_feed(podcast, client)
                 return podcast, result
 
-            for podcast, result in map_thread_pool(_worker, podcasts):
+            for podcast, result in thread_pool_map(_worker, podcasts):
                 self.stdout.write(f"Parsed feed for {podcast}: {result}")

@@ -9,7 +9,7 @@ from django.db.models import Exists, OuterRef, QuerySet
 from django.utils import timezone
 
 from listenwave.episodes.models import Episode
-from listenwave.thread_pool import map_thread_pool
+from listenwave.thread_pool import db_threadsafe, thread_pool_map
 from listenwave.users.emails import get_recipients, send_notification_email
 from listenwave.users.models import User
 
@@ -44,6 +44,7 @@ class Command(BaseCommand):
         site = Site.objects.get_current()
         connection = get_connection()
 
+        @db_threadsafe
         def _worker(recipient: EmailAddress) -> tuple[EmailAddress, bool]:
             if episodes := self._get_new_episodes(
                 recipient.user, since=since, limit=limit
@@ -63,7 +64,7 @@ class Command(BaseCommand):
 
         recipients = get_recipients().select_related("user")
 
-        for recipient, sent in map_thread_pool(_worker, recipients):
+        for recipient, sent in thread_pool_map(_worker, recipients):
             if sent:
                 self.stdout.write(f"Sent episode notifications to {recipient.email}")
 

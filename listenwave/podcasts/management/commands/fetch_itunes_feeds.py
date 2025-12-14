@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, CommandParser
 
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
-from listenwave.thread_pool import map_thread_pool
+from listenwave.thread_pool import thread_pool_map
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                     jitter = random.uniform(min_jitter, max_jitter)  # noqa: S311
                     time.sleep(jitter)
 
-            for result in map_thread_pool(_worker, itunes.COUNTRIES):
+            for result in thread_pool_map(_worker, itunes.COUNTRIES):
                 if result.error:
                     self.stderr.write(
                         f"Error fetching iTunes feeds for country {result.country}: {result.error}"
