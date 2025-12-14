@@ -1,3 +1,4 @@
+import dataclasses
 import random
 import time
 
@@ -6,6 +7,16 @@ from django.core.management.base import BaseCommand, CommandParser
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
 from listenwave.thread_pool import map_thread_pool
+
+
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Result:
+    """Result of fetching iTunes feeds for a country."""
+
+    country: str
+    error: itunes.ItunesError | None = None
+
+    feeds: list[itunes.Feed] = dataclasses.field(default_factory=list)
 
 
 class Command(BaseCommand):
@@ -49,21 +60,27 @@ class Command(BaseCommand):
 
         with get_client() as client:
 
-            def _worker(country: str) -> list[itunes.Feed]:
-                feeds = []
+            def _worker(country: str) -> Result:
                 try:
                     feeds = itunes.fetch_chart(client, country, limit)
-                    self.stdout.write(f"Fetched feeds for country: {country}")
+                    return Result(country=country, feeds=feeds)
                 except itunes.ItunesError as exc:
-                    self.stderr.write(str(exc))
+                    return Result(country=country, error=exc)
                 finally:
                     # Add jitter to avoid hitting rate limits
                     jitter = random.uniform(min_jitter, max_jitter)  # noqa: S311
                     time.sleep(jitter)
-                return feeds
 
             for result in map_thread_pool(_worker, itunes.COUNTRIES):
-                feeds.update(result)
+                if result.error:
+                    self.stderr.write(
+                        f"Error fetching iTunes feeds for country {result.country}: {result.error}"
+                    )
+                else:
+                    self.stdout.write(
+                        f"Fetched {len(result.feeds)} iTunes feeds for country {result.country}"
+                    )
+                    feeds.update(result.feeds)
 
-        self.stdout.write(f"Saving {len(feeds)} iTunes feeds to database...")
         itunes.save_feeds_to_db(feeds, promoted=True)
+        self.stdout.write(f"Saved {len(feeds)} iTunes feeds to database")
