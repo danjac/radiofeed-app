@@ -36,7 +36,6 @@ def thread_pool_map(
 ) -> Iterator[R]:
     """
     Map a single-argument function over an iterable using a thread pool.
-    Exceptions in the worker are propagated immediately via future.result().
     """
 
     # if QuerySet, evaluate as iterator() to avoid caching all results in memory
