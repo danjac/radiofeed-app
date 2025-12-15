@@ -221,7 +221,8 @@ class TestExportPodcastFeeds:
     url = reverse_lazy("users:export_podcast_feeds")
 
     @pytest.mark.django_db
-    def test_export_opml(self, client, subscription):
+    def test_export_opml(self, client, auth_user):
+        SubscriptionFactory.create_batch(3, subscriber=auth_user)
         response = client.get(self.url)
         assert response["Content-Type"] == "text/x-opml"
 
