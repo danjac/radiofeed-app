@@ -8,11 +8,11 @@ from django.utils.text import slugify
 
 from listenwave.episodes.models import Episode
 from listenwave.episodes.tests.factories import EpisodeFactory
-from listenwave.feed_parser.date_parser import parse_date
-from listenwave.feed_parser.feed_parser import get_categories_dict, parse_feed
-from listenwave.feed_parser.rss_fetcher import make_content_hash
 from listenwave.http_client import Client
 from listenwave.podcasts.models import Category, Podcast
+from listenwave.podcasts.parsers.date_parser import parse_date
+from listenwave.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
+from listenwave.podcasts.parsers.rss_fetcher import make_content_hash
 from listenwave.podcasts.tests.factories import PodcastFactory
 
 
@@ -392,7 +392,9 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
-        mock_parse_rss = mocker.patch("listenwave.feed_parser.rss_parser.parse_rss")
+        mock_parse_rss = mocker.patch(
+            "listenwave.podcasts.parsers.rss_parser.parse_rss"
+        )
 
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -426,7 +428,9 @@ class TestFeedParser:
         content = self.get_rss_content()
 
         PodcastFactory(content_hash=make_content_hash(content))
-        mock_parse_rss = mocker.patch("listenwave.feed_parser.rss_parser.parse_rss")
+        mock_parse_rss = mocker.patch(
+            "listenwave.podcasts.parsers.rss_parser.parse_rss"
+        )
 
         client = _mock_client(
             url="https://example.com/other.rss",

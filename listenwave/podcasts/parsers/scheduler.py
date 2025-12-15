@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 from django.utils import timezone
 
-from listenwave.feed_parser.models import Feed
 from listenwave.podcasts.models import Podcast
+from listenwave.podcasts.parsers.models import Feed
 
 
 def schedule(feed: Feed) -> timedelta:

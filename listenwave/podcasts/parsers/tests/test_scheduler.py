@@ -3,9 +3,9 @@ import datetime
 import pytest
 from django.utils import timezone
 
-from listenwave.feed_parser import scheduler
-from listenwave.feed_parser.models import Feed, Item
-from listenwave.feed_parser.tests.factories import FeedFactory, ItemFactory
+from listenwave.podcasts.parsers import scheduler
+from listenwave.podcasts.parsers.models import Feed, Item
+from listenwave.podcasts.parsers.tests.factories import FeedFactory, ItemFactory
 
 
 class TestReschedule:

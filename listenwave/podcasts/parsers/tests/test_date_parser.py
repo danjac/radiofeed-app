@@ -1,7 +1,7 @@
 import datetime
 from zoneinfo import ZoneInfo
 
-from listenwave.feed_parser.date_parser import parse_date
+from listenwave.podcasts.parsers.date_parser import parse_date
 
 UTC = ZoneInfo(key="UTC")
 

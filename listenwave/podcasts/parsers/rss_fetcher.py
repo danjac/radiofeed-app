@@ -8,13 +8,13 @@ import httpx
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
-from listenwave.feed_parser.date_parser import parse_date
-from listenwave.feed_parser.exceptions import (
+from listenwave.http_client import Client
+from listenwave.podcasts.parsers.date_parser import parse_date
+from listenwave.podcasts.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
-from listenwave.http_client import Client
 
 _ACCEPT: Final = (
     "application/atom+xml,"

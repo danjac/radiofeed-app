@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Case, Count, IntegerField, When
 
-from listenwave.feed_parser.feed_parser import parse_feed
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
+from listenwave.podcasts.parsers.feed_parser import parse_feed
 from listenwave.thread_pool import db_threadsafe, thread_pool_map
 
 

@@ -4,17 +4,17 @@ import http
 import httpx
 import pytest
 
-from listenwave.feed_parser.exceptions import (
+from listenwave.http_client import Client
+from listenwave.podcasts.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
-from listenwave.feed_parser.rss_fetcher import (
+from listenwave.podcasts.parsers.rss_fetcher import (
     build_http_headers,
     fetch_rss,
     make_content_hash,
 )
-from listenwave.http_client import Client
 
 
 class TestMakeContentHash:

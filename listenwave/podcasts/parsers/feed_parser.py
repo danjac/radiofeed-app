@@ -10,17 +10,17 @@ from django.db.utils import DatabaseError
 from django.utils import timezone
 
 from listenwave.episodes.models import Episode
-from listenwave.feed_parser import rss_fetcher, rss_parser, scheduler
-from listenwave.feed_parser.exceptions import (
+from listenwave.http_client import Client
+from listenwave.podcasts.models import Category, Podcast
+from listenwave.podcasts.parsers import rss_fetcher, rss_parser, scheduler
+from listenwave.podcasts.parsers.exceptions import (
     DiscontinuedError,
     DuplicateError,
     FeedParserError,
     InvalidDataError,
     NotModifiedError,
 )
-from listenwave.feed_parser.models import Feed, Item
-from listenwave.http_client import Client
-from listenwave.podcasts.models import Category, Podcast
+from listenwave.podcasts.parsers.models import Feed, Item
 
 
 def parse_feed(podcast: Podcast, client: Client) -> Podcast.ParserResult:

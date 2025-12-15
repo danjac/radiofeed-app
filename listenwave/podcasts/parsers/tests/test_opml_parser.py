@@ -1,6 +1,6 @@
 import pathlib
 
-from listenwave.users.opml_parser import parse_opml
+from listenwave.podcasts.parsers.opml_parser import parse_opml
 
 
 class TestParseOpml:
