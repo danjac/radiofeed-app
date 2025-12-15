@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db.models.functions import Lower
 
-from listenwave import tokenizer
-from listenwave.podcasts import recommender
+from listenwave.podcasts import recommender, tokenizer
 from listenwave.podcasts.models import Podcast
 from listenwave.thread_pool import db_threadsafe, thread_pool_map
 

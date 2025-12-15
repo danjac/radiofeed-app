@@ -17,8 +17,8 @@ from pydantic import (
     model_validator,
 )
 
-from listenwave import tokenizer
 from listenwave.episodes.models import Episode
+from listenwave.podcasts import tokenizer
 from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.parsers.date_parser import parse_date
 from listenwave.validators import url_validator

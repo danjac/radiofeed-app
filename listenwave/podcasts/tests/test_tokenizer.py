@@ -1,4 +1,4 @@
-from listenwave.tokenizer import clean_text, get_stopwords, tokenize
+from listenwave.podcasts.tokenizer import clean_text, get_stopwords, tokenize
 
 
 class TestStopwords:
@@ -22,7 +22,7 @@ class TestTokenize:
 
     def test_extract_attribute_error(self, mocker):
         mocker.patch(
-            "listenwave.tokenizer._lemmatizer.lemmatize",
+            "listenwave.podcasts.tokenizer._lemmatizer.lemmatize",
             side_effect=AttributeError,
         )
         assert tokenize("en", "the cat sits on the mat") == []
