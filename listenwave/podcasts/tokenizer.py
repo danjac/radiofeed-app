@@ -8,7 +8,7 @@ from typing import Final
 
 import pycountry
 from django.conf import settings
-from django.utils import timezone, translation
+from django.utils import translation
 from django.utils.formats import date_format
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -147,16 +147,16 @@ def _get_corpus_stopwords(language: str) -> set[str]:
 
 
 def _get_date_stopwords(language: str) -> set[str]:
-    now = timezone.now()
     words = set()
     with translation.override(language):
         for month in range(1, 13):
-            dt = datetime.date(now.year, month, 1)
+            dt = datetime.date(2025, month, 1)
             words.add(date_format(dt, "b"))
             words.add(date_format(dt, "F"))
 
+        start_dt = datetime.date(2025, 1, 1)
         for day in range(7):
-            dt = now + datetime.timedelta(days=day)
+            dt = start_dt + datetime.timedelta(days=day)
             words.add(date_format(dt, "D"))
             words.add(date_format(dt, "l"))
     return words
