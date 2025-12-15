@@ -118,7 +118,7 @@ def export_podcast_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
     return TemplateResponse(
         request,
-        "feedparser/podcasts.opml",
+        "account/export.opml",
         {
             "site": request.site,
             "podcasts": podcasts,
