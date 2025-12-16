@@ -275,6 +275,12 @@ class TestPodcastDetail:
         assert response.context["podcast"] == podcast
         assertContains(response, "Admin")
 
+    @pytest.mark.django_db
+    def test_redirect_to_canonical(self, client, auth_user, podcast):
+        duplicate = PodcastFactory(canonical=podcast)
+        response = client.get(duplicate.get_absolute_url())
+        assert response.url == podcast.get_absolute_url()
+
 
 class TestLatestEpisode:
     @pytest.mark.django_db

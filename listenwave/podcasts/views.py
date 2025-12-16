@@ -122,10 +122,16 @@ def podcast_detail(
     request: AuthenticatedHttpRequest,
     podcast_id: int,
     slug: str,
-) -> TemplateResponse:
+) -> RenderOrRedirectResponse:
     """Details for a single podcast."""
 
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(
+        _get_podcasts().select_related("canonical"),
+        pk=podcast_id,
+    )
+    if podcast.canonical:
+        messages.info(request, "Redirected to canonical podcast feed")
+        return redirect(podcast.canonical)
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
@@ -143,9 +149,9 @@ def podcast_detail(
 @login_required
 def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
     """Redirects to latest episode."""
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
     if episode := podcast.episodes.order_by("-pub_date", "-id").first():
-        return HttpResponseRedirect(episode.get_absolute_url())
+        return redirect(episode)
     raise Http404
 
 
@@ -157,7 +163,7 @@ def episodes(
     slug: str | None = None,
 ) -> TemplateResponse:
     """Render episodes for a single podcast."""
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
     episodes = podcast.episodes.select_related("podcast")
 
     default_ordering = "asc" if podcast.is_serial() else "desc"
@@ -189,7 +195,7 @@ def season(
     slug: str | None = None,
 ) -> TemplateResponse:
     """Render episodes for a podcast season."""
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
 
     episodes = podcast.episodes.filter(season=season).select_related("podcast")
 
@@ -216,7 +222,7 @@ def similar(
 ) -> TemplateResponse:
     """List similar podcasts based on recommendations."""
 
-    podcast = _get_podcast_or_404(podcast_id)
+    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
 
     recommendations = podcast.recommendations.select_related("recommended").order_by(
         "-score"
@@ -287,7 +293,7 @@ def subscribe(
     request: AuthenticatedHttpRequest, podcast_id: int
 ) -> TemplateResponse | HttpResponseConflict:
     """Subscribe a user to a podcast. Podcast must be active and public."""
-    podcast = _get_podcast_or_404(podcast_id, private=False)
+    podcast = get_object_or_404(_get_public_podcasts(), pk=podcast_id)
 
     try:
         request.user.subscriptions.create(podcast=podcast)
@@ -303,7 +309,7 @@ def subscribe(
 @login_required
 def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateResponse:
     """Unsubscribe user from a podcast."""
-    podcast = _get_podcast_or_404(podcast_id, private=False)
+    podcast = get_object_or_404(_get_public_podcasts(), pk=podcast_id)
     request.user.subscriptions.filter(podcast=podcast).delete()
     messages.info(request, "Unsubscribed from Podcast")
     return _render_subscribe_action(request, podcast, is_subscribed=False)
@@ -361,10 +367,9 @@ def remove_private_feed(
 ) -> HttpResponseRedirect:
     """Delete private feed."""
 
-    _get_podcast_or_404(
-        podcast_id,
-        private=True,
-        subscriptions__subscriber=request.user,
+    get_object_or_404(
+        _get_podcasts().subscribed(request.user).filter(private=True),
+        pk=podcast_id,
     ).delete()
 
     messages.info(request, "Removed from Private Feeds")
@@ -377,10 +382,6 @@ def _get_podcasts() -> PodcastQuerySet:
 
 def _get_public_podcasts() -> PodcastQuerySet:
     return _get_podcasts().filter(private=False)
-
-
-def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
-    return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
 
 
 def _render_subscribe_action(

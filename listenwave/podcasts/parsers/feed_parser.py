@@ -1,7 +1,6 @@
 import dataclasses
 import functools
 import itertools
-import operator
 
 from django.db import transaction
 from django.db.models import Q
@@ -74,8 +73,8 @@ class _FeedParser:
 
             # check for duplicates based on content hash
             if canonical_id := self._get_canonical_id(
-                content_hash=content_hash,
                 rss=response.url,
+                content_hash=content_hash,
             ):
                 raise DuplicateError
 
@@ -169,17 +168,15 @@ class _FeedParser:
         )
         return exc.result
 
-    def _get_canonical_id(self, **fields) -> int | None:
-        """Return the PK of a canonical podcast matching the given fields."""
-        q = functools.reduce(
-            operator.or_,
-            (
-                Q(**{k: v})
-                for k, v in fields.items()
-                if v and v != getattr(self.podcast, k)
-            ),
-            Q(),
-        )
+    def _get_canonical_id(
+        self,
+        *,
+        rss: str,
+        content_hash: str | None = None,
+    ) -> int | None:
+        q = Q(rss=rss)
+        if content_hash:
+            q |= Q(content_hash=content_hash)
         return (
             (
                 Podcast.objects.exclude(pk=self.podcast.pk)
