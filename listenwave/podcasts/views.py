@@ -129,9 +129,6 @@ def podcast_detail(
         _get_podcasts().select_related("canonical"),
         pk=podcast_id,
     )
-    if podcast.canonical:
-        messages.info(request, "Redirected to canonical podcast feed")
-        return redirect(podcast.canonical)
 
     is_subscribed = request.user.subscriptions.filter(podcast=podcast).exists()
 
@@ -319,7 +316,7 @@ def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateR
 @login_required
 def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
     """Lists user's private feeds."""
-    podcasts = _get_podcasts().subscribed(request.user).filter(private=True)
+    podcasts = _get_private_podcasts().subscribed(request.user)
 
     if request.search:
         podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
@@ -368,7 +365,7 @@ def remove_private_feed(
     """Delete private feed."""
 
     get_object_or_404(
-        _get_podcasts().subscribed(request.user).filter(private=True),
+        _get_private_podcasts().subscribed(request.user),
         pk=podcast_id,
     ).delete()
 
@@ -382,6 +379,10 @@ def _get_podcasts() -> PodcastQuerySet:
 
 def _get_public_podcasts() -> PodcastQuerySet:
     return _get_podcasts().filter(private=False)
+
+
+def _get_private_podcasts() -> PodcastQuerySet:
+    return _get_podcasts().filter(private=True)
 
 
 def _render_subscribe_action(

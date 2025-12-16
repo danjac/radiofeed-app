@@ -99,7 +99,12 @@
                    class="flex flex-wrap space-x-1 link">Last update {{ podcast.pub_date|date:"DATE_FORMAT" }}</a>
             </div>
         </div>
-        {% if podcast.funding_url %}
+        {% if podcast.canonical %}
+            <div class="flex-wrap font-semibold">
+                This podcast has <a href="{{ podcast.canonical.get_absolute_url }}"
+                                    class="underline link">moved</a>
+            </div>
+        {% elif podcast.funding_url %}
             <div class="flex-wrap font-semibold">
                 <a href="{{ podcast.funding_url }}"
                    class="link"
