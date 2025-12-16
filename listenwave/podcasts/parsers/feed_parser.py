@@ -2,7 +2,6 @@ import dataclasses
 import functools
 import itertools
 import operator
-from collections.abc import Iterator
 
 from django.db import transaction
 from django.db.models import Q
@@ -201,46 +200,48 @@ class _FeedParser:
 
     def _parse_episodes(self, feed: Feed) -> None:
         """Parse the podcast's RSS feed and update the episodes."""
+
+        episodes = Episode.objects.filter(podcast=self.podcast)
+
         # Delete any episodes that are not in the feed
-        qs = Episode.objects.filter(podcast=self.podcast)
-        qs.exclude(guid__in={item.guid for item in feed.items}).delete()
+        episodes.exclude(guid__in={item.guid for item in feed.items}).delete()
 
         # Create a dictionary of guids to episode pks
-        guids = dict(qs.values_list("guid", "pk"))
-        fields_to_update = _item_fields("guid", "categories")
+        guids = dict(episodes.values_list("guid", "pk"))
+
+        # Update existing episodes
+        #
+        # fast_update() requires unique primary keys, do dudupe first
+        items_for_update = {
+            guids[item.guid]: item for item in feed.items if item.guid in guids
+        }
+
+        episodes_for_update = (
+            self._parse_episode(item, pk=episode_id)
+            for episode_id, item in items_for_update.items()
+        )
+
+        fields_for_update = _item_fields(exclude=("guid", "categories"))
 
         for batch in itertools.batched(
-            self._episodes_for_update(feed, guids),
+            episodes_for_update,
             1000,
             strict=False,
         ):
-            Episode.objects.fast_update(batch, fields=fields_to_update)
+            episodes.fast_update(batch, fields=fields_for_update)
+
+        # Insert new episodes
+        #
+        episodes_for_insert = (
+            self._parse_episode(item) for item in feed.items if item.guid not in guids
+        )
 
         for batch in itertools.batched(
-            self._episodes_for_insert(feed, guids),
+            episodes_for_insert,
             100,
             strict=False,
         ):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
-
-    def _episodes_for_insert(
-        self, feed: Feed, guids: dict[str, int]
-    ) -> Iterator[Episode]:
-        """Return episodes that are not in the database."""
-        for item in feed.items:
-            if item.guid not in guids:
-                yield self._parse_episode(item)
-
-    def _episodes_for_update(
-        self, feed: Feed, guids: dict[str, int]
-    ) -> Iterator[Episode]:
-        """Return episodes that are already in the database."""
-        # fast_update() requires that we have no episodes with the same PK
-        episode_ids = set()
-        for item in feed.items:
-            if (episode_id := guids.get(item.guid)) and episode_id not in episode_ids:
-                yield self._parse_episode(item, pk=episode_id)
-                episode_ids.add(episode_id)
 
     def _parse_episode(self, item: Item, **fields) -> Episode:
         return Episode(
@@ -251,5 +252,5 @@ class _FeedParser:
 
 
 @functools.cache
-def _item_fields(*exclude: str) -> set[str]:
+def _item_fields(*, exclude: tuple[str, ...] = ()) -> set[str]:
     return set(Item.model_fields.keys()) - set(exclude)
