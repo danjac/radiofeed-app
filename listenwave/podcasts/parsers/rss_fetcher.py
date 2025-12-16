@@ -1,4 +1,3 @@
-import dataclasses
 import hashlib
 import http
 from datetime import datetime
@@ -28,13 +27,26 @@ _ACCEPT: Final = (
 _WHITESPACE: Final = b" \t\r\n"
 
 
-@dataclasses.dataclass(kw_only=True, frozen=True)
 class Response:
     """Wraps an HTTP response with convenient accessors for feed-related metadata."""
 
-    content: bytes
-    headers: httpx.Headers
-    url: str
+    def __init__(self, response: httpx.Response) -> None:
+        self._response = response
+
+    @cached_property
+    def content(self) -> bytes:
+        """Returns the response content."""
+        return self._response.content
+
+    @cached_property
+    def headers(self) -> httpx.Headers:
+        """Returns the response headers."""
+        return self._response.headers
+
+    @cached_property
+    def url(self) -> str:
+        """Returns the final URL after any redirects."""
+        return str(self._response.url)
 
     @cached_property
     def etag(self) -> str:
@@ -63,12 +75,7 @@ def fetch_rss(
     try:
         try:
             headers = build_http_headers(etag=etag, modified=modified)
-            response = client.get(url, headers=headers)
-            return Response(
-                content=response.content,
-                headers=response.headers,
-                url=str(response.url),
-            )
+            return Response(client.get(url, headers=headers))
         except httpx.HTTPStatusError as exc:
             match exc.response.status_code:
                 case http.HTTPStatus.GONE:
@@ -100,6 +107,7 @@ def make_content_hash(content: bytes) -> str:
     if not content:
         return ""
 
+    # Use memoryview to avoid copying the content unnecessarily
     mv = memoryview(content)
     start = 0
     end = len(mv)
