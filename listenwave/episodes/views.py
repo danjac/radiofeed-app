@@ -6,14 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import OuterRef, Subquery
-from django.http import (
-    Http404,
-    HttpResponseRedirect,
-    JsonResponse,
-)
-from django.shortcuts import get_object_or_404
+from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_safe
 from pydantic import BaseModel, ValidationError
@@ -98,7 +93,7 @@ def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
 
         return render_paginated_response(request, "episodes/search.html", episodes)
 
-    return HttpResponseRedirect(reverse("episodes:index"))
+    return redirect("episodes:index")
 
 
 @require_safe

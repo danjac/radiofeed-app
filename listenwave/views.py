@@ -6,9 +6,9 @@ from django.http import (
     FileResponse,
     Http404,
     HttpResponse,
-    HttpResponseRedirect,
     JsonResponse,
 )
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -33,7 +33,7 @@ def index(request: HttpRequest) -> RenderOrRedirectResponse:
 
     # if user logged in, redirect to their home page
     if request.user.is_authenticated:
-        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+        return redirect(settings.LOGIN_REDIRECT_URL)
     return TemplateResponse(request, "index.html")
 
 

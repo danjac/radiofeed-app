@@ -4,9 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.urls import reverse
 from django.views.decorators.http import require_POST, require_safe
 
 from listenwave.http import require_DELETE, require_form_methods
@@ -66,7 +65,7 @@ def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
             request, "podcasts/search_podcasts.html", podcasts
         )
 
-    return _redirect_to_discover_page()
+    return redirect("podcasts:discover")
 
 
 @require_safe
@@ -94,7 +93,7 @@ def search_itunes(request: HttpRequest) -> RenderOrRedirectResponse:
         except itunes.ItunesError as exc:
             messages.error(request, f"Failed to search iTunes: {exc}")
 
-    return _redirect_to_discover_page()
+    return redirect("podcasts:discover")
 
 
 @require_safe
@@ -114,7 +113,7 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
             podcasts,
         )
 
-    return _redirect_to_discover_page()
+    return redirect("podcasts:discover")
 
 
 @require_safe
@@ -326,9 +325,7 @@ def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_form_methods
 @login_required
-def add_private_feed(
-    request: AuthenticatedHttpRequest,
-) -> RenderOrRedirectResponse:
+def add_private_feed(request: AuthenticatedHttpRequest) -> RenderOrRedirectResponse:
     """Add new private feed to collection."""
     if request.method == "POST":
         form = PodcastForm(request.POST)
@@ -343,7 +340,7 @@ def add_private_feed(
                 request,
                 "Podcast added to your Private Feeds and will appear here soon",
             )
-            return HttpResponseRedirect(reverse("podcasts:private_feeds"))
+            return redirect("podcasts:private_feeds")
     else:
         form = PodcastForm()
 
@@ -371,7 +368,7 @@ def remove_private_feed(
     ).delete()
 
     messages.info(request, "Removed from Private Feeds")
-    return HttpResponseRedirect(reverse("podcasts:private_feeds"))
+    return redirect("podcasts:private_feeds")
 
 
 def _get_podcasts() -> PodcastQuerySet:
@@ -384,10 +381,6 @@ def _get_public_podcasts() -> PodcastQuerySet:
 
 def _get_podcast_or_404(podcast_id: int, **kwargs) -> Podcast:
     return get_object_or_404(_get_podcasts(), pk=podcast_id, **kwargs)
-
-
-def _redirect_to_discover_page() -> HttpResponseRedirect:
-    return HttpResponseRedirect(reverse("podcasts:discover"))
 
 
 def _render_subscribe_action(

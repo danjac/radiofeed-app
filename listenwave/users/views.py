@@ -7,6 +7,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.signing import BadSignature
 from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -48,7 +49,7 @@ def user_preferences(request: AuthenticatedHttpRequest) -> RenderOrRedirectRespo
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return HttpResponseRedirect(reverse("users:preferences"))
+            return redirect(request.path)
     else:
         form = UserPreferencesForm(instance=request.user)
 
@@ -85,7 +86,7 @@ def import_podcast_feeds(
             )
 
             messages.success(request, "You have been subscribed to new podcast feeds.")
-            return HttpResponseRedirect(reverse("users:import_podcast_feeds"))
+            return redirect("users:import_podcast_feeds")
     else:
         form = OpmlUploadForm()
 
@@ -195,13 +196,7 @@ def unsubscribe(
 
         messages.success(request, "You have been unsubscribed from email notifications")
 
-    redirect_url = (
-        reverse("users:preferences")
-        if request.user.is_authenticated
-        else reverse("index")
-    )
-
-    return HttpResponseRedirect(redirect_url)
+    return redirect("users:preferences" if request.user.is_authenticated else "index")
 
 
 @require_form_methods
@@ -214,7 +209,7 @@ def delete_account(request: HttpRequest) -> RenderOrRedirectResponse:
                 request.user.delete()
                 logout(request)
                 messages.info(request, "Your account has been deleted")
-                return HttpResponseRedirect(reverse("index"))
+                return redirect("index")
         else:
             form = AccountDeletionConfirmationForm()
     else:
