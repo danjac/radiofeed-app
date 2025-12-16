@@ -78,9 +78,9 @@ class Command(BaseCommand):
                     )
                 else:
                     self.stdout.write(
-                        f"Fetched {len(result.feeds)} iTunes feeds for country {result.country}"
+                        f"Fetched iTunes feeds for country {result.country}"
                     )
                     feeds.update(result.feeds)
 
         itunes.save_feeds_to_db(feeds, promoted=True)
-        self.stdout.write(f"Saved {len(feeds)} iTunes feeds to database")
+        self.stdout.write("Saved iTunes feeds to database")
