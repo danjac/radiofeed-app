@@ -588,7 +588,8 @@ class TestFeedParser:
 
         assert podcast.parser_result == Podcast.ParserResult.INVALID_RSS
 
-        assert podcast.active
+        assert podcast.active is False
+
         assert podcast.parsed
         assert podcast.etag
         assert podcast.modified
@@ -606,7 +607,7 @@ class TestFeedParser:
 
         assert podcast.parser_result == Podcast.ParserResult.INVALID_RSS
 
-        assert podcast.active
+        assert podcast.active is False
         assert podcast.parsed
 
     @pytest.mark.django_db

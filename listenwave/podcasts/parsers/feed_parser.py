@@ -1,7 +1,6 @@
 import dataclasses
 import functools
 import itertools
-import operator
 
 from django.db import transaction
 from django.db.models import Q
@@ -17,6 +16,7 @@ from listenwave.podcasts.parsers.exceptions import (
     DuplicateError,
     FeedParserError,
     InvalidDataError,
+    InvalidRSSError,
     NotModifiedError,
 )
 from listenwave.podcasts.parsers.models import Feed, Item
@@ -72,7 +72,7 @@ class _FeedParser:
             if content_hash == self.podcast.content_hash:
                 raise NotModifiedError
 
-            # check for duplicates based on content hash
+            # check for duplicates based on content hash or RSS URL
             if canonical_id := self._get_canonical_id(
                 rss=response.url,
                 content_hash=content_hash,
@@ -113,7 +113,7 @@ class _FeedParser:
         result = Podcast.ParserResult.SUCCESS
         try:
             with transaction.atomic():
-                Podcast.objects.filter(pk=self.podcast.pk).update(
+                self._update_podcast(
                     parser_result=result,
                     active=not feed.complete,
                     num_episodes=len(feed.items),
@@ -137,7 +137,7 @@ class _FeedParser:
 
     def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
         match exc:
-            case DiscontinuedError() | DuplicateError():
+            case DiscontinuedError() | DuplicateError() | InvalidRSSError():
                 active = False
             case _:
                 active = True
@@ -151,7 +151,7 @@ class _FeedParser:
             else self.podcast.frequency,
         )
 
-        Podcast.objects.filter(pk=self.podcast.pk).update(
+        self._update_podcast(
             active=active,
             frequency=frequency,
             parser_result=exc.result,
@@ -159,18 +159,26 @@ class _FeedParser:
         )
         return exc.result
 
-    def _get_canonical_id(self, **fields) -> int | None:
-        q = functools.reduce(operator.or_, (Q(**{k: v}) for k, v in fields.items()))
+    def _get_canonical_id(
+        self,
+        *,
+        rss: str,
+        content_hash: str | None = None,
+    ) -> int | None:
+        q = Q(rss=rss)
+
+        if content_hash:
+            q |= Q(content_hash=content_hash)
+
         return (
-            (
-                Podcast.objects.exclude(pk=self.podcast.pk)
-                .filter(q, canonical__isnull=True)
-                .values_list("pk", flat=True)
-                .first()
-            )
-            if q
-            else None
+            Podcast.objects.exclude(pk=self.podcast.pk)
+            .filter(q, canonical__isnull=True)
+            .values_list("pk", flat=True)
+            .first()
         )
+
+    def _update_podcast(self, **fields) -> None:
+        Podcast.objects.filter(pk=self.podcast.pk).update(**fields)
 
     def _parse_categories(self, feed: Feed) -> None:
         categories_dct = get_categories_dict()
