@@ -2,7 +2,6 @@ import pytest
 from django.core.management import call_command
 
 from listenwave.podcasts.itunes import Feed, ItunesError
-from listenwave.podcasts.models import Podcast
 from listenwave.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -33,6 +32,9 @@ class TestParsePodcastFeeds:
 
 
 class TestFetchItunesFeeds:
+    mock_fetch = "listenwave.podcasts.management.commands.fetch_itunes_feeds.itunes.fetch_top_feeds"
+    mock_save = "listenwave.podcasts.management.commands.fetch_itunes_feeds.itunes.save_feeds_to_db"
+
     @pytest.fixture
     def category(self):
         return CategoryFactory(itunes_genre_id=1301)
@@ -48,31 +50,30 @@ class TestFetchItunesFeeds:
 
     @pytest.mark.django_db
     def test_ok(self, category, mocker, feed):
-        mock_fetch_chart = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_chart", return_value=[feed]
-        )
+        mock_fetch = mocker.patch(self.mock_fetch, return_value=[feed])
+        mock_save_feeds = mocker.patch(self.mock_save)
         call_command("fetch_itunes_feeds", min_jitter=0, max_jitter=0)
-        mock_fetch_chart.assert_called()
-        assert Podcast.objects.filter(promoted=True).exists() is True
+        mock_fetch.assert_called()
+        mock_save_feeds.assert_any_call([feed], promoted=True)
+        mock_save_feeds.assert_any_call([feed])
 
     @pytest.mark.django_db
     def test_no_chart_feeds(self, category, mocker, feed):
-        mock_fetch_chart = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_chart", return_value=[]
-        )
+        mock_fetch = mocker.patch(self.mock_fetch, return_value=[])
+        mock_save_feeds = mocker.patch(self.mock_save)
         call_command("fetch_itunes_feeds", min_jitter=0, max_jitter=0)
-        mock_fetch_chart.assert_called()
-        assert Podcast.objects.exists() is False
+        mock_fetch.assert_called()
+        mock_save_feeds.assert_not_called()
 
     @pytest.mark.django_db
     def test_itunes_error(self, mocker):
-        mock_fetch_chart = mocker.patch(
-            "listenwave.podcasts.itunes.fetch_chart",
-            side_effect=ItunesError("Error fetching iTunes"),
+        mock_fetch = mocker.patch(
+            self.mock_fetch, side_effect=ItunesError("Error fetching iTunes")
         )
+        mock_save_feeds = mocker.patch(self.mock_save)
         call_command("fetch_itunes_feeds", min_jitter=0, max_jitter=0)
-        mock_fetch_chart.assert_called()
-        assert Podcast.objects.exists() is False
+        mock_fetch.assert_called()
+        mock_save_feeds.assert_not_called()
 
 
 class TestCreatePodcastRecommendations:

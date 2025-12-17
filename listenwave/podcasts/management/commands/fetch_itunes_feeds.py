@@ -1,4 +1,5 @@
 import dataclasses
+import itertools
 import random
 import time
 
@@ -6,7 +7,8 @@ from django.core.management.base import BaseCommand, CommandParser
 
 from listenwave.http_client import get_client
 from listenwave.podcasts import itunes
-from listenwave.thread_pool import thread_pool_map
+from listenwave.podcasts.models import Category
+from listenwave.thread_pool import db_threadsafe, thread_pool_map
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -14,9 +16,10 @@ class Result:
     """Result of fetching iTunes feeds for a country."""
 
     country: str
-    error: itunes.ItunesError | None = None
+    category: Category | None = None
 
     feeds: list[itunes.Feed] = dataclasses.field(default_factory=list)
+    error: itunes.ItunesError | None = None
 
 
 class Command(BaseCommand):
@@ -26,13 +29,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: CommandParser) -> None:
         """Add command line arguments to the management command."""
-        parser.add_argument(
-            "--limit",
-            "-l",
-            type=int,
-            default=30,
-            help="Number of top podcasts to fetch per country",
-        )
         parser.add_argument(
             "--min-jitter",
             type=float,
@@ -50,37 +46,47 @@ class Command(BaseCommand):
     def handle(
         self,
         *,
-        limit: int,
         min_jitter: float,
         max_jitter: float,
         **options,
     ) -> None:
         """Handle the management command."""
-        feeds: set[itunes.Feed] = set()
+
+        categories = Category.objects.filter(itunes_genre_id__isnull=False)
+
+        combinations = itertools.product(itunes.COUNTRIES, (None, *categories))
 
         with get_client() as client:
 
-            def _worker(country: str) -> Result:
+            @db_threadsafe
+            def _worker(args: tuple[str, Category | None]) -> Result:
+                country, category = args
                 try:
-                    feeds = itunes.fetch_chart(client, country, limit)
-                    return Result(country=country, feeds=feeds)
+                    itunes_genre_id = category.itunes_genre_id if category else None
+                    if feeds := itunes.fetch_top_feeds(
+                        client, country, itunes_genre_id
+                    ):
+                        if itunes_genre_id is None:
+                            itunes.save_feeds_to_db(feeds, promoted=True)
+                        else:
+                            itunes.save_feeds_to_db(feeds)
+
+                    return Result(country=country, category=category, feeds=feeds)
+
                 except itunes.ItunesError as exc:
-                    return Result(country=country, error=exc)
+                    return Result(country=country, category=category, error=exc)
                 finally:
                     # Add jitter to avoid hitting rate limits
                     jitter = random.uniform(min_jitter, max_jitter)  # noqa: S311
                     time.sleep(jitter)
 
-            for result in thread_pool_map(_worker, itunes.COUNTRIES):
+            for result in thread_pool_map(_worker, combinations):
+                category = result.category.name if result.category else "Most Popular"
                 if result.error:
                     self.stderr.write(
-                        f"Error fetching iTunes feeds for country {result.country}: {result.error}"
+                        f"Error fetching iTunes {category} feeds for country {result.country}: {result.error}"
                     )
                 else:
                     self.stdout.write(
-                        f"Fetched iTunes feeds for country {result.country}"
+                        f"Fetched iTunes {category} feeds for country {result.country}"
                     )
-                    feeds.update(result.feeds)
-
-        itunes.save_feeds_to_db(feeds, promoted=True)
-        self.stdout.write("Saved iTunes feeds to database")
