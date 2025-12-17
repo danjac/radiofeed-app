@@ -104,6 +104,10 @@
                 This podcast has <a href="{{ podcast.canonical.get_absolute_url }}"
                                     class="underline link">moved</a>
             </div>
+        {% elif not podcast.active %}
+            <div class="flex-wrap font-semibold">
+                This podcast is no longer updated.
+            </div>
         {% elif podcast.funding_url %}
             <div class="flex-wrap font-semibold">
                 <a href="{{ podcast.funding_url }}"
