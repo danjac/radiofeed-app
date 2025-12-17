@@ -215,8 +215,6 @@ class Podcast(models.Model):
 
     content_hash = models.CharField(max_length=64, blank=True)
 
-    num_retries = models.PositiveSmallIntegerField(default=0)
-
     cover_url = URLField(blank=True)
 
     funding_url = URLField(blank=True)

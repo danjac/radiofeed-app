@@ -1,6 +1,7 @@
 import dataclasses
 import functools
 import itertools
+import operator
 
 from django.db import transaction
 from django.db.models import Q
@@ -96,6 +97,7 @@ class _FeedParser:
                 parsed=parsed,
                 updated=updated,
             )
+
         except FeedParserError as exc:
             return self._handle_error(
                 exc,
@@ -112,7 +114,6 @@ class _FeedParser:
         try:
             with transaction.atomic():
                 Podcast.objects.filter(pk=self.podcast.pk).update(
-                    num_retries=0,
                     parser_result=result,
                     active=not feed.complete,
                     num_episodes=len(feed.items),
@@ -135,20 +136,11 @@ class _FeedParser:
         return result
 
     def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
-        # Handle errors when parsing a feed
-        active = True
-        num_retries = self.podcast.num_retries
-
         match exc:
-            case NotModifiedError():
-                # The feed has not been modified, but otherwise is OK. We can reset num_retries.
-                num_retries = 0
-            case DuplicateError() | DiscontinuedError():
-                # The podcast is a duplicate or has been discontinued
+            case DiscontinuedError() | DuplicateError():
                 active = False
             case _:
-                num_retries += 1
-                active = num_retries < self.max_retries
+                active = True
 
         frequency = (
             scheduler.reschedule(
@@ -156,27 +148,19 @@ class _FeedParser:
                 self.podcast.frequency,
             )
             if active
-            else self.podcast.frequency
+            else self.podcast.frequency,
         )
 
         Podcast.objects.filter(pk=self.podcast.pk).update(
             active=active,
-            num_retries=num_retries,
             frequency=frequency,
             parser_result=exc.result,
             **fields,
         )
         return exc.result
 
-    def _get_canonical_id(
-        self,
-        *,
-        rss: str,
-        content_hash: str | None = None,
-    ) -> int | None:
-        q = Q(rss=rss)
-        if content_hash:
-            q |= Q(content_hash=content_hash)
+    def _get_canonical_id(self, **fields) -> int | None:
+        q = functools.reduce(operator.or_, (Q(**{k: v}) for k, v in fields.items()))
         return (
             (
                 Podcast.objects.exclude(pk=self.podcast.pk)

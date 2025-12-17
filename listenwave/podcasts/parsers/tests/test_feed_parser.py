@@ -69,7 +69,6 @@ class TestFeedParser:
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
             pub_date=datetime(year=2020, month=3, day=1),
-            num_retries=3,
         )
 
         # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
@@ -108,7 +107,6 @@ class TestFeedParser:
         assert podcast.num_episodes == 20
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active is True
-        assert podcast.num_retries == 0
         assert podcast.content_hash
         assert podcast.title == "Mysterious Universe"
 
@@ -267,7 +265,6 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active
-        assert podcast.num_retries == 0
         assert podcast.content_hash
 
         assert podcast.is_serial()
@@ -296,7 +293,6 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active
-        assert podcast.num_retries == 0
         assert podcast.content_hash
         assert podcast.title == "Varsovia Vento Podkasto"
         assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
@@ -574,7 +570,6 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
-        assert podcast.num_retries == 1
 
     @pytest.mark.django_db
     def test_parse_no_podcasts(self, podcast):
@@ -595,7 +590,6 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
-        assert podcast.num_retries == 1
         assert podcast.etag
         assert podcast.modified
 
@@ -614,15 +608,12 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
-        assert podcast.num_retries == 1
 
     @pytest.mark.django_db
     def test_parse_not_modified(self, podcast):
         client = _mock_client(
             status_code=http.HTTPStatus.NOT_MODIFIED,
         )
-
-        podcast.num_retries = 1
 
         parse_feed(podcast, client)
 
@@ -633,7 +624,6 @@ class TestFeedParser:
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
-        assert podcast.num_retries == 0
 
     @pytest.mark.django_db
     def test_parse_http_gone(self, podcast):
@@ -647,7 +637,6 @@ class TestFeedParser:
         assert podcast.parser_result == Podcast.ParserResult.DISCONTINUED
 
         assert not podcast.active
-        assert podcast.num_retries == 0
         assert podcast.parsed
 
     @pytest.mark.django_db
@@ -663,7 +652,6 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
-        assert podcast.num_retries == 1
 
     @pytest.mark.django_db
     def test_parse_connect_error(self, podcast):
@@ -677,24 +665,3 @@ class TestFeedParser:
 
         assert podcast.active
         assert podcast.parsed
-
-        assert podcast.num_retries == 1
-
-    @pytest.mark.django_db
-    def test_parse_exceeds_max_retries(self, settings):
-        settings.FEED_PARSER_MAX_RETRIES = 30
-
-        podcast = PodcastFactory(num_retries=31)
-
-        client = _mock_error_client(httpx.HTTPError("fail"))
-
-        parse_feed(podcast, client)
-
-        podcast.refresh_from_db()
-
-        assert podcast.parser_result == Podcast.ParserResult.UNAVAILABLE
-
-        assert not podcast.active
-        assert podcast.parsed
-
-        assert podcast.num_retries == 32
