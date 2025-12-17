@@ -75,9 +75,8 @@ class Command(BaseCommand):
         since: datetime.datetime,
         limit: int,
     ) -> QuerySet[Episode]:
-        # Fetch latest episode IDs for each podcast the user is subscribed to
+        # Fetch latest episode IDs for each podcast the user is subscribed to since given time
         # Exclude any that the user has bookmarked or listened to
-        # Include only those published within the last `days_since` days
         episodes = dict(
             Episode.objects.annotate(
                 is_bookmarked=Exists(
@@ -106,11 +105,11 @@ class Command(BaseCommand):
             .values_list("podcast", "pk")
         )
         # Randomly sample up to `limit` episode IDs
-        episode_ids = list(episodes.values())
-        sample_ids = random.sample(episode_ids, min(len(episode_ids), limit))
-
-        return (
-            Episode.objects.filter(pk__in=sample_ids)
-            .select_related("podcast")
-            .order_by("-pub_date", "-pk")
-        )
+        if episode_ids := list(episodes.values()):
+            sample_ids = random.sample(episode_ids, min(len(episode_ids), limit))
+            return (
+                Episode.objects.filter(pk__in=sample_ids)
+                .select_related("podcast")
+                .order_by("-pub_date", "-pk")
+            )
+        return Episode.objects.none()
