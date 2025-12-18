@@ -1,3 +1,4 @@
+import dataclasses
 import hashlib
 import http
 from datetime import datetime
@@ -28,26 +29,26 @@ _ACCEPT: Final = (
 _WHITESPACE: Final = b" \t\r\n"
 
 
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class Response:
     """Wraps an HTTP response with convenient accessors for feed-related metadata."""
 
-    def __init__(self, response: httpx.Response) -> None:
-        self._response = response
+    response: httpx.Response
 
     @cached_property
     def content(self) -> bytes:
         """Returns the response content."""
-        return self._response.content
+        return self.response.content
 
     @cached_property
     def headers(self) -> httpx.Headers:
         """Returns the response headers."""
-        return self._response.headers
+        return self.response.headers
 
     @cached_property
     def url(self) -> str:
         """Returns the final URL after any redirects."""
-        return str(self._response.url)
+        return str(self.response.url)
 
     @cached_property
     def etag(self) -> str:
@@ -65,18 +66,16 @@ class Response:
         return make_content_hash(self.content)
 
 
-def fetch_rss(
-    client: Client,
-    url: str,
-    *,
-    etag: str = "",
-    modified: datetime | None = None,
-) -> Response:
+def fetch_rss(client: Client, url: str, **headers) -> Response:
     """Fetches RSS or Atom feed."""
     try:
         try:
-            headers = build_http_headers(etag=etag, modified=modified)
-            return Response(client.get(url, headers=headers))
+            return Response(
+                response=client.get(
+                    url,
+                    headers=build_http_headers(**headers),
+                )
+            )
         except httpx.HTTPStatusError as exc:
             match exc.response.status_code:
                 case (
@@ -100,8 +99,8 @@ def fetch_rss(
 
 def build_http_headers(
     *,
-    etag: str,
-    modified: datetime | None,
+    etag: str = "",
+    modified: datetime | None = None,
 ) -> dict[str, str]:
     """Returns headers to send with the HTTP request."""
     headers = {"Accept": _ACCEPT}
