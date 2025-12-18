@@ -136,6 +136,19 @@ def fetch_top_feeds(
     return feeds
 
 
+def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
+    """Saves the given feeds to the database as Podcast objects."""
+    podcasts = _build_podcasts_from_feeds(feeds, **fields)
+    if fields:
+        return Podcast.objects.bulk_create(
+            podcasts,
+            unique_fields=["rss"],
+            update_conflicts=True,
+            update_fields=fields,
+        )
+    return Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+
+
 def _fetch_feeds(
     client: Client,
     url: str,
@@ -156,19 +169,6 @@ def _fetch_feeds(
         with contextlib.suppress(ValidationError):
             feeds.append(Feed(**result))
     return feeds
-
-
-def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
-    """Saves the given feeds to the database as Podcast objects."""
-    podcasts = _build_podcasts_from_feeds(feeds, **fields)
-    if fields:
-        return Podcast.objects.bulk_create(
-            podcasts,
-            unique_fields=["rss"],
-            update_conflicts=True,
-            update_fields=fields,
-        )
-    return Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
 
 
 def _build_podcasts_from_feeds(feeds: Iterable[Feed], **fields) -> Iterator[Podcast]:
