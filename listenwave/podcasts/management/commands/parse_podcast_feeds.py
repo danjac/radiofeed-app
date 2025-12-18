@@ -48,9 +48,9 @@ class Command(BaseCommand):
         with get_client() as client:
 
             @db_threadsafe
-            def _worker(podcast: Podcast) -> tuple[Podcast, str]:
+            def _worker(podcast: Podcast) -> tuple[Podcast, Podcast.ParserResult]:
                 result = parse_feed(podcast, client)
                 return podcast, result
 
             for podcast, result in thread_pool_map(_worker, podcasts):
-                self.stdout.write(f"Parsed feed for {podcast}: {result}")
+                self.stdout.write(f"Parsed feed for {podcast}: {result.label}")

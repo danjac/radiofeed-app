@@ -160,12 +160,17 @@ class Podcast(models.Model):
 
     class ParserResult(models.TextChoices):
         SUCCESS = "success", "Success"
-        DISCONTINUED = "discontinued", "Discontinued"
-        DUPLICATE = "duplicate", "Duplicate"
-        INVALID_DATA = "invalid_data", "Invalid Data"
-        INVALID_RSS = "invalid_rss", "Invalid RSS"
         NOT_MODIFIED = "not_modified", "Not Modified"
-        UNAVAILABLE = "unavailable", "Unavailable"
+
+        DUPLICATE = "duplicate", "Duplicate"
+        DISCONTINUED = "discontinued", "Discontinued"
+
+        INVALID_RSS = "invalid_rss", "Invalid RSS"
+
+        PERMANENT_NETWORK_ERROR = "permanent_network_error", "Permanent Network Error"
+        TEMPORARY_NETWORK_ERROR = "temporary_network_error", "Temporary Network Error"
+
+        DATABASE_ERROR = "database_error", "Database Error"
 
     class PodcastType(models.TextChoices):
         EPISODIC = "episodic", "Episodic"

@@ -1,10 +1,11 @@
 import dataclasses
 import functools
 import itertools
+from typing import Any
 
 from django.db import transaction
 from django.db.models import Q
-from django.db.utils import DatabaseError
+from django.db.utils import DatabaseError as DatabaseBackendError
 from django.utils import timezone
 
 from listenwave.episodes.models import Episode
@@ -12,12 +13,13 @@ from listenwave.http_client import Client
 from listenwave.podcasts.models import Category, Podcast
 from listenwave.podcasts.parsers import rss_fetcher, rss_parser, scheduler
 from listenwave.podcasts.parsers.exceptions import (
+    DatabaseError,
     DiscontinuedError,
     DuplicateError,
     FeedParserError,
-    InvalidDataError,
     InvalidRSSError,
     NotModifiedError,
+    PermanentNetworkError,
 )
 from listenwave.podcasts.parsers.models import Feed, Item
 
@@ -36,85 +38,77 @@ def get_categories_dict() -> dict[str, Category]:
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class _FeedParser:
     podcast: Podcast
-    max_retries: int = 30
 
     def parse(self, client: Client) -> Podcast.ParserResult:
         """Parse the podcast's RSS feed and update the Podcast instance.
         Additional fields passed will update the podcast.
         """
 
-        canonical_id: int | None = None
-
-        etag, modified, content_hash = (
-            self.podcast.etag,
-            self.podcast.modified,
-            self.podcast.content_hash,
-        )
-        updated = parsed = timezone.now()
+        now = timezone.now()
+        fields: dict[str, Any] = {"parsed": now, "updated": now}
 
         try:
             response = rss_fetcher.fetch_rss(
                 client,
                 self.podcast.rss,
-                etag=etag,
-                modified=modified,
+                etag=self.podcast.etag,
+                modified=self.podcast.modified,
             )
 
-            etag, modified, content_hash = (
-                response.etag,
-                response.modified,
-                response.content_hash,
+            fields.update(
+                {
+                    "content_hash": response.content_hash,
+                    "etag": response.etag,
+                    "modified": response.modified,
+                }
             )
 
             # Not all feeds use ETag or Last-Modified headers correctly,
             # so we also check the content hash to see if the feed has changed.
-
-            if content_hash == self.podcast.content_hash:
+            if response.content_hash == self.podcast.content_hash:
                 raise NotModifiedError
 
-            # check for duplicates based on content hash or RSS URL
-            if canonical_id := self._get_canonical_id(
-                rss=response.url,
-                content_hash=content_hash,
-            ):
-                raise DuplicateError
+            # Check for duplicate RSS feeds by URL and content hash before parsing the feed.
+            self._raise_for_duplicate(response.url, content_hash=response.content_hash)
 
+            # Generate the feed from the response content
             feed = rss_parser.parse_rss(response.content)
-            rss = feed.canonical_url or response.url
 
-            # Check for feed redirection and duplicates
-            if rss != response.url and (
-                canonical_id := self._get_canonical_id(rss=rss)
-            ):
-                raise DuplicateError
+            # Get the canonical URL from the feed, or use the fetched URL
+            canonical_rss = feed.canonical_url or response.url
 
-            return self._handle_success(
-                feed=feed,
-                rss=rss,
-                content_hash=content_hash,
-                etag=etag,
-                modified=modified,
-                parsed=parsed,
-                updated=updated,
+            # If canonical URL in the feed differs from the fetched URL,
+            # check for duplicates again.
+
+            if canonical_rss != response.url:
+                self._raise_for_duplicate(canonical_rss)
+
+            return self._handle_success(feed=feed, rss=canonical_rss, **fields)
+
+        except DuplicateError as exc:
+            return self._handle_permanent_error(
+                exc, canonical_id=exc.canonical_id, **fields
             )
+        except (
+            DiscontinuedError,
+            InvalidRSSError,
+            PermanentNetworkError,
+        ) as exc:
+            # These are permanent errors, so we deactivate the podcast
+            return self._handle_permanent_error(exc, **fields)
 
         except FeedParserError as exc:
-            return self._handle_error(
-                exc,
-                canonical_id=canonical_id,
-                content_hash=content_hash,
-                etag=etag,
-                modified=modified,
-                parsed=parsed,
-                updated=updated,
-            )
+            # These are transient errors, so we reschedule the next fetch time
+            return self._handle_transient_error(exc, **fields)
 
     def _handle_success(self, feed: Feed, **fields) -> Podcast.ParserResult:
-        result = Podcast.ParserResult.SUCCESS
         try:
             with transaction.atomic():
-                self._update_podcast(
-                    parser_result=result,
+                self._parse_categories(feed)
+                self._parse_episodes(feed)
+
+                return self._update_podcast(
+                    Podcast.ParserResult.SUCCESS,
                     active=not feed.complete,
                     num_episodes=len(feed.items),
                     extracted_text=feed.tokenize(),
@@ -129,56 +123,48 @@ class _FeedParser:
                     ),
                     **fields,
                 )
-                self._parse_categories(feed)
-                self._parse_episodes(feed)
-        except DatabaseError as exc:
-            raise InvalidDataError from exc
-        return result
+        except DatabaseBackendError as exc:
+            raise DatabaseError from exc
 
-    def _handle_error(self, exc: FeedParserError, **fields) -> Podcast.ParserResult:
-        match exc:
-            case DiscontinuedError() | DuplicateError() | InvalidRSSError():
-                active = False
-            case _:
-                active = True
+    def _handle_transient_error(
+        self, exc: FeedParserError, **fields
+    ) -> Podcast.ParserResult:
+        # On transient errors, we reschedule the next fetch time
+        frequency = scheduler.reschedule(self.podcast.pub_date, self.podcast.frequency)
+        return self._update_podcast(exc.result, frequency=frequency, **fields)
 
-        frequency = (
-            scheduler.reschedule(
-                self.podcast.pub_date,
-                self.podcast.frequency,
-            )
-            if active
-            else self.podcast.frequency,
-        )
+    def _handle_permanent_error(
+        self, exc: FeedParserError, **fields
+    ) -> Podcast.ParserResult:
+        # On permanent errors, we deactivate the podcast
+        return self._update_podcast(exc.result, active=False, **fields)
 
-        self._update_podcast(
-            active=active,
-            frequency=frequency,
-            parser_result=exc.result,
-            **fields,
-        )
-        return exc.result
-
-    def _get_canonical_id(
+    def _raise_for_duplicate(
         self,
-        *,
         rss: str,
+        *,
         content_hash: str | None = None,
-    ) -> int | None:
+    ) -> None:
         q = Q(rss=rss)
 
         if content_hash:
             q |= Q(content_hash=content_hash)
 
-        return (
+        if canonical_id := (
             Podcast.objects.exclude(pk=self.podcast.pk)
             .filter(q, canonical__isnull=True)
             .values_list("pk", flat=True)
             .first()
-        )
+        ):
+            raise DuplicateError(canonical_id=canonical_id)
 
-    def _update_podcast(self, **fields) -> None:
-        Podcast.objects.filter(pk=self.podcast.pk).update(**fields)
+    def _update_podcast(
+        self, result: Podcast.ParserResult, **fields
+    ) -> Podcast.ParserResult:
+        Podcast.objects.filter(pk=self.podcast.pk).update(
+            parser_result=result, **fields
+        )
+        return result
 
     def _parse_categories(self, feed: Feed) -> None:
         categories_dct = get_categories_dict()
@@ -210,7 +196,7 @@ class _FeedParser:
             for episode_id, item in items_for_update.items()
         )
 
-        fields_for_update = _item_fields(exclude=("guid", "categories"))
+        fields_for_update = Item.model_fields.keys()
 
         for batch in itertools.batched(
             episodes_for_update,
@@ -233,13 +219,4 @@ class _FeedParser:
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _parse_episode(self, item: Item, **fields) -> Episode:
-        return Episode(
-            podcast=self.podcast,
-            **item.model_dump(exclude={"categories"}),
-            **fields,
-        )
-
-
-@functools.cache
-def _item_fields(*, exclude: tuple[str, ...] = ()) -> set[str]:
-    return set(Item.model_fields.keys()) - set(exclude)
+        return Episode(podcast=self.podcast, **item.model_dump(), **fields)

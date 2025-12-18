@@ -13,6 +13,24 @@ class FeedParserError(Exception):
         super().__init__(*args, **kwargs)
 
 
+class DatabaseError(FeedParserError):
+    """Error caused by failed database update."""
+
+    result = Podcast.ParserResult.DATABASE_ERROR
+
+
+class NotModifiedError(FeedParserError):
+    """RSS feed has not been modified since last update."""
+
+    result = Podcast.ParserResult.NOT_MODIFIED
+
+
+class TransientNetworkError(FeedParserError):
+    """Content is inaccessible due to temporary network issue, 500 error etc."""
+
+    result = Podcast.ParserResult.TEMPORARY_NETWORK_ERROR
+
+
 class DiscontinuedError(FeedParserError):
     """Podcast has been discontinued and no longer available."""
 
@@ -24,6 +42,10 @@ class DuplicateError(FeedParserError):
 
     result = Podcast.ParserResult.DUPLICATE
 
+    def __init__(self, *args, canonical_id: int | None = None, **kwargs):
+        self.canonical_id = canonical_id
+        super().__init__(*args, **kwargs)
+
 
 class InvalidRSSError(FeedParserError):
     """Error parsing RSS content."""
@@ -31,19 +53,7 @@ class InvalidRSSError(FeedParserError):
     result = Podcast.ParserResult.INVALID_RSS
 
 
-class NotModifiedError(FeedParserError):
-    """RSS feed has not been modified since last update."""
-
-    result = Podcast.ParserResult.NOT_MODIFIED
-
-
-class UnavailableError(FeedParserError):
+class PermanentNetworkError(FeedParserError):
     """Content is inaccessible due to temporary network issue, 500 error etc."""
 
-    result = Podcast.ParserResult.UNAVAILABLE
-
-
-class InvalidDataError(FeedParserError):
-    """Error caused by invalid data e.g. bad date strings."""
-
-    result = Podcast.ParserResult.INVALID_DATA
+    result = Podcast.ParserResult.PERMANENT_NETWORK_ERROR

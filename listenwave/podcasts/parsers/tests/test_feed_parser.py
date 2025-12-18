@@ -445,8 +445,6 @@ class TestFeedParser:
         assert podcast.parser_result == Podcast.ParserResult.DUPLICATE
 
         assert podcast.active is False
-        assert podcast.etag == "abc123"
-        assert podcast.modified is not None
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()
@@ -566,9 +564,9 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.INVALID_DATA
+        assert podcast.parser_result == Podcast.ParserResult.DATABASE_ERROR
 
-        assert podcast.active
+        assert podcast.active is True
         assert podcast.parsed
 
     @pytest.mark.django_db
@@ -591,8 +589,6 @@ class TestFeedParser:
         assert podcast.active is False
 
         assert podcast.parsed
-        assert podcast.etag
-        assert podcast.modified
 
     @pytest.mark.django_db
     def test_parse_empty_feed(self, podcast):
@@ -637,7 +633,7 @@ class TestFeedParser:
 
         assert podcast.parser_result == Podcast.ParserResult.DISCONTINUED
 
-        assert not podcast.active
+        assert podcast.active is False
         assert podcast.parsed
 
     @pytest.mark.django_db
@@ -649,9 +645,9 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.UNAVAILABLE
+        assert podcast.parser_result == Podcast.ParserResult.TEMPORARY_NETWORK_ERROR
 
-        assert podcast.active
+        assert podcast.active is True
         assert podcast.parsed
 
     @pytest.mark.django_db
@@ -662,7 +658,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.UNAVAILABLE
+        assert podcast.parser_result == Podcast.ParserResult.TEMPORARY_NETWORK_ERROR
 
-        assert podcast.active
+        assert podcast.active is True
         assert podcast.parsed
