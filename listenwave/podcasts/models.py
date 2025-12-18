@@ -161,15 +161,11 @@ class Podcast(models.Model):
     class ParserResult(models.TextChoices):
         SUCCESS = "success", "Success"
         NOT_MODIFIED = "not_modified", "Not Modified"
-
         DUPLICATE = "duplicate", "Duplicate"
         DISCONTINUED = "discontinued", "Discontinued"
-
         INVALID_RSS = "invalid_rss", "Invalid RSS"
-
         PERMANENT_NETWORK_ERROR = "permanent_network_error", "Permanent Network Error"
         TEMPORARY_NETWORK_ERROR = "temporary_network_error", "Temporary Network Error"
-
         DATABASE_ERROR = "database_error", "Database Error"
 
     class PodcastType(models.TextChoices):
@@ -278,8 +274,6 @@ class Podcast(models.Model):
         indexes: ClassVar[list] = [
             # Recent podcasts index
             models.Index(fields=["-pub_date"]),
-            # Feed parser deduplication index
-            models.Index(fields=["content_hash"]),
             # Discover feed index
             models.Index(fields=["-promoted", "language", "-pub_date"]),
             # Feed parser scheduling index

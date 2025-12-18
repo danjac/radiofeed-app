@@ -415,41 +415,6 @@ class TestFeedParser:
         mock_parse_rss.assert_not_called()
 
     @pytest.mark.django_db
-    def test_parse_podcast_another_feed_same_content(
-        self,
-        mocker,
-        podcast,
-        categories,
-    ):
-        content = self.get_rss_content()
-
-        PodcastFactory(content_hash=make_content_hash(content))
-        mock_parse_rss = mocker.patch(
-            "listenwave.podcasts.parsers.rss_parser.parse_rss"
-        )
-
-        client = _mock_client(
-            url="https://example.com/other.rss",
-            status_code=http.HTTPStatus.OK,
-            content=content,
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
-
-        parse_feed(podcast, client)
-
-        podcast.refresh_from_db()
-
-        assert podcast.parser_result == Podcast.ParserResult.DUPLICATE
-
-        assert podcast.active is False
-        assert podcast.parsed
-
-        mock_parse_rss.assert_not_called()
-
-    @pytest.mark.django_db
     def test_parse_complete(self, podcast, categories):
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"

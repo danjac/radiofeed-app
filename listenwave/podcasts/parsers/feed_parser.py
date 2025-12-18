@@ -4,7 +4,6 @@ import itertools
 from typing import Any
 
 from django.db import transaction
-from django.db.models import Q
 from django.db.utils import DatabaseError as DatabaseBackendError
 from django.utils import timezone
 
@@ -68,8 +67,8 @@ class _FeedParser:
             if response.content_hash == self.podcast.content_hash:
                 raise NotModifiedError
 
-            # Check for duplicate RSS feeds by URL and content hash before parsing the feed.
-            self._raise_for_duplicate(response.url, content_hash=response.content_hash)
+            # Check for duplicate RSS feeds by URL
+            self._raise_for_duplicate(response.url)
 
             # Generate the feed from the response content
             feed = rss_parser.parse_rss(response.content)
@@ -139,20 +138,10 @@ class _FeedParser:
         # On permanent errors, we deactivate the podcast
         return self._update_podcast(exc.result, active=False, **fields)
 
-    def _raise_for_duplicate(
-        self,
-        rss: str,
-        *,
-        content_hash: str | None = None,
-    ) -> None:
-        q = Q(rss=rss)
-
-        if content_hash:
-            q |= Q(content_hash=content_hash)
-
+    def _raise_for_duplicate(self, rss: str) -> None:
         if canonical_id := (
             Podcast.objects.exclude(pk=self.podcast.pk)
-            .filter(q, canonical__isnull=True)
+            .filter(rss=rss, canonical__isnull=True)
             .values_list("pk", flat=True)
             .first()
         ):
