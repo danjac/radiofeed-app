@@ -115,7 +115,7 @@ class _FeedParser:
                     self._parse_episodes(feed)
 
             except DatabaseError as exc:
-                raise DatabaseOperationError from exc
+                raise DatabaseOperationError(str(exc)) from exc
 
         except DuplicateError as exc:
             # Deactivate the podcast if it's a duplicate
