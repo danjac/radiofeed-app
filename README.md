@@ -5,7 +5,7 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 ## Development
 
-Listenwave requires the following basic dependencies to get started:
+This project requires the following basic dependencies to get started:
 
 * Python 3.14
 * [uv](https://docs.astral.sh)
@@ -37,8 +37,6 @@ Run `just` to see all available commands.
 **NOTE**: Default settings provided should be suitable for local development, but if you are not using the Docker images you may need to adjust database connection and other settings by creating a `.env` file in the project root.
 
 ## Stack
-
-The **Listenwave** stack includes:
 
 * [Django](https://djangoproject.com)
 * [HTMX](https://htmx.org)
