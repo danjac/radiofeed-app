@@ -10,8 +10,8 @@ from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
 from radiofeed.thread_pool import db_threadsafe, thread_pool_map
-from radiofeed.users.emails import get_recipients, send_notification_email
 from radiofeed.users.models import User
+from radiofeed.users.notifications import get_recipients, send_notification_email
 
 
 class Command(BaseCommand):

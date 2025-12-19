@@ -11,8 +11,8 @@ from radiofeed.episodes.tests.factories import AudioLogFactory, BookmarkFactory
 from radiofeed.podcasts.models import Subscription
 from radiofeed.podcasts.tests.factories import PodcastFactory, SubscriptionFactory
 from radiofeed.tests.asserts import assert200
-from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.models import User
+from radiofeed.users.notifications import get_unsubscribe_signer
 from radiofeed.users.tests.factories import EmailAddressFactory
 
 

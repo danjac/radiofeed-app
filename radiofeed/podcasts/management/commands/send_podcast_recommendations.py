@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand, CommandParser
 
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import db_threadsafe, thread_pool_map
-from radiofeed.users.emails import get_recipients, send_notification_email
+from radiofeed.users.notifications import get_recipients, send_notification_email
 
 
 class Command(BaseCommand):

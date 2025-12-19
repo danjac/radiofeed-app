@@ -23,12 +23,12 @@ from radiofeed.request import (
     is_authenticated_request,
 )
 from radiofeed.response import RenderOrRedirectResponse
-from radiofeed.users.emails import get_unsubscribe_signer
 from radiofeed.users.forms import (
     AccountDeletionConfirmationForm,
     OpmlUploadForm,
     UserPreferencesForm,
 )
+from radiofeed.users.notifications import get_unsubscribe_signer
 
 
 class UserStat(TypedDict):

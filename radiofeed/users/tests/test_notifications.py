@@ -1,6 +1,6 @@
 import pytest
 
-from radiofeed.users.emails import get_recipients
+from radiofeed.users.notifications import get_recipients
 from radiofeed.users.tests.factories import EmailAddressFactory
 
 
