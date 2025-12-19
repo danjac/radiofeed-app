@@ -388,14 +388,14 @@ wheels = [
 
 [[package]]
 name = "django-health-check"
-version = "3.20.3"
+version = "3.20.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/89/f3/d9ea586b741f7095d9906837d080a99e896995c12c77c5ac27d380d6c30f/django_health_check-3.20.3.tar.gz", hash = "sha256:b7cec5179b036fe29399302c27f07264753fb93def1ee5fca239b65e018a0919", size = 20956, upload-time = "2025-12-19T17:14:33.031Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cb/c1/febd7aedd583c3f90e5bab60f30a78b3d637dd85db33ff1d2ff583a8a601/django_health_check-3.20.4.tar.gz", hash = "sha256:aea57b41605fdc3297297ac2ed94da90cbe969678ae3a50dd9b1726e69594336", size = 20966, upload-time = "2025-12-19T21:20:39.188Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e3/e6/a420269aa98bf55f305b79034176c610337d14ad0a6bdfeaa2ad7fc6f6e0/django_health_check-3.20.3-py3-none-any.whl", hash = "sha256:04343786548c42657d4e4de6384a03ba7d6f1101caaea155c0ab7f90248bdde3", size = 32435, upload-time = "2025-12-19T17:14:31.787Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/98/b365f7294b0b9e927e278cde8eed6120654ca170fb76b97fe58d1012e9e4/django_health_check-3.20.4-py3-none-any.whl", hash = "sha256:8e6dc747357c59803241711912d6c913986cbf7d01a5952dcae89904f1dfcaf2", size = 32436, upload-time = "2025-12-19T21:20:38.122Z" },
 ]
 
 [[package]]
