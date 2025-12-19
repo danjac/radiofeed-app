@@ -1,10 +1,21 @@
+import dataclasses
+
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Case, Count, IntegerField, When
 
 from listenwave.http_client import get_client
 from listenwave.podcasts.models import Podcast
+from listenwave.podcasts.parsers.exceptions import FeedParserError
 from listenwave.podcasts.parsers.feed_parser import parse_feed
 from listenwave.thread_pool import db_threadsafe, thread_pool_map
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class Result:
+    """Result of parsing a podcast feed."""
+
+    podcast: Podcast
+    error: FeedParserError | None = None
 
 
 class Command(BaseCommand):
@@ -48,9 +59,15 @@ class Command(BaseCommand):
         with get_client() as client:
 
             @db_threadsafe
-            def _worker(podcast: Podcast) -> tuple[Podcast, Podcast.ParserResult]:
-                result = parse_feed(podcast, client)
-                return podcast, result
+            def _worker(podcast: Podcast) -> Result:
+                try:
+                    parse_feed(podcast, client)
+                    return Result(podcast=podcast)
+                except FeedParserError as exc:
+                    return Result(podcast=podcast, error=exc)
 
-            for podcast, result in thread_pool_map(_worker, podcasts):
-                self.stdout.write(f"Parsed feed for {podcast}: {result.label}")
+            for result in thread_pool_map(_worker, podcasts):
+                if result.error:
+                    self.stderr.write(f"{result.podcast}: {result.error}")
+                else:
+                    self.stdout.write(f"{result.podcast}: OK")

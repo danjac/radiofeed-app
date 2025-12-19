@@ -2,6 +2,7 @@ import pytest
 from django.core.management import call_command
 
 from listenwave.podcasts.itunes import Feed, ItunesError
+from listenwave.podcasts.parsers.exceptions import NotModifiedError
 from listenwave.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -12,23 +13,34 @@ from listenwave.users.tests.factories import EmailAddressFactory
 
 
 class TestParsePodcastFeeds:
+    parse_feed = (
+        "listenwave.podcasts.management.commands.parse_podcast_feeds.parse_feed"
+    )
+
     @pytest.fixture
     def mock_parse(self, mocker):
-        return mocker.patch(
-            "listenwave.podcasts.management.commands.parse_podcast_feeds.parse_feed"
-        )
+        return mocker.patch(self.parse_feed)
 
     @pytest.mark.django_db
-    def test_ok(self, mock_parse):
+    def test_ok(self, mocker):
+        mock_parse = mocker.patch(self.parse_feed)
         PodcastFactory(pub_date=None)
         call_command("parse_podcast_feeds")
         mock_parse.assert_called()
 
     @pytest.mark.django_db
-    def test_not_scheduled(self, mock_parse):
+    def test_not_scheduled(self, mocker):
+        mock_parse = mocker.patch(self.parse_feed)
         PodcastFactory(active=False)
         call_command("parse_podcast_feeds")
         mock_parse.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_error(self, mocker):
+        mock_parse = mocker.patch(self.parse_feed, side_effect=NotModifiedError())
+        PodcastFactory(pub_date=None)
+        call_command("parse_podcast_feeds")
+        mock_parse.assert_called()
 
 
 class TestFetchItunesFeeds:

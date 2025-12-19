@@ -8,7 +8,6 @@ from django.utils import timezone
 from listenwave.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
-    ParserResultFilter,
     PodcastAdmin,
     PodcastTypeFilter,
     PrivateFilter,
@@ -170,56 +169,6 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert inactive in qs
-
-
-class TestParserResultFilter:
-    @pytest.fixture
-    def duplicate(self):
-        return PodcastFactory(
-            parser_result=Podcast.ParserResult.DUPLICATE,
-            parsed=timezone.now(),
-        )
-
-    @pytest.mark.django_db
-    def test_all(self, podcasts, podcast_admin, req, duplicate):
-        f = ParserResultFilter(req, {}, Podcast, podcast_admin)
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 4
-
-    @pytest.mark.django_db
-    def test_duplicate(self, podcasts, podcast_admin, req, duplicate):
-        f = ParserResultFilter(
-            req,
-            {"parser_result": [Podcast.ParserResult.DUPLICATE]},
-            Podcast,
-            podcast_admin,
-        )
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-        assert duplicate in qs
-
-    @pytest.mark.django_db
-    def test_success(self, podcasts, podcast_admin, req, duplicate):
-        PodcastFactory(parser_result=Podcast.ParserResult.SUCCESS)
-        f = ParserResultFilter(
-            req,
-            {"parser_result": [Podcast.ParserResult.SUCCESS]},
-            Podcast,
-            podcast_admin,
-        )
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 1
-
-    @pytest.mark.django_db
-    def test_none(self, podcasts, podcast_admin, req, duplicate):
-        f = ParserResultFilter(
-            req,
-            {"parser_result": ["none"]},
-            Podcast,
-            podcast_admin,
-        )
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
 
 
 class TestPodcastTypeFilter:

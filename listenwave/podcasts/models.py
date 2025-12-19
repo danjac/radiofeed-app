@@ -1,4 +1,5 @@
 import dataclasses
+import http
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, ClassVar, Final, Self
 
@@ -158,16 +159,6 @@ class Podcast(models.Model):
     MIN_PARSER_FREQUENCY: Final = timedelta(hours=1)
     MAX_PARSER_FREQUENCY: Final = timedelta(days=3)
 
-    class ParserResult(models.TextChoices):
-        SUCCESS = "success", "Success"
-        NOT_MODIFIED = "not_modified", "Not Modified"
-        DUPLICATE = "duplicate", "Duplicate"
-        DISCONTINUED = "discontinued", "Discontinued"
-        INVALID_RSS = "invalid_rss", "Invalid RSS"
-        PERMANENT_NETWORK_ERROR = "permanent_network_error", "Permanent Network Error"
-        TEMPORARY_NETWORK_ERROR = "temporary_network_error", "Temporary Network Error"
-        DATABASE_ERROR = "database_error", "Database Error"
-
     class PodcastType(models.TextChoices):
         EPISODIC = "episodic", "Episodic"
         SERIAL = "serial", "Serial"
@@ -201,13 +192,15 @@ class Podcast(models.Model):
 
     parsed = models.DateTimeField(null=True, blank=True)
 
-    parser_result = models.CharField(
-        max_length=30,
-        choices=ParserResult.choices,
-        blank=True,
-    )
-
     frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
+
+    http_status = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        choices=[
+            (code.value, http.HTTPStatus(code).phrase) for code in http.HTTPStatus
+        ],
+    )
 
     modified = models.DateTimeField(
         null=True,

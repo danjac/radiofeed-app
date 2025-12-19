@@ -9,8 +9,17 @@ from django.utils.text import slugify
 from listenwave.episodes.models import Episode
 from listenwave.episodes.tests.factories import EpisodeFactory
 from listenwave.http_client import Client
-from listenwave.podcasts.models import Category, Podcast
+from listenwave.podcasts.models import Category
 from listenwave.podcasts.parsers.date_parser import parse_date
+from listenwave.podcasts.parsers.exceptions import (
+    DatabaseOperationError,
+    DiscontinuedError,
+    DuplicateError,
+    InvalidRSSError,
+    NotModifiedError,
+    PermanentNetworkError,
+    TransientNetworkError,
+)
 from listenwave.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
 from listenwave.podcasts.parsers.rss_fetcher import make_content_hash
 from listenwave.podcasts.tests.factories import PodcastFactory
@@ -105,9 +114,9 @@ class TestFeedParser:
 
         assert podcast.rss
         assert podcast.num_episodes == 20
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active is True
         assert podcast.content_hash
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -168,7 +177,7 @@ class TestFeedParser:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assigned_categories = [c.name for c in podcast.categories.all()]
+        assigned_categories = [c.name for c in list(podcast.categories.all())]
         for name in (
             "Medicine",
             "Science",
@@ -192,10 +201,11 @@ class TestFeedParser:
             },
         )
 
-        assert parse_feed(podcast, client) is Podcast.ParserResult.SUCCESS
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
     @pytest.mark.django_db
@@ -212,10 +222,11 @@ class TestFeedParser:
             },
         )
 
-        assert parse_feed(podcast, client) is Podcast.ParserResult.SUCCESS
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
     @pytest.mark.django_db
@@ -233,11 +244,12 @@ class TestFeedParser:
             },
         )
 
-        assert parse_feed(podcast, client) is Podcast.ParserResult.DUPLICATE
+        with pytest.raises(DuplicateError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.DUPLICATE
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.active is False
         assert podcast.canonical == other
 
@@ -263,9 +275,9 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active
         assert podcast.content_hash
+        assert podcast.http_status == http.HTTPStatus.OK
 
         assert podcast.is_serial()
 
@@ -291,9 +303,9 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.active
         assert podcast.content_hash
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.title == "Varsovia Vento Podkasto"
         assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
 
@@ -315,10 +327,10 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.num_episodes == 4940
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.title == "Armstrong & Getty On Demand"
 
     @pytest.mark.django_db
@@ -351,12 +363,12 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         # new episodes: 19
         assert podcast.num_episodes == 20
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -376,7 +388,7 @@ class TestFeedParser:
 
         assert podcast.pub_date == parse_date("Fri, 19 Jun 2020 16:58:03 +0000")
 
-        assigned_categories = [c.name for c in podcast.categories.all()]
+        assigned_categories = [c.name for c in list(podcast.categories.all())]
 
         assert "Science" in assigned_categories
         assert "Religion & Spirituality" in assigned_categories
@@ -401,16 +413,16 @@ class TestFeedParser:
             },
         )
 
-        parse_feed(podcast, client)
+        with pytest.raises(NotModifiedError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
-
-        assert podcast.parser_result == Podcast.ParserResult.NOT_MODIFIED
 
         assert podcast.active
         assert podcast.etag
         assert podcast.modified
         assert podcast.parsed
+        assert podcast.http_status == http.HTTPStatus.OK
 
         mock_parse_rss.assert_not_called()
 
@@ -440,9 +452,9 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.rss
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.num_episodes == 20
         assert podcast.active is False
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -485,9 +497,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.SUCCESS
-
         assert podcast.num_episodes == 20
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.rss == self.redirect_rss
         assert podcast.active
         assert podcast.modified
@@ -508,13 +519,15 @@ class TestFeedParser:
             },
         )
 
-        parse_feed(podcast, client)
+        with pytest.raises(DuplicateError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
         assert podcast.rss == current_rss
         assert not podcast.active
         assert podcast.parsed
+        assert podcast.http_status == http.HTTPStatus.OK
 
         assert podcast.canonical == other
 
@@ -525,14 +538,14 @@ class TestFeedParser:
             content=self.get_rss_content("rss_invalid_data.xml"),
         )
 
-        parse_feed(podcast, client)
+        with pytest.raises(DatabaseOperationError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.DATABASE_ERROR
-
         assert podcast.active is True
         assert podcast.parsed
+        assert podcast.http_status == http.HTTPStatus.OK
 
     @pytest.mark.django_db
     def test_parse_no_podcasts(self, podcast):
@@ -545,13 +558,13 @@ class TestFeedParser:
             },
         )
 
-        parse_feed(podcast, client)
+        with pytest.raises(InvalidRSSError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.INVALID_RSS
-
         assert podcast.active is False
+        assert podcast.http_status == http.HTTPStatus.OK
 
         assert podcast.parsed
 
@@ -562,13 +575,13 @@ class TestFeedParser:
             content=self.get_rss_content("rss_empty_mock.xml"),
         )
 
-        parse_feed(podcast, client)
+        with pytest.raises(InvalidRSSError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.INVALID_RSS
-
         assert podcast.active is False
+        assert podcast.http_status == http.HTTPStatus.OK
         assert podcast.parsed
 
     @pytest.mark.django_db
@@ -577,13 +590,13 @@ class TestFeedParser:
             status_code=http.HTTPStatus.NOT_MODIFIED,
         )
 
-        parse_feed(podcast, client)
+        with pytest.raises(NotModifiedError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.NOT_MODIFIED
-
         assert podcast.active
+        assert podcast.http_status == http.HTTPStatus.NOT_MODIFIED
         assert podcast.modified is None
         assert podcast.parsed
 
@@ -592,38 +605,54 @@ class TestFeedParser:
         client = _mock_client(
             status_code=http.HTTPStatus.GONE,
         )
-        parse_feed(podcast, client)
+        with pytest.raises(DiscontinuedError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.DISCONTINUED
-
         assert podcast.active is False
         assert podcast.parsed
+        assert podcast.http_status == http.HTTPStatus.GONE
 
     @pytest.mark.django_db
     def test_parse_http_server_error(self, podcast):
         client = _mock_client(
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
-        parse_feed(podcast, client)
+
+        with pytest.raises(TransientNetworkError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.TEMPORARY_NETWORK_ERROR
-
         assert podcast.active is True
         assert podcast.parsed
+        assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
+
+    @pytest.mark.django_db
+    def test_parse_http_not_found(self, podcast):
+        client = _mock_client(
+            status_code=http.HTTPStatus.NOT_FOUND,
+        )
+
+        with pytest.raises(PermanentNetworkError):
+            parse_feed(podcast, client)
+
+        podcast.refresh_from_db()
+
+        assert podcast.active is False
+        assert podcast.parsed
+        assert podcast.http_status == http.HTTPStatus.NOT_FOUND
 
     @pytest.mark.django_db
     def test_parse_connect_error(self, podcast):
         client = _mock_error_client(httpx.HTTPError("fail"))
 
-        parse_feed(podcast, client)
+        with pytest.raises(TransientNetworkError):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.parser_result == Podcast.ParserResult.TEMPORARY_NETWORK_ERROR
-
         assert podcast.active is True
         assert podcast.parsed
+        assert podcast.http_status is None

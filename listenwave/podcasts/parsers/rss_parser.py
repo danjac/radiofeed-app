@@ -100,7 +100,7 @@ class _RSSParser:
                 }
             )
         except ValidationError as exc:
-            raise InvalidRSSError from exc
+            raise InvalidRSSError(str(exc)) from exc
 
     def _parse_items(self, channel: OptionalXmlElement) -> Iterator[Item]:
         for item in self._parser.iterfind(channel, "item"):
