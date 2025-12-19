@@ -51,9 +51,9 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "listenwave.episodes",
-    "listenwave.podcasts",
-    "listenwave.users",
+    "radiofeed.episodes",
+    "radiofeed.podcasts",
+    "radiofeed.users",
 ]
 
 
@@ -73,11 +73,11 @@ MIDDLEWARE: list[str] = [
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "listenwave.middleware.HtmxCacheMiddleware",
-    "listenwave.middleware.HtmxMessagesMiddleware",
-    "listenwave.middleware.HtmxRedirectMiddleware",
-    "listenwave.middleware.SearchMiddleware",
-    "listenwave.episodes.middleware.PlayerMiddleware",
+    "radiofeed.middleware.HtmxCacheMiddleware",
+    "radiofeed.middleware.HtmxMessagesMiddleware",
+    "radiofeed.middleware.HtmxRedirectMiddleware",
+    "radiofeed.middleware.SearchMiddleware",
+    "radiofeed.episodes.middleware.PlayerMiddleware",
 ]
 
 # Databases
@@ -131,7 +131,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "listenwave.templatetags",
+                "radiofeed.templatetags",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
             "context_processors": [
@@ -143,8 +143,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "listenwave.context_processors.cache_timeout",
-                "listenwave.context_processors.csrf_header",
+                "radiofeed.context_processors.cache_timeout",
+                "radiofeed.context_processors.csrf_header",
             ],
         },
     }
@@ -416,7 +416,7 @@ LOGGING = {
             "handlers": ["console"],
             "level": "INFO",
         },
-        "listenwave": {
+        "radiofeed": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
@@ -559,7 +559,7 @@ META_TAGS = {
 
 PWA_CONFIG = {
     "assetlinks": {
-        "package_name": env("PWA_PACKAGE_NAME", default="app.listenwave.twa"),
+        "package_name": env("PWA_PACKAGE_NAME", default="app.radiofeed.twa"),
         "sha256_fingerprints": env.list("PWA_SHA256_FINGERPRINTS", default=[]),
     },
     "manifest": {

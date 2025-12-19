@@ -1,4 +1,4 @@
-This directory contains Ansible playbooks for deploying [Listenwave](https://github.com/danjac/listenwave) to a K3s cluster.
+This directory contains Ansible playbooks for deploying this project to a K3s cluster.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ For ease of use, a [justfile](https://github.com/casey/just) has been provided f
 
 You should have root SSH access to your servers.
 
-1. Ensure you have access to a Listenwave Docker image. The default image is `ghcr.io/danjac/listenwave`. If this image is not available, you will need to build and push it yourself to a container registry.
+1. Ensure you have access to a Listenwave Docker image. The default image is `ghcr.io/danjac/radiofeed`. If this image is not available, you will need to build and push it yourself to a container registry.
 
 2. Run `just apb site` in the project root directory to deploy to your servers.
 

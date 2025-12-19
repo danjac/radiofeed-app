@@ -48,15 +48,15 @@ The **Listenwave** stack includes:
 
 ## Deployment
 
-The following environment variables should be set in your production installation (changing _listenwave.app_ for your domain).
+The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
 
 ```
-ALLOWED_HOSTS=listenwave.app
+ALLOWED_HOSTS=radiofeed.app
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
-ADMINS=me@listenwave.app
-EMAIL_HOST=mg.listenwave.app
+ADMINS=me@radiofeed.app
+EMAIL_HOST=mg.radiofeed.app
 MAILGUN_API_KEY=<mailgun_api_key>
 SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>
