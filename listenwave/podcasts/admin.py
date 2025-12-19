@@ -75,28 +75,6 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
-class PodcastTypeFilter(admin.SimpleListFilter):
-    """Filters based on parser error."""
-
-    title = "Podcast type"
-    parameter_name = "podcast_type"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> list[tuple[str, StrOrPromise]]:
-        """Returns lookup values/labels."""
-        return Podcast.PodcastType.choices
-
-    def queryset(self, request: HttpRequest, queryset: QuerySet[Podcast]):
-        """Returns filtered queryset."""
-
-        match self.value():
-            case value if value in Podcast.PodcastType:  # type: ignore[attr-defined]
-                return queryset.filter(podcast_type=value)
-            case _:
-                return queryset
-
-
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
@@ -114,6 +92,31 @@ class PromotedFilter(admin.SimpleListFilter):
     ) -> QuerySet[Podcast]:
         """Returns filtered queryset."""
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
+
+
+class FeedStatusFilter(admin.SimpleListFilter):
+    """Filters podcasts based on feed status."""
+
+    title = "Feed Status"
+    parameter_name = "feed_status"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> list[tuple[str, StrOrPromise]]:
+        """Returns lookup values/labels."""
+        return [("none", "No Status"), *Podcast.FeedStatus.choices]
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        match self.value():
+            case value if value in Podcast.FeedStatus:  # type: ignore[attr-defined]
+                return queryset.filter(feed_status=value)
+            case "none":
+                return queryset.filter(feed_status="")
+            case _:
+                return queryset
 
 
 class PrivateFilter(admin.SimpleListFilter):
@@ -189,7 +192,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        PodcastTypeFilter,
+        FeedStatusFilter,
         PrivateFilter,
         PromotedFilter,
         ScheduledFilter,
@@ -218,6 +221,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "parsed",
         "frequency",
         "next_scheduled_update",
+        "feed_status",
         "http_status",
         "modified",
         "etag",

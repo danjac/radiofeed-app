@@ -8,8 +8,8 @@ from listenwave.http_client import Client
 from listenwave.podcasts.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
-    PermanentNetworkError,
-    TransientNetworkError,
+    PermanentHTTPError,
+    TemporaryHTTPError,
 )
 from listenwave.podcasts.parsers.rss_fetcher import (
     build_http_headers,
@@ -111,7 +111,7 @@ class TestFetchRss:
             return httpx.Response(http.HTTPStatus.NOT_FOUND, request=request)
 
         client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(PermanentNetworkError):
+        with pytest.raises(PermanentHTTPError):
             fetch_rss(client, "http://example.com")
 
     def test_server_error(self):
@@ -121,5 +121,5 @@ class TestFetchRss:
             )
 
         client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(TransientNetworkError):
+        with pytest.raises(TemporaryHTTPError):
             fetch_rss(client, "http://example.com")

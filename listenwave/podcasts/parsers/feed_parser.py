@@ -18,7 +18,7 @@ from listenwave.podcasts.parsers.exceptions import (
     FeedParserError,
     InvalidRSSError,
     NotModifiedError,
-    PermanentNetworkError,
+    PermanentHTTPError,
 )
 from listenwave.podcasts.parsers.models import Feed, Item
 
@@ -92,12 +92,19 @@ class _FeedParser:
             if canonical_rss != response.url:
                 self._raise_for_duplicate(canonical_rss)
 
+            # If the feed is marked as complete, deactivate the podcast
+            if feed.complete:
+                active, feed_status = False, Podcast.FeedStatus.DISCONTINUED
+            else:
+                active, feed_status = True, Podcast.FeedStatus.OK
+
             # All ok, update the podcast and episodes
             try:
                 with transaction.atomic():
                     self._update_podcast(
+                        active=active,
+                        feed_status=feed_status,
                         rss=canonical_rss,
-                        active=not feed.complete,
                         num_episodes=len(feed.items),
                         extracted_text=feed.tokenize(),
                         frequency=scheduler.schedule(feed),
@@ -119,23 +126,28 @@ class _FeedParser:
 
         except DuplicateError as exc:
             # Deactivate the podcast if it's a duplicate
-            self._update_podcast(canonical_id=exc.canonical_id, active=False, **fields)
+            self._update_podcast(
+                active=False,
+                feed_status=exc.status,
+                canonical_id=exc.canonical_id,
+                **fields,
+            )
             raise
         except (
             DiscontinuedError,
             InvalidRSSError,
-            PermanentNetworkError,
-        ):
+            PermanentHTTPError,
+        ) as exc:
             # These are permanent errors, so we deactivate the podcast
-            self._update_podcast(active=False, **fields)
+            self._update_podcast(active=False, feed_status=exc.status, **fields)
             raise
-        except FeedParserError:
+        except FeedParserError as exc:
             # These are transient errors, so we reschedule the next fetch time
             frequency = scheduler.reschedule(
                 self.podcast.pub_date,
                 self.podcast.frequency,
             )
-            self._update_podcast(frequency=frequency, **fields)
+            self._update_podcast(feed_status=exc.status, frequency=frequency, **fields)
             raise
 
     def _raise_for_duplicate(self, rss: str) -> None:

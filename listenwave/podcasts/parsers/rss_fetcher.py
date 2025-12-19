@@ -13,8 +13,8 @@ from listenwave.podcasts.parsers.date_parser import parse_date
 from listenwave.podcasts.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
-    PermanentNetworkError,
-    TransientNetworkError,
+    PermanentHTTPError,
+    TemporaryHTTPError,
 )
 
 _ACCEPT: Final = (
@@ -96,13 +96,13 @@ def fetch_rss(client: Client, url: str, **headers) -> Response:
                     | http.HTTPStatus.UNAUTHORIZED
                     | http.HTTPStatus.UNAVAILABLE_FOR_LEGAL_REASONS
                 ):
-                    cls = PermanentNetworkError
+                    cls = PermanentHTTPError
                 case _:
-                    cls = TransientNetworkError
+                    cls = TemporaryHTTPError
             message = http.HTTPStatus(exc.response.status_code).phrase
             raise cls(message, response=exc.response) from exc
     except httpx.HTTPError as exc:
-        raise TransientNetworkError(str(exc)) from exc
+        raise TemporaryHTTPError(str(exc)) from exc
 
 
 def build_http_headers(

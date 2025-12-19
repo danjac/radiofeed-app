@@ -1,8 +1,12 @@
 import httpx
 
+from listenwave.podcasts.models import Podcast
+
 
 class FeedParserError(Exception):
     """Base feed parser exception."""
+
+    status: Podcast.FeedStatus | None = None
 
     def __init__(self, *args, response: httpx.Response | None = None, **kwargs):
         self.response = response
@@ -12,6 +16,8 @@ class FeedParserError(Exception):
 class DuplicateError(FeedParserError):
     """Another identical podcast exists in the database."""
 
+    status = Podcast.FeedStatus.DUPLICATE
+
     def __init__(self, *args, canonical_id: int | None = None, **kwargs):
         self.canonical_id = canonical_id
         super().__init__(*args, **kwargs)
@@ -20,22 +26,34 @@ class DuplicateError(FeedParserError):
 class DatabaseOperationError(FeedParserError):
     """Error caused by failed database update."""
 
+    status = Podcast.FeedStatus.DATABASE_ERROR
+
 
 class NotModifiedError(FeedParserError):
     """RSS feed has not been modified since last update."""
 
-
-class TransientNetworkError(FeedParserError):
-    """Content is inaccessible due to temporary network issue, 500 error etc."""
+    status = Podcast.FeedStatus.NOT_MODIFIED
 
 
 class DiscontinuedError(FeedParserError):
     """Podcast has been discontinued and no longer available."""
 
+    status = Podcast.FeedStatus.DISCONTINUED
+
 
 class InvalidRSSError(FeedParserError):
     """Error parsing RSS content."""
 
+    status = Podcast.FeedStatus.INVALID_RSS
 
-class PermanentNetworkError(FeedParserError):
+
+class PermanentHTTPError(FeedParserError):
     """Content is inaccessible due to temporary network issue, 500 error etc."""
+
+    status = Podcast.FeedStatus.PERMANENT_HTTP_ERROR
+
+
+class TemporaryHTTPError(FeedParserError):
+    """Content is inaccessible due to temporary network issue, 500 error etc."""
+
+    status = Podcast.FeedStatus.TEMPORARY_HTTP_ERROR

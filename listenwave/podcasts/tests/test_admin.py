@@ -8,8 +8,8 @@ from django.utils import timezone
 from listenwave.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
+    FeedStatusFilter,
     PodcastAdmin,
-    PodcastTypeFilter,
     PrivateFilter,
     PromotedFilter,
     RecommendationAdmin,
@@ -171,40 +171,34 @@ class TestActiveFilter:
         assert inactive in qs
 
 
-class TestPodcastTypeFilter:
+class TestFeedStatusFilter:
     @pytest.fixture
-    def serial(self):
-        return PodcastFactory(podcast_type=Podcast.PodcastType.SERIAL)
+    def not_modified(self):
+        return PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
 
     @pytest.mark.django_db
-    def test_all(self, podcasts, podcast_admin, req, serial):
-        f = PodcastTypeFilter(req, {}, Podcast, podcast_admin)
+    def test_all(self, podcasts, podcast_admin, req, not_modified):
+        f = FeedStatusFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
-    def test_serial(self, podcasts, podcast_admin, req, serial):
-        f = PodcastTypeFilter(
+    def test_not_parsed(self, podcasts, podcast_admin, req, not_modified):
+        f = FeedStatusFilter(req, {"feed_status": ["none"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+
+    @pytest.mark.django_db
+    def test_not_modified(self, podcasts, podcast_admin, req, not_modified):
+        f = FeedStatusFilter(
             req,
-            {"podcast_type": [Podcast.PodcastType.SERIAL]},
+            {"feed_status": [Podcast.FeedStatus.NOT_MODIFIED]},
             Podcast,
             podcast_admin,
         )
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
-        assert serial in qs
-
-    @pytest.mark.django_db
-    def test_episodic(self, podcasts, podcast_admin, req, serial):
-        f = PodcastTypeFilter(
-            req,
-            {"podcast_type": [Podcast.PodcastType.EPISODIC]},
-            Podcast,
-            podcast_admin,
-        )
-        qs = f.queryset(req, Podcast.objects.all())
-        assert qs.count() == 3
-        assert serial not in qs
+        assert not_modified in qs
 
 
 class TestScheduledFilter:
