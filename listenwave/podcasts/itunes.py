@@ -162,7 +162,7 @@ def _fetch_feeds(
         )
         data = response.json()
     except (httpx.HTTPError, ValueError, json.JSONDecodeError) as exc:
-        raise ItunesError(f"Failed to fetch JSON data from iTunes: {url}") from exc
+        raise ItunesError(f"{url}: {exc}") from exc
 
     feeds: list[Feed] = []
     for result in data.get("results", []):
