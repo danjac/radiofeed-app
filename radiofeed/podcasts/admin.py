@@ -204,7 +204,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     search_fields = ("search",)
 
-    @admin.display(description="Estimated Next Update")
+    @admin.display(description="Next scheduled update")
     def next_scheduled_update(self, obj: Podcast) -> str:
         """Return estimated next update time."""
         if obj.active:
