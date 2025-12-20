@@ -158,17 +158,6 @@ class Podcast(models.Model):
     MIN_PARSER_FREQUENCY: Final = timedelta(hours=1)
     MAX_PARSER_FREQUENCY: Final = timedelta(days=3)
 
-    class FeedStatus(models.TextChoices):
-        OK = "ok", "OK"
-        NOT_MODIFIED = "not_modified", "Not Modified"
-
-        INVALID_RSS = "invalid_rss", "Invalid RSS"
-        DUPLICATE = "duplicate", "Duplicate"
-        DISCONTINUED = "discontinued", "Discontinued"
-
-        DATABASE_ERROR = "database_error", "Database Error"
-        NETWORK_ERROR = "network_error", "Network Error"
-
     class PodcastType(models.TextChoices):
         EPISODIC = "episodic", "Episodic"
         SERIAL = "serial", "Serial"
@@ -203,12 +192,6 @@ class Podcast(models.Model):
     parsed = models.DateTimeField(null=True, blank=True)
 
     frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
-
-    feed_status = models.CharField(
-        max_length=30,
-        blank=True,
-        choices=FeedStatus.choices,
-    )
 
     modified = models.DateTimeField(
         null=True,

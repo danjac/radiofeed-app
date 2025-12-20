@@ -94,31 +94,6 @@ class PromotedFilter(admin.SimpleListFilter):
         return queryset.filter(promoted=True) if self.value() == "yes" else queryset
 
 
-class FeedStatusFilter(admin.SimpleListFilter):
-    """Filters podcasts based on feed status."""
-
-    title = "Feed Status"
-    parameter_name = "feed_status"
-
-    def lookups(
-        self, request: HttpRequest, model_admin: admin.ModelAdmin
-    ) -> list[tuple[str, StrOrPromise]]:
-        """Returns lookup values/labels."""
-        return [("none", "No Status"), *Podcast.FeedStatus.choices]
-
-    def queryset(
-        self, request: HttpRequest, queryset: QuerySet[Podcast]
-    ) -> QuerySet[Podcast]:
-        """Returns filtered queryset."""
-        match self.value():
-            case value if value in Podcast.FeedStatus:  # type: ignore[attr-defined]
-                return queryset.filter(feed_status=value)
-            case "none":
-                return queryset.filter(feed_status="")
-            case _:
-                return queryset
-
-
 class PrivateFilter(admin.SimpleListFilter):
     """Filters podcasts private status."""
 
@@ -192,7 +167,6 @@ class PodcastAdmin(admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
-        FeedStatusFilter,
         PrivateFilter,
         PromotedFilter,
         ScheduledFilter,
@@ -221,7 +195,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "parsed",
         "frequency",
         "next_scheduled_update",
-        "feed_status",
         "modified",
         "etag",
         "content_hash",

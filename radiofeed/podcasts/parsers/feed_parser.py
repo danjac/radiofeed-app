@@ -80,16 +80,9 @@ class _FeedParser:
             if canonical_rss != response.url:
                 self._raise_for_duplicate(canonical_rss)
 
-            # If the feed is marked as complete, deactivate the podcast
-            if feed.complete:
-                active, feed_status = False, Podcast.FeedStatus.DISCONTINUED
-            else:
-                active, feed_status = True, Podcast.FeedStatus.OK
-
             with transaction.atomic():
                 self._update_podcast(
-                    active=active,
-                    feed_status=feed_status,
+                    active=not (feed.complete),
                     rss=canonical_rss,
                     num_episodes=len(feed.items),
                     extracted_text=feed.tokenize(),
@@ -109,24 +102,19 @@ class _FeedParser:
 
         except DuplicateError as exc:
             # Deactivate the podcast if it's a duplicate
-            self._update_podcast(
-                active=False,
-                feed_status=exc.status,
-                canonical_id=exc.canonical_id,
-                **fields,
-            )
+            self._update_podcast(active=False, canonical_id=exc.canonical_id, **fields)
             raise
-        except DiscontinuedError as exc:
+        except DiscontinuedError:
             # Deactivate the podcast if it's discontinued
-            self._update_podcast(active=False, feed_status=exc.status, **fields)
+            self._update_podcast(active=False, **fields)
             raise
-        except FeedParserError as exc:
+        except FeedParserError:
             # These are transient errors, so we reschedule the next fetch time
             frequency = scheduler.reschedule(
                 self.podcast.pub_date,
                 self.podcast.frequency,
             )
-            self._update_podcast(feed_status=exc.status, frequency=frequency, **fields)
+            self._update_podcast(frequency=frequency, **fields)
             raise
 
     def _raise_for_duplicate(self, rss: str) -> None:

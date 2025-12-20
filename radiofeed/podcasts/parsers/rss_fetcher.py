@@ -78,9 +78,7 @@ def fetch_rss(client: Client, url: str, **headers) -> Response:
         except httpx.HTTPStatusError as exc:
             match exc.response.status_code:
                 case http.HTTPStatus.NOT_MODIFIED:
-                    raise NotModifiedError(
-                        "Not Modified", response=exc.response
-                    ) from exc
+                    raise NotModifiedError("Not Modified") from exc
                 case http.HTTPStatus.GONE:
                     raise DiscontinuedError("Discontinued") from exc
                 case _:
