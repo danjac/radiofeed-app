@@ -12,9 +12,10 @@ from radiofeed.http_client import Client
 from radiofeed.podcasts.parsers.date_parser import parse_date
 from radiofeed.podcasts.parsers.exceptions import (
     DiscontinuedError,
+    NetworkError,
     NotModifiedError,
     PermanentHTTPError,
-    TemporaryHTTPError,
+    TransientHTTPError,
 )
 
 _ACCEPT: Final = (
@@ -98,11 +99,11 @@ def fetch_rss(client: Client, url: str, **headers) -> Response:
                 ):
                     cls = PermanentHTTPError
                 case _:
-                    cls = TemporaryHTTPError
+                    cls = TransientHTTPError
             message = http.HTTPStatus(exc.response.status_code).phrase
             raise cls(message, response=exc.response) from exc
     except httpx.HTTPError as exc:
-        raise TemporaryHTTPError(str(exc)) from exc
+        raise NetworkError(str(exc)) from exc
 
 
 def build_http_headers(

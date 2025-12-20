@@ -13,12 +13,11 @@ from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import rss_fetcher, rss_parser, scheduler
 from radiofeed.podcasts.parsers.exceptions import (
     DatabaseOperationError,
-    DiscontinuedError,
     DuplicateError,
     FeedParserError,
-    InvalidRSSError,
     NotModifiedError,
-    PermanentHTTPError,
+    PermanentFeedParserError,
+    TransientFeedParserError,
 )
 from radiofeed.podcasts.parsers.models import Feed, Item
 
@@ -59,8 +58,9 @@ class _FeedParser:
 
             except FeedParserError as exc:
                 # Capture HTTP status code if available
-                if exc.response:
-                    fields["http_status"] = exc.response.status_code
+                fields["http_status"] = (
+                    exc.response.status_code if exc.response else None
+                )
                 raise
 
             fields.update(
@@ -133,15 +133,11 @@ class _FeedParser:
                 **fields,
             )
             raise
-        except (
-            DiscontinuedError,
-            InvalidRSSError,
-            PermanentHTTPError,
-        ) as exc:
+        except PermanentFeedParserError as exc:
             # These are permanent errors, so we deactivate the podcast
             self._update_podcast(active=False, feed_status=exc.status, **fields)
             raise
-        except FeedParserError as exc:
+        except TransientFeedParserError as exc:
             # These are transient errors, so we reschedule the next fetch time
             frequency = scheduler.reschedule(
                 self.podcast.pub_date,

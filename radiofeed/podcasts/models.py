@@ -162,12 +162,16 @@ class Podcast(models.Model):
     class FeedStatus(models.TextChoices):
         OK = "ok", "OK"
         NOT_MODIFIED = "not_modified", "Not Modified"
+
         INVALID_RSS = "invalid_rss", "Invalid RSS"
         DUPLICATE = "duplicate", "Duplicate"
         DISCONTINUED = "discontinued", "Discontinued"
+
         DATABASE_ERROR = "database_error", "Database Error"
-        TEMPORARY_HTTP_ERROR = "temporary_http_error", "Temporary HTTP Error"
+
+        TRANSIENT_HTTP_ERROR = "transient_http_error", "Transient HTTP Error"
         PERMANENT_HTTP_ERROR = "permanent_http_error", "Permanent HTTP Error"
+        NETWORK_ERROR = "network_error", "Network Error"
 
     class PodcastType(models.TextChoices):
         EPISODIC = "episodic", "Episodic"

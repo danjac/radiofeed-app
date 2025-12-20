@@ -9,7 +9,7 @@ from radiofeed.podcasts.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     PermanentHTTPError,
-    TemporaryHTTPError,
+    TransientHTTPError,
 )
 from radiofeed.podcasts.parsers.rss_fetcher import (
     build_http_headers,
@@ -121,5 +121,5 @@ class TestFetchRss:
             )
 
         client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(TemporaryHTTPError):
+        with pytest.raises(TransientHTTPError):
             fetch_rss(client, "http://example.com")

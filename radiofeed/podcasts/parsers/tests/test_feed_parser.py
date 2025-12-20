@@ -16,9 +16,10 @@ from radiofeed.podcasts.parsers.exceptions import (
     DiscontinuedError,
     DuplicateError,
     InvalidRSSError,
+    NetworkError,
     NotModifiedError,
     PermanentHTTPError,
-    TemporaryHTTPError,
+    TransientHTTPError,
 )
 from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.parsers.rss_fetcher import make_content_hash
@@ -634,14 +635,14 @@ class TestFeedParser:
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
-        with pytest.raises(TemporaryHTTPError):
+        with pytest.raises(TransientHTTPError):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
         assert podcast.active is True
         assert podcast.parsed
-        assert podcast.feed_status == Podcast.FeedStatus.TEMPORARY_HTTP_ERROR
+        assert podcast.feed_status == Podcast.FeedStatus.TRANSIENT_HTTP_ERROR
         assert podcast.http_status == http.HTTPStatus.INTERNAL_SERVER_ERROR
 
     @pytest.mark.django_db
@@ -664,12 +665,12 @@ class TestFeedParser:
     def test_parse_connect_error(self, podcast):
         client = _mock_error_client(httpx.HTTPError("fail"))
 
-        with pytest.raises(TemporaryHTTPError):
+        with pytest.raises(NetworkError):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
         assert podcast.active is True
         assert podcast.parsed
-        assert podcast.feed_status == Podcast.FeedStatus.TEMPORARY_HTTP_ERROR
+        assert podcast.feed_status == Podcast.FeedStatus.NETWORK_ERROR
         assert podcast.http_status is None
