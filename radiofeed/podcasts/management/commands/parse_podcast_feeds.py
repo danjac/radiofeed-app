@@ -5,7 +5,6 @@ from django.db.models import Case, Count, IntegerField, When
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.exceptions import FeedParserError
 from radiofeed.podcasts.parsers.feed_parser import parse_feed
 from radiofeed.thread_pool import db_threadsafe, thread_pool_map
 
@@ -15,7 +14,7 @@ class Result:
     """Result of parsing a podcast feed."""
 
     podcast: Podcast
-    error: FeedParserError | None = None
+    error: Exception | None = None
 
 
 class Command(BaseCommand):
@@ -63,7 +62,7 @@ class Command(BaseCommand):
                 try:
                     parse_feed(podcast, client)
                     return Result(podcast=podcast)
-                except FeedParserError as exc:
+                except Exception as exc:
                     return Result(podcast=podcast, error=exc)
 
             for result in thread_pool_map(_worker, podcasts):

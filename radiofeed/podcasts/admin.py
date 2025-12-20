@@ -193,6 +193,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "pub_date",
         "num_episodes",
         "parsed",
+        "feed_last_updated",
         "frequency",
         "next_scheduled_update",
         "modified",

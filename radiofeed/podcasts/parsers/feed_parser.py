@@ -84,6 +84,7 @@ class _FeedParser:
                 self._update_podcast(
                     active=not (feed.complete),
                     rss=canonical_rss,
+                    feed_last_updated=now,
                     num_episodes=len(feed.items),
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),

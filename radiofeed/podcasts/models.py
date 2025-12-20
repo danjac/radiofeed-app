@@ -191,6 +191,8 @@ class Podcast(models.Model):
 
     parsed = models.DateTimeField(null=True, blank=True)
 
+    feed_last_updated = models.DateTimeField(null=True, blank=True)
+
     frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
 
     modified = models.DateTimeField(
