@@ -14,8 +14,6 @@ from radiofeed.podcasts.parsers.exceptions import (
     DiscontinuedError,
     NetworkError,
     NotModifiedError,
-    PermanentHTTPError,
-    TransientHTTPError,
 )
 
 _ACCEPT: Final = (
@@ -52,11 +50,6 @@ class Response:
         return str(self.response.url)
 
     @cached_property
-    def status_code(self) -> int:
-        """Returns the HTTP status code of the response."""
-        return self.response.status_code
-
-    @cached_property
     def etag(self) -> str:
         """Returns the ETag header if available, otherwise an empty string."""
         return self.headers.get("ETag", "")
@@ -84,24 +77,14 @@ def fetch_rss(client: Client, url: str, **headers) -> Response:
             )
         except httpx.HTTPStatusError as exc:
             match exc.response.status_code:
-                case http.HTTPStatus.GONE:
-                    cls = DiscontinuedError
                 case http.HTTPStatus.NOT_MODIFIED:
-                    cls = NotModifiedError
-                case (
-                    http.HTTPStatus.BAD_REQUEST
-                    | http.HTTPStatus.FORBIDDEN
-                    | http.HTTPStatus.METHOD_NOT_ALLOWED
-                    | http.HTTPStatus.NOT_ACCEPTABLE
-                    | http.HTTPStatus.NOT_FOUND
-                    | http.HTTPStatus.UNAUTHORIZED
-                    | http.HTTPStatus.UNAVAILABLE_FOR_LEGAL_REASONS
-                ):
-                    cls = PermanentHTTPError
+                    raise NotModifiedError(
+                        "Not Modified", response=exc.response
+                    ) from exc
+                case http.HTTPStatus.GONE:
+                    raise DiscontinuedError("Discontinued") from exc
                 case _:
-                    cls = TransientHTTPError
-            message = http.HTTPStatus(exc.response.status_code).phrase
-            raise cls(message, response=exc.response) from exc
+                    raise
     except httpx.HTTPError as exc:
         raise NetworkError(str(exc)) from exc
 

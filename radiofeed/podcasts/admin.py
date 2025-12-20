@@ -222,7 +222,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "frequency",
         "next_scheduled_update",
         "feed_status",
-        "http_status",
         "modified",
         "etag",
         "content_hash",

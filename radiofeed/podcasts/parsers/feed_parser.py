@@ -4,7 +4,6 @@ import itertools
 from typing import Any
 
 from django.db import transaction
-from django.db.utils import DatabaseError
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -12,12 +11,10 @@ from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import rss_fetcher, rss_parser, scheduler
 from radiofeed.podcasts.parsers.exceptions import (
-    DatabaseOperationError,
+    DiscontinuedError,
     DuplicateError,
     FeedParserError,
     NotModifiedError,
-    PermanentFeedParserError,
-    TransientFeedParserError,
 )
 from radiofeed.podcasts.parsers.models import Feed, Item
 
@@ -48,26 +45,17 @@ class _FeedParser:
         fields: dict[str, Any] = {"parsed": now, "updated": now}
 
         try:
-            try:
-                response = rss_fetcher.fetch_rss(
-                    client,
-                    self.podcast.rss,
-                    etag=self.podcast.etag,
-                    modified=self.podcast.modified,
-                )
-
-            except FeedParserError as exc:
-                # Capture HTTP status code if available
-                fields["http_status"] = (
-                    exc.response.status_code if exc.response else None
-                )
-                raise
+            response = rss_fetcher.fetch_rss(
+                client,
+                self.podcast.rss,
+                etag=self.podcast.etag,
+                modified=self.podcast.modified,
+            )
 
             fields.update(
                 {
                     "content_hash": response.content_hash,
                     "etag": response.etag,
-                    "http_status": response.status_code,
                     "modified": response.modified,
                 }
             )
@@ -98,31 +86,26 @@ class _FeedParser:
             else:
                 active, feed_status = True, Podcast.FeedStatus.OK
 
-            # All ok, update the podcast and episodes
-            try:
-                with transaction.atomic():
-                    self._update_podcast(
-                        active=active,
-                        feed_status=feed_status,
-                        rss=canonical_rss,
-                        num_episodes=len(feed.items),
-                        extracted_text=feed.tokenize(),
-                        frequency=scheduler.schedule(feed),
-                        **feed.model_dump(
-                            exclude={
-                                "canonical_url",
-                                "categories",
-                                "complete",
-                                "items",
-                            }
-                        ),
-                        **fields,
-                    )
-                    self._parse_categories(feed)
-                    self._parse_episodes(feed)
-
-            except DatabaseError as exc:
-                raise DatabaseOperationError(str(exc)) from exc
+            with transaction.atomic():
+                self._update_podcast(
+                    active=active,
+                    feed_status=feed_status,
+                    rss=canonical_rss,
+                    num_episodes=len(feed.items),
+                    extracted_text=feed.tokenize(),
+                    frequency=scheduler.schedule(feed),
+                    **feed.model_dump(
+                        exclude={
+                            "canonical_url",
+                            "categories",
+                            "complete",
+                            "items",
+                        }
+                    ),
+                    **fields,
+                )
+                self._parse_categories(feed)
+                self._parse_episodes(feed)
 
         except DuplicateError as exc:
             # Deactivate the podcast if it's a duplicate
@@ -133,11 +116,11 @@ class _FeedParser:
                 **fields,
             )
             raise
-        except PermanentFeedParserError as exc:
-            # These are permanent errors, so we deactivate the podcast
+        except DiscontinuedError as exc:
+            # Deactivate the podcast if it's discontinued
             self._update_podcast(active=False, feed_status=exc.status, **fields)
             raise
-        except TransientFeedParserError as exc:
+        except FeedParserError as exc:
             # These are transient errors, so we reschedule the next fetch time
             frequency = scheduler.reschedule(
                 self.podcast.pub_date,

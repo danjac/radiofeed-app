@@ -1,5 +1,4 @@
 import dataclasses
-import http
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, ClassVar, Final, Self
 
@@ -168,9 +167,6 @@ class Podcast(models.Model):
         DISCONTINUED = "discontinued", "Discontinued"
 
         DATABASE_ERROR = "database_error", "Database Error"
-
-        TRANSIENT_HTTP_ERROR = "transient_http_error", "Transient HTTP Error"
-        PERMANENT_HTTP_ERROR = "permanent_http_error", "Permanent HTTP Error"
         NETWORK_ERROR = "network_error", "Network Error"
 
     class PodcastType(models.TextChoices):
@@ -212,14 +208,6 @@ class Podcast(models.Model):
         max_length=30,
         blank=True,
         choices=FeedStatus.choices,
-    )
-
-    http_status = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
-        choices=[
-            (code.value, http.HTTPStatus(code).phrase) for code in http.HTTPStatus
-        ],
     )
 
     modified = models.DateTimeField(

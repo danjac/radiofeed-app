@@ -8,20 +8,8 @@ class FeedParserError(Exception):
 
     status: Podcast.FeedStatus | None = None
 
-    def __init__(self, *args, response: httpx.Response | None = None, **kwargs):
-        self.response = response
-        super().__init__(*args, **kwargs)
 
-
-class TransientFeedParserError(FeedParserError):
-    """Error which may be resolved by retrying later."""
-
-
-class PermanentFeedParserError(FeedParserError):
-    """Error which is unlikely to be resolved by retrying later."""
-
-
-class DuplicateError(PermanentFeedParserError):
+class DuplicateError(FeedParserError):
     """Another identical podcast exists in the database."""
 
     status = Podcast.FeedStatus.DUPLICATE
@@ -31,43 +19,35 @@ class DuplicateError(PermanentFeedParserError):
         super().__init__(*args, **kwargs)
 
 
-class DiscontinuedError(PermanentFeedParserError):
-    """Podcast has been marked discontinued and no longer available."""
-
-    status = Podcast.FeedStatus.DISCONTINUED
-
-
-class InvalidRSSError(PermanentFeedParserError):
-    """Error parsing RSS content."""
-
-    status = Podcast.FeedStatus.INVALID_RSS
-
-
-class PermanentHTTPError(PermanentFeedParserError):
-    """Content is inaccessible due to permanent HTTP issue e.g. not found"""
-
-    status = Podcast.FeedStatus.PERMANENT_HTTP_ERROR
-
-
-class TransientHTTPError(TransientFeedParserError):
-    """Content is inaccessible due to temporary HTTP issue e.g. server error"""
-
-    status = Podcast.FeedStatus.TRANSIENT_HTTP_ERROR
-
-
-class NetworkError(TransientFeedParserError):
-    """Content is inaccessible due to network issue."""
-
-    status = Podcast.FeedStatus.NETWORK_ERROR
-
-
-class DatabaseOperationError(TransientFeedParserError):
+class DatabaseError(FeedParserError):
     """Error caused by failed database update."""
 
     status = Podcast.FeedStatus.DATABASE_ERROR
 
 
-class NotModifiedError(TransientFeedParserError):
+class DiscontinuedError(FeedParserError):
+    """Podcast has been marked discontinued and no longer available."""
+
+    status = Podcast.FeedStatus.DISCONTINUED
+
+
+class InvalidRSSError(FeedParserError):
+    """Error parsing RSS content."""
+
+    status = Podcast.FeedStatus.INVALID_RSS
+
+
+class NetworkError(FeedParserError):
+    """Content is inaccessible due to permanent HTTP issue e.g. not found"""
+
+    status = Podcast.FeedStatus.NETWORK_ERROR
+
+
+class NotModifiedError(FeedParserError):
     """RSS feed has not been modified since last update."""
 
     status = Podcast.FeedStatus.NOT_MODIFIED
+
+    def __init__(self, *args, response: httpx.Response | None = None, **kwargs):
+        self.response = response
+        super().__init__(*args, **kwargs)
