@@ -11,15 +11,11 @@ from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category
 from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.exceptions import (
-    DiscontinuedError,
-    DuplicateError,
-    InvalidRSSError,
-    NetworkError,
-    NotModifiedError,
-)
 from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.parsers.rss_fetcher import make_content_hash
+from radiofeed.podcasts.parsers.rss_parser import (
+    InvalidRSSError,
+)
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
@@ -244,8 +240,7 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(DuplicateError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -412,14 +407,11 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(NotModifiedError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
         assert podcast.active
-        assert podcast.etag
-        assert podcast.modified
         assert podcast.feed_last_updated is None
         assert podcast.parsed
 
@@ -518,8 +510,7 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(DuplicateError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -566,6 +557,7 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
+        assert podcast.exception.startswith("InvalidRSSError:")
 
     @pytest.mark.django_db
     def test_parse_not_modified(self, podcast):
@@ -573,8 +565,7 @@ class TestFeedParser:
             status_code=http.HTTPStatus.NOT_MODIFIED,
         )
 
-        with pytest.raises(NotModifiedError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -588,8 +579,7 @@ class TestFeedParser:
         client = _mock_client(
             status_code=http.HTTPStatus.GONE,
         )
-        with pytest.raises(DiscontinuedError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
@@ -603,7 +593,7 @@ class TestFeedParser:
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
-        with pytest.raises(NetworkError):
+        with pytest.raises(httpx.HTTPError):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
@@ -611,6 +601,9 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
+        assert podcast.exception.startswith(
+            "HTTPStatusError: Server error '500 Internal Server Error'"
+        )
 
     @pytest.mark.django_db
     def test_parse_http_not_found(self, podcast):
@@ -618,7 +611,7 @@ class TestFeedParser:
             status_code=http.HTTPStatus.NOT_FOUND,
         )
 
-        with pytest.raises(NetworkError):
+        with pytest.raises(httpx.HTTPError):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
@@ -626,12 +619,15 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
+        assert podcast.exception.startswith(
+            "HTTPStatusError: Client error '404 Not Found'"
+        )
 
     @pytest.mark.django_db
     def test_parse_connect_error(self, podcast):
         client = _mock_error_client(httpx.HTTPError("fail"))
 
-        with pytest.raises(NetworkError):
+        with pytest.raises(httpx.HTTPError):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
@@ -639,3 +635,4 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
+        assert podcast.exception == "HTTPError: fail"

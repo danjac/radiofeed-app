@@ -2,7 +2,6 @@ import pytest
 from django.core.management import call_command
 
 from radiofeed.podcasts.itunes import Feed, ItunesError
-from radiofeed.podcasts.parsers.exceptions import NotModifiedError
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
@@ -35,7 +34,7 @@ class TestParsePodcastFeeds:
 
     @pytest.mark.django_db
     def test_error(self, mocker):
-        mock_parse = mocker.patch(self.parse_feed, side_effect=NotModifiedError())
+        mock_parse = mocker.patch(self.parse_feed, side_effect=ValueError("Test error"))
         PodcastFactory(pub_date=None)
         call_command("parse_podcast_feeds")
         mock_parse.assert_called()

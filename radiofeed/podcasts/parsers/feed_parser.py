@@ -1,4 +1,5 @@
 import dataclasses
+import datetime
 import functools
 import itertools
 from typing import Any
@@ -10,13 +11,8 @@ from radiofeed.episodes.models import Episode
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import rss_fetcher, rss_parser, scheduler
-from radiofeed.podcasts.parsers.exceptions import (
-    DiscontinuedError,
-    DuplicateError,
-    FeedParserError,
-    NotModifiedError,
-)
 from radiofeed.podcasts.parsers.models import Feed, Item
+from radiofeed.podcasts.parsers.rss_fetcher import DiscontinuedError, NotModifiedError
 
 
 def parse_feed(podcast: Podcast, client: Client) -> None:
@@ -30,6 +26,14 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="slug")
 
 
+class DuplicateError(Exception):
+    """Another identical podcast exists in the database."""
+
+    def __init__(self, *args, canonical_id: int | None = None, **kwargs):
+        self.canonical_id = canonical_id
+        super().__init__(*args, **kwargs)
+
+
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class _FeedParser:
     podcast: Podcast
@@ -37,20 +41,18 @@ class _FeedParser:
     def parse(self, client: Client) -> None:
         """Parse the podcast's RSS feed and update the Podcast instance.
         Additional fields passed will update the podcast.
-
-        Raises FeedParserError on error.
         """
 
         now = timezone.now()
-        fields: dict[str, Any] = {"parsed": now, "updated": now}
+
+        fields: dict[str, Any] = {
+            "parsed": now,
+            "updated": now,
+            "exception": "",
+        }
 
         try:
-            response = rss_fetcher.fetch_rss(
-                client,
-                self.podcast.rss,
-                etag=self.podcast.etag,
-                modified=self.podcast.modified,
-            )
+            response = rss_fetcher.fetch_rss(self.podcast, client)
 
             fields.update(
                 {
@@ -59,11 +61,6 @@ class _FeedParser:
                     "modified": response.modified,
                 }
             )
-
-            # Not all feeds use ETag or Last-Modified headers correctly,
-            # so we also check the content hash to see if the feed has changed.
-            if response.content_hash == self.podcast.content_hash:
-                raise NotModifiedError("Not Modified")
 
             # Check for duplicate RSS feeds by URL
             self._raise_for_duplicate(response.url)
@@ -100,22 +97,15 @@ class _FeedParser:
                 )
                 self._parse_categories(feed)
                 self._parse_episodes(feed)
-
-        except DuplicateError as exc:
-            # Deactivate the podcast if it's a duplicate
-            self._update_podcast(active=False, canonical_id=exc.canonical_id, **fields)
-            raise
         except DiscontinuedError:
-            # Deactivate the podcast if it's discontinued
             self._update_podcast(active=False, **fields)
-            raise
-        except FeedParserError:
-            # These are transient errors, so we reschedule the next fetch time
-            frequency = scheduler.reschedule(
-                self.podcast.pub_date,
-                self.podcast.frequency,
-            )
-            self._update_podcast(frequency=frequency, **fields)
+        except DuplicateError as exc:
+            self._update_podcast(active=False, canonical_id=exc.canonical_id, **fields)
+        except NotModifiedError:
+            self._update_podcast(frequency=self._reschedule(), **fields)
+        except Exception as exc:
+            fields["exception"] = f"{exc.__class__.__name__}: {exc}"
+            self._update_podcast(frequency=self._reschedule(), **fields)
             raise
 
     def _raise_for_duplicate(self, rss: str) -> None:
@@ -126,6 +116,12 @@ class _FeedParser:
             .first()
         ):
             raise DuplicateError("Duplicate", canonical_id=canonical_id)
+
+    def _reschedule(self) -> datetime.timedelta:
+        return scheduler.reschedule(
+            self.podcast.pub_date,
+            self.podcast.frequency,
+        )
 
     def _update_podcast(self, **fields) -> None:
         Podcast.objects.filter(pk=self.podcast.pk).update(**fields)

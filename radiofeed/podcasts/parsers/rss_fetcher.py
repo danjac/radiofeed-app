@@ -9,12 +9,8 @@ from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
 from radiofeed.http_client import Client
+from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.exceptions import (
-    DiscontinuedError,
-    NetworkError,
-    NotModifiedError,
-)
 
 _ACCEPT: Final = (
     "application/atom+xml,"
@@ -25,7 +21,13 @@ _ACCEPT: Final = (
     "text/xml;q=0.2,"
 )
 
-_WHITESPACE: Final = b" \t\r\n"
+
+class DiscontinuedError(Exception):
+    """Podcast has been marked discontinued and no longer available."""
+
+
+class NotModifiedError(Exception):
+    """RSS feed has not been modified since last update."""
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -65,26 +67,35 @@ class Response:
         return make_content_hash(self.content)
 
 
-def fetch_rss(client: Client, url: str, **headers) -> Response:
-    """Fetches RSS or Atom feed."""
+def fetch_rss(podcast: Podcast, client: Client) -> Response:
+    """Fetches RSS or Atom feed.
+
+    If the feed has not changed since the last fetch, raises NotModifiedError.
+    If the feed has been discontinued (HTTP 410), raises DiscontinuedError.
+    """
     try:
-        try:
-            return Response(
-                response=client.get(
-                    url,
-                    headers=build_http_headers(**headers),
-                )
+        response = Response(
+            response=client.get(
+                podcast.rss,
+                headers=build_http_headers(
+                    etag=podcast.etag,
+                    modified=podcast.modified,
+                ),
             )
-        except httpx.HTTPStatusError as exc:
-            match exc.response.status_code:
-                case http.HTTPStatus.NOT_MODIFIED:
-                    raise NotModifiedError("Not Modified") from exc
-                case http.HTTPStatus.GONE:
-                    raise DiscontinuedError("Discontinued") from exc
-                case _:
-                    raise
-    except httpx.HTTPError as exc:
-        raise NetworkError(str(exc)) from exc
+        )
+        # Not all feeds use ETag or Last-Modified headers correctly,
+        # so we also check the content hash to see if the feed has changed.
+        if response.content_hash == podcast.content_hash:
+            raise NotModifiedError("Content not modified")
+        return response
+    except httpx.HTTPStatusError as exc:
+        match exc.response.status_code:
+            case http.HTTPStatus.GONE:
+                raise DiscontinuedError("Discontinued") from exc
+            case http.HTTPStatus.NOT_MODIFIED:
+                raise NotModifiedError("Not Modified") from exc
+            case _:
+                raise
 
 
 def build_http_headers(
@@ -111,10 +122,12 @@ def make_content_hash(content: bytes) -> str:
     start = 0
     end = len(mv)
 
-    while start < end and mv[start] in _WHITESPACE:
+    whitespace = b" \t\r\n"
+
+    while start < end and mv[start] in whitespace:
         start += 1
 
-    while end > start and mv[end - 1] in _WHITESPACE:
+    while end > start and mv[end - 1] in whitespace:
         end -= 1
 
     if start == end:
