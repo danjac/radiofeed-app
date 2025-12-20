@@ -67,6 +67,8 @@ class Command(BaseCommand):
 
             for result in thread_pool_map(_worker, podcasts):
                 if result.error:
-                    self.stderr.write(f"{result.podcast}: {result.error}")
+                    self.stderr.write(
+                        f"Error parsing feed for {result.podcast}: {result.error}"
+                    )
                 else:
-                    self.stdout.write(f"{result.podcast}: OK")
+                    self.stdout.write(f"Parsed feed for {result.podcast}")
