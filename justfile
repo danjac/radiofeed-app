@@ -47,6 +47,11 @@ serve:
 test *args:
    uv run pytest {{ args }}
 
+# Run pytest-watcher
+[group('development')]
+tw:
+   uv run ptw .
+
 # Run type checks
 [group('development')]
 typecheck *args:
