@@ -98,12 +98,22 @@ class _FeedParser:
                 self._parse_categories(feed)
                 self._parse_episodes(feed)
         except DiscontinuedError:
+            # Podcast has been marked discontinued in feed or HTTP 410:
+            # - mark this podcast as inactive
             self._update_podcast(active=False, **fields)
         except DuplicateError as exc:
+            # Another podcast with the same RSS feed exists:
+            # - mark this podcast as inactive
             self._update_podcast(active=False, canonical_id=exc.canonical_id, **fields)
         except NotModifiedError:
+            # RSS feed has not changed since last update:
+            #  - reschedule the next fetch
             self._update_podcast(frequency=self._reschedule(), **fields)
         except Exception as exc:
+            # Any other exception:
+            #  - log the exception message in the podcast
+            #  - reschedule the next fetch
+            #  - re-raise the exception
             fields["exception"] = f"{exc.__class__.__name__}: {exc}"
             self._update_podcast(frequency=self._reschedule(), **fields)
             raise
@@ -115,13 +125,10 @@ class _FeedParser:
             .values_list("pk", flat=True)
             .first()
         ):
-            raise DuplicateError("Duplicate", canonical_id=canonical_id)
+            raise DuplicateError(canonical_id=canonical_id)
 
     def _reschedule(self) -> datetime.timedelta:
-        return scheduler.reschedule(
-            self.podcast.pub_date,
-            self.podcast.frequency,
-        )
+        return scheduler.reschedule(self.podcast.pub_date, self.podcast.frequency)
 
     def _update_podcast(self, **fields) -> None:
         Podcast.objects.filter(pk=self.podcast.pk).update(**fields)

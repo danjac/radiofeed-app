@@ -2,7 +2,6 @@ import dataclasses
 import hashlib
 import http
 from datetime import datetime
-from typing import Final
 
 import httpx
 from django.utils.functional import cached_property
@@ -11,15 +10,6 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-
-_ACCEPT: Final = (
-    "application/atom+xml,"
-    "application/rdf+xml,"
-    "application/rss+xml,"
-    "application/x-netcdf,"
-    "application/xml;q=0.9,"
-    "text/xml;q=0.2,"
-)
 
 
 class DiscontinuedError(Exception):
@@ -73,43 +63,7 @@ def fetch_rss(podcast: Podcast, client: Client) -> Response:
     If the feed has not changed since the last fetch, raises NotModifiedError.
     If the feed has been discontinued (HTTP 410), raises DiscontinuedError.
     """
-    try:
-        response = Response(
-            response=client.get(
-                podcast.rss,
-                headers=build_http_headers(
-                    etag=podcast.etag,
-                    modified=podcast.modified,
-                ),
-            )
-        )
-        # Not all feeds use ETag or Last-Modified headers correctly,
-        # so we also check the content hash to see if the feed has changed.
-        if response.content_hash == podcast.content_hash:
-            raise NotModifiedError("Content not modified")
-        return response
-    except httpx.HTTPStatusError as exc:
-        match exc.response.status_code:
-            case http.HTTPStatus.GONE:
-                raise DiscontinuedError("Discontinued") from exc
-            case http.HTTPStatus.NOT_MODIFIED:
-                raise NotModifiedError("Not Modified") from exc
-            case _:
-                raise
-
-
-def build_http_headers(
-    *,
-    etag: str = "",
-    modified: datetime | None = None,
-) -> dict[str, str]:
-    """Returns headers to send with the HTTP request."""
-    headers = {"Accept": _ACCEPT}
-    if etag:
-        headers["If-None-Match"] = quote_etag(etag)
-    if modified:
-        headers["If-Modified-Since"] = http_date(modified.timestamp())
-    return headers
+    return _RSSFetcher(podcast=podcast).fetch(client)
 
 
 def make_content_hash(content: bytes) -> str:
@@ -134,3 +88,48 @@ def make_content_hash(content: bytes) -> str:
         return ""
 
     return hashlib.sha256(mv[start:end]).hexdigest()
+
+
+@dataclasses.dataclass(kw_only=True)
+class _RSSFetcher:
+    podcast: Podcast
+
+    accept = (
+        "application/atom+xml,"
+        "application/rdf+xml,"
+        "application/rss+xml,"
+        "application/x-netcdf,"
+        "application/xml;q=0.9,"
+        "text/xml;q=0.2,"
+    )
+
+    def fetch(self, client: Client) -> Response:
+        try:
+            response = Response(
+                response=client.get(
+                    self.podcast.rss,
+                    headers=self._build_http_headers(),
+                )
+            )
+            # Not all feeds use ETag or Last-Modified headers correctly,
+            # so we also check the content hash to see if the feed has changed.
+            if response.content_hash == self.podcast.content_hash:
+                raise NotModifiedError
+            return response
+        except httpx.HTTPStatusError as exc:
+            match exc.response.status_code:
+                case http.HTTPStatus.GONE:
+                    raise DiscontinuedError from exc
+                case http.HTTPStatus.NOT_MODIFIED:
+                    raise NotModifiedError from exc
+                case _:
+                    raise
+
+    def _build_http_headers(self) -> dict[str, str]:
+        """Returns headers to send with the HTTP request."""
+        headers = {"Accept": self.accept}
+        if self.podcast.etag:
+            headers["If-None-Match"] = quote_etag(self.podcast.etag)
+        if self.podcast.modified:
+            headers["If-Modified-Since"] = http_date(self.podcast.modified.timestamp())
+        return headers

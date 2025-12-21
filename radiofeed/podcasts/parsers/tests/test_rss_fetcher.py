@@ -6,10 +6,10 @@ import pytest
 
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.parsers.date_parser import parse_date
 from radiofeed.podcasts.parsers.rss_fetcher import (
     DiscontinuedError,
     NotModifiedError,
-    build_http_headers,
     fetch_rss,
     make_content_hash,
 )
@@ -40,19 +40,6 @@ class TestMakeContentHash:
         content_a = b"this is a test"
         content_b = b"this is another test"
         assert make_content_hash(content_a) != make_content_hash(content_b)
-
-
-class TestBuildHttpHeaders:
-    def test_with_etag(self):
-        headers = build_http_headers(etag="123", modified=None)
-        assert headers["If-None-Match"] == '"123"'
-
-    def test_with_modified(self):
-        headers = build_http_headers(
-            etag="",
-            modified=datetime.datetime(2025, 1, 1),
-        )
-        assert headers["If-Modified-Since"] == "Wed, 01 Jan 2025 00:00:00 GMT"
 
 
 class TestFetchRss:
@@ -95,7 +82,14 @@ class TestFetchRss:
 
         client = Client(transport=httpx.MockTransport(_handle))
         with pytest.raises(NotModifiedError):
-            fetch_rss(Podcast(rss=self.url, etag="123"), client)
+            fetch_rss(
+                Podcast(
+                    rss=self.url,
+                    etag="123",
+                    modified=parse_date("Fri, 01 Jan 2025 00:00:00 GMT"),
+                ),
+                client,
+            )
 
     def test_content_not_modified(self):
         def _handle(request):
