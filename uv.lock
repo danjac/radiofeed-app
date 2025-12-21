@@ -388,14 +388,14 @@ wheels = [
 
 [[package]]
 name = "django-health-check"
-version = "3.20.6"
+version = "3.20.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3c/66/23439b270554a120a3340ac6b1c4259a0506994da3a25b683cf3bf2d58f3/django_health_check-3.20.6.tar.gz", hash = "sha256:67e71c93d067499cf57e466f7c12f96e40a76136bab3fab8a61912b9255b89f6", size = 15613, upload-time = "2025-12-20T20:18:51.655Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/35/61/75089cbb2ebcc930af3cdbf34c359e708117ce857b81abbea7500fbdfb4b/django_health_check-3.20.7.tar.gz", hash = "sha256:4ee43b96cd60f77aae1ba97841b403b02c625e74d50135a9d7164c777125e0f3", size = 15656, upload-time = "2025-12-21T17:44:31.496Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b2/18/6ccf98a7fce5426db253d97b37c303302927617397e1a649af2ede4778fb/django_health_check-3.20.6-py3-none-any.whl", hash = "sha256:d64b0cf13a36d7d20fb9945660a4292b73bc4ac04e3c9929e537c7207648faf0", size = 29521, upload-time = "2025-12-20T20:18:50.492Z" },
+    { url = "https://files.pythonhosted.org/packages/30/a8/13a581d1b0d8d9736bd8d9a10964105c34cec5ede8b4d9ccb3067a1eb158/django_health_check-3.20.7-py3-none-any.whl", hash = "sha256:21488972bf96dea9c12117206ad27a68ff9d418675c45d6688671a950e6aae1d", size = 29521, upload-time = "2025-12-21T17:44:30.378Z" },
 ]
 
 [[package]]
@@ -1215,14 +1215,14 @@ wheels = [
 
 [[package]]
 name = "pytest-watcher"
-version = "0.5.0"
+version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "watchdog" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/34/04/fe6edf960c6f993b88854168788dad5eb308b889797a09c7586e5676aa9e/pytest_watcher-0.5.0.tar.gz", hash = "sha256:9901cb857b3d2d6d941e6e5f5d43a0eb780fad1d39394a5d4d00c76219be1043", size = 9785, upload-time = "2025-12-20T22:21:45.72Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/71/83/9d6ffd35243b678d50de01ec38392d098d7c7f849890b9d18cd9c577a90d/pytest_watcher-0.6.0.tar.gz", hash = "sha256:d06c6633cc92ba177a7257a54a2ec9705e3116ef5ae7a2cba0eed708fa768c58", size = 598249, upload-time = "2025-12-21T19:20:09.453Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/df/37a375cdfa63afc6186bdb9edcea1b07cbb4f4f9bcba560586810a35a8e0/pytest_watcher-0.5.0-py3-none-any.whl", hash = "sha256:048c6dea2323ccec5f11a08d8535864fee18b20cc5d1b653f1bead42ffc80176", size = 11166, upload-time = "2025-12-20T22:21:44.64Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/c0/d242b8b5d8c32b001006a4d85088cb20ece494c61e56558d1fdc87429d5e/pytest_watcher-0.6.0-py3-none-any.whl", hash = "sha256:8da8ad71b72a2f333590012461d277d33e25ca8f1e33f509a345db410110d576", size = 11407, upload-time = "2025-12-21T19:20:10.754Z" },
 ]
 
 [[package]]
