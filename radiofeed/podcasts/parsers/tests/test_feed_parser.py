@@ -11,11 +11,9 @@ from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category
 from radiofeed.podcasts.parsers.date_parser import parse_date
+from radiofeed.podcasts.parsers.exceptions import InvalidRSSError
 from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.parsers.rss_fetcher import make_content_hash
-from radiofeed.podcasts.parsers.rss_parser import (
-    InvalidRSSError,
-)
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 

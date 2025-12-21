@@ -5,12 +5,9 @@ from typing import Final
 
 from pydantic import ValidationError
 
+from radiofeed.podcasts.parsers.exceptions import InvalidRSSError
 from radiofeed.podcasts.parsers.models import Feed, Item
 from radiofeed.podcasts.parsers.xpath_parser import OptionalXmlElement, XPathParser
-
-
-class InvalidRSSError(Exception):
-    """The RSS or Atom feed is invalid or unparseable."""
 
 
 def parse_rss(content: bytes) -> Feed:

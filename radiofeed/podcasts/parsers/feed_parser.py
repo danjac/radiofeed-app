@@ -11,8 +11,12 @@ from radiofeed.episodes.models import Episode
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers import rss_fetcher, rss_parser, scheduler
+from radiofeed.podcasts.parsers.exceptions import (
+    DiscontinuedError,
+    DuplicateError,
+    NotModifiedError,
+)
 from radiofeed.podcasts.parsers.models import Feed, Item
-from radiofeed.podcasts.parsers.rss_fetcher import DiscontinuedError, NotModifiedError
 
 
 def parse_feed(podcast: Podcast, client: Client) -> None:
@@ -26,14 +30,6 @@ def get_categories_dict() -> dict[str, Category]:
     return Category.objects.in_bulk(field_name="slug")
 
 
-class DuplicateError(Exception):
-    """Another identical podcast exists in the database."""
-
-    def __init__(self, *args, canonical_id: int | None = None, **kwargs):
-        self.canonical_id = canonical_id
-        super().__init__(*args, **kwargs)
-
-
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class _FeedParser:
     podcast: Podcast
@@ -45,6 +41,10 @@ class _FeedParser:
 
         now = timezone.now()
 
+        # Common fields to update:
+        # - parsed: timestamp of this parse attempt
+        # - updated: timestamp of last successful update
+        # - exception: clear last exception message
         fields: dict[str, Any] = {
             "parsed": now,
             "updated": now,
@@ -52,6 +52,7 @@ class _FeedParser:
         }
 
         try:
+            # Fetch the RSS feed
             response = rss_fetcher.fetch_rss(self.podcast, client)
 
             fields.update(
@@ -98,12 +99,13 @@ class _FeedParser:
                 self._parse_categories(feed)
                 self._parse_episodes(feed)
         except DiscontinuedError:
-            # Podcast has been marked discontinued in feed or HTTP 410:
+            # Podcast has been marked discontinued:
             # - mark this podcast as inactive
             self._update_podcast(active=False, **fields)
         except DuplicateError as exc:
             # Another podcast with the same RSS feed exists:
             # - mark this podcast as inactive
+            # - set the canonical podcast ID
             self._update_podcast(active=False, canonical_id=exc.canonical_id, **fields)
         except NotModifiedError:
             # RSS feed has not changed since last update:
@@ -153,7 +155,7 @@ class _FeedParser:
 
         # Update existing episodes
         #
-        # fast_update() requires unique primary keys, do dudupe first
+        # fast_update() requires unique primary keys, do dedupe first
         items_for_update = {
             guids[item.guid]: item for item in feed.items if item.guid in guids
         }

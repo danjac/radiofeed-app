@@ -10,14 +10,7 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-
-
-class DiscontinuedError(Exception):
-    """Podcast has been marked discontinued and no longer available."""
-
-
-class NotModifiedError(Exception):
-    """RSS feed has not been modified since last update."""
+from radiofeed.podcasts.parsers.exceptions import DiscontinuedError, NotModifiedError
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
