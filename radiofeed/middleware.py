@@ -51,17 +51,16 @@ class HtmxMessagesMiddleware(BaseMiddleware):
         """Middleware implementation"""
         response = self.get_response(request)
 
-        if not request.htmx:
-            return response
-
-        if set(response.headers) & self._hx_redirect_headers:
-            return response
-
         if response.streaming:
             return response
 
-        content_type = response.get("Content-Type", "")
-        if content_type and "html" not in content_type.lower():
+        if not request.htmx:
+            return response
+
+        if "text/html" not in response.get("Content-Type", ""):
+            return response
+
+        if set(response.headers) & self._hx_redirect_headers:
             return response
 
         if messages := get_messages(request):
