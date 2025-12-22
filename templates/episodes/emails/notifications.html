@@ -96,6 +96,9 @@
 
     <body style="margin:0; padding: 0;">
 
+        {% fragment "emails/preview.html" %}
+            Latest episodes from your favorite podcasts!
+        {% endfragment %}
         <div class="container">
             <h1 style="color: white;">Hi {{ recipient.username }}, greetings from Listenwave!</h1>
             <h2 style="color: white;">Here are some episodes you might have missed:</h2>
