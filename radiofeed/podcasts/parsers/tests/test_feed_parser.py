@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.http_client import Client
-from radiofeed.podcasts.models import Category
+from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
 from radiofeed.podcasts.parsers.exceptions import InvalidRSSError
 from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
@@ -104,6 +104,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
+
         assert podcast.rss
         assert podcast.num_episodes == 20
         assert podcast.active is True
@@ -197,6 +199,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
         assert podcast.feed_last_updated
 
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
@@ -219,6 +222,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
         assert podcast.feed_last_updated
@@ -242,6 +246,7 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.DUPLICATE
         assert podcast.active is False
         assert podcast.canonical == other
 
@@ -267,6 +272,8 @@ class TestFeedParser:
         assert podcast.episodes.count() == 10
 
         podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
 
         assert podcast.rss
         assert podcast.active
@@ -295,6 +302,8 @@ class TestFeedParser:
         assert podcast.episodes.count() == 373
 
         podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
 
         assert podcast.rss
         assert podcast.active
@@ -357,6 +366,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
+
         # new episodes: 19
         assert podcast.num_episodes == 20
         assert podcast.rss
@@ -409,6 +420,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.NOT_MODIFIED
+
         assert podcast.active
         assert podcast.feed_last_updated is None
         assert podcast.parsed
@@ -439,6 +452,8 @@ class TestFeedParser:
         assert episode.title != episode_title
 
         podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.DISCONTINUED
 
         assert podcast.rss
         assert podcast.num_episodes == 20
@@ -486,6 +501,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
+
         assert podcast.num_episodes == 20
         assert podcast.rss == self.redirect_rss
         assert podcast.active
@@ -512,6 +529,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.DUPLICATE
+
         assert podcast.rss == current_rss
         assert not podcast.active
         assert podcast.parsed
@@ -535,6 +554,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+
         assert podcast.active is True
 
         assert podcast.parsed
@@ -552,6 +573,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
@@ -567,6 +590,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.NOT_MODIFIED
+
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
@@ -580,6 +605,8 @@ class TestFeedParser:
         parse_feed(podcast, client)
 
         podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.DISCONTINUED
 
         assert podcast.active is False
         assert podcast.parsed
@@ -595,6 +622,8 @@ class TestFeedParser:
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.ERROR
 
         assert podcast.active is True
         assert podcast.parsed
@@ -614,6 +643,8 @@ class TestFeedParser:
 
         podcast.refresh_from_db()
 
+        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
@@ -629,6 +660,8 @@ class TestFeedParser:
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.ERROR
 
         assert podcast.active is True
         assert podcast.parsed

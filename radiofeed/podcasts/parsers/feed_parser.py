@@ -78,9 +78,23 @@ class _FeedParser:
             if canonical_rss != response.url:
                 self._raise_for_duplicate(canonical_rss)
 
+            # If feed is marked complete, set podcast as inactive. However
+            # we still want to update the feed data for the last time.
+            if feed.complete:
+                active, feed_status = False, Podcast.FeedStatus.DISCONTINUED
+            else:
+                active, feed_status = True, Podcast.FeedStatus.SUCCESS
+
+            # Successful update:
+            # - update podcast fields from the feed
+            # - update categories
+            # - update episodes
+            # - set feed_last_updated to now
+
             with transaction.atomic():
                 self._update_podcast(
-                    active=not (feed.complete),
+                    active=active,
+                    feed_status=feed_status,
                     rss=canonical_rss,
                     feed_last_updated=now,
                     num_episodes=len(feed.items),
@@ -101,23 +115,39 @@ class _FeedParser:
         except DiscontinuedError:
             # Podcast has been marked discontinued:
             # - mark this podcast as inactive
-            self._update_podcast(active=False, **fields)
+            self._update_podcast(
+                active=False,
+                feed_status=Podcast.FeedStatus.DISCONTINUED,
+                **fields,
+            )
         except DuplicateError as exc:
             # Another podcast with the same RSS feed exists:
             # - mark this podcast as inactive
             # - set the canonical podcast ID
-            self._update_podcast(active=False, canonical_id=exc.canonical_id, **fields)
+            self._update_podcast(
+                active=False,
+                feed_status=Podcast.FeedStatus.DUPLICATE,
+                canonical_id=exc.canonical_id,
+                **fields,
+            )
         except NotModifiedError:
             # RSS feed has not changed since last update:
             #  - reschedule the next fetch
-            self._update_podcast(frequency=self._reschedule(), **fields)
+            self._update_podcast(
+                feed_status=Podcast.FeedStatus.NOT_MODIFIED,
+                frequency=self._reschedule(),
+                **fields,
+            )
         except Exception as exc:
             # Any other exception:
             #  - log the exception message in the podcast
             #  - reschedule the next fetch
             #  - re-raise the exception
-            fields["exception"] = f"{exc.__class__.__name__}: {exc}"
-            self._update_podcast(frequency=self._reschedule(), **fields)
+            self._update_podcast(
+                feed_status=Podcast.FeedStatus.ERROR,
+                frequency=self._reschedule(),
+                **fields | {"exception": f"{exc.__class__.__name__}: {exc}"},
+            )
             raise
 
     def _raise_for_duplicate(self, rss: str) -> None:

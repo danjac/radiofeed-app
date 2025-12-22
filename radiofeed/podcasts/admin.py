@@ -75,6 +75,31 @@ class ActiveFilter(admin.SimpleListFilter):
                 return queryset
 
 
+class FeedStatusFilter(admin.SimpleListFilter):
+    """Filters podcasts by feed status."""
+
+    title = "Feed Status"
+    parameter_name = "feed_status"
+
+    def lookups(
+        self, request: HttpRequest, model_admin: admin.ModelAdmin
+    ) -> list[tuple[str, str | StrOrPromise]]:
+        """Returns lookup values/labels."""
+        return [("no_status", "No Status"), *Podcast.FeedStatus.choices]
+
+    def queryset(
+        self, request: HttpRequest, queryset: QuerySet[Podcast]
+    ) -> QuerySet[Podcast]:
+        """Returns filtered queryset."""
+        match self.value():
+            case "no_status":
+                return queryset.filter(feed_status="")
+            case value if value in Podcast.FeedStatus:
+                return queryset.filter(feed_status=value)
+            case _:
+                return queryset
+
+
 class PromotedFilter(admin.SimpleListFilter):
     """Filters podcasts promoted status."""
 
@@ -167,6 +192,7 @@ class PodcastAdmin(admin.ModelAdmin):
 
     list_filter = (
         ActiveFilter,
+        FeedStatusFilter,
         PrivateFilter,
         PromotedFilter,
         ScheduledFilter,
@@ -192,8 +218,9 @@ class PodcastAdmin(admin.ModelAdmin):
         "updated",
         "pub_date",
         "num_episodes",
-        "parsed",
+        "feed_status",
         "feed_last_updated",
+        "parsed",
         "frequency",
         "next_scheduled_update",
         "modified",

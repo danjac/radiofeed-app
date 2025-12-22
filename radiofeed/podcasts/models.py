@@ -162,6 +162,15 @@ class Podcast(models.Model):
         EPISODIC = "episodic", "Episodic"
         SERIAL = "serial", "Serial"
 
+    class FeedStatus(models.TextChoices):
+        """Result of the last feed parse."""
+
+        SUCCESS = "success", "Success"
+        NOT_MODIFIED = "not_modified", "Not Modified"
+        DISCONTINUED = "discontinued", "Discontinued"
+        DUPLICATE = "duplicate", "Duplicate"
+        ERROR = "error", "Error"
+
     rss = URLField(unique=True)
 
     active = models.BooleanField(
@@ -192,6 +201,12 @@ class Podcast(models.Model):
     parsed = models.DateTimeField(null=True, blank=True)
 
     feed_last_updated = models.DateTimeField(null=True, blank=True)
+
+    feed_status = models.CharField(
+        max_length=20,
+        choices=FeedStatus.choices,
+        blank=True,
+    )
 
     frequency = models.DurationField(default=DEFAULT_PARSER_FREQUENCY)
 

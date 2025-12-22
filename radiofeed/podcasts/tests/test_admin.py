@@ -8,6 +8,7 @@ from django.utils import timezone
 from radiofeed.podcasts.admin import (
     ActiveFilter,
     CategoryAdmin,
+    FeedStatusFilter,
     PodcastAdmin,
     PrivateFilter,
     PromotedFilter,
@@ -168,6 +169,38 @@ class TestActiveFilter:
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 1
         assert inactive in qs
+
+
+class TestFeedStatusFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(feed_status=Podcast.FeedStatus.ERROR)
+        f = FeedStatusFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_no_status(self, podcasts, podcast_admin, req):
+        specific = PodcastFactory(feed_status=Podcast.FeedStatus.ERROR)
+        f = FeedStatusFilter(
+            req, {"feed_status": ["no_status"]}, Podcast, podcast_admin
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert specific not in qs
+
+    @pytest.mark.django_db
+    def test_specific_status(self, podcasts, podcast_admin, req):
+        specific = PodcastFactory(feed_status=Podcast.FeedStatus.ERROR)
+        f = FeedStatusFilter(
+            req,
+            {"feed_status": [Podcast.FeedStatus.ERROR]},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == specific
 
 
 class TestScheduledFilter:
