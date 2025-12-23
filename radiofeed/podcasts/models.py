@@ -158,6 +158,8 @@ class Podcast(models.Model):
     MIN_PARSER_FREQUENCY: Final = timedelta(hours=1)
     MAX_PARSER_FREQUENCY: Final = timedelta(days=3)
 
+    MAX_RETRIES: Final = 12
+
     class PodcastType(models.TextChoices):
         EPISODIC = "episodic", "Episodic"
         SERIAL = "serial", "Serial"
@@ -169,6 +171,8 @@ class Podcast(models.Model):
         NOT_MODIFIED = "not_modified", "Not Modified"
         DISCONTINUED = "discontinued", "Discontinued"
         DUPLICATE = "duplicate", "Duplicate"
+        INVALID_RSS = "invalid_rss", "Invalid RSS"
+        UNAVAILABLE = "unavailable", "Unavailable"
         ERROR = "error", "Error"
 
     rss = URLField(unique=True)
@@ -218,6 +222,8 @@ class Podcast(models.Model):
     content_hash = models.CharField(max_length=64, blank=True)
 
     exception = models.TextField(blank=True)
+
+    num_retries = models.PositiveIntegerField(default=0)
 
     cover_url = URLField(blank=True)
 

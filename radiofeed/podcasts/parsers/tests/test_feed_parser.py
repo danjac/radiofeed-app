@@ -11,7 +11,6 @@ from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.exceptions import InvalidRSSError
 from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.parsers.rss_fetcher import make_content_hash
 from radiofeed.podcasts.tests.factories import PodcastFactory
@@ -549,17 +548,41 @@ class TestFeedParser:
             },
         )
 
-        with pytest.raises(InvalidRSSError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+        assert podcast.feed_status == Podcast.FeedStatus.INVALID_RSS
 
         assert podcast.active is True
-
+        assert podcast.num_retries == 1
         assert podcast.parsed
         assert podcast.feed_last_updated is None
+        assert podcast.exception
+
+    @pytest.mark.django_db
+    def test_parse_no_podcasts_exceed_max_retries(self):
+        podcast = PodcastFactory(num_retries=Podcast.MAX_RETRIES + 1)
+        client = _mock_client(
+            status_code=http.HTTPStatus.OK,
+            content=self.get_rss_content("rss_no_podcasts_mock.xml"),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
+        )
+
+        parse_feed(podcast, client)
+
+        podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.INVALID_RSS
+
+        assert podcast.active is False
+        assert podcast.num_retries == Podcast.MAX_RETRIES + 2
+        assert podcast.parsed
+        assert podcast.feed_last_updated is None
+        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_empty_feed(self, podcast):
@@ -568,17 +591,17 @@ class TestFeedParser:
             content=self.get_rss_content("rss_empty_mock.xml"),
         )
 
-        with pytest.raises(InvalidRSSError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+        assert podcast.feed_status == Podcast.FeedStatus.INVALID_RSS
 
         assert podcast.active is True
+        assert podcast.num_retries == 1
         assert podcast.parsed
         assert podcast.feed_last_updated is None
-        assert podcast.exception.startswith("InvalidRSSError:")
+        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_not_modified(self, podcast):
@@ -618,19 +641,17 @@ class TestFeedParser:
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
         )
 
-        with pytest.raises(httpx.HTTPError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+        assert podcast.feed_status == Podcast.FeedStatus.UNAVAILABLE
 
         assert podcast.active is True
+        assert podcast.num_retries == 1
         assert podcast.parsed
         assert podcast.feed_last_updated is None
-        assert podcast.exception.startswith(
-            "HTTPStatusError: Server error '500 Internal Server Error'"
-        )
+        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_http_not_found(self, podcast):
@@ -638,25 +659,58 @@ class TestFeedParser:
             status_code=http.HTTPStatus.NOT_FOUND,
         )
 
-        with pytest.raises(httpx.HTTPError):
-            parse_feed(podcast, client)
+        parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.feed_status == Podcast.FeedStatus.ERROR
+        assert podcast.feed_status == Podcast.FeedStatus.UNAVAILABLE
 
         assert podcast.active is True
+        assert podcast.num_retries == 1
         assert podcast.parsed
         assert podcast.feed_last_updated is None
-        assert podcast.exception.startswith(
-            "HTTPStatusError: Client error '404 Not Found'"
+        assert podcast.exception
+
+    @pytest.mark.django_db
+    def test_parse_http_not_found_exceed_num_retries(self):
+        podcast = PodcastFactory(num_retries=Podcast.MAX_RETRIES + 1)
+
+        client = _mock_client(
+            status_code=http.HTTPStatus.NOT_FOUND,
         )
+
+        parse_feed(podcast, client)
+
+        podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.UNAVAILABLE
+
+        assert podcast.active is False
+        assert podcast.num_retries == Podcast.MAX_RETRIES + 2
+        assert podcast.parsed
+        assert podcast.feed_last_updated is None
+        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_connect_error(self, podcast):
         client = _mock_error_client(httpx.HTTPError("fail"))
 
-        with pytest.raises(httpx.HTTPError):
+        parse_feed(podcast, client)
+
+        podcast.refresh_from_db()
+
+        assert podcast.feed_status == Podcast.FeedStatus.UNAVAILABLE
+
+        assert podcast.active is True
+        assert podcast.parsed
+        assert podcast.feed_last_updated is None
+        assert podcast.exception
+
+    @pytest.mark.django_db
+    def test_other_error(self, podcast):
+        client = _mock_error_client(ValueError("fail"))
+
+        with pytest.raises(ValueError, match="fail"):
             parse_feed(podcast, client)
 
         podcast.refresh_from_db()
@@ -666,4 +720,4 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.parsed
         assert podcast.feed_last_updated is None
-        assert podcast.exception == "HTTPError: fail"
+        assert "ValueError: fail" in podcast.exception

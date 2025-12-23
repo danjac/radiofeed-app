@@ -259,6 +259,7 @@ class PodcastAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "active",
+                    "num_retries",
                     "feed_status",
                     "feed_last_updated",
                     "parsed",

@@ -10,7 +10,11 @@ from django.utils.http import http_date, quote_etag
 from radiofeed.http_client import Client
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.exceptions import DiscontinuedError, NotModifiedError
+from radiofeed.podcasts.parsers.exceptions import (
+    DiscontinuedError,
+    NotModifiedError,
+    UnavailableError,
+)
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -55,6 +59,7 @@ def fetch_rss(podcast: Podcast, client: Client) -> Response:
 
     If the feed has not changed since the last fetch, raises NotModifiedError.
     If the feed has been discontinued (HTTP 410), raises DiscontinuedError.
+    Any other HTTP or network errors raise UnavailableError.
     """
     return _RSSFetcher(podcast=podcast).fetch(client)
 
@@ -98,25 +103,28 @@ class _RSSFetcher:
 
     def fetch(self, client: Client) -> Response:
         try:
-            response = Response(
-                response=client.get(
-                    self.podcast.rss,
-                    headers=self._build_http_headers(),
+            try:
+                response = Response(
+                    response=client.get(
+                        self.podcast.rss,
+                        headers=self._build_http_headers(),
+                    )
                 )
-            )
-            # Not all feeds use ETag or Last-Modified headers correctly,
-            # so we also check the content hash to see if the feed has changed.
-            if response.content_hash == self.podcast.content_hash:
-                raise NotModifiedError
-            return response
-        except httpx.HTTPStatusError as exc:
-            match exc.response.status_code:
-                case http.HTTPStatus.GONE:
-                    raise DiscontinuedError from exc
-                case http.HTTPStatus.NOT_MODIFIED:
-                    raise NotModifiedError from exc
-                case _:
-                    raise
+                # Not all feeds use ETag or Last-Modified headers correctly,
+                # so we also check the content hash to see if the feed has changed.
+                if response.content_hash == self.podcast.content_hash:
+                    raise NotModifiedError
+                return response
+            except httpx.HTTPStatusError as exc:
+                match exc.response.status_code:
+                    case http.HTTPStatus.GONE:
+                        raise DiscontinuedError from exc
+                    case http.HTTPStatus.NOT_MODIFIED:
+                        raise NotModifiedError from exc
+                    case _:
+                        raise
+        except httpx.HTTPError as exc:
+            raise UnavailableError(str(exc)) from exc
 
     def _build_http_headers(self) -> dict[str, str]:
         """Returns headers to send with the HTTP request."""

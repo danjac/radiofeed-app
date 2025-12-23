@@ -10,6 +10,7 @@ from radiofeed.podcasts.parsers.date_parser import parse_date
 from radiofeed.podcasts.parsers.rss_fetcher import (
     DiscontinuedError,
     NotModifiedError,
+    UnavailableError,
     fetch_rss,
     make_content_hash,
 )
@@ -123,7 +124,7 @@ class TestFetchRss:
             return httpx.Response(http.HTTPStatus.NOT_FOUND, request=request)
 
         client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(httpx.HTTPError):
+        with pytest.raises(UnavailableError):
             fetch_rss(Podcast(rss=self.url), client)
 
     def test_server_error(self):
@@ -133,5 +134,5 @@ class TestFetchRss:
             )
 
         client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(httpx.HTTPError):
+        with pytest.raises(UnavailableError):
             fetch_rss(Podcast(rss=self.url), client)
