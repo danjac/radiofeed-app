@@ -2,7 +2,7 @@ class FeedParseError(Exception):
     """Error parsing the podcast feed."""
 
 
-class DuplicateError(Exception):
+class DuplicateError(FeedParseError):
     """Another identical podcast exists in the database."""
 
     def __init__(self, *args, canonical_id: int | None = None, **kwargs):
@@ -18,5 +18,5 @@ class NotModifiedError(FeedParseError):
     """RSS feed has not been modified since last update."""
 
 
-class InvalidRSSError(Exception):
+class InvalidRSSError(FeedParseError):
     """The RSS or Atom feed is invalid or unparseable."""
