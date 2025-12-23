@@ -1,126 +1,76 @@
-<!DOCTYPE html>
-<html lang="en-us">
+{% extends "emails/base.html" %}
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Podcast Recommendations for {{ site.name }}</title>
-        <style>
-            .container {
-                font-family: Helvetica, Arial, sans-serif !important;
-                background-color: #311B92 !important;
-                color: white !important;
-                max-width: 600px;
-                margin: 20px auto;
-                padding: 20px;
-                border-radius: 8px;
-            }
+{% block title %}
+    Podcast Recommendations for {{ site.name }}
+{% endblock title %}
 
-            .container h1,
-            .container h2 {
-                text-align: center;
-            }
+{% block style %}
+    {{ block.super }}
+    .podcast {
+    background-color: #512DA8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    }
 
-            .podcast {
-                background-color: #512DA8;
-                padding: 15px;
-                border-radius: 8px;
-                margin-bottom: 20px;
-            }
+    .podcast h3 {
+    margin: 0 0 20px;
+    text-align: center;
+    }
 
-            .podcast h3 {
-                margin: 0 0 20px;
-                text-align: center;
-            }
+    .podcast img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    flex-shrink: 0;
+    }
 
-            .podcast img {
-                display: block;
-                margin: 0 auto;
-                border-radius: 8px;
-                flex-shrink: 0;
-            }
+    .podcast-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    }
 
-            .podcast-content {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-            }
+    @media only screen and (max-width:479px) {
+    .podcast-content {
+    display: block;
+    text-align: center;
+    }
 
-            .description {
-                margin-top: 5px;
-                word-wrap: break-word;
-            /* Break long words */
-                overflow-wrap: break-word;
-            /* Ensures long URLs wrap */
-                max-width: 100%;
-            /* Prevents overflow */
-            }
+    .podcast img {
+    width: 160px;
+    height: 160px;
+    display: block;
+    margin: 0 auto;
+    }
+    }
 
-            .footer {
-                text-align: center;
-                margin-top: 20px;
-                font-size: 14px;
-            }
+    @media only screen and (min-width:480px) {
+    .podcast img {
+    margin-right: 15px !important;
+    }
+    }
+{% endblock style %}
 
-            .container a,
-            .footer a {
-                color: #FFD54F !important;
-            }
+{% block preview %}
+    Podcast recommendations just for you!
+{% endblock preview %}
 
-            @media only screen and (max-width:479px) {
-                .podcast-content {
-                    display: block;
-                    text-align: center;
-                }
+{% block content %}
+    <h1 style="color: white;">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+    <h2 style="color: white;">Here are some podcasts you might find interesting:</h2>
 
-                .description {
-                    margin-top: 10px;
-                }
-
-                .podcast img {
-                    width: 160px;
-                    height: 160px;
-                    display: block;
-                    margin: 0 auto;
-                }
-            }
-
-            @media only screen and (min-width:480px) {
-                .podcast img {
-                    margin-right: 15px !important;
-                }
-            }
-        </style>
-    </head>
-
-    <body style="margin:0; padding: 0;">
-        {% blockinclude "emails/preview.html" %}
-            Podcast recommendations just for you!
-        {% endblockinclude %}
-        <div class="container">
-            <h1 style="color: white;">Hi {{ recipient.username }}, greetings from Listenwave!</h1>
-            <h2 style="color: white;">Here are some podcasts you might find interesting:</h2>
-
-            {% for podcast in podcasts %}
-                <div class="podcast">
-                    <h3><a href="{% absolute_uri site podcast.get_absolute_url %}">{{ podcast.cleaned_title }}</a></h3>
-                    <div class="podcast-content">
-                        {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_attrs %}
-                        <img src="{% absolute_uri site cover_attrs.src %}" width="{{ cover_attrs.width }}"
-                             height="{{ cover_attrs.height }}" alt="{{ cover_attrs.alt }}">
-                        <p class="description">
-                            {{ podcast.cleaned_description|urlize|truncatewords:60 }}
-                        </p>
-                    </div>
-                </div>
-            {% endfor %}
-
-            <div class="footer">
-                <p style="color: white; text-align: center;">
-                    <a href="{{ unsubscribe_url }}">Unsubscribe</a>
+    {% for podcast in podcasts %}
+        <div class="podcast">
+            <h3><a href="{% absolute_uri site podcast.get_absolute_url %}">{{ podcast.cleaned_title }}</a></h3>
+            <div class="podcast-content">
+                {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_attrs %}
+                <img src="{% absolute_uri site cover_attrs.src %}" width="{{ cover_attrs.width }}"
+                     height="{{ cover_attrs.height }}" alt="{{ cover_attrs.alt }}">
+                <p class="description">
+                    {{ podcast.cleaned_description|urlize|truncatewords:60 }}
                 </p>
             </div>
         </div>
-    </body>
-
-</html>
+    {% endfor %}
+{% endblock content %}

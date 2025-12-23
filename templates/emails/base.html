@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %}
+            {% endblock title %}
+        </title>
+        <style>
+            {% block style %}
+                .container {
+                    font-family: Helvetica, Arial, sans-serif !important;
+                    background-color: #311B92 !important;
+                    color: white !important;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    padding: 20px;
+                    border-radius: 8px;
+                }
+
+                .container h1,
+                .container h2 {
+                    text-align: center;
+                }
+
+                .description {
+                    margin-top: 5px;
+                    word-wrap: break-word;
+            /* Break long words */
+                    overflow-wrap: break-word;
+            /* Ensures long URLs wrap */
+                    max-width: 100%;
+            /* Prevents overflow */
+                }
+
+                .footer {
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 14px;
+                }
+
+                .container a,
+                .footer a {
+                    color: #FFD54F !important;
+                }
+
+                @media only screen and (max-width:479px) {
+                    .podcast-content {
+                        display: block;
+                        text-align: center;
+                    }
+
+                    .description {
+                        margin-top: 10px;
+                    }
+
+                }
+            {% endblock style %}
+        </style>
+    </head>
+
+    <body style="margin:0; padding: 0;">
+        <div style="
+                    display:none;
+                    font-size:1px;
+                    color:#ffffff;
+                    line-height:1px;
+                    max-height:0;
+                    max-width:0;
+                    opacity:0;
+                    overflow:hidden;
+                    mso-hide:all;">
+            {% block preview %}
+            {% endblock preview %}
+        </div>
+        <div class="container">
+            {% block content %}
+            {% endblock content %}
+            <div class="footer">
+                <p style="color: white; text-align: center;">
+                    <a href="{{ unsubscribe_url }}">Unsubscribe</a>
+                </p>
+            </div>
+        </div>
+    </body>
+
+</html>

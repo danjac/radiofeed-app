@@ -1,131 +1,81 @@
-<!DOCTYPE html>
-<html lang="en-us">
+{% extends "emails/base.html" %}
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Episode notifications for {{ site.name }}</title>
-        <style>
-            .container {
-                font-family: Helvetica, Arial, sans-serif !important;
-                background-color: #311B92 !important;
-                color: white !important;
-                max-width: 600px;
-                margin: 20px auto;
-                padding: 20px;
-                border-radius: 8px;
-            }
+{% block title %}
+    Episode notifications for {{ site.name }}
+{% endblock title %}
 
-            .container h1,
-            .container h2 {
-                text-align: center;
-            }
+{% block style %}
+    {{ block.super }}
 
-            .episode {
-                background-color: #512DA8;
-                padding: 15px;
-                border-radius: 8px;
-                margin-bottom: 20px;
-            }
+    .episode {
+    background-color: #512DA8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    }
 
-            .episode h3,
-            .episode h4 {
-                margin: 0 0 20px;
-                text-align: center;
-            }
+    .episode h3,
+    .episode h4 {
+    margin: 0 0 20px;
+    text-align: center;
+    }
 
-            .episode img {
-                display: block;
-                margin: 0 auto;
-                border-radius: 8px;
-                flex-shrink: 0;
-            }
+    .episode img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    flex-shrink: 0;
+    }
 
-            .episode-content {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-            }
+    .episode-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    }
 
-            .description {
-                margin-top: 5px;
-                word-wrap: break-word;
-            /* Break long words */
-                overflow-wrap: break-word;
-            /* Ensures long URLs wrap */
-                max-width: 100%;
-            /* Prevents overflow */
-            }
+    @media only screen and (max-width:479px) {
+    .episode-content {
+    display: block;
+    text-align: center;
+    }
 
-            .footer {
-                text-align: center;
-                margin-top: 20px;
-                font-size: 14px;
-            }
+    .episode img {
+    width: 160px;
+    height: 160px;
+    display: block;
+    margin: 0 auto;
+    }
+    }
 
-            .container a,
-            .footer a {
-                color: #FFD54F !important;
-            }
+    @media only screen and (min-width:480px) {
+    .episode img {
+    margin-right: 15px !important;
+    }
+    }
+{% endblock style %}
 
-            @media only screen and (max-width:479px) {
-                .episode-content {
-                    display: block;
-                    text-align: center;
-                }
+{% block preview %}
+    Latest episodes from your favorite podcasts!
+{% endblock preview %}
 
-                .description {
-                    margin-top: 10px;
-                }
+{% block content %}
+    <h1 style="color: white;">Hi {{ recipient.username }}, greetings from {{ site.name }}!</h1>
+    <h2 style="color: white;">Here are some episodes you might have missed:</h2>
 
-                .episode img {
-                    width: 160px;
-                    height: 160px;
-                    display: block;
-                    margin: 0 auto;
-                }
-            }
-
-            @media only screen and (min-width:480px) {
-                .episode img {
-                    margin-right: 15px !important;
-                }
-            }
-        </style>
-    </head>
-
-    <body style="margin:0; padding: 0;">
-
-        {% blockinclude "emails/preview.html" %}
-            Latest episodes from your favorite podcasts!
-        {% endblockinclude %}
-        <div class="container">
-            <h1 style="color: white;">Hi {{ recipient.username }}, greetings from Listenwave!</h1>
-            <h2 style="color: white;">Here are some episodes you might have missed:</h2>
-
-            {% for episode in episodes %}
-                {% with podcast=episode.podcast %}
-                    <div class="episode">
-                        <h3><a href="{% absolute_uri site episode.get_absolute_url %}">{{ episode.cleaned_title }}</a></h3>
-                        <h4>{{ podcast.cleaned_title }}</h4>
-                        <div class="episode-content">
-                            {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_attrs %}
-                            <img src="{% absolute_uri site cover_attrs.src %}" width="{{ cover_attrs.width }}"
-                                 height="{{ cover_attrs.height }}" alt="{{ cover_attrs.alt }}">
-                            <p class="description">
-                                {{ episode.cleaned_description|urlize|truncatewords:60 }}
-                            </p>
-                        </div>
-                    </div>
-                {% endwith %}
-            {% endfor %}
-
-            <div class="footer">
-                <p style="color: white; text-align: center;">
-                    <a href="{{ unsubscribe_url }}">Unsubscribe</a>
-                </p>
+    {% for episode in episodes %}
+        {% with podcast=episode.podcast %}
+            <div class="episode">
+                <h3><a href="{% absolute_uri site episode.get_absolute_url %}">{{ episode.cleaned_title }}</a></h3>
+                <h4>{{ podcast.cleaned_title }}</h4>
+                <div class="episode-content">
+                    {% get_cover_image_attrs "detail" podcast.cover_url podcast.cleaned_title as cover_attrs %}
+                    <img src="{% absolute_uri site cover_attrs.src %}" width="{{ cover_attrs.width }}"
+                         height="{{ cover_attrs.height }}" alt="{{ cover_attrs.alt }}">
+                    <p class="description">
+                        {{ episode.cleaned_description|urlize|truncatewords:60 }}
+                    </p>
+                </div>
             </div>
-        </div>
-    </body>
-
-</html>
+        {% endwith %}
+    {% endfor %}
+{% endblock content %}
