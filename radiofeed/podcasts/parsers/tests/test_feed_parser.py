@@ -524,7 +524,7 @@ class TestFeedParser:
         assert podcast.feed_last_updated
 
     @pytest.mark.django_db
-    def test_parse_permanent_redirect_url_taken(self, podcast):
+    def test_parse_permanent_redirect_url_taken(self, podcast, categories):
         other = PodcastFactory(rss=self.redirect_rss)
         current_rss = podcast.rss
 
@@ -551,6 +551,90 @@ class TestFeedParser:
         assert podcast.feed_last_updated is None
 
         assert podcast.canonical == other
+
+    @pytest.mark.django_db
+    def test_parse_with_canonical_cycle(self, podcast, categories):
+        """
+        Test parse_feed when the canonical chain contains a cycle.
+        Ensures ingestion does not hang and duplicate detection works.
+        """
+
+        # Create another podcast to form the cycle
+        other = PodcastFactory()
+
+        # Form the cycle: podcast -> other -> podcast
+        podcast.canonical = other
+        podcast.save(update_fields=["canonical"])
+        other.canonical = podcast
+        other.save(update_fields=["canonical"])
+
+        current_rss = podcast.rss
+
+        client = _mock_client(
+            url=other.rss,
+            status_code=http.HTTPStatus.OK,
+            content=self.get_rss_content(),
+            headers={
+                "ETag": "abc123",
+                "Last-Modified": self.updated,
+            },
+        )
+
+        # Run parse_feed normally
+        result = parse_feed(podcast, client)
+        assert result == Podcast.FeedStatus.DUPLICATE
+
+        # Assert podcast was marked duplicate correctly
+        podcast.refresh_from_db()
+        assert podcast.feed_status == result
+        assert podcast.rss == current_rss
+        assert not podcast.active
+        assert podcast.parsed
+        assert podcast.feed_last_updated is None
+
+        # Deterministic canonical: should always be 'other' (the .first() in query)
+        assert podcast.canonical == other
+
+    @pytest.mark.django_db
+    def test_parse_feed_duplicate_chain_bug(self, categories):
+        """
+        Test the original duplicate canonical bug scenario:
+        - Podcast A is canonical
+        - Podcast B is a duplicate pointing to A
+        - Feed for A declares canonical URL = B
+        Ensure A stays active, B stays inactive, DuplicateError is handled correctly.
+        """
+
+        # Create canonical podcast A
+        podcast_a = PodcastFactory(active=True, canonical=None)
+        original_rss = podcast_a.rss
+
+        # Create duplicate podcast B pointing to A
+        podcast_b = PodcastFactory(active=False, canonical=podcast_a)
+
+        # Mock feed for Podcast A pointing to B's RSS
+        client = _mock_client(
+            url=podcast_b.rss,  # feed says canonical is B
+            status_code=200,
+            content=self.get_rss_content(),  # some valid RSS content
+        )
+
+        # Parse the feed
+        result = parse_feed(podcast_a, client)
+        assert result == Podcast.FeedStatus.SUCCESS
+
+        # Reload from DB
+        podcast_a.refresh_from_db()
+
+        # Assertions
+
+        # Podcast A stays active (canonical root)
+        assert podcast_a.active
+        assert podcast_a.rss == original_rss
+        assert podcast_a.feed_status == Podcast.FeedStatus.SUCCESS
+
+        # Result of parse_feed reflects that feed was ingested successfully
+        assert result == Podcast.FeedStatus.SUCCESS
 
     @pytest.mark.django_db
     def test_parse_no_podcasts(self, podcast):

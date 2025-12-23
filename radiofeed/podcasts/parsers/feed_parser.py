@@ -44,15 +44,16 @@ class _FeedParser:
             response = rss_fetcher.fetch_rss(self.podcast, client)
 
             # Check for duplicate RSS feeds
-            self._raise_for_duplicate(response.url)
+            canonical_rss = self._resolve_canonical_rss(self.podcast.rss, response.url)
 
             # Parse RSS feed
             feed = rss_parser.parse_rss(response.content)
 
-            # Check for canonical RSS URL changes if new canonical url in feed
-            canonical_rss = feed.canonical_url or response.url
-            if canonical_rss != response.url:
-                self._raise_for_duplicate(canonical_rss)
+            # Resolve canonical URL if provided in feed
+            if feed.canonical_url:
+                canonical_rss = self._resolve_canonical_rss(
+                    canonical_rss, feed.canonical_url
+                )
 
             # Determine podcast active status
             if feed.complete:
@@ -143,14 +144,35 @@ class _FeedParser:
                 exception=str(exc),
             )
 
-    def _raise_for_duplicate(self, rss: str) -> None:
-        if canonical_id := (
+    def _resolve_canonical_rss(self, current_url: str, new_url: str) -> str:
+        if current_url == new_url:
+            return current_url
+
+        # Check for duplicate RSS feeds in the database
+        if root := (
             Podcast.objects.exclude(pk=self.podcast.pk)
-            .filter(rss=rss, canonical__isnull=True)
-            .values_list("pk", flat=True)
-            .first()
-        ):
-            raise DuplicateError(canonical_id=canonical_id)
+            .filter(rss=new_url)
+            .select_related("canonical")
+            .only("pk", "canonical")
+        ).first():
+            seen: set[int] = set()
+
+            # Traverse canonical chain to find root podcast
+            while root.canonical:
+                if root.pk in seen:
+                    break
+                seen.add(root.pk)
+                root = root.canonical
+
+            # If root podcast is the same as current podcast, return the original RSS
+            if root.pk == self.podcast.pk:
+                return current_url
+
+            # Raise DuplicateError with root podcast's pk
+            raise DuplicateError(canonical_id=root.pk)
+
+        # No duplicate found, return the original RSS
+        return new_url
 
     def _reschedule(self) -> datetime.timedelta:
         return scheduler.reschedule(self.podcast.pub_date, self.podcast.frequency)
