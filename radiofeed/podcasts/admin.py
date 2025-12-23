@@ -210,12 +210,11 @@ class PodcastAdmin(admin.ModelAdmin):
 
     raw_id_fields = (
         "canonical",
+        "categories",
         "recipients",
     )
 
     readonly_fields = (
-        "created",
-        "updated",
         "pub_date",
         "num_episodes",
         "feed_status",
@@ -230,6 +229,49 @@ class PodcastAdmin(admin.ModelAdmin):
     )
 
     search_fields = ("search",)
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "rss",
+                    "title",
+                    "private",
+                    "explicit",
+                    "pub_date",
+                    "num_episodes",
+                    "canonical",
+                    "cover_url",
+                    "website",
+                    "funding_url",
+                    "funding_text",
+                    "description",
+                    "extracted_text",
+                    "keywords",
+                    "categories",
+                    "recipients",
+                ),
+            },
+        ),
+        (
+            "Feed Status",
+            {
+                "fields": (
+                    "active",
+                    "feed_status",
+                    "feed_last_updated",
+                    "parsed",
+                    "frequency",
+                    "next_scheduled_update",
+                    "etag",
+                    "modified",
+                    "content_hash",
+                    "exception",
+                ),
+            },
+        ),
+    )
 
     @admin.display(description="Next scheduled update")
     def next_scheduled_update(self, obj: Podcast) -> str:

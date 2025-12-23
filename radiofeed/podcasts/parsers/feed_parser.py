@@ -143,10 +143,13 @@ class _FeedParser:
             #  - log the exception message in the podcast
             #  - reschedule the next fetch
             #  - re-raise the exception
+
+            fields["exception"] = f"{exc.__class__.__name__}: {exc}"
+
             self._update_podcast(
                 feed_status=Podcast.FeedStatus.ERROR,
                 frequency=self._reschedule(),
-                **fields | {"exception": f"{exc.__class__.__name__}: {exc}"},
+                **fields,
             )
             raise
 
