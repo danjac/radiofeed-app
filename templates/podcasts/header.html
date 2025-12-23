@@ -1,8 +1,8 @@
 {% load cache %}
 <header class="pb-3 mb-3 space-y-6 border-b xl:space-y-9">
-    {% fragment "header.html#title" %}
+    {% blockinclude "header.html#title" %}
         {{ podcast.cleaned_title }}
-    {% endfragment %}
+    {% endblockinclude %}
     <div class="space-y-3 sm:flex sm:flex-wrap sm:justify-between sm:items-center sm:space-y-0">
         <nav class="flex justify-center items-center sm:justify-start">
             <ul class="flex items-center space-x-4 lg:space-x-6">

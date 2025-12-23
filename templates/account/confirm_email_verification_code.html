@@ -10,9 +10,9 @@
         <p>
             We've sent a code to <strong>{{ email }}</strong>. Enter the code in the form below and click the <strong>Confirm</strong> button.
         </p>
-        {% fragment "form.html" hx_disable=user.is_anonymous %}
+        {% blockinclude "form.html" hx_disable=user.is_anonymous %}
             {{ form }}
-            {% fragment "form.html#buttons" %}
+            {% blockinclude "form.html#buttons" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "check" class="mr-2" %}
                     Confirm
@@ -34,7 +34,7 @@
                         Cancel
                     </a>
                 {% endif %}
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
     </div>
 {% endblock content %}

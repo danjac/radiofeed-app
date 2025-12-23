@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.template import TemplateSyntaxError
 
 from radiofeed.request import RequestContext
-from radiofeed.templatetags import cookie_banner, fragment
+from radiofeed.templatetags import blockinclude, cookie_banner
 
 
 @pytest.fixture
@@ -21,12 +21,12 @@ def auth_req(req, user):
     return req
 
 
-class TestFragment:
+class TestBlockinclude:
     def test_render_no_template_obj(self, mocker):
         context = mocker.Mock()
         context.template = None
         with pytest.raises(TemplateSyntaxError):
-            fragment(context, "header.html#title", "test")
+            blockinclude(context, "header.html#title", "test")
 
 
 class TestCookieBanner:

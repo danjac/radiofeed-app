@@ -1,11 +1,11 @@
 {% load socialaccount %}
-{% fragment "header.html" %}
-    {% fragment "header.html#title" %}
+{% blockinclude "header.html" %}
+    {% blockinclude "header.html#title" %}
         Settings for {{ user.username }}
-    {% endfragment %}
-    {% fragment "header/nav.html" %}
-        {% fragment "header/nav.html#item" %}
-            {% fragment "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=icon label=label %}
+    {% endblockinclude %}
+    {% blockinclude "header/nav.html" %}
+        {% blockinclude "header/nav.html#item" %}
+            {% blockinclude "header/nav/dropdown.html" dropdown_id="settings-dropdown" icon=icon label=label %}
                 {% with url_name="users:preferences" icon="adjustments-horizontal" label="Preferences" %}
                     {% partial item %}
                 {% endwith %}
@@ -32,10 +32,10 @@
                 {% with url_name="users:delete_account" icon="trash" label="Delete Account" %}
                     {% partial item %}
                 {% endwith %}
-            {% endfragment %}
-        {% endfragment %}
-    {% endfragment %}
-{% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
+    {% endblockinclude %}
+{% endblockinclude %}
 {% partialdef item %}
     {% url url_name as url %}
     {% include "header/nav/dropdown.html#item" %}

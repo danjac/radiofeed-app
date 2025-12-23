@@ -94,9 +94,9 @@
     </head>
 
     <body style="margin:0; padding: 0;">
-        {% fragment "emails/preview.html" %}
+        {% blockinclude "emails/preview.html" %}
             Podcast recommendations just for you!
-        {% endfragment %}
+        {% endblockinclude %}
         <div class="container">
             <h1 style="color: white;">Hi {{ recipient.username }}, greetings from Listenwave!</h1>
             <h2 style="color: white;">Here are some podcasts you might find interesting:</h2>

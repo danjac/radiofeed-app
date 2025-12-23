@@ -11,7 +11,7 @@
             {% with num_addresses=emailaddresses|length %}
                 {% if num_addresses %}
                     <p>The following email addresses are associated with your account:</p>
-                    {% fragment "form.html" %}
+                    {% blockinclude "form.html" %}
                         {% for emailaddress in emailaddresses|dictsortreversed:"primary" %}
                             <div class="flex flex-wrap items-center space-x-3">
                                 <input type="radio"
@@ -32,7 +32,7 @@
                                 {% endif %}
                             </div>
                         {% endfor %}
-                        {% fragment "form.html#buttons" %}
+                        {% blockinclude "form.html#buttons" %}
                             {% if num_addresses > 1 %}
                                 <button class="btn btn-primary" name="action_primary" value="1">
                                     {% heroicon_mini "hand-thumb-up" class="mr-2" %}
@@ -49,8 +49,8 @@
                                     Remove
                                 </button>
                             {% endif %}
-                        {% endfragment %}
-                    {% endfragment %}
+                        {% endblockinclude %}
+                    {% endblockinclude %}
                     <p>Email notifications will be sent to your primary email address.</p>
                 {% else %}
                     <p>
@@ -63,15 +63,15 @@
         {% if can_add_email %}
             <hr class="border" />
             <h2 class="text-base font-semibold lg:text-lg">Add New Email Address</h2>
-            {% fragment "form.html" %}
+            {% blockinclude "form.html" %}
                 {{ form }}
-                {% fragment "form.html#buttons" %}
+                {% blockinclude "form.html#buttons" %}
                     <button class="btn btn-primary" name="action_add" value="1">
                         {% heroicon_mini "plus" class="mr-2" %}
                         Add Email
                     </button>
-                {% endfragment %}
-            {% endfragment %}
+                {% endblockinclude %}
+            {% endblockinclude %}
         {% endif %}
     </div>
 {% endblock content %}

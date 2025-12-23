@@ -7,14 +7,14 @@
 {% block content %}
     {% include "account/header.html" with icon="adjustments-horizontal" label="Preferences" %}
     {% partialdef form inline %}
-        {% fragment "form.html" htmx=True target="preferences-form" %}
+        {% blockinclude "form.html" htmx=True target="preferences-form" %}
             {{ form }}
-            {% fragment "form.html#buttons" %}
+            {% blockinclude "form.html#buttons" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "check" class="mr-2" %}
                     Save Changes
                 </button>
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
     {% endpartialdef form %}
 {% endblock content %}

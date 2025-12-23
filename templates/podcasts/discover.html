@@ -6,22 +6,22 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" title="Discover" %}
-        {% fragment "header/nav.html" %}
-            {% fragment "header/nav.html#item" %}
+    {% blockinclude "header.html" title="Discover" %}
+        {% blockinclude "header/nav.html" %}
+            {% blockinclude "header/nav.html#item" %}
                 {% url "podcasts:search_podcasts" as search_url %}
                 {% include "header/nav/search.html#form" %}
-            {% endfragment %}
-        {% endfragment %}
-    {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
+    {% endblockinclude %}
 
     {% cache cache_timeout discover-podcasts %}
-        {% fragment "browse.html" %}
+        {% blockinclude "browse.html" %}
             {% for podcast in podcasts %}
-                {% fragment "browse.html#item" %}
+                {% blockinclude "browse.html#item" %}
                     {% include "podcasts/cards.html#podcast" %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% endfor %}
-        {% endfragment %}
+        {% endblockinclude %}
     {% endcache %}
 {% endblock content %}

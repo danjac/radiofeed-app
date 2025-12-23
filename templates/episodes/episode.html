@@ -1,5 +1,5 @@
 {% with podcast=episode.podcast %}
-    {% fragment "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=podcast.cover_url %}
+    {% blockinclude "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=podcast.cover_url %}
         {{ podcast.cleaned_title }}
-    {% endfragment %}
+    {% endblockinclude %}
 {% endwith %}

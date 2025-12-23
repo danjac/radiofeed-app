@@ -7,14 +7,14 @@
 {% block content %}
     {% include "header.html" with title="Sign Up" %}
     <div class="space-y-3">
-        {% fragment "socialaccount/buttons.html" process="login" %}
+        {% blockinclude "socialaccount/buttons.html" process="login" %}
             Sign up with
-        {% endfragment %}
+        {% endblockinclude %}
         <p class="mb-3">
             Already have an account? Then please
             <a class="underline link" href="{{ login_url }}">sign in</a>.
         </p>
-        {% fragment "form.html" hx_disable=True %}
+        {% blockinclude "form.html" hx_disable=True %}
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
@@ -31,12 +31,12 @@
                 {{ form.password1.as_field_group }}
                 {{ form.password2.as_field_group }}
             </div>
-            {% fragment "form.html#buttons" %}
+            {% blockinclude "form.html#buttons" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "plus" class="mr-2" %}
                     Sign Up
                 </button>
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
     </div>
 {% endblock content %}

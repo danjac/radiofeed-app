@@ -6,41 +6,41 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "header.html" %}
-        {% fragment "header.html#title" %}
+    {% blockinclude "header.html" %}
+        {% blockinclude "header.html#title" %}
             {{ category.name }} Podcasts
-        {% endfragment %}
+        {% endblockinclude %}
         {% if request.search or page.has_other_pages %}
-            {% fragment "header/nav.html" %}
+            {% blockinclude "header/nav.html" %}
                 {% if request.search %}
-                    {% fragment "header/nav.html#item" %}
+                    {% blockinclude "header/nav.html#item" %}
                         {% url "podcasts:search_podcasts" as search_button_url %}
                         {% include "header/nav/search.html#button" with label="Search Podcasts" %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% endif %}
-                {% fragment "header/nav.html#item" %}
+                {% blockinclude "header/nav.html#item" %}
                     {% include "header/nav/search.html#form" with clearable=True %}
-                {% endfragment %}
-            {% endfragment %}
+                {% endblockinclude %}
+            {% endblockinclude %}
         {% endif %}
-    {% endfragment %}
+    {% endblockinclude %}
     {% partialdef pagination inline %}
         {% cache cache_timeout category-podcasts request.get_full_path %}
-            {% fragment "paginate.html" %}
+            {% blockinclude "paginate.html" %}
                 {% for podcast in page %}
-                    {% fragment "browse.html#item" %}
+                    {% blockinclude "browse.html#item" %}
                         {% include "podcasts/cards.html#podcast" %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% empty %}
-                    {% fragment "browse.html#empty" %}
+                    {% blockinclude "browse.html#empty" %}
                         {% if request.search %}
                             No {{ category.name }} podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         {% else %}
                             Category {{ category.name }} does not have any podcasts.
                         {% endif %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% endfor %}
-            {% endfragment %}
+            {% endblockinclude %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

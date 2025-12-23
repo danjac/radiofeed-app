@@ -6,26 +6,26 @@
 
 {% block content %}
     {% with provider_name=provider.name %}
-        {% fragment "header.html" %}
-            {% fragment "header.html#title" %}
+        {% blockinclude "header.html" %}
+            {% blockinclude "header.html#title" %}
                 {% if process == "connect" %}
                     Connect to {{ provider_name }}
                 {% else %}
                     Sign In Via {{ provider_name }}
                 {% endif %}
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
         <p class="mb-3">
             You are about to {% if process == "connect" %} connect to a new {% else %} sign in using a {% endif %}
             third party account from {{ provider_name }}.
         </p>
-        {% fragment "form.html" hx_disable=True %}
+        {% blockinclude "form.html" hx_disable=True %}
             {% if redirect_field_value %}
                 <input type="hidden"
                        name="{{ redirect_field_name }}"
                        value="{{ redirect_field_value }}" />
             {% endif %}
-            {% fragment "form.html#buttons" %}
+            {% blockinclude "form.html#buttons" %}
                 <button class="btn btn-primary">
                     {% heroicon_mini "arrow-right-on-rectangle" class="mr-2" %}
                     {% if process == "connect" %}
@@ -34,7 +34,7 @@
                         Sign In
                     {% endif %}
                 </button>
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
     {% endwith %}
 {% endblock content %}

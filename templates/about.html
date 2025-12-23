@@ -6,11 +6,11 @@
 
 {% block content %}
     {% with site_name=request.site.name %}
-        {% fragment "header.html" %}
-            {% fragment "header.html#title" %}
+        {% blockinclude "header.html" %}
+            {% blockinclude "header.html#title" %}
                 About {{ site_name }}
-            {% endfragment %}
-        {% endfragment %}
+            {% endblockinclude %}
+        {% endblockinclude %}
         <div class="space-y-6">
             <p class="prose dark:prose-invert">
                 <strong>{{ site_name }}</strong> is a <strong>free</strong> podcasting app for collecting your favorite shows and discovering new content.

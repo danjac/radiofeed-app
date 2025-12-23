@@ -5,17 +5,17 @@
 {% endblock title %}
 
 {% block content %}
-    {% fragment "podcasts/header.html" active="episodes" %}
+    {% blockinclude "podcasts/header.html" active="episodes" %}
         {% with num_episodes=podcast.num_episodes %}
             {% if request.search or num_episodes > page_size %}
-                {% fragment "header/nav.html" %}
+                {% blockinclude "header/nav.html" %}
                     {% if request.search %}
-                        {% fragment "header/nav.html#item" %}
+                        {% blockinclude "header/nav.html#item" %}
                             {% url "episodes:search_episodes" as search_button_url %}
                             {% include "header/nav/search.html#button" with label="Search Episodes" %}
-                        {% endfragment %}
+                        {% endblockinclude %}
                     {% else %}
-                        {% fragment "header/nav.html#item" %}
+                        {% blockinclude "header/nav.html#item" %}
                             {% if ordering == "asc" %}
                                 <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
                                     Newest First</a>
@@ -23,34 +23,34 @@
                                 <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
                                     Oldest First</a>
                             {% endif %}
-                        {% endfragment %}
+                        {% endblockinclude %}
                     {% endif %}
                     {% if request.search or num_episodes > page_size %}
-                        {% fragment "header/nav.html#item" %}
+                        {% blockinclude "header/nav.html#item" %}
                             {% include "header/nav/search.html#form" with clearable=True %}
-                        {% endfragment %}
+                        {% endblockinclude %}
                     {% endif %}
-                {% endfragment %}
+                {% endblockinclude %}
             {% endif %}
         {% endwith %}
-    {% endfragment %}
+    {% endblockinclude %}
     {% partialdef pagination inline %}
         {% cache cache_timeout podcast-episodes request.get_full_path %}
-            {% fragment "paginate.html" %}
+            {% blockinclude "paginate.html" %}
                 {% for episode in page %}
-                    {% fragment "browse.html#item" %}
+                    {% blockinclude "browse.html#item" %}
                         {% include "podcasts/cards.html#episode" %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% empty %}
-                    {% fragment "browse.html#empty" %}
+                    {% blockinclude "browse.html#empty" %}
                         {% if request.search %}
                             No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in this podcast.
                         {% else %}
                             This podcast does not have any episodes.
                         {% endif %}
-                    {% endfragment %}
+                    {% endblockinclude %}
                 {% endfor %}
-            {% endfragment %}
+            {% endblockinclude %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}

@@ -1,5 +1,5 @@
 {% with has_other_pages=page.has_other_pages %}
-    {% fragment "browse.html" target=pagination_target %}
+    {% blockinclude "browse.html" target=pagination_target %}
         {% if has_other_pages %}
             <li class="pb-3">
                 {% partial links %}
@@ -11,7 +11,7 @@
                 {% partial links %}
             </li>
         {% endif %}
-    {% endfragment %}
+    {% endblockinclude %}
 {% endwith %}
 
 {% partialdef links %}
