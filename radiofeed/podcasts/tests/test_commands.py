@@ -32,13 +32,6 @@ class TestParsePodcastFeeds:
         call_command("parse_podcast_feeds")
         mock_parse.assert_not_called()
 
-    @pytest.mark.django_db
-    def test_error(self, mocker):
-        mock_parse = mocker.patch(self.parse_feed, side_effect=ValueError("Test error"))
-        PodcastFactory(pub_date=None)
-        call_command("parse_podcast_feeds")
-        mock_parse.assert_called()
-
 
 class TestFetchItunesFeeds:
     mock_fetch = "radiofeed.podcasts.management.commands.fetch_itunes_feeds.itunes.fetch_top_feeds"

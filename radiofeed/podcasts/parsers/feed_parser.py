@@ -2,10 +2,9 @@ import dataclasses
 import datetime
 import functools
 import itertools
-from typing import Any
 
 from django.db import transaction
-from django.db.models import F
+from django.db.utils import DatabaseError
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -22,9 +21,9 @@ from radiofeed.podcasts.parsers.exceptions import (
 from radiofeed.podcasts.parsers.models import Feed, Item
 
 
-def parse_feed(podcast: Podcast, client: Client) -> None:
+def parse_feed(podcast: Podcast, client: Client) -> Podcast.FeedStatus:
     """Updates a Podcast instance with its RSS or Atom feed source."""
-    _FeedParser(podcast=podcast).parse(client)
+    return _FeedParser(podcast=podcast).parse(client)
 
 
 @functools.cache
@@ -37,27 +36,12 @@ def get_categories_dict() -> dict[str, Category]:
 class _FeedParser:
     podcast: Podcast
 
-    def parse(self, client: Client) -> None:
+    def parse(self, client: Client) -> Podcast.FeedStatus:
         """Parse the podcast's RSS feed and update the Podcast instance."""
-        now = timezone.now()
-
-        fields: dict[str, Any] = {
-            "exception": "",
-            "num_retries": 0,
-            "parsed": now,
-            "updated": now,
-        }
 
         try:
             # Fetch RSS feed
             response = rss_fetcher.fetch_rss(self.podcast, client)
-
-            # Update fields from fetch response
-            fields.update(
-                content_hash=response.content_hash,
-                etag=response.etag,
-                modified=response.modified,
-            )
 
             # Check for duplicate RSS feeds
             self._raise_for_duplicate(response.url)
@@ -70,64 +54,69 @@ class _FeedParser:
             if canonical_rss != response.url:
                 self._raise_for_duplicate(canonical_rss)
 
-            fields.update(rss=canonical_rss)
-
             # Determine podcast active status
             if feed.complete:
                 active, feed_status = False, Podcast.FeedStatus.DISCONTINUED
             else:
                 active, feed_status = True, Podcast.FeedStatus.SUCCESS
 
-            fields.update(
-                active=active,
-                feed_status=feed_status,
-                feed_last_updated=now,
-                num_episodes=len(feed.items),
-                extracted_text=feed.tokenize(),
-                frequency=scheduler.schedule(feed),
-                **feed.model_dump(
-                    exclude={
-                        "canonical_url",
-                        "categories",
-                        "complete",
-                        "items",
-                    }
-                ),
-            )
-
             # Persist and parse categories/episodes atomically
             with transaction.atomic():
-                self._update_podcast(**fields)
                 self._parse_categories(feed)
                 self._parse_episodes(feed)
+
+                return self._feed_update(
+                    feed_status,
+                    active=active,
+                    rss=canonical_rss,
+                    feed_last_updated=timezone.now(),
+                    num_episodes=len(feed.items),
+                    content_hash=response.content_hash,
+                    etag=response.etag,
+                    modified=response.modified,
+                    extracted_text=feed.tokenize(),
+                    frequency=scheduler.schedule(feed),
+                    **feed.model_dump(
+                        exclude={
+                            "canonical_url",
+                            "categories",
+                            "complete",
+                            "items",
+                        }
+                    ),
+                )
+
+        except DatabaseError as exc:
+            # -- Handle database write errors
+            # -- Update feed status to ERROR and reschedule next fetch
+            # Log exception for debugging
+            return self._feed_update(
+                feed_status=Podcast.FeedStatus.DATABASE_ERROR,
+                frequency=self._reschedule(),
+                exception=str(exc),
+            )
 
         except NotModifiedError:
             # -- Handle not modified RSS feed
             # -- Update feed status to NOT_MODIFIED and reschedule next fetch
-            fields.update(
-                feed_status=Podcast.FeedStatus.NOT_MODIFIED,
+            return self._feed_update(
+                Podcast.FeedStatus.NOT_MODIFIED,
                 frequency=self._reschedule(),
             )
-            self._update_podcast(**fields)
 
         except DiscontinuedError:
             # -- Handle discontinued podcast feeds
             # -- Deactivate podcast and set feed status to DISCONTINUED
-            fields.update(
-                active=False,
-                feed_status=Podcast.FeedStatus.DISCONTINUED,
-            )
-            self._update_podcast(**fields)
+            return self._feed_update(Podcast.FeedStatus.DISCONTINUED, active=False)
 
         except DuplicateError as exc:
             # -- Handle duplicate RSS feed errors
             # -- Deactivate podcast and set feed status to DUPLICATE
-            fields.update(
-                active=False,
+            return self._feed_update(
                 feed_status=Podcast.FeedStatus.DUPLICATE,
+                active=False,
                 canonical_id=exc.canonical_id,
             )
-            self._update_podcast(**fields)
 
         except (InvalidRSSError, UnavailableError) as exc:
             # -- Handle recoverable errors with retry logic
@@ -135,8 +124,10 @@ class _FeedParser:
             # -- If max retries exceeded, deactivate podcast
             # -- Otherwise, reschedule next fetch based on retry logic
             # Log exception for debugging
+
             active = self.podcast.num_retries < self.podcast.MAX_RETRIES
             frequency = self._reschedule() if active else self.podcast.frequency
+            num_retries = self.podcast.num_retries + 1
 
             match exc:
                 case InvalidRSSError():
@@ -144,26 +135,13 @@ class _FeedParser:
                 case UnavailableError():
                     feed_status = Podcast.FeedStatus.UNAVAILABLE
 
-            fields.update(
+            return self._feed_update(
+                feed_status,
                 active=active,
-                feed_status=feed_status,
                 frequency=frequency,
-                num_retries=F("num_retries") + 1,
+                num_retries=num_retries,
                 exception=str(exc),
             )
-            self._update_podcast(**fields)
-
-        except Exception as exc:
-            # -- Handle unexpected errors
-            # -- Update feed status to ERROR and reschedule next fetch
-            # Log exception for debugging
-            fields.update(
-                feed_status=Podcast.FeedStatus.ERROR,
-                frequency=self._reschedule(),
-                exception=f"{exc.__class__.__name__}: {exc}",
-            )
-            self._update_podcast(**fields)
-            raise
 
     def _raise_for_duplicate(self, rss: str) -> None:
         if canonical_id := (
@@ -177,8 +155,26 @@ class _FeedParser:
     def _reschedule(self) -> datetime.timedelta:
         return scheduler.reschedule(self.podcast.pub_date, self.podcast.frequency)
 
-    def _update_podcast(self, **fields) -> None:
-        Podcast.objects.filter(pk=self.podcast.pk).update(**fields)
+    def _feed_update(
+        self,
+        feed_status: Podcast.FeedStatus,
+        *,
+        active=True,
+        exception: str = "",
+        num_retries: int = 0,
+        **fields,
+    ) -> Podcast.FeedStatus:
+        now = timezone.now()
+        Podcast.objects.filter(pk=self.podcast.pk).update(
+            feed_status=feed_status,
+            active=active,
+            exception=exception,
+            num_retries=num_retries,
+            updated=now,
+            parsed=now,
+            **fields,
+        )
+        return feed_status
 
     def _parse_categories(self, feed: Feed) -> None:
         categories_dct = get_categories_dict()

@@ -169,11 +169,11 @@ class Podcast(models.Model):
 
         SUCCESS = "success", "Success"
         NOT_MODIFIED = "not_modified", "Not Modified"
+        DATABASE_ERROR = "database_error", "Database Error"
         DISCONTINUED = "discontinued", "Discontinued"
         DUPLICATE = "duplicate", "Duplicate"
         INVALID_RSS = "invalid_rss", "Invalid RSS"
         UNAVAILABLE = "unavailable", "Unavailable"
-        ERROR = "error", "Error"
 
     rss = URLField(unique=True)
 

@@ -14,7 +14,7 @@ class Result:
     """Result of parsing a podcast feed."""
 
     podcast: Podcast
-    error: Exception | None = None
+    feed_status: Podcast.FeedStatus
 
 
 class Command(BaseCommand):
@@ -59,16 +59,10 @@ class Command(BaseCommand):
 
             @db_threadsafe
             def _worker(podcast: Podcast) -> Result:
-                try:
-                    parse_feed(podcast, client)
-                    return Result(podcast=podcast)
-                except Exception as exc:
-                    return Result(podcast=podcast, error=exc)
+                status = parse_feed(podcast, client)
+                return Result(podcast=podcast, feed_status=status)
 
             for result in thread_pool_map(_worker, podcasts):
-                if result.error:
-                    self.stderr.write(
-                        f"Error parsing feed for {result.podcast}: {result.error}"
-                    )
-                else:
-                    self.stdout.write(f"Parsed feed for {result.podcast}")
+                self.stdout.write(
+                    f"Parsed feed for {result.podcast}: {result.feed_status.label}"
+                )

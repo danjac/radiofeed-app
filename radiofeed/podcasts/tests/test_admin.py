@@ -174,14 +174,14 @@ class TestActiveFilter:
 class TestFeedStatusFilter:
     @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
-        PodcastFactory(feed_status=Podcast.FeedStatus.ERROR)
+        PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
         f = FeedStatusFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
     @pytest.mark.django_db
     def test_no_status(self, podcasts, podcast_admin, req):
-        specific = PodcastFactory(feed_status=Podcast.FeedStatus.ERROR)
+        specific = PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
         f = FeedStatusFilter(
             req, {"feed_status": ["no_status"]}, Podcast, podcast_admin
         )
@@ -191,10 +191,10 @@ class TestFeedStatusFilter:
 
     @pytest.mark.django_db
     def test_specific_status(self, podcasts, podcast_admin, req):
-        specific = PodcastFactory(feed_status=Podcast.FeedStatus.ERROR)
+        specific = PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
         f = FeedStatusFilter(
             req,
-            {"feed_status": [Podcast.FeedStatus.ERROR]},
+            {"feed_status": [Podcast.FeedStatus.NOT_MODIFIED]},
             Podcast,
             podcast_admin,
         )
