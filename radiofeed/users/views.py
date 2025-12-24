@@ -49,7 +49,7 @@ def user_preferences(request: AuthenticatedHttpRequest) -> RenderOrRedirectRespo
         if form.is_valid():
             form.save()
             messages.success(request, "Your preferences have been saved")
-            return redirect(request.path)
+            return redirect(reverse("users:preferences"))
     else:
         form = UserPreferencesForm(instance=request.user)
 
