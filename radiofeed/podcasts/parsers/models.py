@@ -1,17 +1,10 @@
-import contextlib
-import functools
-from collections.abc import Iterable
 from datetime import datetime
-from typing import Annotated, Any, ClassVar, Final, Literal, TypeVar
+from typing import Any, ClassVar
 
-from django.core.exceptions import ValidationError
-from django.db.models import TextChoices
 from django.utils import timezone
 from django.utils.text import slugify
 from pydantic import (
-    AfterValidator,
     BaseModel,
-    BeforeValidator,
     Field,
     field_validator,
     model_validator,
@@ -21,134 +14,17 @@ from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import tokenizer
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.validators import url_validator
-
-AudioMimetype = Literal[
-    "audio/aac",
-    "audio/aacp",
-    "audio/basic",
-    "audio/L24",  # Assuming PCM 24-bit WAV-like format
-    "audio/m4a",
-    "audio/midi",
-    "audio/mp3",
-    "audio/mp4",
-    "audio/mp4a-latm",
-    "audio/mpef",
-    "audio/mpeg",
-    "audio/mpeg3",
-    "audio/mpeg4",
-    "audio/mpg",
-    "audio/ogg",
-    "audio/video",  # Not a common audio type, assuming default
-    "audio/vnd.dlna.adts",
-    "audio/vnd.rn-realaudio",  # RealAudio varies, assuming standard quality
-    "audio/vnd.wave",
-    "audio/vorbis",
-    "audio/wav",
-    "audio/wave",
-    "audio/webm",
-    "audio/x-aac",
-    "audio/x-aiff",
-    "audio/x-flac",
-    "audio/x-hx-aac-adts",
-    "audio/x-m4a",
-    "audio/x-m4b",
-    "audio/x-m4v",  # Assuming similar to M4A
-    "audio/x-mov",  # Assuming similar to M4A
-    "audio/x-mp3",
-    "audio/x-mpeg",
-    "audio/x-mpg",
-    "audio/x-ms-wma",
-    "audio/x-pn-realaudio",
-    "audio/x-wav",
-]
-
-T = TypeVar("T")
-
-
-_PG_INTEGER_RANGE: Final = range(
-    -2147483648,
-    2147483647,
+from radiofeed.podcasts.parsers.validators import (
+    AudioMimetype,
+    EmptyIfNone,
+    EpisodeType,
+    Explicit,
+    OptionalUrl,
+    PgInteger,
+    PodcastType,
+    one_of,
+    url,
 )
-
-
-def _pg_integer(value: Any) -> int | None:
-    try:
-        value = int(value)
-    except (TypeError, ValueError):
-        return None
-
-    if value not in _PG_INTEGER_RANGE:
-        return None
-    return value
-
-
-def _one_of(value: str | None, *, values: Iterable[str]) -> bool:
-    return bool(value and value.casefold() in values)
-
-
-def _default_if_none(value: Any, *, default: T) -> T:
-    return default if value is None else value
-
-
-def _one_of_choices(
-    value: str | None,
-    *,
-    choices: type[TextChoices],
-    default: str,
-) -> str:
-    if (value := (value or "").casefold()) in choices:
-        return value
-    return default
-
-
-def _url(value: str | None) -> str:
-    if value:
-        if not value.startswith("http"):
-            value = f"http://{value}"
-
-        with contextlib.suppress(ValidationError):
-            url_validator(value)
-            return value
-    return ""
-
-
-OptionalUrl = Annotated[str | None, AfterValidator(_url)]
-
-PgInteger = Annotated[int | None, BeforeValidator(_pg_integer)]
-
-Explicit = Annotated[
-    bool,
-    BeforeValidator(
-        functools.partial(_one_of, values=("clean", "yes", "true")),
-    ),
-]
-
-EmptyIfNone = Annotated[
-    str, BeforeValidator(functools.partial(_default_if_none, default=""))
-]
-
-EpisodeType = Annotated[
-    str,
-    BeforeValidator(
-        functools.partial(
-            _one_of_choices,
-            choices=Episode.EpisodeType,
-            default=Episode.EpisodeType.FULL,
-        )
-    ),
-]
-
-PodcastType = Annotated[
-    str,
-    BeforeValidator(
-        functools.partial(
-            _one_of_choices,
-            choices=Podcast.PodcastType,
-            default=Podcast.PodcastType.EPISODIC,
-        )
-    ),
-]
 
 
 class Item(BaseModel):
@@ -194,9 +70,9 @@ class Item(BaseModel):
     @classmethod
     def validate_media_url(cls, value: Any) -> str:
         """Validate media url"""
-        if not _url(value):
-            raise ValueError("url is required")
-        return value
+        if value := url(value):
+            return value
+        raise ValueError("url is required")
 
     @field_validator("duration", mode="before")
     @classmethod
@@ -276,7 +152,7 @@ class Feed(BaseModel):
     @classmethod
     def validate_complete(cls, value: Any) -> bool:
         """Validate complete."""
-        return _one_of(value, values=("yes", "true"))
+        return one_of(value, values=("yes", "true"))
 
     @field_validator("categories", mode="before")
     @classmethod
