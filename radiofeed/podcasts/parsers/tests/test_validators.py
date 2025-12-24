@@ -5,10 +5,10 @@ from django.db.models import TextChoices
 
 from radiofeed.podcasts.parsers.validators import (
     default_if_none,
-    one_of,
+    is_one_of,
+    normalize_url,
     one_of_choices,
     pg_integer,
-    url,
 )
 
 
@@ -30,7 +30,7 @@ class TestPgInteger:
         assert pg_integer(input_value) == expected
 
 
-class TestOneOf:
+class TestIsOneOf:
     @pytest.mark.parametrize(
         ("input_value", "values", "expected"),
         [
@@ -48,7 +48,7 @@ class TestOneOf:
         *,
         expected: bool,
     ) -> None:
-        assert one_of(input_value, values=values) == expected
+        assert is_one_of(input_value, values=values) == expected
 
 
 class TestDefaultIfNone:
@@ -104,7 +104,7 @@ class TestOneOfChoices:
         )
 
 
-class TestUrl:
+class TestNormalizeUrl:
     @pytest.mark.parametrize(
         ("input_value", "expected"),
         [
@@ -122,4 +122,4 @@ class TestUrl:
         *,
         expected: str,
     ) -> None:
-        assert url(input_value) == expected
+        assert normalize_url(input_value) == expected

@@ -155,6 +155,7 @@ class _FeedParser:
             .select_related("canonical")
             .only("pk", "canonical")
         ).first():
+            # Keep track of seen podcast pks to avoid infinite loops
             seen: set[int] = set()
 
             # Traverse canonical chain to find root podcast

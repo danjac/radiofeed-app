@@ -14,7 +14,7 @@ from radiofeed.episodes.models import Episode
 from radiofeed.podcasts import tokenizer
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.validators import (
+from radiofeed.podcasts.parsers.fields import (
     AudioMimetype,
     EmptyIfNone,
     EpisodeType,
@@ -22,9 +22,8 @@ from radiofeed.podcasts.parsers.validators import (
     OptionalUrl,
     PgInteger,
     PodcastType,
-    one_of,
-    url,
 )
+from radiofeed.podcasts.parsers.validators import is_one_of, normalize_url
 
 
 class Item(BaseModel):
@@ -70,7 +69,7 @@ class Item(BaseModel):
     @classmethod
     def validate_media_url(cls, value: Any) -> str:
         """Validate media url"""
-        if value := url(value):
+        if value := normalize_url(value):
             return value
         raise ValueError("url is required")
 
@@ -152,7 +151,7 @@ class Feed(BaseModel):
     @classmethod
     def validate_complete(cls, value: Any) -> bool:
         """Validate complete."""
-        return one_of(value, values=("yes", "true"))
+        return is_one_of(value, values=("yes", "true"))
 
     @field_validator("categories", mode="before")
     @classmethod
