@@ -79,7 +79,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(SearchQuerySet, models.QuerySet):
+class PodcastQuerySet(SearchQuerySet):
     """Custom QuerySet of Podcast model."""
 
     search_fields = ("search_vector",)

@@ -375,18 +375,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-fast-update"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/48/6d/6fa970959833893a93d7f60a2a77494a3f96bafa6fa45bce7b001c04c1f7/django_fast_update-0.3.0.tar.gz", hash = "sha256:6cbd0fb9d4899023b174f0840fb70bc29b3519991bce2b9f92a7d64aace42883", size = 22693, upload-time = "2025-08-04T17:03:43.387Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/cf/88/a1400eaef9b1ecf834fdef1bf6c0fb32d37068b813568235740eaa1e8efa/django_fast_update-0.3.0-py3-none-any.whl", hash = "sha256:88ccb5172dd2eafdc040709bbb0a805b4e36697d2bc000e5a17126fa054c43b1", size = 24433, upload-time = "2025-08-04T17:03:40.706Z" },
-]
-
-[[package]]
 name = "django-health-check"
 version = "3.20.8"
 source = { registry = "https://pypi.org/simple" }
@@ -1305,7 +1293,6 @@ dependencies = [
     { name = "django" },
     { name = "django-allauth", extra = ["socialaccount"] },
     { name = "django-anymail" },
-    { name = "django-fast-update" },
     { name = "django-health-check" },
     { name = "django-htmx" },
     { name = "django-http-compression", extra = ["brotli"] },
@@ -1369,7 +1356,6 @@ requires-dist = [
     { name = "django", specifier = ">=6.0a1,<6.1" },
     { name = "django-allauth", extras = ["socialaccount"], specifier = ">=64.2.0" },
     { name = "django-anymail", specifier = ">=11.1" },
-    { name = "django-fast-update", specifier = ">=0.2.3" },
     { name = "django-health-check", specifier = ">=3.18.3" },
     { name = "django-htmx", specifier = ">=1.19.0" },
     { name = "django-http-compression", extras = ["brotli"], specifier = ">=1.2.0" },

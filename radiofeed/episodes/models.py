@@ -10,7 +10,6 @@ from django.db.models.fields.tuple_lookups import (  # type: ignore[reportMissin
 )
 from django.urls import reverse
 from django.utils.functional import cached_property
-from fast_update.query import FastUpdateQuerySet
 from slugify import slugify
 
 from radiofeed.fields import URLField
@@ -19,7 +18,7 @@ from radiofeed.sanitizer import strip_html
 from radiofeed.search import SearchQuerySet
 
 
-class EpisodeQuerySet(SearchQuerySet, FastUpdateQuerySet):
+class EpisodeQuerySet(SearchQuerySet):
     """QuerySet for Episode model."""
 
     search_fields = ("search_vector",)
@@ -193,7 +192,7 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
-class BookmarkQuerySet(SearchQuerySet, models.QuerySet):
+class BookmarkQuerySet(SearchQuerySet):
     """QuerySet for Bookmark model."""
 
     search_fields = (
@@ -243,7 +242,7 @@ class Bookmark(models.Model):
         ]
 
 
-class AudioLogQuerySet(SearchQuerySet, models.QuerySet):
+class AudioLogQuerySet(SearchQuerySet):
     """QuerySet for AudioLog model."""
 
     search_fields = (

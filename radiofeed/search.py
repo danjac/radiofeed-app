@@ -1,17 +1,12 @@
 import functools
 import operator
-from typing import TYPE_CHECKING, Self
+from typing import Self
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Q, QuerySet
 
-if TYPE_CHECKING:
-    BaseQuerySet = QuerySet
-else:
-    BaseQuerySet = object
 
-
-class SearchQuerySet(BaseQuerySet):
+class SearchQuerySet(QuerySet):
     """Search queryset mixin."""
 
     search_fields: tuple[str, ...] = ()

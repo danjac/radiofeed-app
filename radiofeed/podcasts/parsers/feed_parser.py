@@ -92,7 +92,7 @@ class _FeedParser:
             # -- Update feed status to ERROR and reschedule next fetch
             # Log exception for debugging
             return self._feed_update(
-                feed_status=Podcast.FeedStatus.DATABASE_ERROR,
+                Podcast.FeedStatus.DATABASE_ERROR,
                 frequency=self._reschedule(),
                 exception=str(exc),
             )
@@ -114,7 +114,7 @@ class _FeedParser:
             # -- Handle duplicate RSS feed errors
             # -- Deactivate podcast and set feed status to DUPLICATE
             return self._feed_update(
-                feed_status=Podcast.FeedStatus.DUPLICATE,
+                Podcast.FeedStatus.DUPLICATE,
                 active=False,
                 canonical_id=exc.canonical_id,
             )
@@ -209,36 +209,40 @@ class _FeedParser:
     def _parse_episodes(self, feed: Feed) -> None:
         """Parse the podcast's RSS feed and update the episodes."""
 
+        # Find existing episodes for the podcast
         episodes = Episode.objects.filter(podcast=self.podcast)
 
+        # Ensure unique guids in feed items
+        items = {item.guid: item for item in feed.items}.values()
+
         # Delete any episodes that are not in the feed
-        episodes.exclude(guid__in={item.guid for item in feed.items}).delete()
+        episodes.exclude(guid__in={item.guid for item in items}).delete()
 
         # Create a dictionary of guids to episode pks
-        guids = dict(episodes.values_list("guid", "pk"))
+        guids_to_pks = dict(episodes.values_list("guid", "pk"))
 
-        # Update existing episodes
-        items_for_update = {
-            guids[item.guid]: item for item in feed.items if item.guid in guids
-        }
-
-        episodes_for_update = (
-            self._parse_episode(item, pk=episode_id)
-            for episode_id, item in items_for_update.items()
+        # Prepare episodes for upsert: map feed items to Episode instances
+        episodes_for_upsert = (
+            Episode(
+                podcast=self.podcast,
+                pk=guids_to_pks.get(item.guid),
+                **item.model_dump(),
+            )
+            for item in items
         )
 
-        fields_for_update = Item.model_fields.keys()
+        unique_fields = ("podcast", "guid")
+        update_fields = Item.model_fields.keys()
 
-        for batch in itertools.batched(episodes_for_update, 1000, strict=False):
-            episodes.fast_update(batch, fields=fields_for_update)
-
-        # Insert new episodes
-        episodes_for_insert = (
-            self._parse_episode(item) for item in feed.items if item.guid not in guids
-        )
-
-        for batch in itertools.batched(episodes_for_insert, 100, strict=False):
-            Episode.objects.bulk_create(batch, ignore_conflicts=True)
-
-    def _parse_episode(self, item: Item, **fields) -> Episode:
-        return Episode(podcast=self.podcast, **item.model_dump(), **fields)
+        # Bulk upsert episodes in batches
+        for batch in itertools.batched(
+            episodes_for_upsert,
+            300,
+            strict=False,
+        ):
+            Episode.objects.bulk_create(
+                batch,
+                update_conflicts=True,
+                unique_fields=unique_fields,
+                update_fields=update_fields,
+            )
