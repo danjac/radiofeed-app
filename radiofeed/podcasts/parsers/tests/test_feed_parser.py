@@ -111,7 +111,6 @@ class TestFeedParser:
         assert podcast.num_episodes == 20
         assert podcast.active is True
         assert podcast.content_hash
-        assert podcast.feed_last_updated
         assert podcast.title == "Mysterious Universe"
 
         assert podcast.description == "Blog and Podcast specializing in offbeat news"
@@ -202,7 +201,6 @@ class TestFeedParser:
         podcast.refresh_from_db()
 
         assert podcast.feed_status == result
-        assert podcast.feed_last_updated
 
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
@@ -228,8 +226,6 @@ class TestFeedParser:
         assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
-        assert podcast.feed_last_updated
-
     @pytest.mark.django_db
     def test_parse_new_feed_url_other_podcast(self):
         podcast = PodcastFactory()
@@ -253,8 +249,6 @@ class TestFeedParser:
         assert podcast.feed_status == result
         assert podcast.active is False
         assert podcast.canonical == other
-
-        assert podcast.feed_last_updated is None
 
     @pytest.mark.django_db
     def test_parse_serial(self):
@@ -283,7 +277,6 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
-        assert podcast.feed_last_updated
 
         assert podcast.is_serial()
 
@@ -314,7 +307,6 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
-        assert podcast.feed_last_updated
         assert podcast.title == "Varsovia Vento Podkasto"
         assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
 
@@ -342,7 +334,6 @@ class TestFeedParser:
         assert podcast.rss
         assert podcast.active
         assert podcast.content_hash
-        assert podcast.feed_last_updated
         assert podcast.title == "Armstrong & Getty On Demand"
 
     @pytest.mark.django_db
@@ -382,7 +373,6 @@ class TestFeedParser:
         assert podcast.num_episodes == 20
         assert podcast.rss
         assert podcast.active
-        assert podcast.feed_last_updated
         assert podcast.content_hash
         assert podcast.title == "Mysterious Universe"
 
@@ -434,7 +424,6 @@ class TestFeedParser:
         assert podcast.feed_status == result
 
         assert podcast.active
-        assert podcast.feed_last_updated is None
         assert podcast.parsed
 
         mock_parse_rss.assert_not_called()
@@ -482,7 +471,6 @@ class TestFeedParser:
         assert podcast.modified.year == 2020
 
         assert podcast.parsed
-        assert podcast.feed_last_updated
 
         assert podcast.etag
         assert podcast.explicit
@@ -521,7 +509,6 @@ class TestFeedParser:
         assert podcast.active
         assert podcast.modified
         assert podcast.parsed
-        assert podcast.feed_last_updated
 
     @pytest.mark.django_db
     def test_parse_permanent_redirect_url_taken(self, podcast, categories):
@@ -548,7 +535,6 @@ class TestFeedParser:
         assert podcast.rss == current_rss
         assert not podcast.active
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
 
         assert podcast.canonical == other
 
@@ -590,7 +576,6 @@ class TestFeedParser:
         assert podcast.rss == current_rss
         assert not podcast.active
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
 
         # Deterministic canonical: should always be 'other' (the .first() in query)
         assert podcast.canonical == other
@@ -657,7 +642,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -682,7 +666,6 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.num_retries == Podcast.MAX_RETRIES + 2
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -702,7 +685,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -719,7 +701,6 @@ class TestFeedParser:
         assert podcast.active
         assert podcast.modified is None
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
 
     @pytest.mark.django_db
     def test_parse_http_gone(self, podcast):
@@ -734,7 +715,6 @@ class TestFeedParser:
 
         assert podcast.active is False
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
 
     @pytest.mark.django_db
     def test_parse_http_server_error(self, podcast):
@@ -750,7 +730,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -767,7 +746,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -788,7 +766,6 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.num_retries == Podcast.MAX_RETRIES + 2
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -804,7 +781,6 @@ class TestFeedParser:
 
         assert podcast.active is True
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert podcast.exception
 
     @pytest.mark.django_db
@@ -830,5 +806,4 @@ class TestFeedParser:
 
         assert podcast.active is True
         assert podcast.parsed
-        assert podcast.feed_last_updated is None
         assert "fail" in podcast.exception

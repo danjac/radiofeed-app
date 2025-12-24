@@ -70,7 +70,6 @@ class _FeedParser:
                     feed_status,
                     active=active,
                     rss=canonical_rss,
-                    feed_last_updated=timezone.now(),
                     num_episodes=len(feed.items),
                     content_hash=response.content_hash,
                     etag=response.etag,
