@@ -145,6 +145,7 @@ class _FeedParser:
             )
 
     def _resolve_canonical_rss(self, current_url: str, new_url: str) -> str:
+        # Resolve a new canonical RSS feed URL, checking for duplicates
         if current_url == new_url:
             return current_url
 
@@ -171,7 +172,7 @@ class _FeedParser:
             # Raise DuplicateError with root podcast's pk
             raise DuplicateError(canonical_id=root.pk)
 
-        # No duplicate found, return the original RSS
+        # No duplicate found, return the new url
         return new_url
 
     def _reschedule(self) -> datetime.timedelta:
@@ -205,7 +206,7 @@ class _FeedParser:
         }
         self.podcast.categories.set(categories)
 
-    def _parse_episodes(self, feed: Feed, batch_size: int = 100) -> None:
+    def _parse_episodes(self, feed: Feed) -> None:
         """Parse the podcast's RSS feed and update the episodes."""
 
         episodes = Episode.objects.filter(podcast=self.podcast)
@@ -228,7 +229,7 @@ class _FeedParser:
 
         fields_for_update = Item.model_fields.keys()
 
-        for batch in itertools.batched(episodes_for_update, batch_size, strict=False):
+        for batch in itertools.batched(episodes_for_update, 1000, strict=False):
             episodes.fast_update(batch, fields=fields_for_update)
 
         # Insert new episodes
@@ -236,7 +237,7 @@ class _FeedParser:
             self._parse_episode(item) for item in feed.items if item.guid not in guids
         )
 
-        for batch in itertools.batched(episodes_for_insert, batch_size, strict=False):
+        for batch in itertools.batched(episodes_for_insert, 100, strict=False):
             Episode.objects.bulk_create(batch, ignore_conflicts=True)
 
     def _parse_episode(self, item: Item, **fields) -> Episode:
