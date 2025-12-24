@@ -3,7 +3,8 @@ import itertools
 import random
 import time
 
-from django.core.management.base import BaseCommand, CommandParser
+from django.core.management import CommandError, CommandParser
+from django.core.management.base import BaseCommand
 
 from radiofeed.http_client import get_client
 from radiofeed.podcasts import itunes
@@ -43,18 +44,30 @@ class Command(BaseCommand):
             help="Maximum jitter time between requests in seconds",
         )
 
+        parser.add_argument(
+            "--countries",
+            "-c",
+            default=itunes.COUNTRIES,
+            nargs="+",
+        )
+
     def handle(
         self,
         *,
+        countries: list[str],
         min_jitter: float,
         max_jitter: float,
         **options,
     ) -> None:
         """Handle the management command."""
 
+        # Check countries are in list of supported countries by iTunes
+        if invalid := (set(countries) - set(itunes.COUNTRIES)):
+            raise CommandError(f"Invalid iTunes country codes: {', '.join(invalid)}")
+
         categories = Category.objects.filter(itunes_genre_id__isnull=False)
 
-        combinations = itertools.product(itunes.COUNTRIES, (None, *categories))
+        combinations = itertools.product(countries, (None, *categories))
 
         with get_client() as client:
 

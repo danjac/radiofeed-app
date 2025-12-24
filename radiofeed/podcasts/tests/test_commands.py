@@ -1,5 +1,5 @@
 import pytest
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 
 from radiofeed.podcasts.itunes import Feed, ItunesError
 from radiofeed.podcasts.tests.factories import (
@@ -58,6 +58,13 @@ class TestFetchItunesFeeds:
         mock_fetch.assert_called()
         mock_save_feeds.assert_any_call([feed], promoted=True)
         mock_save_feeds.assert_any_call([feed])
+
+    @pytest.mark.django_db
+    def test_invalid_country_codes(self):
+        with pytest.raises(CommandError):
+            call_command(
+                "fetch_itunes_feeds", min_jitter=0, max_jitter=0, countries=["us", "tx"]
+            )
 
     @pytest.mark.django_db
     def test_no_chart_feeds(self, category, mocker, feed):
