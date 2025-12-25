@@ -23,4 +23,4 @@ class InvalidRSSError(FeedParseError):
 
 
 class UnavailableError(FeedParseError):
-    """The podcast feed is temporarily unavailable (e.g., HTTP 503)."""
+    """The podcast feed is unavailable due to network issues or server errors."""

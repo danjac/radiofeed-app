@@ -1,10 +1,7 @@
 import functools
 from typing import Annotated, Literal
 
-from pydantic import (
-    AfterValidator,
-    BeforeValidator,
-)
+from pydantic import AfterValidator, BeforeValidator
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.models import Podcast
