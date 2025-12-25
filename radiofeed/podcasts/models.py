@@ -88,9 +88,9 @@ class PodcastQuerySet(SearchQuerySet):
         """Returns podcasts subscribed by user."""
         return self.filter(pk__in=user.subscriptions.values("podcast"))
 
-    def published(self, *, published: bool = True) -> Self:
+    def published(self) -> Self:
         """Returns only published podcasts (pub_date NOT NULL)."""
-        return self.filter(pub_date__isnull=not published)
+        return self.filter(pub_date__isnull=False)
 
     def scheduled(self) -> Self:
         """Returns all podcasts scheduled for feed parser update.
