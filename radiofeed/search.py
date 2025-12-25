@@ -1,52 +1,42 @@
 import functools
 import operator
-from typing import Self
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Q, QuerySet
 
 
-class SearchQuerySet(QuerySet):
-    """Search queryset mixin."""
+def search_queryset(
+    queryset: QuerySet,
+    value: str,
+    *search_fields: str,
+    annotation: str = "rank",
+    config: str = "simple",
+    search_type: str = "websearch",
+) -> QuerySet:
+    """Search queryset using full-text search."""
+    if not value:
+        return queryset.none()
+    query = SearchQuery(value, search_type=search_type, config=config)
 
-    search_fields: tuple[str, ...] = ()
+    rank = functools.reduce(
+        operator.add,
+        (
+            SearchRank(
+                F(field),
+                query=query,
+            )
+            for field in search_fields
+        ),
+    )
 
-    def search(
-        self,
-        value: str,
-        *search_fields: str,
-        annotation: str = "rank",
-        config: str = "simple",
-        search_type: str = "websearch",
-    ) -> Self:
-        """Search queryset using full-text search."""
+    q = functools.reduce(
+        operator.or_,
+        (
+            Q(
+                **{field: query},
+            )
+            for field in search_fields
+        ),
+    )
 
-        if not value:
-            return self.none()
-
-        search_fields = search_fields or self.search_fields
-
-        query = SearchQuery(value, search_type=search_type, config=config)
-
-        rank = functools.reduce(
-            operator.add,
-            (
-                SearchRank(
-                    F(field),
-                    query=query,
-                )
-                for field in search_fields
-            ),
-        )
-
-        q = functools.reduce(
-            operator.or_,
-            (
-                Q(
-                    **{field: query},
-                )
-                for field in search_fields
-            ),
-        )
-
-        return self.annotate(**{annotation: rank}).filter(q)
+    return queryset.annotate(**{annotation: rank}).filter(q)

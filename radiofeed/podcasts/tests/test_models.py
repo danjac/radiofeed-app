@@ -161,16 +161,6 @@ class TestPodcastManager:
         user.recommended_podcasts.add(recommended)
         assert Podcast.objects.recommended(user).count() == 0
 
-    @pytest.mark.django_db
-    def test_search(self):
-        PodcastFactory(title="testing")
-        assert Podcast.objects.search("testing").exists()
-
-    @pytest.mark.django_db
-    def test_search_empty(self):
-        PodcastFactory(title="testing")
-        assert not Podcast.objects.search("").exists()
-
 
 class TestPodcastModel:
     def test_str(self):

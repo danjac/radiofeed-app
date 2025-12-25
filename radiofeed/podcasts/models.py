@@ -15,11 +15,10 @@ from slugify import slugify
 
 from radiofeed.fields import URLField
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import SearchQuerySet
 from radiofeed.users.models import User
 
 if TYPE_CHECKING:
-    from radiofeed.episodes.models import EpisodeQuerySet
+    from radiofeed.episodes.models import Episode
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -79,10 +78,8 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(SearchQuerySet):
+class PodcastQuerySet(models.QuerySet):
     """Custom QuerySet of Podcast model."""
-
-    search_fields = ("search_vector",)
 
     def subscribed(self, user: User) -> Self:
         """Returns podcasts subscribed by user."""
@@ -272,7 +269,7 @@ class Podcast(models.Model):
     objects: PodcastQuerySet = PodcastQuerySet.as_manager()  # type: ignore[assignment]
 
     if TYPE_CHECKING:
-        episodes: EpisodeQuerySet
+        episodes: models.Manager["Episode"]
         subscriptions: models.Manager["Subscription"]
         recommendations: models.Manager["Recommendation"]
         similar: models.Manager["Recommendation"]

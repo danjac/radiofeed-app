@@ -2,21 +2,12 @@ from datetime import timedelta
 
 import pytest
 
-from radiofeed.episodes.models import AudioLog, Bookmark, Episode
+from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.episodes.tests.factories import (
-    AudioLogFactory,
-    BookmarkFactory,
     EpisodeFactory,
 )
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
-
-
-class TestEpisodeManager:
-    @pytest.mark.django_db
-    def test_search(self):
-        EpisodeFactory(title="testing")
-        assert Episode.objects.search("testing").exists()
 
 
 class TestEpisodeModel:
@@ -130,24 +121,6 @@ class TestEpisodeModel:
     )
     def test_duration_in_seconds(self, duration, expected):
         assert Episode(duration=duration).duration_in_seconds == expected
-
-
-class TestBookmarkManager:
-    @pytest.mark.django_db
-    def test_search(self):
-        BookmarkFactory(episode__title="episode", episode__podcast__title="podcast")
-        assert Bookmark.objects.search("episode").exists()
-        assert Bookmark.objects.search("podcast").exists()
-        assert Bookmark.objects.search("episode OR podcast").exists()
-
-
-class TestAudioLogManager:
-    @pytest.mark.django_db
-    def test_search(self):
-        AudioLogFactory(episode__title="episode", episode__podcast__title="podcast")
-        assert AudioLog.objects.search("episode").exists()
-        assert AudioLog.objects.search("podcast").exists()
-        assert AudioLog.objects.search("episode OR podcast").exists()
 
 
 class TestAudioLogModel:

@@ -27,6 +27,7 @@ from radiofeed.response import (
     HttpResponseNoContent,
     RenderOrRedirectResponse,
 )
+from radiofeed.search import search_queryset
 
 PlayerAction = Literal["load", "play", "close"]
 
@@ -85,8 +86,11 @@ def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
 
     if request.search:
         episodes = (
-            Episode.objects.filter(podcast__private=False)
-            .search(request.search.value)
+            search_queryset(
+                Episode.objects.filter(podcast__private=False),
+                request.search.value,
+                "search_vector",
+            )
             .select_related("podcast")
             .order_by("-rank", "-pub_date")
         )
@@ -219,7 +223,12 @@ def history(request: AuthenticatedHttpRequest) -> TemplateResponse:
     order_by = "listened" if ordering == "asc" else "-listened"
 
     if request.search:
-        audio_logs = audio_logs.search(request.search.value).order_by("-rank", order_by)
+        audio_logs = search_queryset(
+            audio_logs,
+            request.search.value,
+            "episode__search_vector",
+            "episode__podcast__search_vector",
+        ).order_by("-rank", order_by)
     else:
         audio_logs = audio_logs.order_by(order_by)
 
@@ -288,8 +297,12 @@ def bookmarks(request: AuthenticatedHttpRequest) -> TemplateResponse:
     order_by = "created" if ordering == "asc" else "-created"
 
     if request.search:
-        bookmarks = bookmarks.search(request.search.value).order_by("-rank", order_by)
-
+        bookmarks = search_queryset(
+            bookmarks,
+            request.search.value,
+            "episode__search_vector",
+            "episode__podcast__search_vector",
+        ).order_by("-rank", order_by)
     else:
         bookmarks = bookmarks.order_by(order_by)
 
