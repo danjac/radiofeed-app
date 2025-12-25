@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST, require_safe
 
+from radiofeed.episodes.models import Episode
 from radiofeed.http import require_DELETE, require_form_methods
 from radiofeed.http_client import get_client
 from radiofeed.paginator import render_paginated_response
@@ -146,8 +147,11 @@ def podcast_detail(
 @login_required
 def latest_episode(_, podcast_id: int) -> HttpResponseRedirect:
     """Redirects to latest episode."""
-    podcast = get_object_or_404(_get_podcasts(), pk=podcast_id)
-    if episode := podcast.episodes.order_by("-pub_date", "-id").first():
+    if (
+        episode := Episode.objects.filter(podcast__pk=podcast_id)
+        .order_by("-pub_date", "-id")
+        .first()
+    ):
         return redirect(episode)
     raise Http404
 
