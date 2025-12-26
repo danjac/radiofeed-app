@@ -19,10 +19,10 @@ document.addEventListener("alpine:init", () => {
             isUpdating: false,
             duration: 0,
             runtime: 0,
-            skipSeconds: 10,
-            timer: null,
+            skipSeconds: 30,
             loadingTime: 30,
             updateInterval: 6,
+            timer: null,
             counters: {
                 current: "00:00:00",
                 remaining: "00:00:00",
