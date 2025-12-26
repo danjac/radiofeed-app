@@ -70,12 +70,12 @@ class _FeedParser:
                     feed_status,
                     active=active,
                     rss=canonical_rss,
-                    num_episodes=len(feed.items),
                     content_hash=response.content_hash,
                     etag=response.etag,
                     modified=response.modified,
                     extracted_text=feed.tokenize(),
                     frequency=scheduler.schedule(feed),
+                    num_episodes=len(feed.items),
                     **feed.model_dump(
                         exclude={
                             "canonical_url",
