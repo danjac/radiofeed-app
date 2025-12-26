@@ -20,7 +20,12 @@ def search_queryset(
     """Search queryset using full-text search."""
     if not value:
         return queryset.none()
-    query = SearchQuery(value, search_type=search_type, config=config)
+
+    query = SearchQuery(
+        value,
+        search_type=search_type,
+        config=config,
+    )
 
     rank = functools.reduce(
         operator.add,
