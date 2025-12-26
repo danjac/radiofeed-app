@@ -1205,14 +1205,14 @@ wheels = [
 
 [[package]]
 name = "pytest-watcher"
-version = "0.6.0"
+version = "0.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "watchdog" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/71/83/9d6ffd35243b678d50de01ec38392d098d7c7f849890b9d18cd9c577a90d/pytest_watcher-0.6.0.tar.gz", hash = "sha256:d06c6633cc92ba177a7257a54a2ec9705e3116ef5ae7a2cba0eed708fa768c58", size = 598249, upload-time = "2025-12-21T19:20:09.453Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/c6/5ca81317decf5e814b994a3f71773c1c435f1b45f52d53af68183bdfb0b8/pytest_watcher-0.6.1.tar.gz", hash = "sha256:3dd0230fea6a32c6fd566c06214188f1a2971bd81a359c1a08ce5ff44c1759f1", size = 600676, upload-time = "2025-12-25T22:25:55.311Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1e/c0/d242b8b5d8c32b001006a4d85088cb20ece494c61e56558d1fdc87429d5e/pytest_watcher-0.6.0-py3-none-any.whl", hash = "sha256:8da8ad71b72a2f333590012461d277d33e25ca8f1e33f509a345db410110d576", size = 11407, upload-time = "2025-12-21T19:20:10.754Z" },
+    { url = "https://files.pythonhosted.org/packages/85/6c/c903396615807b8024949a2f8f1e573ea4ea8efeeabcb311be4695e8c9c3/pytest_watcher-0.6.1-py3-none-any.whl", hash = "sha256:e7bc839ad213bae1ac502b236c101be80848d4c01ff20c061f6ca7b51de4eb6b", size = 11477, upload-time = "2025-12-25T22:25:56.458Z" },
 ]
 
 [[package]]
