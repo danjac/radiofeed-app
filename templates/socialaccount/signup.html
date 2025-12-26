@@ -12,7 +12,7 @@
                 You are about to use your {{ provider_name }} account to login to {{ site_name }}. As a final step, please complete the following form:
             </p>
 
-            {% blockinclude "form.html" hx_disable=True %}
+            {% fragment "form.html" hx_disable=True %}
                 {% if redirect_field_value %}
                     <input type="hidden"
                            name="{{ redirect_field_name }}"
@@ -21,13 +21,13 @@
                 <div class="grid-cols-2 gap-3 space-y-3 sm:grid sm:space-y-0">
                     {{ form }}
                 </div>
-                {% blockinclude "form.html#buttons" %}
+                {% fragment "form.html#buttons" %}
                     <button class="btn btn-primary">
                         {% heroicon_mini "plus" class="mr-2" %}
                         Sign Up
                     </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                {% endfragment %}
+            {% endfragment %}
         </div>
     {% endwith %}
 {% endblock content %}

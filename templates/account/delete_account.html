@@ -12,15 +12,15 @@
                 <p>Please confirm that you want to delete your account. You will not be able to undo this action!</p>
                 <p>This will permanently delete ALL your data including your subscriptions, bookmarks and listening history.</p>
             </div>
-            {% blockinclude "form.html" hx_disable=True %}
+            {% fragment "form.html" hx_disable=True %}
                 {{ form }}
-                {% blockinclude "form.html#buttons" %}
+                {% fragment "form.html#buttons" %}
                     <button class="btn btn-danger">
                         {% heroicon_mini "trash" class="mr-2" %}
                         Yes, delete my account
                     </button>
-                {% endblockinclude %}
-            {% endblockinclude %}
+                {% endfragment %}
+            {% endfragment %}
         </div>
     {% else %}
         {% include "header.html" with title="Delete Account" %}

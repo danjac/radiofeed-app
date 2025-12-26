@@ -9,6 +9,7 @@ from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
+from django.utils.safestring import SafeString
 
 from simplecasts import covers, sanitizer
 from simplecasts.pwa import get_theme_color
@@ -122,21 +123,21 @@ def cookie_banner(context: RequestContext) -> dict:
 
 
 @register.simple_block_tag(takes_context=True)
-def blockinclude(
+def fragment(
     context: Context,
     content: str,
     template_name: str,
     *,
     only: bool = False,
     **extra_context,
-) -> str:
+) -> SafeString:
     """Renders include in block.
 
     Example:
 
-    {% blockinclude "header.html" %}
+    {% fragment "header.html" %}
     title goes here
-    {% endblockinclude %}
+    {% endfragment %}
 
     header.html:
     <h1>{{ content }}</h1>

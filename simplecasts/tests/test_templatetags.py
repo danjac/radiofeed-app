@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.template import TemplateSyntaxError
 
 from simplecasts.request import RequestContext
-from simplecasts.templatetags import blockinclude, cookie_banner
+from simplecasts.templatetags import cookie_banner, fragment
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ class TestBlockinclude:
         context = mocker.Mock()
         context.template = None
         with pytest.raises(TemplateSyntaxError):
-            blockinclude(context, "header.html#title", "test")
+            fragment(context, "header.html#title", "test")
 
 
 class TestCookieBanner:

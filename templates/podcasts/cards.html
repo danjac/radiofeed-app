@@ -1,17 +1,17 @@
 {% partialdef podcast %}
-    {% blockinclude "card.html" url=podcast.get_absolute_url title=podcast.cleaned_title cover_url=podcast.cover_url %}
+    {% fragment "card.html" url=podcast.get_absolute_url title=podcast.cleaned_title cover_url=podcast.cover_url %}
         {{ podcast.pub_date|date:"DATE_FORMAT" }}
-    {% endblockinclude %}
+    {% endfragment %}
 {% endpartialdef %}
 
 {% partialdef episode %}
-    {% blockinclude "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=episode.get_cover_url %}
+    {% fragment "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=episode.get_cover_url %}
         {{ episode.pub_date|date:"DATE_FORMAT" }}
-    {% endblockinclude %}
+    {% endfragment %}
 {% endpartialdef %}
 
 {% partialdef itunes_feed %}
-    {% blockinclude "card.html" url=feed.url title=feed.title cover_url=feed.image external=True %}
+    {% fragment "card.html" url=feed.url title=feed.title cover_url=feed.image external=True %}
         View in iTunes
-    {% endblockinclude %}
+    {% endfragment %}
 {% endpartialdef %}

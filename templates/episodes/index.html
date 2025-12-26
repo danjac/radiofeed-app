@@ -6,28 +6,28 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "header.html" title="New Releases" %}
-        {% blockinclude "header/nav.html" %}
-            {% blockinclude "header/nav.html#item" %}
+    {% fragment "header.html" title="New Releases" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav.html#item" %}
                 {% url "episodes:search_episodes" as search_url %}
                 {% include "header/nav/search.html#form" %}
-            {% endblockinclude %}
-        {% endblockinclude %}
-    {% endblockinclude %}
-    {% blockinclude "browse.html" %}
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
+    {% fragment "browse.html" %}
         {% for episode in episodes %}
-            {% blockinclude "browse.html#item" %}
+            {% fragment "browse.html#item" %}
                 {% include "episodes/episode.html" %}
-            {% endblockinclude %}
+            {% endfragment %}
         {% empty %}
-            {% blockinclude "browse.html#empty" %}
+            {% fragment "browse.html#empty" %}
                 <p>You're not following any podcasts yet.</p>
                 <p>
                     Head over to the <a href="{% url 'podcasts:discover' %}" class="link">Discover</a> page to find any podcasts you like, and hit the <strong>Subscribe</strong> button in the podcast description to add it to your list.
                 </p>
                 <p>Once you're subscribed to some podcasts, new episodes will show up here automatically.</p>
                 <p>You can also use the search box above to explore and find episodes that catch your interest.</p>
-            {% endblockinclude %}
+            {% endfragment %}
         {% endfor %}
-    {% endblockinclude %}
+    {% endfragment %}
 {% endblock content %}

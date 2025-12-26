@@ -27,15 +27,15 @@
         <div class="space-y-3">
             <h2 class="text-base font-semibold lg:text-lg">Import feeds</h2>
             {% partialdef form inline %}
-                {% blockinclude "form.html" htmx=True multipart=True target="import-feeds-form" %}
+                {% fragment "form.html" htmx=True multipart=True target="import-feeds-form" %}
                     {{ upload_form }}
-                    {% blockinclude "form.html#buttons" %}
+                    {% fragment "form.html#buttons" %}
                         <button class="btn btn-default">
                             {% heroicon_mini "arrow-up-tray" class="mr-2" %}
                             Upload OPML
                         </button>
-                    {% endblockinclude %}
-                {% endblockinclude %}
+                    {% endfragment %}
+                {% endfragment %}
             {% endpartialdef form %}
         </div>
     </div>

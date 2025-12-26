@@ -5,16 +5,16 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "header.html" title="History" %}
+    {% fragment "header.html" title="History" %}
         {% if request.search or page.has_other_pages %}
-            {% blockinclude "header/nav.html" %}
+            {% fragment "header/nav.html" %}
                 {% if request.search %}
-                    {% blockinclude "header/nav.html#item" %}
+                    {% fragment "header/nav.html#item" %}
                         {% url "episodes:search_episodes" as search_button_url %}
                         {% include "header/nav/search.html#button" with label="Search Episodes" %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% else %}
-                    {% blockinclude "header/nav.html#item" %}
+                    {% fragment "header/nav.html#item" %}
                         {% if ordering == "asc" %}
                             <a class="link" href="{{ request.path }}{% querystring order='desc' page=None %}">
                                 Newest First</a>
@@ -22,22 +22,22 @@
                             <a class="link" href="{{ request.path }}{% querystring order='asc' page=None %}">
                                 Oldest First</a>
                         {% endif %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% endif %}
-                {% blockinclude "header/nav.html#item" %}
+                {% fragment "header/nav.html#item" %}
                     {% include "header/nav/search.html#form" with clearable=True %}
-                {% endblockinclude %}
-            {% endblockinclude %}
+                {% endfragment %}
+            {% endfragment %}
         {% endif %}
-    {% endblockinclude %}
+    {% endfragment %}
     {% partialdef pagination inline %}
-        {% blockinclude "paginate.html" %}
+        {% fragment "paginate.html" %}
             {% for audio_log in page %}
-                {% blockinclude "browse.html#item" %}
+                {% fragment "browse.html#item" %}
                     {% include "episodes/episode.html" with episode=audio_log.episode %}
-                {% endblockinclude %}
+                {% endfragment %}
             {% empty %}
-                {% blockinclude "browse.html#empty" %}
+                {% fragment "browse.html#empty" %}
                     {% if request.search %}
                         No episodes for &quot;<strong>{{ request.search.value }}</strong>&quot; found in your history.
                     {% else %}
@@ -47,8 +47,8 @@
                         </p>
                     {% endif %}
 
-                {% endblockinclude %}
+                {% endfragment %}
             {% endfor %}
-        {% endblockinclude %}
+        {% endfragment %}
     {% endpartialdef pagination %}
 {% endblock content %}

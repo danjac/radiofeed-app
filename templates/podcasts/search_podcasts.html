@@ -6,35 +6,35 @@
 {% endblock title %}
 
 {% block content %}
-    {% blockinclude "header.html" title="Search Podcasts" %}
-        {% blockinclude "header/nav.html" %}
-            {% blockinclude "header/nav.html#item" %}
+    {% fragment "header.html" title="Search Podcasts" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav.html#item" %}
                 {% url "podcasts:search_itunes" as search_button_url %}
                 {% include "header/nav/search.html#button" with label="Search iTunes" %}
-            {% endblockinclude %}
-            {% blockinclude "header/nav.html#item" %}
+            {% endfragment %}
+            {% fragment "header/nav.html#item" %}
                 {% include "header/nav/search.html#form" %}
-            {% endblockinclude %}
-        {% endblockinclude %}
-    {% endblockinclude %}
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
     {% partialdef pagination inline %}
         {% cache cache_timeout search-podcasts request.get_full_path %}
-            {% blockinclude "paginate.html" %}
+            {% fragment "paginate.html" %}
                 {% for podcast in page %}
-                    {% blockinclude "browse.html#item" %}
+                    {% fragment "browse.html#item" %}
                         {% include "podcasts/cards.html#podcast" %}
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% empty %}
-                    {% blockinclude "browse.html#empty" %}
+                    {% fragment "browse.html#empty" %}
                         <p>
                             No podcasts found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
                         </p>
                         <p>
                             Click the <strong>Search iTunes</strong> button above to search the iTunes podcast directory.
                         </p>
-                    {% endblockinclude %}
+                    {% endfragment %}
                 {% endfor %}
-            {% endblockinclude %}
+            {% endfragment %}
         {% endcache %}
     {% endpartialdef pagination %}
 {% endblock content %}
