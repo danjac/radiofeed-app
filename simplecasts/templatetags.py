@@ -135,12 +135,19 @@ def fragment(
 
     Example:
 
+    Calling template:
+
     {% fragment "header.html" %}
     title goes here
     {% endfragment %}
 
     header.html:
+
     <h1>{{ content }}</h1>
+
+    Renders:
+
+    <h1>title goes here</h1>
 
     If `only` is passed it will not include outer context.
     """
