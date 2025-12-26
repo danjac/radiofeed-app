@@ -1,18 +1,22 @@
 import functools
 import operator
+from typing import TypeAlias, TypeVar
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Q, QuerySet
+from django.db.models import F, Model, Q, QuerySet
+
+T_Model = TypeVar("T_Model", bound=Model)
+T_QuerySet: TypeAlias = QuerySet[T_Model]
 
 
 def search_queryset(
-    queryset: QuerySet,
+    queryset: T_QuerySet,
     value: str,
     *search_fields: str,
     annotation: str = "rank",
     config: str = "simple",
     search_type: str = "websearch",
-) -> QuerySet:
+) -> T_QuerySet:
     """Search queryset using full-text search."""
     if not value:
         return queryset.none()
