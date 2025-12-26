@@ -34,3 +34,4 @@ pwa_sha256_fingerprints: ""
 secret_key_fallbacks: ""
 secure_ssl_redirect: false
 sentry_url: ""
+user_agent: "simplecasts-bot/1.0 (+https://{{ domain }}/)"

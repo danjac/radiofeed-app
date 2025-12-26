@@ -47,6 +47,9 @@ configmap:
    - name: "secure_ssl_redirect"
      value: "{{ secure_ssl_redirect }}"
 
+   - name: "user_agent"
+     value: "{{ user_agent }}"
+
 
 secrets:
   - name: "database_url"

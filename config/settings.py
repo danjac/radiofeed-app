@@ -520,7 +520,7 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 
 # User-Agent header for API calls from this site
 
-USER_AGENT = env("USER_AGENT", default="Simplecasts/0.0.0")
+USER_AGENT = env("USER_AGENT", default="simplecasts-bot/0.0.0")
 
 # Cookie used to check user accepts cookies
 
