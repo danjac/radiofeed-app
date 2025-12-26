@@ -1,4 +1,4 @@
-name: listenwave:checks
+name: simplecasts:checks
 on: workflow_call
 jobs:
     precommit:

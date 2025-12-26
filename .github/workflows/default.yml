@@ -1,4 +1,4 @@
-name: listenwave:default
+name: simplecasts:default
 on:
     pull_request:
     push:

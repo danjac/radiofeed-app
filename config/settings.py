@@ -51,9 +51,9 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
-    "radiofeed.episodes",
-    "radiofeed.podcasts",
-    "radiofeed.users",
+    "simplecasts.episodes",
+    "simplecasts.podcasts",
+    "simplecasts.users",
 ]
 
 
@@ -73,11 +73,11 @@ MIDDLEWARE: list[str] = [
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "radiofeed.middleware.HtmxCacheMiddleware",
-    "radiofeed.middleware.HtmxMessagesMiddleware",
-    "radiofeed.middleware.HtmxRedirectMiddleware",
-    "radiofeed.middleware.SearchMiddleware",
-    "radiofeed.episodes.middleware.PlayerMiddleware",
+    "simplecasts.middleware.HtmxCacheMiddleware",
+    "simplecasts.middleware.HtmxMessagesMiddleware",
+    "simplecasts.middleware.HtmxRedirectMiddleware",
+    "simplecasts.middleware.SearchMiddleware",
+    "simplecasts.episodes.middleware.PlayerMiddleware",
 ]
 
 # Databases
@@ -131,7 +131,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "radiofeed.templatetags",
+                "simplecasts.templatetags",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
             "context_processors": [
@@ -143,8 +143,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "radiofeed.context_processors.cache_timeout",
-                "radiofeed.context_processors.csrf_header",
+                "simplecasts.context_processors.cache_timeout",
+                "simplecasts.context_processors.csrf_header",
             ],
         },
     }
@@ -416,7 +416,7 @@ LOGGING = {
             "handlers": ["console"],
             "level": "INFO",
         },
-        "radiofeed": {
+        "simplecasts": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
@@ -520,7 +520,7 @@ if env.bool("USE_DEBUG_TOOLBAR", default=False):
 
 # User-Agent header for API calls from this site
 
-USER_AGENT = env("USER_AGENT", default="Listenwave/0.0.0")
+USER_AGENT = env("USER_AGENT", default="Simplecasts/0.0.0")
 
 # Cookie used to check user accepts cookies
 
@@ -559,7 +559,7 @@ META_TAGS = {
 
 PWA_CONFIG = {
     "assetlinks": {
-        "package_name": env("PWA_PACKAGE_NAME", default="app.radiofeed.twa"),
+        "package_name": env("PWA_PACKAGE_NAME", default="app.simplecasts.twa"),
         "sha256_fingerprints": env.list("PWA_SHA256_FINGERPRINTS", default=[]),
     },
     "manifest": {

@@ -1,4 +1,4 @@
-name: listenwave:deploy
+name: simplecasts:deploy
 run-name: ${{ github.actor }} is deploying to production
 on:
     workflow_dispatch:

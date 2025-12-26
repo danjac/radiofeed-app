@@ -46,15 +46,15 @@ Run `just` to see all available commands.
 
 ## Deployment
 
-The following environment variables should be set in your production installation (changing _radiofeed.app_ for your domain).
+The following environment variables should be set in your production installation (changing _simplecasts.app_ for your domain).
 
 ```
-ALLOWED_HOSTS=radiofeed.app
+ALLOWED_HOSTS=simplecasts.app
 DATABASE_URL=<database-url>
 REDIS_URL=<redis-url>
 ADMIN_URL=<admin-url>
-ADMINS=me@radiofeed.app
-EMAIL_HOST=mg.radiofeed.app
+ADMINS=me@simplecasts.app
+EMAIL_HOST=mg.simplecasts.app
 MAILGUN_API_KEY=<mailgun_api_key>
 SECRET_KEY=<secret>
 SENTRY_URL=<sentry-url>

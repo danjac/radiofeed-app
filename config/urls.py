@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from radiofeed import views
+from simplecasts import views
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -18,9 +18,9 @@ urlpatterns = [
     path("manifest.json", views.manifest, name="manifest"),
     path(".well-known/assetlinks.json", views.assetlinks, name="assetlinks"),
     path(".well-known/security.txt", views.security, name="security"),
-    path("", include("radiofeed.episodes.urls")),
-    path("", include("radiofeed.podcasts.urls")),
-    path("", include("radiofeed.users.urls")),
+    path("", include("simplecasts.episodes.urls")),
+    path("", include("simplecasts.podcasts.urls")),
+    path("", include("simplecasts.users.urls")),
     path("account/", include("allauth.urls")),
     path("ht/", include("health_check.urls")),
     path(settings.ADMIN_URL, admin.site.urls),

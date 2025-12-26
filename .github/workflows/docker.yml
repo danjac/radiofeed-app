@@ -1,4 +1,4 @@
-name: listenwave:docker
+name: simplecasts:docker
 on:
     workflow_call:
         outputs:

@@ -1,4 +1,4 @@
-name: listenwave:build
+name: simplecasts:build
 run-name: ${{ github.actor }} is building Docker image
 on:
     workflow_dispatch:
