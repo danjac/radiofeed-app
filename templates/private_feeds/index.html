@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load heroicons %}
+
+{% block title %}
+    {% title_tag "Private Feeds" %}
+{% endblock title %}
+
+{% block content %}
+    {% fragment "header.html" title="Private Feeds" %}
+        {% fragment "header/nav.html" %}
+            {% if not request.search %}
+                {% fragment "header/nav.html#item" %}
+                    <a class="btn btn-default"
+                       href="{% url "private_feeds:add" %}">
+                        {% heroicon_mini "plus" %}
+                        Add Private Feed
+                    </a>
+                {% endfragment %}
+            {% endif %}
+            {% if request.search or page.has_other_pages %}
+                {% if request.search %}
+                    {% fragment "header/nav.html#item" %}
+                        {% url "search:podcasts" as search_button_url %}
+                        {% include "header/nav/search.html#button" with label="Search Podcasts" %}
+                    {% endfragment %}
+                {% endif %}
+                {% fragment "header/nav.html#item" %}
+                    {% include "header/nav/search.html#form" with clearable=True %}
+                {% endfragment %}
+            {% endif %}
+
+        {% endfragment %}
+    {% endfragment %}
+    {% partialdef pagination inline %}
+        {% fragment "paginate.html" %}
+            {% for podcast in page %}
+                {% fragment "browse.html#item" %}
+                    {% include "cards.html#podcast" %}
+                {% endfragment %}
+            {% empty %}
+                {% fragment "browse.html#empty" %}
+                    {% if request.search %}
+                        No private feeds found for &quot;<strong>{{ request.search.value }}</strong>&quot;
+                    {% else %}
+                        <p>You are not subscribed to any Private Feeds.</p>
+                        <p>
+                            To subscribe, click the <strong>Add Private Feed</strong> button above and enter the URL of a private feed, like the one from a paid Patreon subscription. The feed owner should give you the RSS URL you need.
+                        </p>
+                    {% endif %}
+                {% endfragment %}
+            {% endfor %}
+        {% endfragment %}
+    {% endpartialdef pagination %}
+{% endblock content %}

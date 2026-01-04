@@ -33,7 +33,7 @@
             {% fragment "paginate.html" %}
                 {% for episode in page %}
                     {% fragment "browse.html#item" %}
-                        {% include "podcasts/cards.html#episode" %}
+                        {% include "cards.html#podcast_episode" %}
                     {% endfragment %}
                 {% empty %}
                     {% fragment "browse.html#empty" %}

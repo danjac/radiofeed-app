@@ -9,7 +9,7 @@
     {% fragment "header.html" title="Discover" %}
         {% fragment "header/nav.html" %}
             {% fragment "header/nav.html#item" %}
-                {% url "podcasts:search_podcasts" as search_url %}
+                {% url "search:podcasts" as search_url %}
                 {% include "header/nav/search.html#form" %}
             {% endfragment %}
         {% endfragment %}
@@ -19,7 +19,7 @@
         {% fragment "browse.html" %}
             {% for podcast in podcasts %}
                 {% fragment "browse.html#item" %}
-                    {% include "podcasts/cards.html#podcast" %}
+                    {% include "cards.html#podcast" %}
                 {% endfragment %}
             {% endfor %}
         {% endfragment %}

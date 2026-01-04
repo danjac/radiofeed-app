@@ -1,5 +1,5 @@
 {% load heroicons static %}
-{% load get_media_metadata from episodes %}
+{% load get_media_metadata from audio_player %}
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if hx_oob %} hx-swap-oob="true" {% endif %}>
         {% if audio_log and action != "close" %}
@@ -15,7 +15,7 @@
                         metadataTag='{{ metadata_tag }}',
                         currentTime={{ audio_log.current_time|default:0 }},
                         startPlayer={% if action == "play" %}true{% else %}false{% endif %},
-                        timeUpdateUrl='{% url "episodes:player_time_update" %}',
+                        timeUpdateUrl='{% url "player:time_update" %}',
                     )"{# fmt:on #}
                      @keydown.window="shortcuts">
                     <audio x-ref="audio"

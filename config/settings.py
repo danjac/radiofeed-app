@@ -52,9 +52,7 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.redis",
     "heroicons",
     "widget_tweaks",
-    "simplecasts.episodes",
-    "simplecasts.podcasts",
-    "simplecasts.users",
+    "simplecasts",
 ]
 
 
@@ -78,7 +76,7 @@ MIDDLEWARE: list[str] = [
     "simplecasts.middleware.HtmxMessagesMiddleware",
     "simplecasts.middleware.HtmxRedirectMiddleware",
     "simplecasts.middleware.SearchMiddleware",
-    "simplecasts.episodes.middleware.PlayerMiddleware",
+    "simplecasts.middleware.PlayerMiddleware",
 ]
 
 # Databases
@@ -216,7 +214,7 @@ CONTACT_EMAIL = env("CONTACT_EMAIL", default=SERVER_EMAIL)
 # authentication settings
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "simplecasts.User"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -232,7 +230,7 @@ AUTH_PASSWORD_VALIDATORS: list[dict[str, str]] = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LOGIN_REDIRECT_URL = reverse_lazy("podcasts:subscriptions")
+LOGIN_REDIRECT_URL = reverse_lazy("subscriptions:index")
 LOGIN_URL = reverse_lazy("account_login")
 
 # https://django-allauth.readthedocs.io/en/latest/configuration.html

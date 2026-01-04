@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load cache %}
+
+{% block title %}
+    {% title_tag "Search" "Episodes" %}
+{% endblock title %}
+
+{% block content %}
+    {% fragment "header.html" title="Search Episodes" %}
+        {% fragment "header/nav.html" %}
+            {% fragment "header/nav.html#item" %}
+                {% url "search:podcasts" as search_button_url %}
+                {% include "header/nav/search.html#button" with label="Search Podcasts" %}
+            {% endfragment %}
+            {% fragment "header/nav.html#item" %}
+                {% include "header/nav/search.html#form" %}
+            {% endfragment %}
+        {% endfragment %}
+    {% endfragment %}
+    {% partialdef pagination inline %}
+        {% cache cache_timeout search-podcasts request.get_full_path %}
+            {% fragment "paginate.html" %}
+                {% for episode in page %}
+                    {% fragment "browse.html#item" %}
+                        {% include "cards.html#episode" %}
+                    {% endfragment %}
+                {% empty %}
+                    {% fragment "browse.html#empty" %}
+                        No episodes found for &quot;<strong>{{ request.search.value }}</strong>&quot;.
+                    {% endfragment %}
+                {% endfor %}
+            {% endfragment %}
+        {% endcache %}
+    {% endpartialdef pagination %}
+{% endblock content %}
