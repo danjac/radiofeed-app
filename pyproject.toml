@@ -42,6 +42,7 @@ dependencies = [
     "whitenoise[brotli]>=6.11.0",
     "django-http-compression[brotli]>=1.2.0",
     "markdownify>=1.2.2",
+    "django-widget-tweaks>=1.5.1",
 ]
 
 [dependency-groups]

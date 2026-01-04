@@ -1,4 +1,4 @@
-{% load heroicons %}
+{% load heroicons widget_tweaks %}
 {% with widget_type=field|widget_type errors=field.errors described_by=field.aria_describedby %}
     <fieldset class="space-y-3 form-control{% if errors %} has-errors{% endif %}"
               {% if described_by %} aria-describedby="{{ described_by }}"{% endif %}>
@@ -68,7 +68,7 @@
 {% partialdef passwordinput %}
     {% partial label %}
     <div x-data="{ show: false }" class="inline-block relative">
-        {% render_field field class="pr-10 form-input" x_ref="password" %}
+        {% render_field field class="pr-10 form-input" x-ref="password" %}
         <button type="button"
             {# fmt:off #}
             x-on:click="

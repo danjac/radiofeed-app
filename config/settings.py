@@ -51,6 +51,7 @@ INSTALLED_APPS: list[str] = [
     "health_check.contrib.psutil",
     "health_check.contrib.redis",
     "heroicons",
+    "widget_tweaks",
     "simplecasts.episodes",
     "simplecasts.podcasts",
     "simplecasts.users",
@@ -295,7 +296,6 @@ STATICFILES_DIRS = [STATIC_SRC]
 
 TAILWIND_CLI_SRC_CSS = BASE_DIR / "tailwind" / "app.css"
 TAILWIND_CLI_DIST_CSS = "app.css"
-TAILWIND_CLI_VERSION = "4.1.3"
 
 # Whitenoise
 # https://whitenoise.readthedocs.io/en/latest/django.html

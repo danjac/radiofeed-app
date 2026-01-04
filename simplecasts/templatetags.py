@@ -1,7 +1,7 @@
 import functools
 import json
 
-from django import forms, template
+from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.forms.utils import flatatt
@@ -103,12 +103,6 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{url}"
 
 
-@register.simple_tag
-def render_field(field: forms.Field, **attrs) -> str:
-    """Returns rendered widget."""
-    return field.as_widget(attrs=_clean_attrs(attrs))  # type: ignore[attr-defined]
-
-
 @register.inclusion_tag("markdown.html")
 def markdown(text: str) -> dict:
     """Render content as Markdown."""
@@ -163,18 +157,6 @@ def fragment(
 
     with context.push(content=content, **extra_context):
         return tmpl.render(context)
-
-
-@register.filter
-def widget(field: forms.Field) -> forms.Widget:
-    """Returns widget for field."""
-    return field.field.widget  # # type: ignore[attr-defined]
-
-
-@register.filter
-def widget_type(field: forms.Field) -> str:
-    """Returns the widget class name for the bound field."""
-    return widget(field).__class__.__name__.lower()
 
 
 def _clean_attrs(attrs: dict) -> dict:

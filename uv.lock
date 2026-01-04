@@ -527,6 +527,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-widget-tweaks"
+version = "1.5.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/01/6d/d1b5a3ae3bccfee96e10315373298cea51e5e0d6853d022181b7b0861a4d/django_widget_tweaks-1.5.1.tar.gz", hash = "sha256:084acc9eeb5a3208f2670522de6284287973e54d54488ce6d402f4b99bc5f452", size = 16233, upload-time = "2026-01-02T12:46:28.907Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/64/6a/ad176284371005426b9a1c424e6cd77a9018ab1b17dc23948bfbeb2f6a21/django_widget_tweaks-1.5.1-py3-none-any.whl", hash = "sha256:3f5080f8365740fc1c14607498c975cbfed896dd0c40e1b563095716ee31e3b5", size = 9634, upload-time = "2026-01-02T12:46:02.18Z" },
+]
+
+[[package]]
 name = "environs"
 version = "14.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1472,6 +1484,7 @@ dependencies = [
     { name = "django-permissions-policy" },
     { name = "django-redis" },
     { name = "django-tailwind-cli" },
+    { name = "django-widget-tweaks" },
     { name = "environs", extra = ["django"] },
     { name = "gunicorn" },
     { name = "heroicons", extra = ["django"] },
@@ -1535,6 +1548,7 @@ requires-dist = [
     { name = "django-permissions-policy", specifier = ">=4.21.0" },
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
+    { name = "django-widget-tweaks", specifier = ">=1.5.1" },
     { name = "environs", extras = ["django"], specifier = ">=11.0.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "heroicons", extras = ["django"], specifier = ">=2.8.0" },
