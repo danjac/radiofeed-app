@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load cache heroicons %}
-{% load audio_player format_duration from episodes %}
+{% load audio_player cache heroicons %}
 {% block title %}
     {% title_tag episode.podcast.cleaned_title episode.cleaned_title %}
 {% endblock title %}
@@ -81,7 +80,7 @@
                                         class="text-lg btn btn-primary btn-outline"
                                         aria-label="Close Player"
                                         title="Close Player"
-                                        hx-post="{% url "episodes:close_player" %}"
+                                        hx-post="{% url "player:close" %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once"
                                     >
@@ -95,7 +94,7 @@
                                         aria-label="Open Episode in Player"
                                         title="Open Episode in Player"
                                         hx-disabled-elt="this"
-                                        hx-post="{% url "episodes:start_player" episode.pk %}"
+                                        hx-post="{% url "player:start" episode.pk %}"
                                         hx-trigger="click once">
                                         {% heroicon_mini "play" size=24 class="mr-2" %}
                                         Play
@@ -123,7 +122,7 @@
                                     aria-label="Remove Episode from your Bookmarks"
                                     title="Remove Episode from your Bookmarks"
                                     hx-disabled-elt="this"
-                                    hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
+                                    hx-delete="{% url "bookmarks:remove" episode.pk %}"
                                     hx-trigger="click once"
                                 >
                                     {% heroicon_mini "bookmark-slash" class="mr-2" %}
@@ -136,7 +135,7 @@
                                     aria-label="Add Episode to your Bookmarks"
                                     title="Add Episode to your Bookmarks"
                                     hx-disabled-elt="this"
-                                    hx-post="{% url "episodes:add_bookmark" episode.pk %}"
+                                    hx-post="{% url "bookmarks:add" episode.pk %}"
                                     hx-trigger="click once"
                                 >
                                     {% heroicon_mini "bookmark" class="mr-2" %}
@@ -216,7 +215,7 @@
                                     <button
                                         class="text-sm btn btn-default"
                                         title="Mark this episode complete"
-                                        hx-post="{% url "episodes:mark_audio_log_complete" episode.pk %}"
+                                        hx-post="{% url "history:mark_complete" episode.pk %}"
                                         hx-disabled-elt="this"
                                         hx-indicator="this"
                                     >
@@ -227,7 +226,7 @@
                                 <button
                                     class="text-sm btn btn-danger"
                                     title="Remove episode from your History"
-                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
+                                    hx-delete="{% url "history:remove" episode.pk %}"
                                     hx-confirm="Are you sure you want to remove this episode from your History?"
                                     hx-disabled-elt="this"
                                     hx-indicator="this"

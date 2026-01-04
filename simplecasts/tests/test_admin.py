@@ -1,0 +1,365 @@
+import datetime
+from unittest import mock
+
+import pytest
+from django.contrib.admin.sites import AdminSite
+from django.utils import timezone
+
+from simplecasts.admin import (
+    ActiveFilter,
+    AudioLogAdmin,
+    CategoryAdmin,
+    EpisodeAdmin,
+    FeedStatusFilter,
+    PodcastAdmin,
+    PrivateFilter,
+    PromotedFilter,
+    RecommendationAdmin,
+    ScheduledFilter,
+    SubscribedFilter,
+    SubscriptionAdmin,
+)
+from simplecasts.models import (
+    AudioLog,
+    Category,
+    Episode,
+    Podcast,
+    Recommendation,
+    Subscription,
+)
+from simplecasts.tests.factories import (
+    AudioLogFactory,
+    EpisodeFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
+
+# =============================================================================
+# Category Admin
+# =============================================================================
+
+
+@pytest.fixture(scope="module")
+def category_admin():
+    return CategoryAdmin(Category, AdminSite())
+
+
+class TestCategoryAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, rf, category_admin, category):
+        podcasts = PodcastFactory.create_batch(3, active=True, parsed=timezone.now())
+        category.podcasts.set(podcasts)
+        category = Category.objects.first()
+        for podcast in podcasts:
+            podcast.categories.add(category)
+        req = rf.get("/")
+        req._messages = mock.Mock()
+        qs = category_admin.get_queryset(req)
+        assert category_admin.num_podcasts(qs.first()) == 3
+
+
+# =============================================================================
+# Podcast Admin
+# =============================================================================
+
+
+@pytest.fixture(scope="module")
+def podcast_admin():
+    return PodcastAdmin(Podcast, AdminSite())
+
+
+@pytest.fixture
+def podcasts():
+    return PodcastFactory.create_batch(3, active=True, parsed=timezone.now())
+
+
+@pytest.fixture
+def req(rf):
+    req = rf.get("/")
+    req._messages = mock.Mock()
+    return req
+
+
+class TestPodcastAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, podcasts, podcast_admin, req):
+        qs = podcast_admin.get_queryset(req)
+        assert qs.count() == 3
+
+    @pytest.mark.django_db
+    def test_get_search_results(self, podcasts, podcast_admin, req):
+        podcast = PodcastFactory(title="Indie Hackers")
+        qs, _ = podcast_admin.get_search_results(
+            req, Podcast.objects.all(), "Indie Hackers"
+        )
+        assert qs.count() == 1
+        assert qs.first() == podcast
+
+    @pytest.mark.django_db
+    def test_get_search_results_no_search_term(self, podcasts, podcast_admin, req):
+        qs, _ = podcast_admin.get_search_results(req, Podcast.objects.all(), "")
+        assert qs.count() == 3
+
+    @pytest.mark.django_db
+    def test_get_ordering_no_search_term(self, podcast_admin, req):
+        ordering = podcast_admin.get_ordering(req)
+        assert ordering == ["-parsed", "-pub_date"]
+
+    @pytest.mark.django_db
+    def test_get_ordering_search_term(self, podcast_admin, req):
+        req.GET = {"q": "test"}
+        ordering = podcast_admin.get_ordering(req)
+        assert ordering == []
+
+    @pytest.mark.django_db
+    def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
+        mocker.patch(
+            "simplecasts.admin.Podcast.get_next_scheduled_update",
+            return_value=timezone.now() + datetime.timedelta(hours=3),
+        )
+        assert (
+            podcast_admin.next_scheduled_update(podcast) == "2\xa0hours, 59\xa0minutes"
+        )
+
+    @pytest.mark.django_db
+    def test_next_scheduled_update_in_past(self, mocker, podcast, podcast_admin):
+        mocker.patch(
+            "simplecasts.admin.Podcast.get_next_scheduled_update",
+            return_value=timezone.now() + datetime.timedelta(hours=-3),
+        )
+        assert podcast_admin.next_scheduled_update(podcast) == "3\xa0hours ago"
+
+    @pytest.mark.django_db
+    def test_next_scheduled_update_inactive(self, mocker, podcast_admin):
+        podcast = PodcastFactory(active=False)
+        assert podcast_admin.next_scheduled_update(podcast) == "-"
+
+
+class TestPromotedFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        f = PromotedFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+
+    @pytest.mark.django_db
+    def test_promoted(self, podcasts, podcast_admin, req):
+        promoted = PodcastFactory(promoted=True)
+        f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == promoted
+
+
+class TestPrivateFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(private=False)
+        f = PrivateFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_true(self, podcasts, podcast_admin, req):
+        private = PodcastFactory(private=True)
+        f = PrivateFilter(req, {"private": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == private
+
+
+class TestActiveFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(active=False)
+        f = ActiveFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_active(self, podcasts, podcast_admin, req):
+        inactive = PodcastFactory(active=False)
+        f = ActiveFilter(req, {"active": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert inactive not in qs
+
+    @pytest.mark.django_db
+    def test_inactive(self, podcasts, podcast_admin, req):
+        inactive = PodcastFactory(active=False)
+        f = ActiveFilter(req, {"active": ["no"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert inactive in qs
+
+
+class TestFeedStatusFilter:
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req):
+        PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
+        f = FeedStatusFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_no_status(self, podcasts, podcast_admin, req):
+        specific = PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
+        f = FeedStatusFilter(
+            req, {"feed_status": ["no_status"]}, Podcast, podcast_admin
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 3
+        assert specific not in qs
+
+    @pytest.mark.django_db
+    def test_specific_status(self, podcasts, podcast_admin, req):
+        specific = PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
+        f = FeedStatusFilter(
+            req,
+            {"feed_status": [Podcast.FeedStatus.NOT_MODIFIED]},
+            Podcast,
+            podcast_admin,
+        )
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == specific
+
+
+class TestScheduledFilter:
+    @pytest.fixture
+    def scheduled(self):
+        return PodcastFactory(pub_date=None, parsed=None)
+
+    @pytest.fixture
+    def unscheduled(self):
+        now = timezone.now()
+        return PodcastFactory(
+            pub_date=now,
+            parsed=now,
+            frequency=datetime.timedelta(hours=3),
+        )
+
+    @pytest.mark.django_db
+    def test_none(self, podcast_admin, req, scheduled, unscheduled):
+        f = ScheduledFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 2
+
+    @pytest.mark.django_db
+    def test_true(self, podcast_admin, req, scheduled, unscheduled):
+        f = ScheduledFilter(req, {"scheduled": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == scheduled
+
+
+class TestSubscribedFilter:
+    @pytest.fixture
+    def subscribed(self):
+        return SubscriptionFactory().podcast
+
+    @pytest.mark.django_db
+    def test_none(self, podcasts, podcast_admin, req, subscribed):
+        f = SubscribedFilter(req, {}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 4
+
+    @pytest.mark.django_db
+    def test_true(self, podcasts, podcast_admin, req, subscribed):
+        f = SubscribedFilter(req, {"subscribed": ["yes"]}, Podcast, podcast_admin)
+        qs = f.queryset(req, Podcast.objects.all())
+        assert qs.count() == 1
+        assert qs.first() == subscribed
+
+
+# =============================================================================
+# Recommendation Admin
+# =============================================================================
+
+
+class TestRecommendationAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, rf):
+        RecommendationFactory()
+        admin = RecommendationAdmin(Recommendation, AdminSite())
+        qs = admin.get_queryset(rf.get("/"))
+        assert qs.count() == 1
+
+
+# =============================================================================
+# Subscription Admin
+# =============================================================================
+
+
+class TestSubscriptionAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, rf):
+        SubscriptionFactory()
+        admin = SubscriptionAdmin(Subscription, AdminSite())
+        qs = admin.get_queryset(rf.get("/"))
+        assert qs.count() == 1
+
+
+# =============================================================================
+# Episode Admin
+# =============================================================================
+
+
+class TestEpisodeAdmin:
+    @pytest.fixture(scope="class")
+    def admin(self):
+        return EpisodeAdmin(Episode, AdminSite())
+
+    @pytest.mark.django_db
+    def test_episode_title(self, admin):
+        episode = EpisodeFactory(title="testing")
+        assert admin.episode_title(episode) == "testing"
+
+    @pytest.mark.django_db
+    def test_podcast_title(self, admin):
+        episode = EpisodeFactory(podcast=PodcastFactory(title="testing"))
+        assert admin.podcast_title(episode) == "testing"
+
+    @pytest.mark.django_db
+    def test_get_ordering_no_search_term(self, admin, rf):
+        ordering = admin.get_ordering(rf.get("/"))
+        assert ordering == ["-id"]
+
+    @pytest.mark.django_db
+    def test_get_ordering_search_term(self, admin, rf):
+        ordering = admin.get_ordering(rf.get("/", {"q": "test"}))
+        assert ordering == []
+
+    @pytest.mark.django_db
+    def test_get_search_results_no_search_term(self, rf, admin):
+        EpisodeFactory.create_batch(3)
+        qs, _ = admin.get_search_results(rf.get("/"), Episode.objects.all(), "")
+        assert qs.count() == 3
+
+    @pytest.mark.django_db
+    def test_get_search_results(self, rf, admin):
+        EpisodeFactory.create_batch(3)
+
+        episode = EpisodeFactory(title="testing python")
+
+        qs, _ = admin.get_search_results(
+            rf.get("/"), Episode.objects.all(), "testing python"
+        )
+        assert qs.count() == 1
+        assert qs.first() == episode
+
+
+# =============================================================================
+# AudioLog Admin
+# =============================================================================
+
+
+class TestAudioLogAdmin:
+    @pytest.mark.django_db
+    def test_get_queryset(self, rf):
+        AudioLogFactory()
+        admin = AudioLogAdmin(AudioLog, AdminSite())
+        request = rf.get("/")
+        qs = admin.get_queryset(request)
+        assert qs.count() == 1

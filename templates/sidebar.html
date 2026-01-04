@@ -1,7 +1,7 @@
 {% load heroicons %}
 <ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
     {% with icon="rss" label="Subscriptions" %}
-        {% url "podcasts:subscriptions" as url %}
+        {% url "subscriptions:index" as url %}
         {% partial item %}
     {% endwith %}
 
@@ -16,22 +16,22 @@
     {% endwith %}
 
     {% with icon="tag" label="Categories" %}
-        {% url "podcasts:category_list" as url %}
+        {% url "categories:index" as url %}
         {% partial item %}
     {% endwith %}
 
     {% with icon="bookmark" label="Bookmarks" %}
-        {% url "episodes:bookmarks" as url %}
+        {% url "bookmarks:index" as url %}
         {% partial item %}
     {% endwith %}
 
     {% with icon="clock" label="History" %}
-        {% url "episodes:history" as url %}
+        {% url "history:index" as url %}
         {% partial item %}
     {% endwith %}
 
     {% with icon="lock-closed" label="Private Feeds" %}
-        {% url "podcasts:private_feeds" as url %}
+        {% url "private_feeds:index" as url %}
         {% partial item %}
     {% endwith %}
 

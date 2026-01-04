@@ -1,0 +1,42 @@
+{% partialdef card %}
+    <a href="{{ url }}" title="{{ title }}" class="flex items-center space-x-3 cursor-pointer group" {% if external %}
+           target="_blank" rel="noopener noreferrer" {% endif %}>
+            {% cover_image "card" cover_url title %}
+            <div class="flex flex-col place-content-between h-16 leading-tight">
+                <h2
+                    class="font-bold leading-tight break-words group-hover:text-blue-600 line-clamp-2 dark:group-hover:text-blue-300">
+                    {{ title }}
+                </h2>
+                <h3
+                    class="text-sm font-semibold leading-tight group-hover:text-blue-600 line-clamp-1 dark:group-hover:text-blue-300">
+                    {{ content }}
+                </h3>
+            </div>
+        </a>
+{% endpartialdef %}
+
+{% partialdef podcast %}
+    {% fragment "cards.html#card" url=podcast.get_absolute_url title=podcast.cleaned_title cover_url=podcast.cover_url %}
+        {{ podcast.pub_date|date:"DATE_FORMAT" }}
+    {% endfragment %}
+{% endpartialdef %}
+
+{% partialdef podcast_episode %}
+    {% fragment "cards.html#card" url=episode.get_absolute_url title=episode.cleaned_title cover_url=episode.get_cover_url %}
+        {{ episode.pub_date|date:"DATE_FORMAT" }}
+    {% endfragment %}
+{% endpartialdef %}
+
+{% partialdef itunes_feed %}
+    {% fragment "cards.html#card" url=feed.url title=feed.title cover_url=feed.image external=True %}
+        View in iTunes
+    {% endfragment %}
+{% endpartialdef %}
+
+{% partialdef episode %}
+    {% with podcast=episode.podcast %}
+        {% fragment "cards.html#card" url=episode.get_absolute_url title=episode.cleaned_title cover_url=podcast.cover_url %}
+            {{ podcast.cleaned_title }}
+        {% endfragment %}
+    {% endwith %}
+{% endpartialdef %}

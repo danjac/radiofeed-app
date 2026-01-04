@@ -10,7 +10,7 @@
         {% fragment "browse.html" %}
             {% for recommendation in recommendations %}
                 {% fragment "browse.html#item" %}
-                    {% include "podcasts/cards.html#podcast" with podcast=recommendation.recommended %}
+                    {% include "cards.html#podcast" with podcast=recommendation.recommended %}
                 {% endfragment %}
             {% endfor %}
         {% endfragment %}

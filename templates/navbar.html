@@ -12,7 +12,7 @@
         {% with site_name=request.site.name %}
             <a class="flex items-center shrink-0"
                {% if user.is_authenticated %}
-                   href="{% url 'podcasts:subscriptions' %}"
+                   href="{% url 'subscriptions:index' %}"
                {% else %}
                    href="{% url 'index' %}"
                    hx-disable="true"

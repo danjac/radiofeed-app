@@ -195,7 +195,7 @@ django_settings_module = "simplecasts.settings"
 include=["simplecasts"]
 exclude=[
   "**/migrations/*.py",
-  "**/tests/*.py",
+  "**/tests/**",
 ]
 
 typeCheckingMode = "basic"
