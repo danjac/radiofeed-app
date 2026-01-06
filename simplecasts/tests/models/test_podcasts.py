@@ -27,6 +27,16 @@ class TestPodcastManager:
         assert results.count() == 2
 
     @pytest.mark.django_db
+    def test_search_owner(self):
+        PodcastFactory(owner="Python Guru")
+        podcast2 = PodcastFactory(owner="Django Expert")
+        PodcastFactory(owner="Chef Extraordinaire")
+
+        results = Podcast.objects.search("Django", "owner_search_vector")
+        assert podcast2 in results
+        assert results.count() == 1
+
+    @pytest.mark.django_db
     def test_search_empty(self):
         PodcastFactory(title="Learn Python")
         PodcastFactory(title="Learn Django")

@@ -1,8 +1,24 @@
 import pytest
 
-from simplecasts.models import (
-    AudioLog,
-)
+from simplecasts.models import AudioLog
+from simplecasts.tests.factories import AudioLogFactory
+
+
+class TestAudioLogManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        audio_log1 = AudioLogFactory(
+            episode__title="Learn Python Programming",
+            episode__podcast__title="Tech Talks",
+        )
+        audio_log2 = AudioLogFactory(
+            episode__title="Advanced Django Techniques",
+            episode__podcast__title="Web Dev Weekly",
+        )
+
+        results = AudioLog.objects.search("Python")
+        assert audio_log1 in results
+        assert audio_log2 not in results
 
 
 class TestAudioLogModel:

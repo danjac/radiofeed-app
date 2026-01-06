@@ -2,14 +2,28 @@ from datetime import timedelta
 
 import pytest
 
-from simplecasts.models import (
-    Episode,
-    Podcast,
-)
-from simplecasts.tests.factories import (
-    EpisodeFactory,
-    PodcastFactory,
-)
+from simplecasts.models import Episode, Podcast
+from simplecasts.tests.factories import EpisodeFactory, PodcastFactory
+
+
+class TestEpisodeManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        episode = EpisodeFactory(title="UniqueTitle123")
+        results = Episode.objects.search("UniqueTitle123")
+        assert episode in results
+
+    @pytest.mark.django_db
+    def test_search_no_results(self):
+        EpisodeFactory(title="Some Other Title")
+        results = Episode.objects.search("NonExistentTitle456")
+        assert results.count() == 0
+
+    @pytest.mark.django_db
+    def test_search_empty_query(self):
+        EpisodeFactory(title="Any Title")
+        results = Episode.objects.search("")
+        assert results.count() == 0
 
 
 class TestEpisodeModel:
