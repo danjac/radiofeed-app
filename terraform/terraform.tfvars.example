@@ -1,0 +1,78 @@
+# Hetzner Cloud API Token (required)
+# Get this from https://console.hetzner.cloud/projects/*/security/tokens
+hcloud_token = "your-hcloud-api-token"
+
+# General settings
+location = "fsn1"  # fsn1 (Falkenstein), nbg1 (Nuremberg), hel1 (Helsinki), ash (Ashburn), hil (Hillsboro)
+image    = "ubuntu-24.04"
+
+# SSH keys (names or IDs as configured in Hetzner Cloud)
+ssh_keys = ["my-ssh-key"]
+
+# Labels for all resources
+labels = {
+  project     = "simplecasts"
+  environment = "production"
+}
+
+# Database VM
+database_name        = "database"
+database_server_type = "cx22"  # 2 vCPU, 4GB RAM
+
+# Web VMs
+web_count       = 2
+web_name_prefix = "web"
+web_server_type = "cx22"
+
+# Server VM (load balancer/reverse proxy)
+server_name        = "server"
+server_server_type = "cx22"
+
+# Job Runner VM
+jobrunner_name        = "jobrunner"
+jobrunner_server_type = "cx22"
+
+# Volume (attached to database)
+volume_name      = "data"
+volume_size      = 50   # GB
+volume_format    = "ext4"
+volume_automount = true
+
+# Private Network
+create_network   = true
+network_name     = "cluster-network"
+network_ip_range = "10.0.0.0/16"
+subnet_ip_range  = "10.0.1.0/24"
+
+# Cloudflare
+# Get API token from https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Zone:Zone:Read, Zone:DNS:Edit, Zone:Zone Settings:Edit
+cloudflare_api_token  = "your-cloudflare-api-token"
+cloudflare_account_id = "your-cloudflare-account-id"
+
+# Leave empty to create a new zone, or provide existing zone ID
+cloudflare_zone_id = ""
+
+# Domain name
+domain = "example.com"
+
+# SSL/TLS settings
+cloudflare_ssl_mode         = "full"  # off, flexible, full, strict
+cloudflare_always_use_https = true
+cloudflare_min_tls_version  = "1.2"   # 1.0, 1.1, 1.2, 1.3
+cloudflare_proxied          = true    # Enable Cloudflare proxy (recommended)
+
+# Available server types (for reference):
+# Shared vCPU:
+#   cx22  - 2 vCPU,  4GB RAM,  40GB disk
+#   cx32  - 4 vCPU,  8GB RAM,  80GB disk
+#   cx42  - 8 vCPU, 16GB RAM, 160GB disk
+#   cx52  - 16 vCPU, 32GB RAM, 320GB disk
+#
+# Dedicated vCPU:
+#   ccx13 - 2 vCPU,  8GB RAM,  80GB disk
+#   ccx23 - 4 vCPU, 16GB RAM, 160GB disk
+#   ccx33 - 8 vCPU, 32GB RAM, 240GB disk
+#   ccx43 - 16 vCPU, 64GB RAM, 360GB disk
+#   ccx53 - 32 vCPU, 128GB RAM, 600GB disk
+#   ccx63 - 48 vCPU, 192GB RAM, 960GB disk
