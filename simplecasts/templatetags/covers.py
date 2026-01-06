@@ -13,7 +13,7 @@ register = template.Library()
 @functools.cache
 def get_cover_image_attrs(
     variant: covers.CoverVariant,
-    cover_url: str,
+    cover_url: str | None,
     title: str,
 ) -> dict:
     """Returns cover image attributes."""
@@ -24,7 +24,7 @@ def get_cover_image_attrs(
 @functools.cache
 def cover_image(
     variant: covers.CoverVariant,
-    cover_url: str,
+    cover_url: str | None,
     title: str,
 ) -> str:
     """Renders a cover image."""

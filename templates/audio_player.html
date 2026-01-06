@@ -1,6 +1,5 @@
-{% load heroicons static %}
+{% load heroicons static covers %}
 {% load get_media_metadata from audio_player %}
-{% load covers %}
 {% if request.user.is_authenticated %}
     <div id="audio-player"{% if hx_oob %} hx-swap-oob="true" {% endif %}>
         {% if audio_log and action != "close" %}
