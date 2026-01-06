@@ -5,7 +5,6 @@ from datetime import timedelta
 from django import template
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
 from django.template.context import Context
 from django.utils import timezone
@@ -14,7 +13,7 @@ from django.utils.safestring import SafeString
 from django.utils.timesince import timesince
 
 from simplecasts.http.request import RequestContext
-from simplecasts.services import covers, sanitizer
+from simplecasts.services import sanitizer
 from simplecasts.services.pwa import get_theme_color
 
 register = template.Library()
@@ -72,29 +71,6 @@ def meta_tags() -> str:
             for meta in meta_tags
         ),
     )
-
-
-@register.simple_tag
-@functools.cache
-def get_cover_image_attrs(
-    variant: covers.CoverVariant,
-    cover_url: str,
-    title: str,
-) -> dict:
-    """Returns cover image attributes."""
-    return covers.get_cover_image_attrs(variant, cover_url, title)
-
-
-@register.simple_tag
-@functools.cache
-def cover_image(
-    variant: covers.CoverVariant,
-    cover_url: str,
-    title: str,
-) -> str:
-    """Renders a cover image."""
-    attrs = get_cover_image_attrs(variant, cover_url, title)
-    return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
 
 
 @register.simple_tag
@@ -169,7 +145,3 @@ def fragment(
 
     with context.push(content=content, **extra_context):
         return tmpl.render(context)
-
-
-def _clean_attrs(attrs: dict) -> dict:
-    return {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
