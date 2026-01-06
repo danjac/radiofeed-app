@@ -4,6 +4,17 @@ from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
+from simplecasts.models.search import SearchQuerySetMixin
+
+
+class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
+    """Custom queryset for Bookmark model."""
+
+    default_search_fields = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
+
 
 class AudioLog(models.Model):
     """Record of user listening history."""
@@ -22,6 +33,8 @@ class AudioLog(models.Model):
     listened = models.DateTimeField()
     current_time = models.PositiveIntegerField(default=0)
     duration = models.PositiveIntegerField(default=0)
+
+    objects: AudioLogQuerySet = AudioLogQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [

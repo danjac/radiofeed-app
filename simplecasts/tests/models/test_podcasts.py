@@ -16,6 +16,26 @@ from simplecasts.tests.factories import (
 
 class TestPodcastManager:
     @pytest.mark.django_db
+    def test_search(self):
+        podcast1 = PodcastFactory(title="Learn Python")
+        podcast2 = PodcastFactory(title="Learn Django")
+        PodcastFactory(title="Cooking Tips")
+
+        results = Podcast.objects.search("Learn")
+        assert podcast1 in results
+        assert podcast2 in results
+        assert results.count() == 2
+
+    @pytest.mark.django_db
+    def test_search_empty(self):
+        PodcastFactory(title="Learn Python")
+        PodcastFactory(title="Learn Django")
+        PodcastFactory(title="Cooking Tips")
+
+        results = Podcast.objects.search("")
+        assert results.count() == 0
+
+    @pytest.mark.django_db
     def test_subscribed_true(self, user):
         SubscriptionFactory(subscriber=user)
         assert Podcast.objects.subscribed(user).exists() is True

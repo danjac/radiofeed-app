@@ -8,7 +8,6 @@ from django.views.decorators.http import require_safe
 from simplecasts.http.request import AuthenticatedHttpRequest, HttpRequest
 from simplecasts.http.response import RenderOrRedirectResponse
 from simplecasts.models import Episode, Podcast
-from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 
@@ -84,11 +83,9 @@ def episodes(
     order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
 
     if request.search:
-        podcast_episodes = search_queryset(
-            podcast_episodes,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", *order_by)
+        podcast_episodes = podcast_episodes.search(request.search.value).order_by(
+            "-rank", *order_by
+        )
     else:
         podcast_episodes = podcast_episodes.order_by(*order_by)
 

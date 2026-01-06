@@ -8,7 +8,6 @@ from django.views.decorators.http import require_POST, require_safe
 from simplecasts.http.decorators import require_DELETE
 from simplecasts.http.request import AuthenticatedHttpRequest
 from simplecasts.models import AudioLog
-from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 
@@ -22,12 +21,7 @@ def index(request: AuthenticatedHttpRequest) -> TemplateResponse:
     order_by = "listened" if ordering == "asc" else "-listened"
 
     if request.search:
-        audio_logs = search_queryset(
-            audio_logs,
-            request.search.value,
-            "episode__search_vector",
-            "episode__podcast__search_vector",
-        ).order_by("-rank", order_by)
+        audio_logs = audio_logs.search(request.search.value).order_by("-rank", order_by)
     else:
         audio_logs = audio_logs.order_by(order_by)
 

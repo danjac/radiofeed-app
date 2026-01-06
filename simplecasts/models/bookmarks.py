@@ -3,6 +3,17 @@ from typing import ClassVar
 from django.conf import settings
 from django.db import models
 
+from simplecasts.models.search import SearchQuerySetMixin
+
+
+class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
+    """Custom queryset for Bookmark model."""
+
+    default_search_fields = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
+
 
 class Bookmark(models.Model):
     """Bookmarked episodes."""
@@ -20,6 +31,8 @@ class Bookmark(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
+
+    objects: BookmarkQuerySet = BookmarkQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [

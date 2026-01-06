@@ -13,7 +13,14 @@ from slugify import slugify
 
 from simplecasts.models.fields import URLField
 from simplecasts.models.podcasts import Season
+from simplecasts.models.search import SearchQuerySetMixin
 from simplecasts.services.sanitizer import strip_html
+
+
+class EpisodeQuerySet(SearchQuerySetMixin, models.QuerySet):
+    """Custom queryset for Episode model."""
+
+    default_search_fields = ("search_vector",)
 
 
 class Episode(models.Model):
@@ -63,6 +70,8 @@ class Episode(models.Model):
     explicit = models.BooleanField(default=False)
 
     search_vector = SearchVectorField(null=True, blank=True, editable=False)
+
+    objects: EpisodeQuerySet = EpisodeQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [

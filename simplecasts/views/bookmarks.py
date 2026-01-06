@@ -9,7 +9,6 @@ from simplecasts.http.decorators import require_DELETE
 from simplecasts.http.request import AuthenticatedHttpRequest
 from simplecasts.http.response import HttpResponseConflict
 from simplecasts.models import Episode
-from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 
@@ -23,12 +22,7 @@ def index(request: AuthenticatedHttpRequest) -> TemplateResponse:
     order_by = "created" if ordering == "asc" else "-created"
 
     if request.search:
-        bookmarks = search_queryset(
-            bookmarks,
-            request.search.value,
-            "episode__search_vector",
-            "episode__podcast__search_vector",
-        ).order_by("-rank", order_by)
+        bookmarks = bookmarks.search(request.search.value).order_by("-rank", order_by)
     else:
         bookmarks = bookmarks.order_by(order_by)
 

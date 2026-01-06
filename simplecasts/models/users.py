@@ -4,8 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 if TYPE_CHECKING:
-    from simplecasts.models.audio_logs import AudioLog
-    from simplecasts.models.bookmarks import Bookmark
+    from simplecasts.models.audio_logs import AudioLogQuerySet
+    from simplecasts.models.bookmarks import BookmarkQuerySet
     from simplecasts.models.podcasts import PodcastQuerySet
     from simplecasts.models.subscriptions import Subscription
 
@@ -16,10 +16,9 @@ class User(AbstractUser):
     send_email_notifications = models.BooleanField(default=True)
 
     if TYPE_CHECKING:
+        audio_logs: AudioLogQuerySet
+        bookmarks: BookmarkQuerySet
         recommended_podcasts: PodcastQuerySet
-
-        audio_logs: models.Manager[AudioLog]
-        bookmarks: models.Manager[Bookmark]
         subscriptions: models.Manager[Subscription]
 
     @property

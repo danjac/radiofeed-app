@@ -15,6 +15,7 @@ from slugify import slugify
 
 from simplecasts.models.fields import URLField
 from simplecasts.models.recommendations import Recommendation
+from simplecasts.models.search import SearchQuerySetMixin
 from simplecasts.models.users import User
 from simplecasts.services.sanitizer import strip_html
 
@@ -52,8 +53,10 @@ class Season:
         )
 
 
-class PodcastQuerySet(models.QuerySet):
+class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
+
+    default_search_fields = ("search_vector",)
 
     def subscribed(self, user: User) -> Self:
         """Returns podcasts subscribed by user."""

@@ -6,7 +6,6 @@ from django.views.decorators.http import require_safe
 
 from simplecasts.http.request import HttpRequest
 from simplecasts.models import Category, Podcast
-from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 
@@ -47,11 +46,7 @@ def detail(request: HttpRequest, slug: str) -> TemplateResponse:
     podcasts = category.podcasts.published().filter(private=False).distinct()
 
     if request.search:
-        podcasts = search_queryset(
-            podcasts,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 

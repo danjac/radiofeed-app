@@ -9,7 +9,6 @@ from simplecasts.http.decorators import require_DELETE
 from simplecasts.http.request import AuthenticatedHttpRequest, HttpRequest
 from simplecasts.http.response import HttpResponseConflict
 from simplecasts.models import Podcast
-from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 
@@ -20,11 +19,7 @@ def index(request: AuthenticatedHttpRequest) -> TemplateResponse:
     podcasts = Podcast.objects.published().subscribed(request.user).distinct()
 
     if request.search:
-        podcasts = search_queryset(
-            podcasts,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 

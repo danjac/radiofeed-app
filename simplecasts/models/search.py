@@ -1,51 +1,60 @@
 import functools
 import operator
-from typing import TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Self
 
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import F, Model, Q, QuerySet
+from django.db.models import F, Q, QuerySet
 
-T_Model = TypeVar("T_Model", bound=Model)
-T_QuerySet: TypeAlias = QuerySet[T_Model]
+if TYPE_CHECKING:
+    BaseQuerySet = QuerySet
+else:
+    BaseQuerySet = object
 
 
-def search_queryset(
-    queryset: T_QuerySet,
-    value: str,
-    *search_fields: str,
-    annotation: str = "rank",
-    config: str = "simple",
-    search_type: str = "websearch",
-) -> T_QuerySet:
-    """Search queryset using full-text search."""
-    if not value:
-        return queryset.none()
+class SearchQuerySetMixin(BaseQuerySet):
+    """A queryset mixin that adds full-text search capabilities."""
 
-    query = SearchQuery(
-        value,
-        search_type=search_type,
-        config=config,
-    )
+    default_search_fields: tuple[str, ...] = ()
 
-    rank = functools.reduce(
-        operator.add,
-        (
-            SearchRank(
-                F(field),
-                query=query,
-            )
-            for field in search_fields
-        ),
-    )
+    def search(
+        self,
+        value: str,
+        *search_fields: str,
+        annotation: str = "rank",
+        config: str = "simple",
+        search_type: str = "websearch",
+    ) -> Self:
+        """Search queryset using full-text search."""
+        if not value:
+            return self.none()
 
-    q = functools.reduce(
-        operator.or_,
-        (
-            Q(
-                **{field: query},
-            )
-            for field in search_fields
-        ),
-    )
+        search_fields = search_fields or self.default_search_fields
 
-    return queryset.annotate(**{annotation: rank}).filter(q)
+        query = SearchQuery(
+            value,
+            search_type=search_type,
+            config=config,
+        )
+
+        rank = functools.reduce(
+            operator.add,
+            (
+                SearchRank(
+                    F(field),
+                    query=query,
+                )
+                for field in search_fields
+            ),
+        )
+
+        q = functools.reduce(
+            operator.or_,
+            (
+                Q(
+                    **{field: query},
+                )
+                for field in search_fields
+            ),
+        )
+
+        return self.annotate(**{annotation: rank}).filter(q)

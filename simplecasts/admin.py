@@ -17,8 +17,8 @@ from simplecasts.models import (
     Subscription,
     User,
 )
+from simplecasts.models.episodes import EpisodeQuerySet
 from simplecasts.models.podcasts import PodcastQuerySet
-from simplecasts.models.search import search_queryset
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover
@@ -314,11 +314,9 @@ class PodcastAdmin(admin.ModelAdmin):
         """Search episodes."""
         return (
             (
-                search_queryset(
-                    queryset,
-                    search_term,
-                    *self.search_fields,
-                ).order_by("-rank", "-pub_date"),
+                queryset.search(search_term, *self.search_fields).order_by(
+                    "-rank", "-pub_date"
+                ),
                 False,
             )
             if search_term
@@ -396,17 +394,15 @@ class EpisodeAdmin(admin.ModelAdmin):
     def get_search_results(
         self,
         request: HttpRequest,
-        queryset: QuerySet[Episode],
+        queryset: EpisodeQuerySet,
         search_term: str,
     ) -> tuple[QuerySet[Episode], bool]:
         """Search episodes."""
         return (
             (
-                search_queryset(
-                    queryset,
-                    search_term,
-                    *self.search_fields,
-                ).order_by("-rank", "-pub_date"),
+                queryset.search(search_term, *self.search_fields).order_by(
+                    "-rank", "-pub_date"
+                ),
                 False,
             )
             if search_term
