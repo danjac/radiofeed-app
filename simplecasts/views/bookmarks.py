@@ -9,7 +9,7 @@ from simplecasts.http.decorators import require_DELETE
 from simplecasts.http.request import AuthenticatedHttpRequest
 from simplecasts.http.response import HttpResponseConflict
 from simplecasts.models import Episode
-from simplecasts.services.search import search_queryset
+from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 

@@ -8,9 +8,9 @@ from django.views.decorators.http import require_safe
 from simplecasts.http.request import HttpRequest
 from simplecasts.http.response import RenderOrRedirectResponse
 from simplecasts.models import Episode, Podcast
+from simplecasts.models.search import search_queryset
 from simplecasts.services import itunes
 from simplecasts.services.http_client import get_client
-from simplecasts.services.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 

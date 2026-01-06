@@ -8,7 +8,7 @@ from django.views.decorators.http import require_POST, require_safe
 from simplecasts.http.decorators import require_DELETE
 from simplecasts.http.request import AuthenticatedHttpRequest
 from simplecasts.models import AudioLog
-from simplecasts.services.search import search_queryset
+from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 

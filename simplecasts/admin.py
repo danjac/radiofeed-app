@@ -18,7 +18,7 @@ from simplecasts.models import (
     User,
 )
 from simplecasts.models.podcasts import PodcastQuerySet
-from simplecasts.services.search import search_queryset
+from simplecasts.models.search import search_queryset
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover

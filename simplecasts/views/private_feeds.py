@@ -10,7 +10,7 @@ from simplecasts.http.decorators import require_DELETE, require_form_methods
 from simplecasts.http.request import AuthenticatedHttpRequest
 from simplecasts.http.response import RenderOrRedirectResponse
 from simplecasts.models import Podcast
-from simplecasts.services.search import search_queryset
+from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 from simplecasts.views.partials import render_partial_response
 

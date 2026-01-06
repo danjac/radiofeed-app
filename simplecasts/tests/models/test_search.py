@@ -1,7 +1,7 @@
 import pytest
 
 from simplecasts.models import AudioLog, Podcast
-from simplecasts.services.search import search_queryset
+from simplecasts.models.search import search_queryset
 from simplecasts.tests.factories import AudioLogFactory, EpisodeFactory, PodcastFactory
 
 

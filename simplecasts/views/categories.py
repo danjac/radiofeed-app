@@ -6,7 +6,7 @@ from django.views.decorators.http import require_safe
 
 from simplecasts.http.request import HttpRequest
 from simplecasts.models import Category, Podcast
-from simplecasts.services.search import search_queryset
+from simplecasts.models.search import search_queryset
 from simplecasts.views.paginator import render_paginated_response
 
 
