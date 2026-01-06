@@ -226,7 +226,7 @@
                                 <button
                                     class="text-sm btn btn-danger"
                                     title="Remove episode from your History"
-                                    hx-delete="{% url "history:remove" episode.pk %}"
+                                    hx-delete="{% url "history:remove_audio_log" episode.pk %}"
                                     hx-confirm="Are you sure you want to remove this episode from your History?"
                                     hx-disabled-elt="this"
                                     hx-indicator="this"

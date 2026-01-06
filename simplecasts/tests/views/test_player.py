@@ -4,7 +4,7 @@ import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains
 
-from simplecasts.middleware import PlayerDetails
+from simplecasts.middleware.player import PlayerDetails
 from simplecasts.models import AudioLog
 from simplecasts.tests.asserts import (
     assert200,

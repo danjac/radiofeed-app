@@ -72,11 +72,11 @@ MIDDLEWARE: list[str] = [
     "django.middleware.csp.ContentSecurityPolicyMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
-    "simplecasts.middleware.HtmxCacheMiddleware",
-    "simplecasts.middleware.HtmxMessagesMiddleware",
-    "simplecasts.middleware.HtmxRedirectMiddleware",
-    "simplecasts.middleware.SearchMiddleware",
-    "simplecasts.middleware.PlayerMiddleware",
+    "simplecasts.middleware.htmx.HtmxCacheMiddleware",
+    "simplecasts.middleware.htmx.HtmxMessagesMiddleware",
+    "simplecasts.middleware.htmx.HtmxRedirectMiddleware",
+    "simplecasts.middleware.player.PlayerMiddleware",
+    "simplecasts.middleware.search.SearchMiddleware",
 ]
 
 # Databases

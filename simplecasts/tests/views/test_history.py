@@ -147,4 +147,4 @@ class TestRemoveAudioLog:
         assert not AudioLog.objects.filter(user=auth_user).exists()
 
     def url(self, episode):
-        return reverse("history:remove", args=[episode.pk])
+        return reverse("history:remove_audio_log", args=[episode.pk])

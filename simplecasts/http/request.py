@@ -7,7 +7,8 @@ if TYPE_CHECKING:
     from django.contrib.auth.models import AnonymousUser
     from django_htmx.middleware import HtmxDetails
 
-    from simplecasts.middleware import PlayerDetails, SearchDetails
+    from simplecasts.middleware.player import PlayerDetails
+    from simplecasts.middleware.search import SearchDetails
     from simplecasts.models import User
 
 
