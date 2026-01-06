@@ -56,7 +56,7 @@ class Season:
 class PodcastQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
-    default_search_fields = ("search_vector",)
+    default_search_fields = ("search_document",)
 
     def subscribed(self, user: User) -> Self:
         """Returns podcasts subscribed by user."""
@@ -240,8 +240,8 @@ class Podcast(models.Model):
         related_name="recommended_podcasts",
     )
 
-    search_vector = SearchVectorField(null=True, blank=True, editable=False)
-    owner_search_vector = SearchVectorField(null=True, blank=True, editable=False)
+    search_document = SearchVectorField(null=True, blank=True, editable=False)
+    owner_search_document = SearchVectorField(null=True, blank=True, editable=False)
 
     objects: PodcastQuerySet = PodcastQuerySet.as_manager()  # type: ignore[assignment]
 
@@ -276,8 +276,8 @@ class Podcast(models.Model):
                 name="%(app_label)s_%(class)s_public_idx",
             ),
             # Search indexes
-            GinIndex(fields=["search_vector"]),
-            GinIndex(fields=["owner_search_vector"]),
+            GinIndex(fields=["search_document"]),
+            GinIndex(fields=["owner_search_document"]),
         ]
 
     def __str__(self) -> str:

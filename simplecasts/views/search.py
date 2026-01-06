@@ -66,7 +66,7 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
             .filter(private=False)
             .search(
                 request.search.value,
-                "owner_search_vector",
+                "owner_search_document",
             )
         ).order_by("-rank", "-pub_date")
         return render_paginated_response(

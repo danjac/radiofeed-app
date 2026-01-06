@@ -32,7 +32,7 @@ class TestPodcastManager:
         podcast2 = PodcastFactory(owner="Django Expert")
         PodcastFactory(owner="Chef Extraordinaire")
 
-        results = Podcast.objects.search("Django", "owner_search_vector")
+        results = Podcast.objects.search("Django", "owner_search_document")
         assert podcast2 in results
         assert results.count() == 1
 

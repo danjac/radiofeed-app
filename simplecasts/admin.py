@@ -248,7 +248,7 @@ class PodcastAdmin(admin.ModelAdmin):
         "exception",
     )
 
-    search_fields = ("search_vector",)
+    search_fields = ("search_document",)
 
     fieldsets = (
         (
@@ -379,7 +379,7 @@ class EpisodeAdmin(admin.ModelAdmin):
     list_display = ("episode_title", "podcast_title", "pub_date")
     list_select_related = ("podcast",)
     raw_id_fields = ("podcast",)
-    search_fields = ("search_vector",)
+    search_fields = ("search_document",)
 
     @admin.display(description="Title")
     def episode_title(self, obj: Episode) -> str:

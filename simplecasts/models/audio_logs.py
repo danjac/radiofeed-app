@@ -11,8 +11,8 @@ class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom queryset for Bookmark model."""
 
     default_search_fields = (
-        "episode__search_vector",
-        "episode__podcast__search_vector",
+        "episode__search_document",
+        "episode__podcast__search_document",
     )
 
 

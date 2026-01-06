@@ -20,7 +20,7 @@ from simplecasts.services.sanitizer import strip_html
 class EpisodeQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom queryset for Episode model."""
 
-    default_search_fields = ("search_vector",)
+    default_search_fields = ("search_document",)
 
 
 class Episode(models.Model):
@@ -69,7 +69,7 @@ class Episode(models.Model):
 
     explicit = models.BooleanField(default=False)
 
-    search_vector = SearchVectorField(null=True, blank=True, editable=False)
+    search_document = SearchVectorField(null=True, blank=True, editable=False)
 
     objects: EpisodeQuerySet = EpisodeQuerySet.as_manager()  # type: ignore[assignment]
 
@@ -87,7 +87,7 @@ class Episode(models.Model):
             models.Index(fields=["pub_date", "id"]),
             models.Index(fields=["-pub_date", "-id"]),
             models.Index(fields=["guid"]),
-            GinIndex(fields=["search_vector"]),
+            GinIndex(fields=["search_document"]),
         ]
 
     def __str__(self) -> str:
