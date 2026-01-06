@@ -16,11 +16,11 @@ export USE_X_FORWARDED_HOST := "false"
 
 # Install all dependencies
 [group('development')]
-install: pyinstall precommitinstall nltkdownload
+install: pyinstall pcinstall nltkdownload
 
 # Update all dependencies
 [group('development')]
-update: pyupdate pyinstall precommitupdate
+update: pyupdate pyinstall pcupdate
 
 # Install all Python dependencies
 [group('development')]
@@ -59,7 +59,7 @@ typecheck *args:
 
 # Run all checks
 [group('development')]
-check: precommitall typecheck test
+check: pcrunall typecheck test
 
 # Download NLTK data
 [group('development')]
@@ -88,24 +88,24 @@ psql *args:
 
 # Run pre-commit manually
 [group('development')]
-precommit *args:
+pc *args:
    uv run --with pre-commit-uv pre-commit {{ args }}
 
 # Install pre-commit hooks
 [group('development')]
-precommitinstall:
+pcinstall:
    @just precommit install
    @just precommit install --hook-type commit-msg
 
 # Update pre-commit hooks
 [group('development')]
-precommitupdate:
+pcupdate:
    @just precommit autoupdate
 
 # Re-run pre-commit on all files
 [group('development')]
-precommitall:
-   @just precommit run --all-files
+pcrunall:
+   @just pc run --all-files
 
 # Run Ansible playbook
 [group('deployment')]
