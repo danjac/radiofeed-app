@@ -6,7 +6,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertTemplateUsed
 
-from simplecasts.middleware.player import PlayerDetails
+from simplecasts.middleware import PlayerDetails
 from simplecasts.models import Subscription, User
 from simplecasts.services.notifications import get_unsubscribe_signer
 from simplecasts.tests.asserts import (
