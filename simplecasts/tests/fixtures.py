@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
 from django.test import Client
 
-from simplecasts.middleware.player import PlayerDetails
+from simplecasts.middleware import PlayerDetails
 from simplecasts.models import AudioLog, Category, Episode, Podcast, User
 from simplecasts.tests.factories import (
     AudioLogFactory,

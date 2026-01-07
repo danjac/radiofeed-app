@@ -4,13 +4,15 @@ import pytest
 from django.http import HttpResponse
 from django_htmx.middleware import HtmxDetails, HtmxMiddleware
 
-from simplecasts.middleware.htmx import (
+from simplecasts.middleware import (
     HtmxCacheMiddleware,
     HtmxMessagesMiddleware,
     HtmxRedirectMiddleware,
+    PlayerDetails,
+    PlayerMiddleware,
+    SearchDetails,
+    SearchMiddleware,
 )
-from simplecasts.middleware.player import PlayerDetails, PlayerMiddleware
-from simplecasts.middleware.search import SearchDetails, SearchMiddleware
 
 
 @pytest.fixture

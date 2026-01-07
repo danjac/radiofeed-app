@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.template import TemplateSyntaxError
 
 from simplecasts.http.request import RequestContext
-from simplecasts.middleware.player import PlayerDetails
+from simplecasts.middleware import PlayerDetails
 from simplecasts.templatetags.cookie_banner import cookie_banner
 from simplecasts.templatetags.duration import format_duration
 from simplecasts.templatetags.fragments import fragment
