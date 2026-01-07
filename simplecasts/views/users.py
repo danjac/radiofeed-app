@@ -153,13 +153,13 @@ def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
             label="Bookmarks",
             value=request.user.bookmarks.count(),
             unit="episode",
-            url=reverse("bookmarks:index"),
+            url=reverse("episodes:bookmarks"),
         ),
         UserStat(
             label="Listened",
             value=request.user.audio_logs.count(),
             unit="episode",
-            url=reverse("history:index"),
+            url=reverse("episodes:history"),
         ),
     ]
     return TemplateResponse(request, "account/stats.html", {"stats": stats})

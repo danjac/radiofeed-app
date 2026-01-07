@@ -122,7 +122,7 @@
                                     aria-label="Remove Episode from your Bookmarks"
                                     title="Remove Episode from your Bookmarks"
                                     hx-disabled-elt="this"
-                                    hx-delete="{% url "bookmarks:remove" episode.pk %}"
+                                    hx-delete="{% url "episodes:remove_bookmark" episode.pk %}"
                                     hx-trigger="click once"
                                 >
                                     {% heroicon_mini "bookmark-slash" class="mr-2" %}
@@ -135,7 +135,7 @@
                                     aria-label="Add Episode to your Bookmarks"
                                     title="Add Episode to your Bookmarks"
                                     hx-disabled-elt="this"
-                                    hx-post="{% url "bookmarks:add" episode.pk %}"
+                                    hx-post="{% url "episodes:add_bookmark" episode.pk %}"
                                     hx-trigger="click once"
                                 >
                                     {% heroicon_mini "bookmark" class="mr-2" %}
@@ -215,7 +215,7 @@
                                     <button
                                         class="text-sm btn btn-default"
                                         title="Mark this episode complete"
-                                        hx-post="{% url "history:mark_complete" episode.pk %}"
+                                        hx-post="{% url "episodes:mark_complete" episode.pk %}"
                                         hx-disabled-elt="this"
                                         hx-indicator="this"
                                     >
@@ -226,7 +226,7 @@
                                 <button
                                     class="text-sm btn btn-danger"
                                     title="Remove episode from your History"
-                                    hx-delete="{% url "history:remove_audio_log" episode.pk %}"
+                                    hx-delete="{% url "episodes:remove_audio_log" episode.pk %}"
                                     hx-confirm="Are you sure you want to remove this episode from your History?"
                                     hx-disabled-elt="this"
                                     hx-indicator="this"

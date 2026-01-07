@@ -15,14 +15,14 @@ from simplecasts.tests.factories import (
 
 
 class TestHistory:
-    url = reverse_lazy("history:index")
+    url = reverse_lazy("episodes:history")
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
         AudioLogFactory.create_batch(33, user=auth_user)
         response = client.get(self.url)
         assert200(response)
-        assertTemplateUsed(response, "history/index.html")
+        assertTemplateUsed(response, "episodes/history.html")
 
         assert200(response)
         assert len(response.context["page"].object_list) == 30
@@ -93,7 +93,7 @@ class TestMarkAudioLogComplete:
         assert AudioLog.objects.filter(user=auth_user, episode=player_episode).exists()
 
     def url(self, episode):
-        return reverse("history:mark_complete", args=[episode.pk])
+        return reverse("episodes:mark_complete", args=[episode.pk])
 
 
 class TestRemoveAudioLog:
@@ -147,4 +147,4 @@ class TestRemoveAudioLog:
         assert not AudioLog.objects.filter(user=auth_user).exists()
 
     def url(self, episode):
-        return reverse("history:remove_audio_log", args=[episode.pk])
+        return reverse("episodes:remove_audio_log", args=[episode.pk])

@@ -15,7 +15,7 @@ from simplecasts.tests.factories import (
 
 
 class TestBookmarks:
-    url = reverse_lazy("bookmarks:index")
+    url = reverse_lazy("episodes:bookmarks")
 
     @pytest.mark.django_db
     def test_get(self, client, auth_user):
@@ -24,7 +24,7 @@ class TestBookmarks:
         response = client.get(self.url)
 
         assert200(response)
-        assertTemplateUsed(response, "bookmarks/index.html")
+        assertTemplateUsed(response, "episodes/bookmarks.html")
 
         assert len(response.context["page"].object_list) == 30
 
@@ -57,7 +57,7 @@ class TestBookmarks:
         response = client.get(self.url, {"search": "testing"})
 
         assert200(response)
-        assertTemplateUsed(response, "bookmarks/index.html")
+        assertTemplateUsed(response, "episodes/bookmarks.html")
 
         assert len(response.context["page"].object_list) == 1
 
@@ -80,7 +80,7 @@ class TestAddBookmark:
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
     def url(self, episode):
-        return reverse("bookmarks:add", args=[episode.pk])
+        return reverse("episodes:add_bookmark", args=[episode.pk])
 
 
 class TestRemoveBookmark:
@@ -88,7 +88,7 @@ class TestRemoveBookmark:
     def test_post(self, client, auth_user, episode):
         BookmarkFactory(user=auth_user, episode=episode)
         response = client.delete(
-            reverse("bookmarks:remove", args=[episode.pk]),
+            reverse("episodes:remove_bookmark", args=[episode.pk]),
             headers={"HX-Request": "true"},
         )
         assert200(response)
