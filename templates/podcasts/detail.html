@@ -24,7 +24,7 @@
                             <button class="text-lg btn btn-danger"
                                     aria-label="Remove podcast from your Private Feeds"
                                     title="Remove podcast from your Private Feeds"
-                                    hx-delete="{% url "private_feeds:remove" podcast.pk %}"
+                                    hx-delete="{% url "podcasts:remove_private_feed" podcast.pk %}"
                                     hx-headers='{"{{ csrf_header }}": "{{ csrf_token }}"}'
                                     hx-push-url="true"
                                     hx-confirm="Are you sure you want to remove this podcast from your Private Feeds? You can't undo this action!">
