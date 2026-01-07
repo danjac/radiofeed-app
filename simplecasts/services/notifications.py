@@ -10,7 +10,7 @@ from django.template import loader
 from django.urls import reverse
 
 from simplecasts.services.sanitizer import strip_html
-from simplecasts.templatetags import absolute_uri
+from simplecasts.templatetags.notifications import absolute_uri
 
 
 def send_notification_email(  # noqa: PLR0913
