@@ -130,7 +130,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
             "builtins": [
-                "simplecasts.templatetags",
+                "simplecasts.templatetags.fragments",
             ],
             "debug": env.bool("TEMPLATE_DEBUG", default=DEBUG),
             "context_processors": [
