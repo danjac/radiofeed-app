@@ -23,7 +23,7 @@ class TestSearchPeople:
             },
         )
         assert200(response)
-        assertTemplateUsed(response, "search/search_people.html")
+        assertTemplateUsed(response, "podcasts/search_people.html")
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):

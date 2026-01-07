@@ -96,7 +96,7 @@ def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
         )
 
         return render_paginated_response(
-            request, "search/search_episodes.html", results
+            request, "episodes/search_episodes.html", results
         )
 
     return redirect("episodes:index")

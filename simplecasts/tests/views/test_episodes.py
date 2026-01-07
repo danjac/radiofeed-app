@@ -135,7 +135,7 @@ class TestSearchEpisodes:
         episode = EpisodeFactory(title=faker.unique.name())
         response = client.get(self.url, {"search": episode.title})
         assert200(response)
-        assertTemplateUsed(response, "search/search_episodes.html")
+        assertTemplateUsed(response, "episodes/search_episodes.html")
         assert len(response.context["page"].object_list) == 1
         assert response.context["page"].object_list[0] == episode
 
@@ -143,7 +143,7 @@ class TestSearchEpisodes:
     def test_search_no_results(self, auth_user, client):
         response = client.get(self.url, {"search": "zzzz"})
         assert200(response)
-        assertTemplateUsed(response, "search/search_episodes.html")
+        assertTemplateUsed(response, "episodes/search_episodes.html")
         assert len(response.context["page"].object_list) == 0
 
     @pytest.mark.django_db
