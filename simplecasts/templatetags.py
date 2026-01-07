@@ -21,7 +21,7 @@ from simplecasts.http.request import (
 from simplecasts.models import AudioLog, Episode
 from simplecasts.services import covers, sanitizer
 from simplecasts.services.pwa import get_theme_color
-from simplecasts.views.player import PlayerAction
+from simplecasts.views.episodes import PlayerAction
 
 register = template.Library()
 

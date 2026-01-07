@@ -80,7 +80,7 @@
                                         class="text-lg btn btn-primary btn-outline"
                                         aria-label="Close Player"
                                         title="Close Player"
-                                        hx-post="{% url "player:close" %}"
+                                        hx-post="{% url "episodes:close_player" %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once"
                                     >
@@ -94,7 +94,7 @@
                                         aria-label="Open Episode in Player"
                                         title="Open Episode in Player"
                                         hx-disabled-elt="this"
-                                        hx-post="{% url "player:start" episode.pk %}"
+                                        hx-post="{% url "episodes:start_player" episode.pk %}"
                                         hx-trigger="click once">
                                         {% heroicon_mini "play" size=24 class="mr-2" %}
                                         Play

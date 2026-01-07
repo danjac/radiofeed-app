@@ -14,7 +14,7 @@
                         metadataTag='{{ metadata_tag }}',
                         currentTime={{ audio_log.current_time|default:0 }},
                         startPlayer={% if action == "play" %}true{% else %}false{% endif %},
-                        timeUpdateUrl='{% url "player:time_update" %}',
+                        timeUpdateUrl='{% url "episodes:player_time_update" %}',
                     )"{# fmt:on #}
                      @keydown.window="shortcuts">
                     <audio x-ref="audio"

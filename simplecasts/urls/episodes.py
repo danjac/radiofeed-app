@@ -31,4 +31,7 @@ urlpatterns = [
         episodes.remove_bookmark,
         name="remove_bookmark",
     ),
+    path("player/start/<int:episode_id>/", episodes.start_player, name="start_player"),
+    path("player/close/", episodes.close_player, name="close_player"),
+    path("player/time-update/", episodes.player_time_update, name="player_time_update"),
 ]

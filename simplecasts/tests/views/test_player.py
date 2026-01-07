@@ -68,11 +68,11 @@ class TestStartPlayer:
         assert client.session[PlayerDetails.session_id] == player_episode.pk
 
     def url(self, episode):
-        return reverse("player:start", args=[episode.pk])
+        return reverse("episodes:start_player", args=[episode.pk])
 
 
 class TestClosePlayer:
-    url = reverse_lazy("player:close")
+    url = reverse_lazy("episodes:close_player")
 
     @pytest.mark.django_db
     def test_player_empty(self, client, auth_user, episode):
@@ -107,7 +107,7 @@ class TestClosePlayer:
 
 
 class TestPlayerTimeUpdate:
-    url = reverse_lazy("player:time_update")
+    url = reverse_lazy("episodes:player_time_update")
 
     @pytest.mark.django_db
     def test_is_running(self, client, player_episode):
