@@ -1,6 +1,5 @@
-from datetime import timedelta
-
 import json
+from datetime import timedelta
 
 import pytest
 from django.urls import reverse, reverse_lazy
