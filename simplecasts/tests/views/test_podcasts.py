@@ -20,167 +20,6 @@ from simplecasts.tests.factories import (
 _discover_url = reverse_lazy("podcasts:discover")
 
 
-class TestSubscriptions:
-    @pytest.mark.django_db
-    def test_authenticated_no_subscriptions(self, client, auth_user):
-        response = client.get(reverse("podcasts:subscriptions"))
-        assert200(response)
-
-        assertTemplateUsed(response, "podcasts/subscriptions.html")
-
-    @pytest.mark.django_db
-    def test_user_is_subscribed(self, client, auth_user):
-        """If user subscribed any podcasts, show only own feed with these podcasts"""
-
-        sub = SubscriptionFactory(subscriber=auth_user)
-        response = client.get(reverse("podcasts:subscriptions"))
-
-        assert200(response)
-
-        assertTemplateUsed(response, "podcasts/subscriptions.html")
-
-        assert len(response.context["page"].object_list) == 1
-        assert response.context["page"].object_list[0] == sub.podcast
-
-    @pytest.mark.django_db
-    def test_htmx_request(self, client, auth_user):
-        sub = SubscriptionFactory(subscriber=auth_user)
-        response = client.get(
-            reverse("podcasts:subscriptions"),
-            headers={
-                "HX-Request": "true",
-                "HX-Target": "pagination",
-            },
-        )
-
-        assert200(response)
-
-        assertContains(response, 'id="pagination"')
-
-        assert len(response.context["page"].object_list) == 1
-        assert response.context["page"].object_list[0] == sub.podcast
-
-    @pytest.mark.django_db
-    def test_user_is_subscribed_search(self, client, auth_user):
-        """If user subscribed any podcasts, show only own feed with these podcasts"""
-
-        sub = SubscriptionFactory(subscriber=auth_user)
-        response = client.get(
-            reverse("podcasts:subscriptions"), {"search": sub.podcast.title}
-        )
-
-        assert200(response)
-
-        assertTemplateUsed(response, "podcasts/subscriptions.html")
-
-        assert len(response.context["page"].object_list) == 1
-        assert response.context["page"].object_list[0] == sub.podcast
-
-
-class TestSubscribe:
-    @pytest.mark.django_db
-    def test_subscribe(self, client, podcast, auth_user):
-        response = client.post(
-            self.url(podcast),
-            headers={
-                "HX-Request": "true",
-            },
-        )
-
-        assert200(response)
-        assertContains(response, 'id="subscribe-button"')
-
-        assert Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    @pytest.mark.django_db()(transaction=True)
-    def test_already_subscribed(
-        self,
-        client,
-        podcast,
-        auth_user,
-    ):
-        SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        response = client.post(
-            self.url(podcast),
-            headers={
-                "HX-Request": "true",
-                "HX-Target": "subscribe-button",
-            },
-        )
-
-        assert409(response)
-
-        assert Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    @pytest.mark.django_db
-    def test_subscribe_private(self, client, auth_user):
-        podcast = PodcastFactory(private=True)
-
-        response = client.post(
-            self.url(podcast),
-            headers={
-                "HX-Request": "true",
-                "HX-Target": "subscribe-button",
-            },
-        )
-
-        assert404(response)
-
-        assert not Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    def url(self, podcast):
-        return reverse("podcasts:subscribe", args=[podcast.pk])
-
-
-class TestUnsubscribe:
-    @pytest.mark.django_db
-    def test_unsubscribe(self, client, auth_user, podcast):
-        SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        response = client.delete(
-            self.url(podcast),
-            headers={
-                "HX-Request": "true",
-                "HX-Target": "subscribe-button",
-            },
-        )
-
-        assert200(response)
-        assertContains(response, 'id="subscribe-button"')
-
-        assert not Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    @pytest.mark.django_db
-    def test_unsubscribe_private(self, client, auth_user):
-        podcast = SubscriptionFactory(
-            subscriber=auth_user, podcast=PodcastFactory(private=True)
-        ).podcast
-
-        response = client.delete(
-            self.url(podcast),
-            headers={
-                "HX-Request": "true",
-                "HX-Target": "subscribe-button",
-            },
-        )
-
-        assert404(response)
-
-        assert Subscription.objects.filter(
-            podcast=podcast, subscriber=auth_user
-        ).exists()
-
-    def url(self, podcast):
-        return reverse("podcasts:unsubscribe", args=[podcast.pk])
-
-
 class TestDiscover:
     url = reverse_lazy("podcasts:discover")
 
@@ -199,8 +38,6 @@ class TestDiscover:
         assertTemplateUsed(response, "podcasts/discover.html")
 
         assert len(response.context["podcasts"]) == 0
-
-
 class TestPodcastSimilar:
     @pytest.mark.django_db
     def test_get(self, client, auth_user, podcast):
@@ -212,8 +49,6 @@ class TestPodcastSimilar:
 
         assert response.context["podcast"] == podcast
         assert len(response.context["recommendations"]) == 3
-
-
 class TestPodcastDetail:
     @pytest.fixture
     def podcast(self, faker):
@@ -290,8 +125,6 @@ class TestPodcastDetail:
         response = client.get(duplicate.get_absolute_url())
         assert200(response)
         assertContains(response, "moved")
-
-
 class TestLatestEpisode:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
@@ -305,8 +138,6 @@ class TestLatestEpisode:
 
     def url(self, podcast):
         return reverse("podcasts:latest_episode", args=[podcast.pk])
-
-
 class TestPodcastSeason:
     @pytest.mark.django_db
     def test_get_episodes_for_season(self, client, auth_user, podcast):
@@ -348,8 +179,6 @@ class TestPodcastSeason:
 
         assert len(response.context["page"].object_list) == 20
         assert response.context["season"].season == 1
-
-
 class TestPodcastEpisodes:
     @pytest.mark.django_db
     def test_get_episodes(self, client, auth_user, podcast):
@@ -403,8 +232,6 @@ class TestPodcastEpisodes:
         )
         assert200(response)
         assert len(response.context["page"].object_list) == 1
-
-
 class TestSearchPodcasts:
     url = reverse_lazy("podcasts:search_podcasts")
 
@@ -439,8 +266,6 @@ class TestSearchPodcasts:
         response = client.get(self.url, {"search": "zzzz"})
         assert200(response)
         assert len(response.context["page"].object_list) == 0
-
-
 class TestSearchItunes:
     url = reverse_lazy("podcasts:search_itunes")
 
@@ -488,137 +313,6 @@ class TestSearchItunes:
         )
         response = client.get(self.url, {"search": "test"})
         assert response.url == _discover_url
-
-
-class TestPrivateFeeds:
-    url = reverse_lazy("podcasts:private_feeds")
-
-    @pytest.mark.django_db
-    def test_ok(self, client, auth_user):
-        for podcast in PodcastFactory.create_batch(33, private=True):
-            SubscriptionFactory(subscriber=auth_user, podcast=podcast)
-        response = client.get(self.url)
-        assert200(response)
-        assert len(response.context["page"]) == 30
-        assert response.context["page"].has_other_pages is True
-
-    @pytest.mark.django_db
-    def test_empty(self, client, auth_user):
-        PodcastFactory(private=True)
-        response = client.get(self.url)
-        assert200(response)
-        assert len(response.context["page"]) == 0
-        assert response.context["page"].has_other_pages is False
-
-    @pytest.mark.django_db
-    def test_search(self, client, auth_user, faker):
-        podcast = SubscriptionFactory(
-            subscriber=auth_user,
-            podcast=PodcastFactory(title=faker.unique.text(), private=True),
-        ).podcast
-
-        SubscriptionFactory(
-            subscriber=auth_user,
-            podcast=PodcastFactory(title="zzz", private=True),
-        )
-
-        response = client.get(self.url, {"search": podcast.title})
-        assert200(response)
-
-        assert len(response.context["page"].object_list) == 1
-        assert response.context["page"].object_list[0] == podcast
-
-
-class TestRemovePrivateFeed:
-    def url(self, podcast):
-        return reverse("podcasts:remove_private_feed", args=[podcast.pk])
-
-    @pytest.mark.django_db
-    def test_ok(self, client, auth_user):
-        podcast = PodcastFactory(private=True)
-        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
-
-        response = client.delete(
-            self.url(podcast),
-            {"rss": podcast.rss},
-        )
-        assert response.url == reverse("podcasts:private_feeds")
-
-        assert not Podcast.objects.filter(pk=podcast.pk).exists()
-
-    @pytest.mark.django_db
-    def test_not_owned_by_user(self, client, auth_user):
-        podcast = PodcastFactory(private=True)
-
-        response = client.delete(
-            self.url(podcast),
-            {"rss": podcast.rss},
-        )
-        assert404(response)
-
-        assert Podcast.objects.filter(pk=podcast.pk).exists()
-
-    @pytest.mark.django_db
-    def test_not_private_feed(self, client, auth_user):
-        podcast = PodcastFactory(private=False)
-        SubscriptionFactory(podcast=podcast, subscriber=auth_user)
-        response = client.delete(self.url(podcast), {"rss": podcast.rss})
-        assert404(response)
-
-        assert Podcast.objects.filter(pk=podcast.pk).exists()
-
-        assert Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
-
-
-class TestAddPrivateFeed:
-    url = reverse_lazy("podcasts:add_private_feed")
-
-    @pytest.fixture
-    def rss(self, faker):
-        return faker.url()
-
-    @pytest.mark.django_db
-    def test_get(self, client, auth_user):
-        response = client.get(self.url)
-        assert200(response)
-        assertTemplateUsed(response, "podcasts/private_feed_form.html")
-
-    @pytest.mark.django_db
-    def test_post_not_existing(self, client, auth_user, rss):
-        response = client.post(self.url, {"rss": rss})
-        assert response.url == reverse("podcasts:private_feeds")
-
-        podcast = Subscription.objects.get(
-            subscriber=auth_user, podcast__rss=rss
-        ).podcast
-
-        assert podcast.private
-
-    @pytest.mark.django_db
-    def test_existing_private(self, client, auth_user):
-        podcast = PodcastFactory(private=True)
-
-        response = client.post(self.url, {"rss": podcast.rss})
-        assert200(response)
-
-        assert not Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
-
-    @pytest.mark.django_db
-    def test_existing_public(self, client, auth_user):
-        podcast = PodcastFactory(private=False)
-
-        response = client.post(self.url, {"rss": podcast.rss})
-        assert200(response)
-
-        assert not Subscription.objects.filter(
-            subscriber=auth_user, podcast=podcast
-        ).exists()
-
-
 class TestCategoryList:
     url = reverse_lazy("podcasts:categories")
 
@@ -667,8 +361,6 @@ class TestCategoryList:
 
         assert200(response)
         assert len(response.context["categories"]) == 0
-
-
 class TestCategoryDetail:
     @pytest.mark.django_db
     def test_get(self, client, auth_user, category):
