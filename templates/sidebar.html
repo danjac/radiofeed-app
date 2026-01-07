@@ -21,12 +21,12 @@
     {% endwith %}
 
     {% with icon="bookmark" label="Bookmarks" %}
-        {% url "bookmarks:index" as url %}
+        {% url "episodes:bookmarks" as url %}
         {% partial item %}
     {% endwith %}
 
     {% with icon="clock" label="History" %}
-        {% url "history:index" as url %}
+        {% url "episodes:history" as url %}
         {% partial item %}
     {% endwith %}
 
