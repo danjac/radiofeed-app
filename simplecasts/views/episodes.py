@@ -199,20 +199,6 @@ def remove_audio_log(
     return _render_audio_log_action(request, audio_log, show_audio_log=False)
 
 
-def _render_audio_log_action(
-    request: AuthenticatedHttpRequest,
-    audio_log: AudioLog,
-    *,
-    show_audio_log: bool,
-) -> TemplateResponse:
-    context = {"episode": audio_log.episode}
-
-    if show_audio_log:
-        context["audio_log"] = audio_log
-
-    return TemplateResponse(request, "episodes/detail.html#audio_log", context)
-
-
 @require_safe
 @login_required
 def bookmarks(request: AuthenticatedHttpRequest) -> TemplateResponse:
@@ -267,22 +253,6 @@ def remove_bookmark(
     messages.info(request, "Removed from Bookmarks")
 
     return _render_bookmark_action(request, episode, is_bookmarked=False)
-
-
-def _render_bookmark_action(
-    request: AuthenticatedHttpRequest,
-    episode: Episode,
-    *,
-    is_bookmarked: bool,
-) -> TemplateResponse:
-    return TemplateResponse(
-        request,
-        "episodes/detail.html#bookmark_button",
-        {
-            "episode": episode,
-            "is_bookmarked": is_bookmarked,
-        },
-    )
 
 
 @require_POST
@@ -366,6 +336,36 @@ def player_time_update(request: HttpRequest) -> JsonResponse:
         )
 
     return JsonResponse(update.model_dump())
+
+
+def _render_bookmark_action(
+    request: AuthenticatedHttpRequest,
+    episode: Episode,
+    *,
+    is_bookmarked: bool,
+) -> TemplateResponse:
+    return TemplateResponse(
+        request,
+        "episodes/detail.html#bookmark_button",
+        {
+            "episode": episode,
+            "is_bookmarked": is_bookmarked,
+        },
+    )
+
+
+def _render_audio_log_action(
+    request: AuthenticatedHttpRequest,
+    audio_log: AudioLog,
+    *,
+    show_audio_log: bool,
+) -> TemplateResponse:
+    context = {"episode": audio_log.episode}
+
+    if show_audio_log:
+        context["audio_log"] = audio_log
+
+    return TemplateResponse(request, "episodes/detail.html#audio_log", context)
 
 
 def _render_player_action(
