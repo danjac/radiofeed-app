@@ -20,7 +20,6 @@ urlpatterns = [
     path("", include("simplecasts.urls.podcasts")),
     path("account/", include("simplecasts.urls.users")),
     path("categories/", include("simplecasts.urls.categories")),
-    path("player/", include("simplecasts.urls.player")),
     path("private-feeds/", include("simplecasts.urls.private_feeds")),
     path("search/", include("simplecasts.urls.search")),
     path("subscriptions/", include("simplecasts.urls.subscriptions")),
