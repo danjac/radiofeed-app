@@ -198,19 +198,6 @@ def get_media_metadata(context: RequestContext, episode: Episode) -> dict:
     }
 
 
-def _get_audio_log(request: HttpRequest) -> AudioLog | None:
-    if is_authenticated_request(request) and (episode_id := request.player.get()):
-        return (
-            request.user.audio_logs.select_related(
-                "episode",
-                "episode__podcast",
-            )
-            .filter(episode_id=episode_id)
-            .first()
-        )
-    return None
-
-
 @register.simple_tag
 @functools.cache
 def get_cover_image_attrs(
@@ -231,8 +218,18 @@ def cover_image(
 ) -> str:
     """Renders a cover image."""
     attrs = get_cover_image_attrs(variant, cover_url, title)
-    return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
+    attrs = {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
+    return format_html("<img {}>", flatatt(attrs))
 
 
-def _clean_attrs(attrs: dict) -> dict:
-    return {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
+def _get_audio_log(request: HttpRequest) -> AudioLog | None:
+    if is_authenticated_request(request) and (episode_id := request.player.get()):
+        return (
+            request.user.audio_logs.select_related(
+                "episode",
+                "episode__podcast",
+            )
+            .filter(episode_id=episode_id)
+            .first()
+        )
+    return None
