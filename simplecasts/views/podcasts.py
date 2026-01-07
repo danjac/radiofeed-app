@@ -1,36 +1,18 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
-from django.views.decorators.http import require_POST, require_safe
+from django.views.decorators.http import require_safe
 
-from simplecasts.forms import PodcastForm
-from simplecasts.http.decorators import require_DELETE, require_form_methods
 from simplecasts.http.request import AuthenticatedHttpRequest, HttpRequest
-from simplecasts.http.response import HttpResponseConflict, RenderOrRedirectResponse
+from simplecasts.http.response import RenderOrRedirectResponse
 from simplecasts.models import Category, Episode, Podcast
 from simplecasts.services import itunes
 from simplecasts.services.http_client import get_client
 from simplecasts.views.paginator import render_paginated_response
-from simplecasts.views.partials import render_partial_response
-
-
-@require_safe
-@login_required
-def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
-    """Render podcast index page."""
-    podcasts = Podcast.objects.published().subscribed(request.user).distinct()
-
-    if request.search:
-        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
-    else:
-        podcasts = podcasts.order_by("-pub_date")
-
-    return render_paginated_response(request, "podcasts/subscriptions.html", podcasts)
 
 
 @require_safe
@@ -242,115 +224,6 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
         )
 
     return redirect("podcasts:discover")
-
-
-@require_POST
-@login_required
-def subscribe(
-    request: AuthenticatedHttpRequest, podcast_id: int
-) -> TemplateResponse | HttpResponseConflict:
-    """Subscribe a user to a podcast. Podcast must be active and public."""
-    podcast = get_object_or_404(
-        Podcast.objects.published().filter(private=False), pk=podcast_id
-    )
-
-    try:
-        request.user.subscriptions.create(podcast=podcast)
-    except IntegrityError:
-        return HttpResponseConflict()
-
-    messages.success(request, "Subscribed to Podcast")
-
-    return _render_subscribe_action(request, podcast, is_subscribed=True)
-
-
-@require_DELETE
-@login_required
-def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateResponse:
-    """Unsubscribe user from a podcast."""
-    podcast = get_object_or_404(
-        Podcast.objects.published().filter(private=False), pk=podcast_id
-    )
-    request.user.subscriptions.filter(podcast=podcast).delete()
-    messages.info(request, "Unsubscribed from Podcast")
-    return _render_subscribe_action(request, podcast, is_subscribed=False)
-
-
-def _render_subscribe_action(
-    request: HttpRequest,
-    podcast: Podcast,
-    *,
-    is_subscribed: bool,
-) -> TemplateResponse:
-    return TemplateResponse(
-        request,
-        "podcasts/detail.html#subscribe_button",
-        {
-            "podcast": podcast,
-            "is_subscribed": is_subscribed,
-        },
-    )
-
-
-@require_safe
-@login_required
-def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
-    """Lists user's private feeds."""
-    podcasts = Podcast.objects.published().filter(private=True).subscribed(request.user)
-
-    if request.search:
-        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
-    else:
-        podcasts = podcasts.order_by("-pub_date")
-
-    return render_paginated_response(request, "podcasts/private_feeds.html", podcasts)
-
-
-@require_form_methods
-@login_required
-def add_private_feed(request: AuthenticatedHttpRequest) -> RenderOrRedirectResponse:
-    """Add new private feed to collection."""
-    if request.method == "POST":
-        form = PodcastForm(request.POST)
-        if form.is_valid():
-            podcast = form.save(commit=False)
-            podcast.private = True
-            podcast.save()
-
-            request.user.subscriptions.create(podcast=podcast)
-
-            messages.success(
-                request,
-                "Podcast added to your Private Feeds and will appear here soon",
-            )
-            return redirect("podcasts:private_feeds")
-    else:
-        form = PodcastForm()
-
-    return render_partial_response(
-        request,
-        "podcasts/private_feed_form.html",
-        {"form": form},
-        target="private-feed-form",
-        partial="form",
-    )
-
-
-@require_DELETE
-@login_required
-def remove_private_feed(
-    request: AuthenticatedHttpRequest,
-    podcast_id: int,
-) -> HttpResponseRedirect:
-    """Delete private feed."""
-
-    get_object_or_404(
-        Podcast.objects.published().filter(private=True).subscribed(request.user),
-        pk=podcast_id,
-    ).delete()
-
-    messages.info(request, "Removed from Private Feeds")
-    return redirect("podcasts:private_feeds")
 
 
 @require_safe

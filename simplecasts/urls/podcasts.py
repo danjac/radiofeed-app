@@ -18,19 +18,7 @@ class _SignedIntConverter:
 register_converter(_SignedIntConverter, "sint")
 
 urlpatterns = [
-    path("subscriptions/", podcasts.subscriptions, name="subscriptions"),
     path("discover/", podcasts.discover, name="discover"),
-    path("private-feeds/", podcasts.private_feeds, name="private_feeds"),
-    path(
-        "private-feeds/new/",
-        podcasts.add_private_feed,
-        name="add_private_feed",
-    ),
-    path(
-        "private-feeds/<int:podcast_id>/remove/",
-        podcasts.remove_private_feed,
-        name="remove_private_feed",
-    ),
     path("categories/", podcasts.categories, name="categories"),
     path("categories/<slug:slug>/", podcasts.category_detail, name="category_detail"),
     path(
@@ -57,16 +45,6 @@ urlpatterns = [
         "podcasts/<int:podcast_id>/latest-episode/",
         podcasts.latest_episode,
         name="latest_episode",
-    ),
-    path(
-        "podcasts/<int:podcast_id>/subscribe/",
-        podcasts.subscribe,
-        name="subscribe",
-    ),
-    path(
-        "podcasts/<int:podcast_id>/unsubscribe/",
-        podcasts.unsubscribe,
-        name="unsubscribe",
     ),
     path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
     path("search/itunes/", podcasts.search_itunes, name="search_itunes"),
