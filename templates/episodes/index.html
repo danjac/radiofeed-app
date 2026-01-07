@@ -9,7 +9,7 @@
     {% fragment "header.html" title="New Releases" %}
         {% fragment "header/nav.html" %}
             {% fragment "header/nav.html#item" %}
-                {% url "search:episodes" as search_url %}
+                {% url "episodes:search_episodes" as search_url %}
                 {% include "header/nav/search.html#form" %}
             {% endfragment %}
         {% endfragment %}

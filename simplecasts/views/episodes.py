@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Subquery
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_safe
 
-from simplecasts.http.request import AuthenticatedHttpRequest
+from simplecasts.http.request import AuthenticatedHttpRequest, HttpRequest
+from simplecasts.http.response import RenderOrRedirectResponse
 from simplecasts.models import Episode, Podcast
+from simplecasts.views.paginator import render_paginated_response
 
 
 @require_safe
@@ -71,3 +73,26 @@ def detail(
             "is_playing": is_playing,
         },
     )
+
+
+@require_safe
+@login_required
+def search_episodes(request: HttpRequest) -> RenderOrRedirectResponse:
+    """Search any episodes in the database."""
+
+    if request.search:
+        results = (
+            (
+                Episode.objects.filter(podcast__private=False).search(
+                    request.search.value
+                )
+            )
+            .select_related("podcast")
+            .order_by("-rank", "-pub_date")
+        )
+
+        return render_paginated_response(
+            request, "search/search_episodes.html", results
+        )
+
+    return redirect("episodes:index")

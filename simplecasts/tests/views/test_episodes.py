@@ -120,3 +120,29 @@ class TestEpisodeDetail:
         assertTemplateUsed(response, "episodes/detail.html")
         assert response.context["episode"] == episode
         assertContains(response, "First Episode")
+
+
+class TestSearchEpisodes:
+    url = reverse_lazy("episodes:search_episodes")
+
+    @pytest.mark.django_db
+    def test_search(self, auth_user, client, faker):
+        EpisodeFactory.create_batch(3, title="zzzz")
+        episode = EpisodeFactory(title=faker.unique.name())
+        response = client.get(self.url, {"search": episode.title})
+        assert200(response)
+        assertTemplateUsed(response, "search/search_episodes.html")
+        assert len(response.context["page"].object_list) == 1
+        assert response.context["page"].object_list[0] == episode
+
+    @pytest.mark.django_db
+    def test_search_no_results(self, auth_user, client):
+        response = client.get(self.url, {"search": "zzzz"})
+        assert200(response)
+        assertTemplateUsed(response, "search/search_episodes.html")
+        assert len(response.context["page"].object_list) == 0
+
+    @pytest.mark.django_db
+    def test_search_value_empty(self, auth_user, client):
+        response = client.get(self.url, {"search": ""})
+        assert response.url == _index_url
