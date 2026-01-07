@@ -273,7 +273,6 @@ def unsubscribe(request: AuthenticatedHttpRequest, podcast_id: int) -> TemplateR
     return _render_subscribe_action(request, podcast, is_subscribed=False)
 
 
-
 def _render_subscribe_action(
     request: HttpRequest,
     podcast: Podcast,
