@@ -26,11 +26,6 @@ from simplecasts.views.player import PlayerAction
 register = template.Library()
 
 
-# =============================================================================
-# Fragment template tags (from fragments.py)
-# =============================================================================
-
-
 @register.simple_block_tag(takes_context=True)
 def fragment(
     context: Context,
@@ -74,21 +69,11 @@ def fragment(
         return tmpl.render(context)
 
 
-# =============================================================================
-# Cookie banner template tags (from cookie_banner.py)
-# =============================================================================
-
-
 @register.inclusion_tag("cookie_banner.html", takes_context=True)
 def cookie_banner(context: RequestContext) -> dict:
     """Renders GDPR cookie banner"""
     cookies_accepted = settings.GDPR_COOKIE_NAME in context.request.COOKIES
     return context.flatten() | {"cookies_accepted": cookies_accepted}
-
-
-# =============================================================================
-# Duration template tags (from duration.py)
-# =============================================================================
 
 
 @register.filter
@@ -99,11 +84,6 @@ def format_duration(total_seconds: int, min_value: int = 60) -> str:
         if total_seconds >= min_value
         else ""
     )
-
-
-# =============================================================================
-# Head tags template tags (from head_tags.py)
-# =============================================================================
 
 
 @register.simple_tag(takes_context=True)
@@ -160,11 +140,6 @@ def meta_tags() -> str:
     )
 
 
-# =============================================================================
-# Notifications template tags (from notifications.py)
-# =============================================================================
-
-
 @register.simple_tag
 def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     """Returns absolute URI for the given path."""
@@ -173,20 +148,10 @@ def absolute_uri(site: Site, path: str, *args, **kwargs) -> str:
     return f"{scheme}://{site.domain}{url}"
 
 
-# =============================================================================
-# Markdown template tags (from markdown.py)
-# =============================================================================
-
-
 @register.inclusion_tag("markdown.html")
 def markdown(text: str) -> dict:
     """Render content as Markdown."""
     return {"markdown": sanitizer.markdown(text)}
-
-
-# =============================================================================
-# Player template tags (from player.py)
-# =============================================================================
 
 
 @register.inclusion_tag("audio_player.html", takes_context=True)
@@ -244,11 +209,6 @@ def _get_audio_log(request: HttpRequest) -> AudioLog | None:
             .first()
         )
     return None
-
-
-# =============================================================================
-# Cover template tags (from covers.py)
-# =============================================================================
 
 
 @register.simple_tag
