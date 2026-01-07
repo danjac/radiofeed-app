@@ -22,5 +22,4 @@ urlpatterns = [
     path("categories/", include("simplecasts.urls.categories")),
     path("private-feeds/", include("simplecasts.urls.private_feeds")),
     path("search/", include("simplecasts.urls.search")),
-    path("subscriptions/", include("simplecasts.urls.subscriptions")),
 ]

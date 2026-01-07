@@ -1,7 +1,7 @@
 {% load heroicons %}
 <ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
     {% with icon="rss" label="Subscriptions" %}
-        {% url "subscriptions:index" as url %}
+        {% url "podcasts:subscriptions" as url %}
         {% partial item %}
     {% endwith %}
 
