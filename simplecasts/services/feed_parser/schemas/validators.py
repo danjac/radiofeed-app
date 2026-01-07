@@ -5,7 +5,7 @@ from typing import Any, Final, TypeVar
 from django.core.exceptions import ValidationError
 from django.db.models import TextChoices
 
-from simplecasts.validators import url_validator
+from simplecasts.db.validators import url_validator
 
 T = TypeVar("T")
 
