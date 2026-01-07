@@ -79,7 +79,7 @@ def index(request: AuthenticatedHttpRequest) -> TemplateResponse:
 
 @require_safe
 @login_required
-def detail(
+def episode_detail(
     request: AuthenticatedHttpRequest,
     episode_id: int,
     slug: str | None = None,
