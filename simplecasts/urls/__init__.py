@@ -19,6 +19,5 @@ urlpatterns = [
     path("", include("simplecasts.urls.episodes")),
     path("", include("simplecasts.urls.podcasts")),
     path("account/", include("simplecasts.urls.users")),
-    path("categories/", include("simplecasts.urls.categories")),
     path("search/", include("simplecasts.urls.search")),
 ]

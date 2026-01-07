@@ -31,6 +31,8 @@ urlpatterns = [
         podcasts.remove_private_feed,
         name="remove_private_feed",
     ),
+    path("categories/", podcasts.categories, name="categories"),
+    path("categories/<slug:slug>/", podcasts.category_detail, name="category_detail"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
         podcasts.podcast_detail,

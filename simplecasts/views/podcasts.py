@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Exists, OuterRef
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -11,7 +12,7 @@ from simplecasts.forms import PodcastForm
 from simplecasts.http.decorators import require_DELETE, require_form_methods
 from simplecasts.http.request import AuthenticatedHttpRequest, HttpRequest
 from simplecasts.http.response import HttpResponseConflict, RenderOrRedirectResponse
-from simplecasts.models import Episode, Podcast
+from simplecasts.models import Category, Episode, Podcast
 from simplecasts.services import itunes
 from simplecasts.services.http_client import get_client
 from simplecasts.views.paginator import render_paginated_response
@@ -350,3 +351,54 @@ def remove_private_feed(
 
     messages.info(request, "Removed from Private Feeds")
     return redirect("podcasts:private_feeds")
+
+
+@require_safe
+@login_required
+def categories(request: HttpRequest) -> TemplateResponse:
+    """List all categories containing podcasts."""
+    category_list = (
+        Category.objects.alias(
+            has_podcasts=Exists(
+                Podcast.objects.published()
+                .filter(private=False)
+                .filter(categories=OuterRef("pk"))
+            )
+        )
+        .filter(has_podcasts=True)
+        .order_by("name")
+    )
+
+    return TemplateResponse(
+        request,
+        "podcasts/categories.html",
+        {
+            "categories": category_list,
+        },
+    )
+
+
+@require_safe
+@login_required
+def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
+    """Render individual podcast category along with its podcasts.
+
+    Podcasts can also be searched.
+    """
+    category = get_object_or_404(Category, slug=slug)
+
+    podcasts = category.podcasts.published().filter(private=False).distinct()
+
+    if request.search:
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
+    else:
+        podcasts = podcasts.order_by("-pub_date")
+
+    return render_paginated_response(
+        request,
+        "podcasts/category_detail.html",
+        podcasts,
+        {
+            "category": category,
+        },
+    )

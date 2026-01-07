@@ -33,4 +33,4 @@ class Category(models.Model):
 
     def get_absolute_url(self) -> str:
         """Absolute URL to a category."""
-        return reverse("categories:detail", kwargs={"slug": self.slug})
+        return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
