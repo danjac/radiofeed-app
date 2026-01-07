@@ -17,7 +17,7 @@ class TestSearchPeople:
     def test_get(self, client, auth_user, faker):
         podcast = PodcastFactory(owner=faker.name())
         response = client.get(
-            reverse("search:people"),
+            reverse("podcasts:search_people"),
             {
                 "search": podcast.cleaned_owner,
             },
@@ -27,5 +27,5 @@ class TestSearchPeople:
 
     @pytest.mark.django_db
     def test_empty(self, client, auth_user):
-        response = client.get(reverse("search:people"), {"search": ""})
+        response = client.get(reverse("podcasts:search_people"), {"search": ""})
         assert response.url == _discover_url

@@ -46,4 +46,5 @@ urlpatterns = [
     ),
     path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
     path("search/itunes/", podcasts.search_itunes, name="search_itunes"),
+    path("search/people/", podcasts.search_people, name="search_people"),
 ]
