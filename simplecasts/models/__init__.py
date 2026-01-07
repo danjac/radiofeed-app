@@ -1,16 +1,13 @@
 import dataclasses
-import functools
-import operator
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, ClassVar, Final, Optional, Self
+from typing import TYPE_CHECKING, ClassVar, Final, Optional
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVectorField
+from django.contrib.postgres.search import SearchVectorField
 from django.core.validators import MinLengthValidator
 from django.db import models
-from django.db.models import F, Q, QuerySet
 from django.db.models.fields.tuple_lookups import (  # type: ignore[reportMissingTypeStubs]
     TupleGreaterThan,
     TupleLessThan,
@@ -21,74 +18,8 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from slugify import slugify
 
+from simplecasts.db import SearchQuerySetMixin, URLField
 from simplecasts.services.sanitizer import strip_html
-from simplecasts.validators import url_validator
-
-if TYPE_CHECKING:
-    BaseQuerySet = QuerySet
-else:
-    BaseQuerySet = object
-
-
-# Fields
-
-# URLField with sensible defaults
-URLField = functools.partial(
-    models.URLField,
-    max_length=2083,
-    validators=[url_validator],
-)
-
-
-# Search
-
-class SearchQuerySetMixin(BaseQuerySet):
-    """A queryset mixin that adds full-text search capabilities."""
-
-    default_search_fields: tuple[str, ...] = ()
-
-    def search(
-        self,
-        value: str,
-        *search_fields: str,
-        annotation: str = "rank",
-        config: str = "simple",
-        search_type: str = "websearch",
-    ) -> Self:
-        """Search queryset using full-text search."""
-        if not value:
-            return self.none()
-
-        search_fields = search_fields or self.default_search_fields
-
-        query = SearchQuery(
-            value,
-            search_type=search_type,
-            config=config,
-        )
-
-        rank = functools.reduce(
-            operator.add,
-            (
-                SearchRank(
-                    F(field),
-                    query=query,
-                )
-                for field in search_fields
-            ),
-        )
-
-        q = functools.reduce(
-            operator.or_,
-            (
-                Q(
-                    **{field: query},
-                )
-                for field in search_fields
-            ),
-        )
-
-        return self.annotate(**{annotation: rank}).filter(q)
 
 
 # User
@@ -875,23 +806,3 @@ class AudioLog(models.Model):
             return 0
 
         return min(100, round((self.current_time / self.duration) * 100))
-
-
-__all__ = [
-    "AudioLog",
-    "AudioLogQuerySet",
-    "Bookmark",
-    "BookmarkQuerySet",
-    "Category",
-    "Episode",
-    "EpisodeQuerySet",
-    "Podcast",
-    "PodcastQuerySet",
-    "Recommendation",
-    "RecommendationQuerySet",
-    "Season",
-    "SearchQuerySetMixin",
-    "Subscription",
-    "URLField",
-    "User",
-]
