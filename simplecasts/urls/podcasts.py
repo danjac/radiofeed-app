@@ -20,6 +20,17 @@ register_converter(_SignedIntConverter, "sint")
 urlpatterns = [
     path("subscriptions/", podcasts.subscriptions, name="subscriptions"),
     path("discover/", podcasts.discover, name="discover"),
+    path("private-feeds/", podcasts.private_feeds, name="private_feeds"),
+    path(
+        "private-feeds/new/",
+        podcasts.add_private_feed,
+        name="add_private_feed",
+    ),
+    path(
+        "private-feeds/<int:podcast_id>/remove/",
+        podcasts.remove_private_feed,
+        name="remove_private_feed",
+    ),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
         podcasts.podcast_detail,

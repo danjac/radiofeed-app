@@ -31,7 +31,7 @@
     {% endwith %}
 
     {% with icon="lock-closed" label="Private Feeds" %}
-        {% url "private_feeds:index" as url %}
+        {% url "podcasts:private_feeds" as url %}
         {% partial item %}
     {% endwith %}
 
