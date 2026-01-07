@@ -18,6 +18,5 @@ urlpatterns = [
     path(".well-known/security.txt", views.security, name="security"),
     path("", include("simplecasts.urls.episodes")),
     path("", include("simplecasts.urls.podcasts")),
-    path("account/", include("simplecasts.urls.users")),
-    path("search/", include("simplecasts.urls.search")),
+    path("", include("simplecasts.urls.users")),
 ]
