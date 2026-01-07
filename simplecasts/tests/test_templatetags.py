@@ -10,7 +10,7 @@ from simplecasts.templatetags.audio_player import (
 )
 from simplecasts.templatetags.duration import format_duration
 from simplecasts.templatetags.fragments import fragment
-from simplecasts.templatetags.page_layout import cookie_banner
+from simplecasts.templatetags.cookie_banner import cookie_banner
 
 
 @pytest.fixture
