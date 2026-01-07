@@ -44,4 +44,6 @@ urlpatterns = [
         podcasts.latest_episode,
         name="latest_episode",
     ),
+    path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
+    path("search/itunes/", podcasts.search_itunes, name="search_itunes"),
 ]

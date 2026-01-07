@@ -12,4 +12,5 @@ urlpatterns = [
         episodes.detail,
         name="detail",
     ),
+    path("search/episodes/", episodes.search_episodes, name="search_episodes"),
 ]
