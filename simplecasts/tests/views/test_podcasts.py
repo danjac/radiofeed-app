@@ -311,7 +311,7 @@ class TestSearchItunes:
         response = client.get(self.url, {"search": "test"})
         assert200(response)
 
-        assertTemplateUsed(response, "search/search_itunes.html")
+        assertTemplateUsed(response, "podcasts/search_itunes.html")
 
         assertContains(response, "Test &amp; Code : Python Testing")
         assertContains(response, podcast.title)

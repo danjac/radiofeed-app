@@ -168,7 +168,7 @@ def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
         ).order_by("-rank", "-pub_date")
 
         return render_paginated_response(
-            request, "search/search_podcasts.html", results
+            request, "podcasts/search_podcasts.html", results
         )
 
     return redirect("podcasts:discover")
@@ -191,7 +191,7 @@ def search_itunes(request: HttpRequest) -> RenderOrRedirectResponse:
                     itunes.save_feeds_to_db(feeds)
             return TemplateResponse(
                 request,
-                "search/search_itunes.html",
+                "podcasts/search_itunes.html",
                 {
                     "feeds": feeds,
                 },
@@ -218,7 +218,7 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
         ).order_by("-rank", "-pub_date")
         return render_paginated_response(
             request,
-            "search/search_people.html",
+            "podcasts/search_people.html",
             results,
         )
 
