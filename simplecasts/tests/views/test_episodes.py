@@ -546,7 +546,7 @@ class TestPlayerTimeUpdate:
         )
         assert400(response)
 
-    @pytest.mark.django_db()(transaction=True)
+    @pytest.mark.django_db(transaction=True)
     def test_episode_does_not_exist(self, client, auth_user):
         session = client.session
         session[PlayerDetails.session_id] = 12345
