@@ -162,7 +162,6 @@ class TestHistory:
         assert200(response)
         assertTemplateUsed(response, "episodes/history.html")
 
-        assert200(response)
         assert len(response.context["page"].object_list) == 30
 
     @pytest.mark.django_db
@@ -344,7 +343,7 @@ class TestAddBookmark:
         assert200(response)
         assert Bookmark.objects.filter(user=auth_user, episode=episode).exists()
 
-    @pytest.mark.django_db()(transaction=True)
+    @pytest.mark.django_db(transaction=True)
     def test_already_bookmarked(self, client, auth_user, episode):
         BookmarkFactory(episode=episode, user=auth_user)
 
