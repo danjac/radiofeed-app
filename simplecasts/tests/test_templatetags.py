@@ -4,7 +4,7 @@ from django.template import TemplateSyntaxError
 
 from simplecasts.http.request import RequestContext
 from simplecasts.middleware.player import PlayerDetails
-from simplecasts.templatetags.audio_player import (
+from simplecasts.templatetags.player import (
     audio_player,
     get_media_metadata,
 )
