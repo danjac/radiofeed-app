@@ -23,7 +23,6 @@ from simplecasts.tests.factories import (
     SubscriptionFactory,
 )
 
-
 # User tests
 
 

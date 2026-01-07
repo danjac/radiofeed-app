@@ -1,6 +1,6 @@
 import dataclasses
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, ClassVar, Final, Optional
+from typing import TYPE_CHECKING, ClassVar, Final, Optional, Self
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -18,11 +18,12 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from slugify import slugify
 
-from simplecasts.db import SearchQuerySetMixin, URLField
+from simplecasts.db.fields import URLField
+from simplecasts.db.search import SearchQuerySetMixin
 from simplecasts.services.sanitizer import strip_html
 
-
 # User
+
 
 class User(AbstractUser):
     """Custom User model."""
@@ -42,6 +43,7 @@ class User(AbstractUser):
 
 
 # Category
+
 
 class Category(models.Model):
     """iTunes category."""
@@ -72,6 +74,7 @@ class Category(models.Model):
 
 
 # Recommendation
+
 
 class RecommendationQuerySet(models.QuerySet):
     """Custom QuerySet for Recommendation model."""
@@ -122,6 +125,7 @@ class Recommendation(models.Model):
 
 
 # Podcast
+
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class Season:
@@ -492,6 +496,7 @@ class Podcast(models.Model):
 
 # Episode
 
+
 class EpisodeQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom queryset for Episode model."""
 
@@ -668,6 +673,7 @@ class Episode(models.Model):
 
 # Subscription
 
+
 class Subscription(models.Model):
     """Subscribed podcast belonging to a user's collection."""
 
@@ -696,6 +702,7 @@ class Subscription(models.Model):
 
 
 # Bookmark
+
 
 class BookmarkQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom queryset for Bookmark model."""
@@ -748,6 +755,7 @@ class Bookmark(models.Model):
 
 
 # AudioLog
+
 
 class AudioLogQuerySet(SearchQuerySetMixin, models.QuerySet):
     """Custom queryset for Bookmark model."""
