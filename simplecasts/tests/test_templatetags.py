@@ -4,13 +4,13 @@ from django.template import TemplateSyntaxError
 
 from simplecasts.http.request import RequestContext
 from simplecasts.middleware.player import PlayerDetails
-from simplecasts.templatetags.duration import format_duration
-from simplecasts.templatetags.fragments import fragment
-from simplecasts.templatetags.page_layout import cookie_banner
 from simplecasts.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )
+from simplecasts.templatetags.duration import format_duration
+from simplecasts.templatetags.fragments import fragment
+from simplecasts.templatetags.page_layout import cookie_banner
 
 
 @pytest.fixture
