@@ -12,13 +12,13 @@ from simplecasts.models import (
     AudioLog,
     Category,
     Episode,
+    EpisodeQuerySet,
     Podcast,
+    PodcastQuerySet,
     Recommendation,
     Subscription,
     User,
 )
-from simplecasts.models.episodes import EpisodeQuerySet
-from simplecasts.models.podcasts import PodcastQuerySet
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover

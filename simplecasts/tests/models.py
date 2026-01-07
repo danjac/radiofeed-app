@@ -1,0 +1,563 @@
+import datetime
+from datetime import timedelta
+
+import pytest
+from django.utils import timezone
+
+from simplecasts.models import (
+    AudioLog,
+    Bookmark,
+    Category,
+    Episode,
+    Podcast,
+    Recommendation,
+    User,
+)
+from simplecasts.tests.factories import (
+    AudioLogFactory,
+    BookmarkFactory,
+    CategoryFactory,
+    EpisodeFactory,
+    PodcastFactory,
+    RecommendationFactory,
+    SubscriptionFactory,
+)
+
+
+# User tests
+
+
+class TestUserModel:
+    def test_name_has_first_and_last_name(self):
+        """Test name property with first and last name."""
+        user = User(first_name="John", username="johndoe")
+        assert user.name == "John"
+
+    def test_name_has_only_username(self):
+        """Test name property with only username."""
+        user = User(username="johndoe")
+        assert user.name == "johndoe"
+
+
+# Category tests
+
+
+class TestCategoryModel:
+    def test_str(self):
+        category = Category(name="Testing")
+        assert str(category) == "Testing"
+
+    @pytest.mark.django_db
+    def test_slug(self):
+        category = CategoryFactory(name="Testing")
+        assert category.slug == "testing"
+
+
+# Recommendation tests
+
+
+class TestRecommendationManager:
+    @pytest.mark.django_db
+    def test_bulk_delete(self):
+        RecommendationFactory.create_batch(3)
+        Recommendation.objects.bulk_delete()
+        assert Recommendation.objects.count() == 0
+
+
+# Podcast tests
+
+
+class TestPodcastManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        podcast1 = PodcastFactory(title="Learn Python")
+        podcast2 = PodcastFactory(title="Learn Django")
+        PodcastFactory(title="Cooking Tips")
+
+        results = Podcast.objects.search("Learn")
+        assert podcast1 in results
+        assert podcast2 in results
+        assert results.count() == 2
+
+    @pytest.mark.django_db
+    def test_search_owner(self):
+        PodcastFactory(owner="Python Guru")
+        podcast2 = PodcastFactory(owner="Django Expert")
+        PodcastFactory(owner="Chef Extraordinaire")
+
+        results = Podcast.objects.search("Django", "owner_search_document")
+        assert podcast2 in results
+        assert results.count() == 1
+
+    @pytest.mark.django_db
+    def test_search_empty(self):
+        PodcastFactory(title="Learn Python")
+        PodcastFactory(title="Learn Django")
+        PodcastFactory(title="Cooking Tips")
+
+        results = Podcast.objects.search("")
+        assert results.count() == 0
+
+    @pytest.mark.django_db
+    def test_subscribed_true(self, user):
+        SubscriptionFactory(subscriber=user)
+        assert Podcast.objects.subscribed(user).exists() is True
+
+    @pytest.mark.django_db
+    def test_subscribed_false(self, user, podcast):
+        assert Podcast.objects.subscribed(user).exists() is False
+
+    @pytest.mark.django_db
+    def test_published_true(self):
+        PodcastFactory(pub_date=timezone.now())
+        assert Podcast.objects.published().exists() is True
+
+    @pytest.mark.django_db
+    def test_published_false(self):
+        PodcastFactory(pub_date=None)
+        assert Podcast.objects.published().exists() is False
+
+    @pytest.mark.parametrize(
+        ("kwargs", "exists"),
+        [
+            pytest.param(
+                {},
+                True,
+                id="parsed is None",
+            ),
+            pytest.param(
+                {
+                    "parsed": datetime.timedelta(hours=3),
+                    "frequency": datetime.timedelta(hours=1),
+                },
+                True,
+                id="pub date is None, parsed more than now-frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": datetime.timedelta(minutes=30),
+                    "frequency": datetime.timedelta(hours=1),
+                },
+                False,
+                id="pub date is None, parsed less than now-frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": datetime.timedelta(seconds=1200),
+                    "pub_date": datetime.timedelta(days=3),
+                    "frequency": datetime.timedelta(hours=3),
+                },
+                False,
+                id="pub date is None, just parsed",
+            ),
+            pytest.param(
+                {
+                    "parsed": datetime.timedelta(hours=3),
+                    "pub_date": datetime.timedelta(days=1),
+                    "frequency": datetime.timedelta(hours=3),
+                },
+                True,
+                id="parsed before pub date+frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": datetime.timedelta(days=8),
+                    "pub_date": datetime.timedelta(days=8, minutes=1),
+                    "frequency": datetime.timedelta(days=12),
+                },
+                True,
+                id="parsed just before max frequency",
+            ),
+            pytest.param(
+                {
+                    "parsed": datetime.timedelta(days=30),
+                    "pub_date": datetime.timedelta(days=90),
+                    "frequency": datetime.timedelta(days=30),
+                },
+                True,
+                id="parsed before max frequency",
+            ),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_scheduled(self, kwargs, exists):
+        now = timezone.now()
+
+        parsed = kwargs.get("parsed", None)
+        pub_date = kwargs.get("pub_date", None)
+
+        frequency = kwargs.get("frequency", Podcast.DEFAULT_PARSER_FREQUENCY)
+
+        PodcastFactory(
+            frequency=frequency,
+            parsed=now - parsed if parsed else None,
+            pub_date=now - pub_date if pub_date else None,
+        )
+
+        assert Podcast.objects.scheduled().exists() is exists
+
+    @pytest.mark.django_db
+    def test_recommended(self, user):
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        RecommendationFactory.create_batch(3, podcast=podcast)
+        outlier = PodcastFactory()  # not recommended
+        podcasts = Podcast.objects.recommended(user)
+        assert podcasts.count() == 3
+        assert outlier not in podcasts
+
+    @pytest.mark.django_db
+    def test_recommended_is_subscribed(self, user):
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        RecommendationFactory(recommended=podcast)
+        assert Podcast.objects.recommended(user).count() == 0
+
+    @pytest.mark.django_db
+    def test_already_recommended(self, user):
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        recommended = RecommendationFactory(podcast=podcast).recommended
+        user.recommended_podcasts.add(recommended)
+        assert Podcast.objects.recommended(user).count() == 0
+
+    @pytest.mark.django_db
+    def test_recommended_is_subscribed_or_recommended(self, user):
+        podcast = SubscriptionFactory(subscriber=user).podcast
+        RecommendationFactory(recommended=podcast)
+        recommended = RecommendationFactory(podcast=podcast).recommended
+        user.recommended_podcasts.add(recommended)
+        assert Podcast.objects.recommended(user).count() == 0
+
+
+class TestPodcastModel:
+    def test_str(self):
+        assert str(Podcast(title="title")) == "title"
+
+    def test_str_title_empty(self):
+        rss = "https://example.com/rss.xml"
+        assert str(Podcast(title="", rss=rss)) == rss
+
+    def test_slug(self):
+        assert Podcast(title="Testing").slug == "testing"
+
+    def test_slug_if_title_empty(self):
+        assert Podcast().slug == "podcast"
+
+    def test_cleaned_title(self):
+        podcast = Podcast(title="<b>Test &amp; Code")
+        assert podcast.cleaned_title == "Test & Code"
+
+    def test_cleaned_description(self):
+        podcast = Podcast(description="<b>Test &amp; Code")
+        assert podcast.cleaned_description == "Test & Code"
+
+    def test_cleaned_owner(self):
+        podcast = Podcast(owner="<b>Test &amp; Code")
+        assert podcast.cleaned_owner == "Test & Code"
+
+    @pytest.mark.django_db
+    def test_has_similar_podcasts_private(self):
+        podcast = RecommendationFactory(podcast__private=True).podcast
+        assert podcast.has_similar_podcasts is False
+
+    @pytest.mark.django_db
+    def test_has_similar_podcasts_true(self):
+        podcast = RecommendationFactory().podcast
+        assert podcast.has_similar_podcasts is True
+
+    @pytest.mark.django_db
+    def test_has_similar_podcasts_false(self):
+        podcast = PodcastFactory()
+        assert podcast.has_similar_podcasts is False
+
+    @pytest.mark.django_db
+    def test_seasons(self, podcast):
+        EpisodeFactory.create_batch(3, podcast=podcast, season=-1)
+        EpisodeFactory.create_batch(3, podcast=podcast, season=2)
+        EpisodeFactory.create_batch(3, podcast=podcast, season=1)
+        EpisodeFactory.create_batch(1, podcast=podcast, season=None)
+        assert len(podcast.seasons) == 3
+        assert podcast.seasons[0].season == -1
+        assert podcast.seasons[1].season == 1
+        assert podcast.seasons[2].season == 2
+        assert podcast.seasons[0].url
+        assert podcast.seasons[1].url
+        assert podcast.seasons[2].url
+
+    def test_get_next_scheduled_update_pub_date_none(self):
+        now = timezone.now()
+        podcast = Podcast(
+            parsed=now - datetime.timedelta(hours=1),
+            pub_date=None,
+            frequency=datetime.timedelta(hours=3),
+        )
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 2)
+
+    def test_get_next_scheduled_update_frequency_none(self):
+        now = timezone.now()
+        podcast = Podcast(
+            parsed=now - datetime.timedelta(hours=1), pub_date=None, frequency=None
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_parsed_none(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - datetime.timedelta(hours=3),
+            parsed=None,
+            frequency=datetime.timedelta(hours=3),
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_parsed_gt_max(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now,
+            parsed=now,
+            frequency=datetime.timedelta(days=30),
+        )
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 72)
+
+    def test_get_next_scheduled_update_parsed_lt_now(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - datetime.timedelta(days=5),
+            parsed=now - datetime.timedelta(days=16),
+            frequency=datetime.timedelta(days=30),
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_pub_date_lt_now(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - datetime.timedelta(days=33),
+            parsed=now - datetime.timedelta(days=3),
+            frequency=datetime.timedelta(days=30),
+        )
+        assert (podcast.get_next_scheduled_update() - now).total_seconds() < 10
+
+    def test_get_next_scheduled_update_pub_date_in_future(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - datetime.timedelta(days=1),
+            parsed=now - datetime.timedelta(hours=1),
+            frequency=datetime.timedelta(days=7),
+        )
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 71)
+
+    def test_get_next_scheduled_update_pub_date_lt_min(self):
+        now = timezone.now()
+        podcast = Podcast(
+            pub_date=now - datetime.timedelta(hours=3),
+            parsed=now - datetime.timedelta(minutes=30),
+            frequency=datetime.timedelta(hours=3),
+        )
+
+        self.assert_hours_diff(podcast.get_next_scheduled_update() - now, 0.5)
+
+    def test_is_episodic(self):
+        podcast = Podcast(podcast_type=Podcast.PodcastType.EPISODIC)
+        assert podcast.is_episodic() is True
+        assert podcast.is_serial() is False
+
+    def test_is_serial(self):
+        podcast = Podcast(podcast_type=Podcast.PodcastType.SERIAL)
+        assert podcast.is_episodic() is False
+        assert podcast.is_serial() is True
+
+    def assert_hours_diff(self, delta, hours):
+        assert delta.total_seconds() / 3600 == pytest.approx(hours)
+
+
+# Episode tests
+
+
+class TestEpisodeManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        episode = EpisodeFactory(title="UniqueTitle123")
+        results = Episode.objects.search("UniqueTitle123")
+        assert episode in results
+
+    @pytest.mark.django_db
+    def test_search_no_results(self):
+        EpisodeFactory(title="Some Other Title")
+        results = Episode.objects.search("NonExistentTitle456")
+        assert results.count() == 0
+
+    @pytest.mark.django_db
+    def test_search_empty_query(self):
+        EpisodeFactory(title="Any Title")
+        results = Episode.objects.search("")
+        assert results.count() == 0
+
+
+class TestEpisodeModel:
+    link = "https://example.com"
+
+    @pytest.mark.django_db
+    def test_next_episode_if_none(self, episode):
+        assert episode.next_episode is None
+
+    @pytest.mark.django_db
+    def test_previous_episode_if_none(self, episode):
+        assert episode.previous_episode is None
+
+    @pytest.mark.django_db
+    def test_next_episode_not_same_podcast(self, episode):
+        EpisodeFactory(
+            pub_date=episode.pub_date + timedelta(days=2),
+        )
+
+        assert episode.next_episode is None
+
+    @pytest.mark.django_db
+    def test_previous_episode_not_same_podcast(self, episode):
+        EpisodeFactory(
+            pub_date=episode.pub_date - timedelta(days=2),
+        )
+
+        assert episode.previous_episode is None
+
+    @pytest.mark.django_db
+    def test_next_episode(self, episode):
+        next_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date + timedelta(days=2),
+        )
+
+        assert episode.next_episode == next_episode
+
+    @pytest.mark.django_db
+    def test_previous_episode(self, episode):
+        previous_episode = EpisodeFactory(
+            podcast=episode.podcast,
+            pub_date=episode.pub_date - timedelta(days=2),
+        )
+
+        assert episode.previous_episode == previous_episode
+
+    def test_episode_explicit(self):
+        assert Episode(explicit=True).is_explicit() is True
+
+    def test_podcast_explicit(self):
+        assert (
+            Episode(explicit=False, podcast=Podcast(explicit=True)).is_explicit()
+            is True
+        )
+
+    def test_not_explicit(self):
+        assert (
+            Episode(explicit=False, podcast=Podcast(explicit=False)).is_explicit()
+            is False
+        )
+
+    def test_slug(self):
+        episode = Episode(title="Testing")
+        assert episode.slug == "testing"
+
+    def test_slug_if_title_empty(self):
+        assert Episode().slug == "episode"
+
+    def test_str(self):
+        assert str(Episode(title="testing")) == "testing"
+
+    def test_str_no_title(self):
+        episode = Episode(title="", guid="abc123")
+        assert str(episode) == episode.guid
+
+    def test_cleaned_title(self):
+        episode = Episode(title="<b>Test &amp; Code")
+        assert episode.cleaned_title == "Test & Code"
+
+    def test_cleaned_description(self):
+        episode = Episode(description="<b>Test &amp; Code")
+        assert episode.cleaned_description == "Test & Code"
+
+    @pytest.mark.django_db
+    def test_get_cover_url_if_episode_cover(self, podcast):
+        episode = EpisodeFactory(
+            podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
+        )
+        assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
+
+    @pytest.mark.django_db
+    def test_get_cover_url_if_podcast_cover(self, episode):
+        assert episode.get_cover_url() == "https://example.com/cover.jpg"
+
+    @pytest.mark.django_db
+    def test_get_cover_url_if_none(self):
+        episode = EpisodeFactory(podcast=PodcastFactory(cover_url=""))
+        assert episode.get_cover_url() == ""
+
+    @pytest.mark.parametrize(
+        ("duration", "expected"),
+        [
+            pytest.param("2:30:40", 9040, id="hours"),
+            pytest.param("2:30:40:2903903", 9040, id="extra digit"),
+            pytest.param("30:40", 1840, id="minutes and seconds"),
+            pytest.param("40", 40, id="seconds"),
+            pytest.param("NaN", 0, id="non-numeric"),
+            pytest.param("", 0, id="empty"),
+        ],
+    )
+    def test_duration_in_seconds(self, duration, expected):
+        assert Episode(duration=duration).duration_in_seconds == expected
+
+
+# Bookmark tests
+
+
+class TestBookmarkManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        bookmark1 = BookmarkFactory(
+            episode__title="Learn Python Programming",
+            episode__podcast__title="Tech Talks",
+        )
+        bookmark2 = BookmarkFactory(
+            episode__title="Advanced Django Techniques",
+            episode__podcast__title="Web Dev Weekly",
+        )
+
+        results = Bookmark.objects.search("Python")
+        assert bookmark1 in results
+        assert bookmark2 not in results
+
+
+# AudioLog tests
+
+
+class TestAudioLogManager:
+    @pytest.mark.django_db
+    def test_search(self):
+        audio_log1 = AudioLogFactory(
+            episode__title="Learn Python Programming",
+            episode__podcast__title="Tech Talks",
+        )
+        audio_log2 = AudioLogFactory(
+            episode__title="Advanced Django Techniques",
+            episode__podcast__title="Web Dev Weekly",
+        )
+
+        results = AudioLog.objects.search("Python")
+        assert audio_log1 in results
+        assert audio_log2 not in results
+
+
+class TestAudioLogModel:
+    @pytest.mark.parametrize(
+        ("current_time", "duration", "expected"),
+        [
+            pytest.param(0, 0, 0, id="both zero"),
+            pytest.param(0, 0, 0, id="current time zero"),
+            pytest.param(60 * 60, 0, 0, id="duration zero"),
+            pytest.param(60 * 60, 60 * 60, 100, id="both one hour"),
+            pytest.param(60 * 30, 60 * 60, 50, id="current time half"),
+            pytest.param(60 * 60, 30 * 60, 100, id="more than 100 percent"),
+        ],
+    )
+    def test_percent_complete(self, current_time, duration, expected):
+        audio_log = AudioLog(
+            current_time=current_time,
+            duration=duration,
+        )
+        assert audio_log.percent_complete == expected
