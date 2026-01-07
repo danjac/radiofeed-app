@@ -18,6 +18,7 @@ class _SignedIntConverter:
 register_converter(_SignedIntConverter, "sint")
 
 urlpatterns = [
+    path("subscriptions/", podcasts.subscriptions, name="subscriptions"),
     path("discover/", podcasts.discover, name="discover"),
     path(
         "podcasts/<slug:slug>-<int:podcast_id>/",
@@ -43,6 +44,16 @@ urlpatterns = [
         "podcasts/<int:podcast_id>/latest-episode/",
         podcasts.latest_episode,
         name="latest_episode",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/subscribe/",
+        podcasts.subscribe,
+        name="subscribe",
+    ),
+    path(
+        "podcasts/<int:podcast_id>/unsubscribe/",
+        podcasts.unsubscribe,
+        name="unsubscribe",
     ),
     path("search/podcasts/", podcasts.search_podcasts, name="search_podcasts"),
     path("search/itunes/", podcasts.search_itunes, name="search_itunes"),

@@ -141,7 +141,7 @@ def user_stats(request: AuthenticatedHttpRequest) -> TemplateResponse:
             label="Subscribed",
             value=subscriptions.count(),
             unit="podcast",
-            url=reverse("subscriptions:index"),
+            url=reverse("podcasts:subscriptions"),
         ),
         UserStat(
             label="Private Feeds",

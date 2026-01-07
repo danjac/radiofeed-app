@@ -52,7 +52,7 @@
                                 <button class="text-lg btn btn-primary btn-outline"
                                         aria-label="Unsubscribe from this Podcast"
                                         title="Unsubscribe from this Podcast"
-                                        hx-delete="{% url "subscriptions:unsubscribe" podcast.pk %}"
+                                        hx-delete="{% url "podcasts:unsubscribe" podcast.pk %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye-slash" class="mr-2" size=24 %}
@@ -62,7 +62,7 @@
                                 <button class="text-lg btn btn-primary"
                                         aria-label="Subscribe to this Podcast"
                                         title="Subscribe to this Podcast"
-                                        hx-post="{% url "subscriptions:subscribe" podcast.pk %}"
+                                        hx-post="{% url "podcasts:subscribe" podcast.pk %}"
                                         hx-disabled-elt="this"
                                         hx-trigger="click once">
                                     {% heroicon_mini "eye" class="mr-2" size=24 %}
