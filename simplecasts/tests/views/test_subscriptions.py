@@ -1,5 +1,5 @@
 import pytest
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from simplecasts.models import Subscription

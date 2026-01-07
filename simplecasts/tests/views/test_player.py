@@ -6,8 +6,14 @@ from pytest_django.asserts import assertContains
 
 from simplecasts.middleware import PlayerDetails
 from simplecasts.models import AudioLog
-from simplecasts.tests.asserts import assert200, assert204, assert400, assert401, assert409
-from simplecasts.tests.factories import AudioLogFactory, EpisodeFactory
+from simplecasts.tests.asserts import (
+    assert200,
+    assert204,
+    assert400,
+    assert401,
+    assert409,
+)
+from simplecasts.tests.factories import EpisodeFactory
 
 
 class TestStartPlayer:

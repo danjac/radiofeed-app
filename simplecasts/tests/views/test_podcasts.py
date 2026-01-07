@@ -2,12 +2,11 @@ import pytest
 from django.urls import reverse, reverse_lazy
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
-from simplecasts.models import Podcast, Subscription
+from simplecasts.models import Podcast
 from simplecasts.services import itunes
 from simplecasts.tests.asserts import (
     assert200,
     assert404,
-    assert409,
 )
 from simplecasts.tests.factories import (
     CategoryFactory,
@@ -38,6 +37,8 @@ class TestDiscover:
         assertTemplateUsed(response, "podcasts/discover.html")
 
         assert len(response.context["podcasts"]) == 0
+
+
 class TestPodcastSimilar:
     @pytest.mark.django_db
     def test_get(self, client, auth_user, podcast):
@@ -49,6 +50,8 @@ class TestPodcastSimilar:
 
         assert response.context["podcast"] == podcast
         assert len(response.context["recommendations"]) == 3
+
+
 class TestPodcastDetail:
     @pytest.fixture
     def podcast(self, faker):
@@ -125,6 +128,8 @@ class TestPodcastDetail:
         response = client.get(duplicate.get_absolute_url())
         assert200(response)
         assertContains(response, "moved")
+
+
 class TestLatestEpisode:
     @pytest.mark.django_db
     def test_ok(self, client, auth_user, episode):
@@ -138,6 +143,8 @@ class TestLatestEpisode:
 
     def url(self, podcast):
         return reverse("podcasts:latest_episode", args=[podcast.pk])
+
+
 class TestPodcastSeason:
     @pytest.mark.django_db
     def test_get_episodes_for_season(self, client, auth_user, podcast):
@@ -179,6 +186,8 @@ class TestPodcastSeason:
 
         assert len(response.context["page"].object_list) == 20
         assert response.context["season"].season == 1
+
+
 class TestPodcastEpisodes:
     @pytest.mark.django_db
     def test_get_episodes(self, client, auth_user, podcast):
@@ -232,6 +241,8 @@ class TestPodcastEpisodes:
         )
         assert200(response)
         assert len(response.context["page"].object_list) == 1
+
+
 class TestSearchPodcasts:
     url = reverse_lazy("podcasts:search_podcasts")
 
@@ -266,6 +277,8 @@ class TestSearchPodcasts:
         response = client.get(self.url, {"search": "zzzz"})
         assert200(response)
         assert len(response.context["page"].object_list) == 0
+
+
 class TestSearchItunes:
     url = reverse_lazy("podcasts:search_itunes")
 
@@ -313,6 +326,8 @@ class TestSearchItunes:
         )
         response = client.get(self.url, {"search": "test"})
         assert response.url == _discover_url
+
+
 class TestCategoryList:
     url = reverse_lazy("podcasts:categories")
 
@@ -361,6 +376,8 @@ class TestCategoryList:
 
         assert200(response)
         assert len(response.context["categories"]) == 0
+
+
 class TestCategoryDetail:
     @pytest.mark.django_db
     def test_get(self, client, auth_user, category):
