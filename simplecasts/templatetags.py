@@ -1,5 +1,6 @@
 import functools
 import json
+from datetime import timedelta
 
 from django import template
 from django.conf import settings
@@ -10,6 +11,7 @@ from django.template.context import Context
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import SafeString
+from django.utils.timesince import timesince
 
 from simplecasts import covers, sanitizer
 from simplecasts.pwa import get_theme_color
@@ -157,6 +159,16 @@ def fragment(
 
     with context.push(content=content, **extra_context):
         return tmpl.render(context)
+
+
+@register.filter
+def format_duration(total_seconds: int, min_value: int = 60) -> str:
+    """Formats duration (in seconds) as human readable value e.g. 1 hour, 30 minutes."""
+    return (
+        timesince(timezone.now() - timedelta(seconds=total_seconds))
+        if total_seconds >= min_value
+        else ""
+    )
 
 
 def _clean_attrs(attrs: dict) -> dict:

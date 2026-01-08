@@ -1,31 +1,11 @@
 import pytest
 
 from simplecasts.episodes.middleware import PlayerDetails
-from simplecasts.episodes.templatetags.episodes import (
+from simplecasts.episodes.templatetags.audio_player import (
     audio_player,
-    format_duration,
     get_media_metadata,
 )
 from simplecasts.request import RequestContext
-
-
-class TestFormatDuration:
-    @pytest.mark.parametrize(
-        ("duration", "expected"),
-        [
-            pytest.param(0, "", id="zero"),
-            pytest.param(30, "", id="30 seconds"),
-            pytest.param(60, "1\xa0minute", id="1 minute"),
-            pytest.param(61, "1\xa0minute", id="just over 1 minute"),
-            pytest.param(90, "1\xa0minute", id="1 minute 30 seconds"),
-            pytest.param(540, "9\xa0minutes", id="9 minutes"),
-            pytest.param(2400, "40\xa0minutes", id="40 minutes"),
-            pytest.param(3600, "1\xa0hour", id="1 hour"),
-            pytest.param(9000, "2\xa0hours, 30\xa0minutes", id="2 hours 30 minutes"),
-        ],
-    )
-    def test_format_duration(self, duration, expected):
-        assert format_duration(duration) == expected
 
 
 class TestGetMediaMetadata:
