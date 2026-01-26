@@ -25,7 +25,7 @@ repos:
             files: ^templates
             types_or: [html]
     - repo: https://github.com/opensource-nepal/commitlint
-      rev: v1.3.1
+      rev: v1.13.3
       hooks:
           - id: commitlint
     - repo: https://github.com/koalaman/shellcheck-precommit
@@ -33,7 +33,7 @@ repos:
       hooks:
           - id: shellcheck
     - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: "v0.14.10"
+      rev: "v0.14.14"
       hooks:
           - id: ruff-check
             args: ["--fix"]
