@@ -34,6 +34,37 @@ class TestCategoryModel:
 
 class TestPodcastManager:
     @pytest.mark.django_db
+    def test_search_empty(self):
+        result = Podcast.objects.search("")
+        assert result.count() == 0
+
+    @pytest.mark.django_db
+    def test_search_default(self):
+        podcast_1 = PodcastFactory(title="Learn Python Programming")
+        podcast_2 = PodcastFactory(title="Advanced Python Techniques")
+
+        PodcastFactory(title="JavaScript Basics")
+        result = Podcast.objects.search("Python")
+
+        assert result.count() == 2
+
+        assert podcast_1 in result
+        assert podcast_2 in result
+
+    @pytest.mark.django_db
+    def test_search_owner(self):
+        podcast_1 = PodcastFactory(
+            title="Learn Python Programming", owner="Python Guru"
+        )
+        PodcastFactory(title="Advanced Python Techniques", owner="Code with Python")
+
+        result = Podcast.objects.search("guru")
+
+        assert result.count() == 1
+
+        assert podcast_1 in result
+
+    @pytest.mark.django_db
     def test_subscribed_true(self, user):
         SubscriptionFactory(subscriber=user)
         assert Podcast.objects.subscribed(user).exists() is True

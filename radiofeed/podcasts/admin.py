@@ -13,7 +13,6 @@ from radiofeed.podcasts.models import (
     Recommendation,
     Subscription,
 )
-from radiofeed.search import search_queryset
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise  # pragma: no cover
@@ -294,11 +293,9 @@ class PodcastAdmin(admin.ModelAdmin):
         """Search episodes."""
         return (
             (
-                search_queryset(
-                    queryset,
-                    search_term,
-                    *self.search_fields,
-                ).order_by("-rank", "-pub_date"),
+                queryset.search(search_term, *self.search_fields).order_by(
+                    "-rank", "-pub_date"
+                ),
                 False,
             )
             if search_term

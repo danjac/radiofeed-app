@@ -3,8 +3,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
-from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.search import search_queryset
+from radiofeed.episodes.models import AudioLog, Episode, EpisodeQuerySet
 
 
 @admin.register(Episode)
@@ -29,17 +28,15 @@ class EpisodeAdmin(admin.ModelAdmin):
     def get_search_results(
         self,
         request: HttpRequest,
-        queryset: QuerySet[Episode],
+        queryset: EpisodeQuerySet,
         search_term: str,
     ) -> tuple[QuerySet[Episode], bool]:
         """Search episodes."""
         return (
             (
-                search_queryset(
-                    queryset,
-                    search_term,
-                    *self.search_fields,
-                ).order_by("-rank", "-pub_date"),
+                queryset.search(search_term, *self.search_fields).order_by(
+                    "-rank", "-pub_date"
+                ),
                 False,
             )
             if search_term

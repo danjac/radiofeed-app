@@ -18,7 +18,6 @@ from radiofeed.podcasts.forms import PodcastForm
 from radiofeed.podcasts.models import Category, Podcast, PodcastQuerySet
 from radiofeed.request import AuthenticatedHttpRequest, HttpRequest
 from radiofeed.response import HttpResponseConflict, RenderOrRedirectResponse
-from radiofeed.search import search_queryset
 
 
 @require_safe
@@ -28,14 +27,9 @@ def subscriptions(request: AuthenticatedHttpRequest) -> TemplateResponse:
     podcasts = _get_podcasts().subscribed(request.user).distinct()
 
     if request.search:
-        podcasts = search_queryset(
-            podcasts,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
-
     return render_paginated_response(request, "podcasts/subscriptions.html", podcasts)
 
 
@@ -61,11 +55,11 @@ def search_podcasts(request: HttpRequest) -> RenderOrRedirectResponse:
     """Search all public podcasts in database. Redirects to discover page if search is empty."""
 
     if request.search:
-        podcasts = search_queryset(
-            _get_public_podcasts(),
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = (
+            _get_public_podcasts()
+            .search(request.search.value)
+            .order_by("-rank", "-pub_date")
+        )
 
         return render_paginated_response(
             request, "podcasts/search_podcasts.html", podcasts
@@ -108,11 +102,14 @@ def search_people(request: HttpRequest) -> RenderOrRedirectResponse:
     """Search all podcasts by owner(s). Redirects to discover page if no owner is given."""
 
     if request.search:
-        podcasts = search_queryset(
-            _get_public_podcasts(),
-            request.search.value,
-            "owner_search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = (
+            _get_public_podcasts()
+            .search(
+                request.search.value,
+                "owner_search_vector",
+            )
+            .order_by("-rank", "-pub_date")
+        )
         return render_paginated_response(
             request,
             "podcasts/search_people.html",
@@ -177,11 +174,7 @@ def episodes(
     order_by = ("pub_date", "id") if ordering == "asc" else ("-pub_date", "-id")
 
     if request.search:
-        episodes = search_queryset(
-            episodes,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", *order_by)
+        episodes = episodes.search(request.search.value).order_by("-rank", *order_by)
     else:
         episodes = episodes.order_by(*order_by)
 
@@ -283,11 +276,7 @@ def category_detail(request: HttpRequest, slug: str) -> TemplateResponse:
     podcasts = category.podcasts.published().filter(private=False).distinct()
 
     if request.search:
-        podcasts = search_queryset(
-            podcasts,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 
@@ -336,11 +325,7 @@ def private_feeds(request: AuthenticatedHttpRequest) -> TemplateResponse:
     podcasts = _get_private_podcasts().subscribed(request.user)
 
     if request.search:
-        podcasts = search_queryset(
-            podcasts,
-            request.search.value,
-            "search_vector",
-        ).order_by("-rank", "-pub_date")
+        podcasts = podcasts.search(request.search.value).order_by("-rank", "-pub_date")
     else:
         podcasts = podcasts.order_by("-pub_date")
 

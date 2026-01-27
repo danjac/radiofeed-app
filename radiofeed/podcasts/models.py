@@ -15,6 +15,7 @@ from slugify import slugify
 
 from radiofeed.fields import URLField
 from radiofeed.sanitizer import strip_html
+from radiofeed.search import Searchable
 from radiofeed.users.models import User
 
 if TYPE_CHECKING:
@@ -78,8 +79,10 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(models.QuerySet):
+class PodcastQuerySet(Searchable, models.QuerySet):
     """Custom QuerySet of Podcast model."""
+
+    default_search_fields = ("search_vector",)
 
     def subscribed(self, user: User) -> Self:
         """Returns podcasts subscribed by user."""

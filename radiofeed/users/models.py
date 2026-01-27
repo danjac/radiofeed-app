@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 if TYPE_CHECKING:
-    from radiofeed.episodes.models import AudioLog, Bookmark
+    from radiofeed.episodes.models import AudioLogQuerySet, BookmarkQuerySet
     from radiofeed.podcasts.models import PodcastQuerySet, Subscription
 
 
@@ -15,9 +15,8 @@ class User(AbstractUser):
 
     if TYPE_CHECKING:
         recommended_podcasts: PodcastQuerySet
-
-        audio_logs: models.Manager[AudioLog]
-        bookmarks: models.Manager[Bookmark]
+        audio_logs: AudioLogQuerySet
+        bookmarks: BookmarkQuerySet
         subscriptions: models.Manager[Subscription]
 
     @property

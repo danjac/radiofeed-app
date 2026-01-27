@@ -15,6 +15,13 @@ from slugify import slugify
 from radiofeed.fields import URLField
 from radiofeed.podcasts.models import Season
 from radiofeed.sanitizer import strip_html
+from radiofeed.search import Searchable
+
+
+class EpisodeQuerySet(Searchable, models.QuerySet):
+    """Custom queryset for Episode model."""
+
+    default_search_fields = ("search_vector",)
 
 
 class Episode(models.Model):
@@ -64,6 +71,8 @@ class Episode(models.Model):
     explicit = models.BooleanField(default=False)
 
     search_vector = SearchVectorField(null=True, editable=False)
+
+    objects: EpisodeQuerySet = EpisodeQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [
@@ -183,6 +192,15 @@ class Episode(models.Model):
         ).exclude(pk=self.pk)
 
 
+class BookmarkQuerySet(Searchable, models.QuerySet):
+    """Custom queryset for Bookmark model."""
+
+    default_search_fields = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
+
+
 class Bookmark(models.Model):
     """Bookmarked episodes."""
 
@@ -199,6 +217,8 @@ class Bookmark(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
+
+    objects: BookmarkQuerySet = BookmarkQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [
@@ -222,6 +242,15 @@ class Bookmark(models.Model):
         ]
 
 
+class AudioLogQuerySet(Searchable, models.QuerySet):
+    """Custom queryset for AudioLog model."""
+
+    default_search_fields = (
+        "episode__search_vector",
+        "episode__podcast__search_vector",
+    )
+
+
 class AudioLog(models.Model):
     """Record of user listening history."""
 
@@ -239,6 +268,8 @@ class AudioLog(models.Model):
     listened = models.DateTimeField()
     current_time = models.PositiveIntegerField(default=0)
     duration = models.PositiveIntegerField(default=0)
+
+    objects: AudioLogQuerySet = AudioLogQuerySet.as_manager()  # type: ignore[assignment]
 
     class Meta:
         constraints: ClassVar[list] = [

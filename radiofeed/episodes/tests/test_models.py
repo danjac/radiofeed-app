@@ -4,6 +4,7 @@ import pytest
 
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.episodes.tests.factories import (
+    AudioLogFactory,
     EpisodeFactory,
 )
 from radiofeed.podcasts.models import Podcast
@@ -12,6 +13,32 @@ from radiofeed.podcasts.tests.factories import PodcastFactory
 
 class TestEpisodeModel:
     link = "https://example.com"
+
+    @pytest.mark.django_db
+    def test_multiple_joined_fields(self):
+        audio_log_1 = AudioLogFactory(
+            episode=EpisodeFactory(
+                title="This is a test transcript about Django.",
+                podcast__title="Django Podcast",
+            )
+        )
+        audio_log_2 = AudioLogFactory(
+            episode=EpisodeFactory(
+                title="Django for beginners.",
+                podcast__title="Web Dev Podcast",
+            )
+        )
+        AudioLogFactory(
+            episode=EpisodeFactory(
+                title="Learning Flask framework.",
+                podcast__title="Flask Podcast",
+            )
+        )
+
+        result = AudioLog.objects.search("Django")
+        assert result.count() == 2
+        assert audio_log_1 in result
+        assert audio_log_2 in result
 
     @pytest.mark.django_db
     def test_next_episode_if_none(self, episode):
