@@ -1,6 +1,6 @@
 pytest_plugins = [
-    "simplecasts.tests.fixtures",
-    "simplecasts.episodes.tests.fixtures",
-    "simplecasts.podcasts.tests.fixtures",
-    "simplecasts.users.tests.fixtures",
+    "radiofeed.tests.fixtures",
+    "radiofeed.episodes.tests.fixtures",
+    "radiofeed.podcasts.tests.fixtures",
+    "radiofeed.users.tests.fixtures",
 ]

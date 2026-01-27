@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>Podcasts for in Radiofeed</title>
+    </head>
+    <body>
+        <outline text="My Podcasts" title="My Podcasts">
+
+            <outline type="rss"
+                text="Design is everywhere in our lives, perhaps most importantly in the places where we&#x27;ve just stopped noticing. 99% Invisible is a weekly exploration of the process and power of design and architecture. From award winning producer Roman Mars. Learn more at 99percentinvisible.org."
+                title="99% Invisible"
+                xmlUrl="https://feeds.99percentinvisible.org/99percentinvisible"
+                htmlUrl="https://99percentinvisible.org" />
+
+            <outline type="rss"
+                text="Elixir Mix is a weekly show focused on the Elixir programming community. Our panel discusses topics around functional programming, the Elixir ecosystem, and building real world apps with Elixir based tools and frameworks."
+                title="Elixir Mix" xmlUrl="https://feeds.fireside.fm/elixirmix/rss"
+                htmlUrl="https://elixirmix.com" />
+
+            <outline type="rss"
+                text="Welcome to Hypnogoria, Britian&#x27;s longest running horror podcast! Coming to you from the Great Library of Dreams, Mr Jim Moon invites you to take a comfy armchair by the fireside to talk of all things weird and wonderful. Here we discuss strange cinema and spooky television, explore weird fiction and delve into the mysteries of folklore. Plus we also regularly …"
+                title="Hypnogoria" xmlUrl="hypnogoria.libsyn.com/rss"
+                htmlUrl="hypnogoria.blogspot.co.uk" />
+
+            <outline type="rss"
+                text="Courtland Allen interviews the ambitious indie hackers who are turning their ideas and side projects into profitable online businesses. Explore the latest strategies and tools founders are using to capitalize on new opportunities, escape the 9-to-5 grind, and create their own personal revenue-generating machines. The future is indie!"
+                title="Indie Hackers" xmlUrl="https://feeds.transistor.fm/the-indie-hackers-podcast"
+                htmlUrl="https://www.indiehackers.com" />
+
+            <outline type="rss"
+                text="Proudly produced by independent podcasters this show will be for those that are truly open to a mind-expanding experience. You&#x27;ll be taken on a journey with top scientists, journalists and researchers that dare to look way beyond the edges of our known reality to analyze these extraordinary events. Join KTown as she discusses subjects surrounding real paranormal activity, unbelievable UFO …"
+                title="Mysterious Radio: Paranormal, UFO &amp; Lore Interviews"
+                xmlUrl="https://feeds.megaphone.fm/MYSR6960203128"
+                htmlUrl="https://www.mysteriousradio.com/" />
+
+            <outline type="rss"
+                text="Mysterious Universe is a weekly podcast featuring fascinatingly strange reports from all over the world. Always interesting and often hilarious, join hosts Aaron Wright and Benjamin Grundy as they investigate the latest in futurology, weird science, consciousness research, alternative history, cryptozoology, UFOs, and new-age absurdity."
+                title="Mysterious Universe" xmlUrl="https://mysteriousuniverse.org/feed/podcast/"
+                htmlUrl="https://mysteriousuniverse.org" />
+
+            <outline type="rss"
+                text="Podcast UFO is place where you can listen to audio podcasts about UFOs, close encounters and people associated with the UFO phenomenon. Witnesses involved in such things as sightings, views on cover-ups and more. Listeners are welcome to interact with guests, visit the website to find out how. Shows are recorded live on YouTube stream every Tuesday evening, 6:00 to …"
+                title="Podcast UFO" xmlUrl="https://feeds.blubrry.com/feeds/podcast_ufo.xml"
+                htmlUrl="https://podcastufo.com" />
+
+            <outline type="rss"
+                text="Somewhere in the Skies is a weekly podcast covering UFOs, culture, and the extraordinary world we live in. Hosted by author and television host, Ryan Sprague, the podcast covers past and present UFO news, audio docs, and special guest interviews. Join Ryan and his guests as they try to make sense of the mysteries that lay somewhere in the skies. …"
+                title="Somewhere in the Skies"
+                xmlUrl="https://feeds.acast.com/public/shows/e9da3d2c-d264-5c31-83b5-259aad10fee5"
+                htmlUrl="http://www.somewhereintheskies.com" />
+
+            <outline type="rss"
+                text="If you&#x27;re a hacker, you&#x27;ll probably like our show ;)"
+                title="techzing tech podcast" xmlUrl="http://techzinglive.com/?feed=podcast"
+                htmlUrl="http://techzinglive.com" />
+
+            <outline type="rss"
+                text="Conversations with the hackers, leaders, and innovators of the software world. Hosts Adam Stacoviak and Jerod Santo face their imposter syndrome so you don’t have to. Expect in-depth interviews with the best and brightest in software engineering, open source, and leadership. This is a polyglot podcast. All programming languages, platforms, and communities are welcome. Open source moves fast. Keep up."
+                title="The Changelog: Software Development, Open Source"
+                xmlUrl="https://changelog.com/podcast/feed" htmlUrl="https://changelog.com/podcast" />
+
+            <outline type="rss"
+                text="A speculative nonfiction podcast about UFOs — and everything else. Hosted by Kelly Chase."
+                title="The UFO Rabbit Hole Podcast"
+                xmlUrl="https://feeds.buzzsprout.com/1887113.rss"
+                htmlUrl="https://the-ufo-rabbit-hole-podcast.simplecast.com" />
+
+        </outline>
+    </body>
+</opml>

@@ -1,5 +1,5 @@
 [project]
-name = "simplecasts"
+name = "radiofeed"
 version = "0.1.0"
 description = "Podcast aggregator app"
 authors = [
@@ -86,7 +86,7 @@ addopts = [
     "--tb=short",
 ]
 
-testpaths = ["simplecasts", "templates"]
+testpaths = ["radiofeed", "templates"]
 env = [
     "COVERAGE_CORE=sysmon",
     "USE_CONNECTION_POOL=false",
@@ -105,7 +105,7 @@ runner = "pytest"
 patterns = ["*.py", "*.html"]
 
 [tool.coverage.run]
-source=["simplecasts"]
+source=["radiofeed"]
 omit=[
     "**/migrations/*",
     "*/tests/*",
@@ -183,16 +183,16 @@ lint.ignore = [
 "**/tests/**.py" = ["D101", "D102", "D103", "D105", "PL", "RUF"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["simplecasts"]
+known-first-party = ["radiofeed"]
 
 [tool.isort]
 profile = "black"
 
 [tool.django-stubs]
-django_settings_module = "simplecasts.settings"
+django_settings_module = "radiofeed.settings"
 
 [tool.pyright]
-include=["simplecasts"]
+include=["radiofeed"]
 exclude=[
   "**/migrations/*.py",
   "**/tests/*.py",
