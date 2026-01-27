@@ -1,4 +1,4 @@
-name: simplecasts:checks
+name: radiofeed:checks
 on: workflow_call
 jobs:
     precommit:
@@ -21,7 +21,7 @@ jobs:
             postgres:
                 image: postgres:18.1-bookworm
                 env:
-                    POSTGRES_PASSWORD: password
+                    POSTGRES_PASSWORD: password # pragma: allowlist secret
                 ports: ["5432:5432"]
                 options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         steps:

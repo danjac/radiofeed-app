@@ -1,4 +1,4 @@
-name: simplecasts:build
+name: radiofeed:build
 run-name: ${{ github.actor }} is building Docker image
 on:
     workflow_dispatch:
@@ -17,4 +17,4 @@ jobs:
     build:
         uses: ./.github/workflows/docker.yml
         needs: checks
-        secrets: inherit
+        secrets: inherit # pragma: allowlist secret
