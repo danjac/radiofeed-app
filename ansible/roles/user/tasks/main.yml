@@ -47,7 +47,7 @@
 - name: Allow user to run sudo without password
   ansible.builtin.lineinfile:
     path: /etc/sudoers.d/{{ deploy_user }}
-    line: "{{ deploy_user }} ALL=(ALL) NOPASSWD: ALL"
+    line: "{{ deploy_user }} ALL=(ALL) NOPASSWD: ALL" # pragma: allowlist secret
     create: true
     mode: "0440"
     validate: "visudo -cf %s"
