@@ -6,11 +6,4 @@ useDefault = true
 
 [allowlist]
 description = "Global allowlist"
-paths = [
-  '''node_modules''',
-  '''\.secrets\.baseline''',
-  '''package-lock\.json''',
-  '''pnpm-lock\.yaml''',
-  '''yarn\.lock''',
-  '''backend/\.sqlx/.*\.json''',
-]
+paths = ['''\.secrets\.baseline''']
