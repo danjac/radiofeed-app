@@ -9,7 +9,6 @@
 !.tern-project
 **/__pycache__
 **/tests
-.*
 .django_tailwind_cli
 .git
 .github
@@ -24,6 +23,9 @@
 .venv
 .vim
 .vscode
+.gitignore
+.gitattributes
+.dockerignore
 ansible
 justfile
 locust
