@@ -1,5 +1,7 @@
+ARG PYTHON_IMAGE=3.14.2-slim-bookworm
+
 # Install Python dependencies
-FROM python:3.14.2-slim-bookworm AS python-base
+FROM python:${PYTHON_IMAGE} AS python-base
 ENV LC_CTYPE=C.utf8 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
@@ -8,6 +10,7 @@ ENV LC_CTYPE=C.utf8 \
     UV_PROJECT_ENVIRONMENT="/app/.venv" \
     UV_PYTHON_INSTALL_DIR="/python" \
     UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
     PATH="/app/.venv/bin:$PATH"
 WORKDIR /app
 
@@ -34,7 +37,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv run python manage.py collectstatic --no-input
 
 # Final production image
-FROM python:3.14.2-slim-bookworm AS webapp
+FROM python:${PYTHON_IMAGE} AS webapp
 ENV LC_CTYPE=C.utf8 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
