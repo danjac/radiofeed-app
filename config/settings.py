@@ -86,7 +86,7 @@ MIDDLEWARE: list[str] = [
 DATABASES = {
     "default": env.dj_db_url(
         "DATABASE_URL",
-        default="postgresql://postgres:password@127.0.0.1:5432/postgres",
+        default="postgresql://postgres:password@127.0.0.1:5432/postgres",  # pragma: allowlist secret
     )
 }
 

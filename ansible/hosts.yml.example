@@ -30,8 +30,8 @@ all:
     postgres_volume: ""
     postgres_password: dbpasswd
     pwa_sha256_fingerprints: ""
-    secret_key: seekrit1
-    secret_key_fallbacks: "seekrit2,seekrit3"
+    secret_key: seekrit1 # pragma: allowlist secret
+    secret_key_fallbacks: "seekrit2,seekrit3" # pragma: allowlist secret
     sentry_url: "https://xxxx.ingest.us.sentry.io/xxxxx"
     # cron_schedules_override:
     #  send_notifications: "10 10 * * 3"
