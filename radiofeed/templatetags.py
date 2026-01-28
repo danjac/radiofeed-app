@@ -75,7 +75,6 @@ def meta_tags() -> str:
 
 
 @register.simple_tag
-@functools.cache
 def get_cover_image_attrs(
     variant: covers.CoverVariant,
     cover_url: str,
@@ -86,7 +85,6 @@ def get_cover_image_attrs(
 
 
 @register.simple_tag
-@functools.cache
 def cover_image(
     variant: covers.CoverVariant,
     cover_url: str,
