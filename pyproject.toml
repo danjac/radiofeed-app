@@ -69,6 +69,7 @@ dev = [
     "types-urllib3>=1.26.25.14",
     "django-watchfiles>=1.4.0",
     "basedpyright>=1.34.0",
+    "detect-secrets>=1.5.0",
 ]
 
 [tool.pytest.ini_options]
