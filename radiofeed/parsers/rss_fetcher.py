@@ -7,14 +7,14 @@ import httpx
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.http_client import Client
-from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.exceptions import (
+from radiofeed.client import Client
+from radiofeed.parsers.date_parser import parse_date
+from radiofeed.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
+from radiofeed.podcasts.models import Podcast
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)

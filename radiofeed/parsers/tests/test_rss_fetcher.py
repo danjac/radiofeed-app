@@ -4,16 +4,16 @@ import http
 import httpx
 import pytest
 
-from radiofeed.http_client import Client
-from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.rss_fetcher import (
+from radiofeed.client import Client
+from radiofeed.parsers.date_parser import parse_date
+from radiofeed.parsers.rss_fetcher import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
     fetch_rss,
     make_content_hash,
 )
+from radiofeed.podcasts.models import Podcast
 
 
 class TestMakeContentHash:

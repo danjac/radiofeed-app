@@ -2,7 +2,7 @@ import functools
 
 from django.db import models
 
-from radiofeed.validators import url_validator
+from radiofeed.db.validators import url_validator
 
 # URLField with sensible defaults
 URLField = functools.partial(

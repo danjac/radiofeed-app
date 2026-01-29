@@ -4,7 +4,7 @@ import pathlib
 import httpx
 import pytest
 
-from radiofeed.http_client import Client
+from radiofeed.client import Client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Podcast
 

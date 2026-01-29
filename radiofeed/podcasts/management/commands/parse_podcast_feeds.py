@@ -3,9 +3,9 @@ import dataclasses
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Case, Count, IntegerField, When
 
-from radiofeed.http_client import get_client
+from radiofeed.client import get_client
+from radiofeed.parsers.feed_parser import parse_feed
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.feed_parser import parse_feed
 from radiofeed.thread_pool import db_threadsafe, thread_pool_map
 
 

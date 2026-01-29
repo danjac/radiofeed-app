@@ -13,16 +13,16 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_safe
 
-from radiofeed.http import require_form_methods
-from radiofeed.partials import render_partial_response
-from radiofeed.podcasts.models import Podcast, Subscription
-from radiofeed.podcasts.parsers.opml_parser import parse_opml
-from radiofeed.request import (
+from radiofeed.http.decorators import require_form_methods
+from radiofeed.http.request import (
     AuthenticatedHttpRequest,
     HttpRequest,
     is_authenticated_request,
 )
-from radiofeed.response import RenderOrRedirectResponse
+from radiofeed.http.response import RenderOrRedirectResponse
+from radiofeed.parsers.opml_parser import parse_opml
+from radiofeed.partials import render_partial_response
+from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import (
     AccountDeletionConfirmationForm,
     OpmlUploadForm,

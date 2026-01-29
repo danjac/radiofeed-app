@@ -10,7 +10,7 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
-from radiofeed.request import HttpRequest
+from radiofeed.http.request import HttpRequest
 
 
 @dataclasses.dataclass(frozen=True, kw_only=False)

@@ -2,7 +2,7 @@ import pytest
 from django.contrib.sites.models import Site
 from django.template import TemplateSyntaxError
 
-from radiofeed.request import RequestContext
+from radiofeed.http.request import RequestContext
 from radiofeed.templatetags import cookie_banner, format_duration, fragment
 
 

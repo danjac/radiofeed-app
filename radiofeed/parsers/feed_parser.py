@@ -7,18 +7,18 @@ from django.db import transaction
 from django.db.utils import DatabaseError
 from django.utils import timezone
 
+from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
-from radiofeed.http_client import Client
-from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.podcasts.parsers import rss_fetcher, rss_parser, scheduler
-from radiofeed.podcasts.parsers.exceptions import (
+from radiofeed.parsers import rss_fetcher, rss_parser, scheduler
+from radiofeed.parsers.exceptions import (
     DiscontinuedError,
     DuplicateError,
     InvalidRSSError,
     NotModifiedError,
     UnavailableError,
 )
-from radiofeed.podcasts.parsers.models import Feed, Item
+from radiofeed.parsers.models import Feed, Item
+from radiofeed.podcasts.models import Category, Podcast
 
 
 def parse_feed(podcast: Podcast, client: Client) -> Podcast.FeedStatus:

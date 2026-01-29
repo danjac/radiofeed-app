@@ -5,7 +5,7 @@ from typing import Any, Final, TypeVar
 from django.core.exceptions import ValidationError
 from django.db.models import TextChoices
 
-from radiofeed.validators import url_validator
+from radiofeed.db.validators import url_validator
 
 T = TypeVar("T")
 

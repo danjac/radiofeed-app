@@ -5,6 +5,7 @@ import httpx
 import pytest
 from PIL import Image
 
+from radiofeed.client import Client
 from radiofeed.covers import (
     CoverFetchError,
     CoverProcessError,
@@ -21,7 +22,6 @@ from radiofeed.covers import (
     process_cover_image,
     save_cover_image,
 )
-from radiofeed.http_client import Client
 
 
 class TestEncodeDecodeCoverUrl:

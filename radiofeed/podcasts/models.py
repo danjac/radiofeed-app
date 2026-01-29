@@ -13,9 +13,9 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from slugify import slugify
 
-from radiofeed.fields import URLField
+from radiofeed.db.fields import URLField
+from radiofeed.db.search import Searchable
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import Searchable
 from radiofeed.users.models import User
 
 if TYPE_CHECKING:

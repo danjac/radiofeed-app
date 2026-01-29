@@ -7,13 +7,13 @@ import pytest
 from django.db.utils import DatabaseError
 from django.utils.text import slugify
 
+from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
-from radiofeed.http_client import Client
+from radiofeed.parsers.date_parser import parse_date
+from radiofeed.parsers.feed_parser import get_categories_dict, parse_feed
+from radiofeed.parsers.rss_fetcher import make_content_hash
 from radiofeed.podcasts.models import Category, Podcast
-from radiofeed.podcasts.parsers.date_parser import parse_date
-from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
-from radiofeed.podcasts.parsers.rss_fetcher import make_content_hash
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
@@ -405,7 +405,7 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
-        mock_parse_rss = mocker.patch("radiofeed.podcasts.parsers.rss_parser.parse_rss")
+        mock_parse_rss = mocker.patch("radiofeed.parsers.rss_parser.parse_rss")
 
         client = _mock_client(
             status_code=http.HTTPStatus.OK,

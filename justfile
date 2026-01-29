@@ -107,11 +107,6 @@ precommitupdate:
 precommitall:
    @just precommit run --all-files
 
-# Audit secrets using detect-secrets
-[group('development')]
-detectsecrets:
-    detect-secrets audit .secrets.baseline
-
 # Run Ansible playbook
 [group('deployment')]
 apb playbook *args:

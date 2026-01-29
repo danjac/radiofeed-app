@@ -1,7 +1,7 @@
 import functools
 from collections.abc import Iterator
 
-from radiofeed.podcasts.parsers.xpath_parser import XPathParser
+from radiofeed.parsers.xpath_parser import XPathParser
 
 
 def parse_opml(content: bytes) -> Iterator[str]:

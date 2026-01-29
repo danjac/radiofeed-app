@@ -14,8 +14,8 @@ from django.utils.safestring import SafeString
 from django.utils.timesince import timesince
 
 from radiofeed import covers, sanitizer
+from radiofeed.http.request import RequestContext
 from radiofeed.pwa import get_theme_color
-from radiofeed.request import RequestContext
 
 register = template.Library()
 

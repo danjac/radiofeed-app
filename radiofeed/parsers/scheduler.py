@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 from django.utils import timezone
 
+from radiofeed.parsers.models import Feed
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.models import Feed
 
 
 def schedule(feed: Feed) -> timedelta:

@@ -3,7 +3,7 @@ from django import template
 from radiofeed import covers
 from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.episodes.views import PlayerAction
-from radiofeed.request import HttpRequest, RequestContext, is_authenticated_request
+from radiofeed.http.request import HttpRequest, RequestContext, is_authenticated_request
 
 register = template.Library()
 

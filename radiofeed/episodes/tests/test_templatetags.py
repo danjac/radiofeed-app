@@ -5,7 +5,7 @@ from radiofeed.episodes.templatetags.audio_player import (
     audio_player,
     get_media_metadata,
 )
-from radiofeed.request import RequestContext
+from radiofeed.http.request import RequestContext
 
 
 class TestGetMediaMetadata:

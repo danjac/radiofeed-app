@@ -7,8 +7,8 @@ from django.db.models import Model, QuerySet
 from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
+from radiofeed.http.request import HttpRequest
 from radiofeed.partials import render_partial_response
-from radiofeed.request import HttpRequest
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)

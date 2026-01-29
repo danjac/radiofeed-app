@@ -4,14 +4,14 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, BeforeValidator
 
 from radiofeed.episodes.models import Episode
-from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.validators import (
+from radiofeed.parsers.validators import (
     default_if_none,
     is_one_of,
     normalize_url,
     one_of_choices,
     pg_integer,
 )
+from radiofeed.podcasts.models import Podcast
 
 AudioMimetype = Literal[
     "audio/aac",

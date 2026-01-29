@@ -16,9 +16,9 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed import covers, pwa
-from radiofeed.http_client import get_client
-from radiofeed.request import HttpRequest
-from radiofeed.response import RenderOrRedirectResponse, TextResponse
+from radiofeed.client import get_client
+from radiofeed.http.request import HttpRequest
+from radiofeed.http.response import RenderOrRedirectResponse, TextResponse
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 

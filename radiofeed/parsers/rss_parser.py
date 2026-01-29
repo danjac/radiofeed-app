@@ -5,9 +5,9 @@ from typing import Final
 
 from pydantic import ValidationError
 
-from radiofeed.podcasts.parsers.exceptions import InvalidRSSError
-from radiofeed.podcasts.parsers.models import Feed, Item
-from radiofeed.podcasts.parsers.xpath_parser import OptionalXmlElement, XPathParser
+from radiofeed.parsers.exceptions import InvalidRSSError
+from radiofeed.parsers.models import Feed, Item
+from radiofeed.parsers.xpath_parser import OptionalXmlElement, XPathParser
 
 
 def parse_rss(content: bytes) -> Feed:

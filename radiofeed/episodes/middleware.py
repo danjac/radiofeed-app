@@ -2,8 +2,8 @@ import dataclasses
 
 from django.http import HttpResponse
 
+from radiofeed.http.request import HttpRequest
 from radiofeed.middleware import BaseMiddleware
-from radiofeed.request import HttpRequest
 
 
 class PlayerMiddleware(BaseMiddleware):

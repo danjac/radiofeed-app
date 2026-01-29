@@ -1,6 +1,6 @@
 from django.template.response import TemplateResponse
 
-from radiofeed.request import HttpRequest
+from radiofeed.http.request import HttpRequest
 
 
 def render_partial_response(

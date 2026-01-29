@@ -34,7 +34,6 @@ __pycache__
 celerybeat-schedule
 celerybeat.pid
 codealike.json
-db
 deployments/
 dist/
 hosts

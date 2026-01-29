@@ -12,10 +12,10 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from slugify import slugify
 
-from radiofeed.fields import URLField
+from radiofeed.db.fields import URLField
+from radiofeed.db.search import Searchable
 from radiofeed.podcasts.models import Season
 from radiofeed.sanitizer import strip_html
-from radiofeed.search import Searchable
 
 
 class EpisodeQuerySet(Searchable, models.QuerySet):
