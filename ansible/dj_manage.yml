@@ -1,5 +1,6 @@
+---
 - name: Generate a remote Django manage script
   hosts: server
   gather_facts: false
   roles:
-    - scripts/dj_manage
+    - scripts_dj_manage

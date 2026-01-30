@@ -84,4 +84,14 @@ repos:
     - repo: https://github.com/abravalheri/validate-pyproject
       rev: v0.24.1
       hooks:
-          - id: validate-pyproject
+        - id: validate-pyproject
+    - repo: https://github.com/ansible/ansible-lint
+      rev: v26.1.1
+      hooks:
+        - id: ansible-lint
+          name: ansible-lint
+          language_version: python3.14
+          files: ^ansible/.*\.(yml|yaml)$
+          args: [--project-dir, ansible, --exclude, .github/, --exclude, .pre-commit-config.yaml]
+          additional_dependencies:
+            - ansible-core

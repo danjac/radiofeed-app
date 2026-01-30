@@ -1,6 +1,7 @@
+---
 # Deployment settings
 
-postgres:
+k3s_postgres:
   current_volume: "{{ postgres_volume | default(false) }}"
   storage: "{{ postgres_storage | default('30Gi', true) }}"
   new_image: "{{ postgres_new_image | default(false) }}"

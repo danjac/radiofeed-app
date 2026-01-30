@@ -1,4 +1,4 @@
-{% for cronjob in cronjobs %}
+{% for cronjob in k3s_cronjobs %}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -20,7 +20,7 @@ spec:
              role: jobrunner
           containers:
           - name: django
-            image: {{ image }}
+            image: {{ k3s_image }}
             command: ["/bin/bash", "-c", "{{ cronjob.command }}"]
             envFrom:
               - configMapRef:

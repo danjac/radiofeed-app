@@ -1,3 +1,4 @@
+---
 - name: Perform a dist-upgrade.
   ansible.builtin.apt:
     upgrade: dist
@@ -7,11 +8,11 @@
   ansible.builtin.stat:
     path: /var/run/reboot-required
     get_checksum: false
-  register: reboot_required_file
+  register: upgrade_reboot_required_file
 
 - name: Reboot the server (if required).
   ansible.builtin.reboot:
-  when: reboot_required_file.stat.exists is true
+  when: upgrade_reboot_required_file.stat.exists is true
 
 - name: Remove dependencies that are no longer required.
   ansible.builtin.apt:

@@ -1,12 +1,13 @@
+---
 - name: Install dependencies required for K3s
   ansible.builtin.apt:
-      name:
-          - apt-transport-https
-          - curl
-          - ca-certificates
-      state: present
-      update_cache: true
+    name:
+      - apt-transport-https
+      - curl
+      - ca-certificates
+    state: present
+    update_cache: true
 
 - name: Set the hostname of each node to match inventory
   ansible.builtin.hostname:
-      name: "{{ hostvars[inventory_hostname]['hostname'] }}"
+    name: "{{ hostvars[inventory_hostname]['hostname'] }}"

@@ -1,43 +1,50 @@
+---
 - name: Deploy Kubernetes
   environment:
-      KUBECONFIG: "{{ kubeconfig }}"
+    KUBECONFIG: "{{ kubeconfig }}"
   block:
-      - name: Get the current image of running django-app pod
-        ansible.builtin.shell: |
-            kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
-        register: current_image
-        changed_when: false
-        ignore_errors: true
+    - name: Get the current image of running django-app pod
+      ansible.builtin.shell: |
+        kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
+      register: k3s_current_image
+      changed_when: false
+      ignore_errors: true
 
-      - name: Set default image if current image is empty
-        ansible.builtin.set_fact:
-            image: "{{ current_image.stdout if current_image.stdout | length > 0 else docker_image }}"
-        changed_when: false
-        when: current_image is defined and current_image.stdout is defined
+    - name: Set default image if current image is empty
+      ansible.builtin.set_fact:
+        k3s_image: "{{ k3s_current_image.stdout if k3s_current_image.stdout | length > 0 else k3s_docker_image }}"
+      changed_when: false
+      when: k3s_current_image is defined and k3s_current_image.stdout is defined
 
-      - name: Create a temporary directory
-        ansible.builtin.tempfile:
-            state: directory
-        register: manifests_dir
+    - name: Create a temporary directory
+      ansible.builtin.tempfile:
+        state: directory
+      register: k3s_manifests_dir
 
-      - name: Render Kubernetes manifests
-        vars:
-            manage_cmd: "python ./manage.py"
-        ansible.builtin.template:
-            src: "django_cronjobs.yaml.j2"
-            dest: "{{ manifests_dir.path + '/' + 'django_cronjobs.yaml' }}"
+    - name: Render Kubernetes manifests
+      vars:
+        k3s_manage_cmd: "python ./manage.py"
+      ansible.builtin.template:
+        src: "django_cronjobs.yaml.j2"
+        dest: "{{ k3s_manifests_dir.path + '/' + 'django_cronjobs.yaml' }}"
+        mode: "0644"
 
-      - name: Delete all cronjobs
-        ansible.builtin.shell: |
-            kubectl delete cronjob -l app=django-cronjob -n default
+    - name: Delete all cronjobs
+      ansible.builtin.shell: |
+        kubectl delete cronjob -l app=django-cronjob -n default
+      register: k3s_cronjob_delete_result
+      failed_when: false
+      changed_when: "'deleted' in k3s_cronjob_delete_result.stdout"
 
-      - name: Apply Kubernetes manifests using ApplySet
-        ansible.builtin.shell: |
-            kubectl apply -f {{ manifests_dir.path }} --namespace=default
-        environment:
-            KUBECTL_APPLYSET: "true"
+    - name: Apply Kubernetes manifests using ApplySet
+      ansible.builtin.shell: |
+        kubectl apply -f {{ k3s_manifests_dir.path }} --namespace=default
+      environment:
+        KUBECTL_APPLYSET: "true"
+      register: k3s_kubectl_apply_result
+      changed_when: "'created' in k3s_kubectl_apply_result.stdout or 'configured' in k3s_kubectl_apply_result.stdout"
 
-      - name: Delete manifests dir
-        ansible.builtin.file:
-            path: "{{ manifests_dir.path }}"
-            state: absent
+    - name: Delete manifests dir
+      ansible.builtin.file:
+        path: "{{ k3s_manifests_dir.path }}"
+        state: absent

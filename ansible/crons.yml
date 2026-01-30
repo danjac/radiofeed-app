@@ -1,6 +1,7 @@
+---
 - name: Deploy k3s crons
   hosts: server
   become: false
   gather_facts: true
   roles:
-      - k3s/crons
+    - k3s_crons
