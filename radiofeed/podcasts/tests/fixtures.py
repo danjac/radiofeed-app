@@ -1,10 +1,14 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
     PodcastFactory,
 )
+
+if TYPE_CHECKING:
+    from radiofeed.podcasts.models import Category, Podcast
 
 
 @pytest.fixture

@@ -1,6 +1,9 @@
+from typing import TYPE_CHECKING
+
 from django.template.response import TemplateResponse
 
-from radiofeed.http.request import HttpRequest
+if TYPE_CHECKING:
+    from radiofeed.http.request import HttpRequest
 
 
 def render_partial_response(

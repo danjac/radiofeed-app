@@ -1,12 +1,11 @@
 import itertools
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from allauth.account.models import EmailAddress
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.signing import BadSignature
-from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
@@ -19,7 +18,6 @@ from radiofeed.http.request import (
     HttpRequest,
     is_authenticated_request,
 )
-from radiofeed.http.response import RenderOrRedirectResponse
 from radiofeed.parsers.opml_parser import parse_opml
 from radiofeed.partials import render_partial_response
 from radiofeed.podcasts.models import Podcast, Subscription
@@ -29,6 +27,11 @@ from radiofeed.users.forms import (
     UserPreferencesForm,
 )
 from radiofeed.users.notifications import get_unsubscribe_signer
+
+if TYPE_CHECKING:
+    from django.http import HttpResponseRedirect
+
+    from radiofeed.http.response import RenderOrRedirectResponse
 
 
 class UserStat(TypedDict):

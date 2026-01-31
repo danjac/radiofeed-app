@@ -1,7 +1,10 @@
 import functools
-from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from radiofeed.parsers.xpath_parser import XPathParser
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def parse_opml(content: bytes) -> Iterator[str]:

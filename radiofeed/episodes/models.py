@@ -1,4 +1,4 @@
-from typing import ClassVar, Optional
+from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
 from django.contrib.postgres.indexes import GinIndex
@@ -14,8 +14,10 @@ from slugify import slugify
 
 from radiofeed.db.fields import URLField
 from radiofeed.db.search import Searchable
-from radiofeed.podcasts.models import Season
 from radiofeed.sanitizer import strip_html
+
+if TYPE_CHECKING:
+    from radiofeed.podcasts.models import Season
 
 
 class EpisodeQuerySet(Searchable, models.QuerySet):
@@ -118,7 +120,7 @@ class Episode(models.Model):
         return self.podcast.get_season(season=self.season) if self.season else None
 
     @cached_property
-    def next_episode(self) -> Optional["Episode"]:
+    def next_episode(self) -> Episode | None:
         """Returns the next episode in this podcast."""
         return (
             self._get_other_episodes_in_podcast()
@@ -136,7 +138,7 @@ class Episode(models.Model):
         )
 
     @cached_property
-    def previous_episode(self) -> Optional["Episode"]:
+    def previous_episode(self) -> Episode | None:
         """Returns the previous episode in this podcast."""
         return (
             self._get_other_episodes_in_podcast()
@@ -186,7 +188,7 @@ class Episode(models.Model):
         except ValueError:
             return 0
 
-    def _get_other_episodes_in_podcast(self) -> models.QuerySet["Episode"]:
+    def _get_other_episodes_in_podcast(self) -> models.QuerySet[Episode]:
         return self._meta.default_manager.filter(  # type: ignore[reportOptionalMemberAccess]
             podcast=self.podcast,
         ).exclude(pk=self.pk)

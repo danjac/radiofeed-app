@@ -1,9 +1,12 @@
 import dataclasses
+from typing import TYPE_CHECKING
 
-from django.http import HttpResponse
-
-from radiofeed.http.request import HttpRequest
 from radiofeed.middleware import BaseMiddleware
+
+if TYPE_CHECKING:
+    from django.http import HttpResponse
+
+    from radiofeed.http.request import HttpRequest
 
 
 class PlayerMiddleware(BaseMiddleware):

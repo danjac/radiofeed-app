@@ -16,17 +16,17 @@ from slugify import slugify
 from radiofeed.db.fields import URLField
 from radiofeed.db.search import Searchable
 from radiofeed.sanitizer import strip_html
-from radiofeed.users.models import User
 
 if TYPE_CHECKING:
     from radiofeed.episodes.models import Episode
+    from radiofeed.users.models import User
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class Season:
     """Encapsulates podcast season"""
 
-    podcast: "Podcast"
+    podcast: Podcast
     season: int
 
     def __str__(self) -> str:
@@ -59,7 +59,7 @@ class Category(models.Model):
     itunes_genre_id = models.PositiveIntegerField(null=True, blank=True)
 
     if TYPE_CHECKING:
-        podcasts: "PodcastQuerySet"
+        podcasts: PodcastQuerySet
 
     class Meta:
         verbose_name_plural = "categories"
@@ -272,10 +272,10 @@ class Podcast(models.Model):
     objects: PodcastQuerySet = PodcastQuerySet.as_manager()  # type: ignore[assignment]
 
     if TYPE_CHECKING:
-        episodes: models.Manager["Episode"]
-        subscriptions: models.Manager["Subscription"]
-        recommendations: models.Manager["Recommendation"]
-        similar: models.Manager["Recommendation"]
+        episodes: models.Manager[Episode]
+        subscriptions: models.Manager[Subscription]
+        recommendations: models.Manager[Recommendation]
+        similar: models.Manager[Recommendation]
 
     class Meta:
         indexes: ClassVar[list] = [

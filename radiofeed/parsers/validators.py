@@ -1,11 +1,14 @@
 import contextlib
-from collections.abc import Iterable
-from typing import Any, Final, TypeVar
+from typing import TYPE_CHECKING, Any, Final, TypeVar
 
 from django.core.exceptions import ValidationError
-from django.db.models import TextChoices
 
 from radiofeed.db.validators import url_validator
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from django.db.models import TextChoices
 
 T = TypeVar("T")
 

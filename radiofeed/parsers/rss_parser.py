@@ -1,13 +1,15 @@
 import contextlib
 import functools
-from collections.abc import Iterator
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from pydantic import ValidationError
 
 from radiofeed.parsers.exceptions import InvalidRSSError
 from radiofeed.parsers.models import Feed, Item
 from radiofeed.parsers.xpath_parser import OptionalXmlElement, XPathParser
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def parse_rss(content: bytes) -> Feed:

@@ -1,13 +1,12 @@
 import dataclasses
-import datetime
 import functools
 import itertools
+from typing import TYPE_CHECKING
 
 from django.db import transaction
 from django.db.utils import DatabaseError
 from django.utils import timezone
 
-from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.parsers import rss_fetcher, rss_parser, scheduler
 from radiofeed.parsers.exceptions import (
@@ -19,6 +18,11 @@ from radiofeed.parsers.exceptions import (
 )
 from radiofeed.parsers.models import Feed, Item
 from radiofeed.podcasts.models import Category, Podcast
+
+if TYPE_CHECKING:
+    import datetime
+
+    from radiofeed.client import Client
 
 
 def parse_feed(podcast: Podcast, client: Client) -> Podcast.FeedStatus:

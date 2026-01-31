@@ -1,10 +1,14 @@
 import itertools
-from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
 from django.utils import timezone
 
-from radiofeed.parsers.models import Feed
 from radiofeed.podcasts.models import Podcast
+
+if TYPE_CHECKING:
+    from datetime import datetime, timedelta
+
+    from radiofeed.parsers.models import Feed
 
 
 def schedule(feed: Feed) -> timedelta:

@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
-from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
@@ -15,6 +14,7 @@ from radiofeed.podcasts.models import (
 )
 
 if TYPE_CHECKING:
+    from django.http import HttpRequest
     from django_stubs_ext import StrOrPromise  # pragma: no cover
 
     class CategoryWithNumPodcasts(Category):

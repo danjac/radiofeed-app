@@ -1,5 +1,5 @@
 import datetime
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from django.conf import settings
 from django.http import (
@@ -17,8 +17,10 @@ from django.views.decorators.http import require_POST, require_safe
 
 from radiofeed import covers, pwa
 from radiofeed.client import get_client
-from radiofeed.http.request import HttpRequest
 from radiofeed.http.response import RenderOrRedirectResponse, TextResponse
+
+if TYPE_CHECKING:
+    from radiofeed.http.request import HttpRequest
 
 _CACHE_TIMEOUT: Final = 60 * 60 * 24 * 365
 

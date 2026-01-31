@@ -1,10 +1,12 @@
 import contextlib
 import functools
 import io
-from collections.abc import Iterator
-from typing import TypeAlias
+from typing import TYPE_CHECKING, TypeAlias
 
 import lxml.etree
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 Namespaces: TypeAlias = tuple[tuple[str, str], ...]
 OptionalXmlElement: TypeAlias = lxml.etree._Element | None

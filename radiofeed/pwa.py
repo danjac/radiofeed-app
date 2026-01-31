@@ -1,15 +1,18 @@
 import functools
 import itertools
 import pathlib
-from collections.abc import Iterator
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 from django.conf import settings
-from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 from django.templatetags.static import static
 from django.urls import reverse
 from PIL import Image
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from django.http import HttpRequest
 
 
 class ImageInfo(TypedDict):

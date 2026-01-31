@@ -1,7 +1,9 @@
 import functools
 import http
+from typing import TYPE_CHECKING
 
-from django.http import HttpResponse
+if TYPE_CHECKING:
+    from django.http import HttpResponse
 
 
 def assert_status(response: HttpResponse, status: http.HTTPStatus) -> None:

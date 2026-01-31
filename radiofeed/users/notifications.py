@@ -1,16 +1,19 @@
 import functools
 import urllib.parse
+from typing import TYPE_CHECKING
 
 from allauth.account.models import EmailAddress
-from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives
 from django.core.signing import TimestampSigner
-from django.db.models import QuerySet
 from django.template import loader
 from django.urls import reverse
 
 from radiofeed.sanitizer import strip_html
 from radiofeed.templatetags import absolute_uri
+
+if TYPE_CHECKING:
+    from django.contrib.sites.models import Site
+    from django.db.models import QuerySet
 
 
 def send_notification_email(  # noqa: PLR0913

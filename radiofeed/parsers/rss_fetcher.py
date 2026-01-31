@@ -1,20 +1,24 @@
 import dataclasses
 import hashlib
 import http
-from datetime import datetime
+from typing import TYPE_CHECKING
 
 import httpx
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.client import Client
 from radiofeed.parsers.date_parser import parse_date
 from radiofeed.parsers.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
-from radiofeed.podcasts.models import Podcast
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    from radiofeed.client import Client
+    from radiofeed.podcasts.models import Podcast
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)

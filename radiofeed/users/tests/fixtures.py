@@ -1,9 +1,14 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth.models import AnonymousUser
-from django.test import Client
 
-from radiofeed.users.models import User
 from radiofeed.users.tests.factories import UserFactory
+
+if TYPE_CHECKING:
+    from django.test import Client
+
+    from radiofeed.users.models import User
 
 
 @pytest.fixture

@@ -1,6 +1,5 @@
 import dataclasses
-from collections.abc import Callable
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from django.contrib.messages import get_messages
 from django.http import HttpResponse, QueryDict
@@ -10,7 +9,10 @@ from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django_htmx.http import HttpResponseLocation
 
-from radiofeed.http.request import HttpRequest
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from radiofeed.http.request import HttpRequest
 
 
 @dataclasses.dataclass(frozen=True, kw_only=False)

@@ -4,8 +4,7 @@ import hashlib
 import itertools
 import json
 import re
-from collections.abc import Iterable, Iterator
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 import httpx
 import lxml.etree
@@ -16,8 +15,12 @@ from django.utils.http import urlsafe_base64_encode
 from lxml import html
 from pydantic import BaseModel, Field, ValidationError
 
-from radiofeed.client import Client
 from radiofeed.podcasts.models import Podcast
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
+
+    from radiofeed.client import Client
 
 COUNTRIES: Final = (
     "br",

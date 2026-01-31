@@ -1,11 +1,15 @@
-from collections.abc import Callable, Generator
+from typing import TYPE_CHECKING
 
 import pytest
-from django.conf import Settings
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.http import HttpRequest, HttpResponse
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Generator
+
+    from django.conf import Settings
 
 
 @pytest.fixture

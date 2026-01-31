@@ -178,7 +178,7 @@ class Feed(BaseModel):
         return {c for c in (slugify(c, allow_unicode=False) for c in categories) if c}
 
     @model_validator(mode="after")
-    def validate_pub_date(self) -> "Feed":
+    def validate_pub_date(self) -> Feed:
         """Set default pub date based on max items pub date."""
         self.pub_date = max(self.pub_dates)
         return self

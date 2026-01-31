@@ -1,4 +1,5 @@
-from allauth.account.models import EmailAddress
+from typing import TYPE_CHECKING
+
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management.base import BaseCommand, CommandParser
@@ -6,6 +7,9 @@ from django.core.management.base import BaseCommand, CommandParser
 from radiofeed.podcasts.models import Podcast
 from radiofeed.thread_pool import db_threadsafe, thread_pool_map
 from radiofeed.users.notifications import get_recipients, send_notification_email
+
+if TYPE_CHECKING:
+    from allauth.account.models import EmailAddress
 
 
 class Command(BaseCommand):

@@ -1,8 +1,11 @@
 import contextlib
-from collections.abc import Generator
+from typing import TYPE_CHECKING
 
 import httpx
 from django.conf import settings
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 class Client:

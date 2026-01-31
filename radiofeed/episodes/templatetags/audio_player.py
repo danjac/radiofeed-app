@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 from django import template
 
 from radiofeed import covers
-from radiofeed.episodes.models import AudioLog, Episode
-from radiofeed.episodes.views import PlayerAction
 from radiofeed.http.request import HttpRequest, RequestContext, is_authenticated_request
+
+if TYPE_CHECKING:
+    from radiofeed.episodes.models import AudioLog, Episode
+    from radiofeed.episodes.views import PlayerAction
 
 register = template.Library()
 

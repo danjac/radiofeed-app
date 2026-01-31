@@ -1,7 +1,10 @@
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.core.checks import CheckMessage, Warning
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def check_secure_admin_url(*args, **kwargs) -> Sequence[CheckMessage]:

@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 import pytest
-from django.test import Client
 
 from radiofeed.episodes.middleware import PlayerDetails
-from radiofeed.episodes.models import AudioLog, Episode
 from radiofeed.episodes.tests.factories import AudioLogFactory, EpisodeFactory
-from radiofeed.users.models import User
+
+if TYPE_CHECKING:
+    from django.test import Client
+
+    from radiofeed.episodes.models import AudioLog, Episode
+    from radiofeed.users.models import User
 
 
 @pytest.fixture

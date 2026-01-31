@@ -1,21 +1,25 @@
 import functools
 import json
 from datetime import timedelta
+from typing import TYPE_CHECKING
 
 from django import template
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.forms.utils import flatatt
 from django.shortcuts import resolve_url
-from django.template.context import Context
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
-from django.utils.safestring import SafeString
 from django.utils.timesince import timesince
 
 from radiofeed import covers, sanitizer
-from radiofeed.http.request import RequestContext
 from radiofeed.pwa import get_theme_color
+
+if TYPE_CHECKING:
+    from django.contrib.sites.models import Site
+    from django.template.context import Context
+    from django.utils.safestring import SafeString
+
+    from radiofeed.http.request import RequestContext
 
 register = template.Library()
 

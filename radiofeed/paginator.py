@@ -1,14 +1,17 @@
 from collections.abc import Sequence
-from typing import TypeAlias, TypeVar
+from typing import TYPE_CHECKING, TypeAlias, TypeVar
 
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db.models import Model, QuerySet
-from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 
-from radiofeed.http.request import HttpRequest
 from radiofeed.partials import render_partial_response
+
+if TYPE_CHECKING:
+    from django.template.response import TemplateResponse
+
+    from radiofeed.http.request import HttpRequest
 
 T = TypeVar("T")
 T_Model = TypeVar("T_Model", bound=Model)
@@ -58,7 +61,7 @@ class Page:
     The pagination should be done lazily, so we don't execute any database queries until the object list is accessed.
     """
 
-    def __init__(self, *, paginator: "Paginator", number: int) -> None:
+    def __init__(self, *, paginator: Paginator, number: int) -> None:
         self.paginator = paginator
         self.page_size = paginator.per_page
         self.number = number

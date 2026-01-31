@@ -2,21 +2,25 @@ import contextlib
 import functools
 import io
 import itertools
-import pathlib
-from collections.abc import Generator
-from typing import BinaryIO, Final, Literal
+from typing import TYPE_CHECKING, BinaryIO, Final, Literal
 
 import httpx
 from django.conf import settings
 from django.core.signing import BadSignature, Signer
-from django.http import HttpRequest
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from PIL import Image
 
-from radiofeed.client import Client
 from radiofeed.pwa import ImageInfo
+
+if TYPE_CHECKING:
+    import pathlib
+    from collections.abc import Generator
+
+    from django.http import HttpRequest
+
+    from radiofeed.client import Client
 
 CoverVariant = Literal["card", "detail", "tile"]
 

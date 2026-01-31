@@ -1,7 +1,7 @@
 import datetime
 import random
+from typing import TYPE_CHECKING
 
-from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 from django.core.mail import get_connection
 from django.core.management.base import BaseCommand, CommandParser
@@ -10,8 +10,12 @@ from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
 from radiofeed.thread_pool import db_threadsafe, thread_pool_map
-from radiofeed.users.models import User
 from radiofeed.users.notifications import get_recipients, send_notification_email
+
+if TYPE_CHECKING:
+    from allauth.account.models import EmailAddress
+
+    from radiofeed.users.models import User
 
 
 class Command(BaseCommand):

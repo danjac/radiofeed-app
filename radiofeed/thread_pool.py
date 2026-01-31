@@ -1,11 +1,13 @@
 import functools
 import itertools
-from collections.abc import Callable, Iterable, Iterator
 from concurrent.futures import ThreadPoolExecutor
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from django.db import close_old_connections
 from django.db.models import QuerySet
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator
 
 T = TypeVar("T")  # type of the worker argument
 R = TypeVar("R")  # return type of the worker

@@ -3,8 +3,7 @@ import datetime
 import functools
 import re
 import unicodedata
-from collections.abc import Iterator
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 import pycountry
 from django.conf import settings
@@ -15,6 +14,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import RegexpTokenizer
 
 from radiofeed.sanitizer import strip_html
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 _STOPWORDS_LANGUAGES: Final = {
     "ar": "arabic",

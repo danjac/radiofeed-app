@@ -2,14 +2,12 @@ import collections
 import itertools
 import math
 import statistics
-from collections.abc import Iterator
 from datetime import timedelta
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 import numpy as np
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.utils import timezone
 from sklearn.feature_extraction.text import (
     HashingVectorizer,
@@ -18,6 +16,11 @@ from sklearn.feature_extraction.text import (
 from sklearn.neighbors import NearestNeighbors
 
 from radiofeed.podcasts.models import Podcast, Recommendation
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from django.db.models.query import QuerySet
 
 _default_timeframe: Final = timedelta(days=90)
 

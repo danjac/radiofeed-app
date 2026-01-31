@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 from django.contrib import admin
-from django.db.models import QuerySet
-from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars
 
 from radiofeed.episodes.models import AudioLog, Episode, EpisodeQuerySet
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
+    from django.http import HttpRequest
 
 
 @admin.register(Episode)
