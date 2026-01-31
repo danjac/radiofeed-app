@@ -1,7 +1,7 @@
-from health_check.backends import BaseHealthCheckBackend
+from health_check.backends import HealthCheck
 
 
-class SimplePingHealthCheck(BaseHealthCheckBackend):
+class SimplePingHealthCheck(HealthCheck):
     """Just checks service is alive."""
 
     critical_service = False
