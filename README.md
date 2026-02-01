@@ -1,4 +1,3 @@
-
 ![coverage](/static/img/coverage.svg?raw=True)
 
 This is the source code for a simple, easy to use podcatcher web application. You are free to use this source to host the app yourself. A Dockerfile is provided for production deployments.
@@ -7,16 +6,16 @@ This is the source code for a simple, easy to use podcatcher web application. Yo
 
 This project requires the following basic dependencies to get started:
 
-* Python 3.14
-* [uv](https://docs.astral.sh)
+- Python 3.14
+- [uv](https://docs.astral.sh)
 
 **Note:** if you don't have the right version of Python you can use `uv python install 3.14.x`.
 
 For ease of local development a `docker-compose.yml` file is provided which includes Docker images:
 
-* PostgreSQL
-* Redis
-* [Mailpit](https://mailpit.axllent.org/) (for local email testing)
+- PostgreSQL
+- Redis
+- [Mailpit](https://mailpit.axllent.org/) (for local email testing)
 
 You can use these images if you want, or use a local install of PostgreSQL or Redis.
 
@@ -24,13 +23,13 @@ Current tested versions are PostgreSQL 18 and Redis 8.
 
 The [justfile](https://github.com/casey/just) has some convenient shortcuts for local development, including:
 
-* `just install`: download and install local dependencies
-* `just update`: update dependencies to latest available versions
-* `just serve`: run the development server and Tailwind JIT compiler
-* `just dj [command]`: run Django management commands
-* `just test`: run unit tests
-* `just check`: run code linters and formatters, type checkers, and unit tests
-* `just start` and `just stop`: start/stop Docker dev containers
+- `just install`: download and install local dependencies
+- `just update`: update dependencies to latest available versions
+- `just serve`: run the development server and Tailwind JIT compiler
+- `just dj [command]`: run Django management commands
+- `just test`: run unit tests
+- `just lint`: run Ruff linters/formatters
+- `just start` and `just stop`: start/stop Docker dev containers
 
 Run `just` to see all available commands.
 
@@ -38,11 +37,11 @@ Run `just` to see all available commands.
 
 ## Stack
 
-* [Django](https://djangoproject.com)
-* [HTMX](https://htmx.org)
-* [AlpineJS](https://alpinejs.dev)
-* [Tailwind](https://tailwindcss.com)
-* [PostgreSQL](https://www.postgresql.org/)
+- [Django](https://djangoproject.com)
+- [HTMX](https://htmx.org)
+- [AlpineJS](https://alpinejs.dev)
+- [Tailwind](https://tailwindcss.com)
+- [PostgreSQL](https://www.postgresql.org/)
 
 ## Deployment
 

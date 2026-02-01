@@ -62,10 +62,6 @@ typecheck *args:
 lint:
    uv run ruff check --fix
 
-# Run all checks
-[group('development')]
-check: precommitall typecheck test
-
 # Download NLTK data
 [group('development')]
 nltkdownload:
