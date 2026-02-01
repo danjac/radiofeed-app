@@ -57,6 +57,11 @@ tw:
 typecheck *args:
    uv run basedpyright {{ args }}
 
+# Run linting
+[group('development')]
+lint:
+   uv run ruff check --fix
+
 # Run all checks
 [group('development')]
 check: precommitall typecheck test
