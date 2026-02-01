@@ -196,7 +196,7 @@ known-first-party = ["radiofeed"]
 profile = "black"
 
 [tool.django-stubs]
-django_settings_module = "radiofeed.settings"
+django_settings_module = "config.settings"
 
 [tool.pyright]
 include = ["radiofeed"]
