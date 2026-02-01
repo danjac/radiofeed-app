@@ -27,15 +27,13 @@
 .gitignore
 .gitattributes
 .dockerignore
-ansible
+commmitlint.config.js
 justfile
-locust
 LICENSE
 Makefile
 README.md
 SECURITY.md
 conftest.py
-locustfile.py
 docker-compose.yml
 node_modules
 npm-debug.log
