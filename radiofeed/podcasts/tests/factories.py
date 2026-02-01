@@ -1,5 +1,8 @@
-import factory
 from django.utils import timezone
+from factory import django
+from factory.declarations import LazyFunction, Sequence, SubFactory
+from factory.faker import Faker
+from factory.helpers import post_generation
 
 from radiofeed.podcasts.models import (
     Category,
@@ -10,41 +13,41 @@ from radiofeed.podcasts.models import (
 from radiofeed.users.tests.factories import UserFactory
 
 
-class CategoryFactory(factory.django.DjangoModelFactory):
-    name = factory.Sequence(lambda n: f"Category {n}")
+class CategoryFactory(django.DjangoModelFactory):
+    name = Sequence(lambda n: f"Category {n}")
 
     class Meta:
         model = Category
 
 
-class PodcastFactory(factory.django.DjangoModelFactory):
-    title = factory.Faker("text")
-    rss = factory.Sequence(lambda n: f"https://{n}.example.com")
-    pub_date = factory.LazyFunction(timezone.now)
+class PodcastFactory(django.DjangoModelFactory):
+    title = Faker("text")
+    rss = Sequence(lambda n: f"https://{n}.example.com")
+    pub_date = LazyFunction(timezone.now)
     cover_url = "https://example.com/cover.jpg"
 
     class Meta:
         model = Podcast
 
-    @factory.post_generation
+    @post_generation
     def categories(self, create, extracted, **kwargs):
         if create and extracted:
-            self.categories.set(extracted)
+            self.categories.set(extracted)  # type: ignore[attr-defined]
 
 
-class RecommendationFactory(factory.django.DjangoModelFactory):
+class RecommendationFactory(django.DjangoModelFactory):
     score = 0.5
 
-    podcast = factory.SubFactory(PodcastFactory)
-    recommended = factory.SubFactory(PodcastFactory)
+    podcast = SubFactory(PodcastFactory)
+    recommended = SubFactory(PodcastFactory)
 
     class Meta:
         model = Recommendation
 
 
-class SubscriptionFactory(factory.django.DjangoModelFactory):
-    subscriber = factory.SubFactory(UserFactory)
-    podcast = factory.SubFactory(PodcastFactory)
+class SubscriptionFactory(django.DjangoModelFactory):
+    subscriber = SubFactory(UserFactory)
+    podcast = SubFactory(PodcastFactory)
 
     class Meta:
         model = Subscription
