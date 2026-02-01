@@ -9,6 +9,7 @@
 !.tern-project
 **/__pycache__
 **/tests
+.ansible
 .django_tailwind_cli
 .git
 .github
