@@ -1,19 +1,14 @@
----
 # Deployment settings
 #
 k3s_docker_image: "{{ docker_image }}"
-
 k3s_postgres:
   image: "{{ postgres_image | default('postgres:18.1-bookworm', true) }}"
   password: "{{ postgres_password }}"
   storage: "{{ postgres_storage | default('30Gi', true) }}"
   volume: "{{ postgres_volume | default('/home/ubuntu/pg_data', true) }}"
-
 k3s_redis:
   image: "{{ redis_image | default('redis:8.2.2-bookworm', true) }}"
-
 # Django settings
-
 k3s_admin_url: "admin/"
 k3s_admins: "admin@{{ domain }}"
 k3s_allowed_hosts: "*"

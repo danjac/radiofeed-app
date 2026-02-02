@@ -1,4 +1,3 @@
----
 - name: Generate a remote PSQL script
   hosts: server
   gather_facts: false

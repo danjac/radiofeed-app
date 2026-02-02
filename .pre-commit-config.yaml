@@ -1,103 +1,106 @@
 repos:
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v6.0.0
-      hooks:
-          - id: trailing-whitespace
-          - id: end-of-file-fixer
-          - id: check-builtin-literals
-          - id: check-merge-conflict
-          - id: check-shebang-scripts-are-executable
-            exclude: '.*\.j2$'
-          - id: check-toml
-          - id: check-yaml
-          - id: debug-statements
-          - id: destroyed-symlinks
-          - id: detect-private-key
-    - repo: local
-      hooks:
-          - id: rustywind
-            name: rustywind Tailwind CSS class linter
-            language: node
-            additional_dependencies:
-                - rustywind@0.21.0
-            entry: rustywind
-            args: [--write]
-            files: ^templates
-            types_or: [html]
-    - repo: https://github.com/gitleaks/gitleaks
-      rev: v8.30.0
-      hooks:
-       - id: gitleaks
-
-    - repo: https://github.com/opensource-nepal/commitlint
-      rev: v1.13.3
-      hooks:
-          - id: commitlint
-    - repo: https://github.com/koalaman/shellcheck-precommit
-      rev: v0.11.0
-      hooks:
-          - id: shellcheck
-    - repo: https://github.com/charliermarsh/ruff-pre-commit
-      rev: "v0.14.14"
-      hooks:
-          - id: ruff-check
-            args: ["--fix"]
-          - id: ruff-format
-    - repo: https://github.com/MarcoGorelli/absolufy-imports
-      rev: v0.3.1
-      hooks:
-          - id: absolufy-imports
-    - repo: https://github.com/rtts/djhtml
-      rev: 3.0.10
-      hooks:
-          - id: djhtml
-            exclude: (^static/vendor|(^|.*/)mocks/.*)
-          - id: djcss
-            exclude: (^static/vendor|(^|.*/)mocks/.*)
-          - id: djjs
-            exclude: (^static/vendor|(^|.*/)mocks/.*)
-    - repo: https://github.com/adamchainz/djade-pre-commit
-      rev: 1.7.0
-      hooks:
-          - id: djade
-            args: [--target-version, "5.1"]
-    - repo: https://github.com/Riverside-Healthcare/djLint
-      rev: v1.36.4
-      hooks:
-          - id: djlint-django
-            args: ["--lint"]
-            exclude: (^static/vendor|(^|.*/)mocks/.*)
-    - repo: https://github.com/hadolint/hadolint
-      rev: v2.14.0
-      hooks:
-          - id: hadolint-docker
-    - repo: https://github.com/asottile/pyupgrade
-      rev: v3.21.2
-      hooks:
-          - id: pyupgrade
-            args: [--py314]
-    - repo: https://github.com/adamchainz/django-upgrade
-      rev: "1.29.1"
-      hooks:
-          - id: django-upgrade
-            args: [--target-version, "5.1"]
-    - repo: https://github.com/abravalheri/validate-pyproject
-      rev: v0.24.1
-      hooks:
-        - id: validate-pyproject
-    - repo: https://github.com/ansible/ansible-lint
-      rev: v26.1.1
-      hooks:
-        - id: ansible-lint
-          name: ansible-lint
-          language_version: python3.14
-          files: ^ansible/.*\.(yml|yaml)$
-          args: [--project-dir, ansible, --exclude, .github/, --exclude, .pre-commit-config.yaml]
-          additional_dependencies:
-            - ansible-core
-    - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-      rev: v9.24.0
-      hooks:
-          - id: commitlint
-            stages: [commit-msg]
-            additional_dependencies: ['@commitlint/config-conventional']
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-builtin-literals
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+        exclude: '.*\.j2$'
+      - id: check-toml
+      - id: check-yaml
+      - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: rustywind
+        name: rustywind Tailwind CSS class linter
+        language: node
+        additional_dependencies:
+          - rustywind@0.21.0
+        entry: rustywind
+        args: [--write]
+        files: ^templates
+        types_or: [html]
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+  - repo: https://github.com/opensource-nepal/commitlint
+    rev: v1.13.3
+    hooks:
+      - id: commitlint
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.14.14"
+    hooks:
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
+  - repo: https://github.com/MarcoGorelli/absolufy-imports
+    rev: v0.3.1
+    hooks:
+      - id: absolufy-imports
+  - repo: https://github.com/rtts/djhtml
+    rev: 3.0.10
+    hooks:
+      - id: djhtml
+        exclude: (^static/vendor|(^|.*/)mocks/.*)
+      - id: djcss
+        exclude: (^static/vendor|(^|.*/)mocks/.*)
+      - id: djjs
+        exclude: (^static/vendor|(^|.*/)mocks/.*)
+  - repo: https://github.com/adamchainz/djade-pre-commit
+    rev: 1.7.0
+    hooks:
+      - id: djade
+        args: [--target-version, "5.1"]
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-django
+        args: ["--lint"]
+        exclude: (^static/vendor|(^|.*/)mocks/.*)
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.14.0
+    hooks:
+      - id: hadolint-docker
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.21.2
+    hooks:
+      - id: pyupgrade
+        args: [--py314]
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: "1.29.1"
+    hooks:
+      - id: django-upgrade
+        args: [--target-version, "5.1"]
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.21.0
+    hooks:
+      - id: yamlfmt
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v26.1.1
+    hooks:
+      - id: ansible-lint
+        name: ansible-lint
+        language_version: python3.14
+        files: ^ansible/.*\.(yml|yaml)$
+        args: [--project-dir, ansible, --exclude, .github/, --exclude, .pre-commit-config.yaml]
+        additional_dependencies:
+          - ansible-core
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.24.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ['@commitlint/config-conventional']

@@ -1,53 +1,48 @@
 x-logging: &default-logging
-    options:
-        max-size: "10k"
-        max-file: "3"
-
+  options:
+    max-size: "10k"
+    max-file: "3"
 x-deploy: &default-deploy
-    restart_policy:
-        condition: on-failure
-        max_attempts: 3
-
+  restart_policy:
+    condition: on-failure
+    max_attempts: 3
 services:
-    postgres:
-        image: postgres:18.1-bookworm
-        environment:
-            - POSTGRES_PASSWORD=password
-        volumes:
-            - pg_data:/var/lib/postgresql
-        stop_grace_period: "3s"
-        deploy: *default-deploy
-        logging: *default-logging
-        healthcheck:
-            test: ["CMD", "pg_isready", "-U", "postgres"]
-            interval: 1s
-            timeout: 3s
-            retries: 30
-        ports:
-            - "5432:5432"
-
-    redis:
-        image: redis:8.2.2-bookworm
-        stop_grace_period: "3s"
-        deploy: *default-deploy
-        logging: *default-logging
-        healthcheck:
-            test: ["CMD", "redis-cli", "ping"]
-            interval: 1s
-            timeout: 3s
-            retries: 30
-        ports:
-            - "6379:6379"
-
-    mailpit:
-        image: axllent/mailpit:v1.27
-        mem_limit: 100m
-        stop_grace_period: "3s"
-        deploy: *default-deploy
-        logging: *default-logging
-        ports:
-            - "8025:8025"
-            - "1025:1025"
-
+  postgres:
+    image: postgres:18.1-bookworm
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pg_data:/var/lib/postgresql
+    stop_grace_period: "3s"
+    deploy: *default-deploy
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:8.2.2-bookworm
+    stop_grace_period: "3s"
+    deploy: *default-deploy
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    ports:
+      - "6379:6379"
+  mailpit:
+    image: axllent/mailpit:v1.27
+    mem_limit: 100m
+    stop_grace_period: "3s"
+    deploy: *default-deploy
+    logging: *default-logging
+    ports:
+      - "8025:8025"
+      - "1025:1025"
 volumes:
-    pg_data: {}
+  pg_data: {}

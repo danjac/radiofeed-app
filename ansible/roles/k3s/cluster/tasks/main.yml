@@ -1,4 +1,3 @@
----
 - name: Download and install K3s on server
   ansible.builtin.shell: |
     set -o pipefail
@@ -11,17 +10,14 @@
   args:
     creates: /usr/local/bin/k3s
   changed_when: true
-
 - name: Get the K3s join token from the control plane (for worker nodes)
   ansible.builtin.command: k3s token create
   register: k3s_token
   changed_when: false
-
 - name: Set K3s join token as a fact
   ansible.builtin.set_fact:
     k3s_token: "{{ k3s_token.stdout }}"
   changed_when: false
-
 - name: Download and install K3s as a worker node
   ansible.builtin.shell: |
     set -o pipefail

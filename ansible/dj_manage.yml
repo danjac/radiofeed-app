@@ -1,4 +1,3 @@
----
 - name: Generate a remote Django manage script
   hosts: server
   gather_facts: false

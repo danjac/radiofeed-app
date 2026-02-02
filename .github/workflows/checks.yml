@@ -1,40 +1,40 @@
 name: radiofeed:checks
 on: workflow_call
 jobs:
-    precommit:
-        runs-on: ubuntu-latest
-        permissions:
-          contents: read
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: "3.14.2"
-                  cache: "pip"
-            - uses: pre-commit/action@v3.0.1
-    unittests:
-        needs: precommit
-        runs-on: ubuntu-latest
-        permissions:
-          contents: read
-        services:
-            postgres:
-                image: postgres:18.1-bookworm
-                env:
-                    POSTGRES_PASSWORD: password # pragma: allowlist secret
-                ports: ["5432:5432"]
-                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-        steps:
-            - uses: actions/checkout@v4
-            - uses: astral-sh/setup-uv@v3
-              with:
-                version: "0.9.8"
-                enable-cache: true
-                cache-dependency-glob: |
-                    **/uv.lock
-                    **/pyproject.toml
-            - run: uv python install 3.14.0
-            - run: uv sync --frozen --all-extras --no-install-project
-            - run: uv run basedpyright
-            - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
-            - run: uv run pytest
+  precommit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14.2"
+          cache: "pip"
+      - uses: pre-commit/action@v3.0.1
+  unittests:
+    needs: precommit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:18.1-bookworm
+        env:
+          POSTGRES_PASSWORD: password # pragma: allowlist secret
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.9.8"
+          enable-cache: true
+          cache-dependency-glob: |
+            **/uv.lock
+            **/pyproject.toml
+      - run: uv python install 3.14.0
+      - run: uv sync --frozen --all-extras --no-install-project
+      - run: uv run basedpyright
+      - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
+      - run: uv run pytest

@@ -1,12 +1,12 @@
 name: radiofeed:default
 on:
-    pull_request:
-    push:
-        branches:
-            - main
+  pull_request:
+  push:
+    branches:
+      - main
 run-name: ${{ github.actor }} is running checks
 permissions:
   contents: read
 jobs:
-    run_checks:
-        uses: ./.github/workflows/checks.yml
+  run_checks:
+    uses: ./.github/workflows/checks.yml

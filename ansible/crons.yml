@@ -1,4 +1,3 @@
----
 - name: Deploy k3s crons
   hosts: server
   become: false

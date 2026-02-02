@@ -1,4 +1,3 @@
----
 - name: Deploy Kubernetes
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
@@ -19,7 +18,6 @@
         dest: "/tmp/{{ item | basename }}"
         mode: "0600"
       loop: "{{ k3s_cloudflare_certs }}"
-
     - name: Create Kubernetes TLS Secret
       ansible.builtin.shell: |
         set -o pipefail
@@ -29,20 +27,17 @@
             -n default --dry-run=client -o yaml | kubectl apply -f -
       args:
         creates: "/tmp/cloudflare-origin-cert.created"
-
     - name: Remove certs from /tmp after secret is created
       ansible.builtin.file:
         path: "/tmp/{{ item }}"
         state: absent
       loop: "{{ k3s_cloudflare_certs }}"
-
     - name: Label the nodes
       ansible.builtin.shell: |
         kubectl label nodes {{ hostvars[item].hostname }} role={{ hostvars[item].role }} --overwrite
       loop: "{{ groups['all'] }}"
       register: k3s_kubectl_label_result
       changed_when: "'labeled' in k3s_kubectl_label_result.stdout or 'changed' in k3s_kubectl_label_result.stdout"
-
     - name: Force CoreDNS to run on the server node
       ansible.builtin.shell: |
         kubectl patch deployment coredns -n kube-system \
@@ -50,13 +45,11 @@
           -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
       register: k3s_kubectl_patch_result
       changed_when: "'patched' in k3s_kubectl_patch_result.stdout"
-
     - name: Restart CoreDNS to apply changes
       ansible.builtin.shell: |
         kubectl rollout restart deployment/coredns -n kube-system
       register: k3s_kubectl_restart_result
       changed_when: "'restarted' in k3s_kubectl_restart_result.stdout"
-
     - name: Force metrics-server to run on the server node
       ansible.builtin.shell: |
         kubectl patch deployment metrics-server -n kube-system \
@@ -64,7 +57,6 @@
           -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
       register: k3s_kubectl_patch_result
       changed_when: "'patched' in k3s_kubectl_patch_result.stdout"
-
     - name: Restart metrics-server to apply changes
       ansible.builtin.shell: |
         kubectl rollout restart deployment/metrics-server -n kube-system
@@ -77,43 +69,36 @@
           -p='[{"op": "add", "path": "/spec/template/spec/nodeSelector", "value": {"role": "server"}}]'
       register: k3s_kubectl_patch_result
       changed_when: "'patched' in k3s_kubectl_patch_result.stdout"
-
     - name: Restart Traefik to apply changes
       ansible.builtin.shell: |
         kubectl rollout restart deployment/traefik -n kube-system
       register: k3s_kubectl_restart_result
       changed_when: "'restarted' in k3s_kubectl_restart_result.stdout"
-
     - name: Get the current image of running django-app pod
       ansible.builtin.shell: |
         kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
       register: k3s_current_image
       changed_when: false
       ignore_errors: true
-
     - name: Set default image if current image is empty
       ansible.builtin.set_fact:
         k3s_image: "{{ k3s_current_image.stdout if k3s_current_image.stdout | length > 0 else k3s_docker_image }}"
       changed_when: false
       when: k3s_current_image is defined and k3s_current_image.stdout is defined
-
     - name: Create a temporary directory
       ansible.builtin.tempfile:
         state: directory
       register: k3s_manifests_dir
-
     - name: Calculate total resources
       ansible.builtin.set_fact:
         k3s_total_memory_mb: "{{ ansible_memtotal_mb }}"
         k3s_total_cpu_millicores: "{{ ansible_processor_vcpus * 1000 }}"
-
     - name: Calculate resource requests/limits
       ansible.builtin.set_fact:
         k3s_mem_request: "{{ (k3s_total_memory_mb | int * memory_request_percent) | int }}Mi"
         k3s_mem_limit: "{{ (k3s_total_memory_mb | int * memory_limit_percent) | int }}Mi"
         k3s_cpu_request: "{{ (k3s_total_cpu_millicores | int * cpu_request_percent) | int }}m"
         k3s_cpu_limit: "{{ (k3s_total_cpu_millicores | int * cpu_limit_percent) | int }}m"
-
     - name: Render Kubernetes manifests
       vars:
         k3s_database_url: "postgresql://postgres:{{ k3s_postgres.password }}@postgres.default.svc.cluster.local:5432/postgres"
@@ -137,7 +122,6 @@
         - django_deployment
         - django_service
         - ingress_route
-
     - name: Apply Kubernetes manifests using ApplySet
       ansible.builtin.shell: |
         kubectl apply -f {{ k3s_manifests_dir.path }} --prune --applyset=app-deployment --namespace=default
@@ -145,15 +129,12 @@
         KUBECTL_APPLYSET: "true"
       register: k3s_kubectl_apply_result
       changed_when: >
-        'created' in k3s_kubectl_apply_result.stdout or
-        'configured' in k3s_kubectl_apply_result.stdout or
-        'deleted' in k3s_kubectl_apply_result.stdout"
+        'created' in k3s_kubectl_apply_result.stdout or 'configured' in k3s_kubectl_apply_result.stdout or 'deleted' in k3s_kubectl_apply_result.stdout"
 
     - name: Delete manifests dir
       ansible.builtin.file:
         path: "{{ k3s_manifests_dir.path }}"
         state: absent
-
     - name: Restart statefulsets
       ansible.builtin.shell: |
         for statefulset in $(kubectl get statefulsets -n default -o jsonpath='{.items[*].metadata.name}'); do
@@ -161,7 +142,6 @@
         done
       register: k3s_kubectl_restart_result
       changed_when: "'restarted' in k3s_kubectl_restart_result.stdout"
-
     - name: Restart deployments
       ansible.builtin.shell: |
         for deployment in $(kubectl get deployments -n default -o jsonpath='{.items[*].metadata.name}'); do

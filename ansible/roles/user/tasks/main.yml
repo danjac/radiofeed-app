@@ -1,4 +1,3 @@
----
 - name: Read all public SSH keys from directory
   ansible.builtin.find:
     paths: "{{ playbook_dir }}/ssh-keys"
@@ -8,25 +7,21 @@
   register: user_ssh_key_files
   delegate_to: localhost
   run_once: true
-
 - name: Load SSH key contents
   ansible.builtin.set_fact:
     user_ssh_public_keys: "{{ user_ssh_public_keys | default([]) + [lookup('file', item)] }}"
   with_items: "{{ user_ssh_key_files.files | map(attribute='path') | list }}"
   delegate_to: localhost
   run_once: true
-
 - name: Abort if no SSH public keys found
   ansible.builtin.fail:
     msg: >
-      No SSH public keys found in {{ playbook_dir }}/ssh-keys.
-      Ensure at least one *.pub file exists before running this playbook.
-  when: user_ssh_public_keys | length == 0
+      No SSH public keys found in {{ playbook_dir }}/ssh-keys. Ensure at least one *.pub file exists before running this playbook.
 
+  when: user_ssh_public_keys | length == 0
 - name: Set deploy user
   ansible.builtin.set_fact:
     user_deploy_user: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
-
 - name: Create deploy user
   ansible.builtin.user:
     name: "{{ user_deploy_user }}"
@@ -35,7 +30,6 @@
     state: present
     groups: sudo
     append: true
-
 - name: Deploy all authorized SSH keys for "deploy" user
   ansible.posix.authorized_key:
     user: "{{ user_deploy_user }}"
@@ -43,7 +37,6 @@
     state: present
     exclusive: true
   loop: "{{ user_ssh_public_keys }}"
-
 - name: Allow user to run sudo without password
   ansible.builtin.lineinfile:
     path: /etc/sudoers.d/{{ user_deploy_user }}

@@ -1,4 +1,3 @@
----
 - name: Create deployment user
   hosts: all
   remote_user: root
@@ -8,28 +7,24 @@
     ansible_user: root
   roles:
     - user
-
 - name: Pre-install requirements
   hosts: all
   become: true
   gather_facts: false
   roles:
     - k3s_prereqs
-
 - name: Set up K3s cluster
   hosts: server
   become: true
   gather_facts: false
   roles:
     - k3s_cluster
-
 - name: Cleanup tasks for k3s
   hosts: all
   become: true
   gather_facts: true
   roles:
     - k3s_cleanup
-
 - name: Deploy k3s application
   hosts: server
   become: false

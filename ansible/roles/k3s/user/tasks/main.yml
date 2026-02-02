@@ -1,10 +1,8 @@
----
 - name: Create .kube directory with read/write permissions on user home dir
   ansible.builtin.file:
     path: "{{ home_dir }}/.kube"
     mode: "0755"
     state: directory
-
 - name: Copy kubeconfig to user home dir
   become: true
   ansible.builtin.copy:
@@ -14,7 +12,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0600"
-
 - name: Add KUBECONFIG environment variable to .bashrc and .profile
   ansible.builtin.lineinfile:
     path: "{{ home_dir }}/{{ item }}"
@@ -26,7 +23,6 @@
   loop:
     - .bashrc
     - .profile
-
 - name: Reload shell configuration for user
   ansible.builtin.command: "bash -c 'source {{ home_dir }}/{{ item }}'"
   loop:

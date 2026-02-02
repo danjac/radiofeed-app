@@ -1,4 +1,3 @@
----
 - name: Generate remote Kubectl command
   ansible.builtin.template:
     src: templates/kubectl.sh.j2

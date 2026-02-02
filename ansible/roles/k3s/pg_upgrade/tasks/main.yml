@@ -1,4 +1,3 @@
----
 - name: Deploy Kubernetes
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
@@ -11,41 +10,33 @@
           - k3s_postgres.new_volume is defined
           - k3s_postgres.new_volume|length > 0
         fail_msg: "Both 'k3s_postgres.new_image' and 'k3s_postgres.new_volume' must be defined for the upgrade."
-
     - name: Get current Postgres StatefulSet image
       ansible.builtin.shell: |
         kubectl get statefulset postgres -o jsonpath='{.spec.template.spec.containers[0].image}'
       register: k3s_current_postgres_image
       changed_when: false
-
     - name: Get the MAJOR version of the current Postgres image
       ansible.builtin.set_fact:
         k3s_postgres_current_version: "{{ k3s_current_postgres_image.stdout.split(':')[1].split('.')[0] }}"
-
     - name: Get the MAJOR version of the new Postgres image
       ansible.builtin.set_fact:
         k3s_postgres_new_version: "{{ k3s_postgres.new_image.split(':')[1].split('.')[0] }}"
-
     - name: Debug current and new Postgres versions
       ansible.builtin.debug:
         msg: "Current Postgres version: {{ k3s_postgres_current_version }}, New Postgres version: {{ k3s_postgres_new_version }}"
-
     - name: Debug current and new Postgres volumes
       ansible.builtin.debug:
         msg: "Current Postgres volume: {{ k3s_postgres.current_volume }}, New Postgres volume: {{ k3s_postgres.new_volume }}"
-
     - name: Assert volume + image are different than current
       ansible.builtin.assert:
         that:
           - k3s_postgres_new_version != k3s_postgres_current_version
           - k3s_postgres.new_volume != k3s_postgres.current_volume
         fail_msg: "The new image and volume must differ from the current ones."
-
     - name: Create a temporary directory
       ansible.builtin.tempfile:
         state: directory
       register: k3s_manifests_dir
-
     - name: Render Kubernetes manifests
       ansible.builtin.template:
         src: "{{ item }}.yaml.j2"
@@ -56,7 +47,6 @@
         - postgres_upgrade_pvc
         - postgres_upgrade_statefulset
         - postgres_upgrade_service
-
     - name: Apply Kubernetes manifests
       ansible.builtin.shell: |
         kubectl apply -f {{ k3s_manifests_dir.path }} --namespace=default
@@ -64,7 +54,6 @@
         KUBECTL_APPLYSET: "true"
       register: k3s_kubectl_apply_result
       changed_when: "'created' in k3s_kubectl_apply_result.stdout or 'configured' in k3s_kubectl_apply_result.stdout"
-
     - name: Delete manifests dir
       ansible.builtin.file:
         path: "{{ k3s_manifests_dir.path }}"

@@ -1,4 +1,3 @@
----
 - name: Deploy k3s Postgres upgrade resources
   hosts: server
   become: false

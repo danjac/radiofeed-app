@@ -1,4 +1,3 @@
----
 ansible_user: "ubuntu"
 home_dir: "/home/{{ ansible_user }}"
 kubeconfig: "{{ home_dir }}/.kube/config"

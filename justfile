@@ -106,7 +106,7 @@ precommitupdate:
 # Re-run pre-commit on all files
 [group('development')]
 precommitall:
-   @just precommit run --all-files
+   pre-commit run --all
 
 # Run Ansible playbook
 [group('deployment')]

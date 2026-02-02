@@ -1,25 +1,19 @@
----
 k3s_cronjobs:
   - name: "clear-sessions"
     schedule: "20 5 * * *" # 5:20 AM every day
     command: "{{ k3s_manage_cmd }} clearsessions"
-
   - name: "create-podcast-recommendations"
     schedule: "20 4 * * *" # 4:20 AM every day
     command: "{{ k3s_manage_cmd }} create_recommendations"
-
   - name: "fetch-itunes-feeds"
     schedule: "15 3 * * *" # 3:15 AM every day
     command: "{{ k3s_manage_cmd }} fetch_itunes"
-
   - name: "parse-podcast-feeds"
     schedule: "*/6 * * * *" # Every 6 minutes
     command: "{{ k3s_manage_cmd }} parse_feeds"
-
   - name: "send-episode-notifications"
     schedule: "0 13 * * 1" # 1:00 PM every Monday
     command: "{{ k3s_manage_cmd }} send_notifications"
-
   - name: "send-podcast-recommendations"
     schedule: "0 13 * * 5" # 1:00 PM every Friday
     command: "{{ k3s_manage_cmd }} send_recommendations"

@@ -1,4 +1,3 @@
----
 - name: Generate remote PSQL command
   ansible.builtin.template:
     src: templates/psql.sh.j2
