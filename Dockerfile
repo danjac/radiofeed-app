@@ -51,7 +51,7 @@ WORKDIR /app
 
 # Copy files with correct ownership from the start using --chown
 COPY --from=python-base --chown=django:django /app/.venv /app/.venv
-COPY --from=nltk-corpora --chown=django:django /root/nltk_data /root/nltk_data
+COPY --from=nltk-corpora --chown=django:django /root/nltk_data /app/.venv/nltk_data
 COPY --from=staticfiles --chown=django:django /app/staticfiles /app/staticfiles
 
 # Copy application code with correct ownership
