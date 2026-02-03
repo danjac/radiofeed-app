@@ -43,4 +43,5 @@
   roles:
       - k3s/user
       - k3s/deploy
+      - k3s/crons
       - k3s/scripts
