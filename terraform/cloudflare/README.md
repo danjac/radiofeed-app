@@ -5,7 +5,7 @@ This directory contains Terraform configuration for setting up Cloudflare as a C
 ## What This Configures
 
 - **DNS Records**: A record pointing to your Hetzner server
-- **CDN**: Caching for static assets (/static/*) and media files (/media/*)
+- **CDN**: Caching for static assets (/static/_) and media files (/media/_)
 - **SSL/TLS**: Full SSL mode with automatic HTTPS redirects
 - **Security**: Firewall rules, security headers, and DDoS protection
 - **Performance**: HTTP/3, Brotli compression, early hints
@@ -15,7 +15,7 @@ This directory contains Terraform configuration for setting up Cloudflare as a C
 
 ### 1. Cloudflare Account
 
-Sign up for a free Cloudflare account at https://www.cloudflare.com/
+Sign up for a free Cloudflare account at <https://www.cloudflare.com/>
 
 ### 2. Add Domain to Cloudflare
 
@@ -28,12 +28,14 @@ Sign up for a free Cloudflare account at https://www.cloudflare.com/
 ### 3. Update Nameservers
 
 Cloudflare will provide you with nameservers like:
+
 - `ada.ns.cloudflare.com`
 - `tate.ns.cloudflare.com`
 
 Update your nameservers at your domain registrar:
 
 **For Namecheap:**
+
 1. Log in to Namecheap
 2. Go to Domain List → Manage
 3. Find "Nameservers" section
@@ -49,11 +51,11 @@ DNS propagation can take 24-48 hours, but usually completes within a few hours.
 
 Create an API token with Zone:Edit permissions:
 
-1. Go to: https://dash.cloudflare.com/profile/api-tokens
+1. Go to: <https://dash.cloudflare.com/profile/api-tokens>
 2. Click "Create Token"
 3. Use "Edit zone DNS" template
 4. Under "Zone Resources":
-   - Include → Specific zone → Select your domain
+    - Include → Specific zone → Select your domain
 5. Click "Continue to summary"
 6. Click "Create Token"
 7. Copy the token (you won't see it again!)
@@ -79,8 +81,8 @@ Generate origin certificates:
 4. Choose validity period (15 years recommended)
 5. Click "Create"
 6. Save both files:
-   - **Certificate** → Save as `ansible/certs/cloudflare.pem`
-   - **Private Key** → Save as `ansible/certs/cloudflare.key`
+    - **Certificate** → Save as `ansible/certs/cloudflare.pem`
+    - **Private Key** → Save as `ansible/certs/cloudflare.key`
 
 **Security Note:** Keep these files secure. Add `ansible/certs/` to `.gitignore` if not already ignored.
 
@@ -118,6 +120,7 @@ terraform plan
 ```
 
 Review the resources that will be created:
+
 - DNS A record for your domain/subdomain
 - Zone settings (SSL, security, performance)
 - Page rules for caching static assets
@@ -163,61 +166,56 @@ chmod 600 ansible/certs/cloudflare.*
 ### Complete Deployment Flow
 
 1. **Provision Hetzner infrastructure**:
-   ```bash
-   cd terraform/hetzner
-   terraform apply
-   SERVER_IP=$(terraform output -raw server_public_ip)
-   ```
+
+    ```bash
+    cd terraform/hetzner
+    terraform apply
+    SERVER_IP=$(terraform output -raw server_public_ip)
+    ```
 
 2. **Configure Cloudflare** (use the SERVER_IP from step 1):
-   ```bash
-   cd ../cloudflare
-   # Edit terraform.tfvars with the server IP
-   terraform apply
-   ```
+
+    ```bash
+    cd ../cloudflare
+    # Edit terraform.tfvars with the server IP
+    terraform apply
+    ```
 
 3. **Save Origin Certificates**:
-   ```bash
-   cd ../../
-   # Download from Cloudflare Dashboard → SSL/TLS → Origin Server
-   # Save to ansible/certs/cloudflare.pem and ansible/certs/cloudflare.key
-   ```
+
+    ```bash
+    cd ../../
+    # Download from Cloudflare Dashboard → SSL/TLS → Origin Server
+    # Save to ansible/certs/cloudflare.pem and ansible/certs/cloudflare.key
+    ```
 
 4. **Generate Ansible inventory**:
-   ```bash
-   cd terraform/hetzner
-   terraform output -raw ansible_inventory > ../../ansible/hosts.yml
-   ```
+
+    ```bash
+    cd terraform/hetzner
+    terraform output -raw ansible_inventory > ../../ansible/hosts.yml
+    ```
 
 5. **Deploy with Ansible**:
-   ```bash
-   cd ../../
-   just apb site
-   ```
+
+    ```bash
+    cd ../../
+    just apb site
+    ```
 
 Ansible will use the Cloudflare origin certificates to set up SSL/TLS on your K3s cluster.
 
 ## What Gets Cached
 
-### Static Assets (`/static/*`)
 - CSS files
 - JavaScript files
 - Font files
+
+- Images
+
 - Images (logos, icons)
 - Edge TTL: 30 days
 - Browser TTL: 30 minutes
-
-### Media Files (`/media/*`)
-- Podcast cover images
-- User-uploaded images
-- Edge TTL: 30 days
-- Browser TTL: 30 minutes
-
-### Not Cached
-- HTML pages (dynamic content)
-- API endpoints
-- Admin panel
-- User-specific content
 
 ## SSL/TLS Configuration
 
@@ -230,6 +228,7 @@ The Terraform configuration sets up:
 - **Automatic HTTPS Rewrites**: Enabled
 
 The origin server uses Cloudflare Origin Certificates, which are:
+
 - Trusted by Cloudflare (not publicly trusted)
 - Valid for 15 years (recommended)
 - Used for Cloudflare ↔ Origin communication only
@@ -237,15 +236,18 @@ The origin server uses Cloudflare Origin Certificates, which are:
 ## Security Features
 
 ### Firewall Rules
+
 - Block access to sensitive files (`.env`, `.git`, etc.)
 - Block common WordPress exploit paths (not applicable but defensive)
 
 ### Security Headers
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: SAMEORIGIN`
 - `Referrer-Policy: strict-origin-when-cross-origin`
 
 ### DDoS Protection
+
 Cloudflare's free tier includes automatic DDoS protection.
 
 ## Performance Optimizations
@@ -263,6 +265,7 @@ Cloudflare's free tier includes automatic DDoS protection.
 **Problem**: Domain not found in Cloudflare account.
 
 **Solution**:
+
 1. Verify domain is added to Cloudflare Dashboard
 2. Check `domain` in `terraform.tfvars` matches exactly
 3. Ensure API token has access to this zone
@@ -272,6 +275,7 @@ Cloudflare's free tier includes automatic DDoS protection.
 **Problem**: Invalid or insufficient API token permissions.
 
 **Solution**:
+
 1. Verify `cloudflare_api_token` in `terraform.tfvars` is correct
 2. Check token has "Zone:Edit" permissions
 3. Verify token includes the specific zone
@@ -281,6 +285,7 @@ Cloudflare's free tier includes automatic DDoS protection.
 **Problem**: Nameservers not updated at domain registrar.
 
 **Solution**:
+
 1. Check nameservers at your domain registrar
 2. Update to Cloudflare nameservers (shown in Cloudflare Dashboard)
 3. Wait for DNS propagation (up to 24-48 hours)
@@ -290,6 +295,7 @@ Cloudflare's free tier includes automatic DDoS protection.
 **Problem**: Origin certificates not properly configured.
 
 **Solution**:
+
 1. Verify `ansible/certs/cloudflare.pem` and `cloudflare.key` exist
 2. Check certificates are valid (not expired)
 3. Ensure Ansible deployment completed successfully
@@ -298,6 +304,7 @@ Cloudflare's free tier includes automatic DDoS protection.
 ### Site Not Accessible via HTTPS
 
 **Checklist**:
+
 1. Terraform applied successfully
 2. DNS status is "active" (`terraform output dns_status`)
 3. Origin certificates deployed via Ansible
@@ -309,6 +316,7 @@ Cloudflare's free tier includes automatic DDoS protection.
 **Problem**: Static assets not being cached.
 
 **Solution**:
+
 1. Check page rules in Cloudflare Dashboard → Rules → Page Rules
 2. Verify URLs match pattern (e.g., `example.com/static/*`)
 3. Test cache headers: `curl -I https://example.com/static/test.css`
@@ -364,7 +372,7 @@ Type `yes` to confirm.
 
 After applying Terraform, you can view and modify settings in the Cloudflare Dashboard:
 
-- **DNS**: https://dash.cloudflare.com/ → Select domain → DNS
+- **DNS**: <https://dash.cloudflare.com/> → Select domain → DNS
 - **SSL/TLS**: → SSL/TLS
 - **Firewall**: → Security → WAF
 - **Page Rules**: → Rules → Page Rules
@@ -376,16 +384,19 @@ After applying Terraform, you can view and modify settings in the Cloudflare Das
 This setup is designed to work with any DNS provider:
 
 ### Namecheap
+
 1. Add domain to Cloudflare
 2. Update nameservers in Namecheap: Domain List → Manage → Nameservers → Custom DNS
 3. Enter Cloudflare nameservers
 
 ### GoDaddy
+
 1. Add domain to Cloudflare
 2. Update nameservers in GoDaddy: My Products → Domains → DNS → Nameservers → Change
 3. Enter Cloudflare nameservers (custom)
 
 ### Google Domains / Squarespace
+
 1. Add domain to Cloudflare
 2. Update nameservers: Use custom name servers
 3. Enter Cloudflare nameservers
@@ -403,6 +414,7 @@ Once nameservers are updated, Cloudflare handles all DNS management.
 ## Support
 
 For issues related to:
+
 - Cloudflare configuration → Check this README
 - Hetzner infrastructure → See `../hetzner/README.md`
 - Application deployment → See `../../ansible/README.md`
