@@ -48,6 +48,11 @@ output "postgres_volume_linux_device" {
   value       = hcloud_volume.postgres.linux_device
 }
 
+output "postgres_volume_mount_path" {
+  description = "Mount path for PostgreSQL volume (used with automount)"
+  value       = "/mnt/HC_Volume_${hcloud_volume.postgres.id}"
+}
+
 output "network_id" {
   description = "ID of the private network"
   value       = hcloud_network.private_network.id
