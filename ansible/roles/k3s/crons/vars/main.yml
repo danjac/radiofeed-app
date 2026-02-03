@@ -3,22 +3,22 @@ cronjobs:
       schedule: "20 5 * * *" # 5:20 AM every day
       command: "{{ manage_cmd }} clearsessions"
 
-    - name: "create-podcast-recommendations"
+    - name: "create-recommendations"
       schedule: "20 4 * * *" # 4:20 AM every day
       command: "{{ manage_cmd }} create_recommendations"
 
-    - name: "fetch-itunes-feeds"
+    - name: "fetch-itunes"
       schedule: "15 3 * * *" # 3:15 AM every day
       command: "{{ manage_cmd }} fetch_itunes"
 
-    - name: "parse-podcast-feeds"
+    - name: "parse-feeds"
       schedule: "*/6 * * * *" # Every 6 minutes
       command: "{{ manage_cmd }} parse_feeds"
 
-    - name: "send-episode-notifications"
+    - name: "send-notifications"
       schedule: "0 13 * * 1" # 1:00 PM every Monday
       command: "{{ manage_cmd }} send_notifications"
 
-    - name: "send-podcast-recommendations"
+    - name: "send-recommendations"
       schedule: "0 13 * * 5" # 1:00 PM every Friday
       command: "{{ manage_cmd }} send_recommendations"
