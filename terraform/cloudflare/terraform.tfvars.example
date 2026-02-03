@@ -1,0 +1,33 @@
+# Cloudflare API token
+# Create at: https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Zone:Edit for the specific zone
+cloudflare_api_token = "YOUR_CLOUDFLARE_API_TOKEN"
+
+# Domain name (must already be added to Cloudflare)
+# If you're using Namecheap or another DNS provider:
+# 1. Add domain to Cloudflare:
+#    - Go to https://dash.cloudflare.com/
+#    - Click "Add a Site"
+#    - Enter your domain name and select Free plan
+#    - Cloudflare will scan existing DNS records
+# 2. Update nameservers at your DNS provider:
+#    - Cloudflare will provide nameservers (e.g., ada.ns.cloudflare.com)
+#    - Go to your DNS provider (Namecheap, GoDaddy, etc.)
+#    - Update nameservers to Cloudflare's nameservers
+#    - Wait for DNS propagation (up to 24-48 hours, usually faster)
+# 3. Verify in Cloudflare Dashboard that status is "Active"
+domain = "example.com"
+
+# Subdomain for the application (leave empty for root domain)
+# Examples:
+#   "" = example.com
+#   "app" = app.example.com
+#   "radio" = radio.example.com
+subdomain = ""
+
+# Server IP address (get from Hetzner Terraform output)
+# Run: cd ../hetzner && terraform output server_public_ip
+server_ip = "123.456.78.90"
+
+# Enable www redirect (www.example.com -> example.com)
+enable_www_redirect = true

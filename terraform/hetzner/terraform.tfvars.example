@@ -1,0 +1,41 @@
+# Hetzner Cloud API token
+# Create at: https://console.hetzner.cloud/ -> Project -> Security -> API Tokens
+hcloud_token = "YOUR_HETZNER_CLOUD_API_TOKEN"
+
+# Cluster name prefix for all resources
+cluster_name = "radiofeed"
+
+# Hetzner datacenter location
+# Options: nbg1 (Nuremberg), fsn1 (Falkenstein), hel1 (Helsinki), ash (Ashburn), hil (Hillsboro)
+location = "nbg1"
+
+# Network zone (must match location)
+# Options: eu-central, us-east, us-west
+network_zone = "eu-central"
+
+# Private network configuration
+network_ip_range  = "10.0.0.0/16"
+subnet_ip_range   = "10.0.0.0/24"
+server_private_ip = "10.0.0.1"
+
+# SSH public key for server access
+# Paste your public key here (e.g., from ~/.ssh/id_rsa.pub)
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC... your-email@example.com"
+
+# OS image for all servers
+# Options: ubuntu-24.04, ubuntu-22.04, debian-12, etc.
+server_image = "ubuntu-24.04"
+
+# Server types (see: https://www.hetzner.com/cloud#pricing)
+# cx22: 2 vCPU, 4 GB RAM, 40 GB SSD
+# cx32: 4 vCPU, 8 GB RAM, 80 GB SSD
+# cx42: 8 vCPU, 16 GB RAM, 160 GB SSD
+server_type          = "cx22" # k3s control plane + load balancer
+database_server_type = "cx32" # PostgreSQL + Redis (needs more RAM)
+agent_server_type    = "cx22" # jobrunner and webapp nodes
+
+# Number of webapp instances
+webapp_count = 2
+
+# PostgreSQL volume size in GB
+postgres_volume_size = 50

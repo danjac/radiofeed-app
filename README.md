@@ -236,6 +236,84 @@ See [CLAUDE.md](CLAUDE.md) for complete architecture documentation.
 
 ## Deployment
 
+RadioFeed can be deployed in several ways, from simple Docker containers to production-ready K3s clusters on Hetzner Cloud.
+
+### Hetzner Cloud + Terraform (Recommended for Production)
+
+For production deployments, we provide Terraform configuration to provision infrastructure on Hetzner Cloud:
+
+**Infrastructure:**
+- K3s control plane + load balancer (Traefik)
+- Dedicated database server (PostgreSQL + Redis)
+- Job runner for cron tasks
+- Multiple web application servers
+- Private network for secure internal communication
+- Persistent volume for PostgreSQL
+
+**Quick Start:**
+
+1. **Provision infrastructure**:
+   ```bash
+   cd terraform/hetzner
+   cp terraform.tfvars.example terraform.tfvars
+   # Edit terraform.tfvars with your Hetzner API token and SSH key
+   terraform init
+   terraform apply
+   ```
+
+2. **Configure Cloudflare CDN + SSL**:
+   ```bash
+   cd ../cloudflare
+   cp terraform.tfvars.example terraform.tfvars
+   # Edit terraform.tfvars with Cloudflare API token and server IP
+   terraform init
+   terraform apply
+   # Download origin certificates from Cloudflare Dashboard
+   # Save to ansible/certs/cloudflare.pem and ansible/certs/cloudflare.key
+   ```
+
+3. **Generate Ansible inventory**:
+   ```bash
+   cd ../hetzner
+   terraform output -raw ansible_inventory > ../../ansible/hosts.yml
+   ```
+
+4. **Deploy with Ansible**:
+   ```bash
+   cd ../../
+   just apb site
+   ```
+
+See [`terraform/hetzner/README.md`](terraform/hetzner/README.md) and [`terraform/cloudflare/README.md`](terraform/cloudflare/README.md) for complete setup instructions.
+
+### Cloudflare CDN + SSL
+
+Cloudflare is used for CDN, caching, and SSL/TLS termination. The Terraform configuration sets up:
+
+- **CDN**: Caching for static assets (`/static/*`) and media files (`/media/*`)
+- **SSL/TLS**: Full SSL mode with origin certificates
+- **Security**: Firewall rules, DDoS protection, security headers
+- **Performance**: HTTP/3, Brotli compression, early hints
+
+**Requirements:**
+1. Cloudflare account (free tier is sufficient)
+2. Domain added to Cloudflare
+3. Nameservers updated at your DNS provider (e.g., Namecheap)
+4. Cloudflare origin certificates saved to `ansible/certs/`
+
+**Origin Certificates:**
+
+The Ansible deployment requires Cloudflare origin certificates:
+
+1. Go to Cloudflare Dashboard → SSL/TLS → Origin Server
+2. Click "Create Certificate"
+3. Save the certificate as `ansible/certs/cloudflare.pem`
+4. Save the private key as `ansible/certs/cloudflare.key`
+
+These certificates are used for secure communication between Cloudflare and your origin server.
+
+See [`terraform/cloudflare/README.md`](terraform/cloudflare/README.md) for detailed setup instructions.
+
 ### Environment Variables
 
 Required for production:
@@ -278,21 +356,34 @@ docker run -p 8000:8000 \
 
 ### Kubernetes/K3s Deployment
 
-Ansible playbooks are provided in the `ansible/` directory for multi-server K3s deployment:
+Ansible playbooks are provided in the `ansible/` directory for K3s deployment. These work with the Terraform-provisioned infrastructure or manually created servers.
 
+**Using with Terraform** (recommended):
+```bash
+# After terraform apply
+cd terraform/hetzner
+terraform output -raw ansible_inventory > ../../ansible/hosts.yml
+cd ../../
+just apb site
+```
+
+**Manual deployment**:
 ```bash
 cd ansible
-ansible-playbook -i hosts.yml deploy.yml
+cp hosts.yml.example hosts.yml
+# Edit hosts.yml with your server IPs
+ansible-playbook -i hosts.yml site.yml
 ```
 
 This sets up:
-- K3s cluster with HA
-- PostgreSQL with replication
+- K3s cluster with control plane and agent nodes
+- PostgreSQL with persistent volume
 - Redis for caching
-- Automated backups
-- SSL/TLS with cert-manager
+- Django application with multiple replicas
+- Traefik load balancer with SSL/TLS
+- Automated cron jobs for feed parsing
 
-See `ansible/README.md` for details.
+See `ansible/README.md` for detailed deployment instructions.
 
 ### Post-Deployment
 
