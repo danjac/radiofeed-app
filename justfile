@@ -101,7 +101,7 @@ precommitall:
 # Run Ansible playbook
 [group('deployment')]
 apb playbook *args:
-    ansible-playbook -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} {{ args }}
+    ansible-playbook -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} --ask-vault-pass {{ args }}
 
 # Run Github workflow
 [group('deployment')]

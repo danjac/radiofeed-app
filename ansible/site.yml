@@ -12,24 +12,24 @@
   become: true
   gather_facts: false
   roles:
-    - k3s_prereqs
+    - k3s/prereqs
 - name: Set up K3s cluster
   hosts: server
   become: true
   gather_facts: false
   roles:
-    - k3s_cluster
+    - k3s/cluster
 - name: Cleanup tasks for k3s
   hosts: all
   become: true
   gather_facts: true
   roles:
-    - k3s_cleanup
+    - k3s/cleanup
 - name: Deploy k3s application
   hosts: server
   become: false
   gather_facts: true
   roles:
-    - k3s_user
-    - k3s_deploy
-    - k3s_scripts
+    - k3s/user
+    - k3s/deploy
+    - k3s/scripts

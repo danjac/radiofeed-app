@@ -3,6 +3,6 @@
   become: false
   gather_facts: true
   roles:
-    - k3s_deploy
-    - k3s_crons
-    - k3s_scripts
+    - k3s/deploy
+    - k3s/crons
+    - k3s/scripts

@@ -26,6 +26,7 @@
             --key=/tmp/{{ k3s_cloudflare_key }} \
             -n default --dry-run=client -o yaml | kubectl apply -f -
       args:
+        executable: /bin/bash
         creates: "/tmp/cloudflare-origin-cert.created"
     - name: Remove certs from /tmp after secret is created
       ansible.builtin.file:
@@ -76,15 +77,14 @@
       changed_when: "'restarted' in k3s_kubectl_restart_result.stdout"
     - name: Get the current image of running django-app pod
       ansible.builtin.shell: |
-        kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default
+        kubectl get pods -l app=django-app -o jsonpath='{.items[0].spec.containers[0].image}' -n default || echo ""
       register: k3s_current_image
       changed_when: false
-      ignore_errors: true
+      failed_when: false
     - name: Set default image if current image is empty
       ansible.builtin.set_fact:
         k3s_image: "{{ k3s_current_image.stdout if k3s_current_image.stdout | length > 0 else k3s_docker_image }}"
       changed_when: false
-      when: k3s_current_image is defined and k3s_current_image.stdout is defined
     - name: Create a temporary directory
       ansible.builtin.tempfile:
         state: directory
@@ -95,10 +95,10 @@
         k3s_total_cpu_millicores: "{{ ansible_processor_vcpus * 1000 }}"
     - name: Calculate resource requests/limits
       ansible.builtin.set_fact:
-        k3s_mem_request: "{{ (k3s_total_memory_mb | int * memory_request_percent) | int }}Mi"
-        k3s_mem_limit: "{{ (k3s_total_memory_mb | int * memory_limit_percent) | int }}Mi"
-        k3s_cpu_request: "{{ (k3s_total_cpu_millicores | int * cpu_request_percent) | int }}m"
-        k3s_cpu_limit: "{{ (k3s_total_cpu_millicores | int * cpu_limit_percent) | int }}m"
+        k3s_mem_request: "{{ (k3s_total_memory_mb | int * k3s_memory_request_percent) | int }}Mi"
+        k3s_mem_limit: "{{ (k3s_total_memory_mb | int * k3s_memory_limit_percent) | int }}Mi"
+        k3s_cpu_request: "{{ (k3s_total_cpu_millicores | int * k3s_cpu_request_percent) | int }}m"
+        k3s_cpu_limit: "{{ (k3s_total_cpu_millicores | int * k3s_cpu_limit_percent) | int }}m"
     - name: Render Kubernetes manifests
       vars:
         k3s_database_url: "postgresql://postgres:{{ k3s_postgres.password }}@postgres.default.svc.cluster.local:5432/postgres"
@@ -129,7 +129,7 @@
         KUBECTL_APPLYSET: "true"
       register: k3s_kubectl_apply_result
       changed_when: >
-        'created' in k3s_kubectl_apply_result.stdout or 'configured' in k3s_kubectl_apply_result.stdout or 'deleted' in k3s_kubectl_apply_result.stdout"
+        'created' in k3s_kubectl_apply_result.stdout or 'configured' in k3s_kubectl_apply_result.stdout or 'deleted' in k3s_kubectl_apply_result.stdout
 
     - name: Delete manifests dir
       ansible.builtin.file:

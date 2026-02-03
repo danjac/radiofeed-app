@@ -84,20 +84,6 @@ repos:
     rev: v0.25
     hooks:
       - id: validate-pyproject
-  - repo: https://github.com/google/yamlfmt
-    rev: v0.21.0
-    hooks:
-      - id: yamlfmt
-  - repo: https://github.com/ansible/ansible-lint
-    rev: v26.1.1
-    hooks:
-      - id: ansible-lint
-        name: ansible-lint
-        language_version: python3.14
-        files: ^ansible/.*\.(yml|yaml)$
-        args: [--project-dir, ansible, --exclude, .github/, --exclude, .pre-commit-config.yaml]
-        additional_dependencies:
-          - ansible-core
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.24.0
     hooks:

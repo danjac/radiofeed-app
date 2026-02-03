@@ -7,9 +7,14 @@
   register: user_ssh_key_files
   delegate_to: localhost
   run_once: true
+- name: Initialize SSH public keys list
+  ansible.builtin.set_fact:
+    user_ssh_public_keys: []
+  delegate_to: localhost
+  run_once: true
 - name: Load SSH key contents
   ansible.builtin.set_fact:
-    user_ssh_public_keys: "{{ user_ssh_public_keys | default([]) + [lookup('file', item)] }}"
+    user_ssh_public_keys: "{{ user_ssh_public_keys + [lookup('file', item)] }}"
   with_items: "{{ user_ssh_key_files.files | map(attribute='path') | list }}"
   delegate_to: localhost
   run_once: true

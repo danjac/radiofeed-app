@@ -8,6 +8,7 @@
     --advertise-address={{ private_ip }} \
     --tls-san={{ private_ip }}
   args:
+    executable: /bin/bash
     creates: /usr/local/bin/k3s
   changed_when: true
 - name: Get the K3s join token from the control plane (for worker nodes)
@@ -26,6 +27,7 @@
     --flannel-iface=enp7s0 \
     --server https://{{ private_ip }}:6443
   args:
+    executable: /bin/bash
     creates: /usr/local/bin/k3s-agent
   delegate_to: "{{ item }}"
   loop: "{{ groups['agents'] }}"
