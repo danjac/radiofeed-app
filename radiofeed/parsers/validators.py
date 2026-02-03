@@ -23,7 +23,7 @@ def pg_integer(value: Any) -> int | None:
     """Validate that value is within PostgreSQL integer range."""
     try:
         value = int(value)
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         return None
 
     if value not in _PG_INTEGER_RANGE:

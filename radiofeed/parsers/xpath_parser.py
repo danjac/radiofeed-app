@@ -44,7 +44,7 @@ class XPathParser:
         """Returns first matching element, or None if not found."""
         try:
             return next(self.iterparse(*args, **kwargs))
-        except (StopIteration, lxml.etree.XMLSyntaxError):
+        except StopIteration, lxml.etree.XMLSyntaxError:
             return None
 
     def value(self, element: OptionalXmlElement, *paths: str) -> str | None:

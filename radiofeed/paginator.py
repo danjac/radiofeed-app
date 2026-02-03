@@ -132,7 +132,7 @@ class Paginator:
         """Returns a page object."""
         try:
             number = validate_page_number(number)
-        except (PageNotAnInteger, EmptyPage):
+        except PageNotAnInteger, EmptyPage:
             number = 1
 
         return Page(paginator=self, number=number)
