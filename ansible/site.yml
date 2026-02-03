@@ -4,32 +4,36 @@
   become: false
   gather_facts: true
   vars:
-    ansible_user: root
+      ansible_user: root
   roles:
-    - user
+      - user
+
 - name: Pre-install requirements
   hosts: all
   become: true
   gather_facts: false
   roles:
-    - k3s/prereqs
+      - k3s/prereqs
+
 - name: Set up K3s cluster
   hosts: server
   become: true
   gather_facts: false
   roles:
-    - k3s/cluster
+      - k3s/cluster
+
 - name: Cleanup tasks for k3s
   hosts: all
   become: true
   gather_facts: true
   roles:
     - k3s/cleanup
+
 - name: Deploy k3s application
   hosts: server
   become: false
   gather_facts: true
   roles:
-    - k3s/user
-    - k3s/deploy
-    - k3s/scripts
+      - k3s/user
+      - k3s/deploy
+      - k3s/scripts

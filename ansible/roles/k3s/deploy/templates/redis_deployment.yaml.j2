@@ -16,7 +16,7 @@ spec:
         role: database
       containers:
         - name: redis
-          image: {{ k3s_redis.image }}
+          image: {{ redis.image }}
           ports:
             - containerPort: 6379
           livenessProbe:

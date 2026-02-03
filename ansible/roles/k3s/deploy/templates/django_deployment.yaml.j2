@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: django-app
 spec:
-  replicas: {{ k3s_num_webapps }}
+  replicas: {{ num_webapps }}
   selector:
     matchLabels:
       app: django-app
@@ -21,14 +21,14 @@ spec:
         role: webapp
       containers:
         - name: django
-          image: {{ k3s_image }}
+          image: {{ image }}
           resources:
             requests:
-                memory: "{{ k3s_mem_request }}"
-                cpu: "{{ k3s_cpu_request }}"
+                memory: "{{ mem_request }}"
+                cpu: "{{ cpu_request }}"
             limits:
-                memory: "{{ k3s_mem_limit }}"
-                cpu: "{{ k3s_cpu_limit }}"
+                memory: "{{ mem_limit }}"
+                cpu: "{{ cpu_limit }}"
           command: ["/bin/sh", "-c"]
           args: ["./entrypoint.sh"]
           ports:

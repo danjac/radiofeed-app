@@ -1,34 +1,26 @@
 - name: Download and install K3s on server
   ansible.builtin.shell: |
-    set -o pipefail
-    curl -sfL https://get.k3s.io | sh -s - \
-    --node-name="$(hostname -f)" \
-    --node-ip={{ private_ip }} \
-    --flannel-iface=enp7s0 \
-    --advertise-address={{ private_ip }} \
-    --tls-san={{ private_ip }}
-  args:
-    executable: /bin/bash
-    creates: /usr/local/bin/k3s
-  changed_when: true
+      curl -sfL https://get.k3s.io | sh -s - \
+      --node-name="$(hostname -f)" \
+      --node-ip={{ private_ip }} \
+      --flannel-iface=enp7s0 \
+      --advertise-address={{ private_ip }} \
+      --tls-san={{ private_ip }}
+
 - name: Get the K3s join token from the control plane (for worker nodes)
-  ansible.builtin.command: k3s token create
+  ansible.builtin.shell: k3s token create
   register: k3s_token
-  changed_when: false
+
 - name: Set K3s join token as a fact
   ansible.builtin.set_fact:
-    k3s_token: "{{ k3s_token.stdout }}"
+      k3s_token: "{{ k3s_token.stdout }}"
   changed_when: false
+
 - name: Download and install K3s as a worker node
   ansible.builtin.shell: |
-    set -o pipefail
-    curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
-    --node-name="$(hostname -f)" \
-    --flannel-iface=enp7s0 \
-    --server https://{{ private_ip }}:6443
-  args:
-    executable: /bin/bash
-    creates: /usr/local/bin/k3s-agent
+      curl -sfL https://get.k3s.io | K3S_TOKEN={{ k3s_token }} sh -s - agent \
+      --node-name="$(hostname -f)" \
+      --flannel-iface=enp7s0 \
+      --server https://{{ private_ip }}:6443
   delegate_to: "{{ item }}"
   loop: "{{ groups['agents'] }}"
-  changed_when: true

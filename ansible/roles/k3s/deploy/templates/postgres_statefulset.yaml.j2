@@ -17,7 +17,7 @@ spec:
         role: database  # Ensures it runs on the correct node
       containers:
         - name: postgres
-          image: {{ k3s_postgres.image }}
+          image: {{ postgres.image }}
           args:
             - "postgres"
             - "-c"
@@ -62,4 +62,4 @@ spec:
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
-            claimName: postgres-pvc-{{ k3s_postgres_major_version }}
+            claimName: postgres-pvc-{{ postgres_major_version }}

@@ -1,10 +1,10 @@
 - name: Add scripts to access the cluster
   ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "{{ item }}"
-    mode: "u+x"
+      src: "{{ item }}.j2"
+      dest: "{{ item }}"
+      mode: "u+x"
   loop:
-    - deploy.sh
-    - manage.sh
-    - psql.sh
-    - pg_upgrade.sh
+      - deploy.sh
+      - manage.sh
+      - psql.sh
+      - pg_upgrade.sh

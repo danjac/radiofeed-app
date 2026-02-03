@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: configmap
 data:
-{% for item in k3s_configmap %}
+{% for item in configmap %}
    {{ item.name|upper }}: "{{ item.value }}"
 {% endfor %}

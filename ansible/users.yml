@@ -4,6 +4,6 @@
   become: false
   gather_facts: true
   vars:
-    ansible_user: root
+      ansible_user: root
   roles:
-    - user
+      - user

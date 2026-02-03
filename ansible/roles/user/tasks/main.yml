@@ -4,48 +4,50 @@
     patterns: "*.pub"
     use_regex: false
     file_type: file
-  register: user_ssh_key_files
+  register: ssh_key_files
   delegate_to: localhost
   run_once: true
-- name: Initialize SSH public keys list
-  ansible.builtin.set_fact:
-    user_ssh_public_keys: []
-  delegate_to: localhost
-  run_once: true
+
 - name: Load SSH key contents
-  ansible.builtin.set_fact:
-    user_ssh_public_keys: "{{ user_ssh_public_keys + [lookup('file', item)] }}"
-  with_items: "{{ user_ssh_key_files.files | map(attribute='path') | list }}"
+  set_fact:
+    ssh_public_keys: "{{ ssh_public_keys | default([]) + [lookup('file', item)] }}"
+  with_items: "{{ ssh_key_files.files | map(attribute='path') | list }}"
   delegate_to: localhost
   run_once: true
+
 - name: Abort if no SSH public keys found
   ansible.builtin.fail:
     msg: >
-      No SSH public keys found in {{ playbook_dir }}/ssh-keys. Ensure at least one *.pub file exists before running this playbook.
+      No SSH public keys found in {{ playbook_dir }}/ssh-keys.
+      Ensure at least one *.pub file exists before running this playbook.
+  when: ssh_public_keys | length == 0
 
-  when: user_ssh_public_keys | length == 0
 - name: Set deploy user
   ansible.builtin.set_fact:
-    user_deploy_user: "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+    deploy_user:  "{{ hostvars[inventory_hostname]['ansible_user'] }}"
+
 - name: Create deploy user
   ansible.builtin.user:
-    name: "{{ user_deploy_user }}"
-    createhome: true
+    name: "{{ deploy_user }}"
+    createhome: yes
     shell: /bin/bash
     state: present
     groups: sudo
-    append: true
-- name: Deploy all authorized SSH keys for "deploy" user
+    append: yes
+
+
+- name: Deploy all authorized SSH keys for deploy user
   ansible.posix.authorized_key:
-    user: "{{ user_deploy_user }}"
+    user: "{{ deploy_user }}"
     key: "{{ item }}"
     state: present
     exclusive: true
-  loop: "{{ user_ssh_public_keys }}"
+  loop: "{{ ssh_public_keys }}"
+
 - name: Allow user to run sudo without password
   ansible.builtin.lineinfile:
-    path: /etc/sudoers.d/{{ user_deploy_user }}
-    line: "{{ user_deploy_user }} ALL=(ALL) NOPASSWD: ALL" # pragma: allowlist secret
+    path: /etc/sudoers.d/{{ deploy_user }}
+    line: "{{ deploy_user }} ALL=(ALL) NOPASSWD: ALL"
     create: true
     mode: "0440"
     validate: "visudo -cf %s"
