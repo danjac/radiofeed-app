@@ -58,3 +58,5 @@ COPY --from=staticfiles --chown=django:django /app/staticfiles /app/staticfiles
 COPY --chown=django:django . .
 
 USER django
+
+CMD ["./entrypoint.sh"]
