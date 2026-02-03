@@ -15,6 +15,13 @@
   roles:
       - k3s/prereqs
 
+- name: Setup PostgreSQL volume
+  hosts: agents
+  become: true
+  gather_facts: false
+  roles:
+      - k3s/postgres_volume
+
 - name: Set up K3s cluster
   hosts: server
   become: true

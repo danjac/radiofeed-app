@@ -1,0 +1,17 @@
+# PostgreSQL volume configuration
+# This role expects the postgres_volume variable to be defined in hosts.yml
+# Example in hosts.yml:
+#   postgres_volume: /mnt/HC_Volume_104566943
+#
+# The volume path should point to a mounted block storage volume
+# (e.g., Hetzner Cloud Volume) that is attached to the database node.
+#
+# For Hetzner Cloud volumes, ensure the volume is:
+# 1. Created in the Hetzner Cloud console
+# 2. Attached to the database server
+# 3. The path here should be where you want it mounted (e.g., /mnt/HC_Volume_104566943)
+#
+# This role will:
+# - Create the directory with proper permissions
+# - Set ownership to UID/GID 999 (PostgreSQL user in container)
+# - Set permissions to 0700 (required by PostgreSQL)
