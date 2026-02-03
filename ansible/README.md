@@ -1,6 +1,6 @@
-# Ansible Deployment for RadioFeed K3s Cluster
+# Ansible Deployment for Radiofeed K3s Cluster
 
-This directory contains Ansible playbooks for deploying RadioFeed to a K3s (lightweight Kubernetes) cluster. The deployment includes the Django web application, PostgreSQL database, Redis cache, and scheduled cron jobs.
+This directory contains Ansible playbooks for deploying Radiofeed to a K3s (lightweight Kubernetes) cluster. The deployment includes the Django web application, PostgreSQL database, Redis cache, and scheduled cron jobs.
 
 ## Architecture Overview
 
@@ -101,7 +101,7 @@ cp ~/teammate-key.pub ansible/ssh-keys/teammate.pub
 
 ### 4. Docker Image
 
-You need a Docker image of the RadioFeed application pushed to a container registry.
+You need a Docker image of the Radiofeed application pushed to a container registry.
 
 **Option A: Use GitHub Container Registry (Recommended)**
 

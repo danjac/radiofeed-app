@@ -1,4 +1,4 @@
-# RadioFeed
+# Radiofeed
 
 ![coverage](/static/img/coverage.svg?raw=True)
 
@@ -236,7 +236,7 @@ See [CLAUDE.md](CLAUDE.md) for complete architecture documentation.
 
 ## Deployment
 
-RadioFeed can be deployed in several ways, from simple Docker containers to production-ready K3s clusters on Hetzner Cloud.
+Radiofeed can be deployed in several ways, from simple Docker containers to production-ready K3s clusters on Hetzner Cloud.
 
 ### Hetzner Cloud + Terraform (Recommended for Production)
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-RadioFeed is a Django-based podcast aggregator (podcatcher) web application. The app uses HTMX for dynamic UI updates, Tailwind CSS for styling, and PostgreSQL for data persistence with full-text search capabilities.
+Radiofeed is a Django-based podcast aggregator (podcatcher) web application. The app uses HTMX for dynamic UI updates, Tailwind CSS for styling, and PostgreSQL for data persistence with full-text search capabilities.
 
 ## Development Commands
 

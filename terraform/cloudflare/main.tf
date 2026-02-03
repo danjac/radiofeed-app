@@ -26,7 +26,7 @@ resource "cloudflare_record" "server" {
   type    = "A"
   proxied = true # Enable Cloudflare proxy (CDN + SSL)
   ttl     = 1     # Automatic TTL when proxied
-  comment = "RadioFeed server node - managed by Terraform"
+  comment = "Radiofeed server node - managed by Terraform"
 }
 
 # Optional: WWW redirect

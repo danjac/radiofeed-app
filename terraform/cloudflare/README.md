@@ -1,6 +1,6 @@
 # Cloudflare CDN and SSL Configuration with Terraform
 
-This directory contains Terraform configuration for setting up Cloudflare as a CDN and SSL/TLS provider for RadioFeed. This setup assumes your domain is registered with another DNS provider (e.g., Namecheap, GoDaddy) and you're using Cloudflare as a proxy for CDN and security features.
+This directory contains Terraform configuration for setting up Cloudflare as a CDN and SSL/TLS provider for Radiofeed. This setup assumes your domain is registered with another DNS provider (e.g., Namecheap, GoDaddy) and you're using Cloudflare as a proxy for CDN and security features.
 
 ## What This Configures
 

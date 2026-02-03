@@ -1,6 +1,6 @@
 # Hetzner Cloud Infrastructure with Terraform
 
-This directory contains Terraform configuration for provisioning RadioFeed infrastructure on Hetzner Cloud. The infrastructure consists of multiple servers for running a K3s cluster with separate nodes for control plane, database, job processing, and web applications.
+This directory contains Terraform configuration for provisioning Radiofeed infrastructure on Hetzner Cloud. The infrastructure consists of multiple servers for running a K3s cluster with separate nodes for control plane, database, job processing, and web applications.
 
 ## Architecture
 
