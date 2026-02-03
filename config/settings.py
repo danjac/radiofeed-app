@@ -98,10 +98,10 @@ if env.bool("USE_CONNECTION_POOL", default=True):
         "pool": (
             {
                 "min_size": env.int("CONN_POOL_MIN_SIZE", 2),
-                "max_size": env.int("CONN_POOL_MAX_SIZE", 100),
+                "max_size": env.int("CONN_POOL_MAX_SIZE", 10),
                 "max_lifetime": env.int("CONN_POOL_MAX_LIFETIME", 1800),
                 "max_idle": env.int("CONN_POOL_MAX_IDLE", 120),
-                "max_waiting": env.int("CONN_POOL_MAX_WAITING", 25),
+                "max_waiting": env.int("CONN_POOL_MAX_WAITING", 200),
                 # assumes 30s statement_timeout in PostgreSQL
                 "timeout": env.int("CONN_POOL_TIMEOUT", default=20),
             }
