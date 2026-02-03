@@ -10,6 +10,8 @@ wsgi_app = "config.wsgi"
 
 accesslog = "-"
 access_log_format = '%(t)s %(h)s - "%(m)s %(U)s" %(s)s %(L)s'
+errorlog = "-"
+loglevel = "info"
 
 # ---- TIMEOUTS ----
 
