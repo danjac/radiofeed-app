@@ -262,8 +262,13 @@ Update `ansible/hosts.yml` with the new server IPs and re-run Ansible.
 
 Edit `terraform.tfvars`:
 ```hcl
-database_server_type = "cx42"  # 8 vCPU, 16 GB RAM
+database_server_type = "cpx41"  # 8 vCPU, 16 GB RAM
 ```
+
+Available server types (as of 2026):
+- **CPX series** (shared vCPU): cpx11, cpx21, cpx31, cpx41, cpx51
+- **CCX series** (dedicated vCPU): ccx13, ccx23, ccx33, ccx43, ccx53, ccx63
+- **CAX series** (ARM): cax11, cax21, cax31, cax41
 
 Then:
 ```bash

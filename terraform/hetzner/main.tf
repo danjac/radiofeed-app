@@ -171,7 +171,6 @@ resource "hcloud_server" "server" {
 resource "hcloud_server_network" "server_network" {
   server_id  = hcloud_server.server.id
   network_id = hcloud_network.private_network.id
-  ip         = var.server_private_ip
 }
 
 # Database node (PostgreSQL + Redis)

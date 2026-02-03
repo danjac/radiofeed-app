@@ -34,12 +34,6 @@ variable "subnet_ip_range" {
   default     = "10.0.0.0/24"
 }
 
-variable "server_private_ip" {
-  description = "Private IP address for the server node"
-  type        = string
-  default     = "10.0.0.1"
-}
-
 variable "ssh_public_key" {
   description = "SSH public key for server access"
   type        = string
@@ -54,19 +48,19 @@ variable "server_image" {
 variable "server_type" {
   description = "Server type for k3s server node"
   type        = string
-  default     = "cx22" # 2 vCPU, 4 GB RAM
+  default     = "cx23" # 2 vCPU, 4 GB RAM
 }
 
 variable "database_server_type" {
   description = "Server type for database node"
   type        = string
-  default     = "cx32" # 4 vCPU, 8 GB RAM
+  default     = "cx23" # 2 vCPU, 4 GB RAM
 }
 
 variable "agent_server_type" {
   description = "Server type for agent nodes (jobrunner, webapps)"
   type        = string
-  default     = "cx22" # 2 vCPU, 4 GB RAM
+  default     = "cx23" # 2 vCPU, 4 GB RAM
 }
 
 variable "webapp_count" {
