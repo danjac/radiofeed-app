@@ -49,16 +49,27 @@ DNS propagation can take 24-48 hours, but usually completes within a few hours.
 
 ### 4. Cloudflare API Token
 
-Create an API token with Zone:Edit permissions:
+Create an API token with all required permissions:
 
 1. Go to: <https://dash.cloudflare.com/profile/api-tokens>
 2. Click "Create Token"
-3. Use "Edit zone DNS" template
-4. Under "Zone Resources":
-    - Include → Specific zone → Select your domain
+3. Click "Create Custom Token" (do NOT use a template)
+4. Configure permissions:
+   - **Permissions** (all zone-level):
+     - Zone → Zone → Edit
+     - Zone → Zone Settings → Edit
+     - Zone → DNS → Edit
+     - Zone → Page Rules → Edit
+     - Zone → Zone WAF → Edit
+     - Zone → Transform Rules → Edit
+   - **Zone Resources**:
+     - Include → Specific zone → Select your domain
+   - **Client IP Address Filtering** (optional): Leave as "Is in" with your IP for extra security
 5. Click "Continue to summary"
-6. Click "Create Token"
+6. Review permissions and click "Create Token"
 7. Copy the token (you won't see it again!)
+
+**Note**: All permissions are at the **Zone** level (not Account level), since this configuration manages zone-specific resources.
 
 ### 5. Hetzner Server IP
 
@@ -205,6 +216,78 @@ chmod 600 ansible/certs/cloudflare.*
 
 Ansible will use the Cloudflare origin certificates to set up SSL/TLS on your K3s cluster.
 
+## Mailgun DNS Configuration
+
+If you're using Mailgun for sending emails (notifications, password resets, etc.), you need to manually add Mailgun DNS records to Cloudflare.
+
+### 1. Get Mailgun DNS Records
+
+1. Log in to [Mailgun Dashboard](https://app.mailgun.com/)
+2. Go to **Sending** → **Domains**
+3. Select your domain (or add it if not already added)
+4. Click **DNS Records** tab
+5. You'll see several records that need to be added:
+   - **TXT records** (SPF and DKIM for email authentication)
+   - **MX records** (for receiving email, optional)
+   - **CNAME record** (for tracking, optional)
+
+### 2. Add Records to Cloudflare
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
+2. Select your domain (radiofeed.app)
+3. Go to **DNS** → **Records**
+4. For each Mailgun record, click **Add record**:
+
+**SPF Record (TXT)**:
+- **Type**: TXT
+- **Name**: @ (or your subdomain)
+- **Content**: `v=spf1 include:mailgun.org ~all` (copy from Mailgun)
+- **TTL**: Auto
+- Click **Save**
+
+**DKIM Records (TXT)**:
+- **Type**: TXT
+- **Name**: Copy from Mailgun (e.g., `k1._domainkey`)
+- **Content**: Copy the long DKIM key from Mailgun
+- **TTL**: Auto
+- Click **Save**
+
+Repeat for additional DKIM records (usually 2-3).
+
+**MX Records** (optional, only if you want to receive email):
+- **Type**: MX
+- **Name**: @ (or your subdomain)
+- **Mail server**: Copy from Mailgun (e.g., `mxa.mailgun.org`)
+- **Priority**: 10
+- **TTL**: Auto
+- Click **Save**
+
+**CNAME for Tracking** (optional):
+- **Type**: CNAME
+- **Name**: `email` (or as specified by Mailgun)
+- **Target**: `mailgun.org`
+- **TTL**: Auto
+- **Proxy status**: DNS only (gray cloud, not proxied)
+- Click **Save**
+
+### 3. Verify in Mailgun
+
+1. Return to Mailgun Dashboard → DNS Records
+2. Click **Verify DNS Settings**
+3. Wait for verification (may take a few minutes for DNS propagation)
+4. All records should show green checkmarks when verified
+
+### 4. Test Email Sending
+
+Once verified, update your application's environment variables:
+- `EMAIL_HOST=smtp.mailgun.org`
+- `MAILGUN_API_KEY=<your-api-key>`
+- `DEFAULT_FROM_EMAIL=noreply@yourdomain.com`
+
+Test sending an email from your Django application.
+
+**Note**: DNS propagation can take up to 24-48 hours, but usually completes within minutes to hours.
+
 ## What Gets Cached
 
 - CSS files
@@ -277,8 +360,11 @@ Cloudflare's free tier includes automatic DDoS protection.
 **Solution**:
 
 1. Verify `cloudflare_api_token` in `terraform.tfvars` is correct
-2. Check token has "Zone:Edit" permissions
-3. Verify token includes the specific zone
+2. Check token has ALL required permissions (see section 4 above):
+   - Zone: Zone (Edit), Zone Settings (Edit), DNS (Edit), Page Rules (Edit), Zone WAF (Edit), Transform Rules (Edit)
+   - All permissions must be at the Zone level, not Account level
+3. Verify token includes the specific zone in Zone Resources
+4. If token was created with wrong permissions, delete the old token and create a new one with correct permissions
 
 ### DNS Status Shows "Pending"
 

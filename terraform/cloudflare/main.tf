@@ -22,7 +22,7 @@ data "cloudflare_zone" "domain" {
 resource "cloudflare_record" "server" {
   zone_id = data.cloudflare_zone.domain.id
   name    = var.subdomain != "" ? var.subdomain : "@"
-  value   = var.server_ip
+  content = var.server_ip
   type    = "A"
   proxied = true # Enable Cloudflare proxy (CDN + SSL)
   ttl     = 1     # Automatic TTL when proxied
@@ -34,7 +34,7 @@ resource "cloudflare_record" "www" {
   count   = var.enable_www_redirect ? 1 : 0
   zone_id = data.cloudflare_zone.domain.id
   name    = "www"
-  value   = var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain
+  content = var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain
   type    = "CNAME"
   proxied = true
   ttl     = 1
@@ -63,7 +63,6 @@ resource "cloudflare_zone_settings_override" "domain_settings" {
     early_hints = "on"
     http2 = "on"
     http3 = "on"
-    min_tls_version = "1.2"
     opportunistic_encryption = "on"
     rocket_loader = "off" # Disable for HTMX/Alpine.js compatibility
 
@@ -77,24 +76,11 @@ resource "cloudflare_zone_settings_override" "domain_settings" {
   }
 }
 
-# Page rule for caching static assets
-resource "cloudflare_page_rule" "cache_static" {
+# Page rule for caching static assets by file extension
+resource "cloudflare_page_rule" "cache_static_assets" {
   zone_id = data.cloudflare_zone.domain.id
-  target  = "${var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain}/static/*"
+  target  = "${var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain}/*.{css,js,png,jpg,jpeg,webp,gif,svg,ico,woff,woff2}"
   priority = 1
-
-  actions {
-    cache_level = "cache_everything"
-    edge_cache_ttl = 2592000 # 30 days
-    browser_cache_ttl = 1800  # 30 minutes
-  }
-}
-
-# Page rule for caching media files (covers, etc.)
-resource "cloudflare_page_rule" "cache_media" {
-  zone_id = data.cloudflare_zone.domain.id
-  target  = "${var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain}/media/*"
-  priority = 2
 
   actions {
     cache_level = "cache_everything"
@@ -133,6 +119,11 @@ resource "cloudflare_ruleset" "transform_response_headers" {
 
     action_parameters {
       headers {
+        name      = "Referrer-Policy"
+        operation = "set"
+        value     = "strict-origin-when-cross-origin"
+      }
+      headers {
         name      = "X-Content-Type-Options"
         operation = "set"
         value     = "nosniff"
@@ -141,11 +132,6 @@ resource "cloudflare_ruleset" "transform_response_headers" {
         name      = "X-Frame-Options"
         operation = "set"
         value     = "SAMEORIGIN"
-      }
-      headers {
-        name      = "Referrer-Policy"
-        operation = "set"
-        value     = "strict-origin-when-cross-origin"
       }
     }
   }

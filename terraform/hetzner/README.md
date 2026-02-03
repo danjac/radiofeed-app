@@ -158,8 +158,22 @@ Edit `ansible/hosts.yml` and set:
 - `admins` - Admin email addresses
 - `secret_key` - Generate with `python manage.py generate_secret_key`
 - `postgres_password` - Secure database password
+- `postgres_volume` - PostgreSQL volume device path (see below)
 - `mailgun_api_key` - Mailgun API key (if using email)
 - `sentry_url` - Sentry DSN (if using error tracking)
+
+**Getting the PostgreSQL Volume Device Path:**
+
+The `postgres_volume` variable needs the Linux device path for the PostgreSQL volume created by Terraform. Get it with:
+
+```bash
+cd terraform/hetzner
+terraform output postgres_volume_linux_device
+```
+
+Example output: `/dev/disk/by-id/scsi-0HC_Volume_12345678`
+
+Copy this value into your `ansible/hosts.yml` for the `postgres_volume` variable.
 
 ### 3. Encrypt Sensitive Data
 

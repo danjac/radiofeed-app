@@ -20,7 +20,7 @@ output "server_record_name" {
 
 output "server_record_value" {
   description = "DNS record value (IP address)"
-  value       = cloudflare_record.server.value
+  value       = cloudflare_record.server.content
 }
 
 output "dns_status" {
