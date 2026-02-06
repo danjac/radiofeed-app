@@ -151,8 +151,6 @@ TEMPLATES = [
     }
 ]
 
-# prevent deprecation warnings
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Server settings
 
