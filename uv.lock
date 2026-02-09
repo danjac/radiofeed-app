@@ -303,15 +303,15 @@ wheels = [
 
 [[package]]
 name = "django-allauth"
-version = "65.14.0"
+version = "65.14.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/23/9b/061a6ac65c602eb721b13fbf9c665b20fb900f113a03ec8521b5fcf16b83/django_allauth-65.14.0.tar.gz", hash = "sha256:5529227aba2b1377d900e9274a3f24496c645e65400fbae3cad5789944bc4d0b", size = 1991909, upload-time = "2026-01-17T18:43:12.928Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/02/549b6f41ba3e55d4e2cf8e181cdf57b50035a3c0bdddb710a7df0b24efb0/django_allauth-65.14.1.tar.gz", hash = "sha256:2467656d0adc835607e407847054979ab5a943778f6eb8980ed2a29eee6c5790", size = 1993088, upload-time = "2026-02-07T22:36:52.279Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ce/c8/2f959ff8466913d95ba72eb4a29bd7998d28a559786033a97b5bbdda2b81/django_allauth-65.14.0-py3-none-any.whl", hash = "sha256:448f5f7877f95fcbe1657256510fe7822d7871f202521a29e23ef937f3325a97", size = 1793052, upload-time = "2026-01-17T18:43:08.954Z" },
+    { url = "https://files.pythonhosted.org/packages/28/80/05e2b3fffb80260af2dbb179d186929d7531bc9331974ba774d1d8eb3e38/django_allauth-65.14.1-py3-none-any.whl", hash = "sha256:204d8a07f217c41769a62aa4c7ae7afeb2886c841bebda6964e613e5be72e8b3", size = 1793120, upload-time = "2026-02-07T22:37:03.486Z" },
 ]
 
 [package.optional-dependencies]
@@ -591,14 +591,14 @@ wheels = [
 
 [[package]]
 name = "gunicorn"
-version = "25.0.2"
+version = "25.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b7/1d/c8e2efc43a720af04832c88f26d10ee58397269769d646bbe0d5ed93174f/gunicorn-25.0.2.tar.gz", hash = "sha256:8e44f2f7cf791de60c84ce119221c26121fd2ffcb27badfbced5a1c919d35d67", size = 9701969, upload-time = "2026-02-06T13:21:40.436Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f3/e5/e1d2225d2b75fe4988821715d2c526fdf7b39f4a7260aa7e2bb4b25ec65c/gunicorn-25.0.3.tar.gz", hash = "sha256:b53a7fff1a07b825b962af320554de44ae77a26abfa373711ff3f83d57d3506d", size = 9702357, upload-time = "2026-02-07T16:53:52.72Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/59/90/37e392c44be75fb674f7e0161eef42dd890eb9e6883430d9468e061570b9/gunicorn-25.0.2-py3-none-any.whl", hash = "sha256:288c002141d73ec8d05fdbb7c8453e3d01d3209d8ff6ad425df0ae1430153ca2", size = 171712, upload-time = "2026-02-06T13:21:34.543Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/84/117f39896ded517149be72d16c02252885690e9b0d1b84281944928f61aa/gunicorn-25.0.3-py3-none-any.whl", hash = "sha256:aca364c096c81ca11acd4cede0aaeea91ba76ca74e2c0d7f879154db9d890f35", size = 171728, upload-time = "2026-02-07T16:53:49.546Z" },
 ]
 
 [[package]]
@@ -654,11 +654,11 @@ wheels = [
 
 [[package]]
 name = "icdiff"
-version = "2.0.7"
+version = "2.0.10"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fa/e4/43341832be5f2bcae71eb3ef08a07aaef9b74f74fe0b3675f62bd12057fe/icdiff-2.0.7.tar.gz", hash = "sha256:f79a318891adbf59a45e3a7694f5e1f18c5407065264637072ac8363b759866f", size = 16394, upload-time = "2023-08-21T15:00:55.742Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5b/6d/41c8ff13b67c30ceb9325398ff6bb9fc4b77208c6c1d79db8d5913840bc6/icdiff-2.0.10.tar.gz", hash = "sha256:75a3de5c9af35ab45fb0504df59770c514a12c0d2b2c99e5f9c5c2429957e133", size = 16378, upload-time = "2026-02-08T15:03:26.76Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/2a/b3178baa75a3ec75a33588252296c82a1332d2b83cd01061539b74bde9dd/icdiff-2.0.7-py3-none-any.whl", hash = "sha256:f05d1b3623223dd1c70f7848da7d699de3d9a2550b902a8234d9026292fb5762", size = 17018, upload-time = "2023-08-21T15:00:54.634Z" },
+    { url = "https://files.pythonhosted.org/packages/85/4b/bb94514476624bfff977599e5ef3ac9aea603abb693639ed305b22ed1b35/icdiff-2.0.10-py3-none-any.whl", hash = "sha256:fd8ce592d94261c435e2a410f668a41ec3be4527878f8df01100797021d8edb0", size = 17103, upload-time = "2026-02-08T15:03:25.723Z" },
 ]
 
 [[package]]
@@ -1586,11 +1586,11 @@ wheels = [
 
 [[package]]
 name = "setuptools"
-version = "81.0.0"
+version = "82.0.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0d/1c/73e719955c59b8e424d015ab450f51c0af856ae46ea2da83eba51cc88de1/setuptools-81.0.0.tar.gz", hash = "sha256:487b53915f52501f0a79ccfd0c02c165ffe06631443a886740b91af4b7a5845a", size = 1198299, upload-time = "2026-02-06T21:10:39.601Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/f3/748f4d6f65d1756b9ae577f329c951cda23fb900e4de9f70900ced962085/setuptools-82.0.0.tar.gz", hash = "sha256:22e0a2d69474c6ae4feb01951cb69d515ed23728cf96d05513d36e42b62b37cb", size = 1144893, upload-time = "2026-02-08T15:08:40.206Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/e3/c164c88b2e5ce7b24d667b9bd83589cf4f3520d97cad01534cd3c4f55fdb/setuptools-81.0.0-py3-none-any.whl", hash = "sha256:fdd925d5c5d9f62e4b74b30d6dd7828ce236fd6ed998a08d81de62ce5a6310d6", size = 1062021, upload-time = "2026-02-06T21:10:37.175Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/c6/76dc613121b793286a3f91621d7b75a2b493e0390ddca50f11993eadf192/setuptools-82.0.0-py3-none-any.whl", hash = "sha256:70b18734b607bd1da571d097d236cfcfacaf01de45717d59e6e04b96877532e0", size = 1003468, upload-time = "2026-02-08T15:08:38.723Z" },
 ]
 
 [[package]]
