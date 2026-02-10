@@ -31,6 +31,12 @@ dependencies = [
     "python-dateutil>=2.9.0.post0",
     "redis>=5.0.8",
     "scikit-learn>=1.5.1",
+    "opentelemetry-api>=1.28.0",
+    "opentelemetry-sdk>=1.28.0",
+    "opentelemetry-instrumentation-django>=0.49b0",
+    "opentelemetry-instrumentation-redis>=0.49b0",
+    "opentelemetry-exporter-otlp>=1.28.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.28.0",
     "sentry-sdk>=2.13.0",
     "typer>=0.16.0",
     "numpy>=2.2.6",
@@ -41,6 +47,8 @@ dependencies = [
     "django-http-compression[brotli]>=1.2.0",
     "markdownify>=1.2.2",
     "django-widget-tweaks>=1.5.1",
+    "opentelemetry-instrumentation-psycopg>=0.60b1",
+    "opentelemetry-instrumentation-requests>=0.60b1",
 ]
 
 [dependency-groups]

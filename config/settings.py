@@ -1,3 +1,4 @@
+import logging
 import pathlib
 from email.utils import getaddresses
 
@@ -5,6 +6,15 @@ import sentry_sdk
 from django.urls import reverse_lazy
 from django.utils.csp import CSP  # type: ignore[reportMissingTypeStubs]
 from environs import Env
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
+from opentelemetry.instrumentation.redis import RedisInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.logging import ignore_logger
 
@@ -449,6 +459,38 @@ LOGGING = {
         },
     },
 }
+
+# OpenTelemetry
+# https://opentelemetry.io/docs/instrumentation/python/automatic/
+
+if OPEN_TELEMETRY_URL := env("OPEN_TELEMETRY_URL", default=None):
+    # Configure OTLP exporter
+    otlp_exporter = OTLPSpanExporter(endpoint=OPEN_TELEMETRY_URL)
+
+    resource = Resource.create(
+        {
+            "service.name": env("OPEN_TELEMETRY_SERVICE_NAME", default="radiofeed"),
+            "deployment.environment": env(
+                "OPEN_TELEMETRY_ENVIRONMENT", default="production"
+            ),
+            "service.version": env("OPEN_TELEMETRY_VERSION", default="0.0.0"),
+        }
+    )
+
+    # Configure tracer provider
+    tracer_provider = TracerProvider(resource=resource)
+    tracer_provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+    trace.set_tracer_provider(tracer_provider)
+
+    # Instrument Django and Redis
+    DjangoInstrumentor().instrument()
+    PsycopgInstrumentor().instrument()
+    RedisInstrumentor().instrument()
+    RequestsInstrumentor().instrument()
+
+    # Suppress noise from OpenTelemetry libraries
+    logging.getLogger("opentelemetry").setLevel(logging.WARNING)
+    logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
