@@ -31,8 +31,18 @@ def fetch_itunes_feeds(*, country: str, genre_id: int | None = None) -> None:
         try:
             if genre_id:
                 itunes.save_feeds_to_db(feeds)
+                logger.info(
+                    "Saved %d iTunes feeds for country %s to database",
+                    len(feeds),
+                    country,
+                )
             else:
                 itunes.save_feeds_to_db(feeds, promoted=True)
+                logger.info(
+                    "Saved %d iTunes popular feeds for country %s to database",
+                    len(feeds),
+                    country,
+                )
         except itunes.ItunesError as e:
             logger.error("Error saving iTunes feeds to database: %s", e)
 
