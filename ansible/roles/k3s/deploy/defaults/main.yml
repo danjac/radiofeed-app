@@ -30,6 +30,7 @@ mailgun_sender_domain: "mg.{{ domain }}"
 meta_author: "Site owner"
 meta_description: "Podcast aggregator site"
 meta_keywords: "podcasts, feeds, rss"
+open_telemetry_url: ""
 pwa_sha256_fingerprints: ""
 secret_key_fallbacks: ""
 secure_ssl_redirect: false

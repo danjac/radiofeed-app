@@ -55,6 +55,9 @@ secrets:
   - name: "mailgun_api_key"
     value: "{{ mailgun_api_key }}"
 
+  - name: "open_telemetry_url"
+    value: "{{ open_telemetry_url }}"
+
   - name: "postgres_password"
     value: "{{ postgres.password }}"
 
