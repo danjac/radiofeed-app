@@ -71,7 +71,7 @@ class TestRecommend:
         assert Recommendation.objects.filter(podcast=podcast_1).count() == 0
 
     @pytest.mark.django_db
-    def test_create_recommendations(self):
+    def test_create_podcast_recommendations(self):
         # set up categories
         cat_1, cat_2, cat_3 = CategoryFactory.create_batch(3)
 

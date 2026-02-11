@@ -187,9 +187,9 @@ just dj shell
 Podcast feeds are parsed via management commands (typically run via cron):
 
 ```bash
-just dj parse_feeds --limit 360        # Parse up to 360 scheduled podcasts
-just dj send_notifications             # Email new episode notifications
-just dj create_recommendations         # Generate podcast recommendations
+just dj parse_podcast_feeds --limit 360        # Parse up to 360 scheduled podcasts
+just dj send_episode_updates             # Email new episode notifications
+just dj create_podcast_recommendations         # Generate podcast recommendations
 ```
 
 The parser features:
@@ -408,9 +408,9 @@ See `ansible/README.md` for detailed deployment instructions.
 
 5. **Set up cron jobs** for feed parsing:
    ```cron
-   */15 * * * * /path/to/manage.py parse_feeds --limit 360
-   0 9 * * * /path/to/manage.py send_notifications
-   0 3 * * 0 /path/to/manage.py create_recommendations
+   */15 * * * * /path/to/manage.py parse_podcast_feeds --limit 360
+   0 9 * * * /path/to/manage.py send_episode_updates
+   0 3 * * 0 /path/to/manage.py create_podcast_recommendations
    ```
 
 ## Contributing
