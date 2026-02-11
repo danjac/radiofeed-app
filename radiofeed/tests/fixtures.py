@@ -1,13 +1,8 @@
-from typing import TYPE_CHECKING
-
 import pytest
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.sites.models import Site
 from django.core.cache import cache
-from django.http import HttpRequest, HttpResponse
-
-if TYPE_CHECKING:
-    from collections.abc import Callable, Generator
+from django.http import HttpResponse
 
 
 @pytest.fixture
@@ -30,7 +25,7 @@ def _settings_overrides(settings) -> None:
 
 
 @pytest.fixture
-def _locmem_cache(settings) -> Generator:
+def _locmem_cache(settings):
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
     }
@@ -38,8 +33,15 @@ def _locmem_cache(settings) -> Generator:
     cache.clear()
 
 
+@pytest.fixture
+def _immediate_task_backend(settings):
+    settings.TASKS = {
+        "default": {"BACKEND": "django.tasks.backends.immediate.ImmediateBackend"}
+    }
+
+
 @pytest.fixture(scope="session", autouse=True)
-def _disable_update_last_login() -> None:
+def _disable_update_last_login():
     """
     Disable the update_last_login signal receiver to reduce login overhead.
 
@@ -49,5 +51,5 @@ def _disable_update_last_login() -> None:
 
 
 @pytest.fixture(scope="session")
-def get_response() -> Callable[[HttpRequest], HttpResponse]:
+def get_response():
     return lambda req: HttpResponse()

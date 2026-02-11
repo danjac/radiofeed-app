@@ -1,12 +1,15 @@
 import dataclasses
 import itertools
+from typing import TYPE_CHECKING
 
-from django.core.management import CommandError, CommandParser
 from django.core.management.base import BaseCommand
 
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.models import Category
 from radiofeed.podcasts.tasks import fetch_itunes_feeds
+
+if TYPE_CHECKING:
+    from django.core.management import CommandParser
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
@@ -36,11 +39,6 @@ class Command(BaseCommand):
 
     def handle(self, *, countries: list[str], **options) -> None:
         """Handle the management command."""
-
-        # Check countries are in list of supported countries by iTunes
-        if invalid := (set(countries) - set(itunes.COUNTRIES)):
-            raise CommandError(f"Invalid iTunes country codes: {', '.join(invalid)}")
-
         genre_ids = Category.objects.filter(itunes_genre_id__isnull=False).values_list(
             "itunes_genre_id", flat=True
         )
