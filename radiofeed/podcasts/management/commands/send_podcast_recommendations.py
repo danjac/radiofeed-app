@@ -1,15 +1,7 @@
-from typing import TYPE_CHECKING
-
-from django.contrib.sites.models import Site
-from django.core.mail import get_connection
 from django.core.management.base import BaseCommand, CommandParser
 
-from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import db_threadsafe, thread_pool_map
-from radiofeed.users.notifications import get_recipients, send_notification_email
-
-if TYPE_CHECKING:
-    from allauth.account.models import EmailAddress
+from radiofeed.podcasts.tasks import send_podcast_recommendations
+from radiofeed.users.notifications import get_recipients
 
 
 class Command(BaseCommand):
@@ -30,32 +22,6 @@ class Command(BaseCommand):
     def handle(self, *, limit: int, **options) -> None:
         """Handler implementation."""
 
-        site = Site.objects.get_current()
-        connection = get_connection()
-
-        @db_threadsafe
-        def _worker(recipient: EmailAddress) -> tuple[EmailAddress, bool]:
-            if (
-                podcasts := Podcast.objects.published()
-                .recommended(recipient.user)
-                .order_by("-relevance", "-pub_date")[:limit]
-            ):
-                send_notification_email(
-                    site,
-                    recipient,
-                    f"Hi, {recipient.user.name}, here are some podcasts you might like!",
-                    "podcasts/emails/recommendations.html",
-                    {
-                        "podcasts": podcasts,
-                    },
-                    connection=connection,
-                )
-                recipient.user.recommended_podcasts.add(*podcasts)
-                return recipient, True
-            return recipient, False
-
-        recipients = get_recipients().select_related("user")
-
-        for recipient, sent in thread_pool_map(_worker, recipients):
-            if sent:
-                self.stdout.write(f"Podcast recommendations sent to {recipient.email}")
+        recipient_ids = get_recipients().values_list("id", flat=True)
+        for recipient_id in recipient_ids:
+            send_podcast_recommendations.enqueue(recipient_id=recipient_id, limit=limit)

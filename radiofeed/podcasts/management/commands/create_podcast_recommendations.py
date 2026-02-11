@@ -3,7 +3,6 @@ from django.db.models.functions import Lower
 
 from radiofeed.podcasts import recommender, tokenizer
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import db_threadsafe, thread_pool_map
 
 
 class Command(BaseCommand):
@@ -14,11 +13,6 @@ class Command(BaseCommand):
     def handle(self, **options):
         """Create recommendations for all podcasts"""
 
-        @db_threadsafe
-        def _worker(language: str) -> str:
-            recommender.recommend(language)
-            return language
-
         languages = (
             Podcast.objects.annotate(language_code=Lower("language"))
             .filter(language_code__in=tokenizer.get_language_codes())
@@ -27,5 +21,6 @@ class Command(BaseCommand):
             .distinct()
         )
 
-        for language in thread_pool_map(_worker, languages):
+        for language in languages:
+            recommender.recommend(language)
             self.stdout.write(f"Recommendations created for language: {language}")
