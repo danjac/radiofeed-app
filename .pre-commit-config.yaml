@@ -28,10 +28,7 @@ repos:
     rev: v8.30.0
     hooks:
       - id: gitleaks
-  - repo: https://github.com/opensource-nepal/commitlint
-    rev: v1.13.3
-    hooks:
-      - id: commitlint
+
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.11.0
     hooks:
