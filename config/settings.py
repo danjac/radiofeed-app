@@ -53,6 +53,7 @@ INSTALLED_APPS: list[str] = [
     "django_http_compression",
     "django_linear_migrations",
     "django_tailwind_cli",
+    "django_tasks_db",
     "health_check",
     "health_check.db",
     "health_check.cache",
@@ -390,6 +391,16 @@ SECURE_CSP = {
     "img-src": [CSP.SELF, CSP_DATA],
     # Allow all audio files
     "media-src": ["*"],
+}
+
+# Tasks
+# https://docs.djangoproject.com/en/6.0/topics/tasks/
+# https://pypi.org/project/django-tasks-db/
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks_db.DatabaseBackend",
+        "QUEUES": ["default"],
+    }
 }
 
 # Logging

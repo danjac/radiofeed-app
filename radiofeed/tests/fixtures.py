@@ -9,8 +9,6 @@ from django.http import HttpRequest, HttpResponse
 if TYPE_CHECKING:
     from collections.abc import Callable, Generator
 
-    from django.conf import Settings
-
 
 @pytest.fixture
 def site():
@@ -18,10 +16,13 @@ def site():
 
 
 @pytest.fixture(autouse=True)
-def _settings_overrides(settings: Settings) -> None:
+def _settings_overrides(settings) -> None:
     """Default settings for all tests."""
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    }
+    settings.TASKS = {
+        "default": {"BACKEND": "django.tasks.backends.dummy.DummyBackend"}
     }
     settings.ALLOWED_HOSTS = ["example.com", "testserver", "localhost"]
     settings.LOGGING = None
@@ -29,7 +30,7 @@ def _settings_overrides(settings: Settings) -> None:
 
 
 @pytest.fixture
-def _locmem_cache(settings: Settings) -> Generator:
+def _locmem_cache(settings) -> Generator:
     settings.CACHES = {
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
     }

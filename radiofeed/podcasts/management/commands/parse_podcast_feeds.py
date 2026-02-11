@@ -1,20 +1,8 @@
-import dataclasses
-
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Case, Count, IntegerField, When
 
-from radiofeed.client import get_client
-from radiofeed.parsers.feed_parser import parse_feed
 from radiofeed.podcasts.models import Podcast
-from radiofeed.thread_pool import db_threadsafe, thread_pool_map
-
-
-@dataclasses.dataclass(frozen=True, kw_only=True)
-class Result:
-    """Result of parsing a podcast feed."""
-
-    podcast: Podcast
-    feed_status: Podcast.FeedStatus
+from radiofeed.podcasts.tasks import parse_podcast_feed
 
 
 class Command(BaseCommand):
@@ -35,7 +23,7 @@ class Command(BaseCommand):
     def handle(self, *, limit: int, **options) -> None:
         """Handle the command execution."""
 
-        podcasts = (
+        podcast_ids = (
             Podcast.objects.annotate(
                 subscribers=Count("subscriptions"),
                 is_new=Case(
@@ -53,16 +41,7 @@ class Command(BaseCommand):
                 "parsed",
                 "updated",
             )
-        )[:limit]
+        ).values_list("pk", flat=True)[:limit]
 
-        with get_client() as client:
-
-            @db_threadsafe
-            def _worker(podcast: Podcast) -> Result:
-                status = parse_feed(podcast, client)
-                return Result(podcast=podcast, feed_status=status)
-
-            for result in thread_pool_map(_worker, podcasts):
-                self.stdout.write(
-                    f"Parsed feed for {result.podcast}: {result.feed_status.label}"
-                )
+        for podcast_id in podcast_ids:
+            parse_podcast_feed.enqueue(podcast_id=podcast_id)
