@@ -30,7 +30,7 @@ spec:
                 memory: "{{ mem_limit }}"
                 cpu: "{{ cpu_limit }}"
           command: ["/bin/sh", "-c"]
-          args: ["./entrypoint.sh"]
+          args: ["./server.sh"]
           ports:
             - containerPort: 8000
           envFrom:
