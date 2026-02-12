@@ -30,7 +30,7 @@ spec:
                 memory: "{{ mem_limit }}"
                 cpu: "{{ cpu_limit }}"
           command: ["/bin/sh", "-c"]
-          args: ["./server.sh"]
+          args: ["./gunicorn.sh"]
           ports:
             - containerPort: 8000
           envFrom:

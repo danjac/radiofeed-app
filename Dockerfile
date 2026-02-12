@@ -59,4 +59,4 @@ COPY --chown=django:django . .
 
 USER django
 
-CMD ["./server.sh"]
+CMD ["./gunicorn.sh"]
