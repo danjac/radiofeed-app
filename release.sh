@@ -10,5 +10,5 @@ set -o errexit
 MANAGE="python ./manage.py"
 
 $MANAGE check --deploy --traceback
+$MANAGE health_check health_check_ready --traceback
 $MANAGE migrate --no-input --traceback
-$MANAGE health_check --traceback
