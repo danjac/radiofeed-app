@@ -1,24 +1,24 @@
 cronjobs:
-    - name: "clear-sessions"
+    - name: "system:clear-sessions"
       schedule: "20 5 * * *" # 5:20 AM every day
       command: "{{ manage_cmd }} clearsessions"
 
-    - name: "create-recommendations"
+    - name: "podcasts:create-recommendations"
       schedule: "20 4 * * *" # 4:20 AM every day
-      command: "{{ manage_cmd }} create_podcast_recommendations"
+      command: "{{ manage_cmd }} podcasts create-recommendations"
 
-    - name: "fetch-itunes"
+    - name: "podcasts:fetch-itunes"
       schedule: "15 3 * * *" # 3:15 AM every day
-      command: "{{ manage_cmd }} fetch_itunes_feeds"
+      command: "{{ manage_cmd }} podcasts fetch-itunes"
 
-    - name: "parse-feeds"
+    - name: "podcasts:parse-feeds"
       schedule: "*/6 * * * *" # Every 6 minutes
-      command: "{{ manage_cmd }} parse_podcast_feeds"
+      command: "{{ manage_cmd }} podcasts parse-feeds"
 
-    - name: "send-notifications"
+    - name: "notifications:episode-updates"
       schedule: "0 13 * * 1" # 1:00 PM every Monday
-      command: "{{ manage_cmd }} send_episode_updates"
+      command: "{{ manage_cmd }} notifications episode-updates"
 
-    - name: "send-recommendations"
+    - name: "notifications:podcast-recommendations"
       schedule: "0 13 * * 5" # 1:00 PM every Friday
-      command: "{{ manage_cmd }} send_podcast_recommendations"
+      command: "{{ manage_cmd }} notifications podcast-recommendations"

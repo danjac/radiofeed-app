@@ -9,6 +9,7 @@ from django.tasks import task  # type: ignore[reportMissingTypeStubs]
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
+from radiofeed.podcasts.models import Podcast
 from radiofeed.users.notifications import get_recipients, send_notification_email
 
 if TYPE_CHECKING:
@@ -16,6 +17,30 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
+
+
+@task
+def send_podcast_recommendations(*, recipient_id: int, limit: int = 6) -> None:
+    """Send podcast recommendations to users."""
+
+    recipient = get_recipients().select_related("user").get(pk=recipient_id)
+    site = Site.objects.get_current()
+    if (
+        podcasts := Podcast.objects.published()
+        .recommended(recipient.user)
+        .order_by("-relevance", "-pub_date")[:limit]
+    ):
+        send_notification_email(
+            site,
+            recipient,
+            f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+            "podcasts/emails/recommendations.html",
+            {
+                "podcasts": podcasts,
+            },
+        )
+        recipient.user.recommended_podcasts.add(*podcasts)
+        logger.info("Sent podcast recommendations to user %s", recipient.user)
 
 
 @task

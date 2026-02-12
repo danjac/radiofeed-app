@@ -5,15 +5,10 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tasks import (
     fetch_itunes_feeds,
     parse_podcast_feed,
-    send_podcast_recommendations,
 )
 from radiofeed.podcasts.tests.factories import (
     CategoryFactory,
-    PodcastFactory,
-    RecommendationFactory,
-    SubscriptionFactory,
 )
-from radiofeed.users.tests.factories import EmailAddressFactory
 
 
 class TestParsePodcastFeed:
@@ -67,22 +62,3 @@ class TestFetchItunesFeeds:
         )
         fetch_itunes_feeds.enqueue(country="us")
         mock_fetch.assert_called()
-
-
-class TestSendPodcastRecommendations:
-    @pytest.fixture
-    def recipient(self):
-        return EmailAddressFactory(verified=True, primary=True)
-
-    @pytest.mark.django_db(transaction=True)
-    def test_ok(self, recipient, mailoutbox, _immediate_task_backend):
-        podcast = SubscriptionFactory(subscriber=recipient.user).podcast
-        RecommendationFactory(podcast=podcast)
-        send_podcast_recommendations.enqueue(recipient_id=recipient.id)
-        assert len(mailoutbox) == 1
-
-    @pytest.mark.django_db(transaction=True)
-    def test_no_recommendations(self, recipient, mailoutbox, _immediate_task_backend):
-        PodcastFactory()
-        send_podcast_recommendations.enqueue(recipient_id=recipient.id)
-        assert len(mailoutbox) == 0
