@@ -118,7 +118,7 @@
             - redis_service
             - django_deployment
             - django_service
-            - worker_deployment
+            - django_worker_deployment
             - ingress_route
 
       - name: Apply Kubernetes manifests using ApplySet
