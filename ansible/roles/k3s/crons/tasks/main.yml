@@ -22,7 +22,7 @@
 
       - name: Render Kubernetes manifests
         vars:
-            manage_cmd: "python ./manage.py"
+            manage_cmd: "./manage.sh"
         ansible.builtin.template:
             src: "django_cronjobs.yaml.j2"
             dest: "{{ manifests_dir.path + '/' + 'django_cronjobs.yaml' }}"

@@ -2,4 +2,4 @@
 
 set -o errexit
 
-exec python ./manage.py db_worker
+exec python ./manage.py "$@"
