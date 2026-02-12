@@ -55,12 +55,6 @@ INSTALLED_APPS: list[str] = [
     "django_tailwind_cli",
     "django_tasks_db",
     "health_check",
-    "health_check.db",
-    "health_check.cache",
-    "health_check.contrib.db_heartbeat",
-    "health_check.contrib.migrations",
-    "health_check.contrib.psutil",
-    "health_check.contrib.redis",
     "heroicons",
     "widget_tweaks",
     "radiofeed.episodes",
@@ -517,24 +511,6 @@ if SENTRY_URL := env("SENTRY_URL", default=None):
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True,
     )
-
-# Health checks
-
-# https://pypi.org/project/django-health-check/
-
-HEALTH_CHECK = {
-    "DISK_USAGE_MAX": 90,  # percent
-    "MEMORY_MIN": 50,  # in MB
-    "SUBSETS": {
-        "liveness-probe": [
-            "SimplePingHealthCheck",
-        ],
-        "readiness-probe": [
-            "DatabaseHeartBeatHealthCheck",
-            "RedisHealthCheck",
-        ],
-    },
-}
 
 # Dev tools
 

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from health_check.views import HealthCheckView
 
 from radiofeed import views
 
@@ -22,7 +23,26 @@ urlpatterns = [
     path("", include("radiofeed.podcasts.urls")),
     path("", include("radiofeed.users.urls")),
     path("account/", include("allauth.urls")),
-    path("ht/", include("health_check.urls")),
+    # "live" check that the app is running, without doing any expensive checks
+    path(
+        "ht/ping/",
+        HealthCheckView.as_view(
+            checks=[
+                "radiofeed.health_checks.SimplePingHealthCheck",
+            ]
+        ),
+    ),
+    # "ready" check that does more expensive checks to ensure the app is ready to serve traffic
+    path(
+        "ht/",
+        HealthCheckView.as_view(
+            checks=[
+                "health_check.Cache",
+                "health_check.Database",
+                "health_check.contrib.redis.Redis",
+            ]
+        ),
+    ),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 

@@ -40,13 +40,13 @@ spec:
                 name: secrets
           livenessProbe:
             httpGet:
-              path: /ht/liveness-probe/
+              path: /ht/ping/
               port: 8000
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /ht/readiness-probe/
+              path: /ht/
               port: 8000
             initialDelaySeconds: 30
             periodSeconds: 30
