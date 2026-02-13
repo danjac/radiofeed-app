@@ -15,7 +15,7 @@ urlpatterns = [
     # "live" check that the app is running, without doing any expensive checks
     path(
         "ht/live/",
-        HealthCheckView.as_view(checks=["health_check.DNS"]),
+        HealthCheckView.as_view(checks=["health_check.Database"]),
         name="health_check_live",
     ),
     # "ready" check that does more expensive checks to ensure the app is ready to serve traffic
