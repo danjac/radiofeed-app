@@ -69,6 +69,6 @@ output "ansible_inventory" {
     jobrunner_private_ip = hcloud_server_network.jobrunner_network.ip
     webapp_public_ips    = hcloud_server.webapp[*].ipv4_address
     webapp_private_ips   = hcloud_server_network.webapp_network[*].ip
-    postgres_volume_id   = hcloud_volume.postgres.id
+    postgres_volume_mount_path = "/mnt/HC_Volume_${hcloud_volume.postgres.id}"
   })
 }
