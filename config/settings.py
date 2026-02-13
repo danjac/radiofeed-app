@@ -606,3 +606,19 @@ PWA_CONFIG = {
         "theme_color": env("PWA_THEME_COLOR", default="#26323C"),
     },
 }
+
+
+# Countries to include in iTunes charts and search results
+ITUNES_COUNTRIES = env.list(
+    "ITUNES_COUNTRIES",
+    default=[
+        "de",
+        "es",
+        "fi",
+        "fr",
+        "gb",
+        "it",
+        "se",
+        "us",
+    ],
+)

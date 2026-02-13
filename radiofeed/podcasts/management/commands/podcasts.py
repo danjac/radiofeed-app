@@ -2,11 +2,12 @@ import itertools
 from typing import Annotated
 
 import typer
+from django.conf import settings
 from django.db.models import Case, Count, IntegerField, When
 from django.db.models.functions import Lower
 from django_typer.management import Typer
 
-from radiofeed.podcasts import itunes, recommender, tasks, tokenizer
+from radiofeed.podcasts import recommender, tasks, tokenizer
 from radiofeed.podcasts.models import Category, Podcast
 
 app = Typer()
@@ -60,7 +61,8 @@ def fetch_itunes(
     ] = None,
 ) -> None:
     """Fetch the top iTunes podcasts for a given country."""
-    countries = countries or list(itunes.COUNTRIES)
+
+    countries = countries or list(settings.ITUNES_COUNTRIES)
 
     genre_ids = Category.objects.filter(itunes_genre_id__isnull=False).values_list(
         "itunes_genre_id", flat=True

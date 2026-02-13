@@ -4,7 +4,7 @@ import hashlib
 import itertools
 import json
 import re
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 
 import httpx
 import lxml.etree
@@ -21,31 +21,6 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
     from radiofeed.client import Client
-
-COUNTRIES: Final = (
-    "br",
-    "cn",
-    "cz",
-    "de",
-    "dk",
-    "eg",
-    "es",
-    "fi",
-    "fr",
-    "gb",
-    "hr",
-    "hu",
-    "it",
-    "jp",
-    "kr",
-    "nl",
-    "pl",
-    "ro",
-    "se",
-    "tr",
-    "ua",
-    "us",
-)
 
 
 class ItunesError(Exception):
