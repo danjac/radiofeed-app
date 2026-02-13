@@ -30,7 +30,7 @@ spec:
                 memory: "{{ mem_limit }}"
                 cpu: "{{ cpu_limit }}"
           command: ["/bin/sh", "-c"]
-          args: ["./manage.sh", "db_worker"]
+          args: ["./manage.sh db_worker"]
           envFrom:
             - configMapRef:
                 name: configmap
