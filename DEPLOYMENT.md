@@ -20,6 +20,8 @@ This guide covers deploying Radiofeed to a Hetzner Cloud K3s cluster with Cloudf
 
 ## Step 1: Provision Hetzner Infrastructure
 
+Read the [Hetzner Terraform README](terraform/hetzner/README.md) for detailed instructions.
+
 ```bash
 cd terraform/hetzner
 cp terraform.tfvars.example terraform.tfvars
@@ -40,6 +42,8 @@ terraform output server_public_ip
 ```
 
 ## Step 2: Configure Cloudflare
+
+Read the [Cloudflare Terraform README](terraform/cloudflare/README.md) for detailed instructions.
 
 ```bash
 cd ../cloudflare
@@ -78,6 +82,8 @@ If using Mailgun for email, add the following DNS records in the Cloudflare Dash
 Verify the records in Mailgun Dashboard > DNS Records > "Verify DNS Settings". See [`terraform/cloudflare/README.md`](terraform/cloudflare/README.md) for full details.
 
 ## Step 3: Generate Ansible Inventory
+
+Read the [Ansible README](ansible/README.md) for detailed instructions.
 
 ```bash
 cd ../hetzner
