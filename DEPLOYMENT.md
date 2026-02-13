@@ -93,7 +93,7 @@ terraform output -raw ansible_inventory > ../../ansible/hosts.yml
 Edit `ansible/hosts.yml` and set:
 
 - `domain` - your domain name
-- `secret_key` - generate with `python manage.py generate_secret_key`
+- `secret_key` - a secure Django secret key
 - `postgres_password` - a secure password
 - `admin_url` - custom admin path
 - `admins` - admin email addresses
