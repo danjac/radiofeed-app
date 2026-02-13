@@ -3,6 +3,10 @@ cronjobs:
       schedule: "20 5 * * *" # 5:20 AM every day
       command: "{{ manage_cmd }} clearsessions"
 
+    - name: "prune-db-task-results"
+      schedule: "25 9 * * *" # 9:25 AM every day
+      command: "{{ manage_cmd }} prune_db_task_results"
+
     - name: "create-recommendations"
       schedule: "20 4 * * *" # 4:20 AM every day
       command: "{{ manage_cmd }} podcasts create-recommendations"
