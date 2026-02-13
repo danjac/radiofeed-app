@@ -134,7 +134,13 @@ Or get the Ansible inventory snippet:
 terraform output -raw ansible_inventory > ../../ansible/hosts.yml
 ```
 
-This creates a ready-to-use `hosts.yml` file for Ansible.
+This creates a ready-to-use `hosts.yml` file for Ansible. The generated inventory uses **public IPs** as host keys (for SSH access) and includes a `private_ip` variable for each host (for internal service configuration such as database connection strings and k3s cluster communication).
+
+**Important:** After rebuilding infrastructure, the servers will get new IP addresses. You must delete any previously generated local scripts that contain hardcoded IPs:
+
+```bash
+rm ansible/scripts/*.sh
+```
 
 ## Using with Ansible
 
@@ -158,22 +164,11 @@ Edit `ansible/hosts.yml` and set:
 - `admins` - Admin email addresses
 - `secret_key` - Generate with `python manage.py generate_secret_key`
 - `postgres_password` - Secure database password
-- `postgres_volume` - PostgreSQL volume device path (see below)
+- `postgres_volume` - PostgreSQL volume mount path (automatically set when using `terraform output -raw ansible_inventory`)
 - `mailgun_api_key` - Mailgun API key (if using email)
 - `sentry_url` - Sentry DSN (if using error tracking)
 
-**Getting the PostgreSQL Volume Device Path:**
-
-The `postgres_volume` variable needs the Linux device path for the PostgreSQL volume created by Terraform. Get it with:
-
-```bash
-cd terraform/hetzner
-terraform output postgres_volume_linux_device
-```
-
-Example output: `/dev/disk/by-id/scsi-0HC_Volume_12345678`
-
-Copy this value into your `ansible/hosts.yml` for the `postgres_volume` variable.
+**Note:** The `postgres_volume` variable is the Hetzner volume mount path (e.g. `/mnt/HC_Volume_12345678`), not the Linux device path. This is set automatically when generating the inventory from Terraform output.
 
 ### 3. Encrypt Sensitive Data
 
