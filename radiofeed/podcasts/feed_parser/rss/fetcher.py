@@ -7,8 +7,8 @@ import httpx
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
-from radiofeed.parsers.date_parser import parse_date
-from radiofeed.parsers.exceptions import (
+from radiofeed.podcasts.feed_parser.date_parser import parse_date
+from radiofeed.podcasts.feed_parser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
@@ -73,7 +73,6 @@ def make_content_hash(content: bytes) -> str:
     if not content:
         return ""
 
-    # Use memoryview to avoid copying the content unnecessarily
     mv = memoryview(content)
     start = 0
     end = len(mv)
@@ -114,8 +113,6 @@ class _RSSFetcher:
                         headers=self._build_http_headers(),
                     )
                 )
-                # Not all feeds use ETag or Last-Modified headers correctly,
-                # so we also check the content hash to see if the feed has changed.
                 if response.content_hash == self.podcast.content_hash:
                     raise NotModifiedError
                 return response

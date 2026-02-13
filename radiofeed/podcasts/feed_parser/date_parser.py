@@ -25,7 +25,6 @@ def _(value: datetime) -> datetime | None:
     try:
         return value if is_aware(value) else make_aware(value)
     except ValueError:
-        # weird offset: try and rebuild as UTC
         return make_aware(
             datetime(
                 year=value.year,

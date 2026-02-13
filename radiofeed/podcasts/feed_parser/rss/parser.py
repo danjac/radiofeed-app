@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING, Final
 
 from pydantic import ValidationError
 
-from radiofeed.parsers.exceptions import InvalidRSSError
-from radiofeed.parsers.models import Feed, Item
-from radiofeed.parsers.xpath_parser import OptionalXmlElement, XPathParser
+from radiofeed.podcasts.feed_parser.exceptions import InvalidRSSError
+from radiofeed.podcasts.feed_parser.models import Feed, Item
+from radiofeed.xpath_parser import OptionalXmlElement, XPathParser
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

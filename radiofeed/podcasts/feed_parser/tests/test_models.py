@@ -5,8 +5,8 @@ from django.utils import timezone
 from pydantic import ValidationError
 
 from radiofeed.episodes.models import Episode
-from radiofeed.parsers.models import Feed, Item
-from radiofeed.parsers.tests.factories import FeedFactory, ItemFactory
+from radiofeed.podcasts.feed_parser.models import Feed, Item
+from radiofeed.podcasts.feed_parser.tests.factories import FeedFactory, ItemFactory
 
 
 class TestItem:

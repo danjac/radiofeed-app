@@ -10,9 +10,9 @@ from django.utils.text import slugify
 from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
-from radiofeed.parsers.date_parser import parse_date
-from radiofeed.parsers.feed_parser import get_categories_dict, parse_feed
-from radiofeed.parsers.rss_fetcher import make_content_hash
+from radiofeed.podcasts.feed_parser import get_categories_dict, parse_feed
+from radiofeed.podcasts.feed_parser.date_parser import parse_date
+from radiofeed.podcasts.feed_parser.rss.fetcher import make_content_hash
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
@@ -53,7 +53,7 @@ def _mock_error_client(exc):
 
 
 def _get_mock_file_path(filename):
-    return pathlib.Path(__file__).parent / "mocks" / filename
+    return pathlib.Path(__file__).parents[1] / "tests" / "mocks" / filename
 
 
 class TestFeedParser:
@@ -72,15 +72,11 @@ class TestFeedParser:
             pub_date=datetime(year=2020, month=3, day=1),
         )
 
-        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
-
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
-        # test updated
         EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        # add episode to remove in update
         extra = EpisodeFactory(podcast=podcast)
 
         client = _mock_client(
@@ -96,10 +92,8 @@ class TestFeedParser:
         result = parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
-        # extra episode should be removed
         assert not podcast.episodes.filter(pk=extra.id).exists()
 
-        # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
 
@@ -340,12 +334,9 @@ class TestFeedParser:
     def test_parse_ok_no_pub_date(self, categories):
         podcast = PodcastFactory(pub_date=None)
 
-        # set pub date to before latest Fri, 19 Jun 2020 16:58:03 +0000
-
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
-        # test updated
         EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         client = _mock_client(
@@ -361,7 +352,6 @@ class TestFeedParser:
         result = parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
-        # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
 
@@ -369,7 +359,6 @@ class TestFeedParser:
 
         assert podcast.feed_status == result
 
-        # new episodes: 19
         assert podcast.num_episodes == 20
         assert podcast.rss
         assert podcast.active
@@ -405,7 +394,9 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
-        mock_parse_rss = mocker.patch("radiofeed.parsers.rss_parser.parse_rss")
+        mock_parse_rss = mocker.patch(
+            "radiofeed.podcasts.feed_parser.rss.parser.parse_rss"
+        )
 
         client = _mock_client(
             status_code=http.HTTPStatus.OK,
@@ -433,7 +424,6 @@ class TestFeedParser:
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
 
-        # test updated
         EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
         client = _mock_client(
@@ -448,7 +438,6 @@ class TestFeedParser:
         result = parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DISCONTINUED
 
-        # check episode updated
         episode = Episode.objects.get(guid=episode_guid)
         assert episode.title != episode_title
 
@@ -540,15 +529,8 @@ class TestFeedParser:
 
     @pytest.mark.django_db
     def test_parse_with_canonical_cycle(self, podcast, categories):
-        """
-        Test parse_feed when the canonical chain contains a cycle.
-        Ensures ingestion does not hang and duplicate detection works.
-        """
-
-        # Create another podcast to form the cycle
         other = PodcastFactory()
 
-        # Form the cycle: podcast -> other -> podcast
         podcast.canonical = other
         podcast.save(update_fields=["canonical"])
         other.canonical = podcast
@@ -566,59 +548,39 @@ class TestFeedParser:
             },
         )
 
-        # Run parse_feed normally
         result = parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DUPLICATE
 
-        # Assert podcast was marked duplicate correctly
         podcast.refresh_from_db()
         assert podcast.feed_status == result
         assert podcast.rss == current_rss
         assert not podcast.active
         assert podcast.parsed
 
-        # Deterministic canonical: should always be 'other' (the .first() in query)
         assert podcast.canonical == other
 
     @pytest.mark.django_db
     def test_parse_feed_duplicate_chain_bug(self, categories):
-        """
-        Test the original duplicate canonical bug scenario:
-        - Podcast A is canonical
-        - Podcast B is a duplicate pointing to A
-        - Feed for A declares canonical URL = B
-        Ensure A stays active, B stays inactive, DuplicateError is handled correctly.
-        """
-
-        # Create canonical podcast A
         podcast_a = PodcastFactory(active=True, canonical=None)
         original_rss = podcast_a.rss
 
-        # Create duplicate podcast B pointing to A
         podcast_b = PodcastFactory(active=False, canonical=podcast_a)
 
-        # Mock feed for Podcast A pointing to B's RSS
         client = _mock_client(
-            url=podcast_b.rss,  # feed says canonical is B
+            url=podcast_b.rss,
             status_code=200,
-            content=self.get_rss_content(),  # some valid RSS content
+            content=self.get_rss_content(),
         )
 
-        # Parse the feed
         result = parse_feed(podcast_a, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
-        # Reload from DB
         podcast_a.refresh_from_db()
 
-        # Assertions
-
-        # Podcast A stays active (canonical root)
         assert podcast_a.active
         assert podcast_a.rss == original_rss
         assert podcast_a.feed_status == Podcast.FeedStatus.SUCCESS
 
-        # Result of parse_feed reflects that feed was ingested successfully
         assert result == Podcast.FeedStatus.SUCCESS
 
     @pytest.mark.django_db

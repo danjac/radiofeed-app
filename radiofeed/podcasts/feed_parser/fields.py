@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 from pydantic import AfterValidator, BeforeValidator
 
 from radiofeed.episodes.models import Episode
-from radiofeed.parsers.validators import (
+from radiofeed.podcasts.feed_parser.validators import (
     default_if_none,
     is_one_of,
     normalize_url,
@@ -17,7 +17,7 @@ AudioMimetype = Literal[
     "audio/aac",
     "audio/aacp",
     "audio/basic",
-    "audio/L24",  # Assuming PCM 24-bit WAV-like format
+    "audio/L24",
     "audio/m4a",
     "audio/midi",
     "audio/mp3",
@@ -29,9 +29,9 @@ AudioMimetype = Literal[
     "audio/mpeg4",
     "audio/mpg",
     "audio/ogg",
-    "audio/video",  # Not a common audio type, assuming default
+    "audio/video",
     "audio/vnd.dlna.adts",
-    "audio/vnd.rn-realaudio",  # RealAudio varies, assuming standard quality
+    "audio/vnd.rn-realaudio",
     "audio/vnd.wave",
     "audio/vorbis",
     "audio/wav",
@@ -43,8 +43,8 @@ AudioMimetype = Literal[
     "audio/x-hx-aac-adts",
     "audio/x-m4a",
     "audio/x-m4b",
-    "audio/x-m4v",  # Assuming similar to M4A
-    "audio/x-mov",  # Assuming similar to M4A
+    "audio/x-m4v",
+    "audio/x-mov",
     "audio/x-mp3",
     "audio/x-mpeg",
     "audio/x-mpg",

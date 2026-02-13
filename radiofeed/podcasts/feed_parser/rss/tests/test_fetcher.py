@@ -5,14 +5,13 @@ import httpx
 import pytest
 
 from radiofeed.client import Client
-from radiofeed.parsers.date_parser import parse_date
-from radiofeed.parsers.rss_fetcher import (
+from radiofeed.podcasts.feed_parser.date_parser import parse_date
+from radiofeed.podcasts.feed_parser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
-    fetch_rss,
-    make_content_hash,
 )
+from radiofeed.podcasts.feed_parser.rss.fetcher import fetch_rss, make_content_hash
 from radiofeed.podcasts.models import Podcast
 
 

@@ -11,8 +11,9 @@ from pydantic import (
 )
 
 from radiofeed.episodes.models import Episode
-from radiofeed.parsers.date_parser import parse_date
-from radiofeed.parsers.fields import (
+from radiofeed.podcasts import tokenizer
+from radiofeed.podcasts.feed_parser.date_parser import parse_date
+from radiofeed.podcasts.feed_parser.fields import (
     AudioMimetype,
     EmptyIfNone,
     EpisodeType,
@@ -21,8 +22,7 @@ from radiofeed.parsers.fields import (
     PgInteger,
     PodcastType,
 )
-from radiofeed.parsers.validators import is_one_of, normalize_url
-from radiofeed.podcasts import tokenizer
+from radiofeed.podcasts.feed_parser.validators import is_one_of, normalize_url
 from radiofeed.podcasts.models import Podcast
 
 
@@ -88,7 +88,6 @@ class Item(BaseModel):
             return ""
 
         try:
-            # plain seconds value
             return str(int(value))
         except ValueError:
             pass
@@ -174,7 +173,6 @@ class Feed(BaseModel):
                 categories.add(normalized)
                 for sep in (" ", "/", "&", ",", "+"):
                     categories.update(normalized.split(sep))
-        # Slugify keywords to ensure consistent format
         return {c for c in (slugify(c, allow_unicode=False) for c in categories) if c}
 
     @model_validator(mode="after")

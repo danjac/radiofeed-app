@@ -8,15 +8,16 @@ from django.db.utils import DatabaseError
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
-from radiofeed.parsers import rss_fetcher, rss_parser, scheduler
-from radiofeed.parsers.exceptions import (
+from radiofeed.podcasts.feed_parser import scheduler
+from radiofeed.podcasts.feed_parser.exceptions import (
     DiscontinuedError,
     DuplicateError,
     InvalidRSSError,
     NotModifiedError,
     UnavailableError,
 )
-from radiofeed.parsers.models import Feed, Item
+from radiofeed.podcasts.feed_parser.models import Feed, Item
+from radiofeed.podcasts.feed_parser.rss import fetch_rss, parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
 if TYPE_CHECKING:
@@ -44,28 +45,22 @@ class _FeedParser:
         """Parse the podcast's RSS feed and update the Podcast instance."""
 
         try:
-            # Fetch RSS feed
-            response = rss_fetcher.fetch_rss(self.podcast, client)
+            response = fetch_rss(self.podcast, client)
 
-            # Check for duplicate RSS feeds
             canonical_rss = self._resolve_canonical_rss(self.podcast.rss, response.url)
 
-            # Parse RSS feed
-            feed = rss_parser.parse_rss(response.content)
+            feed = parse_rss(response.content)
 
-            # Resolve canonical URL if provided in feed
             if feed.canonical_url:
                 canonical_rss = self._resolve_canonical_rss(
                     canonical_rss, feed.canonical_url
                 )
 
-            # Determine podcast active status
             if feed.complete:
                 active, feed_status = False, Podcast.FeedStatus.DISCONTINUED
             else:
                 active, feed_status = True, Podcast.FeedStatus.SUCCESS
 
-            # Persist and parse categories/episodes atomically
             with transaction.atomic():
                 self._parse_categories(feed)
                 self._parse_episodes(feed)
@@ -91,9 +86,6 @@ class _FeedParser:
                 )
 
         except DatabaseError as exc:
-            # -- Handle database write errors
-            # -- Update feed status to ERROR and reschedule next fetch
-            # Log exception for debugging
             return self._feed_update(
                 Podcast.FeedStatus.DATABASE_ERROR,
                 frequency=self._reschedule(),
@@ -101,21 +93,15 @@ class _FeedParser:
             )
 
         except NotModifiedError:
-            # -- Handle not modified RSS feed
-            # -- Update feed status to NOT_MODIFIED and reschedule next fetch
             return self._feed_update(
                 Podcast.FeedStatus.NOT_MODIFIED,
                 frequency=self._reschedule(),
             )
 
         except DiscontinuedError:
-            # -- Handle discontinued podcast feeds
-            # -- Deactivate podcast and set feed status to DISCONTINUED
             return self._feed_update(Podcast.FeedStatus.DISCONTINUED, active=False)
 
         except DuplicateError as exc:
-            # -- Handle duplicate RSS feed errors
-            # -- Deactivate podcast and set feed status to DUPLICATE
             return self._feed_update(
                 Podcast.FeedStatus.DUPLICATE,
                 active=False,
@@ -123,12 +109,6 @@ class _FeedParser:
             )
 
         except (InvalidRSSError, UnavailableError) as exc:
-            # -- Handle recoverable errors with retry logic
-            # Determine if podcast should remain active
-            # -- If max retries exceeded, deactivate podcast
-            # -- Otherwise, reschedule next fetch based on retry logic
-            # Log exception for debugging
-
             active = self.podcast.num_retries < self.podcast.MAX_RETRIES
             frequency = self._reschedule() if active else self.podcast.frequency
             num_retries = self.podcast.num_retries + 1
@@ -148,35 +128,28 @@ class _FeedParser:
             )
 
     def _resolve_canonical_rss(self, current_url: str, new_url: str) -> str:
-        # Resolve a new canonical RSS feed URL, checking for duplicates
         if current_url == new_url:
             return current_url
 
-        # Check for duplicate RSS feeds in the database
         if root := (
             Podcast.objects.exclude(pk=self.podcast.pk)
             .filter(rss=new_url)
             .select_related("canonical")
             .only("pk", "canonical")
         ).first():
-            # Keep track of seen podcast pks to avoid infinite loops
             seen: set[int] = set()
 
-            # Traverse canonical chain to find root podcast
             while root.canonical:
                 if root.pk in seen:
                     break
                 seen.add(root.pk)
                 root = root.canonical
 
-            # If root podcast is the same as current podcast, return the original RSS
             if root.pk == self.podcast.pk:
                 return current_url
 
-            # Raise DuplicateError with root podcast's pk
             raise DuplicateError(canonical_id=root.pk)
 
-        # No duplicate found, return the new url
         return new_url
 
     def _reschedule(self) -> datetime.timedelta:
@@ -213,19 +186,14 @@ class _FeedParser:
     def _parse_episodes(self, feed: Feed) -> None:
         """Parse the podcast's RSS feed and update the episodes."""
 
-        # Find existing episodes for the podcast
         episodes = Episode.objects.filter(podcast=self.podcast)
 
-        # Ensure unique guids in feed items
         items = {item.guid: item for item in feed.items}.values()
 
-        # Delete any episodes that are not in the feed
         episodes.exclude(guid__in={item.guid for item in items}).delete()
 
-        # Create a dictionary of guids to episode pks
         guids_to_pks = dict(episodes.values_list("guid", "pk"))
 
-        # Prepare episodes for upsert: map feed items to Episode instances
         episodes_for_upsert = (
             Episode(
                 podcast=self.podcast,
@@ -238,7 +206,6 @@ class _FeedParser:
         unique_fields = ("podcast", "guid")
         update_fields = Item.model_fields.keys()
 
-        # Bulk upsert episodes in batches
         for batch in itertools.batched(
             episodes_for_upsert,
             300,

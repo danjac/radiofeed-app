@@ -2,13 +2,15 @@ import pathlib
 
 import pytest
 
-from radiofeed.parsers.exceptions import InvalidRSSError
-from radiofeed.parsers.rss_parser import parse_rss
+from radiofeed.podcasts.feed_parser.exceptions import InvalidRSSError
+from radiofeed.podcasts.feed_parser.rss.parser import parse_rss
 
 
 class TestParseRss:
     def read_mock_file(self, mock_filename):
-        return (pathlib.Path(__file__).parent / "mocks" / mock_filename).read_bytes()
+        return (
+            pathlib.Path(__file__).parents[2] / "tests" / "mocks" / mock_filename
+        ).read_bytes()
 
     def test_empty(self):
         with pytest.raises(InvalidRSSError):
