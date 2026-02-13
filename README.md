@@ -258,8 +258,6 @@ Dynamic update frequency based on podcast activity:
 - Prioritizes by: new podcasts, subscriber count, promoted status
 - Incremental backoff if no new episodes
 
-See [CLAUDE.md](CLAUDE.md) for complete architecture documentation.
-
 ## Deployment
 
 For production deployment to Hetzner Cloud with Cloudflare CDN/SSL, see the [Deployment Guide](DEPLOYMENT.md).
