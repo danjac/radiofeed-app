@@ -25,7 +25,7 @@ resource "cloudflare_record" "server" {
   content = var.server_ip
   type    = "A"
   proxied = true # Enable Cloudflare proxy (CDN + SSL)
-  ttl     = 1     # Automatic TTL when proxied
+  ttl     = 1    # Automatic TTL when proxied
   comment = "Radiofeed server node - managed by Terraform"
 }
 
@@ -47,45 +47,44 @@ resource "cloudflare_zone_settings_override" "domain_settings" {
 
   settings {
     # SSL/TLS
-    ssl = "full" # Full (strict) requires valid certificate on origin
-    always_use_https = "on"
+    ssl                      = "full" # Full (strict) requires valid certificate on origin
+    always_use_https         = "on"
     automatic_https_rewrites = "on"
-    min_tls_version = "1.2"
-    tls_1_3 = "on"
+    min_tls_version          = "1.2"
+    tls_1_3                  = "on"
 
     # Security
     security_level = "medium"
-    challenge_ttl = 1800
-    browser_check = "on"
+    challenge_ttl  = 1800
+    browser_check  = "on"
 
     # Performance
-    brotli = "on"
-    early_hints = "on"
-    http2 = "on"
-    http3 = "on"
+    brotli                   = "on"
+    early_hints              = "on"
+    http3                    = "on"
     opportunistic_encryption = "on"
-    rocket_loader = "off" # Disable for HTMX/Alpine.js compatibility
+    rocket_loader            = "off" # Disable for HTMX/Alpine.js compatibility
 
     # Caching
     browser_cache_ttl = 14400 # 4 hours
-    cache_level = "aggressive"
+    cache_level       = "aggressive"
 
     # Other
-    ipv6 = "on"
+    ipv6       = "on"
     websockets = "on"
   }
 }
 
 # Page rule for caching static assets by file extension
 resource "cloudflare_page_rule" "cache_static_assets" {
-  zone_id = data.cloudflare_zone.domain.id
-  target  = "${var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain}/*.{css,js,png,jpg,jpeg,webp,gif,svg,ico,woff,woff2}"
+  zone_id  = data.cloudflare_zone.domain.id
+  target   = "${var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain}/*.{css,js,png,jpg,jpeg,webp,gif,svg,ico,woff,woff2}"
   priority = 1
 
   actions {
-    cache_level = "cache_everything"
-    edge_cache_ttl = 2592000 # 30 days
-    browser_cache_ttl = 1800  # 30 minutes
+    cache_level       = "cache_everything"
+    edge_cache_ttl    = 2592000 # 30 days
+    browser_cache_ttl = 1800    # 30 minutes
   }
 }
 
@@ -97,25 +96,25 @@ resource "cloudflare_ruleset" "zone_level_firewall" {
   phase   = "http_request_firewall_custom"
 
   rules {
-    action = "block"
-    expression = "(http.request.uri.path contains \".env\") or (http.request.uri.path contains \".git\") or (http.request.uri.path contains \"wp-admin\")"
+    action      = "block"
+    expression  = "(http.request.uri.path contains \".env\") or (http.request.uri.path contains \".git\") or (http.request.uri.path contains \"wp-admin\")"
     description = "Block common exploit paths"
-    enabled = true
+    enabled     = true
   }
 }
 
 # Security headers
 resource "cloudflare_ruleset" "transform_response_headers" {
-  zone_id     = data.cloudflare_zone.domain.id
-  name        = "Transform Rules - Response Headers"
-  kind        = "zone"
-  phase       = "http_response_headers_transform"
+  zone_id = data.cloudflare_zone.domain.id
+  name    = "Transform Rules - Response Headers"
+  kind    = "zone"
+  phase   = "http_response_headers_transform"
 
   rules {
-    action = "rewrite"
+    action      = "rewrite"
     description = "Add security headers"
-    enabled = true
-    expression = "true"
+    enabled     = true
+    expression  = "true"
 
     action_parameters {
       headers {
