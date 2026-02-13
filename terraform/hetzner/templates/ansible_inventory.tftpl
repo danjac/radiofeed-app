@@ -9,13 +9,16 @@ all:
     agents:
       hosts:
         ${database_public_ip}:
+          private_ip: ${database_private_ip}
           hostname: database
           role: database
         ${jobrunner_public_ip}:
+          private_ip: ${jobrunner_private_ip}
           hostname: jobrunner
           role: jobrunner
 %{ for idx, ip in webapp_public_ips ~}
         ${ip}:
+          private_ip: ${webapp_private_ips[idx]}
           hostname: webapp-${idx + 1}
           role: webapp
 %{ endfor ~}

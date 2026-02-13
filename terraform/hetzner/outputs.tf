@@ -61,11 +61,14 @@ output "network_id" {
 output "ansible_inventory" {
   description = "Ansible inventory snippet for hosts.yml"
   value = templatefile("${path.module}/templates/ansible_inventory.tftpl", {
-    server_public_ip    = hcloud_server.server.ipv4_address
-    server_private_ip   = hcloud_server_network.server_network.ip
-    database_public_ip  = hcloud_server.database.ipv4_address
-    jobrunner_public_ip = hcloud_server.jobrunner.ipv4_address
-    webapp_public_ips   = hcloud_server.webapp[*].ipv4_address
-    postgres_volume_id  = hcloud_volume.postgres.id
+    server_public_ip     = hcloud_server.server.ipv4_address
+    server_private_ip    = hcloud_server_network.server_network.ip
+    database_public_ip   = hcloud_server.database.ipv4_address
+    database_private_ip  = hcloud_server_network.database_network.ip
+    jobrunner_public_ip  = hcloud_server.jobrunner.ipv4_address
+    jobrunner_private_ip = hcloud_server_network.jobrunner_network.ip
+    webapp_public_ips    = hcloud_server.webapp[*].ipv4_address
+    webapp_private_ips   = hcloud_server_network.webapp_network[*].ip
+    postgres_volume_id   = hcloud_volume.postgres.id
   })
 }
