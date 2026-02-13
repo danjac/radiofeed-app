@@ -125,24 +125,6 @@ just typecheck          # Run type checker (basedpyright)
 just dj <command>       # Run Django management commands
 ```
 
-### Project Structure
-
-```
-radiofeed-app/
-├── radiofeed/          # Main Django project
-│   ├── episodes/       # Episode models, views, audio playback
-│   ├── podcasts/       # Podcast models, feed parsing, recommendations
-│   ├── users/          # User accounts and preferences
-│   └── parsers/        # RSS/Atom feed parsing pipeline
-├── config/             # Django settings and URL configuration
-├── templates/          # Django templates (HTMX-enhanced)
-├── static/             # Static assets (CSS, JS, images)
-├── ansible/            # Deployment playbooks for K3s
-└── justfile            # Development command shortcuts
-```
-
-For detailed architecture documentation, see [CLAUDE.md](CLAUDE.md).
-
 ### Testing
 
 The project maintains 100% code coverage:
@@ -152,13 +134,6 @@ just test                      # Run all tests with coverage
 just test radiofeed/podcasts   # Test specific module
 just tw                        # Watch mode - auto-run on changes
 ```
-
-Tests use pytest with:
-
-- `factory_boy` for test data generation
-- `pytest-django` for Django integration
-- `pytest-mock` for mocking
-- `pytest-xdist` for parallel execution
 
 ### Code Quality
 
