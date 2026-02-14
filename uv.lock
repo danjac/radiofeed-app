@@ -1727,7 +1727,7 @@ requires-dist = [
     { name = "django-redis", specifier = ">=5.4.0" },
     { name = "django-tailwind-cli", specifier = ">=2.16.0" },
     { name = "django-tasks-db", specifier = ">=0.12.0" },
-    { name = "django-typer", extras = ["rich"], specifier = ">=3.6.0" },
+    { name = "django-typer", specifier = ">=3.6.0" },
     { name = "django-widget-tweaks", specifier = ">=1.5.1" },
     { name = "environs", extras = ["django"], specifier = ">=11.0.0" },
     { name = "gunicorn", specifier = ">=23.0.0" },
