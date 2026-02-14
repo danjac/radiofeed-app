@@ -31,3 +31,15 @@ server_ip = "123.456.78.90"
 
 # Enable www redirect (www.example.com -> example.com)
 enable_www_redirect = true
+
+# Mailgun DKIM public key file (optional)
+# Uncomment and set this to enable Mailgun DNS records (MX, SPF, DKIM).
+# Create the file with your DKIM key from: Mailgun Dashboard → Sending → Domains → DNS Records
+# Example: echo 'k=rsa; p=MIIBIjANBgk...' > mailgun_dkim.txt
+# mailgun_dkim_file = "mailgun_dkim.txt"
+
+# Mailgun MX servers (optional, defaults shown)
+# mailgun_mx_servers = ["mxa.eu.mailgun.org", "mxb.eu.mailgun.org"]
+
+# Mailgun SPF record value (optional, default shown)
+# mailgun_spf_value = "v=spf1 include:mailgun.org ~all"

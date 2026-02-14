@@ -20,25 +20,78 @@ data "cloudflare_zone" "domain" {
 
 # A record pointing to the server node (k3s control plane + load balancer)
 resource "cloudflare_record" "server" {
-  zone_id = data.cloudflare_zone.domain.id
-  name    = var.subdomain != "" ? var.subdomain : "@"
-  content = var.server_ip
-  type    = "A"
-  proxied = true # Enable Cloudflare proxy (CDN + SSL)
-  ttl     = 1    # Automatic TTL when proxied
-  comment = "Radiofeed server node - managed by Terraform"
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = var.subdomain != "" ? var.subdomain : "@"
+  content         = var.server_ip
+  type            = "A"
+  proxied         = true # Enable Cloudflare proxy (CDN + SSL)
+  ttl             = 1    # Automatic TTL when proxied
+  allow_overwrite = true # Adopt existing record if present
+  comment         = "Radiofeed server node - managed by Terraform"
 }
 
 # Optional: WWW redirect
 resource "cloudflare_record" "www" {
-  count   = var.enable_www_redirect ? 1 : 0
-  zone_id = data.cloudflare_zone.domain.id
-  name    = "www"
-  content = var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain
-  type    = "CNAME"
-  proxied = true
-  ttl     = 1
-  comment = "WWW redirect - managed by Terraform"
+  count           = var.enable_www_redirect ? 1 : 0
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = "www"
+  content         = var.subdomain != "" ? "${var.subdomain}.${var.domain}" : var.domain
+  type            = "CNAME"
+  proxied         = true
+  ttl             = 1
+  allow_overwrite = true # Adopt existing record if present
+  comment         = "WWW redirect - managed by Terraform"
+}
+
+locals {
+  mailgun_dkim_value = fileexists(var.mailgun_dkim_file) ? trimspace(file(var.mailgun_dkim_file)) : ""
+}
+
+# Mailgun DNS records (optional, only created when mailgun_dkim_file is set)
+resource "cloudflare_record" "mailgun_mx" {
+  count           = local.mailgun_dkim_value != "" ? length(var.mailgun_mx_servers) : 0
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = "mg"
+  content         = var.mailgun_mx_servers[count.index]
+  type            = "MX"
+  priority        = 10
+  ttl             = 1
+  allow_overwrite = true
+  comment         = "Mailgun MX - managed by Terraform"
+}
+
+resource "cloudflare_record" "mailgun_spf" {
+  count           = local.mailgun_dkim_value != "" ? 1 : 0
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = "mg"
+  content         = "\"${var.mailgun_spf_value}\""
+  type            = "TXT"
+  ttl             = 1
+  allow_overwrite = true
+  comment         = "Mailgun SPF - managed by Terraform"
+}
+
+resource "cloudflare_record" "mailgun_dkim" {
+  count           = local.mailgun_dkim_value != "" ? 1 : 0
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = "mta._domainkey.mg"
+  content         = "\"${local.mailgun_dkim_value}\""
+  type            = "TXT"
+  ttl             = 1
+  allow_overwrite = true
+  comment         = "Mailgun DKIM - managed by Terraform"
+}
+
+resource "cloudflare_record" "mailgun_tracking" {
+  count           = local.mailgun_dkim_value != "" ? 1 : 0
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = "email.mg"
+  content         = "eu.mailgun.org"
+  type            = "CNAME"
+  proxied         = false # DNS only
+  ttl             = 1
+  allow_overwrite = true
+  comment         = "Mailgun tracking - managed by Terraform"
 }
 
 # SSL/TLS settings

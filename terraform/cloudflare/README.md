@@ -115,6 +115,9 @@ Edit `terraform.tfvars` and set:
 - `subdomain` - Subdomain for the app (e.g., "" for root, "app" for app.example.com)
 - `server_ip` - Public IP of your Hetzner server node
 - `enable_www_redirect` - Whether to redirect www to root domain (default: true)
+- `mailgun_dkim_file` - Path to file containing Mailgun DKIM public key (optional, leave empty to skip Mailgun DNS setup)
+- `mailgun_mx_servers` - Mailgun MX servers (optional, defaults to EU servers)
+- `mailgun_spf_value` - Mailgun SPF record (optional, defaults to `v=spf1 include:mailgun.org ~all`)
 
 **Important:** Never commit `terraform.tfvars` to version control (already in .gitignore).
 
@@ -218,75 +221,33 @@ Ansible will use the Cloudflare origin certificates to set up SSL/TLS on your K3
 
 ## Mailgun DNS Configuration
 
-If you're using Mailgun for sending emails (notifications, password resets, etc.), you need to manually add Mailgun DNS records to Cloudflare.
+Mailgun DNS records (MX, SPF, DKIM) are managed by Terraform and created automatically when `mailgun_dkim_value` is set.
 
-### 1. Get Mailgun DNS Records
+### Setup
 
-1. Log in to [Mailgun Dashboard](https://app.mailgun.com/)
-2. Go to **Sending** → **Domains**
-3. Select your domain (or add it if not already added)
-4. Click **DNS Records** tab
-5. You'll see several records that need to be added:
-   - **TXT records** (SPF and DKIM for email authentication)
-   - **MX records** (for receiving email, optional)
-   - **CNAME record** (for tracking, optional)
+1. Log in to [Mailgun Dashboard](https://app.mailgun.com/) → **Sending** → **Domains** → **DNS Records**
+2. Copy the DKIM public key value (the `k=rsa; p=...` string from the TXT record for `mta._domainkey.mg`)
+3. Save it to a file:
 
-### 2. Add Records to Cloudflare
+    ```bash
+    echo 'k=rsa; p=MIIBIjANBgk...' > mailgun_dkim.txt
+    ```
 
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Select your domain (radiofeed.app)
-3. Go to **DNS** → **Records**
-4. For each Mailgun record, click **Add record**:
+4. Add to your `terraform.tfvars`:
 
-**SPF Record (TXT)**:
-- **Type**: TXT
-- **Name**: @ (or your subdomain)
-- **Content**: `v=spf1 include:mailgun.org ~all` (copy from Mailgun)
-- **TTL**: Auto
-- Click **Save**
+    ```hcl
+    mailgun_dkim_file = "mailgun_dkim.txt"
+    ```
 
-**DKIM Records (TXT)**:
-- **Type**: TXT
-- **Name**: Copy from Mailgun (e.g., `k1._domainkey`)
-- **Content**: Copy the long DKIM key from Mailgun
-- **TTL**: Auto
-- Click **Save**
+5. Run `terraform apply`
 
-Repeat for additional DKIM records (usually 2-3).
+The MX servers default to Mailgun's EU servers (`mxa.eu.mailgun.org`, `mxb.eu.mailgun.org`). Override `mailgun_mx_servers` and `mailgun_spf_value` in `terraform.tfvars` if needed (e.g. for US servers).
 
-**MX Records** (optional, only if you want to receive email):
-- **Type**: MX
-- **Name**: @ (or your subdomain)
-- **Mail server**: Copy from Mailgun (e.g., `mxa.mailgun.org`)
-- **Priority**: 10
-- **TTL**: Auto
-- Click **Save**
-
-**CNAME for Tracking** (optional):
-- **Type**: CNAME
-- **Name**: `email` (or as specified by Mailgun)
-- **Target**: `mailgun.org`
-- **TTL**: Auto
-- **Proxy status**: DNS only (gray cloud, not proxied)
-- Click **Save**
-
-### 3. Verify in Mailgun
+### Verify in Mailgun
 
 1. Return to Mailgun Dashboard → DNS Records
 2. Click **Verify DNS Settings**
-3. Wait for verification (may take a few minutes for DNS propagation)
-4. All records should show green checkmarks when verified
-
-### 4. Test Email Sending
-
-Once verified, update your application's environment variables:
-- `EMAIL_HOST=smtp.mailgun.org`
-- `MAILGUN_API_KEY=<your-api-key>`
-- `DEFAULT_FROM_EMAIL=noreply@yourdomain.com`
-
-Test sending an email from your Django application.
-
-**Note**: DNS propagation can take up to 24-48 hours, but usually completes within minutes to hours.
+3. All records should show green checkmarks when verified
 
 ## What Gets Cached
 
@@ -365,6 +326,41 @@ Cloudflare's free tier includes automatic DDoS protection.
    - All permissions must be at the Zone level, not Account level
 3. Verify token includes the specific zone in Zone Resources
 4. If token was created with wrong permissions, delete the old token and create a new one with correct permissions
+
+### Error: "ruleset already exists"
+
+**Problem**: Cloudflare automatically creates one ruleset per phase per zone. These always exist, even on a brand new zone or after deletion. Terraform cannot create them — they must be imported into state first.
+
+This is expected on first apply, or if local state is lost.
+
+**Solution**:
+
+1. Get your zone ID (if not already in state, run `terraform apply -target=data.cloudflare_zone.domain` first):
+
+    ```bash
+    ZONE_ID=$(terraform show -json | jq -r \
+      '.values.root_module.resources[] | select(.address == "data.cloudflare_zone.domain") | .values.id')
+    ```
+
+2. List zone-level rulesets and their IDs:
+
+    ```bash
+    curl -s "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/rulesets" \
+      -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+      | jq '.result[] | select(.kind == "zone") | {id, phase, name}'
+    ```
+
+3. Import each ruleset using the matching phase:
+
+    ```bash
+    # Use the id where phase = "http_request_firewall_custom"
+    terraform import cloudflare_ruleset.zone_level_firewall "zone/$ZONE_ID/<ID>"
+
+    # Use the id where phase = "http_response_headers_transform"
+    terraform import cloudflare_ruleset.transform_response_headers "zone/$ZONE_ID/<ID>"
+    ```
+
+4. Run `terraform apply` as normal. Subsequent applies will work without re-importing, as long as the local state is preserved.
 
 ### DNS Status Shows "Pending"
 

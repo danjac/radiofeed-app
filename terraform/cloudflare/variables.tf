@@ -25,3 +25,21 @@ variable "enable_www_redirect" {
   type        = bool
   default     = true
 }
+
+variable "mailgun_dkim_file" {
+  description = "Path to file containing Mailgun DKIM public key (from Mailgun dashboard: Sending → Domains → DNS Records). If file does not exist, Mailgun DNS records are skipped."
+  type        = string
+  default     = "mailgun_dkim.txt"
+}
+
+variable "mailgun_mx_servers" {
+  description = "Mailgun MX servers"
+  type        = list(string)
+  default     = ["mxa.eu.mailgun.org", "mxb.eu.mailgun.org"]
+}
+
+variable "mailgun_spf_value" {
+  description = "Mailgun SPF record value"
+  type        = string
+  default     = "v=spf1 include:mailgun.org ~all"
+}

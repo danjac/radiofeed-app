@@ -12,6 +12,8 @@ terraform.tfvars
 *.auto.tfvars
 *.auto.tfvars.json
 
+mailgun_dkim.txt
+
 # Override files
 override.tf
 override.tf.json
