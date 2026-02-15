@@ -81,6 +81,10 @@ repos:
     rev: v0.25
     hooks:
       - id: validate-pyproject
+  - repo: https://github.com/owenlamont/uv-secure
+    rev: 0.16.0
+    hooks:
+      - id: uv-secure
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.24.0
     hooks:
