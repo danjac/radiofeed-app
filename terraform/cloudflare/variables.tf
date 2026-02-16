@@ -26,10 +26,10 @@ variable "enable_www_redirect" {
   default     = true
 }
 
-variable "mailgun_dkim_file" {
-  description = "Path to file containing Mailgun DKIM public key (from Mailgun dashboard: Sending → Domains → DNS Records). If file does not exist, Mailgun DNS records are skipped."
+variable "mailgun_dkim_value" {
+  description = "Mailgun DKIM public key (from Mailgun dashboard: Sending → Domains → DNS Records). If empty, Mailgun DNS records are skipped."
   type        = string
-  default     = "mailgun_dkim.txt"
+  default     = ""
 }
 
 variable "mailgun_mx_servers" {

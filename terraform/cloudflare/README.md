@@ -115,7 +115,7 @@ Edit `terraform.tfvars` and set:
 - `subdomain` - Subdomain for the app (e.g., "" for root, "app" for app.example.com)
 - `server_ip` - Public IP of your Hetzner server node
 - `enable_www_redirect` - Whether to redirect www to root domain (default: true)
-- `mailgun_dkim_file` - Path to file containing Mailgun DKIM public key (optional, leave empty to skip Mailgun DNS setup)
+- `mailgun_dkim_value` - Mailgun DKIM public key (optional, leave empty to skip Mailgun DNS setup)
 - `mailgun_mx_servers` - Mailgun MX servers (optional, defaults to EU servers)
 - `mailgun_spf_value` - Mailgun SPF record (optional, defaults to `v=spf1 include:mailgun.org ~all`)
 
@@ -227,19 +227,13 @@ Mailgun DNS records (MX, SPF, DKIM) are managed by Terraform and created automat
 
 1. Log in to [Mailgun Dashboard](https://app.mailgun.com/) → **Sending** → **Domains** → **DNS Records**
 2. Copy the DKIM public key value (the `k=rsa; p=...` string from the TXT record for `mta._domainkey.mg`)
-3. Save it to a file:
-
-    ```bash
-    echo 'k=rsa; p=MIIBIjANBgk...' > mailgun_dkim.txt
-    ```
-
-4. Add to your `terraform.tfvars`:
+3. Add to your `terraform.tfvars`:
 
     ```hcl
-    mailgun_dkim_file = "mailgun_dkim.txt"
+    mailgun_dkim_value = "k=rsa; p=MIIBIjANBgk..."
     ```
 
-5. Run `terraform apply`
+4. Run `terraform apply`
 
 The MX servers default to Mailgun's EU servers (`mxa.eu.mailgun.org`, `mxb.eu.mailgun.org`). Override `mailgun_mx_servers` and `mailgun_spf_value` in `terraform.tfvars` if needed (e.g. for US servers).
 

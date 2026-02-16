@@ -44,10 +44,10 @@ resource "cloudflare_record" "www" {
 }
 
 locals {
-  mailgun_dkim_value = fileexists(var.mailgun_dkim_file) ? trimspace(file(var.mailgun_dkim_file)) : ""
+  mailgun_dkim_value = trimspace(var.mailgun_dkim_value)
 }
 
-# Mailgun DNS records (optional, only created when mailgun_dkim_file is set)
+# Mailgun DNS records (optional, only created when mailgun_dkim_value is set)
 resource "cloudflare_record" "mailgun_mx" {
   count           = local.mailgun_dkim_value != "" ? length(var.mailgun_mx_servers) : 0
   zone_id         = data.cloudflare_zone.domain.id
