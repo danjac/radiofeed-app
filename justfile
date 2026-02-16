@@ -65,7 +65,7 @@ dc *args:
 # Start all Docker services
 [group('development')]
 start *args:
-   @just dc up -d {{ args }}
+   @just dc up -d --remove-orphans {{ args }}
 
 # Stop all Docker services
 [group('development')]
