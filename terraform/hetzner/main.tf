@@ -142,19 +142,19 @@ resource "hcloud_firewall" "agents" {
 
 # Volume for PostgreSQL data
 resource "hcloud_volume" "postgres" {
-  name      = "${var.cluster_name}-postgres-volume"
-  size      = var.postgres_volume_size
-  location  = var.location
-  format    = "ext4"
+  name     = "${var.cluster_name}-postgres-volume"
+  size     = var.postgres_volume_size
+  location = var.location
+  format   = "ext4"
 }
 
 # Server node (k3s control plane + Traefik load balancer)
 resource "hcloud_server" "server" {
-  name        = "${var.cluster_name}-server"
-  server_type = var.server_type
-  image       = var.server_image
-  location    = var.location
-  ssh_keys    = [hcloud_ssh_key.default.id]
+  name         = "${var.cluster_name}-server"
+  server_type  = var.server_type
+  image        = var.server_image
+  location     = var.location
+  ssh_keys     = [hcloud_ssh_key.default.id]
   firewall_ids = [hcloud_firewall.server.id]
 
   labels = {
@@ -175,11 +175,11 @@ resource "hcloud_server_network" "server_network" {
 
 # Database node (PostgreSQL + Redis)
 resource "hcloud_server" "database" {
-  name        = "${var.cluster_name}-database"
-  server_type = var.database_server_type
-  image       = var.server_image
-  location    = var.location
-  ssh_keys    = [hcloud_ssh_key.default.id]
+  name         = "${var.cluster_name}-database"
+  server_type  = var.database_server_type
+  image        = var.server_image
+  location     = var.location
+  ssh_keys     = [hcloud_ssh_key.default.id]
   firewall_ids = [hcloud_firewall.agents.id]
 
   labels = {
@@ -206,11 +206,11 @@ resource "hcloud_volume_attachment" "postgres_attachment" {
 
 # Job runner node (for cron jobs)
 resource "hcloud_server" "jobrunner" {
-  name        = "${var.cluster_name}-jobrunner"
-  server_type = var.agent_server_type
-  image       = var.server_image
-  location    = var.location
-  ssh_keys    = [hcloud_ssh_key.default.id]
+  name         = "${var.cluster_name}-jobrunner"
+  server_type  = var.agent_server_type
+  image        = var.server_image
+  location     = var.location
+  ssh_keys     = [hcloud_ssh_key.default.id]
   firewall_ids = [hcloud_firewall.agents.id]
 
   labels = {
@@ -231,12 +231,12 @@ resource "hcloud_server_network" "jobrunner_network" {
 
 # Web application nodes
 resource "hcloud_server" "webapp" {
-  count       = var.webapp_count
-  name        = "${var.cluster_name}-webapp-${count.index + 1}"
-  server_type = var.agent_server_type
-  image       = var.server_image
-  location    = var.location
-  ssh_keys    = [hcloud_ssh_key.default.id]
+  count        = var.webapp_count
+  name         = "${var.cluster_name}-webapp-${count.index + 1}"
+  server_type  = var.agent_server_type
+  image        = var.server_image
+  location     = var.location
+  ssh_keys     = [hcloud_ssh_key.default.id]
   firewall_ids = [hcloud_firewall.agents.id]
 
   labels = {
