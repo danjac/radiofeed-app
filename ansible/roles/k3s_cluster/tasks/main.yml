@@ -7,6 +7,7 @@
       --flannel-iface=enp7s0 \
       --advertise-address={{ private_ip }} \
       --tls-san={{ private_ip }}
+    executable: /bin/bash
   changed_when: true
 
 - name: Get the K3s join token from the control plane (for worker nodes)
@@ -26,6 +27,7 @@
       --node-name="$(hostname -f)" \
       --flannel-iface=enp7s0 \
       --server https://{{ private_ip }}:6443
+    executable: /bin/bash
   delegate_to: "{{ item }}"
   loop: "{{ groups['agents'] }}"
   changed_when: true

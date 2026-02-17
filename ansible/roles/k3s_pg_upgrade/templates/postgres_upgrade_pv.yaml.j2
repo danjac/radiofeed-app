@@ -4,9 +4,9 @@ metadata:
   name: postgres-upgrade-pv
 spec:
   capacity:
-    storage: {{ k3s_pg_upgrade_postgres.storage }}
+    storage: {{ k3s_pg_upgrade_storage }}
   accessModes:
     - ReadWriteOnce
   storageClassName: manual
   hostPath:
-    path: "{{ k3s_pg_upgrade_postgres.new_volume }}"
+    path: "{{ k3s_pg_upgrade_new_volume }}"

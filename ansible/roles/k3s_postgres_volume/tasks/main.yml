@@ -3,7 +3,7 @@
   block:
       - name: Ensure PostgreSQL data directory exists
         ansible.builtin.file:
-            path: "{{ k3s_postgres_volume }}"
+            path: "{{ k3s_postgres_volume_path }}"
             state: directory
             owner: "999"  # PostgreSQL user in container
             group: "999"  # PostgreSQL group in container
@@ -11,7 +11,7 @@
 
       - name: Check if PostgreSQL data directory is writable
         ansible.builtin.file:
-            path: "{{ k3s_postgres_volume }}/.test_write"
+            path: "{{ k3s_postgres_volume_path }}/.test_write"
             state: touch
             owner: "999"
             group: "999"
@@ -21,7 +21,7 @@
 
       - name: Remove test file
         ansible.builtin.file:
-            path: "{{ k3s_postgres_volume }}/.test_write"
+            path: "{{ k3s_postgres_volume_path }}/.test_write"
             state: absent
         when: k3s_postgres_volume_test_write is succeeded
         changed_when: false
@@ -29,6 +29,6 @@
       - name: Display volume information
         ansible.builtin.debug:
             msg:
-                - "PostgreSQL volume path: {{ k3s_postgres_volume }}"
+                - "PostgreSQL volume path: {{ k3s_postgres_volume_path }}"
                 - "Volume permissions: 0700 (owner: 999, group: 999)"
                 - "Node: {{ hostvars[inventory_hostname].hostname }}"

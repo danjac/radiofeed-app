@@ -2,14 +2,14 @@
   environment:
       KUBECONFIG: "{{ kubeconfig }}"
   block:
-      - name: Assert k3s_pg_upgrade_postgres.new_image and k3s_pg_upgrade_postgres.new_volume are defined
+      - name: Assert k3s_pg_upgrade_new_image and k3s_pg_upgrade_new_volume are defined
         ansible.builtin.assert:
             that:
-                - k3s_pg_upgrade_postgres.new_image is defined
-                - k3s_pg_upgrade_postgres.new_image|length > 0
-                - k3s_pg_upgrade_postgres.new_volume is defined
-                - k3s_pg_upgrade_postgres.new_volume|length > 0
-            fail_msg: "Both 'k3s_pg_upgrade_postgres.new_image' and 'k3s_pg_upgrade_postgres.new_volume' must be defined for the upgrade."
+                - k3s_pg_upgrade_new_image is defined
+                - k3s_pg_upgrade_new_image|length > 0
+                - k3s_pg_upgrade_new_volume is defined
+                - k3s_pg_upgrade_new_volume|length > 0
+            fail_msg: "Both 'k3s_pg_upgrade_new_image' and 'k3s_pg_upgrade_new_volume' must be defined for the upgrade."
 
       - name: Get current Postgres StatefulSet image
         ansible.builtin.shell: |
@@ -23,7 +23,7 @@
 
       - name: Get the MAJOR version of the new Postgres image
         ansible.builtin.set_fact:
-            k3s_pg_upgrade_postgres_new_version: "{{ k3s_pg_upgrade_postgres.new_image.split(':')[1].split('.')[0] }}"
+            k3s_pg_upgrade_postgres_new_version: "{{ k3s_pg_upgrade_new_image.split(':')[1].split('.')[0] }}"
 
       - name: Debug current and new Postgres versions
         ansible.builtin.debug:
@@ -31,13 +31,13 @@
 
       - name: Debug current and new Postgres volumes
         ansible.builtin.debug:
-            msg: "Current Postgres volume: {{ k3s_pg_upgrade_postgres.current_volume }}, New Postgres volume: {{ k3s_pg_upgrade_postgres.new_volume }}"
+            msg: "Current Postgres volume: {{ k3s_pg_upgrade_current_volume }}, New Postgres volume: {{ k3s_pg_upgrade_new_volume }}"
 
       - name: Assert volume + image are different than current
         ansible.builtin.assert:
             that:
                 - k3s_pg_upgrade_postgres_new_version != k3s_pg_upgrade_postgres_current_version
-                - k3s_pg_upgrade_postgres.new_volume != k3s_pg_upgrade_postgres.current_volume
+                - k3s_pg_upgrade_new_volume != k3s_pg_upgrade_current_volume
             fail_msg: "The new image and volume must differ from the current ones."
 
       - name: Create a temporary directory

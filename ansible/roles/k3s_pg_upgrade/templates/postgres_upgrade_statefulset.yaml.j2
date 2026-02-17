@@ -17,7 +17,7 @@ spec:
         role: database  # Ensures it runs on the correct node
       containers:
         - name: postgres
-          image: {{ k3s_pg_upgrade_postgres.new_image }}
+          image: {{ k3s_pg_upgrade_new_image }}
           args:
             - "postgres"
             - "-c"

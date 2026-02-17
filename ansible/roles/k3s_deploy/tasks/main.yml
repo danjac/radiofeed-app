@@ -26,6 +26,7 @@
                   --cert=/tmp/{{ cloudflare_cert }} \
                   --key=/tmp/{{ cloudflare_key }} \
                   -n default --dry-run=client -o yaml | kubectl apply -f -
+            executable: /bin/bash
         changed_when: true
 
       - name: Remove certs from /tmp after secret is created
@@ -108,11 +109,11 @@
 
       - name: Render Kubernetes manifests
         vars:
-            database_url: "postgresql://postgres:{{ k3s_deploy_postgres.password }}@postgres.default.svc.cluster.local:5432/postgres"
+            database_url: "postgresql://postgres:{{ k3s_deploy_postgres_password }}@postgres.default.svc.cluster.local:5432/postgres"
             redis_url: "redis://redis.default.svc.cluster.local:6379/0"
             manage_cmd: "python ./manage.py"
             num_webapps: "{{ groups['agents'] | map('extract', hostvars, 'role') | select('equalto', 'webapp') | length }}"
-            postgres_major_version: "{{ k3s_deploy_postgres.image.split(':')[1].split('.')[0] }}"
+            postgres_major_version: "{{ k3s_deploy_postgres_image.split(':')[1].split('.')[0] }}"
         ansible.builtin.template:
             src: "{{ item }}.yaml.j2"
             dest: "{{ k3s_deploy_manifests_dir.path + '/' + item + '.yaml' }}"

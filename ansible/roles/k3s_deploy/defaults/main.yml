@@ -2,36 +2,35 @@
 #
 k3s_deploy_docker_image: "{{ k3s_docker_image }}"
 
-k3s_deploy_postgres:
-  image: "{{ k3s_postgres_image | default('postgres:18.1-bookworm', true) }}"
-  password: "{{ k3s_postgres_password }}"
-  storage: "{{ k3s_postgres_storage | default('30Gi', true) }}"
-  volume: "{{ k3s_postgres_volume | default('/home/ubuntu/pg_data', true) }}"
+k3s_deploy_postgres_image: "postgres:18.1-bookworm"
+k3s_deploy_postgres_password: ""
+k3s_deploy_postgres_storage: "30Gi"
+k3s_deploy_postgres_volume: "/home/ubuntu/pg_data"
 
-k3s_deploy_redis:
-  image: "{{ k3s_redis_image | default('redis:8.2.2-bookworm', true) }}"
+k3s_deploy_redis_image: "redis:8.2.2-bookworm"
 
 # Django settings
 
-k3s_deploy_admin_url: "{{ k3s_admin_url | default('admin/') }}"
-k3s_deploy_admins: "{{ k3s_admins | default('admin@' + domain) }}"
-k3s_deploy_allowed_hosts: "{{ k3s_allowed_hosts | default('*') }}"
-k3s_deploy_contact_email: "{{ k3s_contact_email | default('contact@' + domain) }}"
-k3s_deploy_conn_pool_max_idle: "{{ k3s_conn_pool_max_idle | default(120) }}"
-k3s_deploy_conn_pool_max_lifetime: "{{ k3s_conn_pool_max_lifetime | default(1800) }}"
-k3s_deploy_conn_pool_max_size: "{{ k3s_conn_pool_max_size | default(100) }}"
-k3s_deploy_conn_pool_max_waiting: "{{ k3s_conn_pool_max_waiting | default(25) }}"
-k3s_deploy_conn_pool_min_size: "{{ k3s_conn_pool_min_size | default(2) }}"
-k3s_deploy_conn_pool_timeout: "{{ k3s_conn_pool_timeout | default(20) }}"
-k3s_deploy_csp_script_whitelist: "{{ k3s_csp_script_whitelist | default('*.account.google.com,*.googleapis.com,*.cloudflareinsights.com') }}"
-k3s_deploy_mailgun_api_key: "{{ k3s_mailgun_api_key | default('') }}"
-k3s_deploy_mailgun_api_url: "{{ k3s_mailgun_api_url | default('https://api.eu.mailgun.net/v3') }}"
-k3s_deploy_mailgun_sender_domain: "{{ k3s_mailgun_sender_domain | default('mg.' + domain) }}"
-k3s_deploy_meta_author: "{{ k3s_meta_author | default('Site owner') }}"
-k3s_deploy_meta_description: "{{ k3s_meta_description | default('Podcast aggregator site') }}"
-k3s_deploy_meta_keywords: "{{ k3s_meta_keywords | default('podcasts, feeds, rss') }}"
-k3s_deploy_open_telemetry_url: "{{ k3s_open_telemetry_url | default('') }}"
-k3s_deploy_pwa_sha256_fingerprints: "{{ k3s_pwa_sha256_fingerprints | default('') }}"
-k3s_deploy_secret_key_fallbacks: "{{ k3s_secret_key_fallbacks | default('') }}"
-k3s_deploy_secure_ssl_redirect: "{{ k3s_secure_ssl_redirect | default(false) }}"
-k3s_deploy_sentry_url: "{{ k3s_sentry_url | default('') }}"
+k3s_deploy_admin_url: "admin/"
+k3s_deploy_admins: "admin@{{ domain }}"
+k3s_deploy_allowed_hosts: "*"
+k3s_deploy_contact_email: "contact@{{ domain }}"
+k3s_deploy_conn_pool_max_idle: 120
+k3s_deploy_conn_pool_max_lifetime: 1800
+k3s_deploy_conn_pool_max_size: 100
+k3s_deploy_conn_pool_max_waiting: 25
+k3s_deploy_conn_pool_min_size: 2
+k3s_deploy_conn_pool_timeout: 20
+k3s_deploy_csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
+k3s_deploy_mailgun_api_key: ""
+k3s_deploy_mailgun_api_url: "https://api.eu.mailgun.net/v3"
+k3s_deploy_mailgun_sender_domain: "mg.{{ domain }}"
+k3s_deploy_meta_author: "Site owner"
+k3s_deploy_meta_description: "Podcast aggregator site"
+k3s_deploy_meta_keywords: "podcasts, feeds, rss"
+k3s_deploy_open_telemetry_url: ""
+k3s_deploy_pwa_sha256_fingerprints: ""
+k3s_deploy_secret_key: ""
+k3s_deploy_secret_key_fallbacks: ""
+k3s_deploy_secure_ssl_redirect: false
+k3s_deploy_sentry_url: ""

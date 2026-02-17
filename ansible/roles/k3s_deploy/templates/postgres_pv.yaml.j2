@@ -4,9 +4,9 @@ metadata:
   name: postgres-pv-{{ postgres_major_version }}
 spec:
   capacity:
-    storage: {{ k3s_deploy_postgres.storage }}
+    storage: {{ k3s_deploy_postgres_storage }}
   accessModes:
     - ReadWriteOnce
   storageClassName: manual
   hostPath:
-    path: "{{ k3s_deploy_postgres.volume }}"
+    path: "{{ k3s_deploy_postgres_volume }}"

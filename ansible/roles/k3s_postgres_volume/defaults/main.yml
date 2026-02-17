@@ -1,7 +1,7 @@
 # PostgreSQL volume configuration
-# This role expects the postgres_volume variable to be defined in hosts.yml
+# This role expects k3s_deploy_postgres_volume to be defined in hosts.yml
 # Example in hosts.yml:
-#   postgres_volume: /mnt/HC_Volume_104566943
+#   k3s_deploy_postgres_volume: /mnt/HC_Volume_104566943
 #
 # The volume path should point to a mounted block storage volume
 # (e.g., Hetzner Cloud Volume) that is attached to the database node.
@@ -15,3 +15,5 @@
 # - Create the directory with proper permissions
 # - Set ownership to UID/GID 999 (PostgreSQL user in container)
 # - Set permissions to 0700 (required by PostgreSQL)
+
+k3s_postgres_volume_path: "{{ k3s_deploy_postgres_volume }}"

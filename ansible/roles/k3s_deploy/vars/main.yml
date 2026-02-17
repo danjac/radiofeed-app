@@ -59,7 +59,7 @@ k3s_deploy_secrets:
      value: "{{ k3s_deploy_open_telemetry_url }}"
 
    - name: "postgres_password"
-     value: "{{ k3s_deploy_postgres.password }}"
+     value: "{{ k3s_deploy_postgres_password }}"
 
    - name: "pwa_sha256_fingerprints"
      value: "{{ k3s_deploy_pwa_sha256_fingerprints }}"
@@ -68,7 +68,7 @@ k3s_deploy_secrets:
      value: "{{ redis_url }}"
 
    - name: "secret_key"
-     value: "{{ k3s_secret_key }}"
+     value: "{{ k3s_deploy_secret_key }}"
 
    - name: "secret_key_fallbacks"
      value: "{{ k3s_deploy_secret_key_fallbacks }}"
