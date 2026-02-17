@@ -93,6 +93,8 @@ repos:
         always_run: false
         files: ^ansible/
         args: ['ansible/']
+        additional_dependencies:
+          - ansible
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.105.0
     hooks:
