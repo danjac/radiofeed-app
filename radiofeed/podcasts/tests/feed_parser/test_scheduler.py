@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from radiofeed.podcasts.feed_parser import scheduler
 from radiofeed.podcasts.feed_parser.models import Feed, Item
-from radiofeed.podcasts.feed_parser.tests.factories import FeedFactory, ItemFactory
+from radiofeed.podcasts.tests.feed_parser.factories import FeedFactory, ItemFactory
 
 
 class TestReschedule:

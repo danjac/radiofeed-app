@@ -132,7 +132,6 @@ class TestImportPodcastFeeds:
             (
                 pathlib.Path(__file__).parents[2]
                 / "podcasts"
-                / "feed_parser"
                 / "tests"
                 / "mocks"
                 / "feeds.opml"

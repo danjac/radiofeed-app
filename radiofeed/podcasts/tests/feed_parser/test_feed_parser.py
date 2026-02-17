@@ -12,7 +12,7 @@ from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 from radiofeed.podcasts.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.feed_parser.date_parser import parse_date
-from radiofeed.podcasts.feed_parser.rss.fetcher import make_content_hash
+from radiofeed.podcasts.feed_parser.rss_fetcher import make_content_hash
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
@@ -53,7 +53,7 @@ def _mock_error_client(exc):
 
 
 def _get_mock_file_path(filename):
-    return pathlib.Path(__file__).parents[1] / "tests" / "mocks" / filename
+    return pathlib.Path(__file__).parents[1] / "mocks" / filename
 
 
 class TestFeedParser:
@@ -395,7 +395,7 @@ class TestFeedParser:
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
         mock_parse_rss = mocker.patch(
-            "radiofeed.podcasts.feed_parser.rss.parser.parse_rss"
+            "radiofeed.podcasts.feed_parser.rss_parser.parse_rss"
         )
 
         client = _mock_client(

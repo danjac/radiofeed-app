@@ -11,7 +11,7 @@ from radiofeed.podcasts.feed_parser.exceptions import (
     NotModifiedError,
     UnavailableError,
 )
-from radiofeed.podcasts.feed_parser.rss.fetcher import fetch_rss, make_content_hash
+from radiofeed.podcasts.feed_parser.rss_fetcher import fetch_rss, make_content_hash
 from radiofeed.podcasts.models import Podcast
 
 

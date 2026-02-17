@@ -17,7 +17,8 @@ from radiofeed.podcasts.feed_parser.exceptions import (
     UnavailableError,
 )
 from radiofeed.podcasts.feed_parser.models import Feed, Item
-from radiofeed.podcasts.feed_parser.rss import fetch_rss, parse_rss
+from radiofeed.podcasts.feed_parser.rss_fetcher import fetch_rss
+from radiofeed.podcasts.feed_parser.rss_parser import parse_rss
 from radiofeed.podcasts.models import Category, Podcast
 
 if TYPE_CHECKING:

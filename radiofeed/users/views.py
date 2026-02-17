@@ -19,7 +19,6 @@ from radiofeed.http.request import (
     is_authenticated_request,
 )
 from radiofeed.partials import render_partial_response
-from radiofeed.podcasts.feed_parser.opml_parser import parse_opml
 from radiofeed.podcasts.forms import OpmlUploadForm
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import (
@@ -74,10 +73,7 @@ def import_podcast_feeds(
     if request.method == "POST":
         form = OpmlUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            opml = form.cleaned_data["opml"]
-            opml.seek(0)
-
-            feeds = itertools.islice(parse_opml(opml.read()), feed_limit)
+            feeds = itertools.islice(form.parse_opml(), feed_limit)
             podcasts = Podcast.objects.filter(active=True, private=False, rss__in=feeds)
 
             Subscription.objects.bulk_create(

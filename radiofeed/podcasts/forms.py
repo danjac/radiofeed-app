@@ -1,8 +1,12 @@
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from django import forms
 
 from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.opml_parser import parse_opml
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class PodcastForm(forms.ModelForm):
@@ -28,3 +32,9 @@ class OpmlUploadForm(forms.Form):
             }
         ),
     )
+
+    def parse_opml(self) -> Iterator[str]:
+        """Parse the uploaded OPML file and extract podcast RSS feed URLs."""
+        fp = self.cleaned_data["opml"]
+        fp.seek(0)
+        return parse_opml(fp.read())

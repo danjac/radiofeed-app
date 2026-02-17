@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from radiofeed.episodes.models import Episode
 from radiofeed.podcasts.feed_parser.models import Feed, Item
-from radiofeed.podcasts.feed_parser.tests.factories import FeedFactory, ItemFactory
+from radiofeed.podcasts.tests.feed_parser.factories import FeedFactory, ItemFactory
 
 
 class TestItem:

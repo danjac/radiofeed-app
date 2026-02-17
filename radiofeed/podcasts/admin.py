@@ -9,7 +9,6 @@ from django.urls import path
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
-from radiofeed.podcasts.feed_parser.opml_parser import parse_opml
 from radiofeed.podcasts.forms import OpmlUploadForm
 from radiofeed.podcasts.models import (
     Category,
@@ -319,7 +318,7 @@ class PodcastAdmin(admin.ModelAdmin):
             path(
                 "upload-opml/",
                 self.admin_site.admin_view(self.upload_opml_view),
-                name="podcast_upload_opml",
+                name="podcasts_podcast_upload_opml",
             ),
             *super().get_urls(),
         ]
@@ -329,9 +328,7 @@ class PodcastAdmin(admin.ModelAdmin):
         if request.method == "POST":
             form = OpmlUploadForm(request.POST, request.FILES)
             if form.is_valid():
-                opml_file = form.cleaned_data["opml"]
-                rss_urls = parse_opml(opml_file.read())
-                podcasts = (Podcast(rss=url) for url in rss_urls)
+                podcasts = (Podcast(rss=url) for url in form.parse_opml())
                 Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
                 self.message_user(
                     request, "Successfully created podcasts from OPML file."

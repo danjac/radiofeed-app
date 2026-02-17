@@ -3,7 +3,7 @@ import pathlib
 import pytest
 
 from radiofeed.podcasts.feed_parser.exceptions import InvalidRSSError
-from radiofeed.podcasts.feed_parser.rss.parser import parse_rss
+from radiofeed.podcasts.feed_parser.rss_parser import parse_rss
 
 
 class TestParseRss:

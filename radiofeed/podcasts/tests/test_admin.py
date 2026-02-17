@@ -5,6 +5,7 @@ from unittest import mock
 
 import pytest
 from django.contrib.admin.sites import AdminSite
+from django.urls import reverse_lazy
 from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
@@ -271,22 +272,18 @@ class TestSubscriptionAdmin:
 
 
 class TestPodcastAdminUploadOpml:
+    url = reverse_lazy("admin:podcasts_podcast_upload_opml")
+
     @pytest.mark.django_db
     def test_upload_opml_view_get(self, client, staff_user):
-        response = client.get("/admin/podcasts/podcast/upload-opml/")
+        response = client.get(self.url)
         assert response.status_code == 200
 
     @pytest.mark.django_db
     def test_upload_opml_view_post(self, client, staff_user):
-        path = (
-            pathlib.Path(__file__).parent.parent
-            / "feed_parser"
-            / "tests"
-            / "mocks"
-            / "feeds.opml"
-        )
+        path = pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
         response = client.post(
-            "/admin/podcasts/podcast/upload-opml/",
+            self.url,
             {"opml": BytesIO(path.read_bytes())},
         )
         assert response.status_code == 302
@@ -306,10 +303,7 @@ class TestPodcastAdminUploadOpml:
     </body>
 </opml>"""
 
-        response = client.post(
-            "/admin/podcasts/podcast/upload-opml/",
-            {"opml": BytesIO(opml_content)},
-        )
+        response = client.post(self.url, {"opml": BytesIO(opml_content)})
         assert response.status_code == 302
         assert Podcast.objects.count() == 2
 
@@ -325,10 +319,7 @@ class TestPodcastAdminUploadOpml:
     </body>
 </opml>"""
 
-        response = client.post(
-            "/admin/podcasts/podcast/upload-opml/",
-            {"opml": BytesIO(opml_content)},
-        )
+        response = client.post(self.url, {"opml": BytesIO(opml_content)})
         assert response.status_code == 302
         assert response.url == "/admin/podcasts/podcast/"
 
