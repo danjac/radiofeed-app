@@ -129,7 +129,14 @@ class TestImportPodcastFeeds:
     def upload_file(self):
         return SimpleUploadedFile(
             "feeds.opml",
-            (pathlib.Path(__file__).parent / "mocks" / "feeds.opml").read_bytes(),
+            (
+                pathlib.Path(__file__).parents[2]
+                / "podcasts"
+                / "feed_parser"
+                / "tests"
+                / "mocks"
+                / "feeds.opml"
+            ).read_bytes(),
             content_type="text/xml",
         )
 

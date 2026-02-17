@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from radiofeed.podcasts.feed_parser.exceptions import InvalidRSSError
 from radiofeed.podcasts.feed_parser.models import Feed, Item
-from radiofeed.xpath_parser import OptionalXmlElement, XPathParser
+from radiofeed.podcasts.feed_parser.xpath_parser import OptionalXmlElement, XPathParser
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

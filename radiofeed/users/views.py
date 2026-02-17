@@ -19,14 +19,14 @@ from radiofeed.http.request import (
     is_authenticated_request,
 )
 from radiofeed.partials import render_partial_response
+from radiofeed.podcasts.feed_parser.opml_parser import parse_opml
+from radiofeed.podcasts.forms import OpmlUploadForm
 from radiofeed.podcasts.models import Podcast, Subscription
 from radiofeed.users.forms import (
     AccountDeletionConfirmationForm,
-    OpmlUploadForm,
     UserPreferencesForm,
 )
 from radiofeed.users.notifications import get_unsubscribe_signer
-from radiofeed.users.opml_parser import parse_opml
 
 if TYPE_CHECKING:
     from django.http import HttpResponseRedirect

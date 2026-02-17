@@ -1,6 +1,6 @@
 import pathlib
 
-from radiofeed.users.opml_parser import parse_opml
+from radiofeed.podcasts.feed_parser.opml_parser import parse_opml
 
 
 class TestParseOpml:

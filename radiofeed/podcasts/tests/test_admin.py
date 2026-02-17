@@ -1,4 +1,6 @@
 import datetime
+import pathlib
+from io import BytesIO
 from unittest import mock
 
 import pytest
@@ -266,3 +268,71 @@ class TestSubscriptionAdmin:
         admin = SubscriptionAdmin(Subscription, AdminSite())
         qs = admin.get_queryset(rf.get("/"))
         assert qs.count() == 1
+
+
+class TestPodcastAdminUploadOpml:
+    @pytest.mark.django_db
+    def test_upload_opml_view_get(self, client, staff_user):
+        response = client.get("/admin/podcasts/podcast/upload-opml/")
+        assert response.status_code == 200
+
+    @pytest.mark.django_db
+    def test_upload_opml_view_post(self, client, staff_user):
+        path = (
+            pathlib.Path(__file__).parent.parent
+            / "feed_parser"
+            / "tests"
+            / "mocks"
+            / "feeds.opml"
+        )
+        response = client.post(
+            "/admin/podcasts/podcast/upload-opml/",
+            {"opml": BytesIO(path.read_bytes())},
+        )
+        assert response.status_code == 302
+        assert Podcast.objects.count() == 11
+
+    @pytest.mark.django_db
+    def test_upload_opml_ignores_existing(self, client, staff_user):
+        PodcastFactory(rss="https://example.com/existing.xml")
+        opml_content = b"""<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <outline type="rss" text="Existing" xmlUrl="https://example.com/existing.xml" />
+        <outline type="rss" text="New" xmlUrl="https://example.com/new.xml" />
+    </body>
+</opml>"""
+
+        response = client.post(
+            "/admin/podcasts/podcast/upload-opml/",
+            {"opml": BytesIO(opml_content)},
+        )
+        assert response.status_code == 302
+        assert Podcast.objects.count() == 2
+
+    @pytest.mark.django_db
+    def test_upload_opml_view_redirects_to_changelist(self, client, staff_user):
+        opml_content = b"""<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <outline type="rss" text="Test" xmlUrl="https://example.com/feed.xml" />
+    </body>
+</opml>"""
+
+        response = client.post(
+            "/admin/podcasts/podcast/upload-opml/",
+            {"opml": BytesIO(opml_content)},
+        )
+        assert response.status_code == 302
+        assert response.url == "/admin/podcasts/podcast/"
+
+    @pytest.mark.django_db
+    def test_upload_opml_view_requires_staff(self, client, user):
+        response = client.get("/admin/podcasts/podcast/upload-opml/")
+        assert response.status_code == 302

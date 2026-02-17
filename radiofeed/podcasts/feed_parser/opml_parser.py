@@ -1,7 +1,7 @@
 import functools
 from typing import TYPE_CHECKING
 
-from radiofeed.xpath_parser import XPathParser
+from radiofeed.podcasts.feed_parser.xpath_parser import XPathParser
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

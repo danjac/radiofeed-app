@@ -15,3 +15,16 @@ class PodcastForm(forms.ModelForm):
         error_messages: ClassVar[dict] = {
             "rss": {"unique": "This podcast is not available"}
         }
+
+
+class OpmlUploadForm(forms.Form):
+    """Form for uploading OPML collection."""
+
+    opml = forms.FileField(
+        label="Select OPML file",
+        widget=forms.FileInput(
+            attrs={
+                "accept": ".opml,.xml,application/xml,text/x-opml,text/xml",
+            }
+        ),
+    )

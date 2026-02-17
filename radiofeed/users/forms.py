@@ -41,16 +41,3 @@ class AccountDeletionConfirmationForm(forms.Form):
                 f'You must type "{self.required_value}" to confirm account deletion.'
             )
         return value
-
-
-class OpmlUploadForm(forms.Form):
-    """Form for uploading OPML into user collection."""
-
-    opml = forms.FileField(
-        label="Select OPML file",
-        widget=forms.FileInput(
-            attrs={
-                "accept": ".opml,.xml,application/xml,text/x-opml,text/xml",
-            }
-        ),
-    )

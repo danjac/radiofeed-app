@@ -2,9 +2,15 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
+from django.http import HttpRequest
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import path
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
+from radiofeed.podcasts.feed_parser.opml_parser import parse_opml
+from radiofeed.podcasts.forms import OpmlUploadForm
 from radiofeed.podcasts.models import (
     Category,
     Podcast,
@@ -14,7 +20,8 @@ from radiofeed.podcasts.models import (
 )
 
 if TYPE_CHECKING:
-    from django.http import HttpRequest
+    from django.http import HttpRequest, HttpResponse
+    from django.urls import URLPattern
     from django_stubs_ext import StrOrPromise  # pragma: no cover
 
     class CategoryWithNumPodcasts(Category):
@@ -305,6 +312,36 @@ class PodcastAdmin(admin.ModelAdmin):
     def get_ordering(self, request: HttpRequest) -> list[str]:
         """Returns default ordering."""
         return [] if request.GET.get("q") else ["-parsed", "-pub_date"]
+
+    def get_urls(self) -> list[URLPattern]:
+        """Returns custom URLs including the OPML upload view."""
+        return [
+            path(
+                "upload-opml/",
+                self.admin_site.admin_view(self.upload_opml_view),
+                name="podcast_upload_opml",
+            ),
+            *super().get_urls(),
+        ]
+
+    def upload_opml_view(self, request: HttpRequest) -> HttpResponse:
+        """Upload OPML file and create podcasts."""
+        if request.method == "POST":
+            form = OpmlUploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                opml_file = form.cleaned_data["opml"]
+                rss_urls = parse_opml(opml_file.read())
+                podcasts = (Podcast(rss=url) for url in rss_urls)
+                Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+                self.message_user(
+                    request, "Successfully created podcasts from OPML file."
+                )
+                return redirect("admin:podcasts_podcast_changelist")
+        else:
+            form = OpmlUploadForm()
+        return TemplateResponse(
+            request, "admin/podcasts/opml_upload.html", {"form": form}
+        )
 
 
 @admin.register(Recommendation)
