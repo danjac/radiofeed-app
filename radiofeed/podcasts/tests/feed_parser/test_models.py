@@ -6,12 +6,17 @@ from pydantic import ValidationError
 
 from radiofeed.episodes.models import Episode
 <<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_models.py
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_models.py
 from radiofeed.podcasts.feed_parser.models import Feed, Item
 from radiofeed.podcasts.tests.feed_parser.factories import FeedFactory, ItemFactory
 ========
 from radiofeed.parsers.feeds.models import Feed, Item
 from radiofeed.parsers.tests.factories import FeedFactory, ItemFactory
 >>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_models.py
+========
+from radiofeed.podcasts.parsers.feed_parser.models import Feed, Item
+from radiofeed.podcasts.parsers.tests.factories import FeedFactory, ItemFactory
+>>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts):radiofeed/podcasts/parsers/feed_parser/tests/test_models.py
 
 
 class TestItem:

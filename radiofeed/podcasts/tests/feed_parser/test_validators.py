@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 from django.db.models import TextChoices
 
-from radiofeed.parsers.feeds.validators import (
+from radiofeed.podcasts.parsers.feed_parser.validators import (
     default_if_none,
     is_one_of,
     normalize_url,

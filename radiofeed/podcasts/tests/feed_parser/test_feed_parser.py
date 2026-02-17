@@ -11,6 +11,7 @@ from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
 <<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
 from radiofeed.podcasts.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.feed_parser.date_parser import parse_date
 from radiofeed.podcasts.feed_parser.rss_fetcher import make_content_hash
@@ -19,7 +20,12 @@ from radiofeed.parsers.feeds.date_parser import parse_date
 from radiofeed.parsers.feeds.feed_parser import get_categories_dict, parse_feed
 from radiofeed.parsers.feeds.rss.fetcher import make_content_hash
 >>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_feed_parser.py
+========
+>>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts):radiofeed/podcasts/parsers/feed_parser/tests/test_feed_parser.py
 from radiofeed.podcasts.models import Category, Podcast
+from radiofeed.podcasts.parsers.feed_parser import get_categories_dict, parse_feed
+from radiofeed.podcasts.parsers.feed_parser.date_parser import parse_date
+from radiofeed.podcasts.parsers.rss_parser import make_content_hash
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
@@ -405,12 +411,16 @@ class TestFeedParser:
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
 <<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
         mock_parse_rss = mocker.patch(
             "radiofeed.podcasts.feed_parser.rss_parser.parse_rss"
         )
 ========
         mock_parse_rss = mocker.patch("radiofeed.parsers.feeds.rss.parser.parse_rss")
 >>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_feed_parser.py
+========
+        mock_parse_rss = mocker.patch("radiofeed.podcasts.parsers.rss_parser.parse_rss")
+>>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts):radiofeed/podcasts/parsers/feed_parser/tests/test_feed_parser.py
 
         client = _mock_client(
             status_code=http.HTTPStatus.OK,

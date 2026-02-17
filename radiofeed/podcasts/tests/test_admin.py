@@ -281,7 +281,17 @@ class TestPodcastAdminUploadOpml:
 
     @pytest.mark.django_db
     def test_upload_opml_view_post(self, client, staff_user):
+<<<<<<< HEAD
         path = pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
+=======
+        path = (
+            pathlib.Path(__file__).parents[1]
+            / "parsers"
+            / "tests"
+            / "mocks"
+            / "feeds.opml"
+        )
+>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts)
         response = client.post(
             self.url,
             {"opml": BytesIO(path.read_bytes())},

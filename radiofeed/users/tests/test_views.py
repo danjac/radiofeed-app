@@ -132,6 +132,10 @@ class TestImportPodcastFeeds:
             (
                 pathlib.Path(__file__).parents[2]
                 / "podcasts"
+<<<<<<< HEAD
+=======
+                / "parsers"
+>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts)
                 / "tests"
                 / "mocks"
                 / "feeds.opml"

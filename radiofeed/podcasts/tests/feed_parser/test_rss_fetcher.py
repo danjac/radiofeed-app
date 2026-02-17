@@ -5,12 +5,14 @@ import httpx
 import pytest
 
 from radiofeed.client import Client
-from radiofeed.parsers.feeds.date_parser import parse_date
-from radiofeed.parsers.feeds.exceptions import (
+from radiofeed.podcasts.models import Podcast
+from radiofeed.podcasts.parsers.feed_parser.date_parser import parse_date
+from radiofeed.podcasts.parsers.feed_parser.exceptions import (
     DiscontinuedError,
     NotModifiedError,
     UnavailableError,
 )
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_rss_fetcher.py
 <<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_rss_fetcher.py
 from radiofeed.podcasts.feed_parser.rss_fetcher import fetch_rss, make_content_hash
 ========
@@ -20,6 +22,12 @@ from radiofeed.parsers.feeds.rss.fetcher import (
 )
 >>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/rss/tests/test_fetcher.py
 from radiofeed.podcasts.models import Podcast
+========
+from radiofeed.podcasts.parsers.rss_parser import (
+    fetch_rss,
+    make_content_hash,
+)
+>>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts):radiofeed/podcasts/parsers/rss_parser/tests/test_fetcher.py
 
 
 class TestMakeContentHash:
