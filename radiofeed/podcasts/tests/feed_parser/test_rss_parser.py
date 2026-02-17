@@ -2,18 +2,8 @@ import pathlib
 
 import pytest
 
-<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_rss_parser.py
-<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_rss_parser.py
 from radiofeed.podcasts.feed_parser.exceptions import InvalidRSSError
 from radiofeed.podcasts.feed_parser.rss_parser import parse_rss
-========
-from radiofeed.parsers.feeds.exceptions import InvalidRSSError
-from radiofeed.parsers.feeds.rss.parser import parse_rss
->>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/rss/tests/test_parser.py
-========
-from radiofeed.podcasts.parsers.feed_parser.exceptions import InvalidRSSError
-from radiofeed.podcasts.parsers.rss_parser import parse_rss
->>>>>>>> f991ea3c0 (refactor: move parsers package to podcasts):radiofeed/podcasts/parsers/rss_parser/tests/test_parser.py
 
 
 class TestParseRss:

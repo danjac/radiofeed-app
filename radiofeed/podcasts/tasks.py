@@ -4,8 +4,8 @@ from django.tasks import task  # type: ignore[reportMissingTypeStubs]
 
 from radiofeed.client import get_client
 from radiofeed.podcasts import itunes
+from radiofeed.podcasts.feed_parser import parse_feed
 from radiofeed.podcasts.models import Podcast
-from radiofeed.podcasts.parsers.feed_parser import parse_feed
 
 logger = logging.getLogger(__name__)
 
