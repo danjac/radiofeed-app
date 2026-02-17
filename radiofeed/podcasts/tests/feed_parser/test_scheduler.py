@@ -3,9 +3,15 @@ import datetime
 import pytest
 from django.utils import timezone
 
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_scheduler.py
 from radiofeed.podcasts.feed_parser import scheduler
 from radiofeed.podcasts.feed_parser.models import Feed, Item
 from radiofeed.podcasts.tests.feed_parser.factories import FeedFactory, ItemFactory
+========
+from radiofeed.parsers.feeds import scheduler
+from radiofeed.parsers.feeds.models import Feed, Item
+from radiofeed.parsers.tests.factories import FeedFactory, ItemFactory
+>>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_scheduler.py
 
 
 class TestReschedule:

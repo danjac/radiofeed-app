@@ -1,7 +1,11 @@
 import functools
 from typing import TYPE_CHECKING
 
+<<<<<<<< HEAD:radiofeed/podcasts/opml_parser.py
 from radiofeed.podcasts.xml_parser import XPathParser
+========
+from radiofeed.parsers.xpath_parser import XPathParser
+>>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/opml_parser.py
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

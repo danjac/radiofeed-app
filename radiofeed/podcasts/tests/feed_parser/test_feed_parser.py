@@ -10,9 +10,15 @@ from django.utils.text import slugify
 from radiofeed.client import Client
 from radiofeed.episodes.models import Episode
 from radiofeed.episodes.tests.factories import EpisodeFactory
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
 from radiofeed.podcasts.feed_parser import get_categories_dict, parse_feed
 from radiofeed.podcasts.feed_parser.date_parser import parse_date
 from radiofeed.podcasts.feed_parser.rss_fetcher import make_content_hash
+========
+from radiofeed.parsers.feeds.date_parser import parse_date
+from radiofeed.parsers.feeds.feed_parser import get_categories_dict, parse_feed
+from radiofeed.parsers.feeds.rss.fetcher import make_content_hash
+>>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_feed_parser.py
 from radiofeed.podcasts.models import Category, Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
@@ -53,7 +59,11 @@ def _mock_error_client(exc):
 
 
 def _get_mock_file_path(filename):
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
     return pathlib.Path(__file__).parents[1] / "mocks" / filename
+========
+    return pathlib.Path(__file__).parents[2] / "tests" / "mocks" / filename
+>>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_feed_parser.py
 
 
 class TestFeedParser:
@@ -394,9 +404,13 @@ class TestFeedParser:
         content = self.get_rss_content()
         podcast = PodcastFactory(content_hash=make_content_hash(content))
 
+<<<<<<<< HEAD:radiofeed/podcasts/tests/feed_parser/test_feed_parser.py
         mock_parse_rss = mocker.patch(
             "radiofeed.podcasts.feed_parser.rss_parser.parse_rss"
         )
+========
+        mock_parse_rss = mocker.patch("radiofeed.parsers.feeds.rss.parser.parse_rss")
+>>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/feeds/tests/test_feed_parser.py
 
         client = _mock_client(
             status_code=http.HTTPStatus.OK,

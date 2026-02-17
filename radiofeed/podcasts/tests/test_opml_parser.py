@@ -1,6 +1,10 @@
 import pathlib
 
+<<<<<<<< HEAD:radiofeed/podcasts/tests/test_opml_parser.py
 from radiofeed.podcasts.opml_parser import parse_opml
+========
+from radiofeed.parsers.opml_parser import parse_opml
+>>>>>>>> f7f200b02 (refactor: reorganise parsers):radiofeed/parsers/tests/test_opml_parser.py
 
 
 class TestParseOpml:

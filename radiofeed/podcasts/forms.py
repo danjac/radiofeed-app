@@ -2,8 +2,12 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django import forms
 
+from radiofeed.parsers.opml_parser import parse_opml
 from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.opml_parser import parse_opml
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
