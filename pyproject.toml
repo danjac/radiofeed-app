@@ -210,6 +210,6 @@ django_settings_module = "config.settings"
 
 [tool.pyright]
 include = ["radiofeed"]
-exclude = ["**/migrations/*.py", "**/tests/*.py"]
+exclude = ["**/migrations/*.py", "**/tests/**/*.py"]
 
 typeCheckingMode = "basic"
