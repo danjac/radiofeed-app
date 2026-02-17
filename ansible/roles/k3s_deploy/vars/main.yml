@@ -1,0 +1,77 @@
+k3s_deploy_configmap:
+   - name: "admins"
+     value: "{{ k3s_deploy_admins }}"
+
+   - name: "admin_url"
+     value: "{{ k3s_deploy_admin_url }}"
+
+   - name: "allowed_hosts"
+     value: "{{ k3s_deploy_allowed_hosts }}"
+
+   - name: "conn_pool_max_idle"
+     value: "{{ k3s_deploy_conn_pool_max_idle }}"
+
+   - name: "conn_pool_max_lifetime"
+     value: "{{ k3s_deploy_conn_pool_max_lifetime }}"
+
+   - name: "conn_pool_max_waiting"
+     value: "{{ k3s_deploy_conn_pool_max_waiting }}"
+
+   - name: "conn_pool_max_size"
+     value: "{{ k3s_deploy_conn_pool_max_size }}"
+
+   - name: "conn_pool_min_size"
+     value: "{{ k3s_deploy_conn_pool_min_size }}"
+
+   - name: "contact_email"
+     value: "{{ k3s_deploy_contact_email }}"
+
+   - name: "csp_script_whitelist"
+     value: "{{ k3s_deploy_csp_script_whitelist }}"
+
+   - name: "mailgun_api_url"
+     value: "{{ k3s_deploy_mailgun_api_url }}"
+
+   - name: "mailgun_sender_domain"
+     value: "{{ k3s_deploy_mailgun_sender_domain }}"
+
+   - name: "meta_author"
+     value: "{{ k3s_deploy_meta_author }}"
+
+   - name: "meta_description"
+     value: "{{ k3s_deploy_meta_description }}"
+
+   - name: "meta_keywords"
+     value: "{{ k3s_deploy_meta_keywords }}"
+
+   - name: "secure_ssl_redirect"
+     value: "{{ k3s_deploy_secure_ssl_redirect }}"
+
+
+k3s_deploy_secrets:
+   - name: "database_url"
+     value: "{{ database_url }}"
+
+   - name: "mailgun_api_key"
+     value: "{{ k3s_deploy_mailgun_api_key }}"
+
+   - name: "open_telemetry_url"
+     value: "{{ k3s_deploy_open_telemetry_url }}"
+
+   - name: "postgres_password"
+     value: "{{ k3s_deploy_postgres.password }}"
+
+   - name: "pwa_sha256_fingerprints"
+     value: "{{ k3s_deploy_pwa_sha256_fingerprints }}"
+
+   - name: "redis_url"
+     value: "{{ redis_url }}"
+
+   - name: "secret_key"
+     value: "{{ k3s_secret_key }}"
+
+   - name: "secret_key_fallbacks"
+     value: "{{ k3s_deploy_secret_key_fallbacks }}"
+
+   - name: "sentry_url"
+     value: "{{ k3s_deploy_sentry_url }}"

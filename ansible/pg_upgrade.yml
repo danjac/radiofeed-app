@@ -3,4 +3,4 @@
   become: false
   gather_facts: true
   roles:
-      - k3s/pg_upgrade
+      - k3s_pg_upgrade

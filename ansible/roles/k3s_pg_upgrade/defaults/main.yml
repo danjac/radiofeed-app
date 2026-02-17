@@ -1,0 +1,7 @@
+# Deployment settings
+
+k3s_pg_upgrade_postgres:
+  current_volume: "{{ k3s_postgres_volume | default(false) }}"
+  storage: "{{ k3s_postgres_storage | default('30Gi', true) }}"
+  new_image: "{{ k3s_postgres_new_image | default(false) }}"
+  new_volume: "{{ k3s_postgres_new_volume | default(false) }}"

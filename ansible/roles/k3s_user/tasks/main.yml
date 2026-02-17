@@ -1,0 +1,27 @@
+- name: Create .kube directory with read/write permissions on user home dir
+  ansible.builtin.file:
+      path: "{{ home_dir }}/.kube"
+      mode: "u+rw"
+      state: directory
+
+- name: Copy kubeconfig to user home dir
+  become: true
+  ansible.builtin.copy:
+      src: /etc/rancher/k3s/k3s.yaml
+      dest: "{{ kubeconfig }}"
+      remote_src: true
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: "u+rw"
+
+- name: Add KUBECONFIG environment variable to .bashrc and .profile
+  ansible.builtin.lineinfile:
+      path: "{{ home_dir }}/{{ item }}"
+      regexp: '^export KUBECONFIG='
+      line: 'export KUBECONFIG={{ kubeconfig }}'
+      create: true
+      state: present
+      mode: "0644"
+  loop:
+      - .bashrc
+      - .profile

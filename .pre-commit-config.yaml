@@ -85,6 +85,14 @@ repos:
     rev: 0.16.0
     hooks:
       - id: uv-secure
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v26.1.1
+    hooks:
+      - id: ansible-lint
+        language_version: "3.14"
+        always_run: false
+        files: ^ansible/
+        args: ['ansible/']
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.105.0
     hooks:

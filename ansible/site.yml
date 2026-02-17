@@ -13,35 +13,35 @@
   become: true
   gather_facts: false
   roles:
-      - k3s/prereqs
+      - k3s_prereqs
 
 - name: Setup PostgreSQL volume
   hosts: agents
   become: true
   gather_facts: false
   roles:
-      - k3s/postgres_volume
+      - k3s_postgres_volume
 
 - name: Set up K3s cluster
   hosts: server
   become: true
   gather_facts: false
   roles:
-      - k3s/cluster
+      - k3s_cluster
 
 - name: Cleanup tasks for k3s
   hosts: all
   become: true
   gather_facts: true
   roles:
-    - k3s/cleanup
+      - k3s_cleanup
 
 - name: Deploy k3s application
   hosts: server
   become: false
   gather_facts: true
   roles:
-      - k3s/user
-      - k3s/deploy
-      - k3s/crons
-      - k3s/scripts
+      - k3s_user
+      - k3s_deploy
+      - k3s_crons
+      - k3s_scripts

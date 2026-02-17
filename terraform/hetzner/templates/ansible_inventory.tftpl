@@ -23,17 +23,17 @@ all:
           role: webapp
 %{ endfor ~}
   vars:
-    admin_url: "my-admin/"
-    admins: "admin@example.com"
-    contact_email: "contact@example.com"
+    k3s_admin_url: "my-admin/"
+    k3s_admins: "admin@example.com"
+    k3s_contact_email: "contact@example.com"
     domain: "myapp.com"
-    mailgun_api_key: ""
-    mailgun_api_url: "https://api.eu.mailgun.net/v3"
-    postgres_volume: "${postgres_volume_mount_path}"
-    postgres_password: "CHANGE_ME" # pragma: allowlist secret
-    pwa_sha256_fingerprints: ""
-    secret_key: "CHANGE_ME" # pragma: allowlist secret
-    secret_key_fallbacks: "" # pragma: allowlist secret
-    sentry_url: ""
+    k3s_mailgun_api_key: ""
+    k3s_mailgun_api_url: "https://api.eu.mailgun.net/v3"
+    k3s_postgres_volume: "${postgres_volume_mount_path}"
+    k3s_postgres_password: "CHANGE_ME" # pragma: allowlist secret
+    k3s_pwa_sha256_fingerprints: ""
+    k3s_secret_key: "CHANGE_ME" # pragma: allowlist secret
+    k3s_secret_key_fallbacks: "" # pragma: allowlist secret
+    k3s_sentry_url: ""
     # cron_schedules_override:
     #  send_episode_updates: "10 10 * * 3"

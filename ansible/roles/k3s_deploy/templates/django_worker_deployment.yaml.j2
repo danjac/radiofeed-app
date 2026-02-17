@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-worker
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxSurge: 0  # No extra pods created during update
+        maxUnavailable: 1  # Only one pod can be replaced at a time
+  template:
+    metadata:
+      labels:
+        app: django-worker
+    spec:
+      nodeSelector:
+        role: jobrunner
+      containers:
+        - name: django
+          image: {{ k3s_deploy_image }}
+          resources:
+            requests:
+                memory: "{{ k3s_deploy_mem_request }}"
+                cpu: "{{ k3s_deploy_cpu_request }}"
+            limits:
+                memory: "{{ k3s_deploy_mem_limit }}"
+                cpu: "{{ k3s_deploy_cpu_limit }}"
+          command: ["/bin/sh", "-c"]
+          args: ["./manage.sh db_worker"]
+          envFrom:
+            - configMapRef:
+                name: configmap
+            - secretRef:
+                name: secrets

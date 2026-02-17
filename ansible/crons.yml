@@ -3,4 +3,4 @@
   become: false
   gather_facts: true
   roles:
-      - k3s/crons
+      - k3s_crons

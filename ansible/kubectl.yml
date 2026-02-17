@@ -2,4 +2,4 @@
   hosts: server
   gather_facts: true
   roles:
-    - scripts/kubectl
+    - scripts_kubectl

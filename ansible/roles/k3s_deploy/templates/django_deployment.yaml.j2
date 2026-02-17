@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: {{ num_webapps }}
+  selector:
+    matchLabels:
+      app: django-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxSurge: 0  # No extra pods created during update
+        maxUnavailable: 1  # Only one pod can be replaced at a time
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      nodeSelector:
+        role: webapp
+      containers:
+        - name: django
+          image: {{ k3s_deploy_image }}
+          resources:
+            requests:
+                memory: "{{ k3s_deploy_mem_request }}"
+                cpu: "{{ k3s_deploy_cpu_request }}"
+            limits:
+                memory: "{{ k3s_deploy_mem_limit }}"
+                cpu: "{{ k3s_deploy_cpu_limit }}"
+          command: ["/bin/sh", "-c"]
+          args: ["./gunicorn.sh"]
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: configmap
+            - secretRef:
+                name: secrets
+          livenessProbe:
+            httpGet:
+              path: /ht/live/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ht/ready/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30

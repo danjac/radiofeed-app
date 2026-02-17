@@ -21,17 +21,17 @@ all:
           hostname: webapp-2
           role: webapp
   vars:
-    admin_url: "my-admin/"
-    admins: "admin@gmail.com"
-    contact_email: "contact@gmail.com"
+    k3s_admin_url: "my-admin/"
+    k3s_admins: "admin@gmail.com"
+    k3s_contact_email: "contact@gmail.com"
     domain: "myapp.com"
-    mailgun_api_key: ""
-    mailgun_api_url: "https://api.eu.mailgun.net/v3"
-    postgres_volume: "/mnt/HC_Volume_104566943"  # Path to mounted block storage volume on database node
-    postgres_password: dbpasswd
-    pwa_sha256_fingerprints: ""
-    secret_key: seekrit1
-    secret_key_fallbacks: "seekrit2,seekrit3"
-    sentry_url: "https://xxxx.ingest.us.sentry.io/xxxxx"
+    k3s_mailgun_api_key: ""
+    k3s_mailgun_api_url: "https://api.eu.mailgun.net/v3"
+    k3s_postgres_volume: "/mnt/HC_Volume_104566943"  # Path to mounted block storage volume on database node
+    k3s_postgres_password: dbpasswd
+    k3s_pwa_sha256_fingerprints: ""
+    k3s_secret_key: seekrit1
+    k3s_secret_key_fallbacks: "seekrit2,seekrit3"
+    k3s_sentry_url: "https://xxxx.ingest.us.sentry.io/xxxxx"
     # cron_schedules_override:
     #  send_episode_updates: "10 10 * * 3"

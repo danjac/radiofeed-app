@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: configmap
-data:
-{% for item in configmap %}
-   {{ item.name|upper }}: "{{ item.value }}"
-{% endfor %}

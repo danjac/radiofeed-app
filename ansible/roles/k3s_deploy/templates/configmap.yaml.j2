@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap
+data:
+{% for item in k3s_deploy_configmap %}
+   {{ item.name|upper }}: "{{ item.value }}"
+{% endfor %}

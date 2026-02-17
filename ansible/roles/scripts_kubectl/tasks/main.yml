@@ -1,0 +1,6 @@
+- name: Generate remote Kubectl command
+  ansible.builtin.template:
+    src: templates/kubectl.sh.j2
+    dest: scripts/kubectl.sh
+    mode: "u+x"
+  delegate_to: localhost

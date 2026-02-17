@@ -1,0 +1,6 @@
+- name: Generate remote PSQL command
+  ansible.builtin.template:
+    src: templates/psql.sh.j2
+    dest: scripts/psql.sh
+    mode: "u+x"
+  delegate_to: localhost

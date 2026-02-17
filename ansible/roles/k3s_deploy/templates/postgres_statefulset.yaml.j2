@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      nodeSelector:
+        role: database  # Ensures it runs on the correct node
+      containers:
+        - name: postgres
+          image: {{ k3s_deploy_postgres.image }}
+          args:
+            - "postgres"
+            - "-c"
+            - "lock_timeout=5s"
+            - "-c"
+            - "log_destination=stderr"
+            - "-c"
+            - "log_statement=all"
+            - "-c"
+            - "max_connections=200"
+            - "-c"
+            - "max_wal_size=4GB"
+            - "-c"
+            - "statement_timeout=30s"
+            - "-c"
+            - "wal_buffers=32MB"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: POSTGRES_PASSWORD
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: postgres-storage
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 3
+            periodSeconds: 1
+            timeoutSeconds: 3
+            failureThreshold: 30
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 3
+            periodSeconds: 1
+            timeoutSeconds: 3
+            failureThreshold: 30
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc-{{ postgres_major_version }}
