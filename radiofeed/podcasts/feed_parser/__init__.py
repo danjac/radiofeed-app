@@ -93,18 +93,15 @@ class _FeedParser:
                 exception=str(exc),
             )
 
-        except NotModifiedError:
-            return self._feed_update(
-                Podcast.FeedStatus.NOT_MODIFIED,
-                frequency=self._reschedule(),
-            )
+        except NotModifiedError as exc:
+            return self._feed_update(exc.feed_status, frequency=self._reschedule())
 
-        except DiscontinuedError:
-            return self._feed_update(Podcast.FeedStatus.DISCONTINUED, active=False)
+        except DiscontinuedError as exc:
+            return self._feed_update(exc.feed_status, active=False)
 
         except DuplicateError as exc:
             return self._feed_update(
-                Podcast.FeedStatus.DUPLICATE,
+                exc.feed_status,
                 active=False,
                 canonical_id=exc.canonical_id,
             )
@@ -114,14 +111,8 @@ class _FeedParser:
             frequency = self._reschedule() if active else self.podcast.frequency
             num_retries = self.podcast.num_retries + 1
 
-            match exc:
-                case InvalidRSSError():
-                    feed_status = Podcast.FeedStatus.INVALID_RSS
-                case UnavailableError():
-                    feed_status = Podcast.FeedStatus.UNAVAILABLE
-
             return self._feed_update(
-                feed_status,
+                exc.feed_status,
                 active=active,
                 frequency=frequency,
                 num_retries=num_retries,
