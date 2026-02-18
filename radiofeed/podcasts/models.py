@@ -169,7 +169,6 @@ class Podcast(models.Model):
 
         SUCCESS = "success", "Success"
         NOT_MODIFIED = "not_modified", "Not Modified"
-        DATABASE_ERROR = "database_error", "Database Error"
         DISCONTINUED = "discontinued", "Discontinued"
         DUPLICATE = "duplicate", "Duplicate"
         INVALID_RSS = "invalid_rss", "Invalid RSS"
@@ -218,8 +217,6 @@ class Podcast(models.Model):
     )
 
     content_hash = models.CharField(max_length=64, blank=True)
-
-    exception = models.TextField(blank=True)
 
     num_retries = models.PositiveIntegerField(default=0)
 

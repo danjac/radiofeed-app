@@ -230,7 +230,6 @@ class PodcastAdmin(admin.ModelAdmin):
         "modified",
         "etag",
         "content_hash",
-        "exception",
     )
 
     search_fields = ("search_vector",)

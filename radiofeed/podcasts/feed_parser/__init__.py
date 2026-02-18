@@ -4,7 +4,6 @@ import itertools
 from typing import TYPE_CHECKING
 
 from django.db import transaction
-from django.db.utils import DatabaseError
 from django.utils import timezone
 
 from radiofeed.episodes.models import Episode
@@ -12,8 +11,8 @@ from radiofeed.podcasts.feed_parser import scheduler
 from radiofeed.podcasts.feed_parser.exceptions import (
     DiscontinuedError,
     DuplicateError,
+    FeedParseError,
     InvalidRSSError,
-    NotModifiedError,
     UnavailableError,
 )
 from radiofeed.podcasts.feed_parser.models import Feed, Item
@@ -85,38 +84,29 @@ class _FeedParser:
                         }
                     ),
                 )
+        except FeedParseError as exc:
+            active = True
+            canonical_id = None
+            num_retries = 0
 
-        except DatabaseError as exc:
-            return self._feed_update(
-                Podcast.FeedStatus.DATABASE_ERROR,
-                frequency=self._reschedule(),
-                exception=str(exc),
-            )
+            match exc:
+                case DiscontinuedError():
+                    active = False
+                case DuplicateError():
+                    active = False
+                    canonical_id = exc.canonical_id
+                case InvalidRSSError() | UnavailableError():
+                    active = self.podcast.num_retries < self.podcast.MAX_RETRIES
+                    num_retries = self.podcast.num_retries + 1
 
-        except NotModifiedError as exc:
-            return self._feed_update(exc.feed_status, frequency=self._reschedule())
-
-        except DiscontinuedError as exc:
-            return self._feed_update(exc.feed_status, active=False)
-
-        except DuplicateError as exc:
-            return self._feed_update(
-                exc.feed_status,
-                active=False,
-                canonical_id=exc.canonical_id,
-            )
-
-        except (InvalidRSSError, UnavailableError) as exc:
-            active = self.podcast.num_retries < self.podcast.MAX_RETRIES
             frequency = self._reschedule() if active else self.podcast.frequency
-            num_retries = self.podcast.num_retries + 1
 
             return self._feed_update(
                 exc.feed_status,
                 active=active,
+                canonical_id=canonical_id,
                 frequency=frequency,
                 num_retries=num_retries,
-                exception=str(exc),
             )
 
     def _resolve_canonical_rss(self, current_url: str, new_url: str) -> str:
@@ -152,7 +142,6 @@ class _FeedParser:
         feed_status: Podcast.FeedStatus,
         *,
         active=True,
-        exception: str = "",
         num_retries: int = 0,
         **fields,
     ) -> Podcast.FeedStatus:
@@ -160,7 +149,6 @@ class _FeedParser:
         Podcast.objects.filter(pk=self.podcast.pk).update(
             feed_status=feed_status,
             active=active,
-            exception=exception,
             num_retries=num_retries,
             updated=now,
             parsed=now,

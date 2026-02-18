@@ -604,7 +604,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_no_podcasts_exceed_max_retries(self):
@@ -628,7 +627,6 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.num_retries == Podcast.MAX_RETRIES + 2
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_empty_feed(self, podcast):
@@ -647,7 +645,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_not_modified(self, podcast):
@@ -692,7 +689,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_http_not_found(self, podcast):
@@ -708,7 +704,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.num_retries == 1
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_http_not_found_exceed_num_retries(self):
@@ -728,7 +723,6 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.num_retries == Podcast.MAX_RETRIES + 2
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_parse_connect_error(self, podcast):
@@ -743,7 +737,6 @@ class TestFeedParser:
 
         assert podcast.active is True
         assert podcast.parsed
-        assert podcast.exception
 
     @pytest.mark.django_db
     def test_other_error(self, podcast, mocker):
@@ -759,13 +752,10 @@ class TestFeedParser:
             },
         )
 
-        result = parse_feed(podcast, client)
-        assert result == Podcast.FeedStatus.DATABASE_ERROR
+        with pytest.raises(DatabaseError, match="fail"):
+            parse_feed(podcast, client)
 
         podcast.refresh_from_db()
 
-        assert podcast.feed_status == result
-
         assert podcast.active is True
-        assert podcast.parsed
-        assert "fail" in podcast.exception
+        assert podcast.parsed is None
