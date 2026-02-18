@@ -386,15 +386,15 @@ wheels = [
 
 [[package]]
 name = "django-health-check"
-version = "4.0.0"
+version = "4.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "dnspython" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/e0/d0e9cf78f4aaea9f0f8cc9e6e2daeac41604960c04c8fdf66277e4f8a84a/django_health_check-4.0.0.tar.gz", hash = "sha256:1b49c36cb1ae90edd8c2667c889b4b9c6aa8317d8444a8bc884061c5cf9ad706", size = 19963, upload-time = "2026-02-12T14:45:58.554Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ae/6f/2b54d682088f3a4fcaf07dfd5564d3c68e9b3a96791713d3b63a176d7735/django_health_check-4.0.3.tar.gz", hash = "sha256:06ca4dc203ba28f6e269c49709d3c3e31b5bb9f9c5c08c98cdbd4bdd9a1bbdc1", size = 20112, upload-time = "2026-02-17T18:24:57.96Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d8/36/f8950eaf079600d9877490baaae49d52d919e5b576ef694e6b42709c628c/django_health_check-4.0.0-py3-none-any.whl", hash = "sha256:1d90a8fdd7625ea2fd84e46225d7e435440bf4cad564a382bc6282c78c77cdbe", size = 24848, upload-time = "2026-02-12T14:45:57.355Z" },
+    { url = "https://files.pythonhosted.org/packages/94/58/b944444e5d1e240648f7ddccd25e8bccb969c5ea0743291a23df27f7b01f/django_health_check-4.0.3-py3-none-any.whl", hash = "sha256:b7b0bdc4bdf204d5062f767b756ec22ecc538e1d235d0e7693ba1601630bcfee", size = 25022, upload-time = "2026-02-17T18:24:56.925Z" },
 ]
 
 [[package]]
@@ -540,16 +540,16 @@ wheels = [
 
 [[package]]
 name = "django-typer"
-version = "3.6.1"
+version = "3.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "django" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/73/23/f0b59f61e9efec0397cf2920b70d9b9f5c3a7502b073834239c538289e8e/django_typer-3.6.1.tar.gz", hash = "sha256:1e46cbca738191471fbe80e93ed35bbc7eee19fe65ab61368760fc34c6468040", size = 2971971, upload-time = "2026-02-15T05:36:40.128Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/29/e2fe2471d839eceb565123f538a3bd351b871dc57afb0956c93244607623/django_typer-3.6.2.tar.gz", hash = "sha256:160a78a88c28863a33c748bc094e500bbc171f6ffa663957be5efa9c646e45be", size = 2971988, upload-time = "2026-02-17T18:58:05.074Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/08/88/104b4cd75264e04aa01eba31caa7e88663f1299d8ac528a1aec8343a93e7/django_typer-3.6.1-py3-none-any.whl", hash = "sha256:b1228ff7908a4dde7078657ee3040f81a7a18fe40d3255482a8ac213945835f5", size = 295953, upload-time = "2026-02-15T05:36:38.154Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/22/eb795c06c230668c1eedaa6c90f21d22aa003be8a7125f359cd341f6e029/django_typer-3.6.2-py3-none-any.whl", hash = "sha256:8dfd12faeb23daf5652c81b7f0ecc0fdc96e86947f34210ff521cc86b8156d45", size = 295953, upload-time = "2026-02-17T18:58:03.225Z" },
 ]
 
 [[package]]
@@ -1503,15 +1503,15 @@ wheels = [
 
 [[package]]
 name = "pytest-env"
-version = "1.3.2"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pytest" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/43/ad/dd32e4614fb68ad980c949fd4299f8c6a8d4874e24ec8d222c056efb4741/pytest_env-1.3.2.tar.gz", hash = "sha256:f091a2c6a8eb91befcae2b4c1bd2905a51f33bc1c6567707b7feed4e51b76b47", size = 12009, upload-time = "2026-02-11T22:09:49.168Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/56/a931c6f6194917ff44be41b8586e2ffd13a18fa70fb28d9800a4695befa5/pytest_env-1.5.0.tar.gz", hash = "sha256:db8994b9ce170f135a37acc09ac753a6fc697d15e691b576ed8d8ca261c40246", size = 15271, upload-time = "2026-02-17T18:31:39.095Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/ad/d793670b26f4fb82e974dbff20d05782ebb23490b08987976cdc62d854bb/pytest_env-1.3.2-py3-none-any.whl", hash = "sha256:e8626b776a035112a8ad58fcc9e04926868c58f15225de484de7c8af4b4b526c", size = 7864, upload-time = "2026-02-11T22:09:47.775Z" },
+    { url = "https://files.pythonhosted.org/packages/61/af/99b52a8524983bfece35e51e65a0b517b22920c023e57855c95e744e19e4/pytest_env-1.5.0-py3-none-any.whl", hash = "sha256:89a15686ac837c9cd009a8a2d52bd55865e2f23c82094247915dae4540c87161", size = 10122, upload-time = "2026-02-17T18:31:37.496Z" },
 ]
 
 [[package]]
@@ -2031,7 +2031,7 @@ wheels = [
 
 [[package]]
 name = "typer"
-version = "0.23.2"
+version = "0.24.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-doc" },
@@ -2039,9 +2039,9 @@ dependencies = [
     { name = "rich" },
     { name = "shellingham" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d3/ae/93d16574e66dfe4c2284ffdaca4b0320ade32858cb2cc586c8dd79f127c5/typer-0.23.2.tar.gz", hash = "sha256:a99706a08e54f1aef8bb6a8611503808188a4092808e86addff1828a208af0de", size = 120162, upload-time = "2026-02-16T18:52:40.354Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5a/b6/3e681d3b6bb22647509bdbfdd18055d5adc0dce5c5585359fa46ff805fdc/typer-0.24.0.tar.gz", hash = "sha256:f9373dc4eff901350694f519f783c29b6d7a110fc0dcc11b1d7e353b85ca6504", size = 118380, upload-time = "2026-02-16T22:08:48.496Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/14/2c/dee705c427875402200fe779eb8a3c00ccb349471172c41178336e9599cc/typer-0.23.2-py3-none-any.whl", hash = "sha256:e9c8dc380f82450b3c851a9b9d5a0edf95d1d6456ae70c517d8b06a50c7a9978", size = 56834, upload-time = "2026-02-16T18:52:39.308Z" },
+    { url = "https://files.pythonhosted.org/packages/85/d0/4da85c2a45054bb661993c93524138ace4956cb075a7ae0c9d1deadc331b/typer-0.24.0-py3-none-any.whl", hash = "sha256:5fc435a9c8356f6160ed6e85a6301fdd6e3d8b2851da502050d1f92c5e9eddc8", size = 56441, upload-time = "2026-02-16T22:08:47.535Z" },
 ]
 
 [[package]]
