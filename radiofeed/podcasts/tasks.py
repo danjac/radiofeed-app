@@ -24,26 +24,20 @@ def parse_podcast_feed(*, podcast_id: int) -> Podcast.FeedStatus:
 @task
 def fetch_itunes_feeds(*, country: str, genre_id: int | None = None) -> None:
     """Fetch the top iTunes podcasts for a given country and genre."""
-    with get_client() as client:
-        try:
+    try:
+        with get_client() as client:
             feeds = itunes.fetch_top_feeds(client, country, genre_id)
-        except itunes.ItunesError as e:
-            logger.error("Error saving iTunes feeds to database: %s", e)
-            return
+    except itunes.ItunesError as e:
+        logger.error("Error saving iTunes feeds to database: %s", e)
+        return
 
-        num_feeds = len(feeds)
+    if genre_id:
+        itunes.save_feeds_to_db(feeds)
+    else:
+        itunes.save_feeds_to_db(feeds, promoted=True)
 
-        if genre_id:
-            itunes.save_feeds_to_db(feeds)
-            logger.info(
-                "Saved %d iTunes feeds for country %s to database",
-                num_feeds,
-                country,
-            )
-        else:
-            itunes.save_feeds_to_db(feeds, promoted=True)
-            logger.info(
-                "Saved %d iTunes popular feeds for country %s to database",
-                num_feeds,
-                country,
-            )
+    logger.info(
+        "Saved %d iTunes feeds for country %s to database",
+        len(feeds),
+        country,
+    )
