@@ -1,40 +1,47 @@
 @layer messages {
     .message-error {
-        background-color: var(--color-rose-500);
-        color: var(--color-white);
+        background-color: var(--color-bg);
+        border: 2px solid var(--color-rose-600);
+        color: var(--color-rose-600);
     }
 
     .message-info {
-        background-color: var(--color-sky-500);
-        color: var(--color-white);
+        background-color: var(--color-bg);
+        border: 2px solid var(--color-sky-600);
+        color: var(--color-sky-600);
     }
 
     .message-success {
-        background-color: var(--color-emerald-500);
-        color: var(--color-white);
+        background-color: var(--color-bg);
+        border: 2px solid var(--color-emerald-600);
+        color: var(--color-emerald-600);
     }
 
     .message-warning {
-        background-color: var(--color-amber-500);
-        color: var(--color-zinc-900);
+        background-color: var(--color-bg);
+        border: 2px solid var(--color-amber-600);
+        color: var(--color-amber-600);
     }
 
     @variant dark {
         .message-error {
-            background-color: var(--color-rose-600);
+            border-color: var(--color-rose-400);
+            color: var(--color-rose-400);
         }
 
         .message-info {
-            background-color: var(--color-sky-600);
+            border-color: var(--color-sky-400);
+            color: var(--color-sky-400);
         }
 
         .message-success {
-            background-color: var(--color-emerald-600);
+            border-color: var(--color-emerald-400);
+            color: var(--color-emerald-400);
         }
 
         .message-warning {
-            background-color: var(--color-amber-600);
-            color: var(--color-white);
+            border-color: var(--color-amber-400);
+            color: var(--color-amber-400);
         }
     }
 }
