@@ -2,13 +2,13 @@ from typing import TYPE_CHECKING, ClassVar
 
 from django.contrib import admin
 from django.db.models import Count, Exists, OuterRef, QuerySet
-from django.http import HttpRequest
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
+from radiofeed.podcasts import tasks
 from radiofeed.podcasts.forms import OpmlUploadForm
 from radiofeed.podcasts.models import (
     Category,
@@ -19,9 +19,11 @@ from radiofeed.podcasts.models import (
 )
 
 if TYPE_CHECKING:
-    from django.http import HttpRequest, HttpResponse
+    from django.http import HttpRequest, HttpResponseRedirect
     from django.urls import URLPattern
-    from django_stubs_ext import StrOrPromise  # pragma: no cover
+    from django_stubs_ext import StrOrPromise
+
+    from radiofeed.http.response import RenderOrRedirectResponse
 
     class CategoryWithNumPodcasts(Category):
         """Category with annotated number of podcasts."""
@@ -196,6 +198,8 @@ class PodcastAdmin(admin.ModelAdmin):
 
     date_hierarchy = "pub_date"
 
+    actions = ("sync_podcast_feeds",)
+
     list_filter = (
         ActiveFilter,
         FeedStatusFilter,
@@ -276,6 +280,17 @@ class PodcastAdmin(admin.ModelAdmin):
         ),
     )
 
+    @admin.action(description="Sync selected podcast feeds")
+    def sync_podcast_feeds(
+        self,
+        request: HttpRequest,
+        queryset: PodcastQuerySet,
+    ) -> None:
+        """Admin action to sync selected podcast feeds. Only active podcasts will be scheduled for update."""
+        for podcast_id in queryset.filter(active=True).values_list("pk", flat=True):
+            tasks.parse_podcast_feed.enqueue(podcast_id=podcast_id)
+        self.message_user(request, "Scheduled feed updates for selected podcasts.")
+
     @admin.display(description="Next scheduled update")
     def next_scheduled_update(self, obj: Podcast) -> str:
         """Return estimated next update time."""
@@ -318,10 +333,15 @@ class PodcastAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.upload_opml_view),
                 name="podcasts_podcast_upload_opml",
             ),
+            path(
+                "<int:object_id>/sync-feed/",
+                self.admin_site.admin_view(self.sync_feed_view),
+                name="podcasts_podcast_sync_feed",
+            ),
             *super().get_urls(),
         ]
 
-    def upload_opml_view(self, request: HttpRequest) -> HttpResponse:
+    def upload_opml_view(self, request: HttpRequest) -> RenderOrRedirectResponse:
         """Upload OPML file and create podcasts."""
         if request.method == "POST":
             form = OpmlUploadForm(request.POST, request.FILES)
@@ -337,6 +357,15 @@ class PodcastAdmin(admin.ModelAdmin):
         return TemplateResponse(
             request, "admin/podcasts/opml_upload.html", {"form": form}
         )
+
+    def sync_feed_view(
+        self, request: HttpRequest, object_id: int
+    ) -> HttpResponseRedirect:
+        """Sync individual podcast feed."""
+        podcast = get_object_or_404(Podcast, active=True, pk=object_id)
+        tasks.parse_podcast_feed.enqueue(podcast_id=podcast.pk)
+        self.message_user(request, f"Scheduled feed update for {podcast}.")
+        return redirect("admin:podcasts_podcast_change", object_id)
 
 
 @admin.register(Recommendation)

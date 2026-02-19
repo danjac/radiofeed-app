@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 from django.contrib.admin.sites import AdminSite
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from radiofeed.podcasts.admin import (
@@ -26,6 +26,7 @@ from radiofeed.podcasts.tests.factories import (
     RecommendationFactory,
     SubscriptionFactory,
 )
+from radiofeed.tests.asserts import assert404
 
 
 @pytest.fixture(scope="module")
@@ -114,6 +115,66 @@ class TestPodcastAdmin:
     def test_next_scheduled_update_inactive(self, mocker, podcast_admin):
         podcast = PodcastFactory(active=False)
         assert podcast_admin.next_scheduled_update(podcast) == "-"
+
+    @pytest.mark.django_db
+    def test_sync_podcast_feeds(self, rf, mocker, podcast_admin):
+        mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
+        podcast_admin.message_user = mocker.Mock()
+        podcast = PodcastFactory()
+        request = rf.get("/")
+        queryset = Podcast.objects.all()
+        podcast_admin.sync_podcast_feeds(request, queryset)
+        mock_parse.enqueue.assert_called_once_with(podcast_id=podcast.id)
+
+    @pytest.mark.django_db
+    def test_sync_podcast_feeds_inactive(self, rf, mocker, podcast_admin):
+        mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
+        podcast_admin.message_user = mocker.Mock()
+        PodcastFactory(active=False)
+        request = rf.get("/")
+        queryset = Podcast.objects.all()
+        podcast_admin.sync_podcast_feeds(request, queryset)
+        mock_parse.enqueue.assert_not_called()
+
+
+class TestPodcastAdminSyncFeedView:
+    url = reverse_lazy("admin:podcasts_podcast_sync_feed", kwargs={"object_id": 1})
+
+    @pytest.mark.django_db
+    def test_sync_feed_view_active(self, client, staff_user, mocker):
+        mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
+        podcast = PodcastFactory(active=True)
+        response = client.get(
+            reverse_lazy(
+                "admin:podcasts_podcast_sync_feed", kwargs={"object_id": podcast.pk}
+            )
+        )
+        assert response.url == reverse(
+            "admin:podcasts_podcast_change", args=[podcast.pk]
+        )
+        mock_parse.enqueue.assert_called_once_with(podcast_id=podcast.id)
+
+    @pytest.mark.django_db
+    def test_sync_feed_view_inactive(self, client, staff_user, mocker):
+        mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
+        podcast = PodcastFactory(active=False)
+        response = client.get(
+            reverse_lazy(
+                "admin:podcasts_podcast_sync_feed", kwargs={"object_id": podcast.pk}
+            )
+        )
+        assert404(response)
+        mock_parse.enqueue.assert_not_called()
+
+    @pytest.mark.django_db
+    def test_sync_feed_view_requires_staff(self, client, user):
+        podcast = PodcastFactory(active=True)
+        url = reverse(
+            "admin:podcasts_podcast_sync_feed", kwargs={"object_id": podcast.pk}
+        )
+
+        response = client.get(url)
+        assert response.url == f"{reverse('admin:login')}?next={url}"
 
 
 class TestPromotedFilter:
@@ -286,7 +347,7 @@ class TestPodcastAdminUploadOpml:
             self.url,
             {"opml": BytesIO(path.read_bytes())},
         )
-        assert response.status_code == 302
+        assert response.url == reverse("admin:podcasts_podcast_changelist")
         assert Podcast.objects.count() == 11
 
     @pytest.mark.django_db
@@ -304,7 +365,7 @@ class TestPodcastAdminUploadOpml:
 </opml>"""
 
         response = client.post(self.url, {"opml": BytesIO(opml_content)})
-        assert response.status_code == 302
+        assert response.url == reverse("admin:podcasts_podcast_changelist")
         assert Podcast.objects.count() == 2
 
     @pytest.mark.django_db
@@ -320,10 +381,9 @@ class TestPodcastAdminUploadOpml:
 </opml>"""
 
         response = client.post(self.url, {"opml": BytesIO(opml_content)})
-        assert response.status_code == 302
-        assert response.url == "/admin/podcasts/podcast/"
+        assert response.url == reverse("admin:podcasts_podcast_changelist")
 
     @pytest.mark.django_db
     def test_upload_opml_view_requires_staff(self, client, user):
-        response = client.get("/admin/podcasts/podcast/upload-opml/")
-        assert response.status_code == 302
+        response = client.get(self.url)
+        assert response.url == f"{reverse('admin:login')}?next={self.url}"
