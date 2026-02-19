@@ -271,7 +271,6 @@ class PodcastAdmin(admin.ModelAdmin):
                     "etag",
                     "modified",
                     "content_hash",
-                    "exception",
                 ),
             },
         ),
