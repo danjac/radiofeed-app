@@ -51,21 +51,27 @@
     input[type="range"] {
         --thumbSize: --spacing(4);
         --trackSize: --spacing(1);
-        --thumbBg: var(--color-blue-600);
-        --progressBg: var(--color-blue-600);
+        --thumbBg: var(--color-indigo-500);
+        --progressBg: var(--color-indigo-500);
         --trackBg: var(--color-white);
 
         /* webkit progress workaround */
         --webkitProgressPercent: 0%;
 
+        @variant dark {
+            --thumbBg: var(--color-indigo-400);
+            --progressBg: var(--color-indigo-400);
+            --trackBg: var(--color-zinc-800);
+        }
+
     }
     input[type="range"]:disabled {
-        --thumbBg: var(--color-gray-800);
-        --progressBg: var(--color-gray-800);
+        --thumbBg: var(--color-zinc-800);
+        --progressBg: var(--color-zinc-800);
 
         @variant dark {
-            --thumbBg: var(--color-gray-500);
-            --progressBg: var(--color-gray-500);
+            --thumbBg: var(--color-zinc-500);
+            --progressBg: var(--color-zinc-500);
         }
     }
 
