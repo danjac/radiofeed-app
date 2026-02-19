@@ -21,6 +21,10 @@
                 {% fragment "browse.html#item" %}
                     {% include "podcasts/cards.html#podcast" %}
                 {% endfragment %}
+            {% empty %}
+                {% fragment "browse.html#empty" %}
+                    No podcasts have been added to the Discover feed yet. Check back later!
+                {% endfragment %}
             {% endfor %}
         {% endfragment %}
     {% endcache %}
