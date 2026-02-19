@@ -1,12 +1,21 @@
 {% load heroicons widget_tweaks %}
-{% with widget_type=field|widget_type errors=field.errors described_by=field.aria_describedby %}
-    <fieldset class="space-y-3 form-control{% if errors %} has-errors{% endif %}"
-              {% if described_by %} aria-describedby="{{ described_by }}"{% endif %}>
+
+{% fragment "form/field.html#fieldset" %}
+    {% with widget_type=field|widget_type %}
         {% include "form/field.html#"|add:widget_type %}
-        {% partial errors %}
-        {% partial help_text %}
-    </fieldset>
-{% endwith %}
+    {% endwith %}
+{% endfragment %}
+
+{% partialdef fieldset %}
+    {% with errors=field.errors described_by=field.aria_describedby %}
+        <fieldset class="space-y-3 form-control{% if errors %} has-errors{% endif %}"
+                  {% if described_by %} aria-describedby="{{ described_by }}"{% endif %}>
+            {{ content }}
+            {% partial errors %}
+            {% partial help_text %}
+        </fieldset>
+    {% endwith %}
+{% endpartialdef %}
 
 {% partialdef label %}
     <label class="block font-semibold text-zinc-700 dark:text-zinc-300{% if field.errors %} text-rose-600 dark:text-rose-400{% endif %}"
