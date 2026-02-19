@@ -35,38 +35,41 @@ class TestEncodeDecodeCoverUrl:
 class TestFetchImage:
     cover_url = "https://example.com/test.jpg"
 
-    def test_ok(self):
+    async def test_ok(self):
         def _handler(request):
             return httpx.Response(200)
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_cover_image(client, self.cover_url)
+        assert await fetch_cover_image(client, self.cover_url)
 
-    def test_content_length_ok(self):
+    async def test_content_length_ok(self):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "123"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_cover_image(client, self.cover_url)
+        assert await fetch_cover_image(client, self.cover_url)
 
-    def test_content_length_invalid(self):
+    async def test_content_length_invalid(self):
         def _handler(request):
             return httpx.Response(200, headers={"Content-Length": "invalid"})
 
         client = Client(transport=httpx.MockTransport(_handler))
-        assert fetch_cover_image(client, self.cover_url)
+        assert await fetch_cover_image(client, self.cover_url)
 
-    def test_chunked_content_too_long(self, mocker):
+    async def test_chunked_content_too_long(self, mocker):
         # mock entire fetch
         client = mocker.Mock()
 
         mock_response = mocker.Mock()
         mock_response.headers = {"content-length": 20000}
 
-        mock_response.iter_bytes.return_value = [b"OK"]
+        async def _aiter_bytes():
+            yield b"OK"
 
-        @contextlib.contextmanager
-        def mock_stream(*args, **kwargs):
+        mock_response.aiter_bytes = _aiter_bytes
+
+        @contextlib.asynccontextmanager
+        async def mock_stream(*args, **kwargs):
             yield mock_response
 
         client.stream = mock_stream
@@ -77,9 +80,9 @@ class TestFetchImage:
         mocker.patch("radiofeed.covers.io.BytesIO", return_value=mock_bytesio)
 
         with pytest.raises(CoverFetchError):
-            fetch_cover_image(client, self.cover_url)
+            await fetch_cover_image(client, self.cover_url)
 
-    def test_content_length_too_long(self):
+    async def test_content_length_too_long(self):
         def _handler(request):
             return httpx.Response(
                 200,
@@ -90,15 +93,15 @@ class TestFetchImage:
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverFetchError):
-            fetch_cover_image(client, self.cover_url)
+            await fetch_cover_image(client, self.cover_url)
 
-    def test_http_error(self):
+    async def test_http_error(self):
         def _handler(request):
             raise httpx.HTTPError("invalid")
 
         client = Client(transport=httpx.MockTransport(_handler))
         with pytest.raises(CoverFetchError):
-            fetch_cover_image(client, self.cover_url)
+            await fetch_cover_image(client, self.cover_url)
 
 
 class TestProcessImage:

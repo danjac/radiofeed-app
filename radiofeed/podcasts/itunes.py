@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field, ValidationError
 from radiofeed.podcasts.models import Podcast
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import AsyncIterator, Iterable
 
     from radiofeed.client import Client
 
@@ -40,9 +40,9 @@ class Feed(BaseModel):
         return self.title
 
 
-def search(client: Client, search_term: str, limit: int) -> list[Feed]:
+async def search(client: Client, search_term: str, limit: int) -> list[Feed]:
     """Search iTunes podcast API."""
-    return _fetch_feeds(
+    return await _fetch_feeds(
         client,
         "https://itunes.apple.com/search",
         {
@@ -53,7 +53,7 @@ def search(client: Client, search_term: str, limit: int) -> list[Feed]:
     )
 
 
-def search_cached(
+async def search_cached(
     client: Client,
     search_term: str,
     limit: int,
@@ -63,15 +63,15 @@ def search_cached(
     Returns True if results were fetched from the API, False if from cache.
     """
     cache_key = _get_cache_key(search_term, limit)
-    feeds = cache.get(cache_key, None)
+    feeds = await cache.aget(cache_key, None)
     if feeds is None:
-        feeds = search(client, search_term, limit=limit)
-        cache.set(cache_key, feeds, timeout=cache_timeout)
+        feeds = await search(client, search_term, limit=limit)
+        await cache.aset(cache_key, feeds, timeout=cache_timeout)
         return feeds, True
     return feeds, False
 
 
-def fetch_top_feeds(
+async def fetch_top_feeds(
     client: Client, country: str, genre_id: int | None = None
 ) -> list[Feed]:
     """Fetch top feeds from iTunes podcast chart page."""
@@ -83,7 +83,7 @@ def fetch_top_feeds(
     )
 
     try:
-        response = client.get(url)
+        response = await client.get(url)
     except httpx.HTTPError as exc:
         raise ItunesError from exc
 
@@ -103,7 +103,7 @@ def fetch_top_feeds(
     # Batch requests to avoid URL length limits
 
     for batch in itertools.batched(itunes_ids, 200, strict=False):
-        feeds += _fetch_feeds(
+        feeds += await _fetch_feeds(
             client,
             "https://itunes.apple.com/lookup",
             {
@@ -114,26 +114,26 @@ def fetch_top_feeds(
     return feeds
 
 
-def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
+async def save_feeds_to_db(feeds: Iterable[Feed], **fields) -> list[Podcast]:
     """Saves the given feeds to the database as Podcast objects."""
-    podcasts = _build_podcasts_from_feeds(feeds, **fields)
+    podcasts = [p async for p in _build_podcasts_from_feeds(feeds, **fields)]
     if fields:
-        return Podcast.objects.bulk_create(
+        return await Podcast.objects.abulk_create(
             podcasts,
             unique_fields=["rss"],
             update_conflicts=True,
             update_fields=fields,
         )
-    return Podcast.objects.bulk_create(podcasts, ignore_conflicts=True)
+    return await Podcast.objects.abulk_create(podcasts, ignore_conflicts=True)
 
 
-def _fetch_feeds(
+async def _fetch_feeds(
     client: Client,
     url: str,
     params: dict | None = None,
 ) -> list[Feed]:
     try:
-        response = client.get(
+        response = await client.get(
             url,
             params=params or {},
             headers={"Accept": "application/json"},
@@ -149,20 +149,23 @@ def _fetch_feeds(
     return feeds
 
 
-def _build_podcasts_from_feeds(feeds: Iterable[Feed], **fields) -> Iterator[Podcast]:
-    """Returns a list of podcasts with canonical URLs for the given feeds."""
+async def _build_podcasts_from_feeds(
+    feeds: Iterable[Feed], **fields
+) -> AsyncIterator[Podcast]:
+    """Yields podcasts with canonical URLs for the given feeds."""
 
     # make sure we fetch only unique feeds in the right order
     urls = dict.fromkeys(feed.rss for feed in feeds).keys()
 
     # in certain cases, we may have duplicates in the database
     # find the canonical URLs for the given URLs
-    canonical_urls = dict(
-        Podcast.objects.filter(
+    canonical_urls = {
+        k: v
+        async for k, v in Podcast.objects.filter(
             rss__in=urls,
             canonical__isnull=False,
         ).values_list("rss", "canonical__rss")
-    )
+    }
 
     for url in urls:
         yield Podcast(rss=canonical_urls.get(url, url), **fields)

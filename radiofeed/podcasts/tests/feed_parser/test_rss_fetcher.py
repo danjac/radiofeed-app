@@ -45,7 +45,7 @@ class TestMakeContentHash:
 class TestFetchRss:
     url = "http://example.com/feed"
 
-    def test_ok(self):
+    async def test_ok(self):
         def _handle(request):
             return httpx.Response(
                 http.HTTPStatus.OK,
@@ -58,7 +58,7 @@ class TestFetchRss:
             )
 
         client = Client(transport=httpx.MockTransport(_handle))
-        response = fetch_rss(Podcast(rss=self.url), client)
+        response = await fetch_rss(Podcast(rss=self.url), client)
 
         assert response.url == self.url
         assert response.etag == "123"
@@ -68,7 +68,7 @@ class TestFetchRss:
         assert response.content == b"test"
         assert response.content_hash == make_content_hash(b"test")
 
-    def test_not_modified(self):
+    async def test_not_modified(self):
         def _handle(request):
             return httpx.Response(
                 http.HTTPStatus.NOT_MODIFIED,
@@ -82,7 +82,7 @@ class TestFetchRss:
 
         client = Client(transport=httpx.MockTransport(_handle))
         with pytest.raises(NotModifiedError):
-            fetch_rss(
+            await fetch_rss(
                 Podcast(
                     rss=self.url,
                     etag="123",
@@ -91,7 +91,7 @@ class TestFetchRss:
                 client,
             )
 
-    def test_content_not_modified(self):
+    async def test_content_not_modified(self):
         def _handle(request):
             return httpx.Response(
                 http.HTTPStatus.OK,
@@ -102,7 +102,7 @@ class TestFetchRss:
         client = Client(transport=httpx.MockTransport(_handle))
 
         with pytest.raises(NotModifiedError):
-            fetch_rss(
+            await fetch_rss(
                 Podcast(
                     rss=self.url,
                     content_hash=make_content_hash(b"testvalue"),
@@ -110,23 +110,23 @@ class TestFetchRss:
                 client,
             )
 
-    def test_gone(self):
+    async def test_gone(self):
         def _handle(request):
             return httpx.Response(http.HTTPStatus.GONE, request=request)
 
         client = Client(transport=httpx.MockTransport(_handle))
         with pytest.raises(DiscontinuedError):
-            fetch_rss(Podcast(rss=self.url), client)
+            await fetch_rss(Podcast(rss=self.url), client)
 
-    def test_not_found(self):
+    async def test_not_found(self):
         def _handle(request):
             return httpx.Response(http.HTTPStatus.NOT_FOUND, request=request)
 
         client = Client(transport=httpx.MockTransport(_handle))
         with pytest.raises(UnavailableError):
-            fetch_rss(Podcast(rss=self.url), client)
+            await fetch_rss(Podcast(rss=self.url), client)
 
-    def test_server_error(self):
+    async def test_server_error(self):
         def _handle(request):
             return httpx.Response(
                 http.HTTPStatus.INTERNAL_SERVER_ERROR, request=request
@@ -134,4 +134,4 @@ class TestFetchRss:
 
         client = Client(transport=httpx.MockTransport(_handle))
         with pytest.raises(UnavailableError):
-            fetch_rss(Podcast(rss=self.url), client)
+            await fetch_rss(Podcast(rss=self.url), client)

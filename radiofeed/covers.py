@@ -121,7 +121,7 @@ def get_cover_image_attrs(
     return attrs | {"srcset": srcset, "sizes": sizes}
 
 
-def generate_cover_image(
+async def generate_cover_image(
     client: Client,
     cover_url: str,
     size: int,
@@ -129,19 +129,19 @@ def generate_cover_image(
     """Fetches, processes, and resaves the cover image from a remote URL.
     Raises CoverError on failure.
     """
-    data = fetch_cover_image(client, cover_url)
+    data = await fetch_cover_image(client, cover_url)
     image = process_cover_image(data, size)
     return save_cover_image(image)
 
 
-def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
+async def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
     """Fetches the cover image from a remote URL.
     Raises CoverFetchError if the image is too large or cannot be fetched or processed.
     """
 
     try:
         with _handle_output_stream(io.BytesIO()) as output:
-            with client.stream(cover_url) as response:
+            async with client.stream(cover_url) as response:
                 try:
                     content_length = int(response.headers.get("Content-Length", 0))
                 except ValueError:
@@ -150,7 +150,7 @@ def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
                 if content_length > _COVER_MAX_SIZE:
                     raise CoverFetchError("Image too large")
 
-                for chunk in response.iter_bytes():
+                async for chunk in response.aiter_bytes():
                     output.write(chunk)
                     if output.tell() > _COVER_MAX_SIZE:
                         raise CoverFetchError("Image too large")

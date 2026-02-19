@@ -57,27 +57,27 @@ class TestTopFeeds:
         )
 
     @pytest.mark.django_db
-    def test_ok(self, good_client):
-        feeds = list(itunes.fetch_top_feeds(good_client, country="us"))
+    async def test_ok(self, good_client):
+        feeds = await itunes.fetch_top_feeds(good_client, country="us")
         assert len(feeds) == 1
 
     @pytest.mark.django_db
-    def test_get_genre(self, good_client):
-        feeds = list(itunes.fetch_top_feeds(good_client, country="us", genre_id=1303))
+    async def test_get_genre(self, good_client):
+        feeds = await itunes.fetch_top_feeds(good_client, country="us", genre_id=1303)
         assert len(feeds) == 1
 
     @pytest.mark.django_db
-    def test_fail(self):
+    async def test_fail(self):
         def _handle(_):
             raise httpx.HTTPError("fail")
 
         client = Client(transport=httpx.MockTransport(_handle))
 
         with pytest.raises(itunes.ItunesError):
-            list(itunes.fetch_top_feeds(client, country="us"))
+            await itunes.fetch_top_feeds(client, country="us")
 
     @pytest.mark.django_db
-    def test_empty(self):
+    async def test_empty(self):
         def _handle(_):
             return httpx.Response(
                 http.HTTPStatus.OK,
@@ -87,12 +87,12 @@ class TestTopFeeds:
         client = Client(transport=httpx.MockTransport(_handle))
 
         with pytest.raises(itunes.ItunesError):
-            list(itunes.fetch_top_feeds(client, country="us"))
+            await itunes.fetch_top_feeds(client, country="us")
 
 
 class TestSaveFeedsToDB:
-    @pytest.mark.django_db
-    def test_save_feeds_to_db(self):
+    @pytest.mark.django_db(transaction=True)
+    async def test_save_feeds_to_db(self):
         feeds = [
             itunes.Feed(
                 artworkUrl100="http://example.com/image.jpg",
@@ -101,14 +101,14 @@ class TestSaveFeedsToDB:
                 feedUrl="https://feeds.fireside.fm/testandcode/rss",
             )
         ]
-        itunes.save_feeds_to_db(feeds)
+        await itunes.save_feeds_to_db(feeds)
 
         assert Podcast.objects.filter(
             rss="https://feeds.fireside.fm/testandcode/rss"
         ).exists()
 
-    @pytest.mark.django_db
-    def test_save_with_extra_fields(self):
+    @pytest.mark.django_db(transaction=True)
+    async def test_save_with_extra_fields(self):
         feeds = [
             itunes.Feed(
                 artworkUrl100="http://example.com/image.jpg",
@@ -117,7 +117,7 @@ class TestSaveFeedsToDB:
                 feedUrl="https://feeds.fireside.fm/testandcode/rss",
             )
         ]
-        itunes.save_feeds_to_db(feeds, promoted=True)
+        await itunes.save_feeds_to_db(feeds, promoted=True)
 
         podcast = Podcast.objects.get(rss="https://feeds.fireside.fm/testandcode/rss")
         assert podcast.promoted is True
@@ -125,7 +125,7 @@ class TestSaveFeedsToDB:
 
 class TestSearch:
     @pytest.mark.django_db
-    def test_ok(self):
+    async def test_ok(self):
         client = Client(
             transport=httpx.MockTransport(
                 lambda _: httpx.Response(
@@ -134,21 +134,21 @@ class TestSearch:
                 )
             ),
         )
-        feeds = itunes.search(client, "test", limit=30)
+        feeds = await itunes.search(client, "test", limit=30)
         assert len(feeds) == 1
 
     @pytest.mark.django_db
-    def test_http_error(self):
+    async def test_http_error(self):
         def _handle(_):
             raise httpx.HTTPError("fail")
 
         client = Client(transport=httpx.MockTransport(_handle))
 
         with pytest.raises(itunes.ItunesError):
-            itunes.search(client, "test", limit=30)
+            await itunes.search(client, "test", limit=30)
 
     @pytest.mark.django_db
-    def test_bad_data(self):
+    async def test_bad_data(self):
         client = Client(
             transport=httpx.MockTransport(
                 lambda request: httpx.Response(
@@ -165,12 +165,12 @@ class TestSearch:
             ),
         )
 
-        feeds = itunes.search(client, "test", limit=30)
+        feeds = await itunes.search(client, "test", limit=30)
         assert len(feeds) == 0
         assert feeds == []
 
     @pytest.mark.django_db
-    def test_not_json(self):
+    async def test_not_json(self):
         client = Client(
             transport=httpx.MockTransport(
                 lambda request: httpx.Response(
@@ -180,22 +180,22 @@ class TestSearch:
             ),
         )
         with pytest.raises(itunes.ItunesError):
-            itunes.search(client, "test", limit=30)
+            await itunes.search(client, "test", limit=30)
 
 
 class TestSearchCached:
     @pytest.mark.django_db
-    def test_cached(self, mocker, _locmem_cache):
+    async def test_cached(self, mocker, _locmem_cache):
         client = Client()
         mock_search = mocker.patch(
             "radiofeed.podcasts.itunes.search",
             return_value=MOCK_SEARCH_RESULT,
         )
-        feeds, is_new = itunes.search_cached(client, "test", limit=30)
+        feeds, is_new = await itunes.search_cached(client, "test", limit=30)
         assert is_new is True
         assert len(feeds) == 2
 
-        feeds, is_new = itunes.search_cached(client, "test", limit=30)
+        feeds, is_new = await itunes.search_cached(client, "test", limit=30)
         assert is_new is False
         assert len(feeds) == 2
         mock_search.assert_called_once()

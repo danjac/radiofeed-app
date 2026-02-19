@@ -11,30 +11,30 @@ logger = logging.getLogger(__name__)
 
 
 @task
-def parse_podcast_feed(*, podcast_id: int) -> Podcast.FeedStatus:
+async def parse_podcast_feed(*, podcast_id: int) -> Podcast.FeedStatus:
     """Parse the feed for a given podcast."""
-    podcast = Podcast.objects.get(pk=podcast_id)
+    podcast = await Podcast.objects.aget(pk=podcast_id)
     logger.info("Parsing feed for podcast %s", podcast)
-    with get_client() as client:
-        result = parse_feed(podcast, client)
+    async with get_client() as client:
+        result = await parse_feed(podcast, client)
     logger.info("Parsed feed for podcast %s: %s", podcast, result.label)
     return result
 
 
 @task
-def fetch_itunes_feeds(*, country: str, genre_id: int | None = None) -> None:
+async def fetch_itunes_feeds(*, country: str, genre_id: int | None = None) -> None:
     """Fetch the top iTunes podcasts for a given country and genre."""
     try:
-        with get_client() as client:
-            feeds = itunes.fetch_top_feeds(client, country, genre_id)
+        async with get_client() as client:
+            feeds = await itunes.fetch_top_feeds(client, country, genre_id)
     except itunes.ItunesError as e:
         logger.error("Error saving iTunes feeds to database: %s", e)
         return
 
     if genre_id:
-        itunes.save_feeds_to_db(feeds)
+        await itunes.save_feeds_to_db(feeds)
     else:
-        itunes.save_feeds_to_db(feeds, promoted=True)
+        await itunes.save_feeds_to_db(feeds, promoted=True)
 
     logger.info(
         "Saved %d iTunes feeds for country %s to database",

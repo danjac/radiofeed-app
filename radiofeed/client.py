@@ -5,7 +5,7 @@ import httpx
 from django.conf import settings
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import AsyncGenerator
 
 
 class Client:
@@ -23,41 +23,45 @@ class Client:
             "User-Agent": settings.USER_AGENT,
         } | (headers or {})
 
-        self._client = httpx.Client(
+        self._client = httpx.AsyncClient(
             headers=headers,
             follow_redirects=follow_redirects,
             timeout=timeout,
             **kwargs,
         )
 
-    def get(self, url: str, headers: dict | None = None, **kwargs) -> httpx.Response:
+    async def get(
+        self, url: str, headers: dict | None = None, **kwargs
+    ) -> httpx.Response:
         """Does an HTTP GET request."""
 
-        response = self._client.get(url, headers=headers, **kwargs)
+        response = await self._client.get(url, headers=headers, **kwargs)
         response.raise_for_status()
 
         return response
 
-    @contextlib.contextmanager
-    def stream(
+    @contextlib.asynccontextmanager
+    async def stream(
         self, url: str, headers: dict | None = None, **kwargs
-    ) -> Generator[httpx.Response]:
+    ) -> AsyncGenerator[httpx.Response]:
         """Does an HTTP GET request and returns a stream."""
 
-        with self._client.stream("GET", url, headers=headers, **kwargs) as response:
+        async with self._client.stream(
+            "GET", url, headers=headers, **kwargs
+        ) as response:
             response.raise_for_status()
             yield response
 
-    def close(self) -> None:
+    async def aclose(self) -> None:
         """Close the underlying httpx client."""
-        self._client.close()
+        await self._client.aclose()
 
 
-@contextlib.contextmanager
-def get_client(**kwargs) -> Generator[Client]:
-    """Context manager that yields a Client and closes it afterwards."""
+@contextlib.asynccontextmanager
+async def get_client(**kwargs) -> AsyncGenerator[Client]:
+    """Async context manager that yields a Client and closes it afterwards."""
     client = Client(**kwargs)
     try:
         yield client
     finally:
-        client.close()
+        await client.aclose()

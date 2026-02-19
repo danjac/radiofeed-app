@@ -58,14 +58,14 @@ class Response:
         return make_content_hash(self.content)
 
 
-def fetch_rss(podcast: Podcast, client: Client) -> Response:
+async def fetch_rss(podcast: Podcast, client: Client) -> Response:
     """Fetches RSS or Atom feed.
 
     If the feed has not changed since the last fetch, raises NotModifiedError.
     If the feed has been discontinued (HTTP 410), raises DiscontinuedError.
     Any other HTTP or network errors raise UnavailableError.
     """
-    return _RSSFetcher(podcast=podcast).fetch(client)
+    return await _RSSFetcher(podcast=podcast).fetch(client)
 
 
 def make_content_hash(content: bytes) -> str:
@@ -104,11 +104,11 @@ class _RSSFetcher:
         "text/xml;q=0.2,"
     )
 
-    def fetch(self, client: Client) -> Response:
+    async def fetch(self, client: Client) -> Response:
         try:
             try:
                 response = Response(
-                    response=client.get(
+                    response=await client.get(
                         self.podcast.rss,
                         headers=self._build_http_headers(),
                     )

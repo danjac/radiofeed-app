@@ -52,6 +52,7 @@ dependencies = [
     "rich>=14.3.2",
     "typer>=0.23.0",
     "django-typer>=3.6.0",
+    "uvicorn[standard]>=0.41.0",
 ]
 
 [dependency-groups]
@@ -78,10 +79,12 @@ dev = [
     "types-urllib3>=1.26.25.14",
     "django-watchfiles>=1.4.0",
     "basedpyright>=1.34.0",
+    "pytest-asyncio>=1.3.0",
 ]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
+asyncio_mode = "auto"
 addopts = [
     "-v",
     "-x",
@@ -98,6 +101,7 @@ addopts = [
 testpaths = ["radiofeed", "templates"]
 env = [
     "COVERAGE_CORE=sysmon",
+    "DJANGO_ALLOW_ASYNC_UNSAFE=true",
     "USE_CONNECTION_POOL=false",
     "USE_COLLECTSTATIC=false",
     "USE_HTTPS=false",

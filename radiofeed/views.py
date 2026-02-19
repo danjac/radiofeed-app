@@ -124,7 +124,7 @@ def security(_) -> TextResponse:
 @require_safe
 @_cache_control
 @_cache_page
-def cover_image(_, encoded_url: str, size: int) -> FileResponse:
+async def cover_image(_, encoded_url: str, size: int) -> FileResponse:
     """Proxies a cover image from remote source.
 
     URL should be signed, so we can verify the request comes from this site.
@@ -134,8 +134,8 @@ def cover_image(_, encoded_url: str, size: int) -> FileResponse:
         raise Http404
     try:
         cover_url = covers.decode_cover_url(encoded_url)
-        with get_client() as client:
-            output = covers.generate_cover_image(client, cover_url, size)
+        async with get_client() as client:
+            output = await covers.generate_cover_image(client, cover_url, size)
 
     except covers.CoverError:
         # Return placeholder image on error to prevent multiple requests
