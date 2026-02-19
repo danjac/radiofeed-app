@@ -2,9 +2,10 @@
     .btn {
         display: inline-flex;
         align-items: center;
-        padding: theme("padding.1") theme("padding.2");
-        border-radius: var(--radius-md);
+        padding: 0.375rem 0.75rem;
+        border-radius: var(--radius-lg);
         font-weight: var(--font-weight-semibold);
+        transition: all 200ms ease;
 
         @variant hover {
             cursor: pointer;
@@ -17,9 +18,9 @@
         }
 
         @variant disabled {
-            background-color: var(--color-gray-600) !important;
+            background-color: var(--color-gray-400) !important;
             color: var(--color-white) !important;
-            border-color: var(--color-gray-600) !important;
+            border-color: var(--color-gray-400) !important;
             cursor: not-allowed !important;
         }
 
@@ -31,32 +32,35 @@
 
     .btn-primary {
         color: var(--color-white);
-        background-color: var(--color-blue-800);
-        border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
+        background-color: var(--color-indigo-600);
+        border: solid theme("borderWidth.DEFAULT") var(--color-indigo-600);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
         @variant hover {
-            background-color: var(--color-blue-600);
+            background-color: var(--color-indigo-500);
+            border-color: var(--color-indigo-500);
         }
 
         &.btn-outline {
-            color: var(--color-blue-800);
+            color: var(--color-indigo-600);
             background-color: inherit;
-            border: solid theme("borderWidth.DEFAULT") var(--color-blue-800);
+            border: solid theme("borderWidth.DEFAULT") var(--color-indigo-600);
+            box-shadow: none;
 
             @variant hover {
-                color: var(--color-blue-600);
-                background-color: var(--color-gray-100);
-                border-color: var(--color-blue-800);
+                color: var(--color-white);
+                background-color: var(--color-indigo-600);
+                border-color: var(--color-indigo-600);
             }
 
             @variant dark {
-                color: var(--color-white);
-                border-color: var(--color-gray-500);
+                color: var(--color-indigo-400);
+                border-color: var(--color-indigo-400);
 
                 @variant hover {
-                    color: var(--color-blue-300);
-                    background-color: inherit;
-                    border-color: var(--color-blue-300);
+                    color: var(--color-white);
+                    background-color: var(--color-indigo-500);
+                    border-color: var(--color-indigo-500);
                 }
             }
         }
@@ -64,33 +68,34 @@
 
     .btn-default {
         color: var(--color-white);
-        background-color: var(--color-purple-800);
-        border: solid theme("borderWidth.DEFAULT") var(--color-purple-800);
+        background-color: var(--color-violet-600);
+        border: solid theme("borderWidth.DEFAULT") var(--color-violet-600);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
         @variant hover {
-            background-color: var(--color-purple-600);
+            background-color: var(--color-violet-500);
+            border-color: var(--color-violet-500);
         }
 
         &.btn-outline {
-            color: var(--color-gray-800);
+            color: var(--color-zinc-700);
             background-color: inherit;
-            border: solid theme("borderWidth.DEFAULT") var(--color-gray-600);
+            border: solid theme("borderWidth.DEFAULT") var(--color-zinc-400);
 
             @variant hover {
-                color: var(--color-purple-600);
-                background-color: var(--color-gray-100);
-                border: solid theme("borderWidth.DEFAULT")
-                        var(--color-purple-600);
+                color: var(--color-violet-600);
+                background-color: var(--color-zinc-100);
+                border: solid theme("borderWidth.DEFAULT") var(--color-violet-600);
             }
 
             @variant dark {
-                color: var(--color-white);
-                border-color: var(--color-gray-500);
+                color: var(--color-zinc-300);
+                border-color: var(--color-zinc-500);
 
                 @variant hover {
-                    color: var(--color-purple-400);
-                    background-color: inherit;
-                    border-color: var(--color-purple-300);
+                    color: var(--color-violet-400);
+                    background-color: var(--color-zinc-800);
+                    border-color: var(--color-violet-400);
                 }
             }
         }
@@ -98,32 +103,35 @@
 
     .btn-danger {
         color: var(--color-white);
-        background-color: var(--color-red-800);
-        border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
+        background-color: var(--color-rose-600);
+        border: solid theme("borderWidth.DEFAULT") var(--color-rose-600);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
         @variant hover {
-            background-color: var(--color-red-600);
+            background-color: var(--color-rose-500);
+            border-color: var(--color-rose-500);
         }
 
         &.btn-outline {
-            color: var(--color-red-800);
-            border: solid theme("borderWidth.DEFAULT") var(--color-red-800);
+            color: var(--color-rose-600);
+            border: solid theme("borderWidth.DEFAULT") var(--color-rose-600);
             background-color: inherit;
+            box-shadow: none;
 
             @variant hover {
-                color: var(--color-red-600);
-                background-color: var(--color-gray-100);
-                border-color: var(--color-red-800);
+                color: var(--color-white);
+                background-color: var(--color-rose-600);
+                border-color: var(--color-rose-600);
             }
 
             @variant dark {
-                color: var(--color-red-500);
-                border-color: var(--color-red-500);
+                color: var(--color-rose-400);
+                border-color: var(--color-rose-400);
 
                 @variant hover {
-                    color: var(--color-red-500);
-                    background-color: inherit;
-                    border-color: var(--color-red-500);
+                    color: var(--color-white);
+                    background-color: var(--color-rose-500);
+                    border-color: var(--color-rose-500);
                 }
             }
         }

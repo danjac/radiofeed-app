@@ -1,5 +1,5 @@
 {% load heroicons %}
-<ul class="grid grid-cols-1 gap-3 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-6 grid-flow-cols">
+<ul class="grid grid-cols-1 gap-2 text-lg sm:grid-cols-2 lg:text-xl xl:grid-cols-1 xl:gap-3 grid-flow-cols">
     {% with icon="rss" label="Subscriptions" %}
         {% url "podcasts:subscriptions" as url %}
         {% partial item %}
@@ -44,7 +44,7 @@
 {% partialdef item %}
     <li>
         <a href="{{ url }}"
-           class="inline-flex items-center w-full sm:w-auto link">
+           class="inline-flex items-center p-2 w-full rounded-lg transition-colors link dark:hover:bg-zinc-800 hover:bg-zinc-100">
             {% heroicon_outline icon class="mr-3" %}
             {{ label }}
         </a>

@@ -11,28 +11,28 @@
                 {% include "messages.html" %}
                 <div class="py-6 px-6 mx-auto space-y-3 min-h-screen lg:py-12 lg:space-y-12">
                     <div class="space-y-3 lg:space-y-6">
-                        <h1 class="text-3xl font-extrabold text-center md:text-4xl lg:text-5xl">Welcome to {{ site_name }}</h1>
-                        <h2 class="text-xl font-bold text-center lg:text-2xl">
+                        <h1 class="text-3xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 md:text-4xl lg:text-5xl">Welcome to {{ site_name }}</h1>
+                        <h2 class="text-xl font-bold text-center lg:text-2xl text-zinc-600 dark:text-zinc-400">
                             <strong>{{ site_name }}</strong> is an easy-to-use and fast application for listening and subscribing to your favorite podcasts in your browser.
                         </h2>
                     </div>
                     <div class="gap-6 py-6 lg:grid lg:grid-cols-2">
-                        <div class="justify-center pb-6 mb-6 space-y-12 border-b border-gray-500 lg:content-center lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0">
+                        <div class="justify-center pb-6 mb-6 space-y-12 border-b lg:content-center lg:pr-6 lg:pb-0 lg:mb-0 lg:border-b-0 border-zinc-200 dark:border-zinc-700">
                             <div class="space-y-3 lg:space-y-6">
                                 <div class="flex justify-center items-center">
                                     <a href="{% url "account_signup" %}"
                                        class="flex justify-center items-center !py-3 w-full text-xl lg:text-3xl xl:w-2/3 btn btn-lg btn-primary">{% heroicon_solid "plus" class="mr-2" %}Sign up to {{ site_name }}</a>
                                 </div>
                                 <div class="flex relative items-center py-5">
-                                    <div class="border-t border-gray-500 grow"></div>
+                                    <div class="border-t border-zinc-300 grow dark:border-zinc-600"></div>
                                     <span class="mx-4 font-bold shrink">OR</span>
-                                    <div class="border-t border-gray-500 grow"></div>
+                                    <div class="border-t border-zinc-300 grow dark:border-zinc-600"></div>
                                 </div>
                                 <div class="flex justify-center items-center">
                                     <a href="{% url "account_login" %}"
                                        class="flex justify-center items-center !py-3 w-full xl:w-2/3 text-xl lg:text-3xl btn btn-lg btn-default btn-outline hover:bg-inherit!">{% heroicon_solid "arrow-right-on-rectangle" class="mr-2" %}Log in</a>
                                 </div>
-                                <p class="text-lg text-center lg:text-xl">
+                                <p class="text-lg text-center lg:text-xl text-zinc-600 dark:text-zinc-400">
                                     Learn more about <a href="{% url "about" %}" class="font-semibold underline">{{ site_name }}</a>
                                 </p>
                             </div>

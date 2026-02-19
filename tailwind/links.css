@@ -3,25 +3,27 @@
     .form-control a,
     .markdown a {
         font-weight: var(--font-weight-semibold);
-        color: var(--color-black);
+        color: var(--color-text);
+        text-decoration: none;
+        transition: color 200ms ease;
 
         &.active {
-            color: var(--color-blue-600);
+            color: var(--color-indigo-600);
         }
 
         @variant hover {
-            color: var(--color-blue-600);
+            color: var(--color-indigo-600);
         }
 
         @variant dark {
-            color: var(--color-white);
+            color: var(--color-text);
 
             &.active {
-                color: var(--color-blue-300);
+                color: var(--color-indigo-400);
             }
 
             @variant hover {
-                color: var(--color-blue-300);
+                color: var(--color-indigo-400);
             }
         }
     }

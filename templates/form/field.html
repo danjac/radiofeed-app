@@ -9,7 +9,7 @@
 {% endwith %}
 
 {% partialdef label %}
-    <label class="block font-semibold{% if field.errors %} text-red-800 dark:text-red-500{% endif %}"
+    <label class="block font-semibold text-zinc-700 dark:text-zinc-300{% if field.errors %} text-rose-600 dark:text-rose-400{% endif %}"
            for="{{ field.id_for_label }}"
     >
         {{ field.label }}
@@ -19,7 +19,7 @@
 
 {% partialdef errors %}
     {% if errors %}
-        <ul class="space-y-3 font-semibold text-red-800 dark:text-red-600">
+        <ul class="space-y-1 font-semibold text-rose-600 dark:text-rose-400">
             {{ errors|unordered_list }}
         </ul>
     {% endif %}
@@ -27,7 +27,7 @@
 
 {% partialdef help_text %}
     {% if field.help_text %}
-        <div class="text-gray-600 dark:text-gray-300" id="{{ field.auto_id }}_helptext">
+        <div class="text-sm text-zinc-500 dark:text-zinc-400" id="{{ field.auto_id }}_helptext">
             {{ field.help_text }}
         </div>
     {% endif %}
@@ -77,11 +77,11 @@
             "
             {# fmt:on #}
                 aria-label="Toggle password"
-                class="flex absolute inset-y-0 right-0 justify-center items-center px-3 h-full text-gray-700"
+                class="flex absolute inset-y-0 right-0 justify-center items-center px-3 h-full text-zinc-500 dark:text-zinc-400"
                 tabindex="-1"
         >
-            {% heroicon_mini "eye" class="w-5 h-5 text-gray-700 dark:text-white" x_show="show" %}
-            {% heroicon_mini "eye-slash" class="w-5 h-5 text-gray-700 dark:text-white" x_show="!show" %}
+            {% heroicon_mini "eye" class="w-5 h-5 text-zinc-500 dark:text-zinc-400" x_show="show" %}
+            {% heroicon_mini "eye-slash" class="w-5 h-5 text-zinc-500 dark:text-zinc-400" x_show="!show" %}
         </button>
     </div>
 {% endpartialdef %}

@@ -3,17 +3,36 @@
     .form-select,
     .form-multiselect,
     .form-textarea {
-        background: inherit;
-        color: inherit;
-        border-radius: var(--radius-md);
-        padding: theme("padding.1") theme("padding.2");
+        background: var(--color-surface);
+        color: var(--color-text);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--color-border);
+        padding: theme("padding.2") theme("padding.3");
+        transition: border-color 200ms ease, box-shadow 200ms ease;
+
+        @variant focus {
+            border-color: var(--color-indigo-500);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
 
         .has-errors & {
-            border-color: var(--color-red-800);
-            --tw-ring-color: var(--color-red-800);
+            border-color: var(--color-rose-500);
+            --tw-ring-color: var(--color-rose-500);
             @variant dark {
-                border-color: var(--color-red-500);
-                --tw-ring-color: var(--color-red-500);
+                border-color: var(--color-rose-400);
+                --tw-ring-color: var(--color-rose-400);
+            }
+        }
+
+        @variant dark {
+            background: var(--color-zinc-800);
+            border-color: var(--color-zinc-600);
+            color: var(--color-zinc-200);
+
+            @variant focus {
+                border-color: var(--color-indigo-400);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
             }
         }
     }

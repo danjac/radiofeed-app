@@ -1,17 +1,40 @@
 @layer messages {
     .message-error {
-        background-color: var(--color-red-600);
+        background-color: var(--color-rose-500);
+        color: var(--color-white);
     }
 
     .message-info {
-        background-color: var(--color-blue-600);
+        background-color: var(--color-sky-500);
+        color: var(--color-white);
     }
 
     .message-success {
-        background-color: var(--color-green-600);
+        background-color: var(--color-emerald-500);
+        color: var(--color-white);
     }
 
     .message-warning {
-        background-color: var(--color-yellow-600);
+        background-color: var(--color-amber-500);
+        color: var(--color-zinc-900);
+    }
+
+    @variant dark {
+        .message-error {
+            background-color: var(--color-rose-600);
+        }
+
+        .message-info {
+            background-color: var(--color-sky-600);
+        }
+
+        .message-success {
+            background-color: var(--color-emerald-600);
+        }
+
+        .message-warning {
+            background-color: var(--color-amber-600);
+            color: var(--color-white);
+        }
     }
 }

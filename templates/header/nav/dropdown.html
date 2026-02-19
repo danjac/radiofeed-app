@@ -7,34 +7,34 @@
             @click="showDropdown = !showDropdown"
             @click.outside="showDropdown=false"
             @keyup.escape.window="showDropdown=false"
-            class="flex items-center py-1 px-2 rounded-lg border cursor-pointer sm:justify-end link md:hover:bg-transparent focus:ring-3 focus:outline-hidden">
+            class="flex items-center py-2 px-3 rounded-xl border transition-colors cursor-pointer sm:justify-end focus:ring-2 focus:ring-indigo-500 border-zinc-200 link md:hover:bg-zinc-100 dark:border-zinc-700 dark:md:hover:bg-zinc-800 focus:outline-hidden">
         <span class="inline-flex items-center">
             {% if icon %}
                 {% heroicon_mini icon class="mr-2" %}
             {% endif %}
             {{ label }}
         </span>
-        {% heroicon_mini "chevron-down" class="ml-3" %}
+        {% heroicon_mini "chevron-down" class="ml-2" %}
     </button>
-    <div class="overflow-y-auto absolute z-20 my-2 w-56 bg-white rounded-lg border shadow-lg sm:w-60 dark:bg-gray-900 dark:border max-h-[50dvh]"
+    <div class="overflow-y-auto absolute z-20 my-2 w-56 bg-white rounded-xl border shadow-xl sm:w-60 dark:border border-zinc-200 max-h-[50dvh] backdrop-blur-lg dark:bg-zinc-900 dark:border-zinc-700"
          :class="{'right-0': isLeft, 'left-0': isRight}"
          x-cloak
          x-show="showDropdown"
          x-transition.scale.origin.top
          x-ref="dropdown"
          x-init="$watch('showDropdown', () => $nextTick(() => adjustPositioning()))"
-        {# fmt:off #}
-        x-data="{
-        isLeft: false,
-        isRight: false,
-        adjustPositioning() {
-        const windowWidth = document.body.getBoundingClientRect().width;
-        const boxRight = this.$refs.dropdown.getBoundingClientRect().right;
-        this.isLeft = windowWidth < boxRight;
-        this.isRight = !this.isLeft;
-        }
-        }"
-        {# fmt:on #}
+         {# fmt:off #}
+         x-data="{
+         isLeft: false,
+         isRight: false,
+         adjustPositioning() {
+         const windowWidth = document.body.getBoundingClientRect().width;
+         const boxRight = this.$refs.dropdown.getBoundingClientRect().right;
+         this.isLeft = windowWidth < boxRight;
+         this.isRight = !this.isLeft;
+         }
+         }"
+         {# fmt:on #}
          @resize.window="adjustPositioning()"
          @click.outside="showDropdown = false"
          @keydown.escape.window="showDropdown = false"
@@ -51,7 +51,7 @@
 {% partialdef item %}
     <li>
         <a href="{{ url }}"
-           class="flex items-center py-2 px-4 font-semibold text-gray-700 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-800">
+           class="flex items-center py-2 px-4 font-semibold text-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 hover:bg-zinc-100">
             {% if icon %}
                 {% heroicon_mini icon class="mr-2" %}
             {% endif %}

@@ -10,9 +10,25 @@
     :root {
         scrollbar-width: thin;
 
+        --color-bg: var(--color-white);
+        --color-surface: var(--color-zinc-50);
+        --color-border: var(--color-zinc-200);
+        --color-text: var(--color-zinc-900);
+        --color-text-muted: var(--color-zinc-500);
+
         @variant dark {
             color-scheme: dark;
+            --color-bg: var(--color-zinc-950);
+            --color-surface: var(--color-zinc-900);
+            --color-border: var(--color-zinc-800);
+            --color-text: var(--color-zinc-100);
+            --color-text-muted: var(--color-zinc-400);
         }
+    }
+
+    body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
     }
 
     /* ALPINEJS */
