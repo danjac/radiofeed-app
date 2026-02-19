@@ -48,9 +48,7 @@
             box-shadow: none;
 
             @variant hover {
-                color: var(--color-white);
-                background-color: var(--color-indigo-600);
-                border-color: var(--color-indigo-600);
+                background-color: var(--color-indigo-50);
             }
 
             @variant dark {
@@ -58,9 +56,7 @@
                 border-color: var(--color-indigo-400);
 
                 @variant hover {
-                    color: var(--color-white);
-                    background-color: var(--color-indigo-500);
-                    border-color: var(--color-indigo-500);
+                    background-color: var(--color-indigo-950);
                 }
             }
         }
@@ -83,9 +79,7 @@
             border: solid theme("borderWidth.DEFAULT") var(--color-zinc-400);
 
             @variant hover {
-                color: var(--color-violet-600);
                 background-color: var(--color-zinc-100);
-                border: solid theme("borderWidth.DEFAULT") var(--color-violet-600);
             }
 
             @variant dark {
@@ -93,9 +87,7 @@
                 border-color: var(--color-zinc-500);
 
                 @variant hover {
-                    color: var(--color-violet-400);
                     background-color: var(--color-zinc-800);
-                    border-color: var(--color-violet-400);
                 }
             }
         }
@@ -119,9 +111,7 @@
             box-shadow: none;
 
             @variant hover {
-                color: var(--color-white);
-                background-color: var(--color-rose-600);
-                border-color: var(--color-rose-600);
+                background-color: var(--color-rose-50);
             }
 
             @variant dark {
@@ -129,9 +119,7 @@
                 border-color: var(--color-rose-400);
 
                 @variant hover {
-                    color: var(--color-white);
-                    background-color: var(--color-rose-500);
-                    border-color: var(--color-rose-500);
+                    background-color: var(--color-rose-950);
                 }
             }
         }
