@@ -3,7 +3,3 @@
 
 [extend]
 useDefault = true
-
-[allowlist]
-description = "Global allowlist"
-paths = ['''\.secrets\.baseline''']
