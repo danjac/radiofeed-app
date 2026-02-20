@@ -196,46 +196,9 @@ The parser features:
 - Bulk episode upserts for efficiency
 - Support for iTunes, Google Play, and Podcast Index namespaces
 
-## Architecture Highlights
-
-### HTMX-First Design
-
-The frontend uses HTMX for dynamic updates without JavaScript frameworks. Custom middleware handles:
-
-- Out-of-band message injection
-- Redirect conversion to HX-Location headers
-- Cache control for HTMX requests
-- Session-based audio player state
-
-### PostgreSQL Full-Text Search
-
-Uses PostgreSQL's native full-text search instead of external search engines:
-
-- SearchVector fields with GIN indexes
-- SearchRank for relevance scoring
-- Supports podcast and episode search across multiple fields
-
-### Thread-Pool Background Processing
-
-Instead of Celery, uses Python's ThreadPoolExecutor:
-
-- Simpler deployment (no separate workers)
-- Database-safe threading with connection cleanup
-- Batch processing (500 items/batch)
-- Suitable for ~360 podcasts/run
-
-### Smart Feed Scheduling
-
-Dynamic update frequency based on podcast activity:
-
-- Analyzes episode publication intervals
-- Ranges from 1 hour (active) to 3 days (inactive)
-- Prioritizes by: new podcasts, subscriber count, promoted status
-- Incremental backoff if no new episodes
-
 ## Deployment
 
-For production deployment to Hetzner Cloud with Cloudflare CDN/SSL, see the [Deployment Guide](DEPLOYMENT.md).
+For production deployment to Hetzner Cloud with Cloudflare CDN/SSL, see the [Deployment Guide](DEPLOYMENT.md). It should be possible to deploy to any Docker compatible hosting provider with some adjustments to the deployment scripts.
 
 ## Contributing
 
