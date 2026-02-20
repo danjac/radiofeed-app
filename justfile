@@ -32,6 +32,10 @@ dj *args:
 serve:
    @just dj tailwind runserver
 
+# Run all tests
+[group('development')]
+test-all: test e2e
+
 # Run unit tests
 [group('development')]
 test *args:
