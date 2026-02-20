@@ -12,7 +12,6 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from slugify import slugify
 
-from radiofeed.db.fast_count import FastCount
 from radiofeed.db.fields import URLField
 from radiofeed.db.search import Searchable
 from radiofeed.sanitizer import strip_html
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
     from radiofeed.podcasts.models import Season
 
 
-class EpisodeQuerySet(Searchable, FastCount, models.QuerySet):
+class EpisodeQuerySet(Searchable, models.QuerySet):
     """Custom queryset for Episode model."""
 
     default_search_fields = ("search_vector",)
