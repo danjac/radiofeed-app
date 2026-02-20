@@ -161,6 +161,13 @@ Do NOT push any changes to remote. The user will do so themselves manually when 
 - Coverage source: `radiofeed/`, omits migrations and test files
 - E2E tests are marked with `@pytest.mark.e2e` and excluded from default test runs
 
+## Working Conventions
+
+- **Search before implementing** — Before writing new code, search the codebase with `rg` or `ast-grep` for existing utilities, mixins, and patterns. This project has consistent abstractions: admin mixins in `radiofeed/admin.py`, full-text search via `search_vector` fields, custom QuerySet methods on model managers. Do not reimplement what already exists.
+- **Scope discipline** — Only change what was explicitly requested. Do not refactor adjacent code, rename variables in unrelated files, or add unrequested features. If you notice something broken nearby, flag it in a message — do not touch it.
+- **Diagnose before changing** — For bugs, read the relevant code and state your diagnosis with a specific file:line reference before making any edits. Do not attempt fixes speculatively.
+- **Verify runtime behaviour** — Passing tests is necessary but not sufficient. For Django-specific changes (QuerySets, async views, middleware, admin), reason through whether the change could fail at runtime in ways tests don't cover (e.g. `SynchronousOnlyOperation`, missing `select_related`, wrong HTTP method).
+
 ## Deployment
 
 Production deploys to a Hetzner Cloud K3s cluster with Cloudflare CDN/SSL. The deployment pipeline is: Terraform (infrastructure) → Cloudflare (DNS/CDN) → Ansible (application).
