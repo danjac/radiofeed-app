@@ -119,6 +119,7 @@ just                     # List all available commands
 just serve              # Run dev server + Tailwind compiler
 just test               # Run test suite
 just test -k pattern    # Run specific tests
+just e2e                # Run Playright e2e tests
 just tw                 # Run tests in watch mode
 just lint               # Run code formatters and linters
 just typecheck          # Run type checker (basedpyright)
