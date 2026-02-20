@@ -6,11 +6,13 @@ from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
 class TestCountReltuples:
-    @pytest.mark.django_db
-    def test_returns_count_for_existing_table(self):
-        result = count_reltuples(Podcast._meta.db_table)
-        assert isinstance(result, int)
-        assert result >= 0
+    def test_returns_count_for_existing_table(self, mocker):
+        mock_cursor = mocker.MagicMock()
+        mock_cursor.__enter__ = mocker.MagicMock(return_value=mock_cursor)
+        mock_cursor.__exit__ = mocker.MagicMock(return_value=False)
+        mock_cursor.fetchone.return_value = (42,)
+        mocker.patch("radiofeed.admin.connection.cursor", return_value=mock_cursor)
+        assert count_reltuples("podcasts_podcast") == 42
 
     def test_returns_zero_when_fetchone_is_none(self, mocker):
         mock_cursor = mocker.MagicMock()
