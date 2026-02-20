@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.pyc
+*.egg
+.venv/
+venv/
+dist/
+
+# Locks & caches (generated, not useful to read)
+*.lock
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage*
+.django_tailwind_cli/
+.disk_cache/
+.data/
+
+# Compiled / generated assets
+staticfiles/
+static/app.css
+static/vendor/
+
+# Secrets & credentials
+.env
+.envrc
+.tsvars
+.vault_pass
+ansible/.vault_pass
+ansible/hosts.yml
+ansible/certs/
+ansible/ssh-keys/
+terraform/*.tfvars
+terraform/*.tfvars.json
+terraform/terraform.tfstate*
+
+# Terraform internals
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/.terraform.lock.info
+terraform/.tfplan
+
+# Logs & media
+logs/
+*log
+media/
+
+# IDE & OS
+.idea/
+.vscode/
+.vim/
+*.DS_Store
+*.swp
+*.bak
+
+# Misc
+node_modules/
+deployments/
