@@ -62,15 +62,23 @@ def fetch_itunes(
 ) -> None:
     """Fetch the top iTunes podcasts for a given country."""
 
-    countries = countries or list(settings.ITUNES_COUNTRIES)
+    unique_countries = set(countries or settings.ITUNES_COUNTRIES)
 
-    genre_ids = Category.objects.filter(itunes_genre_id__isnull=False).values_list(
-        "itunes_genre_id", flat=True
+    typer.echo(f"Fetching iTunes podcasts for countries: {', '.join(unique_countries)}")
+
+    genre_ids = list(
+        Category.objects.filter(itunes_genre_id__isnull=False)
+        .values_list("itunes_genre_id", flat=True)
+        .distinct()
     )
 
     # Create combinations of countries and genre IDs, including a None genre ID for fetching
     # most popular across all genres.
-    combinations = itertools.product(countries, (None, *genre_ids))
+    combinations = itertools.product(unique_countries, (None, *genre_ids))
+
+    typer.echo(
+        f"Enqueuing tasks for {len(unique_countries)} countries and {len(genre_ids) + 1} genre combinations..."
+    )
 
     for country, genre_id in combinations:
         tasks.fetch_itunes_feeds.enqueue(country=country, genre_id=genre_id)
