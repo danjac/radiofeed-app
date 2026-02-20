@@ -40,7 +40,7 @@ jobs:
       - run: uv run xargs -I{} python -c "import nltk; nltk.download('{}')" < ./nltk.txt
       - run: uv run pytest
   e2etests:
-    needs: unittests
+    needs: precommit
     runs-on: ubuntu-latest
     permissions:
       contents: read
