@@ -165,6 +165,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 SITE_ID = 1
 
+USE_HTTPS = env.bool("USE_HTTPS", default=True)
+
 # Session and cookies
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
@@ -174,7 +176,7 @@ CSRF_USE_SESSIONS = True
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[]) or []
 
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = USE_HTTPS
 
 
 # Email configuration
@@ -334,8 +336,6 @@ if USE_X_FORWARDED_HOST := env.bool("USE_X_FORWARDED_HOST", default=True):
         )
         or []
     )
-
-USE_HTTPS = env.bool("USE_HTTPS", default=True)
 
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=USE_HTTPS)
 

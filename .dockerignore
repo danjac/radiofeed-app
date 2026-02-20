@@ -35,6 +35,7 @@ Makefile
 README.md
 SECURITY.md
 conftest.py
+pytest-e2e.ini
 docker-compose.yml
 node_modules
 npm-debug.log
