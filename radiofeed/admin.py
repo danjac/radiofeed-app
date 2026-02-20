@@ -33,6 +33,11 @@ class FastCountPaginator(Paginator):
 
 
 class FastCountMixin:
-    """Mixin that uses pg_class.reltuples for fast unfiltered counts."""
+    """Mixin that uses pg_class.reltuples for fast unfiltered counts.
+
+    Sets show_full_result_count=False to prevent Django admin from issuing
+    a separate COUNT(*) query for the total results header.
+    """
 
     paginator = FastCountPaginator
+    show_full_result_count = False
