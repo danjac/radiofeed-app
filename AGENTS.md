@@ -48,6 +48,7 @@ just typecheck
 ```
 
 Runs `basedpyright`. Configuration is in `pyproject.toml` under `[tool.pyright]`:
+
 - Mode: `basic`
 - Includes: `radiofeed/`
 - Excludes: migrations, tests
@@ -121,6 +122,7 @@ Conventional commits enforced by commitlint. Format: `type: subject`
 Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
 
 Rules:
+
 - Subject must be lowercase, non-empty, no trailing period
 - Header max 100 characters, body lines max 100 characters
 
@@ -128,7 +130,7 @@ Rules:
 
 Create a well-named branch for each change (e.g. `feature-<name>`, `hotfix-<name>`).
 
-Before merging a branch into `main`, squash all commits in the branch into a single commit using `git rebase -i` with fixup. Ensure all tests pass (`just test`) and pre-commit linting passes before merging. When merging into `main`, use `git rebase`, not `git merge`. After merging, run all tests again to verify. Delete the branch after merging.
+Before merging a branch into `main`, squash all commits in the branch into a single commit using `git rebase -i` with fixup. Ensure all tests pass (`just test`) and pre-commit linting passes before merging. When merging into `main`, use `git rebase`, not `git merge`. After merging, run all tests again to verify. **You must have 100% coverage as indicated in by coverage tool before merging a branch.** Delete the branch after merging.
 
 Do NOT push any changes to remote. The user will do so themselves manually when they are satisfied with all changes.
 
@@ -195,6 +197,7 @@ just apb upgrade               # Update server packages
 ```
 
 Key files:
+
 - `ansible/hosts.yml` — Inventory (generated from `terraform output -raw ansible_inventory`, then encrypted with `ansible-vault`)
 - `ansible/certs/` — Cloudflare origin certificates (`cloudflare.pem`, `cloudflare.key`)
 - `ansible/ssh-keys/` — SSH public keys for server access (`.pub` extension)

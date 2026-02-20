@@ -168,3 +168,27 @@ class TestAudioLogModel:
             duration=duration,
         )
         assert audio_log.percent_complete == expected
+
+
+class TestFastCount:
+    @pytest.mark.django_db
+    def test_count_without_filter_uses_reltuples(self, podcast, mocker):
+        """Count without filter should use pg_class reltuples."""
+        mock_reltuples = mocker.patch(
+            "radiofeed.db.fast_count.count_reltuples", return_value=100
+        )
+
+        qs = Episode.objects.all()
+        count = qs.count()
+
+        assert count == 100
+        mock_reltuples.assert_called_once_with("episodes_episode")
+
+    @pytest.mark.django_db
+    def test_count_with_filter_uses_standard_count(self, podcast):
+        """Count with filter should use standard COUNT query."""
+        EpisodeFactory.create_batch(3, podcast=podcast, explicit=True)
+        EpisodeFactory.create_batch(2, podcast=podcast, explicit=False)
+        qs = Episode.objects.filter(explicit=True)
+        count = qs.count()
+        assert count == 3

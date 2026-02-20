@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from slugify import slugify
 
+from radiofeed.db.fast_count import FastCount
 from radiofeed.db.fields import URLField
 from radiofeed.db.search import Searchable
 from radiofeed.sanitizer import strip_html
@@ -79,7 +80,7 @@ class Category(models.Model):
         return reverse("podcasts:category_detail", kwargs={"slug": self.slug})
 
 
-class PodcastQuerySet(Searchable, models.QuerySet):
+class PodcastQuerySet(Searchable, FastCount, models.QuerySet):
     """Custom QuerySet of Podcast model."""
 
     default_search_fields = ("search_vector",)
