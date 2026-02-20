@@ -117,10 +117,6 @@ If you need to customize settings (e.g., using local PostgreSQL/Redis instead of
 ```bash
 just                     # List all available commands
 just serve              # Run dev server + Tailwind compiler
-just test               # Run test suite
-just test -k pattern    # Run specific tests
-just e2e                # Run Playright e2e tests
-just tw                 # Run tests in watch mode
 just lint               # Run code formatters and linters
 just typecheck          # Run type checker (basedpyright)
 just dj <command>       # Run Django management commands
@@ -133,6 +129,7 @@ The project maintains 100% code coverage:
 ```bash
 just test                      # Run all tests with coverage
 just test radiofeed/podcasts   # Test specific module
+just e2e                       # Run end-to-end tests with Playwright
 just tw                        # Watch mode - auto-run on changes
 ```
 

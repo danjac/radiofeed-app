@@ -70,6 +70,7 @@ typecheck *args:
 [group('development')]
 lint:
    uv run ruff check --fix
+   uv run djlint --lint templates/
 
 # Download NLTK data
 [group('development')]
