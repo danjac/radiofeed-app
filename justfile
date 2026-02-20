@@ -40,12 +40,12 @@ test *args:
 # Run e2e tests with Playwright (headless)
 [group('development')]
 e2e *args:
-   uv run pytest -c pytest-e2e.ini {{ args }}
+   uv run pytest -c playright.ini {{ args }}
 
 # Run e2e tests with a visible browser window
 [group('development')]
 e2e-headed *args:
-   uv run pytest -c pytest-e2e.ini --headed {{ args }}
+   uv run pytest -c playright.ini --headed {{ args }}
 
 # Install Playwright browsers (run once after uv sync)
 [group('development')]
