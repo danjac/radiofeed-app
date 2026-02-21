@@ -28,6 +28,11 @@ class TestParseRss:
         with pytest.raises(InvalidRSSError):
             parse_rss(b"<rss><channel /></rss>")
 
+    def test_iso_8859_1_accented_characters(self):
+        feed = parse_rss(self.read_mock_file("rss_mock_catalan.xml"))
+        titles = {item.title for item in feed.items}
+        assert "Jubilació: aspectes psicològics" in titles
+
     def test_with_bad_chars(self):
         content = self.read_mock_file("rss_mock.xml").decode("utf-8")
         content = content.replace("&amp;", "&")
@@ -92,6 +97,12 @@ class TestParseRss:
                 "TED Talks Daily",
                 327,
                 id="invalid image URLs",
+            ),
+            pytest.param(
+                "rss_mock_catalan.xml",
+                "L'ofici de viure",
+                350,
+                id="ISO-8859-1 encoded feed",
             ),
         ],
     )

@@ -25,7 +25,6 @@ class XPathParser:
         for _, element in lxml.etree.iterparse(
             io.BytesIO(content),
             tag=tag,
-            encoding="utf-8",
             no_network=True,
             resolve_entities=False,
             recover=True,
