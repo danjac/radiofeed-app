@@ -612,13 +612,14 @@ PWA_CONFIG = {
 ITUNES_COUNTRIES = env.list(
     "ITUNES_COUNTRIES",
     default=[
+        "cn",
         "de",
         "es",
         "fi",
         "fr",
         "gb",
         "it",
-        "ja",
+        "jp",
         "se",
         "us",
         "zh",
