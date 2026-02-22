@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from django.contrib import admin
 from django.template.defaultfilters import truncatechars
 
-from radiofeed.admin import FastCountMixin
+from radiofeed.admin import FastCountAdminMixin
 from radiofeed.episodes.models import AudioLog, Episode, EpisodeQuerySet
 
 if TYPE_CHECKING:
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @admin.register(Episode)
-class EpisodeAdmin(FastCountMixin, admin.ModelAdmin):
+class EpisodeAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Django admin for Episode model."""
 
     list_display = ("episode_title", "podcast_title", "pub_date")

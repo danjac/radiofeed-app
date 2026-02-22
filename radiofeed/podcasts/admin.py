@@ -8,7 +8,7 @@ from django.urls import path
 from django.utils import timezone
 from django.utils.timesince import timesince, timeuntil
 
-from radiofeed.admin import FastCountMixin
+from radiofeed.admin import FastCountAdminMixin
 from radiofeed.podcasts import tasks
 from radiofeed.podcasts.forms import OpmlUploadForm
 from radiofeed.podcasts.models import (
@@ -194,7 +194,7 @@ class ScheduledFilter(admin.SimpleListFilter):
 
 
 @admin.register(Podcast)
-class PodcastAdmin(FastCountMixin, admin.ModelAdmin):
+class PodcastAdmin(FastCountAdminMixin, admin.ModelAdmin):
     """Podcast model admin."""
 
     date_hierarchy = "pub_date"
