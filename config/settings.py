@@ -618,7 +618,9 @@ ITUNES_COUNTRIES = env.list(
         "fr",
         "gb",
         "it",
+        "ja",
         "se",
         "us",
+        "zh",
     ],
 )
