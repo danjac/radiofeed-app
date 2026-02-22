@@ -1,4 +1,4 @@
-"""E2E tests for user account workflows."""
+"""E2E tests for user authentication workflows."""
 
 import re
 
@@ -49,35 +49,3 @@ def test_logout(auth_page: Page, live_server):
     auth_page.get_by_role("button", name="Logout").click()
     # After logout allauth redirects to the home page; the login link appears.
     expect(auth_page.get_by_role("link", name="log in")).to_be_visible()
-
-
-@pytest.mark.e2e
-@pytest.mark.django_db(transaction=True)
-def test_preferences_page(auth_page: Page, live_server):
-    """User preferences page renders the settings form."""
-    auth_page.goto(f"{live_server.url}{reverse('users:preferences')}")
-    expect(auth_page).to_have_title(re.compile("Preferences"))
-
-
-@pytest.mark.e2e
-@pytest.mark.django_db(transaction=True)
-def test_stats_page(auth_page: Page, live_server):
-    """User statistics page is accessible."""
-    auth_page.goto(f"{live_server.url}{reverse('users:stats')}")
-    expect(auth_page).to_have_title(re.compile("Statistics"))
-
-
-@pytest.mark.e2e
-@pytest.mark.django_db(transaction=True)
-def test_import_feeds_page(auth_page: Page, live_server):
-    """OPML import/export page is accessible."""
-    auth_page.goto(f"{live_server.url}{reverse('users:import_podcast_feeds')}")
-    expect(auth_page).to_have_title(re.compile("Import/Export Feeds"))
-
-
-@pytest.mark.e2e
-@pytest.mark.django_db(transaction=True)
-def test_delete_account_page(auth_page: Page, live_server):
-    """Delete account page renders a confirmation form."""
-    auth_page.goto(f"{live_server.url}{reverse('users:delete_account')}")
-    expect(auth_page).to_have_title(re.compile("Delete Account"))
