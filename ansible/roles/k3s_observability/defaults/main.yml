@@ -1,0 +1,23 @@
+# Image versions — check GitHub releases for updates before deploying
+k3s_observability_otel_image: "otel/opentelemetry-collector-contrib:0.146.1"
+k3s_observability_prometheus_image: "prom/prometheus:v3.9.1"
+k3s_observability_loki_image: "grafana/loki:3.6.7"
+k3s_observability_tempo_image: "grafana/tempo:2.10.1"
+k3s_observability_grafana_image: "grafana/grafana:12.3.3"
+
+# Base directory for observability data on the server node
+k3s_observability_data_dir: "/var/lib/radiofeed/observability"
+
+# Grafana
+k3s_observability_grafana_password: ""
+k3s_observability_grafana_subdomain: "grafana"
+
+# Retention periods
+k3s_observability_prometheus_retention: "30d"
+k3s_observability_tempo_retention: "48h"
+
+# Storage sizes (hostPath volumes on server node)
+k3s_observability_prometheus_storage: "20Gi"
+k3s_observability_loki_storage: "10Gi"
+k3s_observability_tempo_storage: "10Gi"
+k3s_observability_grafana_storage: "2Gi"

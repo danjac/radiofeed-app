@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tempo-pv
+spec:
+  capacity:
+    storage: {{ k3s_observability_tempo_storage }}
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  claimRef:
+    name: tempo-pvc
+    namespace: default
+  hostPath:
+    path: "{{ k3s_observability_data_dir }}/tempo"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: role
+              operator: In
+              values:
+                - server

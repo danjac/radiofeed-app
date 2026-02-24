@@ -45,3 +45,4 @@
       - k3s_deploy
       - k3s_crons
       - k3s_scripts
+      - k3s_observability

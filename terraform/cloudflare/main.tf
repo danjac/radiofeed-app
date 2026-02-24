@@ -30,6 +30,19 @@ resource "cloudflare_record" "server" {
   comment         = "Radiofeed server node - managed by Terraform"
 }
 
+# Grafana monitoring UI — proxied through Cloudflare so the Cloudflare origin cert is valid
+resource "cloudflare_record" "grafana" {
+  count           = var.grafana_subdomain != "" ? 1 : 0
+  zone_id         = data.cloudflare_zone.domain.id
+  name            = var.grafana_subdomain
+  content         = var.server_ip
+  type            = "A"
+  proxied         = true
+  ttl             = 1
+  allow_overwrite = true
+  comment         = "Grafana observability UI - managed by Terraform"
+}
+
 # Optional: WWW redirect
 resource "cloudflare_record" "www" {
   count           = var.enable_www_redirect ? 1 : 0

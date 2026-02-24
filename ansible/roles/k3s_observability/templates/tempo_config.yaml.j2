@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tempo-config
+  namespace: default
+data:
+  tempo.yaml: |
+    server:
+      http_listen_port: 3200
+      grpc_listen_port: 9095
+
+    query_frontend:
+      metrics:
+        max_duration: 0
+
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+
+    ingester:
+      trace_idle_period: 10s
+      max_block_bytes: 1_000_000
+      max_block_duration: 5m
+
+    compactor:
+      compaction:
+        compaction_window: 1h
+        max_compaction_objects: 1000000
+        block_retention: {{ k3s_observability_tempo_retention }}
+        compacted_block_retention: 10m
+
+    metrics_generator:
+      processor:
+        local_blocks:
+          filter_server_spans: false
+          flush_to_storage: true
+      storage:
+        path: /data/tempo/generator/wal
+        remote_write: []
+      traces_storage:
+        path: /data/tempo/generator/traces
+
+    overrides:
+      defaults:
+        metrics_generator:
+          processors: [local-blocks]
+
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /data/tempo/blocks
+        wal:
+          path: /data/tempo/wal

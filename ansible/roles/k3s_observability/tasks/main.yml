@@ -1,0 +1,113 @@
+- name: Deploy OpenTelemetry observability stack
+  environment:
+      KUBECONFIG: "{{ kubeconfig }}"
+  block:
+      - name: Create observability data directories on server node
+        ansible.builtin.file:
+            path: "{{ item.path }}"
+            state: directory
+            mode: "0755"
+            owner: "{{ item.owner }}"
+            group: "{{ item.owner }}"
+        loop:
+            - path: "{{ k3s_observability_data_dir }}/prometheus"
+              owner: "65534"  # nobody — Prometheus default UID
+            - path: "{{ k3s_observability_data_dir }}/loki"
+              owner: "10001"  # Loki default UID
+            - path: "{{ k3s_observability_data_dir }}/tempo"
+              owner: "10001"  # Tempo default UID
+            - path: "{{ k3s_observability_data_dir }}/grafana"
+              owner: "472"    # Grafana default UID
+        become: true
+
+      - name: Create temporary manifests directory
+        ansible.builtin.tempfile:
+            state: directory
+        register: k3s_observability_manifests_dir
+
+      - name: Create subdirectory for cluster-scoped manifests
+        ansible.builtin.file:
+            path: "{{ k3s_observability_manifests_dir.path }}/cluster"
+            state: directory
+            mode: "0755"
+
+      - name: Render cluster-scoped manifests
+        ansible.builtin.template:
+            src: "{{ item }}.yaml.j2"
+            dest: "{{ k3s_observability_manifests_dir.path }}/cluster/{{ item }}.yaml"
+            mode: "0644"
+        loop:
+            - otel_rbac
+
+      - name: Apply cluster-scoped manifests
+        ansible.builtin.shell: |
+            kubectl apply -f {{ k3s_observability_manifests_dir.path }}/cluster/
+        changed_when: true
+
+      - name: Render namespaced manifests
+        ansible.builtin.template:
+            src: "{{ item }}.yaml.j2"
+            dest: "{{ k3s_observability_manifests_dir.path }}/{{ item }}.yaml"
+            mode: "0644"
+        loop:
+            - otel_agent_config
+            - otel_agent_daemonset
+            - otel_agent_service
+            - otel_gateway_config
+            - otel_gateway_deployment
+            - otel_gateway_service
+            - prometheus_config
+            - prometheus_pv
+            - prometheus_pvc
+            - prometheus_deployment
+            - prometheus_service
+            - loki_config
+            - loki_pv
+            - loki_pvc
+            - loki_deployment
+            - loki_service
+            - tempo_config
+            - tempo_pv
+            - tempo_pvc
+            - tempo_deployment
+            - tempo_service
+            - grafana_datasources
+            - grafana_dashboard_provisioner
+            - grafana_dashboard_django
+            - grafana_secret
+            - grafana_pv
+            - grafana_pvc
+            - grafana_deployment
+            - grafana_service
+            - grafana_ingress
+
+      - name: Apply namespaced manifests using ApplySet
+        ansible.builtin.shell: |
+            kubectl apply -f {{ k3s_observability_manifests_dir.path }} \
+                --prune --applyset=observability-deployment --namespace=default
+        environment:
+            KUBECTL_APPLYSET: "true"
+        changed_when: true
+
+      - name: Delete temporary manifests directory
+        ansible.builtin.file:
+            path: "{{ k3s_observability_manifests_dir.path }}"
+            state: absent
+
+      - name: Restart observability deployments
+        ansible.builtin.shell: |
+            for deployment in otel-gateway prometheus loki tempo grafana; do
+              kubectl rollout restart deployment/$deployment -n default || true
+            done
+        changed_when: true
+
+      - name: Wait for Grafana to be ready
+        ansible.builtin.shell: |
+            kubectl rollout status deployment/grafana -n default --timeout=120s
+        changed_when: false
+
+      - name: Set Grafana admin password
+        ansible.builtin.shell: |
+            kubectl exec -n default deployment/grafana -- \
+                grafana-cli admin reset-admin-password "{{ k3s_observability_grafana_password }}"
+        changed_when: true

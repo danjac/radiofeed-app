@@ -469,8 +469,11 @@ LOGGING = {
 # https://opentelemetry.io/docs/instrumentation/python/automatic/
 
 if OPEN_TELEMETRY_URL := env("OPEN_TELEMETRY_URL", default=None):
-    # Configure OTLP exporter
-    otlp_exporter = OTLPSpanExporter(endpoint=OPEN_TELEMETRY_URL)
+    # Configure OTLP exporter — OTLPSpanExporter uses the endpoint as-is, so
+    # we must include the signal-specific path explicitly.
+    otlp_exporter = OTLPSpanExporter(
+        endpoint=f"{OPEN_TELEMETRY_URL.rstrip('/')}/v1/traces"
+    )
 
     resource = Resource.create(
         {

@@ -1,0 +1,281 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-django
+  namespace: default
+data:
+  django.json: |
+    {
+      "annotations": {"list": []},
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "links": [],
+      "panels": [
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 10},
+                  {"color": "red", "value": 50}
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0},
+          "id": 1,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+            "textMode": "auto"
+          },
+          "title": "Request Rate",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | rate()",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 0.1},
+                  {"color": "red", "value": 1}
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0},
+          "id": 2,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+            "textMode": "auto"
+          },
+          "title": "Error Rate",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server && status = error } | rate()",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 500000000},
+                  {"color": "red", "value": 2000000000}
+                ]
+              },
+              "unit": "ns"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 4, "w": 8, "x": 16, "y": 0},
+          "id": 3,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false},
+            "textMode": "auto"
+          },
+          "title": "P95 Latency",
+          "type": "stat",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | quantile_over_time(duration, 0.95)",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"},
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+          "id": 4,
+          "options": {
+            "legend": {"calcs": [], "displayMode": "list", "placement": "bottom"},
+            "tooltip": {"mode": "single", "sort": "none"}
+          },
+          "title": "Request Rate",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | rate()",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "fixed", "fixedColor": "red"},
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+          "id": 5,
+          "options": {
+            "legend": {"calcs": [], "displayMode": "list", "placement": "bottom"},
+            "tooltip": {"mode": "single", "sort": "none"}
+          },
+          "title": "Error Rate",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server && status = error } | rate()",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"},
+              "unit": "ns"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12},
+          "id": 6,
+          "options": {
+            "legend": {"calcs": [], "displayMode": "list", "placement": "bottom"},
+            "tooltip": {"mode": "multi", "sort": "none"}
+          },
+          "title": "Latency Percentiles (P50 / P95 / P99)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | quantile_over_time(duration, 0.50)",
+              "refId": "P50"
+            },
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | quantile_over_time(duration, 0.95)",
+              "refId": "P95"
+            },
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | quantile_over_time(duration, 0.99)",
+              "refId": "P99"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"},
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 20},
+          "id": 7,
+          "options": {
+            "legend": {"calcs": [], "displayMode": "list", "placement": "right"},
+            "tooltip": {"mode": "multi", "sort": "desc"}
+          },
+          "title": "Request Rate by Endpoint",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | rate() by (name)",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"},
+              "unit": "ns"
+            },
+            "overrides": []
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 28},
+          "id": 8,
+          "options": {
+            "legend": {"calcs": [], "displayMode": "list", "placement": "right"},
+            "tooltip": {"mode": "multi", "sort": "desc"}
+          },
+          "title": "P95 Latency by Endpoint",
+          "type": "timeseries",
+          "targets": [
+            {
+              "datasource": {"type": "tempo", "uid": "tempo"},
+              "queryType": "traceql",
+              "query": "{ resource.service.name = \"radiofeed\" && kind = server } | quantile_over_time(duration, 0.95) by (name)",
+              "refId": "A"
+            }
+          ]
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "tags": ["django", "performance"],
+      "time": {"from": "now-1h", "to": "now"},
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "Django Performance",
+      "uid": "django-perf",
+      "version": 1
+    }

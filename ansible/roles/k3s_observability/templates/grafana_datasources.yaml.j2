@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: default
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        uid: prometheus
+        url: http://prometheus.default.svc.cluster.local:9090
+        isDefault: true
+        editable: false
+
+      - name: Loki
+        type: loki
+        uid: loki
+        url: http://loki.default.svc.cluster.local:3100
+        editable: false
+        jsonData:
+          derivedFields:
+            - datasourceUid: tempo
+              matcherRegex: '"trace_id":"(\w+)"'
+              name: TraceID
+              url: "$${__value.raw}"
+
+      - name: Tempo
+        type: tempo
+        uid: tempo
+        url: http://tempo.default.svc.cluster.local:3200
+        editable: false
+        jsonData:
+          tracesToLogsV2:
+            datasourceUid: loki
+            filterByTraceID: false
+            filterBySpanID: false
+          tracesToMetrics:
+            datasourceUid: prometheus
+          lokiSearch:
+            datasourceUid: loki
+          serviceMap:
+            datasourceUid: prometheus
