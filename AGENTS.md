@@ -128,7 +128,7 @@ Rules:
 
 ### Branching
 
-Create a well-named branch for each change (e.g. `feature-<name>`, `hotfix-<name>`).
+Create a well-named branch for each change (e.g. `feature-<name>`).
 
 Before merging a branch into `main`, squash all commits in the branch into a single commit using `git rebase -i` with fixup. Ensure all tests pass (`just test`) and pre-commit linting passes before merging. When merging into `main`, use `git rebase`, not `git merge`. After merging, run all tests again to verify. **You must have 100% coverage as indicated in by coverage tool before merging a branch.** Delete the branch after merging.
 
@@ -195,7 +195,7 @@ Pre-commit hooks run `terraform fmt` and `terraform validate` automatically.
 
 ### Ansible
 
-Ansible playbooks in `ansible/` deploy K3s, PostgreSQL, Redis, the Django app, Traefik ingress, and cron jobs.
+Ansible playbooks in `ansible/` deploy K3s, PostgreSQL, Redis, the Django app, Traefik ingress, Grafana/Prometheus, and cron jobs.
 
 ```bash
 just apb site                  # Full deployment
