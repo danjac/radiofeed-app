@@ -423,6 +423,10 @@ LOGGING = {
             "class": "logging.NullHandler",
             "formatter": "simple",
         },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+        },
     },
     "loggers": {
         "root": {
@@ -444,7 +448,7 @@ LOGGING = {
             "propagate": False,
         },
         "django.request": {
-            "handlers": ["console"],
+            "handlers": ["console", "mail_admins"],
             "propagate": False,
         },
         "environ": {
