@@ -101,6 +101,11 @@
             done
         changed_when: true
 
+      - name: Restart otel-agent daemonset
+        ansible.builtin.shell: |
+            kubectl rollout restart daemonset/otel-agent -n default
+        changed_when: true
+
       - name: Wait for Grafana to be ready
         ansible.builtin.shell: |
             kubectl rollout status deployment/grafana -n default --timeout=120s

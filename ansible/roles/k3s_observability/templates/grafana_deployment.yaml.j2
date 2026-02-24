@@ -48,6 +48,21 @@ spec:
               value: warn
             - name: GF_USERS_ALLOW_SIGN_UP
               value: "false"
+            - name: GF_SMTP_ENABLED
+              value: "true"
+            - name: GF_SMTP_HOST
+              value: "{{ k3s_observability_grafana_smtp_host }}"
+            - name: GF_SMTP_USER
+              value: "{{ k3s_observability_grafana_smtp_user or 'postmaster@mg.' + domain }}"
+            - name: GF_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-secret
+                  key: smtp-password
+            - name: GF_SMTP_FROM_ADDRESS
+              value: "{{ k3s_observability_grafana_smtp_from_address or 'grafana@' + domain }}"
+            - name: GF_SMTP_FROM_NAME
+              value: "{{ k3s_observability_grafana_smtp_from_name }}"
           volumeMounts:
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources

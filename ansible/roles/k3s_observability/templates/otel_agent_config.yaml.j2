@@ -45,6 +45,11 @@ data:
                 name: k8s.pod.uid
           - sources:
               - from: resource_attribute
+                name: k8s.pod.name
+              - from: resource_attribute
+                name: k8s.namespace.name
+          - sources:
+              - from: resource_attribute
                 name: k8s.pod.ip
           - sources:
               - from: connection
@@ -57,6 +62,45 @@ data:
             - k8s.pod.name
             - k8s.node.name
             - k8s.container.name
+      resource/service_name:
+        attributes:
+          - key: service.name
+            from_attribute: k8s.statefulset.name
+            action: upsert
+          - key: service.name
+            from_attribute: k8s.daemonset.name
+            action: upsert
+          - key: service.name
+            from_attribute: k8s.deployment.name
+            action: upsert
+      # Fallback: if k8sattributes enrichment failed (service.name still unset or
+      # unknown_service), derive a stable service name from the pod name by
+      # stripping the two trailing Kubernetes hash segments (-<rs-hash>-<pod-hash>
+      # for Deployments, or -<hash> for DaemonSets/StatefulSets).
+      transform/service_name_fallback:
+        log_statements:
+          - context: resource
+            statements:
+              - >
+                set(attributes["service.name"],
+                    ExtractPatterns(attributes["k8s.pod.name"],
+                        "^(?P<svc>.+?)-[a-z0-9]+-[a-z0-9]+$")["svc"])
+                where (attributes["service.name"] == nil
+                    or attributes["service.name"] == "unknown_service")
+                    and attributes["k8s.pod.name"] != nil
+              - >
+                set(attributes["service.name"],
+                    ExtractPatterns(attributes["k8s.pod.name"],
+                        "^(?P<svc>.+?)-[a-z0-9]+$")["svc"])
+                where (attributes["service.name"] == nil
+                    or attributes["service.name"] == "unknown_service")
+                    and attributes["k8s.pod.name"] != nil
+      filter/drop_unknown_service:
+        error_mode: ignore
+        logs:
+          log_record:
+            - resource.attributes["service.name"] == "unknown_service"
+            - resource.attributes["service.name"] == nil
 
     exporters:
       otlphttp/gateway:
@@ -70,5 +114,5 @@ data:
           exporters: [otlphttp/gateway]
         logs:
           receivers: [filelog]
-          processors: [memory_limiter, k8sattributes, batch]
+          processors: [memory_limiter, k8sattributes, resource/service_name, transform/service_name_fallback, filter/drop_unknown_service, batch]
           exporters: [otlphttp/gateway]

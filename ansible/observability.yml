@@ -1,0 +1,6 @@
+- name: Deploy k3s telemetry (grafana, prometheus, loki)
+  hosts: server
+  become: false
+  gather_facts: true
+  roles:
+      - k3s_observability

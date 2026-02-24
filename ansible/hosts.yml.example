@@ -44,3 +44,6 @@ all:
     # Subdomain for Grafana UI — requires DNS record grafana.<domain> → server public IP
     # and Cloudflare origin cert covering *.<domain>
     k3s_observability_grafana_subdomain: "grafana"
+    # Grafana SMTP via Mailgun. SMTP password is separate from the API key —
+    # find it in Mailgun dashboard: Sending > Domains > <domain> > SMTP credentials
+    k3s_observability_grafana_smtp_password: ""

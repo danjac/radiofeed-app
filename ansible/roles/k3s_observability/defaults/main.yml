@@ -11,6 +11,11 @@ k3s_observability_data_dir: "/var/lib/radiofeed/observability"
 # Grafana
 k3s_observability_grafana_password: ""
 k3s_observability_grafana_subdomain: "grafana"
+k3s_observability_grafana_smtp_host: "smtp.eu.mailgun.org:587"
+k3s_observability_grafana_smtp_user: ""
+k3s_observability_grafana_smtp_password: ""
+k3s_observability_grafana_smtp_from_address: ""
+k3s_observability_grafana_smtp_from_name: "Grafana"
 
 # Retention periods
 k3s_observability_prometheus_retention: "30d"
