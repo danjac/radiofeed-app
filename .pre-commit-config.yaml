@@ -85,7 +85,7 @@ repos:
     hooks:
       - id: uv-secure
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.1.1
+    rev: v26.2.0
     hooks:
       - id: ansible-lint
         language_version: "3.14"
