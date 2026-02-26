@@ -24,6 +24,11 @@ data:
         check_interval: 5s
       batch:
         timeout: 10s
+      transform/truncate_logs:
+        log_statements:
+          - context: log
+            statements:
+              - set(body, Substring(body, 0, 65536)) where IsString(body) and Len(body) > 65536
 
     exporters:
       prometheusremotewrite:
@@ -47,7 +52,7 @@ data:
           exporters: [prometheusremotewrite]
         logs:
           receivers: [otlp]
-          processors: [memory_limiter, batch]
+          processors: [memory_limiter, transform/truncate_logs, batch]
           exporters: [otlphttp/loki]
         traces:
           receivers: [otlp]
