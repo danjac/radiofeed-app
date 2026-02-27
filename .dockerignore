@@ -27,7 +27,10 @@
 .vscode
 .gitignore
 .gitattributes
+.claudeignore
 .dockerignore
+AGENTS.md
+CLAUDE.md
 commmitlint.config.js
 justfile
 LICENSE
