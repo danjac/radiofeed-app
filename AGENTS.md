@@ -59,8 +59,8 @@ Runs `basedpyright`. Configuration is in `pyproject.toml` under `[tool.pyright]`
 just test                      # Run all unit tests with coverage
 just test radiofeed/podcasts   # Test a specific module
 just tw                        # Watch mode (auto-rerun on .py/.html changes)
-just e2e                       # End-to-end tests (Playwright, headless)
-just e2e-headed                # E2E tests with visible browser
+just test-e2e                       # End-to-end tests (Playwright, headless)
+just test-e2e-headed                # E2E tests with visible browser
 ```
 
 - Framework: `pytest` with `pytest-django`

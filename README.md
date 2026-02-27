@@ -129,7 +129,7 @@ The project maintains 100% code coverage:
 ```bash
 just test                      # Run all tests with coverage
 just test radiofeed/podcasts   # Test specific module
-just e2e                       # Run end-to-end tests with Playwright
+just test-e2e                       # Run end-to-end tests with Playwright
 just tw                        # Watch mode - auto-run on changes
 ```
 
