@@ -31,6 +31,7 @@
 .dockerignore
 AGENTS.md
 CLAUDE.md
+DEPLOYMENT.md
 commmitlint.config.js
 justfile
 LICENSE
