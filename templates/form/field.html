@@ -15,7 +15,7 @@
             {% partial help_text %}
         </fieldset>
     {% endwith %}
-{% endpartialdef %}
+{% endpartialdef fieldset %}
 
 {% partialdef label %}
     <label class="block font-semibold text-zinc-700 dark:text-zinc-300{% if field.errors %} text-rose-600 dark:text-rose-400{% endif %}"
@@ -24,7 +24,7 @@
         {{ field.label }}
         {% if not field.field.required %}(optional){% endif %}
     </label>
-{% endpartialdef %}
+{% endpartialdef label %}
 
 {% partialdef errors %}
     {% if errors %}
@@ -32,7 +32,7 @@
             {{ errors|unordered_list }}
         </ul>
     {% endif %}
-{% endpartialdef %}
+{% endpartialdef errors %}
 
 {% partialdef help_text %}
     {% if field.help_text %}
@@ -40,7 +40,7 @@
             {{ field.help_text }}
         </div>
     {% endif %}
-{% endpartialdef %}
+{% endpartialdef help_text %}
 
 {# FIELD DEFINITIONS #}
 
@@ -48,22 +48,22 @@
 {% partialdef input %}
     {% partial label %}
     {% render_field field class="form-input" %}
-{% endpartialdef %}
+{% endpartialdef input %}
 
 {# Text input #}
 {% partialdef textinput %}
     {% partial input %}
-{% endpartialdef %}
+{% endpartialdef textinput %}
 
 {# File input #}
 {% partialdef fileinput %}
     {% partial input %}
-{% endpartialdef %}
+{% endpartialdef fileinput %}
 
 {# URL input #}
 {% partialdef urlinput %}
     {% partial input %}
-{% endpartialdef %}
+{% endpartialdef urlinput %}
 
 {# Checkbox input #}
 {% partialdef checkboxinput %}
@@ -71,7 +71,7 @@
         {% render_field field class="form-checkbox" %}
         {% partial label %}
     </div>
-{% endpartialdef %}
+{% endpartialdef checkboxinput %}
 
 {# Password input #}
 {% partialdef passwordinput %}
@@ -93,4 +93,4 @@
             {% heroicon_mini "eye-slash" class="w-5 h-5 text-zinc-500 dark:text-zinc-400" x_show="!show" %}
         </button>
     </div>
-{% endpartialdef %}
+{% endpartialdef passwordinput %}

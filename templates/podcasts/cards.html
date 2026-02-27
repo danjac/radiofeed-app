@@ -2,16 +2,16 @@
     {% fragment "card.html" url=podcast.get_absolute_url title=podcast.cleaned_title cover_url=podcast.cover_url %}
         {{ podcast.pub_date|date:"DATE_FORMAT" }}
     {% endfragment %}
-{% endpartialdef %}
+{% endpartialdef podcast %}
 
 {% partialdef episode %}
     {% fragment "card.html" url=episode.get_absolute_url title=episode.cleaned_title cover_url=episode.get_cover_url %}
         {{ episode.pub_date|date:"DATE_FORMAT" }}
     {% endfragment %}
-{% endpartialdef %}
+{% endpartialdef episode %}
 
 {% partialdef itunes_feed %}
     {% fragment "card.html" url=feed.url title=feed.title cover_url=feed.image external=True %}
         View in iTunes
     {% endfragment %}
-{% endpartialdef %}
+{% endpartialdef itunes_feed %}
