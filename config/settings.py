@@ -325,7 +325,6 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 # Secure settings
 # https://docs.djangoproject.com/en/4.1/topics/security/
 
-SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 if USE_X_FORWARDED_HOST := env.bool("USE_X_FORWARDED_HOST", default=True):
