@@ -194,10 +194,17 @@ This runs the release job (migrations, collectstatic) then rolls out the new ima
 The `deploy` workflow (`.github/workflows/deploy.yml`) runs `scripts/deploy.sh` directly
 on the GitHub Actions runner using `kubectl` and `helm`. Two repository secrets are required:
 
-| Secret | How to set it |
-|--------|---------------|
-| `KUBECONFIG_BASE64` | Base64-encoded kubeconfig: `base64 < ~/.kube/radiofeed.yaml \| tr -d '\n'` |
+| Secret | Description |
+|--------|-------------|
+| `KUBECONFIG_BASE64` | Base64-encoded kubeconfig (see below) |
 | `HELM_VALUES_SECRET` | Full contents of `helm/radiofeed/values.secret.yaml` |
+
+Generate `KUBECONFIG_BASE64`:
+
+```bash
+base64 -w0 ~/.kube/radiofeed.yaml
+# macOS: base64 -i ~/.kube/radiofeed.yaml
+```
 
 Set these in GitHub → repository **Settings → Secrets and variables → Actions**.
 
