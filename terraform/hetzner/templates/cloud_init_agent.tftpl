@@ -1,0 +1,47 @@
+#cloud-config
+hostname: ${hostname}
+manage_etc_hosts: true
+
+users:
+  - name: ubuntu
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+package_update: true
+packages:
+  - curl
+  - ca-certificates
+  - apt-transport-https
+
+write_files:
+  - path: /usr/local/bin/k3s-daily-cleanup.sh
+    permissions: "0755"
+    content: |
+      #!/bin/bash
+      ctr images prune --all || true
+      journalctl --vacuum-time=1d || true
+      apt clean
+  - path: /etc/cron.d/k3s-cleanup
+    content: "0 2 * * * root /usr/local/bin/k3s-daily-cleanup.sh\n"
+
+runcmd:
+  - |
+    # Wait for K3s server to be reachable (up to 10 minutes)
+    for i in $(seq 1 60); do
+      if curl -k -s --max-time 5 \
+          https://${server_private_ip}:6443/livez 2>/dev/null | grep -q "ok"; then
+        break
+      fi
+      sleep 10
+    done
+  - |
+    curl -sfL https://get.k3s.io | \
+      K3S_TOKEN=${k3s_token} \
+      K3S_URL=https://${server_private_ip}:6443 \
+      sh -s - agent \
+      --node-name=${hostname} \
+      --flannel-iface=enp7s0 \
+      --node-label=role=${role}

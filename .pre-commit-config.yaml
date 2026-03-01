@@ -10,9 +10,11 @@ repos:
         exclude: '.*\.j2$'
       - id: check-toml
       - id: check-yaml
+        exclude: '^helm/.*/templates/.*\.yaml$'
       - id: debug-statements
       - id: destroyed-symlinks
       - id: detect-private-key
+        exclude: '\.example$'
   - repo: local
     hooks:
       - id: rustywind
@@ -84,16 +86,6 @@ repos:
     rev: 0.17.0
     hooks:
       - id: uv-secure
-  - repo: https://github.com/ansible/ansible-lint
-    rev: v26.2.0
-    hooks:
-      - id: ansible-lint
-        language_version: "3.14"
-        always_run: false
-        files: ^ansible/
-        args: ['ansible/']
-        additional_dependencies:
-          - ansible
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.105.0
     hooks:

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: django-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      nodeSelector:
+        role: webapp
+      containers:
+        - name: django
+          image: {{ .Values.image }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory|quote }}
+              cpu: {{ .Values.resources.requests.cpu|quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory|quote }}
+              cpu: {{ .Values.resources.limits.cpu|quote }}
+          command: ["/bin/sh", "-c"]
+          args: ["./gunicorn.sh"]
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: configmap
+            - secretRef:
+                name: secrets
+          livenessProbe:
+            httpGet:
+              path: /ht/live/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ht/ready/
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30

@@ -1,6 +1,0 @@
-# Deployment settings
-
-k3s_pg_upgrade_current_volume: ""
-k3s_pg_upgrade_storage: "30Gi"
-k3s_pg_upgrade_new_image: ""
-k3s_pg_upgrade_new_volume: ""

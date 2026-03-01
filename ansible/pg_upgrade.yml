@@ -1,6 +1,0 @@
-- name: Deploy k3s Postgres upgrade resources
-  hosts: server
-  become: false
-  gather_facts: true
-  roles:
-      - k3s_pg_upgrade

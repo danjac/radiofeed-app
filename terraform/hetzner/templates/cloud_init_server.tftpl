@@ -1,0 +1,62 @@
+#cloud-config
+hostname: ${hostname}
+manage_etc_hosts: true
+
+users:
+  - name: ubuntu
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
+package_update: true
+packages:
+  - curl
+  - ca-certificates
+  - apt-transport-https
+
+write_files:
+  - path: /usr/local/bin/k3s-daily-cleanup.sh
+    permissions: "0755"
+    content: |
+      #!/bin/bash
+      ctr images prune --all || true
+      journalctl --vacuum-time=1d || true
+      apt clean
+  - path: /etc/cron.d/k3s-cleanup
+    content: "0 2 * * * root /usr/local/bin/k3s-daily-cleanup.sh\n"
+
+runcmd:
+  - |
+    curl -sfL https://get.k3s.io | \
+      K3S_TOKEN=${k3s_token} \
+      sh -s - \
+      --node-name=${hostname} \
+      --node-ip=${private_ip} \
+      --flannel-iface=enp7s0 \
+      --advertise-address=${private_ip} \
+      --tls-san=${private_ip} \
+      --node-label=role=server
+  - |
+    # Copy kubeconfig for ubuntu user
+    mkdir -p /home/ubuntu/.kube
+    cp /etc/rancher/k3s/k3s.yaml /home/ubuntu/.kube/config
+    chown -R ubuntu:ubuntu /home/ubuntu/.kube
+    chmod 600 /home/ubuntu/.kube/config
+    echo 'export KUBECONFIG=/home/ubuntu/.kube/config' >> /home/ubuntu/.bashrc
+    echo 'export KUBECONFIG=/home/ubuntu/.kube/config' >> /home/ubuntu/.profile
+  - |
+    # Wait for K3s API to be ready
+    until k3s kubectl get nodes >/dev/null 2>&1; do sleep 5; done
+  - |
+    # Wait for system deployments then pin them to the server node
+    for dep in coredns metrics-server traefik; do
+      k3s kubectl wait --for=condition=Available \
+        deployment/$${dep} -n kube-system --timeout=120s || true
+      k3s kubectl patch deployment $${dep} -n kube-system \
+        --type='json' \
+        -p='[{"op":"add","path":"/spec/template/spec/nodeSelector","value":{"role":"server"}}]' \
+        || true
+      k3s kubectl rollout restart deployment/$${dep} -n kube-system || true
+    done

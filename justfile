@@ -1,5 +1,4 @@
-ansible_dir := invocation_directory() / "ansible"
-script_dir := ansible_dir / "scripts"
+script_dir := invocation_directory() / "scripts"
 
 @_default:
     just --list
@@ -118,10 +117,27 @@ precommitupdate:
 precommitall:
    pre-commit run --all
 
-# Run Ansible playbook
+# Fetch kubeconfig from the production server (writes to ~/.kube/radiofeed.yaml)
 [group('deployment')]
-apb playbook *args:
-    ansible-playbook -i {{ ansible_dir / "hosts.yml" }} {{ ansible_dir / playbook + ".yml" }} {{ args }}
+get-kubeconfig:
+    {{ script_dir }}/get-kubeconfig.sh
+
+# Install or upgrade the radiofeed Helm chart
+[group('deployment')]
+helm-upgrade:
+    helm upgrade --install radiofeed helm/radiofeed/ \
+        -f helm/radiofeed/values.yaml \
+        -f helm/radiofeed/values.secret.yaml
+
+# Install or upgrade the observability Helm chart
+[group('deployment')]
+helm-upgrade-observability:
+    helm dependency update helm/observability/
+    helm upgrade --install observability helm/observability/ \
+        --namespace monitoring \
+        --create-namespace \
+        -f helm/observability/values.yaml \
+        -f helm/observability/values.secret.yaml
 
 # Run Github workflow
 [group('deployment')]
@@ -132,25 +148,21 @@ gh workflow *args:
 [group('production')]
 [confirm("WARNING!!! Are you sure you want to run this command on production? (y/N)")]
 rdj *args:
-    @just remote_script manage.sh dj_manage {{ args }}
+    {{ script_dir }}/manage.sh {{ args }}
 
 # Run Psql commands remotely on production database
 [group('production')]
 [confirm("WARNING!!! Are you sure you want to run this command on production? (y/N)")]
 rpsql *args:
-    @just remote_script psql.sh psql {{ args }}
+    {{ script_dir }}/psql.sh {{ args }}
 
-# Run Kubectl commands remotely on production cluster
+# Run Kubectl commands on the production cluster
 [group('production')]
 kube *args:
-    @just remote_script kubectl.sh kubectl {{ args }}
+    KUBECONFIG="${KUBECONFIG:-$HOME/.kube/radiofeed.yaml}" kubectl {{ args }}
 
-[private]
-remote_script script playbook *args:
-    #!/usr/bin/bash
-    if [ ! -f "{{ script_dir / script }}" ]; then
-        echo "{{ script }} not found, generating it..."
-        mkdir -p {{ script_dir }}
-        just apb {{ playbook }}
-    fi
-    {{ script_dir / script }} {{ args }}
+# Deploy a new image to production (runs release job then helm upgrade)
+[group('production')]
+[confirm("WARNING!!! Are you sure you want to deploy to production? (y/N)")]
+deploy image:
+    IMAGE={{ image }} {{ script_dir }}/deploy.sh

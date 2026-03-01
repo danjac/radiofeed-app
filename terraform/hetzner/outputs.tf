@@ -5,7 +5,7 @@ output "server_public_ip" {
 
 output "server_private_ip" {
   description = "Private IP address of the server node"
-  value       = hcloud_server_network.server_network.ip
+  value       = local.server_private_ip
 }
 
 output "database_public_ip" {
@@ -15,7 +15,7 @@ output "database_public_ip" {
 
 output "database_private_ip" {
   description = "Private IP address of the database node"
-  value       = hcloud_server_network.database_network.ip
+  value       = local.database_private_ip
 }
 
 output "jobrunner_public_ip" {
@@ -25,7 +25,7 @@ output "jobrunner_public_ip" {
 
 output "jobrunner_private_ip" {
   description = "Private IP address of the jobrunner node"
-  value       = hcloud_server_network.jobrunner_network.ip
+  value       = local.jobrunner_private_ip
 }
 
 output "webapp_public_ips" {
@@ -35,7 +35,7 @@ output "webapp_public_ips" {
 
 output "webapp_private_ips" {
   description = "Private IP addresses of webapp nodes"
-  value       = hcloud_server_network.webapp_network[*].ip
+  value       = local.webapp_private_ips
 }
 
 output "postgres_volume_id" {
@@ -49,7 +49,7 @@ output "postgres_volume_linux_device" {
 }
 
 output "postgres_volume_mount_path" {
-  description = "Mount path for PostgreSQL volume (used with automount)"
+  description = "Automount path for PostgreSQL volume — use as postgres.volumePath in helm/radiofeed/values.yaml"
   value       = "/mnt/HC_Volume_${hcloud_volume.postgres.id}"
 }
 
@@ -58,17 +58,7 @@ output "network_id" {
   value       = hcloud_network.private_network.id
 }
 
-output "ansible_inventory" {
-  description = "Ansible inventory snippet for hosts.yml"
-  value = templatefile("${path.module}/templates/ansible_inventory.tftpl", {
-    server_public_ip           = hcloud_server.server.ipv4_address
-    server_private_ip          = hcloud_server_network.server_network.ip
-    database_public_ip         = hcloud_server.database.ipv4_address
-    database_private_ip        = hcloud_server_network.database_network.ip
-    jobrunner_public_ip        = hcloud_server.jobrunner.ipv4_address
-    jobrunner_private_ip       = hcloud_server_network.jobrunner_network.ip
-    webapp_public_ips          = hcloud_server.webapp[*].ipv4_address
-    webapp_private_ips         = hcloud_server_network.webapp_network[*].ip
-    postgres_volume_mount_path = "/mnt/HC_Volume_${hcloud_volume.postgres.id}"
-  })
+output "get_kubeconfig_cmd" {
+  description = "Command to fetch kubeconfig from the server"
+  value       = "ssh ubuntu@${hcloud_server.server.ipv4_address} 'cat /home/ubuntu/.kube/config' | sed 's/127.0.0.1/${hcloud_server.server.ipv4_address}/g' > ~/.kube/radiofeed.yaml"
 }

@@ -1,0 +1,31 @@
+{{ - range $name, $cron := .Values.cronjobs }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $name }}
+  labels:
+    app: django-cronjob
+spec:
+  schedule: {{ $cron.schedule | quote }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          nodeSelector:
+            role: jobrunner
+          containers:
+            - name: django
+              image: {{ $.Values.image }}
+              command: ["/bin/bash", "-c", {{ $cron.command | quote }}]
+              envFrom:
+                - configMapRef:
+                    name: configmap
+                - secretRef:
+                    name: secrets
+{{ - end }}

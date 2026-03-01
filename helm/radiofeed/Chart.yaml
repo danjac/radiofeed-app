@@ -1,0 +1,6 @@
+apiVersion: v2
+name: radiofeed
+description: Radiofeed Django podcast aggregator
+type: application
+version: 0.1.0
+appVersion: "main"

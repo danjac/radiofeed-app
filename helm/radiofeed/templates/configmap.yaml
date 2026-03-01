@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap
+data:
+  ADMINS: {{ .Values.app.admins|quote }}
+  ADMIN_URL: {{ .Values.app.adminUrl|quote }}
+  ALLOWED_HOSTS: {{ .Values.app.allowedHosts|quote }}
+  CONN_POOL_MAX_IDLE: {{ .Values.app.connPool.maxIdle|toString|quote }}
+  CONN_POOL_MAX_LIFETIME: {{ .Values.app.connPool.maxLifetime|toString|quote }}
+  CONN_POOL_MAX_WAITING: {{ .Values.app.connPool.maxWaiting|toString|quote }}
+  CONN_POOL_MAX_SIZE: {{ .Values.app.connPool.maxSize|toString|quote }}
+  CONN_POOL_MIN_SIZE: {{ .Values.app.connPool.minSize|toString|quote }}
+  CONN_POOL_TIMEOUT: {{ .Values.app.connPool.timeout|toString|quote }}
+  CONTACT_EMAIL: {{ .Values.app.contactEmail|quote }}
+  CSP_SCRIPT_WHITELIST: {{ .Values.app.cspScriptWhitelist|quote }}
+  MAILGUN_API_URL: {{ .Values.app.mailgunApiUrl|quote }}
+  MAILGUN_SENDER_DOMAIN: {{ .Values.app.mailgunSenderDomain|quote }}
+  META_AUTHOR: {{ .Values.app.metaAuthor|quote }}
+  META_DESCRIPTION: {{ .Values.app.metaDescription|quote }}
+  META_KEYWORDS: {{ .Values.app.metaKeywords|quote }}
+  SECURE_SSL_REDIRECT: {{ .Values.app.secureSslRedirect|toString|quote }}

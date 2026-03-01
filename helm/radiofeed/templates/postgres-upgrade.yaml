@@ -1,0 +1,90 @@
+{{ - if .Values.pgUpgrade.enabled }}
+{{ - $newVersion := .Values.pgUpgrade.newImage | splitList ":" | last | splitList "." | first }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-upgrade-pv
+spec:
+  capacity:
+    storage: {{ .Values.pgUpgrade.storage }}
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: {{ .Values.pgUpgrade.newVolumePath|quote }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-upgrade-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  resources:
+    requests:
+      storage: {{ .Values.pgUpgrade.storage }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-upgrade
+spec:
+  serviceName: postgres-upgrade
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-upgrade
+  template:
+    metadata:
+      labels:
+        app: postgres-upgrade
+    spec:
+      nodeSelector:
+        role: database
+      containers:
+        - name: postgres
+          image: {{ .Values.pgUpgrade.newImage }}
+          args: {{ .Values.postgres.args | toYaml | nindent 12 }}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: POSTGRES_PASSWORD
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: postgres-storage
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 3
+            periodSeconds: 1
+            timeoutSeconds: 3
+            failureThreshold: 30
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "postgres"]
+            initialDelaySeconds: 3
+            periodSeconds: 1
+            timeoutSeconds: 3
+            failureThreshold: 30
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-upgrade-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-upgrade
+spec:
+  selector:
+    app: postgres-upgrade
+  ports:
+    - port: 5432
+      targetPort: 5432
+{{ - end }}

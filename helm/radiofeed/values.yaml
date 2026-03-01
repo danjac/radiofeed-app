@@ -1,0 +1,113 @@
+# Application image
+image: ghcr.io/danjac/radiofeed-app:main
+
+# Number of webapp replicas — match webapp_count in terraform/hetzner/terraform.tfvars
+replicas: 2
+
+# PostgreSQL configuration
+postgres:
+  image: postgres:18.1-bookworm
+  storage: 30Gi
+  # Volume mount path — set from: terraform -chdir=terraform/hetzner output -raw postgres_volume_mount_path
+  volumePath: /mnt/HC_Volume_CHANGEME
+  args:
+    - postgres
+    - -c
+    - lock_timeout=5s
+    - -c
+    - log_destination=stderr
+    - -c
+    - log_statement=all
+    - -c
+    - max_connections=200
+    - -c
+    - max_wal_size=4GB
+    - -c
+    - statement_timeout=30s
+    - -c
+    - wal_buffers=32MB
+
+# Redis configuration
+redis:
+  image: redis:8.2.2-bookworm
+
+# Resource requests/limits (tuned for cx23: 2 vCPU, 4 GB RAM)
+resources:
+  requests:
+    memory: 1638Mi
+    cpu: 700m
+  limits:
+    memory: 3072Mi
+    cpu: 1600m
+
+# Application domain (e.g. radiofeed.app)
+domain: ""
+
+# Django application settings
+app:
+  adminUrl: admin/
+  admins: ""
+  allowedHosts: "*"
+  contactEmail: ""
+  connPool:
+    maxIdle: 120
+    maxLifetime: 1800
+    maxWaiting: 25
+    maxSize: 100
+    minSize: 2
+    timeout: 20
+  cspScriptWhitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
+  mailgunApiUrl: https://api.eu.mailgun.net/v3
+  mailgunSenderDomain: ""
+  metaAuthor: Site owner
+  metaDescription: Podcast aggregator site
+  metaKeywords: podcasts, feeds, rss
+  secureSslRedirect: false
+
+# CronJob schedules
+cronjobs:
+  clear-sessions:
+    schedule: "20 5 * * *"
+    command: "./manage.sh clearsessions"
+  prune-db-task-results:
+    schedule: "25 9 * * *"
+    command: "./manage.sh prune_db_task_results --min-age-days=1"
+  create-recommendations:
+    schedule: "20 4 * * *"
+    command: "./manage.sh podcasts create-recommendations"
+  fetch-itunes:
+    schedule: "15 3 * * *"
+    command: "./manage.sh podcasts fetch-itunes"
+  parse-feeds:
+    schedule: "*/6 * * * *"
+    command: "./manage.sh podcasts parse-feeds"
+  send-episode-updates:
+    schedule: "0 13 * * 1"
+    command: "./manage.sh notifications episode-updates"
+  send-podcast-recommendations:
+    schedule: "0 13 * * 5"
+    command: "./manage.sh notifications podcast-recommendations"
+
+# PostgreSQL major-version upgrade (disabled by default)
+# Enable when performing a major version upgrade alongside the main deployment.
+# See helm/pg-upgrade/ for the dedicated upgrade chart.
+pgUpgrade:
+  enabled: false
+  newImage: ""
+  newVolumePath: ""
+  storage: 30Gi
+
+# Secrets — never commit values.secret.yaml
+# Copy values.secret.yaml.example to values.secret.yaml and fill in values.
+secrets:
+  postgresPassword: ""
+  djangoSecretKey: ""
+  djangoSecretKeyFallbacks: ""
+  mailgunApiKey: ""
+  sentryUrl: ""
+  openTelemetryUrl: ""
+  pwaSha256Fingerprints: ""
+  # Cloudflare origin certificate (PEM format)
+  cloudflare:
+    cert: ""
+    key: ""

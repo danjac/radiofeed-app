@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -o errexit
-
-ssh -t "{{ ansible_user }}@{{ inventory_hostname }}" -- ./psql.sh "$@"

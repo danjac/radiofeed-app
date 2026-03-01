@@ -49,3 +49,6 @@ webapp_count = 2
 
 # PostgreSQL volume size in GB
 postgres_volume_size = 50
+
+# Pre-shared token for K3s cluster join (generate with: openssl rand -hex 32)
+k3s_token = "CHANGE_ME"
