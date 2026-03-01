@@ -29,13 +29,17 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v4
       - name: Write kubeconfig
+        env:
+          KUBECONFIG_BASE64: ${{ secrets.KUBECONFIG_BASE64 }}
         run: |
           mkdir -p "$HOME/.kube"
-          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > "$HOME/.kube/radiofeed.yaml"
+          echo "$KUBECONFIG_BASE64" | base64 -d > "$HOME/.kube/radiofeed.yaml"
           chmod 600 "$HOME/.kube/radiofeed.yaml"
       - name: Write Helm secret values
+        env:
+          HELM_VALUES_SECRET: ${{ secrets.HELM_VALUES_SECRET }}
         run: |
-          echo "${{ secrets.HELM_VALUES_SECRET }}" > helm/radiofeed/values.secret.yaml
+          printf '%s' "$HELM_VALUES_SECRET" > helm/radiofeed/values.secret.yaml
           chmod 600 helm/radiofeed/values.secret.yaml
       - name: Deploy to Kubernetes
         env:
