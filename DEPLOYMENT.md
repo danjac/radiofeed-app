@@ -189,6 +189,20 @@ just deploy ghcr.io/danjac/radiofeed-app:sha-abc123
 
 This runs the release job (migrations, collectstatic) then rolls out the new image.
 
+### CI/CD deployment (GitHub Actions)
+
+The `deploy` workflow (`.github/workflows/deploy.yml`) runs `scripts/deploy.sh` directly
+on the GitHub Actions runner using `kubectl` and `helm`. Two repository secrets are required:
+
+| Secret | How to set it |
+|--------|---------------|
+| `KUBECONFIG_BASE64` | Base64-encoded kubeconfig: `base64 < ~/.kube/radiofeed.yaml \| tr -d '\n'` |
+| `HELM_VALUES_SECRET` | Full contents of `helm/radiofeed/values.secret.yaml` |
+
+Set these in GitHub → repository **Settings → Secrets and variables → Actions**.
+
+The workflow is triggered manually via **Actions → radiofeed:deploy → Run workflow**.
+
 ### Run management commands
 
 ```bash

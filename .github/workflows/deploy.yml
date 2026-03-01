@@ -22,11 +22,22 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+      - name: Write kubeconfig
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > "$HOME/.kube/radiofeed.yaml"
+          chmod 600 "$HOME/.kube/radiofeed.yaml"
+      - name: Write Helm secret values
+        run: |
+          echo "${{ secrets.HELM_VALUES_SECRET }}" > helm/radiofeed/values.secret.yaml
+          chmod 600 helm/radiofeed/values.secret.yaml
       - name: Deploy to Kubernetes
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_IP }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            IMAGE=${{ needs.build.outputs.image }} ./deploy.sh
+        env:
+          IMAGE: ${{ needs.build.outputs.image }}
+        run: bash scripts/deploy.sh
