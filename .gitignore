@@ -53,3 +53,4 @@ terraform/**/.tfplan
 terraform/**/*.tfvars
 terraform/**/*.tfvars.json
 helm/*/values.secret.yaml
+helm/*/charts/*.tgz

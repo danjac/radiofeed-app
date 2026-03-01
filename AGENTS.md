@@ -170,44 +170,37 @@ Do NOT push any changes to remote. The user will do so themselves manually when 
 
 ## Deployment
 
-Production deploys to a Hetzner Cloud K3s cluster with Cloudflare CDN/SSL. The deployment pipeline is: Terraform (infrastructure) → Cloudflare (DNS/CDN) → Ansible (application).
+Production deploys to a Hetzner Cloud K3s cluster with Cloudflare CDN/SSL. The deployment pipeline is: Terraform (infrastructure) → Cloudflare (DNS/CDN) → Helm (Kubernetes).
 
-**No production deployment tasks (Terraform apply/destroy, Ansible playbooks, `rdj`, `rpsql`, `kube`) should be executed without express permission of the user.**
+**No production deployment tasks (Terraform apply/destroy, Helm upgrades, `rdj`, `rpsql`, `kube`) should be executed without express permission of the user.**
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the full deployment guide.
 
 ### Terraform
 
 Two Terraform configurations provision infrastructure:
 
-- `terraform/hetzner/` — Hetzner Cloud servers, network, firewall, PostgreSQL volume
+- `terraform/hetzner/` — Hetzner Cloud servers, network, firewall, PostgreSQL volume; K3s installed via cloud-init
 - `terraform/cloudflare/` — DNS records, CDN caching, SSL/TLS, security headers
 
 Each has its own `terraform.tfvars.example`. Copy to `terraform.tfvars` and fill in secrets. Never commit `terraform.tfvars`.
 
-```bash
-cd terraform/hetzner
-terraform init && terraform plan && terraform apply
-
-cd ../cloudflare
-terraform init && terraform plan && terraform apply
-```
-
 Pre-commit hooks run `terraform fmt` and `terraform validate` automatically.
 
-### Ansible
+### Helm
 
-Ansible playbooks in `ansible/` deploy K3s, PostgreSQL, Redis, the Django app, Traefik ingress, Grafana/Prometheus, and cron jobs.
+Two Helm charts manage all Kubernetes objects:
+
+- `helm/radiofeed/` — PostgreSQL, Redis, Django app, workers, cron jobs, ingress
+- `helm/observability/` — Prometheus, Grafana, Loki, Tempo, OTel collector
+
+Instance-specific and sensitive values go in `helm/*/values.secret.yaml` (gitignored). Copy from `values.secret.yaml.example` and fill in values.
 
 ```bash
-just apb site                  # Full deployment
-just apb deploy                # Redeploy application only
-just apb upgrade               # Update server packages
+just helm-upgrade                  # Deploy/upgrade radiofeed chart
+just helm-upgrade-observability    # Deploy/upgrade observability chart
+just deploy <image>                # Deploy a new image (runs migrations first)
 ```
-
-Key files:
-
-- `ansible/hosts.yml` — Inventory (generated from `terraform output -raw ansible_inventory`, then encrypted with `ansible-vault`)
-- `ansible/certs/` — Cloudflare origin certificates (`cloudflare.pem`, `cloudflare.key`)
-- `ansible/ssh-keys/` — SSH public keys for server access (`.pub` extension)
 
 ### Production Commands
 

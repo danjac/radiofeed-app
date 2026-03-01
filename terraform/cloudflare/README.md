@@ -166,21 +166,9 @@ Should return `"active"`. If it shows `"pending"`, your nameservers haven't prop
 
 ### 6. Save Origin Certificates
 
-If you haven't already, save the Cloudflare Origin Certificates:
+Paste the certificate and private key into `helm/radiofeed/values.secret.yaml` under `secrets.cloudflare.cert` and `secrets.cloudflare.key`.
 
-```bash
-# From project root
-mkdir -p ansible/certs
-
-# Copy your downloaded certificates
-cp ~/Downloads/cloudflare.pem ansible/certs/
-cp ~/Downloads/cloudflare.key ansible/certs/
-
-# Secure the files
-chmod 600 ansible/certs/cloudflare.*
-```
-
-## Integration with Hetzner and Ansible
+## Integration with Hetzner and Helm
 
 ### Complete Deployment Flow
 
@@ -381,7 +369,7 @@ This is expected on first apply, or if local state is lost.
 
 1. Terraform applied successfully
 2. DNS status is "active" (`terraform output dns_status`)
-3. Origin certificates deployed via Ansible
+3. Origin certificates pasted into `helm/radiofeed/values.secret.yaml`
 4. Server firewall allows ports 80 and 443
 5. Traefik is running on K3s cluster
 

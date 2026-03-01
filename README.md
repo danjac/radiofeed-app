@@ -196,7 +196,7 @@ The parser features:
 
 ## Deployment
 
-For production deployment to Hetzner Cloud with Cloudflare CDN/SSL, see the [Deployment Guide](DEPLOYMENT.md). It should be possible to deploy to any Docker compatible hosting provider with some adjustments to the deployment scripts.
+For production deployment to Hetzner Cloud with Cloudflare CDN/SSL using Terraform and Helm, see the [Deployment Guide](DEPLOYMENT.md).
 
 ## Contributing
 
