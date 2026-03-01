@@ -1,15 +1,16 @@
 # Application image
 image: ghcr.io/danjac/radiofeed-app:main
 
-# Number of webapp replicas — match webapp_count in terraform/hetzner/terraform.tfvars
-replicas: 2
+# Number of webapp replicas — override in values.secret.yaml
+replicas: 1
 
 # PostgreSQL configuration
 postgres:
   image: postgres:18.1-bookworm
   storage: 30Gi
-  # Volume mount path — set from: terraform -chdir=terraform/hetzner output -raw postgres_volume_mount_path
-  volumePath: /mnt/HC_Volume_CHANGEME
+  # Volume mount path — set in values.secret.yaml from:
+  # terraform -chdir=terraform/hetzner output -raw postgres_volume_mount_path
+  volumePath: ""
   args:
     - postgres
     - -c
@@ -31,7 +32,7 @@ postgres:
 redis:
   image: redis:8.2.2-bookworm
 
-# Resource requests/limits (tuned for cx23: 2 vCPU, 4 GB RAM)
+# Resource requests/limits (tuned for cx22: 2 vCPU, 4 GB RAM)
 resources:
   requests:
     memory: 1638Mi
@@ -40,7 +41,7 @@ resources:
     memory: 3072Mi
     cpu: 1600m
 
-# Application domain (e.g. radiofeed.app)
+# Application domain — set in values.secret.yaml
 domain: ""
 
 # Django application settings
@@ -59,9 +60,9 @@ app:
   cspScriptWhitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
   mailgunApiUrl: https://api.eu.mailgun.net/v3
   mailgunSenderDomain: ""
-  metaAuthor: Site owner
-  metaDescription: Podcast aggregator site
-  metaKeywords: podcasts, feeds, rss
+  metaAuthor: ""
+  metaDescription: ""
+  metaKeywords: ""
   secureSslRedirect: false
 
 # CronJob schedules
@@ -89,8 +90,6 @@ cronjobs:
     command: "./manage.sh notifications podcast-recommendations"
 
 # PostgreSQL major-version upgrade (disabled by default)
-# Enable when performing a major version upgrade alongside the main deployment.
-# See helm/pg-upgrade/ for the dedicated upgrade chart.
 pgUpgrade:
   enabled: false
   newImage: ""
@@ -107,7 +106,6 @@ secrets:
   sentryUrl: ""
   openTelemetryUrl: ""
   pwaSha256Fingerprints: ""
-  # Cloudflare origin certificate (PEM format)
   cloudflare:
     cert: ""
     key: ""

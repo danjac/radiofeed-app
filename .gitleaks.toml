@@ -3,3 +3,9 @@
 
 [extend]
 useDefault = true
+
+[allowlist]
+description = "Allowlist for documentation examples"
+paths = [
+  '''README\.md''',
+]

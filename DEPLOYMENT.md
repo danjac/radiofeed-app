@@ -1,153 +1,225 @@
 # Deployment Guide
 
-This guide covers deploying Radiofeed to a Hetzner Cloud K3s cluster with Cloudflare CDN and SSL. For detailed reference, see [`terraform/hetzner/README.md`](terraform/hetzner/README.md), [`terraform/cloudflare/README.md`](terraform/cloudflare/README.md), and [`ansible/README.md`](ansible/README.md).
+Fresh install of Radiofeed on a Hetzner Cloud K3s cluster with Cloudflare CDN/SSL.
 
-## Architecture Overview
+## Architecture
 
-- **Hetzner Cloud**: K3s cluster with dedicated server, database, job runner, and webapp nodes on a private network
-- **Cloudflare**: DNS, CDN caching, SSL/TLS termination, DDoS protection
-- **Ansible**: Deploys K3s, PostgreSQL, Redis, Django app, Traefik ingress, and cron jobs
+| Layer | Tool | What it does |
+|-------|------|--------------|
+| Infrastructure | Terraform (hetzner) | Servers, network, firewall, Postgres volume; K3s installed via cloud-init |
+| DNS / CDN / SSL | Terraform (cloudflare) | DNS A record, CDN caching, TLS settings |
+| Kubernetes objects | Helm (`helm/radiofeed/`) | Postgres, Redis, Django app, workers, cron jobs, ingress |
+| Observability | Helm (`helm/observability/`) | Prometheus, Grafana, Loki, Tempo, OTel |
 
 ## Prerequisites
 
 - [Terraform](https://www.terraform.io/downloads) >= 1.0
-- [Ansible](https://docs.ansible.com/)
-- [just](https://github.com/casey/just) command runner
-- SSH key pair (`ssh-keygen -t rsa -b 4096`)
-- Hetzner Cloud account and API token (Read & Write)
-- Cloudflare account (free tier) with your domain added and nameservers updated
-- Docker image available at `ghcr.io/danjac/radiofeed-app:main` (or build your own)
+- [Helm](https://helm.sh/docs/intro/install/) >= 3.0
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [hcloud CLI](https://github.com/hetznercloud/cli) — install then:
+  ```bash
+  hcloud context create radiofeed   # paste a Read & Write API token when prompted
+  ```
+  Get the token: Hetzner Console → your project → Security → API Tokens → Generate.
+- [just](https://github.com/casey/just)
+- SSH key pair (`ssh-keygen -t ed25519`)
+- Cloudflare account with your domain added and nameservers updated
 
-## Step 1: Provision Hetzner Infrastructure
+---
 
-Read the [Hetzner Terraform README](terraform/hetzner/README.md) for detailed instructions.
+## Step 1 — Provision Hetzner infrastructure
 
 ```bash
 cd terraform/hetzner
 cp terraform.tfvars.example terraform.tfvars
+$EDITOR terraform.tfvars
 ```
 
-Edit `terraform.tfvars` with your `hcloud_token`, `ssh_public_key`, and desired settings (cluster name, location, server types, webapp count).
+Required values:
+
+| Variable | Description |
+|----------|-------------|
+| `hcloud_token` | Hetzner Cloud API token (Read & Write) |
+| `ssh_public_key` | Contents of `~/.ssh/id_ed25519.pub` |
+| `k3s_token` | Random string for K3s cluster auth — `openssl rand -hex 32` |
+| `cluster_name` | Name prefix for all resources (e.g. `radiofeed`) |
 
 ```bash
 terraform init
-terraform plan    # review resources
-terraform apply   # creates servers, network, firewall, and PostgreSQL volume (~2-3 min)
+terraform plan    # review
+terraform apply   # ~3–5 min; K3s installs via cloud-init in the background
 ```
 
-Note the server public IP:
+Note the server IP for the next step:
 
 ```bash
 terraform output server_public_ip
 ```
 
-## Step 2: Configure Cloudflare
+See [`terraform/hetzner/README.md`](terraform/hetzner/README.md) for all variables and scaling options.
 
-Read the [Cloudflare Terraform README](terraform/cloudflare/README.md) for detailed instructions.
+---
+
+## Step 2 — Configure Cloudflare
 
 ```bash
 cd ../cloudflare
 cp terraform.tfvars.example terraform.tfvars
+$EDITOR terraform.tfvars
 ```
 
-Edit `terraform.tfvars` with your `cloudflare_api_token`, `domain`, and the `server_ip` from Step 1.
+Set `cloudflare_api_token`, `domain`, and `server_ip` (from Step 1).
 
 ```bash
 terraform init
 terraform apply
 ```
 
-### Create Origin Certificates
+### Create origin certificates
 
-1. Go to Cloudflare Dashboard > SSL/TLS > Origin Server
-2. Click "Create Certificate" (15-year validity recommended)
-3. Save the certificate and key:
+1. Cloudflare Dashboard → SSL/TLS → Origin Server → Create Certificate (15-year validity)
+2. Keep the browser tab open — you'll paste these into `values.secret.yaml` in Step 4.
 
-```bash
-mkdir -p ../../ansible/certs
-# Save certificate as ansible/certs/cloudflare.pem
-# Save private key as ansible/certs/cloudflare.key
-chmod 600 ../../ansible/certs/cloudflare.*
-```
+See [`terraform/cloudflare/README.md`](terraform/cloudflare/README.md) for Mailgun DNS setup and troubleshooting.
 
-### Mailgun DNS Records (Optional)
+---
 
-If using Mailgun for email, add the following DNS records in the Cloudflare Dashboard (DNS > Records):
+## Step 3 — Wait for K3s and fetch kubeconfig
 
-- **TXT** (SPF): `v=spf1 include:mailgun.org ~all`
-- **TXT** (DKIM): copy the `k1._domainkey` (and any additional DKIM) records from Mailgun Dashboard > Sending > Domains > DNS Records
-- **MX**: `mxa.mailgun.org` (priority 10) and `mxb.mailgun.org` (priority 10)
-- **CNAME** (tracking): `email` pointing to `mailgun.org` (DNS only, not proxied)
-
-Verify the records in Mailgun Dashboard > DNS Records > "Verify DNS Settings". See [`terraform/cloudflare/README.md`](terraform/cloudflare/README.md) for full details.
-
-## Step 3: Generate Ansible Inventory
-
-Read the [Ansible README](ansible/README.md) for detailed instructions.
+K3s finishes installing a few minutes after `terraform apply` completes. Check:
 
 ```bash
-cd ../hetzner
-terraform output -raw ansible_inventory > ../../ansible/hosts.yml
+ssh ubuntu@$(cd terraform/hetzner && terraform output -raw server_public_ip) \
+    'k3s kubectl get nodes'
 ```
 
-Edit `ansible/hosts.yml` and set:
-
-- `domain` - your domain name
-- `secret_key` - a secure Django secret key
-- `postgres_password` - a secure password
-- `admin_url` - custom admin path
-- `admins` - admin email addresses
-- `mailgun_api_key` - Mailgun API key (if using Mailgun for email; also add DNS records per Step 2)
-- `sentry_url` - Sentry DSN (optional)
-
-Encrypt the inventory:
+All nodes should show `Ready`. Then fetch the kubeconfig:
 
 ```bash
-cd ../../ansible
-ansible-vault encrypt hosts.yml
+just get-kubeconfig
+kubectl --kubeconfig ~/.kube/radiofeed.yaml get nodes  # sanity check
 ```
 
-## Step 4: Prepare SSH Keys
+---
 
-Copy public keys for all users who need server access:
+## Step 4 — Configure Helm values
+
+### radiofeed chart
 
 ```bash
-cp ~/.ssh/id_rsa.pub ansible/ssh-keys/admin.pub
+cp helm/radiofeed/values.secret.yaml.example helm/radiofeed/values.secret.yaml
+$EDITOR helm/radiofeed/values.secret.yaml
 ```
 
-Keys must have a `.pub` extension.
-
-## Step 5: Deploy
-
-From the project root:
+Fill in all secrets, including `postgres.volumePath`:
 
 ```bash
-just apb site
+terraform -chdir=terraform/hetzner output -raw postgres_volume_mount_path
+# e.g. /mnt/HC_Volume_12345678
 ```
 
-This installs K3s, deploys PostgreSQL, Redis, the Django app, Traefik with SSL, and cron jobs across all nodes.
+```yaml
+# helm/radiofeed/values.secret.yaml
+postgres:
+  volumePath: "/mnt/HC_Volume_12345678"
+```
 
-## Post-Deployment
+Also set `domain` in `values.yaml`:
 
-1. Verify pods are running: `just kube get pods`
-2. Run database migrations: `just rdj migrate`
-3. Create a superuser: `just rdj createsuperuser`
-4. Update the Site domain in Django admin
+```yaml
+domain: example.com
+```
 
-## Upgrading
+### observability chart (optional)
 
-- **Redeploy application**: `just apb site`
-- **Update server packages**: `just apb upgrade`
-- **Upgrade PostgreSQL**: see [`ansible/docs/pg_upgrade.md`](ansible/docs/pg_upgrade.md)
+```bash
+cp helm/observability/values.secret.yaml.example helm/observability/values.secret.yaml
+$EDITOR helm/observability/values.secret.yaml   # set Grafana admin password + hostname
+```
 
-## Scaling
+---
 
-Edit `terraform/hetzner/terraform.tfvars` to add webapp nodes or upgrade server types, then run `terraform apply` and re-run Ansible.
+## Step 5 — Deploy
 
-## Redeployment After Infrastructure Rebuild
+> **Prerequisite**: `just get-kubeconfig` (Step 3) must have run successfully before this.
+> All `helm-upgrade`, `helm-upgrade-observability`, `kube`, `rdj`, and `rpsql` commands
+> read `~/.kube/radiofeed.yaml`. Override the path with `KUBECONFIG=/other/path just helm-upgrade`.
 
-If you destroy and recreate infrastructure (`terraform destroy` / `terraform apply`):
+```bash
+just helm-upgrade
+```
 
-1. Delete cached scripts with old IPs: `rm ansible/scripts/*.sh`
-2. Regenerate `ansible/hosts.yml` from Terraform output
-3. Re-run `just apb site`
+Wait for all pods to come up:
+
+```bash
+just kube get pods -n default
+```
+
+---
+
+## Step 6 — Post-deployment
+
+```bash
+just rdj migrate           # run database migrations
+just rdj createsuperuser   # create admin user
+```
+
+Visit `https://your-domain/admin/` to verify. Update the Site domain in Django admin → Sites.
+
+---
+
+## Step 7 — Deploy observability (optional)
+
+```bash
+just helm-upgrade-observability
+just kube get pods -n monitoring
+```
+
+Grafana is available at the hostname set in `helm/observability/values.secret.yaml`.
+
+---
+
+## Day-2 operations
+
+### Deploy a new image
+
+```bash
+just deploy ghcr.io/danjac/radiofeed-app:sha-abc123
+```
+
+This runs the release job (migrations, collectstatic) then rolls out the new image.
+
+### Run management commands
+
+```bash
+just rdj migrate
+just rdj createsuperuser
+just rdj shell
+```
+
+### Connect to the production database
+
+```bash
+just rpsql
+```
+
+### kubectl access
+
+```bash
+just kube get pods
+just kube logs -f deployment/django-app
+```
+
+### Scale webapp nodes
+
+Edit `terraform/hetzner/terraform.tfvars`:
+
+```hcl
+webapp_count = 3
+```
+
+Then `terraform apply` and `just helm-upgrade` (updates replica count to match).
+
+### Upgrade PostgreSQL major version
+
+See `scripts/pg-upgrade.sh` and the `pgUpgrade` section in `helm/radiofeed/values.yaml`.

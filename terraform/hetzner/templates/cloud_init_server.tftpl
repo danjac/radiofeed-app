@@ -29,6 +29,7 @@ write_files:
 
 runcmd:
   - |
+    PUBLIC_IP="$(curl -s http://169.254.169.254/hetzner/v1/metadata/public-ipv4)"
     curl -sfL https://get.k3s.io | \
       K3S_TOKEN=${k3s_token} \
       sh -s - \
@@ -37,6 +38,7 @@ runcmd:
       --flannel-iface=enp7s0 \
       --advertise-address=${private_ip} \
       --tls-san=${private_ip} \
+      --tls-san="$PUBLIC_IP" \
       --node-label=role=server
   - |
     # Copy kubeconfig for ubuntu user

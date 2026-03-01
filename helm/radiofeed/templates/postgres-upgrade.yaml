@@ -1,5 +1,5 @@
-{{ - if .Values.pgUpgrade.enabled }}
-{{ - $newVersion := .Values.pgUpgrade.newImage | splitList ":" | last | splitList "." | first }}
+{{- if .Values.pgUpgrade.enabled }}
+{{- $newVersion := .Values.pgUpgrade.newImage | splitList ":" | last | splitList "." | first }}
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -87,4 +87,4 @@ spec:
   ports:
     - port: 5432
       targetPort: 5432
-{{ - end }}
+{{- end }}

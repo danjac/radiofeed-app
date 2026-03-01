@@ -96,13 +96,24 @@ openssl rand -hex 32
 
 ### 5b. Import the existing Postgres volume
 
-This tells Terraform to adopt the existing volume instead of creating a new (empty) one.
+This tells Terraform to adopt the existing volume instead of the new empty one it created.
+
+If `terraform apply` already ran and created a fresh volume, remove it from state first
+(this does **not** delete the cloud resource — it just untracks it):
 
 ```bash
 cd terraform/hetzner
-terraform init
+terraform state rm hcloud_volume.postgres
+```
+
+Then import the real volume:
+
+```bash
 terraform import hcloud_volume.postgres <VOLUME_ID>
 ```
+
+You can now safely delete the empty volume Terraform created via the Hetzner Console
+or `hcloud volume delete <name>` — it has no data.
 
 Verify Terraform sees the correct volume:
 

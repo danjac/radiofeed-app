@@ -1,4 +1,5 @@
-script_dir := invocation_directory() / "scripts"
+script_dir := justfile_directory() / "scripts"
+kubeconfig := env("KUBECONFIG", env("HOME") / ".kube/radiofeed.yaml")
 
 @_default:
     just --list
@@ -126,6 +127,7 @@ get-kubeconfig:
 [group('deployment')]
 helm-upgrade:
     helm upgrade --install radiofeed helm/radiofeed/ \
+        --kubeconfig {{ kubeconfig }} \
         -f helm/radiofeed/values.yaml \
         -f helm/radiofeed/values.secret.yaml
 
@@ -134,6 +136,7 @@ helm-upgrade:
 helm-upgrade-observability:
     helm dependency update helm/observability/
     helm upgrade --install observability helm/observability/ \
+        --kubeconfig {{ kubeconfig }} \
         --namespace monitoring \
         --create-namespace \
         -f helm/observability/values.yaml \
@@ -159,7 +162,7 @@ rpsql *args:
 # Run Kubectl commands on the production cluster
 [group('production')]
 kube *args:
-    KUBECONFIG="${KUBECONFIG:-$HOME/.kube/radiofeed.yaml}" kubectl {{ args }}
+    kubectl --kubeconfig {{ kubeconfig }} {{ args }}
 
 # Deploy a new image to production (runs release job then helm upgrade)
 [group('production')]

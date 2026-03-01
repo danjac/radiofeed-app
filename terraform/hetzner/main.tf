@@ -65,6 +65,14 @@ resource "hcloud_firewall" "server" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
+  # K3s API server — required for kubectl and Helm
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "6443"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+
   rule {
     direction  = "in"
     protocol   = "tcp"

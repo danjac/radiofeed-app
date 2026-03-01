@@ -57,19 +57,20 @@ kube-prometheus-stack:
     additionalDataSources:
       - name: Loki
         type: loki
+        uid: loki
         url: http://loki:3100
         access: proxy
         isDefault: false
       - name: Tempo
         type: tempo
-        url: http://tempo:3100
+        uid: tempo
+        url: http://tempo:3200
         access: proxy
         isDefault: false
 
     ingress:
       enabled: true
-      annotations:
-        kubernetes.io/ingress.class: traefik
+      ingressClassName: traefik
       # Grafana subdomain — set in values.secret.yaml (e.g. grafana.example.com)
       hosts: []
 
@@ -77,8 +78,7 @@ kube-prometheus-stack:
     nodeSelector:
       role: server
 
-  prometheus-node-exporter:
-    # Node exporter runs on every node as a DaemonSet — no nodeSelector needed
+  prometheus-node-exporter: {}  # DaemonSet — no nodeSelector needed
 
 # ── Loki ─────────────────────────────────────────────────────────────────────
 loki:
@@ -97,6 +97,15 @@ loki:
       replication_factor: 1
     storage:
       type: filesystem
+    schemaConfig:
+      configs:
+        - from: "2024-01-01"
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
 
   persistence:
     enabled: true
@@ -122,6 +131,15 @@ tempo:
 
   tempo:
     retention: 48h
+    metricsGenerator:
+      enabled: true
+      remoteWriteUrl: "http://prometheus-operated:9090/api/v1/write"
+    overrides:
+      defaults:
+        metrics_generator:
+          processors:
+            - service-graphs
+            - span-metrics
 
   persistence:
     enabled: true

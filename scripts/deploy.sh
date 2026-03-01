@@ -52,6 +52,7 @@ kubectl delete "job/$RELEASE_JOB_NAME" -n default
 
 # ── Helm upgrade ─────────────────────────────────────────────────────────────
 helm upgrade radiofeed "$REPO_ROOT/helm/radiofeed/" \
+    --kubeconfig "$KUBECONFIG" \
     --set "image=$IMAGE" \
     -f "$REPO_ROOT/helm/radiofeed/values.yaml" \
     -f "$REPO_ROOT/helm/radiofeed/values.secret.yaml"

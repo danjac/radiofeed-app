@@ -55,16 +55,16 @@ Create an API token with all required permissions:
 2. Click "Create Token"
 3. Click "Create Custom Token" (do NOT use a template)
 4. Configure permissions:
-   - **Permissions** (all zone-level):
-     - Zone → Zone → Edit
-     - Zone → Zone Settings → Edit
-     - Zone → DNS → Edit
-     - Zone → Page Rules → Edit
-     - Zone → Zone WAF → Edit
-     - Zone → Transform Rules → Edit
-   - **Zone Resources**:
-     - Include → Specific zone → Select your domain
-   - **Client IP Address Filtering** (optional): Leave as "Is in" with your IP for extra security
+    - **Permissions** (all zone-level):
+        - Zone → Zone → Edit
+        - Zone → Zone Settings → Edit
+        - Zone → DNS → Edit
+        - Zone → Page Rules → Edit
+        - Zone → Zone WAF → Edit
+        - Zone → Transform Rules → Edit
+    - **Zone Resources**:
+        - Include → Specific zone → Select your domain
+    - **Client IP Address Filtering** (optional): Leave as "Is in" with your IP for extra security
 5. Click "Continue to summary"
 6. Review permissions and click "Create Token"
 7. Copy the token (you won't see it again!)
@@ -80,22 +80,27 @@ cd ../hetzner
 terraform output server_public_ip
 ```
 
-### 6. Origin Certificates for Ansible
+### 6. Origin Certificates
 
-**Important:** You need Cloudflare Origin Certificates for the Ansible deployment.
-
-Generate origin certificates:
+Generate origin certificates for the Helm deployment:
 
 1. Go to: Cloudflare Dashboard → SSL/TLS → Origin Server
 2. Click "Create Certificate"
 3. Select "Generate private key and CSR with Cloudflare"
 4. Choose validity period (15 years recommended)
 5. Click "Create"
-6. Save both files:
-    - **Certificate** → Save as `ansible/certs/cloudflare.pem`
-    - **Private Key** → Save as `ansible/certs/cloudflare.key`
+6. Paste both into `helm/radiofeed/values.secret.yaml`:
 
-**Security Note:** Keep these files secure. Add `ansible/certs/` to `.gitignore` if not already ignored.
+    ```yaml
+    secrets:
+        cloudflare:
+            cert: |
+                <paste PEM certificate here>
+            key: |
+                <paste PEM private key here>
+    ```
+
+**Security Note:** `values.secret.yaml` is gitignored — never commit it.
 
 ## Setup
 
@@ -197,27 +202,20 @@ chmod 600 ansible/certs/cloudflare.*
 
 3. **Save Origin Certificates**:
 
-    ```bash
-    cd ../../
-    # Download from Cloudflare Dashboard → SSL/TLS → Origin Server
-    # Save to ansible/certs/cloudflare.pem and ansible/certs/cloudflare.key
-    ```
+    Download from Cloudflare Dashboard → SSL/TLS → Origin Server and paste
+    the certificate and key into `helm/radiofeed/values.secret.yaml`.
 
-4. **Generate Ansible inventory**:
+4. **Fetch kubeconfig**:
 
     ```bash
-    cd terraform/hetzner
-    terraform output -raw ansible_inventory > ../../ansible/hosts.yml
+    just get-kubeconfig
     ```
 
-5. **Deploy with Ansible**:
+5. **Deploy with Helm**:
 
     ```bash
-    cd ../../
-    just apb site
+    just helm-upgrade
     ```
-
-Ansible will use the Cloudflare origin certificates to set up SSL/TLS on your K3s cluster.
 
 ## Mailgun DNS Configuration
 
@@ -316,8 +314,8 @@ Cloudflare's free tier includes automatic DDoS protection.
 
 1. Verify `cloudflare_api_token` in `terraform.tfvars` is correct
 2. Check token has ALL required permissions (see section 4 above):
-   - Zone: Zone (Edit), Zone Settings (Edit), DNS (Edit), Page Rules (Edit), Zone WAF (Edit), Transform Rules (Edit)
-   - All permissions must be at the Zone level, not Account level
+    - Zone: Zone (Edit), Zone Settings (Edit), DNS (Edit), Page Rules (Edit), Zone WAF (Edit), Transform Rules (Edit)
+    - All permissions must be at the Zone level, not Account level
 3. Verify token includes the specific zone in Zone Resources
 4. If token was created with wrong permissions, delete the old token and create a new one with correct permissions
 
@@ -372,9 +370,9 @@ This is expected on first apply, or if local state is lost.
 
 **Solution**:
 
-1. Verify `ansible/certs/cloudflare.pem` and `cloudflare.key` exist
+1. Verify `helm/radiofeed/values.secret.yaml` has `secrets.cloudflare.cert` and `.key` set
 2. Check certificates are valid (not expired)
-3. Ensure Ansible deployment completed successfully
+3. Ensure Helm deployment completed successfully
 4. Check K3s secret: `kubectl get secret cloudflare-origin-cert -n default`
 
 ### Site Not Accessible via HTTPS
@@ -493,4 +491,4 @@ For issues related to:
 
 - Cloudflare configuration → Check this README
 - Hetzner infrastructure → See `../hetzner/README.md`
-- Application deployment → See `../../ansible/README.md`
+- Application deployment → See `../../DEPLOYMENT.md`
