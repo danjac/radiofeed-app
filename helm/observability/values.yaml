@@ -11,7 +11,7 @@ kube-prometheus-stack:
   # Pin all kube-prometheus-stack components to the server node
   prometheusOperator:
     nodeSelector:
-      role: server
+      role: monitor
     resources:
       requests:
         memory: 64Mi
@@ -23,7 +23,7 @@ kube-prometheus-stack:
   prometheus:
     prometheusSpec:
       nodeSelector:
-        role: server
+        role: monitor
       resources:
         requests:
           memory: 256Mi
@@ -45,7 +45,7 @@ kube-prometheus-stack:
   grafana:
     enabled: true
     nodeSelector:
-      role: server
+      role: monitor
     resources:
       requests:
         memory: 256Mi
@@ -97,7 +97,7 @@ kube-prometheus-stack:
 
   kube-state-metrics:
     nodeSelector:
-      role: server
+      role: monitor
     resources:
       requests:
         memory: 32Mi
@@ -125,7 +125,7 @@ loki:
   singleBinary:
     replicas: 1
     nodeSelector:
-      role: server
+      role: monitor
     resources:
       requests:
         memory: 256Mi
@@ -186,7 +186,7 @@ tempo:
   replicas: 1
 
   nodeSelector:
-    role: server
+    role: monitor
 
   resources:
     requests:
@@ -388,7 +388,7 @@ otel-gateway:
   replicaCount: 1
 
   nodeSelector:
-    role: server
+    role: monitor
 
   # Limit aligns with memory_limiter (limit_mib: 256)
   resources:

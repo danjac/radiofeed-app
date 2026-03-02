@@ -38,6 +38,16 @@ output "webapp_private_ips" {
   value       = local.webapp_private_ips
 }
 
+output "monitor_public_ip" {
+  description = "Public IPv4 address of the monitor node"
+  value       = hcloud_server.monitor.ipv4_address
+}
+
+output "monitor_private_ip" {
+  description = "Private IP address of the monitor node"
+  value       = local.monitor_private_ip
+}
+
 output "postgres_volume_id" {
   description = "ID of the PostgreSQL volume"
   value       = hcloud_volume.postgres.id

@@ -20,6 +20,11 @@ variable "server_ip" {
   type        = string
 }
 
+variable "monitor_ip" {
+  description = "Public IP address of the monitor node (from Hetzner Terraform output)"
+  type        = string
+}
+
 variable "enable_www_redirect" {
   description = "Enable www subdomain redirect to main domain"
   type        = bool

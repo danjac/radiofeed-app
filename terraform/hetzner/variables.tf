@@ -58,7 +58,7 @@ variable "database_server_type" {
 }
 
 variable "agent_server_type" {
-  description = "Server type for agent nodes (jobrunner, webapps)"
+  description = "Server type for agent nodes (jobrunner, webapps, monitor)"
   type        = string
   default     = "cx23" # 2 vCPU, 4 GB RAM
 }

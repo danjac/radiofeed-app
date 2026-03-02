@@ -35,7 +35,7 @@ resource "cloudflare_record" "grafana" {
   count           = var.grafana_subdomain != "" ? 1 : 0
   zone_id         = data.cloudflare_zone.domain.id
   name            = var.grafana_subdomain
-  content         = var.server_ip
+  content         = var.monitor_ip
   type            = "A"
   proxied         = true
   ttl             = 1
