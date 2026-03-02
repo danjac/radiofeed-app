@@ -47,7 +47,7 @@ jobs:
         run: |
           helm upgrade radiofeed helm/radiofeed/ \
             --kubeconfig "$HOME/.kube/radiofeed.yaml" \
-            --atomic \
+            --rollback-on-failure \
             --set "image=$IMAGE" \
             -f helm/radiofeed/values.yaml \
             -f helm/radiofeed/values.secret.yaml

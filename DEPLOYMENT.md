@@ -229,7 +229,7 @@ just gh workflow deploy
 ```
 
 Triggers the `deploy` GitHub Actions workflow, which runs tests, builds a new image, then runs
-`helm upgrade --atomic`. Helm executes the `django-release` pre-upgrade hook (migrations,
+`helm upgrade --rollback-on-failure`. Helm executes the `django-release` pre-upgrade hook (migrations,
 collectstatic) before rolling out the new pods. If the hook or rollout fails, Helm rolls back
 to the previous revision automatically.
 
@@ -241,7 +241,7 @@ just kube logs -f job/django-release -n default
 
 ### CI/CD deployment (GitHub Actions)
 
-The `deploy` workflow (`.github/workflows/deploy.yml`) runs `helm upgrade --atomic` directly
+The `deploy` workflow (`.github/workflows/deploy.yml`) runs `helm upgrade --rollback-on-failure` directly
 on the GitHub Actions runner. Two repository secrets are required:
 
 | Secret | Description |
