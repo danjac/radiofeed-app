@@ -42,7 +42,7 @@ server_image = "ubuntu-24.04"
 #   cax21: 4 vCPU, 8 GB RAM, 80 GB SSD
 server_type          = "cx23" # k3s control plane + load balancer
 database_server_type = "cx23" # PostgreSQL + Redis
-agent_server_type    = "cx23" # jobrunner and webapp nodes
+agent_server_type    = "cx23" # jobrunner, webapp, and monitor nodes
 
 # Number of webapp instances
 webapp_count = 2

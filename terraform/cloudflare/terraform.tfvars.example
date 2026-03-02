@@ -29,6 +29,10 @@ subdomain = ""
 # Run: cd ../hetzner && terraform output server_public_ip
 server_ip = "123.456.78.90"
 
+# Monitor node IP address (get from Hetzner Terraform output)
+# Run: cd ../hetzner && terraform output monitor_public_ip
+monitor_ip = "123.456.78.91"
+
 # Enable www redirect (www.example.com -> example.com)
 enable_www_redirect = true
 
