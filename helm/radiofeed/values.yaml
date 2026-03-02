@@ -37,32 +37,32 @@ redis:
 resources:
   app:
     requests:
-      memory: 256Mi
-      cpu: 200m
+      memory: 1536Mi
+      cpu: 700m
     limits:
-      memory: 768Mi
-      cpu: 1000m
+      memory: 3072Mi
+      cpu: 1600m
   worker:
     requests:
-      memory: 256Mi
-      cpu: 200m
+      memory: 1536Mi
+      cpu: 700m
     limits:
-      memory: 768Mi
-      cpu: 1000m
+      memory: 3072Mi
+      cpu: 1600m
   cronjob:
     requests:
-      memory: 128Mi
-      cpu: 100m
-    limits:
-      memory: 512Mi
-      cpu: 500m
-  postgres:
-    requests:
       memory: 512Mi
       cpu: 200m
     limits:
-      memory: 1536Mi
-      cpu: 1000m
+      memory: 1024Mi
+      cpu: 800m
+  postgres:
+    requests:
+      memory: 1024Mi
+      cpu: 400m
+    limits:
+      memory: 2816Mi
+      cpu: 1600m
   redis:
     requests:
       memory: 64Mi
