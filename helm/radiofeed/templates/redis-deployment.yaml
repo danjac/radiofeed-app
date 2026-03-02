@@ -17,6 +17,13 @@ spec:
       containers:
         - name: redis
           image: {{ .Values.redis.image }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.redis.requests.memory|quote }}
+              cpu: {{ .Values.resources.redis.requests.cpu|quote }}
+            limits:
+              memory: {{ .Values.resources.redis.limits.memory|quote }}
+              cpu: {{ .Values.resources.redis.limits.cpu|quote }}
           ports:
             - containerPort: 6379
           livenessProbe:

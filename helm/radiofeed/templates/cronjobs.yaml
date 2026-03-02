@@ -22,6 +22,13 @@ spec:
           containers:
             - name: django
               image: {{ $.Values.image }}
+              resources:
+                requests:
+                  memory: {{ $.Values.resources.cronjob.requests.memory|quote }}
+                  cpu: {{ $.Values.resources.cronjob.requests.cpu|quote }}
+                limits:
+                  memory: {{ $.Values.resources.cronjob.limits.memory|quote }}
+                  cpu: {{ $.Values.resources.cronjob.limits.cpu|quote }}
               command: ["/bin/bash", "-c", {{ $cron.command | quote }}]
               envFrom:
                 - configMapRef:

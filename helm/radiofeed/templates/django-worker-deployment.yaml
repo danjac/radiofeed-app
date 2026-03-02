@@ -24,11 +24,11 @@ spec:
           image: {{ .Values.image }}
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory|quote }}
-              cpu: {{ .Values.resources.requests.cpu|quote }}
+              memory: {{ .Values.resources.worker.requests.memory|quote }}
+              cpu: {{ .Values.resources.worker.requests.cpu|quote }}
             limits:
-              memory: {{ .Values.resources.limits.memory|quote }}
-              cpu: {{ .Values.resources.limits.cpu|quote }}
+              memory: {{ .Values.resources.worker.limits.memory|quote }}
+              cpu: {{ .Values.resources.worker.limits.cpu|quote }}
           command: ["/bin/sh", "-c"]
           args: ["./manage.sh db_worker"]
           envFrom:

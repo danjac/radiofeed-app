@@ -24,11 +24,11 @@ spec:
           image: {{ .Values.image }}
           resources:
             requests:
-              memory: {{ .Values.resources.requests.memory|quote }}
-              cpu: {{ .Values.resources.requests.cpu|quote }}
+              memory: {{ .Values.resources.app.requests.memory|quote }}
+              cpu: {{ .Values.resources.app.requests.cpu|quote }}
             limits:
-              memory: {{ .Values.resources.limits.memory|quote }}
-              cpu: {{ .Values.resources.limits.cpu|quote }}
+              memory: {{ .Values.resources.app.limits.memory|quote }}
+              cpu: {{ .Values.resources.app.limits.cpu|quote }}
           command: ["/bin/sh", "-c"]
           args: ["./gunicorn.sh"]
           ports:

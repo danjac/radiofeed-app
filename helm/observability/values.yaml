@@ -12,11 +12,25 @@ kube-prometheus-stack:
   prometheusOperator:
     nodeSelector:
       role: server
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 50m
+      limits:
+        memory: 128Mi
+        cpu: 200m
 
   prometheus:
     prometheusSpec:
       nodeSelector:
         role: server
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
+          cpu: 500m
       retention: 30d
       storageSpec:
         volumeClaimTemplate:
@@ -32,6 +46,13 @@ kube-prometheus-stack:
     enabled: true
     nodeSelector:
       role: server
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 50m
+      limits:
+        memory: 512Mi
+        cpu: 200m
 
     # Admin password — override in values.secret.yaml
     adminPassword: ""
@@ -77,8 +98,23 @@ kube-prometheus-stack:
   kube-state-metrics:
     nodeSelector:
       role: server
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 20m
+      limits:
+        memory: 128Mi
+        cpu: 100m
 
-  prometheus-node-exporter: {}  # DaemonSet — no nodeSelector needed
+  prometheus-node-exporter:
+    # DaemonSet — no nodeSelector needed
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 20m
+      limits:
+        memory: 64Mi
+        cpu: 100m
 
 # ── Loki ─────────────────────────────────────────────────────────────────────
 loki:
@@ -90,6 +126,13 @@ loki:
     replicas: 1
     nodeSelector:
       role: server
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 50m
+      limits:
+        memory: 512Mi
+        cpu: 200m
 
   loki:
     auth_enabled: false
@@ -120,6 +163,22 @@ loki:
   backend:
     replicas: 0
 
+  # Disable optional components that add overhead without benefit in this setup:
+  # - gateway: Grafana connects to loki:3100 directly
+  # - lokiCanary: validation DaemonSet, unnecessary in production
+  # - resultsCache: Memcached query cache, not needed at this scale
+  # - test: chart validation requires canary; disable both together
+  gateway:
+    enabled: false
+  lokiCanary:
+    enabled: false
+  chunksCache:
+    enabled: false
+  resultsCache:
+    enabled: false
+  test:
+    enabled: false
+
 # ── Tempo ─────────────────────────────────────────────────────────────────────
 tempo:
   fullnameOverride: tempo
@@ -128,6 +187,14 @@ tempo:
 
   nodeSelector:
     role: server
+
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 50m
+    limits:
+      memory: 256Mi
+      cpu: 200m
 
   tempo:
     retention: 48h
@@ -150,6 +217,15 @@ tempo:
 otel-agent:
   fullnameOverride: otel-agent
   mode: daemonset
+
+  # Limit aligns with memory_limiter (limit_mib: 192)
+  resources:
+    requests:
+      memory: 64Mi
+      cpu: 50m
+    limits:
+      memory: 256Mi
+      cpu: 200m
 
   image:
     repository: otel/opentelemetry-collector-contrib
@@ -313,6 +389,15 @@ otel-gateway:
 
   nodeSelector:
     role: server
+
+  # Limit aligns with memory_limiter (limit_mib: 256)
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 50m
+    limits:
+      memory: 384Mi
+      cpu: 300m
 
   image:
     repository: otel/opentelemetry-collector-contrib

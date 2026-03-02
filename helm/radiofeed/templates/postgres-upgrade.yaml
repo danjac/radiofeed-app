@@ -46,6 +46,13 @@ spec:
       containers:
         - name: postgres
           image: {{ .Values.pgUpgrade.newImage }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.postgres.requests.memory|quote }}
+              cpu: {{ .Values.resources.postgres.requests.cpu|quote }}
+            limits:
+              memory: {{ .Values.resources.postgres.limits.memory|quote }}
+              cpu: {{ .Values.resources.postgres.limits.cpu|quote }}
           args: {{ .Values.postgres.args | toYaml | nindent 12 }}
           env:
             - name: POSTGRES_PASSWORD

@@ -130,6 +130,39 @@ Also set `domain` in `values.yaml`:
 domain: example.com
 ```
 
+### Resource limits
+
+Both charts ship defaults tuned for the Terraform default server type (`cx23`: 2 vCPU, 4 GB RAM).
+If you change `server_type`, `database_server_type`, or `agent_server_type` in `terraform.tfvars`,
+override the corresponding resource values in `values.secret.yaml`.
+
+**radiofeed chart** — one block per workload, all under `resources:`:
+
+| Key | Node | Default request | Default limit |
+|-----|------|-----------------|---------------|
+| `resources.app` | webapp | 256Mi / 200m | 768Mi / 1000m |
+| `resources.worker` | jobrunner | 256Mi / 200m | 768Mi / 1000m |
+| `resources.cronjob` | jobrunner | 128Mi / 100m | 512Mi / 500m |
+| `resources.postgres` | database | 512Mi / 200m | 1536Mi / 1000m |
+| `resources.redis` | database | 64Mi / 50m | 256Mi / 200m |
+
+Example override in `helm/radiofeed/values.secret.yaml`:
+
+```yaml
+resources:
+  app:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 1536Mi
+      cpu: 1500m
+```
+
+**observability chart** — all components run on the server node alongside k3s + etcd + Traefik.
+Limits are set per component (Prometheus, Grafana, Loki, Tempo, OTel agent/gateway) and can be
+overridden in `helm/observability/values.secret.yaml` using the same key paths as `values.yaml`.
+
 ### observability chart (optional)
 
 ```bash
@@ -240,6 +273,24 @@ webapp_count = 3
 ```
 
 Then `terraform apply` and `just helm-upgrade` (updates replica count to match).
+
+### Tune resource limits after resizing nodes
+
+After changing `server_type`, `database_server_type`, or `agent_server_type` in Terraform and
+running `terraform apply`, update the matching resource blocks in `helm/radiofeed/values.secret.yaml`
+and (for the server node) `helm/observability/values.secret.yaml`, then redeploy:
+
+```bash
+just helm-upgrade
+just helm-upgrade-observability
+```
+
+To check current resource usage on the cluster:
+
+```bash
+just kube top pods
+just kube top nodes
+```
 
 ### Upgrade PostgreSQL major version
 

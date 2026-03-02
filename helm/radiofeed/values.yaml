@@ -32,14 +32,44 @@ postgres:
 redis:
   image: redis:8.2.2-bookworm
 
-# Resource requests/limits (tuned for cx22: 2 vCPU, 4 GB RAM)
+# Resource requests/limits — defaults tuned for cx23 (2 vCPU, 4 GB RAM).
+# Override per-workload in values.secret.yaml if using a different server type.
 resources:
-  requests:
-    memory: 1638Mi
-    cpu: 700m
-  limits:
-    memory: 3072Mi
-    cpu: 1600m
+  app:
+    requests:
+      memory: 256Mi
+      cpu: 200m
+    limits:
+      memory: 768Mi
+      cpu: 1000m
+  worker:
+    requests:
+      memory: 256Mi
+      cpu: 200m
+    limits:
+      memory: 768Mi
+      cpu: 1000m
+  cronjob:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+  postgres:
+    requests:
+      memory: 512Mi
+      cpu: 200m
+    limits:
+      memory: 1536Mi
+      cpu: 1000m
+  redis:
+    requests:
+      memory: 64Mi
+      cpu: 50m
+    limits:
+      memory: 256Mi
+      cpu: 200m
 
 # Application domain — set in values.secret.yaml
 domain: ""
