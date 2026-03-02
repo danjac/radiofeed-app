@@ -15,9 +15,9 @@ provider "hcloud" {
 
 locals {
   # Fixed private IPs — deterministic, referenced in cloud-init templates
-  server_private_ip    = cidrhost(var.subnet_ip_range, 2)  # 10.0.0.2
-  database_private_ip  = cidrhost(var.subnet_ip_range, 3)  # 10.0.0.3
-  jobrunner_private_ip = cidrhost(var.subnet_ip_range, 4)  # 10.0.0.4
+  server_private_ip    = cidrhost(var.subnet_ip_range, 2) # 10.0.0.2
+  database_private_ip  = cidrhost(var.subnet_ip_range, 3) # 10.0.0.3
+  jobrunner_private_ip = cidrhost(var.subnet_ip_range, 4) # 10.0.0.4
   webapp_private_ips   = [for i in range(var.webapp_count) : cidrhost(var.subnet_ip_range, 5 + i)]
   monitor_private_ip   = cidrhost(var.subnet_ip_range, 10) # 10.0.0.10
 }
