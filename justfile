@@ -164,8 +164,13 @@ rpsql *args:
 kube *args:
     kubectl --kubeconfig {{ kubeconfig }} {{ args }}
 
-# Deploy a new image to production (runs release job then helm upgrade)
+# Deploy a new image to production (pre-upgrade hook runs migrations before rollout)
 [group('production')]
 [confirm("WARNING!!! Are you sure you want to deploy to production? (y/N)")]
 deploy image:
-    IMAGE={{ image }} {{ script_dir }}/deploy.sh
+    helm upgrade radiofeed helm/radiofeed/ \
+        --kubeconfig {{ kubeconfig }} \
+        --atomic \
+        --set "image={{ image }}" \
+        -f helm/radiofeed/values.yaml \
+        -f helm/radiofeed/values.secret.yaml

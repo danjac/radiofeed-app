@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-release
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        role: jobrunner
+      containers:
+        - name: django
+          image: {{ .Values.image }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.cronjob.requests.memory|quote }}
+              cpu: {{ .Values.resources.cronjob.requests.cpu|quote }}
+            limits:
+              memory: {{ .Values.resources.cronjob.limits.memory|quote }}
+              cpu: {{ .Values.resources.cronjob.limits.cpu|quote }}
+          command: ["/bin/sh", "-c"]
+          args: ["./release.sh"]
+          envFrom:
+            - configMapRef:
+                name: configmap
+            - secretRef:
+                name: secrets

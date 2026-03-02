@@ -220,12 +220,20 @@ Grafana is available at the hostname set in `helm/observability/values.secret.ya
 just deploy ghcr.io/danjac/radiofeed-app:sha-abc123
 ```
 
-This runs the release job (migrations, collectstatic) then rolls out the new image.
+Runs `helm upgrade --atomic`. Helm automatically executes the `django-release` pre-upgrade hook
+(migrations, collectstatic) before rolling out the new pods. If the hook or rollout fails,
+Helm rolls the release back to the previous revision automatically.
+
+To watch the release job logs during a deploy:
+
+```bash
+just kube logs -f job/django-release -n default
+```
 
 ### CI/CD deployment (GitHub Actions)
 
-The `deploy` workflow (`.github/workflows/deploy.yml`) runs `scripts/deploy.sh` directly
-on the GitHub Actions runner using `kubectl` and `helm`. Two repository secrets are required:
+The `deploy` workflow (`.github/workflows/deploy.yml`) runs `helm upgrade --atomic` directly
+on the GitHub Actions runner. Two repository secrets are required:
 
 | Secret | Description |
 |--------|-------------|

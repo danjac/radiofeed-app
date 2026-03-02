@@ -44,4 +44,10 @@ jobs:
       - name: Deploy to Kubernetes
         env:
           IMAGE: ${{ needs.build.outputs.image }}
-        run: bash scripts/deploy.sh
+        run: |
+          helm upgrade radiofeed helm/radiofeed/ \
+            --kubeconfig "$HOME/.kube/radiofeed.yaml" \
+            --atomic \
+            --set "image=$IMAGE" \
+            -f helm/radiofeed/values.yaml \
+            -f helm/radiofeed/values.secret.yaml
