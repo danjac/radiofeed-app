@@ -175,11 +175,12 @@ $EDITOR helm/observability/values.secret.yaml   # set Grafana admin password + h
 ## Step 5 — Deploy
 
 > **Prerequisite**: `just get-kubeconfig` (Step 3) must have run successfully before this.
-> All `helm-upgrade`, `helm-upgrade-observability`, `kube`, `rdj`, and `rpsql` commands
-> read `~/.kube/radiofeed.yaml`. Override the path with `KUBECONFIG=/other/path just helm-upgrade`.
+> All `helm-install`, `helm-upgrade`, `helm-upgrade-observability`, `kube`, `rdj`, and `rpsql`
+> commands read `~/.kube/radiofeed.yaml`. Override the path with
+> `KUBECONFIG=/other/path just helm-install`.
 
 ```bash
-just helm-upgrade
+just helm-install
 ```
 
 Wait for all pods to come up:
@@ -214,15 +215,23 @@ Grafana is available at the hostname set in `helm/observability/values.secret.ya
 
 ## Day-2 operations
 
+### Helm command reference
+
+| Command | When to use |
+|---------|-------------|
+| `just helm-install` | First-time install on a fresh cluster |
+| `just helm-upgrade` | Config or resource changes on an existing release — preserves the running image via `--reuse-values` |
+
 ### Deploy a new image
 
 ```bash
-just deploy ghcr.io/danjac/radiofeed-app:sha-abc123
+just gh workflow deploy
 ```
 
-Runs `helm upgrade --atomic`. Helm automatically executes the `django-release` pre-upgrade hook
-(migrations, collectstatic) before rolling out the new pods. If the hook or rollout fails,
-Helm rolls the release back to the previous revision automatically.
+Triggers the `deploy` GitHub Actions workflow, which runs tests, builds a new image, then runs
+`helm upgrade --atomic`. Helm executes the `django-release` pre-upgrade hook (migrations,
+collectstatic) before rolling out the new pods. If the hook or rollout fails, Helm rolls back
+to the previous revision automatically.
 
 To watch the release job logs during a deploy:
 
@@ -280,7 +289,7 @@ Edit `terraform/hetzner/terraform.tfvars`:
 webapp_count = 3
 ```
 
-Then `terraform apply` and `just helm-upgrade` (updates replica count to match).
+Then `terraform apply` and `just helm-upgrade` to apply the updated replica count.
 
 ### Tune resource limits after resizing nodes
 

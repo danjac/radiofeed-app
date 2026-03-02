@@ -123,10 +123,18 @@ precommitall:
 get-kubeconfig:
     {{ script_dir }}/get-kubeconfig.sh
 
-# Install or upgrade the radiofeed Helm chart (preserves last deployed image)
+# Fresh install of the radiofeed Helm chart (first-time setup only)
+[group('deployment')]
+helm-install:
+    helm install radiofeed helm/radiofeed/ \
+        --kubeconfig {{ kubeconfig }} \
+        -f helm/radiofeed/values.yaml \
+        -f helm/radiofeed/values.secret.yaml
+
+# Upgrade the radiofeed Helm chart config (preserves last deployed image)
 [group('deployment')]
 helm-upgrade:
-    helm upgrade --install radiofeed helm/radiofeed/ \
+    helm upgrade radiofeed helm/radiofeed/ \
         --kubeconfig {{ kubeconfig }} \
         --reuse-values \
         -f helm/radiofeed/values.yaml \
@@ -164,14 +172,3 @@ rpsql *args:
 [group('production')]
 kube *args:
     kubectl --kubeconfig {{ kubeconfig }} {{ args }}
-
-# Deploy a new image to production (pre-upgrade hook runs migrations before rollout)
-[group('production')]
-[confirm("WARNING!!! Are you sure you want to deploy to production? (y/N)")]
-deploy image:
-    helm upgrade radiofeed helm/radiofeed/ \
-        --kubeconfig {{ kubeconfig }} \
-        --atomic \
-        --set "image={{ image }}" \
-        -f helm/radiofeed/values.yaml \
-        -f helm/radiofeed/values.secret.yaml
