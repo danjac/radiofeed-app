@@ -123,11 +123,12 @@ precommitall:
 get-kubeconfig:
     {{ script_dir }}/get-kubeconfig.sh
 
-# Install or upgrade the radiofeed Helm chart
+# Install or upgrade the radiofeed Helm chart (preserves last deployed image)
 [group('deployment')]
 helm-upgrade:
     helm upgrade --install radiofeed helm/radiofeed/ \
         --kubeconfig {{ kubeconfig }} \
+        --reuse-values \
         -f helm/radiofeed/values.yaml \
         -f helm/radiofeed/values.secret.yaml
 
