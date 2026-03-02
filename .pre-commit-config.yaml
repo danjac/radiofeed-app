@@ -17,6 +17,13 @@ repos:
         exclude: '\.example$'
   - repo: local
     hooks:
+      - id: helm-lint
+        name: Helm lint radiofeed chart
+        language: system
+        entry: helm lint
+        args: [helm/radiofeed/]
+        files: ^helm/radiofeed/
+        pass_filenames: false
       - id: rustywind
         name: rustywind Tailwind CSS class linter
         language: node

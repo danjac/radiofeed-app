@@ -9,8 +9,6 @@
 !.tern-project
 **/__pycache__
 **/tests
-.ansible
-.ansible-lint
 .django_tailwind_cli
 .git
 .github
@@ -43,6 +41,7 @@ playright.ini
 docker-compose.yml
 node_modules
 npm-debug.log
+helm
 screenshots
 static/app.css
 staticfiles
