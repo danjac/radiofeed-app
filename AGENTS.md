@@ -68,7 +68,7 @@ just test-e2e-headed                # E2E tests with visible browser
 - Coverage: **100% required** (`--cov-fail-under=100`)
 - Test location: colocated in `radiofeed/**/tests/` directories
 - Fixtures: registered as plugins in `conftest.py` at project root
-- E2E config: `playright.ini` (separate pytest config for Playwright tests, marker `e2e`)
+- E2E config: `playwright.ini` (separate pytest config for Playwright tests, marker `e2e`)
 - Parallelism: `pytest-xdist` available, `pytest-randomly` randomizes order
 - Database: `--reuse-db` enabled by default
 
