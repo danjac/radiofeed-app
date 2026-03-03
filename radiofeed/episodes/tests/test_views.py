@@ -2,6 +2,7 @@ import json
 from datetime import timedelta
 
 import pytest
+from django.db import IntegrityError
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from pytest_django.asserts import assertContains, assertNotContains, assertTemplateUsed
@@ -204,6 +205,22 @@ class TestStartPlayer:
         assertContains(response, 'id="audio-player-button"')
 
         assert client.session[PlayerDetails.session_id] == player_episode.pk
+
+    @pytest.mark.django_db
+    def test_integrity_error(self, client, auth_user, episode, mocker):
+        mocker.patch(
+            "django.db.models.query.QuerySet.update_or_create",
+            side_effect=IntegrityError,
+        )
+
+        response = client.post(
+            self.url(episode),
+            headers={
+                "HX-Request": "true",
+                "HX-Target": "audio-player-button",
+            },
+        )
+        assert409(response)
 
     def url(self, episode):
         return reverse("episodes:start_player", args=[episode.pk])

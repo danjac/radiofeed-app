@@ -53,7 +53,7 @@ def send_episode_updates(
     days_since: int = 7,
     limit: int = 6,
 ) -> None:
-    """Send podcast recommendations to users."""
+    """Send new episode updates to users."""
 
     recipient = _get_recipient(recipient_id)
     since = timezone.now() - datetime.timedelta(days=days_since)
@@ -73,7 +73,7 @@ def send_episode_updates(
         logger.info("Sent episode updates to %s", recipient.user)
 
 
-def _get_recipient(recipient_id) -> EmailAddress:
+def _get_recipient(recipient_id: int) -> EmailAddress:
     return get_recipients().select_related("user").get(pk=recipient_id)
 
 

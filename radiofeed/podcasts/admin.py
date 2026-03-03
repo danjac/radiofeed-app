@@ -386,7 +386,7 @@ class RecommendationAdmin(admin.ModelAdmin):
     )
     ordering = ("-score",)
 
-    def get_queryset(self, request: HttpRequest) -> QuerySet[Subscription]:
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Recommendation]:
         """Returns queryset with related fields."""
         return super().get_queryset(request).select_related("podcast", "recommended")
 

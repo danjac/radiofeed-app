@@ -130,19 +130,22 @@ def episode_detail(
 @login_required
 def start_player(
     request: AuthenticatedHttpRequest, episode_id: int
-) -> TemplateResponse:
+) -> TemplateResponse | HttpResponseConflict:
     """Starts player. Creates new audio log if required."""
     episode = get_object_or_404(
         Episode.objects.select_related("podcast"),
         pk=episode_id,
     )
 
-    audio_log, _ = request.user.audio_logs.update_or_create(
-        episode=episode,
-        defaults={
-            "listened": timezone.now(),
-        },
-    )
+    try:
+        audio_log, _ = request.user.audio_logs.update_or_create(
+            episode=episode,
+            defaults={
+                "listened": timezone.now(),
+            },
+        )
+    except IntegrityError:
+        return HttpResponseConflict()
 
     request.player.set(episode.pk)
 
