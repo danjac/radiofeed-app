@@ -3,7 +3,7 @@
     {% if messages %}
         <ul class="flex flex-col gap-2 items-center md:items-end">
             {% for message in messages %}
-                <li class="flex flex-wrap items-center justify-center gap-2 px-4 py-3 font-semibold text-center rounded-xl shadow-lg message-{{ message.tags }}"
+                <li class="flex flex-wrap items-center justify-center gap-2 p-3 font-semibold text-center rounded-xl shadow-lg message-{{ message.tags }}"
                     role="alert"
                     x-data="{show: true}"
                     x-show="show"
