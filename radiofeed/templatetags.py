@@ -95,8 +95,12 @@ def cover_image(
     title: str,
 ) -> str:
     """Renders a cover image."""
-    attrs = get_cover_image_attrs(variant, cover_url, title)
-    return format_html("<img {}>", flatatt(_clean_attrs(attrs)))
+    attrs = {
+        k.replace("_", "-"): v
+        for k, v in get_cover_image_attrs(variant, cover_url, title).items()
+        if v not in (None, False)
+    }
+    return format_html("<img {}>", flatatt(attrs))
 
 
 @register.simple_tag
@@ -171,7 +175,3 @@ def format_duration(total_seconds: int, min_value: int = 60) -> str:
         if total_seconds >= min_value
         else ""
     )
-
-
-def _clean_attrs(attrs: dict) -> dict:
-    return {k.replace("_", "-"): v for k, v in attrs.items() if v not in (None, False)}
