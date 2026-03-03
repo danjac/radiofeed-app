@@ -140,6 +140,9 @@ loki:
       replication_factor: 1
     storage:
       type: filesystem
+    # Raise gRPC receive limit (default 4 MiB) to handle large OTel batches
+    server:
+      grpc_server_max_recv_msg_size: 16777216
     schemaConfig:
       configs:
         - from: "2024-01-01"
@@ -389,6 +392,26 @@ otel-gateway:
 
   nodeSelector:
     role: monitor
+
+  # ClusterRole required by k8s_cluster receiver
+  clusterRole:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["nodes", "pods", "namespaces", "resourcequotas", "replicationcontrollers", "services"]
+        verbs: ["get", "list", "watch"]
+      - apiGroups: ["apps"]
+        resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+        verbs: ["get", "list", "watch"]
+      - apiGroups: ["batch"]
+        resources: ["jobs", "cronjobs"]
+        verbs: ["get", "list", "watch"]
+      - apiGroups: ["autoscaling"]
+        resources: ["horizontalpodautoscalers"]
+        verbs: ["get", "list", "watch"]
+      - apiGroups: ["events.k8s.io"]
+        resources: ["events"]
+        verbs: ["get", "list", "watch"]
 
   # Limit aligns with memory_limiter (limit_mib: 256)
   resources:
