@@ -128,3 +128,11 @@ class TestFetchRss:
             with pytest.raises(UnavailableError):
                 await fetch_rss(Podcast(rss=self.url), client)
             await client.aclose()
+
+    async def test_timeout(self):
+        with aioresponses() as m:
+            m.get(self.url, exception=TimeoutError)
+            client = Client()
+            with pytest.raises(UnavailableError):
+                await fetch_rss(Podcast(rss=self.url), client)
+            await client.aclose()
