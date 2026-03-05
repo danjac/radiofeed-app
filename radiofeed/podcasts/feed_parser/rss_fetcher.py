@@ -1,7 +1,7 @@
 import dataclasses
 import hashlib
 import http
-from typing import TYPE_CHECKING, Mapping
+from typing import TYPE_CHECKING
 
 import aiohttp
 from django.utils.functional import cached_property
@@ -15,19 +15,33 @@ from radiofeed.podcasts.feed_parser.exceptions import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
     from datetime import datetime
 
-    from radiofeed.client import Client
+    from radiofeed.client import Client, ClientResponse
     from radiofeed.podcasts.models import Podcast
 
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class Response:
-    """Wraps an HTTP response with convenient accessors for feed-related metadata."""
+    """Wraps a ClientResponse with convenient accessors for feed-related metadata."""
 
-    content: bytes
-    headers: Mapping[str, str]
-    url: str
+    client_response: ClientResponse
+
+    @property
+    def content(self) -> bytes:
+        """Returns the response body."""
+        return self.client_response.content
+
+    @property
+    def url(self) -> str:
+        """Returns the response URL."""
+        return self.client_response.url
+
+    @property
+    def headers(self) -> Mapping[str, str]:
+        """Returns the response headers."""
+        return self.client_response.headers
 
     @cached_property
     def etag(self) -> str:
@@ -100,11 +114,7 @@ class _RSSFetcher:
                 )
                 if aio_response.status == http.HTTPStatus.NOT_MODIFIED:
                     raise NotModifiedError
-                response = Response(
-                    content=aio_response.content,
-                    headers=aio_response.headers,
-                    url=aio_response.url,
-                )
+                response = Response(client_response=aio_response)
                 if response.content_hash == self.podcast.content_hash:
                     raise NotModifiedError
                 return response
