@@ -1,11 +1,32 @@
 import contextlib
-from typing import TYPE_CHECKING
+import dataclasses
+import json as json_module
+from typing import TYPE_CHECKING, Any
 
-import httpx
+import aiohttp
 from django.conf import settings
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
+    from collections.abc import Mapping
+
+
+@dataclasses.dataclass(kw_only=True)
+class ClientResponse:
+    """Lightweight HTTP response container with pre-read body."""
+
+    status: int
+    headers: Mapping[str, str]
+    url: str
+    content: bytes
+
+    async def read(self) -> bytes:
+        """Returns the response body."""
+        return self.content
+
+    async def json(self, **kwargs: Any) -> Any:
+        """Parses the response body as JSON."""
+        return json_module.loads(self.content)
 
 
 class Client:
@@ -15,7 +36,6 @@ class Client:
         self,
         headers: dict | None = None,
         *,
-        follow_redirects: bool = True,
         timeout: int = 5,
         **kwargs,
     ) -> None:
@@ -23,38 +43,39 @@ class Client:
             "User-Agent": settings.USER_AGENT,
         } | (headers or {})
 
-        self._client = httpx.AsyncClient(
+        self._session = aiohttp.ClientSession(
             headers=headers,
-            follow_redirects=follow_redirects,
-            timeout=timeout,
+            timeout=aiohttp.ClientTimeout(total=timeout),
             **kwargs,
         )
 
     async def get(
         self, url: str, headers: dict | None = None, **kwargs
-    ) -> httpx.Response:
+    ) -> ClientResponse:
         """Does an HTTP GET request."""
 
-        response = await self._client.get(url, headers=headers, **kwargs)
-        response.raise_for_status()
-
-        return response
+        async with self._session.get(url, headers=headers, **kwargs) as response:
+            response.raise_for_status()
+            return ClientResponse(
+                status=response.status,
+                headers=response.headers,
+                url=str(response.url),
+                content=await response.read(),
+            )
 
     @contextlib.asynccontextmanager
     async def stream(
         self, url: str, headers: dict | None = None, **kwargs
-    ) -> AsyncGenerator[httpx.Response]:
+    ) -> AsyncGenerator[aiohttp.ClientResponse]:
         """Does an HTTP GET request and returns a stream."""
 
-        async with self._client.stream(
-            "GET", url, headers=headers, **kwargs
-        ) as response:
+        async with self._session.get(url, headers=headers, **kwargs) as response:
             response.raise_for_status()
             yield response
 
     async def aclose(self) -> None:
-        """Close the underlying httpx client."""
-        await self._client.aclose()
+        """Close the underlying aiohttp session."""
+        await self._session.close()
 
 
 @contextlib.asynccontextmanager

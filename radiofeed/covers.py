@@ -4,7 +4,7 @@ import io
 import itertools
 from typing import TYPE_CHECKING, BinaryIO, Final, Literal
 
-import httpx
+import aiohttp
 from django.conf import settings
 from django.core.signing import BadSignature, Signer
 from django.templatetags.static import static
@@ -150,13 +150,13 @@ async def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
                 if content_length > _COVER_MAX_SIZE:
                     raise CoverFetchError("Image too large")
 
-                async for chunk in response.aiter_bytes():
+                async for chunk in response.content.iter_any():
                     output.write(chunk)
                     if output.tell() > _COVER_MAX_SIZE:
                         raise CoverFetchError("Image too large")
             return output
 
-    except httpx.HTTPError as exc:
+    except aiohttp.ClientError as exc:
         raise CoverFetchError from exc
 
 

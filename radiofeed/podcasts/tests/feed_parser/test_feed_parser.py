@@ -2,8 +2,9 @@ import http
 import pathlib
 from datetime import datetime
 
-import httpx
+import aiohttp
 import pytest
+from aioresponses import aioresponses
 from django.db.utils import DatabaseError
 from django.utils.text import slugify
 
@@ -36,23 +37,6 @@ def categories():
     )
 
 
-def _mock_client(*, url="https://example.com", **response_kwargs):
-    def _handle(request):
-        request.url = url
-        response = httpx.Response(**response_kwargs)
-        response.request = request
-        return response
-
-    return Client(transport=httpx.MockTransport(_handle))
-
-
-def _mock_error_client(exc):
-    def _handle(request):
-        raise exc
-
-    return Client(transport=httpx.MockTransport(_handle))
-
-
 def _get_mock_file_path(filename):
     return pathlib.Path(__file__).parents[1] / "mocks" / filename
 
@@ -80,17 +64,20 @@ class TestFeedParser:
 
         extra = EpisodeFactory(podcast=podcast)
 
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content(),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
         assert not podcast.episodes.filter(pk=extra.id).exists()
@@ -122,7 +109,6 @@ class TestFeedParser:
             "universe",
             "renner",
             "philosophy",
-            "religionspirituality",
             "joshua",
             "science",
             "religion",
@@ -180,17 +166,20 @@ class TestFeedParser:
     async def test_parse_new_feed_url_same(self, categories):
         podcast = PodcastFactory(rss="https://feeds.simplecast.com/bgeVtxQX")
 
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_new_feed_url.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_new_feed_url.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
         podcast.refresh_from_db()
@@ -203,17 +192,20 @@ class TestFeedParser:
     async def test_parse_new_feed_url_changed(self, categories):
         podcast = PodcastFactory()
 
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_new_feed_url.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_new_feed_url.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
         podcast.refresh_from_db()
@@ -226,17 +218,20 @@ class TestFeedParser:
         podcast = PodcastFactory()
         other = PodcastFactory(rss="https://feeds.simplecast.com/bgeVtxQX")
 
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_new_feed_url.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_new_feed_url.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DUPLICATE
 
         podcast.refresh_from_db()
@@ -250,17 +245,21 @@ class TestFeedParser:
         podcast = PodcastFactory(
             rss="https://feeds.acast.com/public/shows/867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5",
         )
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_serial.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
 
-        result = await parse_feed(podcast, client)
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_serial.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
+
         assert result == Podcast.FeedStatus.SUCCESS
 
         assert podcast.episodes.count() == 10
@@ -280,17 +279,21 @@ class TestFeedParser:
         podcast = PodcastFactory(
             rss="https://feeds.feedburner.com/VarsoviaVentoPodkasto"
         )
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_use_link_ids.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
 
-        result = await parse_feed(podcast, client)
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_use_link_ids.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
+
         assert result == Podcast.FeedStatus.SUCCESS
 
         assert podcast.episodes.count() == 373
@@ -308,17 +311,21 @@ class TestFeedParser:
     @pytest.mark.django_db(transaction=True)
     async def test_parse_high_num_episodes(self, categories):
         podcast = PodcastFactory()
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_high_num_episodes.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
 
-        result = await parse_feed(podcast, client)
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_high_num_episodes.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
+
         assert result == Podcast.FeedStatus.SUCCESS
 
         podcast.refresh_from_db()
@@ -340,17 +347,20 @@ class TestFeedParser:
 
         EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content(),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
         episode = Episode.objects.get(guid=episode_guid)
@@ -399,16 +409,20 @@ class TestFeedParser:
             "radiofeed.podcasts.feed_parser.rss_parser.parse_rss"
         )
 
-        client = _mock_client(
-            status_code=http.HTTPStatus.OK,
-            content=content,
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=content,
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.NOT_MODIFIED
 
         podcast.refresh_from_db()
@@ -427,16 +441,20 @@ class TestFeedParser:
 
         EpisodeFactory(podcast=podcast, guid=episode_guid, title=episode_title)
 
-        client = _mock_client(
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_mock_complete.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_mock_complete.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DISCONTINUED
 
         episode = Episode.objects.get(guid=episode_guid)
@@ -477,17 +495,25 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_permanent_redirect(self, podcast, categories):
-        client = _mock_client(
-            url=self.redirect_rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content(),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.MOVED_PERMANENTLY,
+                headers={"Location": self.redirect_rss},
+            )
+            m.get(
+                self.redirect_rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
         podcast.refresh_from_db()
@@ -505,17 +531,25 @@ class TestFeedParser:
         other = PodcastFactory(rss=self.redirect_rss)
         current_rss = podcast.rss
 
-        client = _mock_client(
-            url=other.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content(),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.MOVED_PERMANENTLY,
+                headers={"Location": other.rss},
+            )
+            m.get(
+                other.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DUPLICATE
 
         podcast.refresh_from_db()
@@ -539,17 +573,25 @@ class TestFeedParser:
 
         current_rss = podcast.rss
 
-        client = _mock_client(
-            url=other.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content(),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.MOVED_PERMANENTLY,
+                headers={"Location": other.rss},
+            )
+            m.get(
+                other.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DUPLICATE
 
         podcast.refresh_from_db()
@@ -567,13 +609,21 @@ class TestFeedParser:
 
         podcast_b = PodcastFactory(active=False, canonical=podcast_a)
 
-        client = _mock_client(
-            url=podcast_b.rss,
-            status_code=200,
-            content=self.get_rss_content(),
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast_a.rss,
+                status=http.HTTPStatus.MOVED_PERMANENTLY,
+                headers={"Location": podcast_b.rss},
+            )
+            m.get(
+                podcast_b.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+            )
+            client = Client()
+            result = await parse_feed(podcast_a, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast_a, client)
         assert result == Podcast.FeedStatus.SUCCESS
 
         podcast_a.refresh_from_db()
@@ -586,16 +636,20 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_no_podcasts(self, podcast):
-        client = _mock_client(
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_no_podcasts_mock.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_no_podcasts_mock.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.INVALID_RSS
 
         podcast.refresh_from_db()
@@ -609,16 +663,21 @@ class TestFeedParser:
     @pytest.mark.django_db(transaction=True)
     async def test_parse_no_podcasts_exceed_max_retries(self):
         podcast = PodcastFactory(num_retries=Podcast.MAX_RETRIES + 1)
-        client = _mock_client(
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_no_podcasts_mock.xml"),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
 
-        result = await parse_feed(podcast, client)
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_no_podcasts_mock.xml"),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
+
         assert result == Podcast.FeedStatus.INVALID_RSS
 
         podcast.refresh_from_db()
@@ -631,12 +690,16 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_empty_feed(self, podcast):
-        client = _mock_client(
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content("rss_empty_mock.xml"),
-        )
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content("rss_empty_mock.xml"),
+            )
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.INVALID_RSS
 
         podcast.refresh_from_db()
@@ -649,9 +712,12 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_not_modified(self, podcast):
-        client = _mock_client(status_code=http.HTTPStatus.NOT_MODIFIED)
+        with aioresponses() as m:
+            m.get(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED)
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.NOT_MODIFIED
 
         podcast.refresh_from_db()
@@ -664,9 +730,12 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_http_gone(self, podcast):
-        client = _mock_client(status_code=http.HTTPStatus.GONE)
+        with aioresponses() as m:
+            m.get(podcast.rss, status=http.HTTPStatus.GONE)
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.DISCONTINUED
 
         podcast.refresh_from_db()
@@ -678,9 +747,12 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_http_server_error(self, podcast):
-        client = _mock_client(status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+        with aioresponses() as m:
+            m.get(podcast.rss, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.UNAVAILABLE
 
         podcast.refresh_from_db()
@@ -693,9 +765,12 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_http_not_found(self, podcast):
-        client = _mock_client(status_code=http.HTTPStatus.NOT_FOUND)
+        with aioresponses() as m:
+            m.get(podcast.rss, status=http.HTTPStatus.NOT_FOUND)
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.UNAVAILABLE
 
         podcast.refresh_from_db()
@@ -710,11 +785,12 @@ class TestFeedParser:
     async def test_parse_http_not_found_exceed_num_retries(self):
         podcast = PodcastFactory(num_retries=Podcast.MAX_RETRIES + 1)
 
-        client = _mock_client(
-            status_code=http.HTTPStatus.NOT_FOUND,
-        )
+        with aioresponses() as m:
+            m.get(podcast.rss, status=http.HTTPStatus.NOT_FOUND)
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.UNAVAILABLE
 
         podcast.refresh_from_db()
@@ -727,9 +803,12 @@ class TestFeedParser:
 
     @pytest.mark.django_db(transaction=True)
     async def test_parse_connect_error(self, podcast):
-        client = _mock_error_client(httpx.HTTPError("fail"))
+        with aioresponses() as m:
+            m.get(podcast.rss, exception=aiohttp.ClientError("fail"))
+            client = Client()
+            result = await parse_feed(podcast, client)
+            await client.aclose()
 
-        result = await parse_feed(podcast, client)
         assert result == Podcast.FeedStatus.UNAVAILABLE
 
         podcast.refresh_from_db()
@@ -743,20 +822,23 @@ class TestFeedParser:
     async def test_other_error(self, podcast, mocker):
         mocker.patch("django.db.transaction.atomic", side_effect=DatabaseError("fail"))
 
-        client = _mock_client(
-            url=podcast.rss,
-            status_code=http.HTTPStatus.OK,
-            content=self.get_rss_content(),
-            headers={
-                "ETag": "abc123",
-                "Last-Modified": self.updated,
-            },
-        )
-
-        with pytest.raises(DatabaseError, match="fail"):
-            await parse_feed(podcast, client)
+        with aioresponses() as m:
+            m.get(
+                podcast.rss,
+                status=http.HTTPStatus.OK,
+                body=self.get_rss_content(),
+                headers={
+                    "ETag": "abc123",
+                    "Last-Modified": self.updated,
+                },
+            )
+            client = Client()
+            with pytest.raises(DatabaseError, match="fail"):
+                await parse_feed(podcast, client)
+            await client.aclose()
 
         podcast.refresh_from_db()
 
         assert podcast.active is True
         assert podcast.parsed is None
+

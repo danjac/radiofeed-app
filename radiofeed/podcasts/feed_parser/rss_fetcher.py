@@ -1,9 +1,9 @@
 import dataclasses
 import hashlib
 import http
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Mapping
 
-import httpx
+import aiohttp
 from django.utils.functional import cached_property
 from django.utils.http import http_date, quote_etag
 
@@ -25,22 +25,9 @@ if TYPE_CHECKING:
 class Response:
     """Wraps an HTTP response with convenient accessors for feed-related metadata."""
 
-    response: httpx.Response
-
-    @cached_property
-    def content(self) -> bytes:
-        """Returns the response content."""
-        return self.response.content
-
-    @cached_property
-    def headers(self) -> httpx.Headers:
-        """Returns the response headers."""
-        return self.response.headers
-
-    @cached_property
-    def url(self) -> str:
-        """Returns the final URL after any redirects."""
-        return str(self.response.url)
+    content: bytes
+    headers: Mapping[str, str]
+    url: str
 
     @cached_property
     def etag(self) -> str:
@@ -107,24 +94,27 @@ class _RSSFetcher:
     async def fetch(self, client: Client) -> Response:
         try:
             try:
+                aio_response = await client.get(
+                    self.podcast.rss,
+                    headers=self._build_http_headers(),
+                )
+                if aio_response.status == http.HTTPStatus.NOT_MODIFIED:
+                    raise NotModifiedError
                 response = Response(
-                    response=await client.get(
-                        self.podcast.rss,
-                        headers=self._build_http_headers(),
-                    )
+                    content=aio_response.content,
+                    headers=aio_response.headers,
+                    url=aio_response.url,
                 )
                 if response.content_hash == self.podcast.content_hash:
                     raise NotModifiedError
                 return response
-            except httpx.HTTPStatusError as exc:
-                match exc.response.status_code:
+            except aiohttp.ClientResponseError as exc:
+                match exc.status:
                     case http.HTTPStatus.GONE:
                         raise DiscontinuedError from exc
-                    case http.HTTPStatus.NOT_MODIFIED:
-                        raise NotModifiedError from exc
                     case _:
                         raise
-        except httpx.HTTPError as exc:
+        except aiohttp.ClientError as exc:
             raise UnavailableError(str(exc)) from exc
 
     def _build_http_headers(self) -> dict[str, str]:

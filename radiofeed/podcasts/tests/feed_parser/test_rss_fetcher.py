@@ -1,8 +1,9 @@
 import datetime
 import http
 
-import httpx
+import aiohttp
 import pytest
+from aioresponses import aioresponses
 
 from radiofeed.client import Client
 from radiofeed.podcasts.feed_parser.date_parser import parse_date
@@ -46,19 +47,19 @@ class TestFetchRss:
     url = "http://example.com/feed"
 
     async def test_ok(self):
-        def _handle(request):
-            return httpx.Response(
-                http.HTTPStatus.OK,
-                content=b"test",
-                request=request,
+        with aioresponses() as m:
+            m.get(
+                self.url,
+                status=http.HTTPStatus.OK,
+                body=b"test",
                 headers={
                     "ETag": "123",
                     "Last-Modified": "Fri, 01 Jan 2025 00:00:00 GMT",
                 },
             )
-
-        client = Client(transport=httpx.MockTransport(_handle))
-        response = await fetch_rss(Podcast(rss=self.url), client)
+            client = Client()
+            response = await fetch_rss(Podcast(rss=self.url), client)
+            await client.aclose()
 
         assert response.url == self.url
         assert response.etag == "123"
@@ -69,69 +70,62 @@ class TestFetchRss:
         assert response.content_hash == make_content_hash(b"test")
 
     async def test_not_modified(self):
-        def _handle(request):
-            return httpx.Response(
-                http.HTTPStatus.NOT_MODIFIED,
-                content=b"",
-                request=request,
+        with aioresponses() as m:
+            m.get(
+                self.url,
+                status=http.HTTPStatus.NOT_MODIFIED,
+                body=b"",
                 headers={
                     "ETag": "123",
                     "Last-Modified": "Fri, 01 Jan 2025 00:00:00 GMT",
                 },
             )
-
-        client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(NotModifiedError):
-            await fetch_rss(
-                Podcast(
-                    rss=self.url,
-                    etag="123",
-                    modified=parse_date("Fri, 01 Jan 2025 00:00:00 GMT"),
-                ),
-                client,
-            )
+            client = Client()
+            with pytest.raises(NotModifiedError):
+                await fetch_rss(
+                    Podcast(
+                        rss=self.url,
+                        etag="123",
+                        modified=parse_date("Fri, 01 Jan 2025 00:00:00 GMT"),
+                    ),
+                    client,
+                )
+            await client.aclose()
 
     async def test_content_not_modified(self):
-        def _handle(request):
-            return httpx.Response(
-                http.HTTPStatus.OK,
-                content=b"testvalue",
-                request=request,
-            )
-
-        client = Client(transport=httpx.MockTransport(_handle))
-
-        with pytest.raises(NotModifiedError):
-            await fetch_rss(
-                Podcast(
-                    rss=self.url,
-                    content_hash=make_content_hash(b"testvalue"),
-                ),
-                client,
-            )
+        with aioresponses() as m:
+            m.get(self.url, status=http.HTTPStatus.OK, body=b"testvalue")
+            client = Client()
+            with pytest.raises(NotModifiedError):
+                await fetch_rss(
+                    Podcast(
+                        rss=self.url,
+                        content_hash=make_content_hash(b"testvalue"),
+                    ),
+                    client,
+                )
+            await client.aclose()
 
     async def test_gone(self):
-        def _handle(request):
-            return httpx.Response(http.HTTPStatus.GONE, request=request)
-
-        client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(DiscontinuedError):
-            await fetch_rss(Podcast(rss=self.url), client)
+        with aioresponses() as m:
+            m.get(self.url, status=http.HTTPStatus.GONE)
+            client = Client()
+            with pytest.raises(DiscontinuedError):
+                await fetch_rss(Podcast(rss=self.url), client)
+            await client.aclose()
 
     async def test_not_found(self):
-        def _handle(request):
-            return httpx.Response(http.HTTPStatus.NOT_FOUND, request=request)
-
-        client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(UnavailableError):
-            await fetch_rss(Podcast(rss=self.url), client)
+        with aioresponses() as m:
+            m.get(self.url, status=http.HTTPStatus.NOT_FOUND)
+            client = Client()
+            with pytest.raises(UnavailableError):
+                await fetch_rss(Podcast(rss=self.url), client)
+            await client.aclose()
 
     async def test_server_error(self):
-        def _handle(request):
-            return httpx.Response(
-                http.HTTPStatus.INTERNAL_SERVER_ERROR, request=request
-            )
-
-        client = Client(transport=httpx.MockTransport(_handle))
-        with pytest.raises(UnavailableError):
-            await fetch_rss(Podcast(rss=self.url), client)
+        with aioresponses() as m:
+            m.get(self.url, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+            client = Client()
+            with pytest.raises(UnavailableError):
+                await fetch_rss(Podcast(rss=self.url), client)
+            await client.aclose()

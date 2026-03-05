@@ -1,8 +1,10 @@
 import http
 import pathlib
+import re
 
-import httpx
+import aiohttp
 import pytest
+from aioresponses import aioresponses
 
 from radiofeed.client import Client
 from radiofeed.podcasts import itunes
@@ -37,57 +39,74 @@ class TestItunesFeed:
 
 
 class TestTopFeeds:
-    @pytest.fixture
-    def good_client(self):
-        def _get_result(request):
-            if "podcasts.apple.com" in str(request.url):
-                with (
-                    pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
-                ).open("rb") as f:
-                    chart_content = f.read()
-
-                return httpx.Response(
-                    http.HTTPStatus.OK,
-                    content=chart_content,
-                )
-            return httpx.Response(http.HTTPStatus.OK, json=MOCK_SEARCH_RESULT)
-
-        return Client(
-            transport=httpx.MockTransport(_get_result),
-        )
-
     @pytest.mark.django_db
-    async def test_ok(self, good_client):
-        feeds = await itunes.fetch_top_feeds(good_client, country="us")
+    async def test_ok(self):
+        chart_content = (
+            pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
+        ).read_bytes()
+
+        with aioresponses() as m:
+            m.get(
+                "https://podcasts.apple.com/us/charts",
+                status=http.HTTPStatus.OK,
+                body=chart_content,
+            )
+            m.get(
+                re.compile(r"https://itunes\.apple\.com/lookup.*"),
+                status=http.HTTPStatus.OK,
+                payload=MOCK_SEARCH_RESULT,
+            )
+            client = Client()
+            feeds = await itunes.fetch_top_feeds(client, country="us")
+            await client.aclose()
         assert len(feeds) == 1
 
     @pytest.mark.django_db
-    async def test_get_genre(self, good_client):
-        feeds = await itunes.fetch_top_feeds(good_client, country="us", genre_id=1303)
+    async def test_get_genre(self):
+        chart_content = (
+            pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
+        ).read_bytes()
+
+        with aioresponses() as m:
+            m.get(
+                "https://podcasts.apple.com/us/genre/1303",
+                status=http.HTTPStatus.OK,
+                body=chart_content,
+            )
+            m.get(
+                re.compile(r"https://itunes\.apple\.com/lookup.*"),
+                status=http.HTTPStatus.OK,
+                payload=MOCK_SEARCH_RESULT,
+            )
+            client = Client()
+            feeds = await itunes.fetch_top_feeds(client, country="us", genre_id=1303)
+            await client.aclose()
         assert len(feeds) == 1
 
     @pytest.mark.django_db
     async def test_fail(self):
-        def _handle(_):
-            raise httpx.HTTPError("fail")
-
-        client = Client(transport=httpx.MockTransport(_handle))
-
-        with pytest.raises(itunes.ItunesError):
-            await itunes.fetch_top_feeds(client, country="us")
+        with aioresponses() as m:
+            m.get(
+                "https://podcasts.apple.com/us/charts",
+                exception=aiohttp.ClientError("fail"),
+            )
+            client = Client()
+            with pytest.raises(itunes.ItunesError):
+                await itunes.fetch_top_feeds(client, country="us")
+            await client.aclose()
 
     @pytest.mark.django_db
     async def test_empty(self):
-        def _handle(_):
-            return httpx.Response(
-                http.HTTPStatus.OK,
-                content=b"",
+        with aioresponses() as m:
+            m.get(
+                "https://podcasts.apple.com/us/charts",
+                status=http.HTTPStatus.OK,
+                body=b"",
             )
-
-        client = Client(transport=httpx.MockTransport(_handle))
-
-        with pytest.raises(itunes.ItunesError):
-            await itunes.fetch_top_feeds(client, country="us")
+            client = Client()
+            with pytest.raises(itunes.ItunesError):
+                await itunes.fetch_top_feeds(client, country="us")
+            await client.aclose()
 
 
 class TestSaveFeedsToDB:
@@ -126,61 +145,55 @@ class TestSaveFeedsToDB:
 class TestSearch:
     @pytest.mark.django_db
     async def test_ok(self):
-        client = Client(
-            transport=httpx.MockTransport(
-                lambda _: httpx.Response(
-                    http.HTTPStatus.OK,
-                    json=MOCK_SEARCH_RESULT,
-                )
-            ),
-        )
-        feeds = await itunes.search(client, "test", limit=30)
+        with aioresponses() as m:
+            m.get(
+                re.compile(r"https://itunes\.apple\.com/search.*"),
+                status=http.HTTPStatus.OK,
+                payload=MOCK_SEARCH_RESULT,
+            )
+            client = Client()
+            feeds = await itunes.search(client, "test", limit=30)
+            await client.aclose()
         assert len(feeds) == 1
 
     @pytest.mark.django_db
     async def test_http_error(self):
-        def _handle(_):
-            raise httpx.HTTPError("fail")
-
-        client = Client(transport=httpx.MockTransport(_handle))
-
-        with pytest.raises(itunes.ItunesError):
-            await itunes.search(client, "test", limit=30)
+        with aioresponses() as m:
+            m.get(
+                re.compile(r"https://itunes\.apple\.com/search.*"),
+                exception=aiohttp.ClientError("fail"),
+            )
+            client = Client()
+            with pytest.raises(itunes.ItunesError):
+                await itunes.search(client, "test", limit=30)
+            await client.aclose()
 
     @pytest.mark.django_db
     async def test_bad_data(self):
-        client = Client(
-            transport=httpx.MockTransport(
-                lambda request: httpx.Response(
-                    http.HTTPStatus.OK,
-                    json={
-                        "results": [
-                            {
-                                "id": 12345,
-                                "url": "bad-url",
-                            }
-                        ],
-                    },
-                )
-            ),
-        )
-
-        feeds = await itunes.search(client, "test", limit=30)
+        with aioresponses() as m:
+            m.get(
+                re.compile(r"https://itunes\.apple\.com/search.*"),
+                status=http.HTTPStatus.OK,
+                payload={"results": [{"id": 12345, "url": "bad-url"}]},
+            )
+            client = Client()
+            feeds = await itunes.search(client, "test", limit=30)
+            await client.aclose()
         assert len(feeds) == 0
         assert feeds == []
 
     @pytest.mark.django_db
     async def test_not_json(self):
-        client = Client(
-            transport=httpx.MockTransport(
-                lambda request: httpx.Response(
-                    http.HTTPStatus.OK,
-                    content=b"not json",
-                )
-            ),
-        )
-        with pytest.raises(itunes.ItunesError):
-            await itunes.search(client, "test", limit=30)
+        with aioresponses() as m:
+            m.get(
+                re.compile(r"https://itunes\.apple\.com/search.*"),
+                status=http.HTTPStatus.OK,
+                body=b"not json",
+            )
+            client = Client()
+            with pytest.raises(itunes.ItunesError):
+                await itunes.search(client, "test", limit=30)
+            await client.aclose()
 
 
 class TestSearchCached:
@@ -199,3 +212,4 @@ class TestSearchCached:
         assert is_new is False
         assert len(feeds) == 2
         mock_search.assert_called_once()
+        await client.aclose()
