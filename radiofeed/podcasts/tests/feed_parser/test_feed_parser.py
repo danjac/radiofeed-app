@@ -110,6 +110,7 @@ class TestFeedParser:
             "renner",
             "philosophy",
             "joshua",
+            "religionspirituality",
             "science",
             "religion",
             "culture",
@@ -841,4 +842,3 @@ class TestFeedParser:
 
         assert podcast.active is True
         assert podcast.parsed is None
-
