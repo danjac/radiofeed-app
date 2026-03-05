@@ -6,7 +6,7 @@ import json
 import re
 from typing import TYPE_CHECKING
 
-import httpx
+import aiohttp
 import lxml.etree
 from django.conf import settings
 from django.core.cache import cache
@@ -84,11 +84,11 @@ async def fetch_top_feeds(
 
     try:
         response = await client.get(url)
-    except httpx.HTTPError as exc:
+    except aiohttp.ClientError as exc:
         raise ItunesError from exc
 
     try:
-        tree = html.fromstring(response.content)
+        tree = html.fromstring(await response.read())
     except lxml.etree.ParserError as exc:
         raise ItunesError("Failed to parse iTunes chart page") from exc
 
@@ -138,8 +138,8 @@ async def _fetch_feeds(
             params=params or {},
             headers={"Accept": "application/json"},
         )
-        data = response.json()
-    except (httpx.HTTPError, ValueError, json.JSONDecodeError) as exc:
+        data = await response.json(content_type=None)
+    except (aiohttp.ClientError, ValueError, json.JSONDecodeError) as exc:
         raise ItunesError(f"{url}: {exc}") from exc
 
     feeds: list[Feed] = []

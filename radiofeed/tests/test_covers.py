@@ -1,8 +1,9 @@
 import contextlib
 import io
 
-import httpx
+import aiohttp
 import pytest
+from aioresponses import aioresponses
 from PIL import Image
 
 from radiofeed.client import Client
@@ -36,25 +37,25 @@ class TestFetchImage:
     cover_url = "https://example.com/test.jpg"
 
     async def test_ok(self):
-        def _handler(request):
-            return httpx.Response(200)
-
-        client = Client(transport=httpx.MockTransport(_handler))
-        assert await fetch_cover_image(client, self.cover_url)
+        with aioresponses() as m:
+            m.get(self.cover_url, status=200)
+            client = Client()
+            assert await fetch_cover_image(client, self.cover_url)
+            await client.aclose()
 
     async def test_content_length_ok(self):
-        def _handler(request):
-            return httpx.Response(200, headers={"Content-Length": "123"})
-
-        client = Client(transport=httpx.MockTransport(_handler))
-        assert await fetch_cover_image(client, self.cover_url)
+        with aioresponses() as m:
+            m.get(self.cover_url, status=200, headers={"Content-Length": "123"})
+            client = Client()
+            assert await fetch_cover_image(client, self.cover_url)
+            await client.aclose()
 
     async def test_content_length_invalid(self):
-        def _handler(request):
-            return httpx.Response(200, headers={"Content-Length": "invalid"})
-
-        client = Client(transport=httpx.MockTransport(_handler))
-        assert await fetch_cover_image(client, self.cover_url)
+        with aioresponses() as m:
+            m.get(self.cover_url, status=200, headers={"Content-Length": "invalid"})
+            client = Client()
+            assert await fetch_cover_image(client, self.cover_url)
+            await client.aclose()
 
     async def test_chunked_content_too_long(self, mocker):
         # mock entire fetch
@@ -63,10 +64,12 @@ class TestFetchImage:
         mock_response = mocker.Mock()
         mock_response.headers = {"content-length": 20000}
 
-        async def _aiter_bytes():
+        async def _iter_any():
             yield b"OK"
 
-        mock_response.aiter_bytes = _aiter_bytes
+        mock_content = mocker.Mock()
+        mock_content.iter_any = _iter_any
+        mock_response.content = mock_content
 
         @contextlib.asynccontextmanager
         async def mock_stream(*args, **kwargs):
@@ -83,25 +86,24 @@ class TestFetchImage:
             await fetch_cover_image(client, self.cover_url)
 
     async def test_content_length_too_long(self):
-        def _handler(request):
-            return httpx.Response(
-                200,
-                headers={
-                    "Content-Length": str(100_000_000_000),
-                },
+        with aioresponses() as m:
+            m.get(
+                self.cover_url,
+                status=200,
+                headers={"Content-Length": str(100_000_000_000)},
             )
-
-        client = Client(transport=httpx.MockTransport(_handler))
-        with pytest.raises(CoverFetchError):
-            await fetch_cover_image(client, self.cover_url)
+            client = Client()
+            with pytest.raises(CoverFetchError):
+                await fetch_cover_image(client, self.cover_url)
+            await client.aclose()
 
     async def test_http_error(self):
-        def _handler(request):
-            raise httpx.HTTPError("invalid")
-
-        client = Client(transport=httpx.MockTransport(_handler))
-        with pytest.raises(CoverFetchError):
-            await fetch_cover_image(client, self.cover_url)
+        with aioresponses() as m:
+            m.get(self.cover_url, exception=aiohttp.ClientError("invalid"))
+            client = Client()
+            with pytest.raises(CoverFetchError):
+                await fetch_cover_image(client, self.cover_url)
+            await client.aclose()
 
 
 class TestProcessImage:
