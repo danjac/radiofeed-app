@@ -124,7 +124,7 @@ class _RSSFetcher:
                         raise DiscontinuedError from exc
                     case _:
                         raise
-        except aiohttp.ClientError as exc:
+        except (aiohttp.ClientError, TimeoutError) as exc:
             raise UnavailableError(str(exc)) from exc
 
     def _build_http_headers(self) -> dict[str, str]:
