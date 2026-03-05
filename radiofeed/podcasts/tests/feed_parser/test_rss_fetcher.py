@@ -1,7 +1,6 @@
 import datetime
 import http
 
-import aiohttp
 import pytest
 from aioresponses import aioresponses
 
