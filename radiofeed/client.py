@@ -1,14 +1,13 @@
 import contextlib
 import dataclasses
-import json as json_module
+import json
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
 from django.conf import settings
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
-    from collections.abc import Mapping
+    from collections.abc import AsyncGenerator, Mapping
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -26,7 +25,7 @@ class ClientResponse:
 
     async def json(self, **kwargs: Any) -> Any:
         """Parses the response body as JSON."""
-        return json_module.loads(self.content)
+        return json.loads(self.content)
 
 
 class Client:
