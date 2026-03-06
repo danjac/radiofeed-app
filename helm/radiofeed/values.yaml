@@ -103,13 +103,13 @@ cronjobs:
   prune-db-task-results:
     schedule: "25 9 * * *"
     command: "./manage.sh prune_db_task_results --min-age-days=1"
-  create-recommendations:
+  create-podcast-recommendations:
     schedule: "20 4 * * *"
     command: "./manage.sh create_podcast_recommendations"
-  fetch-itunes:
+  fetch-itunes-feeds:
     schedule: "15 3 * * *"
     command: "./manage.sh fetch_itunes_feeds"
-  parse-feeds:
+  parse-podcast-feeds:
     schedule: "*/6 * * * *"
     command: "./manage.sh parse_podcast_feeds"
   send-episode-updates:
