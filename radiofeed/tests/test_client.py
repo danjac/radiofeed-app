@@ -5,30 +5,7 @@ import aiohttp
 import pytest
 from aioresponses import aioresponses
 
-from radiofeed.client import Client, ClientResponse, get_client
-
-
-class TestClientResponse:
-    def setup_method(self):
-        self.response = ClientResponse(
-            status=200,
-            headers={"Content-Type": "text/html"},
-            url="https://example.com",
-            content=b"hello",
-        )
-
-    async def test_read(self):
-        assert await self.response.read() == b"hello"
-
-    async def test_json(self):
-        response = ClientResponse(
-            status=200,
-            headers={"Content-Type": "application/json"},
-            url="https://example.com/api",
-            content=json.dumps({"key": "value"}).encode(),
-        )
-        result = await response.json()
-        assert result == {"key": "value"}
+from radiofeed.client import Client, ClientResponse, StreamingClientResponse, get_client
 
 
 class TestClient:
@@ -74,6 +51,15 @@ class TestClient:
 
         assert response.status == 200
 
+    async def test_get_json(self):
+        with aioresponses() as m:
+            m.get(self.url, status=200, body=json.dumps({"key": "value"}).encode())
+            client = Client()
+            response = await client.get(self.url)
+            await client.aclose()
+
+        assert await response.json() == {"key": "value"}
+
     async def test_get_error(self):
         with aioresponses() as m:
             m.get(self.url, status=500)
@@ -95,6 +81,7 @@ class TestClient:
             m.get(self.url, status=200, body=b"streamed")
             client = Client()
             async with client.stream(self.url) as response:
+                assert isinstance(response, StreamingClientResponse)
                 assert response.status == 200
             await client.aclose()
 

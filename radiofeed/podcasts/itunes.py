@@ -88,7 +88,7 @@ async def fetch_top_feeds(
         raise ItunesError from exc
 
     try:
-        tree = html.fromstring(await response.read())
+        tree = html.fromstring(response.content)
     except lxml.etree.ParserError as exc:
         raise ItunesError("Failed to parse iTunes chart page") from exc
 

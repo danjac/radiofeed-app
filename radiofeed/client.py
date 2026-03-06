@@ -11,21 +11,43 @@ if TYPE_CHECKING:
 
 
 @dataclasses.dataclass(kw_only=True)
-class ClientResponse:
-    """Lightweight HTTP response container with pre-read body."""
+class BaseClientResponse:
+    """Base HTTP response wrapping an aiohttp response."""
 
-    status: int
-    headers: Mapping[str, str]
-    url: str
+    response: aiohttp.ClientResponse
+
+    @property
+    def status(self) -> int:
+        """HTTP status code."""
+        return self.response.status
+
+    @property
+    def headers(self) -> Mapping[str, str]:
+        """HTTP response headers."""
+        return self.response.headers
+
+    @property
+    def url(self) -> str:
+        """Final URL after redirects."""
+        return str(self.response.url)
+
+
+@dataclasses.dataclass(kw_only=True)
+class ClientResponse(BaseClientResponse):
+    """HTTP response with pre-read body."""
+
     content: bytes
-
-    async def read(self) -> bytes:
-        """Returns the response body."""
-        return self.content
 
     async def json(self, **kwargs: Any) -> Any:
         """Parses the response body as JSON."""
         return json.loads(self.content)
+
+
+@dataclasses.dataclass(kw_only=True)
+class StreamingClientResponse(BaseClientResponse):
+    """HTTP response that streams the body without buffering."""
+
+    reader: aiohttp.StreamReader
 
 
 class Client:
@@ -51,23 +73,24 @@ class Client:
     async def get(
         self, url: str, headers: dict | None = None, **kwargs
     ) -> ClientResponse:
-        """Does an HTTP GET request."""
+        """Does an HTTP GET request and returns a pre-read response."""
 
-        async with self._session.get(url, headers=headers, **kwargs) as response:
-            response.raise_for_status()
-            return ClientResponse(
-                status=response.status,
-                headers=response.headers,
-                url=str(response.url),
-                content=await response.read(),
-            )
+        async with self._get(url, headers=headers, **kwargs) as response:
+            return ClientResponse(response=response, content=await response.read())
 
     @contextlib.asynccontextmanager
     async def stream(
         self, url: str, headers: dict | None = None, **kwargs
-    ) -> AsyncGenerator[aiohttp.ClientResponse]:
-        """Does an HTTP GET request and returns a stream."""
+    ) -> AsyncGenerator[StreamingClientResponse]:
+        """Does an HTTP GET request and yields a streaming response."""
 
+        async with self._get(url, headers=headers, **kwargs) as response:
+            yield StreamingClientResponse(response=response, reader=response.content)
+
+    @contextlib.asynccontextmanager
+    async def _get(
+        self, url: str, headers: dict | None = None, **kwargs
+    ) -> AsyncGenerator[aiohttp.ClientResponse]:
         async with self._session.get(url, headers=headers, **kwargs) as response:
             response.raise_for_status()
             yield response

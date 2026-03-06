@@ -150,7 +150,7 @@ async def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
                 if content_length > _COVER_MAX_SIZE:
                     raise CoverFetchError("Image too large")
 
-                async for chunk in response.content.iter_any():
+                async for chunk in response.reader.iter_any():
                     output.write(chunk)
                     if output.tell() > _COVER_MAX_SIZE:
                         raise CoverFetchError("Image too large")

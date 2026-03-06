@@ -67,9 +67,9 @@ class TestFetchImage:
         async def _iter_any():
             yield b"OK"
 
-        mock_content = mocker.Mock()
-        mock_content.iter_any = _iter_any
-        mock_response.content = mock_content
+        mock_reader = mocker.Mock()
+        mock_reader.iter_any = _iter_any
+        mock_response.reader = mock_reader
 
         @contextlib.asynccontextmanager
         async def mock_stream(*args, **kwargs):
