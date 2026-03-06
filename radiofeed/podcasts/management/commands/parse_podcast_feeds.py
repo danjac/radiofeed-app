@@ -23,10 +23,13 @@ class Command(BaseCommand):
     def handle(self, *, limit: int, **options) -> None:
         """Parse feeds for all active podcasts."""
         self.stdout.write(f"Parsing feeds for up to {limit} podcasts...")
-        for podcast_id in self._get_scheduled_podcast_ids(limit):
+        for podcast_id in self._get_scheduled_podcasts().values_list(
+            "pk",
+            flat=True,
+        )[:limit]:
             tasks.parse_podcast_feed.enqueue(podcast_id=podcast_id)
 
-    def _get_scheduled_podcast_ids(self, limit: int) -> QuerySet:
+    def _get_scheduled_podcasts(self) -> QuerySet[Podcast]:
         return (
             Podcast.objects.annotate(
                 subscribers=Count("subscriptions"),
@@ -45,4 +48,4 @@ class Command(BaseCommand):
                 "parsed",
                 "updated",
             )
-        ).values_list("pk", flat=True)[:limit]
+        )
