@@ -1,11 +1,13 @@
 import logging
 
+from django.contrib.sites.models import Site
 from django.tasks import task  # type: ignore[reportMissingTypeStubs]
 
 from radiofeed.client import get_client
 from radiofeed.podcasts import itunes
 from radiofeed.podcasts.feed_parser import parse_feed
 from radiofeed.podcasts.models import Podcast
+from radiofeed.users.notifications import get_recipients, send_notification_email
 
 logger = logging.getLogger(__name__)
 
@@ -41,3 +43,28 @@ async def fetch_itunes_feeds(*, country: str, genre_id: int | None = None) -> No
         len(feeds),
         country,
     )
+
+
+@task
+def send_podcast_recommendations(*, recipient_id: int, limit: int = 6) -> None:
+    """Send podcast recommendations to users."""
+
+    recipient = get_recipients().get(pk=recipient_id)
+    if (
+        podcasts := Podcast.objects.published()
+        .recommended(recipient.user)
+        .order_by("-relevance", "-pub_date")[:limit]
+    ):
+        site = Site.objects.get_current()
+
+        send_notification_email(
+            site,
+            recipient,
+            f"Hi, {recipient.user.name}, here are some podcasts you might like!",
+            "podcasts/emails/recommendations.html",
+            {
+                "podcasts": podcasts,
+            },
+        )
+        recipient.user.recommended_podcasts.add(*podcasts)
+        logger.info("Sent podcast recommendations to user %s", recipient.user)

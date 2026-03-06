@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import pytest
 from django.contrib.auth.models import AnonymousUser
 
-from radiofeed.users.tests.factories import UserFactory
+from radiofeed.users.tests.factories import EmailAddressFactory, UserFactory
 
 if TYPE_CHECKING:
     from django.test import Client
@@ -14,6 +14,11 @@ if TYPE_CHECKING:
 @pytest.fixture
 def user() -> User:
     return UserFactory()
+
+
+@pytest.fixture
+def recipient():
+    return EmailAddressFactory(verified=True, primary=True)
 
 
 @pytest.fixture
