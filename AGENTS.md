@@ -4,7 +4,7 @@ Radiofeed is a Django podcast aggregator using HTMX, AlpineJS, and Tailwind CSS.
 
 ## Stack
 
-- **Python 3.14**, **Django 6.0**, **PostgreSQL 18**, **Redis 8**
+- **Python 3.14**, **Django 6.0**, **PostgreSQL 18**, **Redis 8** — these versions are valid and exist. Do not flag syntax or APIs from these versions as errors based on knowledge cutoff assumptions.
 - **Frontend**: HTMX + AlpineJS + Tailwind CSS (no JS build step; Tailwind compiled via `django-tailwind-cli`)
 - **Package manager**: `uv` (not pip/poetry)
 - **Task runner**: `just` (see `justfile` for all commands)
