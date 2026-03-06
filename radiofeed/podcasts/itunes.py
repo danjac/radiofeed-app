@@ -138,7 +138,7 @@ async def _fetch_feeds(
             params=params or {},
             headers={"Accept": "application/json"},
         )
-        data = await response.json(content_type=None)
+        data = response.json()
     except (aiohttp.ClientError, ValueError, json.JSONDecodeError) as exc:
         raise ItunesError(f"{url}: {exc}") from exc
 

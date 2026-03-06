@@ -58,7 +58,7 @@ class TestClient:
             response = await client.get(self.url)
             await client.aclose()
 
-        assert await response.json() == {"key": "value"}
+        assert response.json() == {"key": "value"}
 
     async def test_get_error(self):
         with aioresponses() as m:

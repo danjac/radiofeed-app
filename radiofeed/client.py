@@ -38,7 +38,7 @@ class ClientResponse(BaseClientResponse):
 
     content: bytes
 
-    async def json(self, **kwargs: Any) -> Any:
+    def json(self) -> Any:
         """Parses the response body as JSON."""
         return json.loads(self.content)
 
