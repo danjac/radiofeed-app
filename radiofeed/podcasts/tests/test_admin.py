@@ -51,8 +51,8 @@ def req(rf):
     return req
 
 
+@pytest.mark.django_db
 class TestCategoryAdmin:
-    @pytest.mark.django_db
     def test_get_queryset(self, req, category_admin, podcasts, category):
         category.podcasts.set(podcasts)
         category = Category.objects.first()
@@ -62,13 +62,12 @@ class TestCategoryAdmin:
         assert category_admin.num_podcasts(qs.first()) == 3
 
 
+@pytest.mark.django_db
 class TestPodcastAdmin:
-    @pytest.mark.django_db
     def test_get_queryset(self, podcasts, podcast_admin, req):
         qs = podcast_admin.get_queryset(req)
         assert qs.count() == 3
 
-    @pytest.mark.django_db
     def test_get_search_results(self, podcasts, podcast_admin, req):
         podcast = PodcastFactory(title="Indie Hackers")
         qs, _ = podcast_admin.get_search_results(
@@ -77,23 +76,19 @@ class TestPodcastAdmin:
         assert qs.count() == 1
         assert qs.first() == podcast
 
-    @pytest.mark.django_db
     def test_get_search_results_no_search_term(self, podcasts, podcast_admin, req):
         qs, _ = podcast_admin.get_search_results(req, Podcast.objects.all(), "")
         assert qs.count() == 3
 
-    @pytest.mark.django_db
     def test_get_ordering_no_search_term(self, podcast_admin, req):
         ordering = podcast_admin.get_ordering(req)
         assert ordering == ["-parsed", "-pub_date"]
 
-    @pytest.mark.django_db
     def test_get_ordering_search_term(self, podcast_admin, req):
         req.GET = {"q": "test"}
         ordering = podcast_admin.get_ordering(req)
         assert ordering == []
 
-    @pytest.mark.django_db
     def test_next_scheduled_update(self, mocker, podcast, podcast_admin):
         mocker.patch(
             "radiofeed.podcasts.admin.Podcast.get_next_scheduled_update",
@@ -103,7 +98,6 @@ class TestPodcastAdmin:
             podcast_admin.next_scheduled_update(podcast) == "2\xa0hours, 59\xa0minutes"
         )
 
-    @pytest.mark.django_db
     def test_next_scheduled_update_in_past(self, mocker, podcast, podcast_admin):
         mocker.patch(
             "radiofeed.podcasts.admin.Podcast.get_next_scheduled_update",
@@ -111,12 +105,10 @@ class TestPodcastAdmin:
         )
         assert podcast_admin.next_scheduled_update(podcast) == "3\xa0hours ago"
 
-    @pytest.mark.django_db
     def test_next_scheduled_update_inactive(self, mocker, podcast_admin):
         podcast = PodcastFactory(active=False)
         assert podcast_admin.next_scheduled_update(podcast) == "-"
 
-    @pytest.mark.django_db
     def test_sync_podcast_feeds(self, rf, mocker, podcast_admin):
         mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
         podcast_admin.message_user = mocker.Mock()
@@ -126,7 +118,6 @@ class TestPodcastAdmin:
         podcast_admin.sync_podcast_feeds(request, queryset)
         mock_parse.enqueue.assert_called_once_with(podcast_id=podcast.id)
 
-    @pytest.mark.django_db
     def test_sync_podcast_feeds_inactive(self, rf, mocker, podcast_admin):
         mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
         podcast_admin.message_user = mocker.Mock()
@@ -137,10 +128,10 @@ class TestPodcastAdmin:
         mock_parse.enqueue.assert_not_called()
 
 
+@pytest.mark.django_db
 class TestPodcastAdminSyncFeedView:
     url = reverse_lazy("admin:podcasts_podcast_sync_feed", kwargs={"object_id": 1})
 
-    @pytest.mark.django_db
     def test_sync_feed_view_active(self, client, staff_user, mocker):
         mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
         podcast = PodcastFactory(active=True)
@@ -154,7 +145,6 @@ class TestPodcastAdminSyncFeedView:
         )
         mock_parse.enqueue.assert_called_once_with(podcast_id=podcast.id)
 
-    @pytest.mark.django_db
     def test_sync_feed_view_inactive(self, client, staff_user, mocker):
         mock_parse = mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
         podcast = PodcastFactory(active=False)
@@ -166,7 +156,6 @@ class TestPodcastAdminSyncFeedView:
         assert404(response)
         mock_parse.enqueue.assert_not_called()
 
-    @pytest.mark.django_db
     def test_sync_feed_view_requires_staff(self, client, user):
         podcast = PodcastFactory(active=True)
         url = reverse(
@@ -177,14 +166,13 @@ class TestPodcastAdminSyncFeedView:
         assert response.url == f"{reverse('admin:login')}?next={url}"
 
 
+@pytest.mark.django_db
 class TestPromotedFilter:
-    @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
         f = PromotedFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 3
 
-    @pytest.mark.django_db
     def test_promoted(self, podcasts, podcast_admin, req):
         promoted = PodcastFactory(promoted=True)
         f = PromotedFilter(req, {"promoted": ["yes"]}, Podcast, podcast_admin)
@@ -193,15 +181,14 @@ class TestPromotedFilter:
         assert qs.first() == promoted
 
 
+@pytest.mark.django_db
 class TestPrivateFilter:
-    @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
         PodcastFactory(private=False)
         f = PrivateFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    @pytest.mark.django_db
     def test_true(self, podcasts, podcast_admin, req):
         private = PodcastFactory(private=True)
         f = PrivateFilter(req, {"private": ["yes"]}, Podcast, podcast_admin)
@@ -210,15 +197,14 @@ class TestPrivateFilter:
         assert qs.first() == private
 
 
+@pytest.mark.django_db
 class TestActiveFilter:
-    @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
         PodcastFactory(active=False)
         f = ActiveFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    @pytest.mark.django_db
     def test_active(self, podcasts, podcast_admin, req):
         inactive = PodcastFactory(active=False)
         f = ActiveFilter(req, {"active": ["yes"]}, Podcast, podcast_admin)
@@ -226,7 +212,6 @@ class TestActiveFilter:
         assert qs.count() == 3
         assert inactive not in qs
 
-    @pytest.mark.django_db
     def test_inactive(self, podcasts, podcast_admin, req):
         inactive = PodcastFactory(active=False)
         f = ActiveFilter(req, {"active": ["no"]}, Podcast, podcast_admin)
@@ -235,15 +220,14 @@ class TestActiveFilter:
         assert inactive in qs
 
 
+@pytest.mark.django_db
 class TestFeedStatusFilter:
-    @pytest.mark.django_db
     def test_none(self, podcasts, podcast_admin, req):
         PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
         f = FeedStatusFilter(req, {}, Podcast, podcast_admin)
         qs = f.queryset(req, Podcast.objects.all())
         assert qs.count() == 4
 
-    @pytest.mark.django_db
     def test_no_status(self, podcasts, podcast_admin, req):
         specific = PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
         f = FeedStatusFilter(
@@ -253,7 +237,6 @@ class TestFeedStatusFilter:
         assert qs.count() == 3
         assert specific not in qs
 
-    @pytest.mark.django_db
     def test_specific_status(self, podcasts, podcast_admin, req):
         specific = PodcastFactory(feed_status=Podcast.FeedStatus.NOT_MODIFIED)
         f = FeedStatusFilter(
@@ -314,8 +297,8 @@ class TestSubscribedFilter:
         assert qs.first() == subscribed
 
 
+@pytest.mark.django_db
 class TestRecommendationAdmin:
-    @pytest.mark.django_db
     def test_get_queryset(self, rf):
         RecommendationFactory()
         admin = RecommendationAdmin(Recommendation, AdminSite())
@@ -323,8 +306,8 @@ class TestRecommendationAdmin:
         assert qs.count() == 1
 
 
+@pytest.mark.django_db
 class TestSubscriptionAdmin:
-    @pytest.mark.django_db
     def test_get_queryset(self, rf):
         SubscriptionFactory()
         admin = SubscriptionAdmin(Subscription, AdminSite())
@@ -332,15 +315,14 @@ class TestSubscriptionAdmin:
         assert qs.count() == 1
 
 
+@pytest.mark.django_db
 class TestPodcastAdminUploadOpml:
     url = reverse_lazy("admin:podcasts_podcast_upload_opml")
 
-    @pytest.mark.django_db
     def test_upload_opml_view_get(self, client, staff_user):
         response = client.get(self.url)
         assert response.status_code == 200
 
-    @pytest.mark.django_db
     def test_upload_opml_view_post(self, client, staff_user):
         path = pathlib.Path(__file__).parent / "mocks" / "feeds.opml"
         response = client.post(
@@ -350,7 +332,6 @@ class TestPodcastAdminUploadOpml:
         assert response.url == reverse("admin:podcasts_podcast_changelist")
         assert Podcast.objects.count() == 11
 
-    @pytest.mark.django_db
     def test_upload_opml_ignores_existing(self, client, staff_user):
         PodcastFactory(rss="https://example.com/existing.xml")
         opml_content = b"""<?xml version="1.0" encoding="UTF-8"?>
@@ -368,7 +349,6 @@ class TestPodcastAdminUploadOpml:
         assert response.url == reverse("admin:podcasts_podcast_changelist")
         assert Podcast.objects.count() == 2
 
-    @pytest.mark.django_db
     def test_upload_opml_view_redirects_to_changelist(self, client, staff_user):
         opml_content = b"""<?xml version="1.0" encoding="UTF-8"?>
 <opml version="1.0">
@@ -383,7 +363,6 @@ class TestPodcastAdminUploadOpml:
         response = client.post(self.url, {"opml": BytesIO(opml_content)})
         assert response.url == reverse("admin:podcasts_podcast_changelist")
 
-    @pytest.mark.django_db
     def test_upload_opml_view_requires_staff(self, client, user):
         response = client.get(self.url)
         assert response.url == f"{reverse('admin:login')}?next={self.url}"

@@ -4,8 +4,8 @@ from radiofeed.users.notifications import get_recipients
 from radiofeed.users.tests.factories import EmailAddressFactory
 
 
+@pytest.mark.django_db
 class TestGetRecipients:
-    @pytest.mark.django_db
     def test_ok(self):
         EmailAddressFactory(
             verified=True,
@@ -13,7 +13,6 @@ class TestGetRecipients:
         )
         assert get_recipients().exists() is True
 
-    @pytest.mark.django_db
     def test_email_not_verified(self):
         EmailAddressFactory(
             verified=False,
@@ -22,7 +21,6 @@ class TestGetRecipients:
 
         assert get_recipients().exists() is False
 
-    @pytest.mark.django_db
     def test_email_not_primary(self):
         EmailAddressFactory(
             verified=True,
@@ -31,7 +29,6 @@ class TestGetRecipients:
 
         assert get_recipients().exists() is False
 
-    @pytest.mark.django_db
     def test_user_inactive(self):
         EmailAddressFactory(
             user__is_active=False,
@@ -41,7 +38,6 @@ class TestGetRecipients:
 
         assert get_recipients().exists() is False
 
-    @pytest.mark.django_db
     def test_user_disabled_emails(self):
         EmailAddressFactory(
             user__send_email_notifications=False,

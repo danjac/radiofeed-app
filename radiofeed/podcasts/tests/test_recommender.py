@@ -9,14 +9,13 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
+@pytest.mark.django_db
 class TestRecommend:
-    @pytest.mark.django_db
     def test_recommend_with_no_podcasts(self):
         # No podcasts inserted, corpus is empty
         recommend("en")  # Should handle empty corpus without exception
         assert Recommendation.objects.exists() is False
 
-    @pytest.mark.django_db
     def test_podcast_never_recommends_itself(self):
         # set up a shared category
         cat = CategoryFactory.create()
@@ -37,7 +36,6 @@ class TestRecommend:
             # The podcast itself should never appear in its recommendations
             assert all(r.recommended != podcast for r in recs)
 
-    @pytest.mark.django_db
     def test_handle_empty_data_frame(self):
         PodcastFactory(
             title="Cool science podcast",
@@ -48,7 +46,6 @@ class TestRecommend:
         recommend("en")
         assert Recommendation.objects.count() == 0
 
-    @pytest.mark.django_db
     def test_no_categories(self):
         podcast_1 = PodcastFactory(
             title="Cool science podcast",
@@ -70,7 +67,6 @@ class TestRecommend:
         # no common category, so still zero recommendations
         assert Recommendation.objects.filter(podcast=podcast_1).count() == 0
 
-    @pytest.mark.django_db
     def test_create_podcast_recommendations(self):
         # set up categories
         cat_1, cat_2, cat_3 = CategoryFactory.create_batch(3)
@@ -123,7 +119,6 @@ class TestRecommend:
         assert recs_2.count() == 1
         assert recs_2.get().recommended == podcast_1
 
-    @pytest.mark.django_db
     def test_one_podcast(self):
         # set up categories
         cat = CategoryFactory()
@@ -140,7 +135,6 @@ class TestRecommend:
 
         assert Recommendation.objects.exists() is False
 
-    @pytest.mark.django_db
     def test_matches_for_category_empty_queryset(self):
         # Create a category with no podcasts assigned
         Category.objects.create(name="EmptyCategory")

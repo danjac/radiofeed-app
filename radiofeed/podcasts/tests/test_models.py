@@ -13,8 +13,8 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
+@pytest.mark.django_db
 class TestRecommendationManager:
-    @pytest.mark.django_db
     def test_bulk_delete(self):
         RecommendationFactory.create_batch(3)
         Recommendation.objects.bulk_delete()
@@ -32,13 +32,12 @@ class TestCategoryModel:
         assert category.slug == "testing"
 
 
+@pytest.mark.django_db
 class TestPodcastManager:
-    @pytest.mark.django_db
     def test_search_empty(self):
         result = Podcast.objects.search("")
         assert result.count() == 0
 
-    @pytest.mark.django_db
     def test_search_default(self):
         podcast_1 = PodcastFactory(title="Learn Python Programming")
         podcast_2 = PodcastFactory(title="Advanced Python Techniques")
@@ -51,7 +50,6 @@ class TestPodcastManager:
         assert podcast_1 in result
         assert podcast_2 in result
 
-    @pytest.mark.django_db
     def test_search_owner(self):
         podcast_1 = PodcastFactory(
             title="Learn Python Programming", owner="Python Guru"
@@ -64,21 +62,17 @@ class TestPodcastManager:
 
         assert podcast_1 in result
 
-    @pytest.mark.django_db
     def test_subscribed_true(self, user):
         SubscriptionFactory(subscriber=user)
         assert Podcast.objects.subscribed(user).exists() is True
 
-    @pytest.mark.django_db
     def test_subscribed_false(self, user, podcast):
         assert Podcast.objects.subscribed(user).exists() is False
 
-    @pytest.mark.django_db
     def test_published_true(self):
         PodcastFactory(pub_date=timezone.now())
         assert Podcast.objects.published().exists() is True
 
-    @pytest.mark.django_db
     def test_published_false(self):
         PodcastFactory(pub_date=None)
         assert Podcast.objects.published().exists() is False
@@ -145,7 +139,6 @@ class TestPodcastManager:
             ),
         ],
     )
-    @pytest.mark.django_db
     def test_scheduled(self, kwargs, exists):
         now = timezone.now()
 
@@ -162,7 +155,6 @@ class TestPodcastManager:
 
         assert Podcast.objects.scheduled().exists() is exists
 
-    @pytest.mark.django_db
     def test_recommended(self, user):
         podcast = SubscriptionFactory(subscriber=user).podcast
         RecommendationFactory.create_batch(3, podcast=podcast)
@@ -171,20 +163,17 @@ class TestPodcastManager:
         assert podcasts.count() == 3
         assert outlier not in podcasts
 
-    @pytest.mark.django_db
     def test_recommended_is_subscribed(self, user):
         podcast = SubscriptionFactory(subscriber=user).podcast
         RecommendationFactory(recommended=podcast)
         assert Podcast.objects.recommended(user).count() == 0
 
-    @pytest.mark.django_db
     def test_already_recommended(self, user):
         podcast = SubscriptionFactory(subscriber=user).podcast
         recommended = RecommendationFactory(podcast=podcast).recommended
         user.recommended_podcasts.add(recommended)
         assert Podcast.objects.recommended(user).count() == 0
 
-    @pytest.mark.django_db
     def test_recommended_is_subscribed_or_recommended(self, user):
         podcast = SubscriptionFactory(subscriber=user).podcast
         RecommendationFactory(recommended=podcast)

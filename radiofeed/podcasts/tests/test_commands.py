@@ -8,35 +8,35 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
+@pytest.mark.django_db
 class TestSendPodcastRecommendations:
     @pytest.fixture
     def mock_task(self, mocker):
         return mocker.patch("radiofeed.podcasts.tasks.send_podcast_recommendations")
 
-    @pytest.mark.django_db
     def test_has_episodes(self, recipient, mock_task):
         call_command("send_podcast_recommendations")
         mock_task.enqueue.assert_called()
 
 
+@pytest.mark.django_db
 class TestParsePodcastFeeds:
     @pytest.fixture
     def mock_task(self, mocker):
         return mocker.patch("radiofeed.podcasts.tasks.parse_podcast_feed")
 
-    @pytest.mark.django_db
     def test_ok(self, mock_task):
         PodcastFactory(pub_date=None)
         call_command("parse_podcast_feeds")
         mock_task.enqueue.assert_called()
 
-    @pytest.mark.django_db
     def test_not_scheduled(self, mock_task):
         PodcastFactory(active=False)
         call_command("parse_podcast_feeds")
         mock_task.enqueue.assert_not_called()
 
 
+@pytest.mark.django_db
 class TestFetchItunesFeeds:
     @pytest.fixture
     def category(self):
@@ -46,14 +46,13 @@ class TestFetchItunesFeeds:
     def mock_task(self, mocker):
         return mocker.patch("radiofeed.podcasts.tasks.fetch_itunes_feeds")
 
-    @pytest.mark.django_db
     def test_ok(self, category, mock_task):
         call_command("fetch_itunes_feeds")
         mock_task.enqueue.assert_called()
 
 
+@pytest.mark.django_db
 class TestCreatePodcastRecommendations:
-    @pytest.mark.django_db
     def test_create_podcast_recommendations(self, mocker):
         patched = mocker.patch(
             "radiofeed.podcasts.recommender.recommend",

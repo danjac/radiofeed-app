@@ -41,6 +41,7 @@ def _get_mock_file_path(filename):
     return pathlib.Path(__file__).parents[1] / "mocks" / filename
 
 
+@pytest.mark.django_db(transaction=True)
 class TestFeedParser:
     mock_file = "rss_mock.xml"
     rss = "https://mysteriousuniverse.org/feed/podcast/"
@@ -50,7 +51,6 @@ class TestFeedParser:
     def get_rss_content(self, filename=""):
         return _get_mock_file_path(filename or self.mock_file).read_bytes()
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_ok(self, categories):
         podcast = PodcastFactory(
             rss="https://mysteriousuniverse.org/feed/podcast/",
@@ -163,7 +163,6 @@ class TestFeedParser:
         ):
             assert name in assigned_categories, f"Category {name} not assigned"
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_new_feed_url_same(self, categories):
         podcast = PodcastFactory(rss="https://feeds.simplecast.com/bgeVtxQX")
 
@@ -189,7 +188,6 @@ class TestFeedParser:
 
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_new_feed_url_changed(self, categories):
         podcast = PodcastFactory()
 
@@ -214,7 +212,6 @@ class TestFeedParser:
         assert podcast.feed_status == Podcast.FeedStatus.SUCCESS
         assert podcast.rss == "https://feeds.simplecast.com/bgeVtxQX"
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_new_feed_url_other_podcast(self):
         podcast = PodcastFactory()
         other = PodcastFactory(rss="https://feeds.simplecast.com/bgeVtxQX")
@@ -241,7 +238,6 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.canonical == other
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_serial(self):
         podcast = PodcastFactory(
             rss="https://feeds.acast.com/public/shows/867a533e-5a8d-4e5c-81bc-f7e5a1fe29a5",
@@ -275,7 +271,6 @@ class TestFeedParser:
 
         assert podcast.is_serial()
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_links_as_ids(self):
         podcast = PodcastFactory(
             rss="https://feeds.feedburner.com/VarsoviaVentoPodkasto"
@@ -309,7 +304,6 @@ class TestFeedParser:
         assert podcast.title == "Varsovia Vento Podkasto"
         assert podcast.pub_date == parse_date("July 27, 2023 2:00+0000")
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_high_num_episodes(self, categories):
         podcast = PodcastFactory()
 
@@ -339,7 +333,6 @@ class TestFeedParser:
         assert podcast.content_hash
         assert podcast.title == "Armstrong & Getty On Demand"
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_ok_no_pub_date(self, categories):
         podcast = PodcastFactory(pub_date=None)
 
@@ -401,7 +394,6 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_same_content(self, mocker):
         content = self.get_rss_content()
         podcast = PodcastFactory(content_hash=make_content_hash(content))
@@ -435,7 +427,6 @@ class TestFeedParser:
 
         mock_parse_rss.assert_not_called()
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_complete(self, podcast, categories):
         episode_guid = "https://mysteriousuniverse.org/?p=168097"
         episode_title = "original title"
@@ -494,7 +485,6 @@ class TestFeedParser:
         assert "Society & Culture" in assigned_categories
         assert "Philosophy" in assigned_categories
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_permanent_redirect(self, podcast, categories):
         with aioresponses() as m:
             m.get(
@@ -527,7 +517,6 @@ class TestFeedParser:
         assert podcast.modified
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_permanent_redirect_url_taken(self, podcast, categories):
         other = PodcastFactory(rss=self.redirect_rss)
         current_rss = podcast.rss
@@ -563,7 +552,6 @@ class TestFeedParser:
 
         assert podcast.canonical == other
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_with_canonical_cycle(self, podcast, categories):
         other = PodcastFactory()
 
@@ -603,7 +591,6 @@ class TestFeedParser:
 
         assert podcast.canonical == other
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_feed_duplicate_chain_bug(self, categories):
         podcast_a = PodcastFactory(active=True, canonical=None)
         original_rss = podcast_a.rss
@@ -635,7 +622,6 @@ class TestFeedParser:
 
         assert result == Podcast.FeedStatus.SUCCESS
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_no_podcasts(self, podcast):
         with aioresponses() as m:
             m.get(
@@ -661,7 +647,6 @@ class TestFeedParser:
         assert podcast.num_retries == 1
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_no_podcasts_exceed_max_retries(self):
         podcast = PodcastFactory(num_retries=Podcast.MAX_RETRIES + 1)
 
@@ -689,7 +674,6 @@ class TestFeedParser:
         assert podcast.num_retries == Podcast.MAX_RETRIES + 2
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_empty_feed(self, podcast):
         with aioresponses() as m:
             m.get(
@@ -711,7 +695,6 @@ class TestFeedParser:
         assert podcast.num_retries == 1
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_not_modified(self, podcast):
         with aioresponses() as m:
             m.get(podcast.rss, status=http.HTTPStatus.NOT_MODIFIED)
@@ -729,7 +712,6 @@ class TestFeedParser:
         assert podcast.modified is None
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_http_gone(self, podcast):
         with aioresponses() as m:
             m.get(podcast.rss, status=http.HTTPStatus.GONE)
@@ -746,7 +728,6 @@ class TestFeedParser:
         assert podcast.active is False
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_http_server_error(self, podcast):
         with aioresponses() as m:
             m.get(podcast.rss, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -764,7 +745,6 @@ class TestFeedParser:
         assert podcast.num_retries == 1
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_http_not_found(self, podcast):
         with aioresponses() as m:
             m.get(podcast.rss, status=http.HTTPStatus.NOT_FOUND)
@@ -782,7 +762,6 @@ class TestFeedParser:
         assert podcast.num_retries == 1
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_http_not_found_exceed_num_retries(self):
         podcast = PodcastFactory(num_retries=Podcast.MAX_RETRIES + 1)
 
@@ -802,7 +781,6 @@ class TestFeedParser:
         assert podcast.num_retries == Podcast.MAX_RETRIES + 2
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_parse_connect_error(self, podcast):
         with aioresponses() as m:
             m.get(podcast.rss, exception=aiohttp.ClientError("fail"))
@@ -819,7 +797,6 @@ class TestFeedParser:
         assert podcast.active is True
         assert podcast.parsed
 
-    @pytest.mark.django_db(transaction=True)
     async def test_other_error(self, podcast, mocker):
         mocker.patch("django.db.transaction.atomic", side_effect=DatabaseError("fail"))
 

@@ -38,8 +38,8 @@ class TestItunesFeed:
         )
 
 
+@pytest.mark.django_db
 class TestTopFeeds:
-    @pytest.mark.django_db
     async def test_ok(self):
         chart_content = (
             pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
@@ -61,7 +61,6 @@ class TestTopFeeds:
             await client.aclose()
         assert len(feeds) == 1
 
-    @pytest.mark.django_db
     async def test_get_genre(self):
         chart_content = (
             pathlib.Path(__file__).parent / "mocks" / "itunes_chart.html"
@@ -83,7 +82,6 @@ class TestTopFeeds:
             await client.aclose()
         assert len(feeds) == 1
 
-    @pytest.mark.django_db
     async def test_fail(self):
         with aioresponses() as m:
             m.get(
@@ -95,7 +93,6 @@ class TestTopFeeds:
                 await itunes.fetch_top_feeds(client, country="us")
             await client.aclose()
 
-    @pytest.mark.django_db
     async def test_empty(self):
         with aioresponses() as m:
             m.get(
@@ -142,8 +139,8 @@ class TestSaveFeedsToDB:
         assert podcast.promoted is True
 
 
+@pytest.mark.django_db
 class TestSearch:
-    @pytest.mark.django_db
     async def test_ok(self):
         with aioresponses() as m:
             m.get(
@@ -156,7 +153,6 @@ class TestSearch:
             await client.aclose()
         assert len(feeds) == 1
 
-    @pytest.mark.django_db
     async def test_http_error(self):
         with aioresponses() as m:
             m.get(
@@ -168,7 +164,6 @@ class TestSearch:
                 await itunes.search(client, "test", limit=30)
             await client.aclose()
 
-    @pytest.mark.django_db
     async def test_bad_data(self):
         with aioresponses() as m:
             m.get(
@@ -182,7 +177,6 @@ class TestSearch:
         assert len(feeds) == 0
         assert feeds == []
 
-    @pytest.mark.django_db
     async def test_not_json(self):
         with aioresponses() as m:
             m.get(
@@ -196,8 +190,8 @@ class TestSearch:
             await client.aclose()
 
 
+@pytest.mark.django_db
 class TestSearchCached:
-    @pytest.mark.django_db
     async def test_cached(self, mocker, _locmem_cache):
         client = Client()
         mock_search = mocker.patch(

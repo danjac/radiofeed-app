@@ -15,8 +15,8 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
+@pytest.mark.django_db(transaction=True)
 class TestParsePodcastFeed:
-    @pytest.mark.django_db(transaction=True)
     def test_ok(self, podcast, mocker, _immediate_task_backend):
         mock_parse = mocker.patch(
             "radiofeed.podcasts.tasks.parse_feed",
@@ -27,6 +27,7 @@ class TestParsePodcastFeed:
         mock_parse.assert_called()
 
 
+@pytest.mark.django_db(transaction=True)
 class TestFetchItunesFeeds:
     @pytest.fixture
     def feed(self):
@@ -48,17 +49,14 @@ class TestFetchItunesFeeds:
             return_value=[feed],
         )
 
-    @pytest.mark.django_db(transaction=True)
     def test_popular(self, mock_fetch, category, feed, _immediate_task_backend):
         fetch_itunes_feeds.enqueue(country="us")
         mock_fetch.assert_called()
 
-    @pytest.mark.django_db(transaction=True)
     def test_genre(self, mock_fetch, category, feed, _immediate_task_backend):
         fetch_itunes_feeds.enqueue(country="us", genre_id=category.itunes_genre_id)
         mock_fetch.assert_called()
 
-    @pytest.mark.django_db(transaction=True)
     def test_error(self, mocker, _immediate_task_backend):
         mock_fetch = mocker.patch(
             "radiofeed.podcasts.tasks.itunes.fetch_top_feeds",
@@ -68,15 +66,14 @@ class TestFetchItunesFeeds:
         mock_fetch.assert_called()
 
 
+@pytest.mark.django_db(transaction=True)
 class TestSendPodcastRecommendations:
-    @pytest.mark.django_db(transaction=True)
     def test_ok(self, recipient, mailoutbox, _immediate_task_backend):
         podcast = SubscriptionFactory(subscriber=recipient.user).podcast
         RecommendationFactory(podcast=podcast)
         send_podcast_recommendations.enqueue(recipient_id=recipient.id)
         assert len(mailoutbox) == 1
 
-    @pytest.mark.django_db(transaction=True)
     def test_no_recommendations(self, recipient, mailoutbox, _immediate_task_backend):
         PodcastFactory()
         send_podcast_recommendations.enqueue(recipient_id=recipient.id)

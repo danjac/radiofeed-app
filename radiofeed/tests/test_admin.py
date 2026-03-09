@@ -23,8 +23,8 @@ class TestCountReltuples:
         assert count_reltuples("nonexistent_table") == 0
 
 
+@pytest.mark.django_db
 class TestFastCountPaginator:
-    @pytest.mark.django_db
     def test_unfiltered_queryset_uses_reltuples(self, mocker):
         mocker.patch(
             "radiofeed.admin.count_reltuples",
@@ -33,7 +33,6 @@ class TestFastCountPaginator:
         paginator = FastCountPaginator(Podcast.objects.all(), 25)
         assert paginator.count == 100
 
-    @pytest.mark.django_db
     def test_filtered_queryset_uses_standard_count(self):
         PodcastFactory.create_batch(3, active=True)
         PodcastFactory.create_batch(2, active=False)
@@ -44,7 +43,6 @@ class TestFastCountPaginator:
         paginator = FastCountPaginator([1, 2, 3], 25)
         assert paginator.count == 3
 
-    @pytest.mark.django_db
     def test_reltuples_zero_falls_back_to_standard_count(self, mocker):
         mocker.patch(
             "radiofeed.admin.count_reltuples",

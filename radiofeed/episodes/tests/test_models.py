@@ -11,10 +11,10 @@ from radiofeed.podcasts.models import Podcast
 from radiofeed.podcasts.tests.factories import PodcastFactory
 
 
+@pytest.mark.django_db
 class TestEpisodeModel:
     link = "https://example.com"
 
-    @pytest.mark.django_db
     def test_multiple_joined_fields(self):
         audio_log_1 = AudioLogFactory(
             episode=EpisodeFactory(
@@ -40,15 +40,12 @@ class TestEpisodeModel:
         assert audio_log_1 in result
         assert audio_log_2 in result
 
-    @pytest.mark.django_db
     def test_next_episode_if_none(self, episode):
         assert episode.next_episode is None
 
-    @pytest.mark.django_db
     def test_previous_episode_if_none(self, episode):
         assert episode.previous_episode is None
 
-    @pytest.mark.django_db
     def test_next_episode_not_same_podcast(self, episode):
         EpisodeFactory(
             pub_date=episode.pub_date + timedelta(days=2),
@@ -56,7 +53,6 @@ class TestEpisodeModel:
 
         assert episode.next_episode is None
 
-    @pytest.mark.django_db
     def test_previous_episode_not_same_podcast(self, episode):
         EpisodeFactory(
             pub_date=episode.pub_date - timedelta(days=2),
@@ -64,7 +60,6 @@ class TestEpisodeModel:
 
         assert episode.previous_episode is None
 
-    @pytest.mark.django_db
     def test_next_episode(self, episode):
         next_episode = EpisodeFactory(
             podcast=episode.podcast,
@@ -73,7 +68,6 @@ class TestEpisodeModel:
 
         assert episode.next_episode == next_episode
 
-    @pytest.mark.django_db
     def test_previous_episode(self, episode):
         previous_episode = EpisodeFactory(
             podcast=episode.podcast,
@@ -119,18 +113,15 @@ class TestEpisodeModel:
         episode = Episode(description="<b>Test &amp; Code")
         assert episode.cleaned_description == "Test & Code"
 
-    @pytest.mark.django_db
     def test_get_cover_url_if_episode_cover(self, podcast):
         episode = EpisodeFactory(
             podcast=podcast, cover_url="https://example.com/episode-cover.jpg"
         )
         assert episode.get_cover_url() == "https://example.com/episode-cover.jpg"
 
-    @pytest.mark.django_db
     def test_get_cover_url_if_podcast_cover(self, episode):
         assert episode.get_cover_url() == "https://example.com/cover.jpg"
 
-    @pytest.mark.django_db
     def test_get_cover_url_if_none(self):
         episode = EpisodeFactory(podcast=PodcastFactory(cover_url=""))
         assert episode.get_cover_url() == ""

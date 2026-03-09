@@ -27,75 +27,74 @@ class TestErrorPages:
         assert b"Error" in response.render().content
 
 
+@pytest.mark.django_db
 class TestIndex:
     url = reverse_lazy("index")
 
-    @pytest.mark.django_db
     def test_anonymous(self, client):
         response = client.get(self.url)
         assert200(response)
         assertTemplateUsed(response, "index.html")
 
-    @pytest.mark.django_db
     def test_authenticated(self, client, auth_user):
         response = client.get(self.url)
         assert response.url == settings.LOGIN_REDIRECT_URL
 
 
+@pytest.mark.django_db
 class TestManifest:
-    @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("manifest"))
         assert200(response)
 
 
+@pytest.mark.django_db
 class TestAssetlinks:
-    @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("assetlinks"))
         assert200(response)
 
 
+@pytest.mark.django_db
 class TestRobots:
-    @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("robots"))
         assert200(response)
 
 
+@pytest.mark.django_db
 class TestSecurty:
-    @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("security"))
         assert200(response)
 
 
+@pytest.mark.django_db
 class TestAbout:
-    @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("about"))
         assert200(response)
 
 
+@pytest.mark.django_db
 class TestPrivacy:
-    @pytest.mark.django_db
     def test_get(self, client):
         response = client.get(reverse("privacy"))
         assert200(response)
 
 
+@pytest.mark.django_db
 class TestAcceptCookies:
-    @pytest.mark.django_db
     def test_post(self, client):
         response = client.post(reverse("accept_cookies"))
         assert200(response)
         assert "accept-cookies" in response.cookies
 
 
+@pytest.mark.django_db
 class TestCoverImage:
     cover_url = "http://example.com/test.png"
 
-    @pytest.mark.django_db
     def test_ok(self, client, mocker):
         mocker.patch("radiofeed.covers.fetch_cover_image", return_value=b"ok")
         mocker.patch(
@@ -105,7 +104,6 @@ class TestCoverImage:
         response = client.get(covers.get_cover_url(self.cover_url, 96))
         assert200(response)
 
-    @pytest.mark.django_db
     def test_invalid_fetch(self, client, mocker):
         mocker.patch(
             "radiofeed.covers.fetch_cover_image",
@@ -115,7 +113,6 @@ class TestCoverImage:
         response = client.get(covers.get_cover_url(self.cover_url, 96))
         assert200(response)
 
-    @pytest.mark.django_db
     def test_invalid_image(self, client, mocker):
         mocker.patch("radiofeed.covers.fetch_cover_image", return_value=b"ok")
         mocker.patch(
@@ -124,12 +121,10 @@ class TestCoverImage:
         response = client.get(covers.get_cover_url(self.cover_url, 96))
         assert200(response)
 
-    @pytest.mark.django_db
     def test_not_accepted_size(self, client):
         response = client.get(covers.get_cover_url(self.cover_url, 500))
         assert404(response)
 
-    @pytest.mark.django_db
     def test_unsigned_url(self, client, mocker):
         response = client.get(
             reverse(

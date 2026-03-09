@@ -54,16 +54,15 @@ class Test3rdPartyAuthTemplates:
         assert response.template_name == template
 
 
+@pytest.mark.django_db
 class TestUserPreferences:
     url = reverse_lazy("users:preferences")
 
-    @pytest.mark.django_db
     def test_get(self, client, auth_user):
         response = client.get(self.url, headers={"HX-Request": "true"})
         assert200(response)
         assertTemplateUsed(response, "account/preferences.html")
 
-    @pytest.mark.django_db
     def test_post(self, client, auth_user):
         response = client.post(
             self.url,
@@ -77,7 +76,6 @@ class TestUserPreferences:
 
         assert not auth_user.send_email_notifications
 
-    @pytest.mark.django_db
     def test_post_not_htmx(self, client, auth_user):
         response = client.post(
             self.url,
@@ -92,11 +90,11 @@ class TestUserPreferences:
         assert not auth_user.send_email_notifications
 
 
+@pytest.mark.django_db
 class TestUserStats:
     url = reverse_lazy("users:stats")
     template = "account/stats.html"
 
-    @pytest.mark.django_db
     def test_stats(self, client, auth_user):
         SubscriptionFactory(subscriber=auth_user)
         AudioLogFactory(user=auth_user)
@@ -108,7 +106,6 @@ class TestUserStats:
 
         assertTemplateUsed(response, self.template)
 
-    @pytest.mark.django_db
     def test_stats_plural(self, client, auth_user):
         AudioLogFactory.create_batch(3, user=auth_user)
         BookmarkFactory.create_batch(3, user=auth_user)
@@ -223,31 +220,29 @@ class TestImportPodcastFeeds:
         assert not Subscription.objects.filter(subscriber=auth_user).exists()
 
 
+@pytest.mark.django_db
 class TestExportPodcastFeeds:
     url = reverse_lazy("users:export_podcast_feeds")
 
-    @pytest.mark.django_db
     def test_export_opml(self, client, auth_user):
         SubscriptionFactory.create_batch(3, subscriber=auth_user)
         response = client.get(self.url)
         assert response["Content-Type"] == "text/x-opml"
 
 
+@pytest.mark.django_db
 class TestDeleteAccount:
     url = reverse_lazy("users:delete_account")
 
-    @pytest.mark.django_db
     def test_get_not_logged_in(self, client):
         response = client.get(self.url)
         assert200(response)
         assertTemplateUsed(response, "account/delete_account.html")
 
-    @pytest.mark.django_db
     def test_post_not_logged_in(self, client):
         response = client.post(self.url, {"confirm-delete": True})
         assert200(response)
 
-    @pytest.mark.django_db
     def test_get(self, client, auth_user):
         # make sure we don't accidentally delete account on get request
         response = client.get(self.url)
@@ -255,13 +250,11 @@ class TestDeleteAccount:
         assertTemplateUsed(response, "account/delete_account.html")
         assert User.objects.exists()
 
-    @pytest.mark.django_db
     def test_post_unconfirmed(self, client, auth_user):
         response = client.post(self.url, {"confirm_delete": "wrong text"})
         assert200(response)
         assert User.objects.exists()
 
-    @pytest.mark.django_db
     def test_post_confirmed(self, client, auth_user):
         response = client.post(self.url, {"confirm_delete": "delete me"})
         assert response.url == reverse("index")

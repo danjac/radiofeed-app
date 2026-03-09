@@ -14,8 +14,8 @@ from radiofeed.podcasts.tests.factories import (
 )
 
 
+@pytest.mark.django_db(transaction=True)
 class TestSendEpisodeUpdates:
-    @pytest.mark.django_db(transaction=True)
     def test_has_episodes(self, mailoutbox, recipient, _immediate_task_backend):
         subscription = SubscriptionFactory(
             subscriber=recipient.user,
@@ -29,7 +29,6 @@ class TestSendEpisodeUpdates:
         assert len(mailoutbox) == 1
         assert mailoutbox[0].to == [recipient.email]
 
-    @pytest.mark.django_db(transaction=True)
     def test_is_bookmarked(self, mailoutbox, recipient, _immediate_task_backend):
         subscription = SubscriptionFactory(
             subscriber=recipient.user,
@@ -42,7 +41,6 @@ class TestSendEpisodeUpdates:
         send_episode_updates.enqueue(recipient_id=recipient.id)
         assert len(mailoutbox) == 0
 
-    @pytest.mark.django_db(transaction=True)
     def test_no_new_episodes(self, mailoutbox, recipient, _immediate_task_backend):
         subscription = SubscriptionFactory(
             subscriber=recipient.user,
@@ -55,7 +53,6 @@ class TestSendEpisodeUpdates:
         send_episode_updates.enqueue(recipient_id=recipient.id)
         assert len(mailoutbox) == 0
 
-    @pytest.mark.django_db(transaction=True)
     def test_listened(self, mailoutbox, recipient, _immediate_task_backend):
         subscription = SubscriptionFactory(
             subscriber=recipient.user,
