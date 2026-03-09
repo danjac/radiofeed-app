@@ -156,7 +156,7 @@ async def fetch_cover_image(client: Client, cover_url: str) -> BinaryIO:
                         raise CoverFetchError("Image too large")
             return output
 
-    except aiohttp.ClientError as exc:
+    except (aiohttp.ClientError, TimeoutError) as exc:
         raise CoverFetchError from exc
 
 
