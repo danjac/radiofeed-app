@@ -1,6 +1,7 @@
 from django.core.management import BaseCommand, CommandParser
 
 from radiofeed.podcasts import tasks
+from radiofeed.users.notifications import get_recipients
 
 
 class Command(BaseCommand):
@@ -18,6 +19,9 @@ class Command(BaseCommand):
             help="Max recommendations in email.",
         )
 
-    def handle(self, *limit: int, **options) -> None:
+    def handle(self, *, limit: int, **options) -> None:
         """Send podcast recommendations to users."""
-        tasks.send_podcast_recommendations.enqueue(limit=limit)
+        for recipient_id in get_recipients().values_list("id", flat=True):
+            tasks.send_podcast_recommendations.enqueue(
+                recipient_id=recipient_id, limit=limit
+            )
